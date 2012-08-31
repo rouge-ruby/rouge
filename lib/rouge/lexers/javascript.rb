@@ -18,12 +18,12 @@ module Rouge
         rule %r(
           /(\\.|[^[/\\\n]|\[(\\.|[^\]\\\n])*])+/ # a nonempty regex
           (?:[gim]+\b|\B) # regex flags
-        )x, 'String.Regex', :flags
+        )x, 'Literal.String.Regex'
 
         # if it's not matched by the above r.e., it's not
         # a valid expression, so we use :bad_regex to eat until the
         # end of the line.
-        rule %r(/), 'String.Regex', :bad_regex
+        rule %r(/), 'Literal.String.Regex', :bad_regex
         rule //, 'Text', :pop!
 
         lexer :bad_regex do
@@ -73,8 +73,8 @@ module Rouge
         rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, 'Number.Float'
         rule /0x[0-9a-fA-F]+/, 'Number.Hex'
         rule /[0-9]+/, 'Number.Integer'
-        rule /"(\\\\|\\"|[^"])*"/, 'String.Double'
-        rule /'(\\\\|\\'|[^'])*'/, 'String.Single'
+        rule /"(\\\\|\\"|[^"])*"/, 'Literal.String.Double'
+        rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
       end
 
       mixin :root

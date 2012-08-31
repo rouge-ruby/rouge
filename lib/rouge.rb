@@ -19,3 +19,6 @@ load load_dir.join('rouge/lexers/shell.rb')
 
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')
+
+load load_dir.join('rouge/theme.rb')
+load load_dir.join('rouge/themes/thankful_eyes.rb')

@@ -15,12 +15,12 @@ describe Rouge::Lexer do
 
   it 'makes sublexers' do
     a_lexer = Rouge::RegexLexer.create do
-      brace = lexer do
+      lexer :brace do
         rule /b/, 'B'
         rule /}/, 'Brace', :pop!
       end
 
-      rule /{/, 'Brace', brace
+      rule /{/, 'Brace', :brace
       rule /a/, 'A'
     end
 
@@ -28,9 +28,11 @@ describe Rouge::Lexer do
     assert { result.size == 5 }
 
     # failed parses
+
+    t = Rouge::Token
     assert {
       a_lexer.get_tokens('{a}') ==
-        [[Rouge::Token['Brace'], '{'], [Rouge::Token['Error'], 'a}']]
+        [[t['Brace'], '{'], [t['Error'], 'a'], [t['Brace'], '}']]
     }
 
     assert { a_lexer.get_tokens('b') == [[Rouge::Token['Error'], 'b']] }

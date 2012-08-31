@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= @lexer.name %> | Visual Test</title>
+
+    <style type="text/css">
+      <%= @theme.render %>
+
+      pre {
+        padding: 15px;
+        line-height: 15px;
+        font-family: 'Ubuntu Mono', 'Monaco', monospace;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Highlighted</h2>
+    <%= @highlighted %>
+
+    <h2>Raw</h2>
+    <pre><%= @sample %></pre>
+  </body>
+</html>

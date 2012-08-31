@@ -91,7 +91,7 @@ module Rouge
       attr_reader :re
       def initialize(re, callback, next_lexer)
         @orig_re = re
-        @re = Regexp.new %/\\A#{re.source}/
+        @re = Regexp.new %/\\A(?:#{re.source})/
         @callback = callback
         @next_lexer = next_lexer
       end
@@ -115,12 +115,33 @@ module Rouge
       end
     end
 
-    def lexer(opts={}, &defn)
-      RegexLexer.new(options.merge(opts), &defn)
+    def initialize(parent=nil, opts={}, &defn)
+      if parent.is_a? Hash
+        opts = parent
+        parent = nil
+      end
+
+      @parent = parent
+      super(opts, &defn)
+    end
+
+    def lexer(name, opts={}, &defn)
+      @scope ||= {}
+      name = name.to_s
+
+      if block_given?
+        l = @scope[name] = RegexLexer.new(self, options.merge(opts), &defn)
+        l.instance_variable_set :@name, name
+        l
+      else
+        @scope[name] || @parent && @parent.lexer(name)
+      end
     end
 
     def mixin(lexer)
+      lexer = get_lexer(lexer)
       lexer.force_load!
+
       rules << lexer
     end
 
@@ -140,7 +161,7 @@ module Rouge
         callback = proc { |match, &b| b.call token, match }
       end
 
-      rules << Rule.new(re, callback, next_lexer)
+      rules << Rule.new(re, callback, get_lexer(next_lexer))
     end
 
     def stream_tokens(stream, &b)
@@ -154,12 +175,13 @@ module Rouge
       return true if stream.empty?
 
       until stream.empty?
-        debug { "parsing #{stream.inspect}" }
+        debug { "stack: #{stack.map(&:name).inspect}" }
+        debug { "parsing #{stream.slice(0..20).inspect}" }
         success = stack.last.step(stream, stack, &b)
 
         if !success
           debug { "    no match, yielding Error" }
-          b.call(Token['Error'], stream.slice!(0..1))
+          b.call(Token['Error'], stream.slice!(0..0))
         end
       end
     end
@@ -175,7 +197,7 @@ module Rouge
   private
     def get_lexer(o)
       case o
-      when RegexLexer
+      when RegexLexer, :pop!
         o
       else
         lexer o
@@ -185,6 +207,8 @@ module Rouge
     def run_rule(rule, stream, stack, &b)
       case rule
       when String, RegexLexer
+        lexer = get_lexer(rule)
+        debug { "  entering mixin #{lexer.name}" }
         get_lexer(rule).step(stream, stack, &b)
       when Rule
         debug { "  trying #{rule.inspect}" }
@@ -196,13 +220,17 @@ module Rouge
               tok = Token[tok]
             end
 
+            debug { "    yielding #{tok.name.inspect}, #{res.inspect}" }
             b.call(tok, res)
           end
 
           if rule.next_lexer == :pop!
+            debug { "    popping stack" }
             stack.pop
           elsif rule.next_lexer
-            stack.push get_lexer(rule.next_lexer)
+            lexer = get_lexer(rule.next_lexer)
+            debug { "    entering #{lexer.name}" }
+            stack.push lexer
           end
         end
       end

@@ -1,11 +1,10 @@
 module Rouge
   module Lexers
     ShellLexer = RegexLexer.create do
+      option :debug, true
+
       name 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
-
-      # because ruby closures are weird
-      root = nil
 
       KEYWORDS = %w(
         if fi else while do done for then return function case
@@ -21,8 +20,7 @@ module Rouge
         ulimit umask unalias unset wait
       ).join('|')
 
-      basic = lexer do
-
+      lexer :basic do
         rule /#.*\n/, 'Comment'
 
         rule /\b(#{KEYWORDS})\s*\b/, 'Keyword'
@@ -36,15 +34,23 @@ module Rouge
 
         rule /[\[\]{}()=]/, 'Operator'
         rule /&&|\|\|/, 'Operator'
+        # rule /\|\|/, 'Operator'
 
         rule /<<</, 'Operator' # here-string
         rule /<<-?\s*(\'?)\\?(\w+)[\w\W]+?\2/, 'Literal.String'
       end
 
-      data = lexer do
+      lexer :double_quotes do
+        rule /"/, 'String.Double', :pop!
+        rule /\\./, 'String.Escape'
+        mixin :interp
+        rule /[^"`\\$]+/, 'String.Double'
+      end
+
+      lexer :data do
         # TODO: this should be its own sublexer so we can capture
         # interpolation and such
-        rule /$?"(\\"|[^"])*"/, 'String.Double'
+        rule /$?"/, 'String.Double', :double_quotes
 
         # single quotes are much easier than double quotes - we can
         # literally just scan until the next single quote.
@@ -57,45 +63,49 @@ module Rouge
         rule /\s+/, 'Text'
         rule /[^=\s\[\]{}()$"\'`\\<]+/, 'Text'
         rule /\d+(?= |\Z)/, 'Number'
-        rule /\$#?(\w+|.)/, 'Name.Variable'
         rule /</, 'Text'
+        mixin :interp
       end
 
-      curly = lexer do
+      lexer :curly do
         rule /}/, 'Keyword', :pop!
         rule /:-/, 'Keyword'
         rule /[a-zA-Z0-9_]+/, 'Name.Variable'
         rule /[^}:"'`$]+/, 'Punctuation'
-        mixin root
+        mixin :root
       end
 
-      paren = lexer do
+      lexer :paren do
         rule /\)/, 'Keyword', :pop!
-        mixin root
+        mixin :root
       end
 
-      math = lexer do
+      lexer :math do
         rule /\)\)/, 'Keyword', :pop!
         rule %r([-+*/%^|&]|\*\*|\|\|), 'Operator'
         rule /\d+/, 'Number'
-        mixin root
+        mixin :root
       end
 
-      backticks = lexer do
+      lexer :backticks do
         rule /`/, 'String.Backtick', :pop!
-        mixin root
+        mixin :root
       end
 
-      root = lexer do
-        mixin basic
-        rule /\$\(\(/, 'Keyword', math
-        rule /\$\(/, 'Keyword', paren
-        rule /\${#?/, 'Keyword', curly
-        rule /`/, 'String.Backtick', backticks
-        mixin data
+      lexer :interp do
+        rule /\$\(\(/, 'Keyword', :math
+        rule /\$\(/, 'Keyword', :paren
+        rule /\${#?/, 'Keyword', :curly
+        rule /`/, 'String.Backtick', :backticks
+        rule /\$#?(\w+|.)/, 'Name.Variable'
       end
 
-      mixin root
+      lexer :root do
+        mixin :basic
+        mixin :data
+      end
+
+      mixin :root
     end
   end
 end

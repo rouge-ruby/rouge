@@ -8,6 +8,7 @@ require 'pathname'
 
 class VisualTestApp < Sinatra::Application
   BASE = Pathname.new(__FILE__).dirname
+  SAMPLES = BASE.join('samples')
 
   configure do
     set :root, BASE
@@ -15,10 +16,9 @@ class VisualTestApp < Sinatra::Application
   end
 
   get '/:lexer' do |lexer_name|
-    dir = BASE.join(lexer_name)
     @lexer = Rouge::Lexer.find(lexer_name)
     halt 404 unless @lexer
-    @sample = File.read(dir.join('sample'))
+    @sample = File.read(SAMPLES.join(@lexer.name))
     formatter = Rouge::Formatters::HTML.new
     @highlighted = Rouge.highlight(@sample, lexer_name, formatter)
     @theme = Rouge::Themes::ThankfulEyes.new

@@ -84,7 +84,7 @@ module Rouge
       tokens = [token]
       parent = token.parent
 
-      inflate_token(token).map do |tok|
+      enum_for(:inflate_token, token).map do |tok|
         base = ".highlight"
         base << " .#{tok.shortname}" unless tok.shortname.empty?
 
@@ -92,15 +92,12 @@ module Rouge
       end.join(', ')
     end
 
-    def inflate_token(tok)
-      Enumerator.new do |out|
-        out << tok
-        tok.sub_tokens.each_value do |st|
-          next if self.class.styles.include? st.name
+    def inflate_token(tok, &b)
+      yield tok
+      tok.sub_tokens.each_value do |st|
+        next if self.class.styles.include? st.name
 
-          out << st
-          inflate_token(st).each { |t| out << t }
-        end
+        inflate_token(st, &b)
       end
     end
   end

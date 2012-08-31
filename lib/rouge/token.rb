@@ -72,6 +72,15 @@ module Rouge
       end
 
       alias [] get
+
+      def each_token(&b)
+        recurse = proc do |token|
+          b.call(token)
+          token.sub_tokens.each_value(&recurse)
+        end
+
+        base.sub_tokens.each_value(&recurse)
+      end
     end
 
     # XXX IMPORTANT XXX

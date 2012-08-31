@@ -16,6 +16,7 @@ load_dir = Pathname.new(__FILE__).dirname
 load load_dir.join('rouge/token.rb')
 load load_dir.join('rouge/lexer.rb')
 load load_dir.join('rouge/lexers/shell.rb')
+load load_dir.join('rouge/lexers/javascript.rb')
 
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')

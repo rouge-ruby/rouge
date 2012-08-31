@@ -1,8 +1,6 @@
 module Rouge
   module Lexers
     ShellLexer = RegexLexer.create do
-      option :debug, true
-
       name 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
 

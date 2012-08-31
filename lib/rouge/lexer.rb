@@ -1,7 +1,38 @@
 module Rouge
   class Lexer
-    def initialize(&b)
-      instance_eval(&b)
+    class << self
+      def create(opts={}, &b)
+        new(opts, &b).send(:force_load!)
+      end
+
+      def find(name)
+        registry[name.to_s]
+      end
+
+      def register(name, lexer)
+        registry[name.to_s] = lexer
+      end
+
+    private
+      def registry
+        @registry ||= {}
+      end
+    end
+
+    def name(n=nil)
+      return @name if n.nil?
+
+      @name = n.to_s
+      aliases @name
+    end
+
+    def aliases(*args)
+      args.each { |arg| Lexer.register(arg, self) }
+    end
+
+    def initialize(opts={}, &b)
+      options opts
+      @lazy_load_proc = b
     end
 
     def default_options
@@ -10,6 +41,8 @@ module Rouge
 
     def options(o={})
       (@options ||= default_options).merge!(o)
+
+      @options
     end
 
     def option(k, v=:absent)
@@ -25,15 +58,29 @@ module Rouge
     end
 
     def get_tokens(stream)
+      enum_tokens(stream).to_a
+    end
+
+    def enum_tokens(stream)
       Enumerator.new do |out|
         stream_tokens(stream) do |token, value|
           out << [token, value]
         end
-      end.to_a
+      end
     end
 
     def stream_tokens(stream)
       raise 'abstract'
+    end
+
+  protected
+
+    def force_load!
+      return self if @force_load
+      @force_load = true
+      instance_eval &@lazy_load_proc
+
+      self
     end
   end
 
@@ -43,9 +90,14 @@ module Rouge
       attr_reader :next_lexer
       attr_reader :re
       def initialize(re, callback, next_lexer)
+        @orig_re = re
         @re = Regexp.new %/\\A#{re.source}/
         @callback = callback
         @next_lexer = next_lexer
+      end
+
+      def inspect
+        "#<Rule #{@orig_re.inspect}>"
       end
 
       def consume(stream, &b)
@@ -63,30 +115,17 @@ module Rouge
       end
     end
 
-    def initialize(parent=nil, &defn)
-      @parent = parent
-      super(&defn)
-    end
-
-    def lexer(name, &defn)
-      name = name.to_s
-
-      if block_given?
-        scope[name] = RegexLexer.new(self, &defn)
-      else
-        scope[name] || parent && parent.lexer(name)
-      end
-    end
-
-    def scope
-      @scope ||= {}
+    def lexer(opts={}, &defn)
+      RegexLexer.new(options.merge(opts), &defn)
     end
 
     def mixin(lexer)
+      lexer.force_load!
       rules << lexer
     end
 
     def rules
+      force_load!
       @rules ||= []
     end
 
@@ -104,24 +143,6 @@ module Rouge
       rules << Rule.new(re, callback, next_lexer)
     end
 
-    def step(stream, stack, &b)
-      debug { "parsing #{stream.inspect}" }
-      if stack.empty?
-        raise 'empty stack!'
-      end
-
-      lexer = stack.last
-
-      lexer.rules.each do |rule|
-        rule.consume(stream) do |match|
-
-          return true
-        end
-      end
-
-      return false
-    end
-
     def stream_tokens(stream, &b)
       stream = stream.dup
       stack = [self]
@@ -137,16 +158,14 @@ module Rouge
         success = stack.last.step(stream, stack, &b)
 
         if !success
-          debug { "    failed parse, returning text" }
-          b.call(Token['Text'], stream)
-          return false
+          debug { "    no match, yielding Error" }
+          b.call(Token['Error'], stream.slice!(0..1))
         end
       end
     end
 
     def step(stream, stack, &b)
       rules.each do |rule|
-        debug { "  trying #{rule.re.inspect}" }
         return true if run_rule(rule, stream, stack, &b)
       end
 
@@ -168,6 +187,7 @@ module Rouge
       when String, RegexLexer
         get_lexer(rule).step(stream, stack, &b)
       when Rule
+        debug { "  trying #{rule.inspect}" }
         rule.consume(stream) do |match|
           debug { "    got #{match[0].inspect}" }
 

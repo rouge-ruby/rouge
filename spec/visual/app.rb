@@ -18,7 +18,7 @@ class VisualTestApp < Sinatra::Application
   get '/:lexer' do |lexer_name|
     @lexer = Rouge::Lexer.find(lexer_name)
     halt 404 unless @lexer
-    @sample = File.read(SAMPLES.join(@lexer.name))
+    @sample = File.read(SAMPLES.join(@lexer.tag))
     formatter = Rouge::Formatters::HTML.new
     @highlighted = Rouge.highlight(@sample, lexer_name, formatter)
     @theme = Rouge::Themes::ThankfulEyes.new

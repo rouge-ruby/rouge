@@ -1,9 +1,7 @@
 module Rouge
   module Lexers
-    JavascriptLexer = RegexLexer.create do
-      option :debug, true
-
-      name 'javascript'
+    class JavascriptLexer < RegexLexer
+      tag 'javascript'
       aliases 'js'
 
       lexer :comments_and_whitespace do

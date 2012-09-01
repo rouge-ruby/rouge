@@ -1,12 +1,12 @@
 module Rouge
   module Lexers
-    ShellLexer = RegexLexer.create do
-      name 'shell'
+    class ShellLexer < RegexLexer
+      tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
 
       KEYWORDS = %w(
-        if fi else while do done for then return function case
-        select continue until esac elif
+        if fi else while do done for then return function
+        select continue until esac elif in
       ).join('|')
 
       BUILTINS = %w(
@@ -22,6 +22,7 @@ module Rouge
         rule /#.*\n/, 'Comment'
 
         rule /\b(#{KEYWORDS})\s*\b/, 'Keyword'
+        rule /\bcase\b/, 'Keyword', :case
 
         rule /\b(#{BUILTINS})\s*\b(?!\.)/, 'Name.Builtin'
 
@@ -83,6 +84,17 @@ module Rouge
         rule %r([-+*/%^|&]|\*\*|\|\|), 'Operator'
         rule /\d+/, 'Number'
         mixin :root
+      end
+
+      lexer :case do
+        lexer :stanza do
+          rule /;;/, 'Punctuation', :pop!
+          mixin :root
+        end
+
+        rule /\besac\b/, 'Keyword', :pop!
+        rule /\)/, 'Punctuation', :stanza
+        mixin :data
       end
 
       lexer :backticks do

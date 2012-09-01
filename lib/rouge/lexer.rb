@@ -1,8 +1,37 @@
 module Rouge
   class Lexer
     class << self
-      def create(opts={}, &b)
-        new(opts, &b).send(:force_load!)
+      def make(opts={}, &b)
+        _sup = self
+
+        Class.new(self) do
+          @lazy_load_proc = b
+          @default_options = _sup.default_options.merge(opts)
+          @parent = _sup
+        end
+      end
+
+      def lex(stream, opts={})
+        new(opts).lex(stream)
+      end
+
+    protected
+      def force_load!
+        return self if @force_load
+        @force_load = true
+        @lazy_load_proc && instance_eval(&@lazy_load_proc)
+
+        self
+      end
+    public
+
+      def new(*a, &b)
+        force_load!
+        super(*a, &b)
+      end
+
+      def default_options
+        @default_options ||= {}
       end
 
       def find(name)
@@ -13,36 +42,34 @@ module Rouge
         registry[name.to_s] = lexer
       end
 
+      def tag(t=nil)
+        return @tag if t.nil?
+
+        @tag = t.to_s
+        aliases @tag
+      end
+
+      def aliases(*args)
+        args.each { |arg| Lexer.register(arg, self) }
+      end
+
     private
       def registry
         @registry ||= {}
       end
     end
 
-    def name(n=nil)
-      return @name if n.nil?
-
-      @name = n.to_s
-      aliases @name
-    end
-
-    def aliases(*args)
-      args.each { |arg| Lexer.register(arg, self) }
-    end
+    # -*- instance methods -*- #
 
     def initialize(opts={}, &b)
-      options opts
+      options(opts)
       @lazy_load_proc = b
     end
 
-    def default_options
-      {}
-    end
-
     def options(o={})
-      (@options ||= default_options).merge!(o)
+      (@options ||= {}).merge!(o)
 
-      @options
+      self.class.default_options.merge(@options)
     end
 
     def option(k, v=:absent)
@@ -69,16 +96,6 @@ module Rouge
 
     def stream_tokens(stream, &b)
       raise 'abstract'
-    end
-
-  protected
-
-    def force_load!
-      return self if @force_load
-      @force_load = true
-      instance_eval &@lazy_load_proc
-
-      self
     end
   end
 
@@ -113,6 +130,58 @@ module Rouge
       end
     end
 
+    class << self
+      def rules
+        force_load!
+        @rules ||= []
+      end
+
+      def lexer(name, opts={}, &defn)
+        @scope ||= {}
+        name = name.to_s
+        new_opts = default_options.merge(opts)
+
+        if block_given?
+          l = @scope[name] = make(new_opts, &defn)
+          l.instance_variable_set :@name, name
+          l
+        else
+          lexer_class = @scope[name]
+          inst = lexer_class && lexer_class.new(new_opts)
+          inst || @parent && @parent.lexer(name, opts)
+        end
+      end
+
+      def mixin(lexer)
+        lexer = get_lexer(lexer)
+
+        rules << lexer
+      end
+
+      def rule(re, token=nil, next_lexer=nil, &callback)
+        if block_given?
+          next_lexer = token
+        else
+          if token.is_a? String
+            token = Token[token]
+          end
+
+          callback = proc { |match, &b| b.call token, match }
+        end
+
+        rules << Rule.new(re, callback, get_lexer(next_lexer))
+      end
+
+      def get_lexer(o)
+        case o
+        when RegexLexer, :pop!
+          o
+        else
+          lexer o
+        end
+      end
+    end
+
     def initialize(parent=nil, opts={}, &defn)
       if parent.is_a? Hash
         opts = parent
@@ -123,43 +192,8 @@ module Rouge
       super(opts, &defn)
     end
 
-    def lexer(name, opts={}, &defn)
-      @scope ||= {}
-      name = name.to_s
-
-      if block_given?
-        l = @scope[name] = RegexLexer.new(self, options.merge(opts), &defn)
-        l.instance_variable_set :@name, name
-        l
-      else
-        @scope[name] || @parent && @parent.lexer(name)
-      end
-    end
-
-    def mixin(lexer)
-      lexer = get_lexer(lexer)
-      lexer.force_load!
-
-      rules << lexer
-    end
-
     def rules
-      force_load!
-      @rules ||= []
-    end
-
-    def rule(re, token=nil, next_lexer=nil, &callback)
-      if block_given?
-        next_lexer = token
-      else
-        if token.is_a? String
-          token = Token[token]
-        end
-
-        callback = proc { |match, &b| b.call token, match }
-      end
-
-      rules << Rule.new(re, callback, get_lexer(next_lexer))
+      self.class.rules
     end
 
     def stream_tokens(stream, &b)
@@ -194,12 +228,7 @@ module Rouge
 
   private
     def get_lexer(o)
-      case o
-      when RegexLexer, :pop!
-        o
-      else
-        lexer o
-      end
+      self.class.get_lexer(o)
     end
 
     def run_rule(rule, stream, stack, &b)

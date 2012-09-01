@@ -1,9 +1,9 @@
 describe Rouge::Lexer do
   it 'makes a simple lexer' do
-    a_lexer = Rouge::RegexLexer.new do
+    a_lexer = Class.new(Rouge::RegexLexer) do
       rule /a/, 'A'
       rule /b/, 'B'
-    end
+    end.new
 
     token_A = Rouge::Token[:A]
     token_B = Rouge::Token[:B]
@@ -14,7 +14,7 @@ describe Rouge::Lexer do
   end
 
   it 'makes sublexers' do
-    a_lexer = Rouge::RegexLexer.create do
+    a_lexer = Class.new(Rouge::RegexLexer) do
       lexer :brace do
         rule /b/, 'B'
         rule /}/, 'Brace', :pop!
@@ -22,7 +22,7 @@ describe Rouge::Lexer do
 
       rule /{/, 'Brace', :brace
       rule /a/, 'A'
-    end
+    end.new :debug => true
 
     result = a_lexer.get_tokens('a{b}a')
     assert { result.size == 5 }
@@ -40,12 +40,12 @@ describe Rouge::Lexer do
   end
 
   it 'does callbacks' do
-    callback_lexer = Rouge::RegexLexer.new do
+    callback_lexer = Class.new(Rouge::RegexLexer) do
       rule /(a)(b)/ do |_, a, b, &out|
         out.call 'A', a
         out.call 'B', b
       end
-    end
+    end.new
 
     result = callback_lexer.get_tokens('ab')
 

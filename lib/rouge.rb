@@ -23,3 +23,4 @@ load load_dir.join('rouge/formatters/html.rb')
 
 load load_dir.join('rouge/theme.rb')
 load load_dir.join('rouge/themes/thankful_eyes.rb')
+load load_dir.join('rouge/themes/colorful.rb')

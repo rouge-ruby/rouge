@@ -20,6 +20,7 @@ module Rouge
 
       state :basic do
         rule /#.*\n/, 'Comment'
+        rule /\\$/, 'Literal.String.Escape' # line continuation
 
         rule /\b(#{KEYWORDS})\s*\b/, 'Keyword'
         rule /\bcase\b/, 'Keyword', :case
@@ -40,16 +41,20 @@ module Rouge
       end
 
       state :double_quotes do
-        rule /"/, 'Literal.String.Double', :pop!
+        # NB: "abc$" is literally the string abc$.
+        # Here we prevent :interp from interpreting $" as a variable.
+        rule /(?:\$#?)?"/, 'Literal.String.Double', :pop!
         rule /\\./, 'Literal.String.Escape'
+        rule /\\$/, 'Literal.String.Escape'
         mixin :interp
         rule /[^"`\\$]+/, 'Literal.String.Double'
       end
 
       state :data do
+        rule /\\./, 'Literal.String.Escape'
         # TODO: this should be its own sublexer so we can capture
         # interpolation and such
-        rule /$?"/, 'Literal.String.Double', :double_quotes
+        rule /\$?"/, 'Literal.String.Double', :double_quotes
 
         # single quotes are much easier than double quotes - we can
         # literally just scan until the next single quote.
@@ -60,7 +65,7 @@ module Rouge
 
         rule /;/, 'Text'
         rule /\s+/, 'Text'
-        rule /[^=\s\[\]{}()$"\'`\\<]+/, 'Text'
+        rule /[^=\s{}()$"\'`\\<]+/, 'Text'
         rule /\d+(?= |\Z)/, 'Number'
         rule /</, 'Text'
         mixin :interp
@@ -88,8 +93,9 @@ module Rouge
 
       state :case do
         rule /\besac\b/, 'Keyword', :pop!
+        rule /\|/, 'Punctuation'
         rule /\)/, 'Punctuation', :case_stanza
-        mixin :data
+        mixin :root
       end
 
       state :case_stanza do

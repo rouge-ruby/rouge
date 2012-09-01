@@ -1,3 +1,10 @@
+// vim: ft=javascript
+
+var myFloat = 0.123;
+var myOctal = 0x123;
+var myRegex = /asdf/;
+var badRegex = /123;
+
 Blag = {};
 jQuery.noConflict();
 

@@ -70,9 +70,9 @@ module Rouge
         rule /(?:#{builtins})\b/, 'Name.Builtin'
         rule /[$a-zA-Z_][a-zA-Z0-9_]*/, 'Name.Other'
 
-        rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, 'Number.Float'
-        rule /0x[0-9a-fA-F]+/, 'Number.Hex'
-        rule /[0-9]+/, 'Number.Integer'
+        rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, 'Literal.Number.Float'
+        rule /0x[0-9a-fA-F]+/, 'Literal.Number.Hex'
+        rule /[0-9]+/, 'Literal.Number.Integer'
         rule /"(\\\\|\\"|[^"])*"/, 'Literal.String.Double'
         rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
       end

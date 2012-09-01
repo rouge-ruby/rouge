@@ -62,14 +62,10 @@ module Rouge
     end
 
     def enum_tokens(stream)
-      Enumerator.new do |out|
-        stream_tokens(stream) do |token, value|
-          out << [token, value]
-        end
-      end
+      enum_for(:stream_tokens, stream)
     end
 
-    def stream_tokens(stream)
+    def stream_tokens(stream, &b)
       raise 'abstract'
     end
 

@@ -51,6 +51,8 @@ module Rouge
     end
 
     def stream(&b)
+      return enum_for(:stream) unless block_given?
+
       self.class.styles.each do |tokname, style|
         stream_single(Token[tokname], style, &b)
       end
@@ -84,7 +86,7 @@ module Rouge
       tokens = [token]
       parent = token.parent
 
-      enum_for(:inflate_token, token).map do |tok|
+      inflate_token(token).map do |tok|
         base = ".highlight"
         base << " .#{tok.shortname}" unless tok.shortname.empty?
 
@@ -93,6 +95,8 @@ module Rouge
     end
 
     def inflate_token(tok, &b)
+      return enum_for(:inflate_token, tok) unless block_given?
+
       yield tok
       tok.sub_tokens.each_value do |st|
         next if self.class.styles.include? st.name

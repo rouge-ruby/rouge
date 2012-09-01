@@ -58,11 +58,13 @@ module Rouge
     end
 
     def get_tokens(stream)
-      enum_tokens(stream).to_a
+      lex(stream).to_a
     end
 
-    def enum_tokens(stream)
-      enum_for(:stream_tokens, stream)
+    def lex(stream, &b)
+      return enum_for(:lex, stream) unless block_given?
+
+      stream_tokens(stream, &b)
     end
 
     def stream_tokens(stream, &b)

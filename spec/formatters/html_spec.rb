@@ -3,7 +3,7 @@ describe Rouge::Formatters::HTML do
   Token = Rouge::Token
 
   it 'formats a simple token stream' do
-    out = subject.get_output([[Token['Name'], 'foo']])
+    out = subject.render([[Token['Name'], 'foo']])
     assert { out == '<pre class="highlight"><span class="n">foo</span></pre>' }
   end
 end

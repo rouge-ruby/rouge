@@ -7,7 +7,7 @@ module Rouge
       lexer = Lexer.find(lexer_name)
       raise "unknown lexer #{lexer_name}" unless lexer
 
-      formatter.get_output(lexer.enum_tokens(text))
+      formatter.render(lexer.lex(text))
     end
   end
 end

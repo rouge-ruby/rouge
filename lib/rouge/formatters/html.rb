@@ -5,7 +5,7 @@ module Rouge
         @css_class = opts[:css_class] || 'highlight'
       end
 
-      def stream_output(tokens, &b)
+      def stream(tokens, &b)
         yield "<pre class=#{@css_class.inspect}>"
         tokens.each do |tok, val|
           # TODO: properly html-encode val

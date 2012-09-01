@@ -74,9 +74,9 @@ module Rouge
 
     def option(k, v=:absent)
       if v == :absent
-        options[k.to_s]
+        options[k]
       else
-        options({ k.to_s => v })
+        options({ k => v })
       end
     end
 
@@ -102,13 +102,13 @@ module Rouge
   class RegexLexer < Lexer
     class Rule
       attr_reader :callback
-      attr_reader :next_lexer
+      attr_reader :next_state
       attr_reader :re
-      def initialize(re, callback, next_lexer)
+      def initialize(re, callback, next_state)
         @orig_re = re
         @re = Regexp.new %/\\A(?:#{re.source})/
         @callback = callback
-        @next_lexer = next_lexer
+        @next_state = next_state
       end
 
       def inspect
@@ -130,37 +130,34 @@ module Rouge
       end
     end
 
-    class << self
+    class State
+      attr_reader :name
+      def initialize(name, &defn)
+        @name = name
+        @defn = defn
+      end
+
       def rules
-        force_load!
         @rules ||= []
       end
 
-      def lexer(name, opts={}, &defn)
-        @scope ||= {}
-        name = name.to_s
-        new_opts = default_options.merge(opts)
+      def load!
+        return self if @loaded
+        @loaded = true
+        StateDSL.new(rules).instance_eval(&@defn)
+        self
+      end
+    end
 
-        if block_given?
-          l = @scope[name] = make(new_opts, &defn)
-          l.instance_variable_set :@name, name
-          l
-        else
-          lexer_class = @scope[name]
-          inst = lexer_class && lexer_class.new(new_opts)
-          inst || @parent && @parent.lexer(name, opts)
-        end
+    class StateDSL
+      attr_reader :rules
+      def initialize(rules)
+        @rules = rules
       end
 
-      def mixin(lexer)
-        lexer = get_lexer(lexer)
-
-        rules << lexer
-      end
-
-      def rule(re, token=nil, next_lexer=nil, &callback)
+      def rule(re, token=nil, next_state=nil, &callback)
         if block_given?
-          next_lexer = token
+          next_state = token
         else
           if token.is_a? String
             token = Token[token]
@@ -169,17 +166,21 @@ module Rouge
           callback = proc { |match, &b| b.call token, match }
         end
 
-        rules << Rule.new(re, callback, get_lexer(next_lexer))
+        rules << Rule.new(re, callback, next_state)
       end
 
-      def get_lexer(o)
-        case o
-        when RegexLexer, :pop!
-          o
-        else
-          lexer o
-        end
+      def mixin(lexer_name)
+        rules << lexer_name.to_s
       end
+    end
+
+    def self.states
+      @states ||= {}
+    end
+
+    def self.state(name, &b)
+      name = name.to_s
+      states[name] = State.new(name, &b)
     end
 
     def initialize(parent=nil, opts={}, &defn)
@@ -192,15 +193,21 @@ module Rouge
       super(opts, &defn)
     end
 
-    def rules
-      self.class.rules
+    def states
+      self.class.states
+    end
+
+    def get_state(name)
+      state = states[name.to_s] 
+      raise "unknown state: #{name}" unless state
+      state.load!
     end
 
     def stream_tokens(stream, &b)
       stream = stream.dup
-      stack = [self]
+      stack = [get_state(:root)]
 
-      stream_with_stack(stream.dup, [self], &b)
+      stream_with_stack(stream.dup, stack, &b)
     end
 
     def stream_with_stack(stream, stack, &b)
@@ -208,8 +215,8 @@ module Rouge
 
       until stream.empty?
         debug { "stack: #{stack.map(&:name).inspect}" }
-        debug { "parsing #{stream.slice(0..20).inspect}" }
-        success = stack.last.step(stream, stack, &b)
+        debug { "stream: #{stream.slice(0..20).inspect}" }
+        success = step(stack.last, stream, stack, &b)
 
         if !success
           debug { "    no match, yielding Error" }
@@ -218,8 +225,8 @@ module Rouge
       end
     end
 
-    def step(stream, stack, &b)
-      rules.each do |rule|
+    def step(state, stream, stack, &b)
+      state.rules.each do |rule|
         return true if run_rule(rule, stream, stack, &b)
       end
 
@@ -227,16 +234,11 @@ module Rouge
     end
 
   private
-    def get_lexer(o)
-      self.class.get_lexer(o)
-    end
-
     def run_rule(rule, stream, stack, &b)
       case rule
-      when String, RegexLexer
-        lexer = get_lexer(rule)
-        debug { "  entering mixin #{lexer.name}" }
-        get_lexer(rule).step(stream, stack, &b)
+      when String
+        debug { "  entering mixin #{rule}" }
+        step(get_state(rule), stream, stack, &b)
       when Rule
         debug { "  trying #{rule.inspect}" }
         rule.consume(stream) do |match|
@@ -251,13 +253,12 @@ module Rouge
             b.call(tok, res)
           end
 
-          if rule.next_lexer == :pop!
+          if rule.next_state == :pop!
             debug { "    popping stack" }
             stack.pop
-          elsif rule.next_lexer
-            lexer = get_lexer(rule.next_lexer)
-            debug { "    entering #{lexer.name}" }
-            stack.push lexer
+          elsif rule.next_state
+            debug { "    entering #{rule.next_state}" }
+            stack.push get_state(rule.next_state)
           end
         end
       end

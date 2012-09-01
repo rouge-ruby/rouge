@@ -18,7 +18,7 @@ module Rouge
         ulimit umask unalias unset wait
       ).join('|')
 
-      lexer :basic do
+      state :basic do
         rule /#.*\n/, 'Comment'
 
         rule /\b(#{KEYWORDS})\s*\b/, 'Keyword'
@@ -39,14 +39,14 @@ module Rouge
         rule /<<-?\s*(\'?)\\?(\w+)[\w\W]+?\2/, 'Literal.String'
       end
 
-      lexer :double_quotes do
+      state :double_quotes do
         rule /"/, 'Literal.String.Double', :pop!
         rule /\\./, 'Literal.String.Escape'
         mixin :interp
         rule /[^"`\\$]+/, 'Literal.String.Double'
       end
 
-      lexer :data do
+      state :data do
         # TODO: this should be its own sublexer so we can capture
         # interpolation and such
         rule /$?"/, 'Literal.String.Double', :double_quotes
@@ -66,7 +66,7 @@ module Rouge
         mixin :interp
       end
 
-      lexer :curly do
+      state :curly do
         rule /}/, 'Keyword', :pop!
         rule /:-/, 'Keyword'
         rule /[a-zA-Z0-9_]+/, 'Name.Variable'
@@ -74,35 +74,35 @@ module Rouge
         mixin :root
       end
 
-      lexer :paren do
+      state :paren do
         rule /\)/, 'Keyword', :pop!
         mixin :root
       end
 
-      lexer :math do
+      state :math do
         rule /\)\)/, 'Keyword', :pop!
         rule %r([-+*/%^|&]|\*\*|\|\|), 'Operator'
         rule /\d+/, 'Number'
         mixin :root
       end
 
-      lexer :case do
-        lexer :stanza do
-          rule /;;/, 'Punctuation', :pop!
-          mixin :root
-        end
-
+      state :case do
         rule /\besac\b/, 'Keyword', :pop!
-        rule /\)/, 'Punctuation', :stanza
+        rule /\)/, 'Punctuation', :case_stanza
         mixin :data
       end
 
-      lexer :backticks do
+      state :case_stanza do
+        rule /;;/, 'Punctuation', :pop!
+        mixin :root
+      end
+
+      state :backticks do
         rule /`/, 'Literal.String.Backtick', :pop!
         mixin :root
       end
 
-      lexer :interp do
+      state :interp do
         rule /\$\(\(/, 'Keyword', :math
         rule /\$\(/, 'Keyword', :paren
         rule /\${#?/, 'Keyword', :curly
@@ -110,12 +110,10 @@ module Rouge
         rule /\$#?(\w+|.)/, 'Name.Variable'
       end
 
-      lexer :root do
+      state :root do
         mixin :basic
         mixin :data
       end
-
-      mixin :root
     end
   end
 end

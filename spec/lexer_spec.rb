@@ -1,13 +1,15 @@
 describe Rouge::Lexer do
   it 'makes a simple lexer' do
     a_lexer = Class.new(Rouge::RegexLexer) do
-      rule /a/, 'A'
-      rule /b/, 'B'
-    end.new
+      state :root do
+        rule /a/, 'A'
+        rule /b/, 'B'
+      end
+    end
 
     token_A = Rouge::Token[:A]
     token_B = Rouge::Token[:B]
-    result = a_lexer.get_tokens('aa')
+    result = a_lexer.lex('aa').to_a
 
     assert { result.size == 2 }
     assert { result == [[token_A, 'a']] * 2 }
@@ -15,39 +17,43 @@ describe Rouge::Lexer do
 
   it 'makes sublexers' do
     a_lexer = Class.new(Rouge::RegexLexer) do
-      lexer :brace do
+      state :brace do
         rule /b/, 'B'
         rule /}/, 'Brace', :pop!
       end
 
-      rule /{/, 'Brace', :brace
-      rule /a/, 'A'
-    end.new :debug => true
+      state :root do
+        rule /{/, 'Brace', :brace
+        rule /a/, 'A'
+      end
+    end
 
-    result = a_lexer.get_tokens('a{b}a')
+    result = a_lexer.lex('a{b}a').to_a
     assert { result.size == 5 }
 
     # failed parses
 
     t = Rouge::Token
     assert {
-      a_lexer.get_tokens('{a}') ==
+      a_lexer.lex('{a}').to_a ==
         [[t['Brace'], '{'], [t['Error'], 'a'], [t['Brace'], '}']]
     }
 
-    assert { a_lexer.get_tokens('b') == [[Rouge::Token['Error'], 'b']] }
-    assert { a_lexer.get_tokens('}') == [[Rouge::Token['Error'], '}']] }
+    assert { a_lexer.lex('b').to_a == [[Rouge::Token['Error'], 'b']] }
+    assert { a_lexer.lex('}').to_a == [[Rouge::Token['Error'], '}']] }
   end
 
   it 'does callbacks' do
     callback_lexer = Class.new(Rouge::RegexLexer) do
-      rule /(a)(b)/ do |_, a, b, &out|
-        out.call 'A', a
-        out.call 'B', b
+      state :root do
+        rule /(a)(b)/ do |_, a, b, &out|
+          out.call 'A', a
+          out.call 'B', b
+        end
       end
-    end.new
+    end
 
-    result = callback_lexer.get_tokens('ab')
+    result = callback_lexer.lex('ab').to_a
 
     assert { result.size == 2 }
     assert { result[0] == [Rouge::Token['A'], 'a'] }

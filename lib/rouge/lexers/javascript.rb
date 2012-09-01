@@ -4,14 +4,14 @@ module Rouge
       tag 'javascript'
       aliases 'js'
 
-      lexer :comments_and_whitespace do
+      state :comments_and_whitespace do
         rule /\s+/, 'Text'
         rule /<!--/, 'Comment' # really...?
         rule %r(//.*?\n), 'Comment.Single'
         rule %r(/\*.*?\*/), 'Comment.Multiline'
       end
 
-      lexer :slash_starts_regex do
+      state :slash_starts_regex do
         mixin :comments_and_whitespace
         rule %r(
           /(\\.|[^[/\\\n]|\[(\\.|[^\]\\\n])*])+/ # a nonempty regex
@@ -23,10 +23,10 @@ module Rouge
         # end of the line.
         rule %r(/), 'Literal.String.Regex', :bad_regex
         rule //, 'Text', :pop!
+      end
 
-        lexer :bad_regex do
-          rule /[^\n]+/, 'Error', :pop!
-        end
+      state :bad_regex do
+        rule /[^\n]+/, 'Error', :pop!
       end
 
       keywords = %w(
@@ -53,7 +53,7 @@ module Rouge
         window
       ).join('|')
 
-      lexer :root do
+      state :root do
         rule %r(^(?=\s|/|<!--)), 'Text', :slash_starts_regex
         mixin :comments_and_whitespace
         rule %r(\+\+|--|~|&&|\?|\|\||\\(?=\n)|<<|>>>?|===|!==),
@@ -74,8 +74,6 @@ module Rouge
         rule /"(\\\\|\\"|[^"])*"/, 'Literal.String.Double'
         rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
       end
-
-      mixin :root
     end
   end
 end

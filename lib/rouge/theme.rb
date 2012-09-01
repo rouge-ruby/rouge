@@ -94,6 +94,10 @@ module Rouge
       end.join(', ')
     end
 
+    # yield all of the tokens that should be styled the same
+    # as the given token.  Essentially this recursively all of
+    # the subtokens, except those which are more specifically
+    # styled.
     def inflate_token(tok, &b)
       return enum_for(:inflate_token, tok) unless block_given?
 

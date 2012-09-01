@@ -23,11 +23,11 @@
   <body class="highlight">
     <section class="legend">
       <h2>Legend</h2>
-      <pre class="highlight">
-        <% Rouge::Token.each_token do |token| %>
- <span class="<%= token.shortname %>"><%= token.name %></span>
-        <% end %>
-      </pre>
+      <pre class="highlight"><%
+        Rouge::Token.each_token do |token|
+          %><span class="<%= token.shortname %>"><%= token.name %></span>
+<%      end
+      %></pre>
     </section>
     <h2>Highlighted</h2>
     <%= @highlighted %>

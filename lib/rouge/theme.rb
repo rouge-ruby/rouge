@@ -87,6 +87,8 @@ module Rouge
       parent = token.parent
 
       inflate_token(token).map do |tok|
+        raise "unknown token: #{tok.inspect}" if tok.shortname.nil?
+
         base = ".highlight"
         base << " .#{tok.shortname}" unless tok.shortname.empty?
 

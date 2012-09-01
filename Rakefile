@@ -9,7 +9,7 @@ end
 CLEAN.include('*.gem')
 task :build => [:clean, :spec] do
   puts
-  sh "gem build cacher.gemspec"
+  sh "gem build rouge.gemspec"
 end
 
 task :default => :spec

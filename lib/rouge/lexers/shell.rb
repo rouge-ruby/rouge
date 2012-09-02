@@ -20,7 +20,6 @@ module Rouge
 
       state :basic do
         rule /#.*\n/, 'Comment'
-        rule /\\$/, 'Literal.String.Escape' # line continuation
 
         rule /\b(#{KEYWORDS})\s*\b/, 'Keyword'
         rule /\bcase\b/, 'Keyword', :case
@@ -44,16 +43,12 @@ module Rouge
         # NB: "abc$" is literally the string abc$.
         # Here we prevent :interp from interpreting $" as a variable.
         rule /(?:\$#?)?"/, 'Literal.String.Double', :pop!
-        rule /\\./, 'Literal.String.Escape'
-        rule /\\$/, 'Literal.String.Escape'
         mixin :interp
         rule /[^"`\\$]+/, 'Literal.String.Double'
       end
 
       state :data do
         rule /\\./, 'Literal.String.Escape'
-        # TODO: this should be its own sublexer so we can capture
-        # interpolation and such
         rule /\$?"/, 'Literal.String.Double', :double_quotes
 
         # single quotes are much easier than double quotes - we can
@@ -62,6 +57,8 @@ module Rouge
         # shall preserve the literal value of each character within the
         # single-quotes. A single-quote cannot occur within single-quotes.
         rule /$?'[^']*'/, 'Literal.String.Single'
+
+        rule /\*/, 'Keyword'
 
         rule /;/, 'Text'
         rule /\s+/, 'Text'
@@ -109,6 +106,8 @@ module Rouge
       end
 
       state :interp do
+        rule /\\$/, 'Literal.String.Escape' # line continuation
+        rule /\\./, 'Literal.String.Escape'
         rule /\$\(\(/, 'Keyword', :math
         rule /\$\(/, 'Keyword', :paren
         rule /\${#?/, 'Keyword', :curly

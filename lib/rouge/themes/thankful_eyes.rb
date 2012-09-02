@@ -24,7 +24,8 @@ module Rouge
       style 'Error',
             'Generic.Error', :fg => aluminum1, :bg => scarletred2
       style 'Keyword', :fg => sandy, :bold => true
-      style 'Operator', :fg => backlit, :bold => true
+      style 'Operator',
+            'Punctuation', :fg => backlit, :bold => true
       style 'Comment.Preproc',
             'Comment.Multiline',
             'Comment.Single',

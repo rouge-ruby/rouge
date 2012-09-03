@@ -243,12 +243,8 @@ module Rouge
           debug { "    got #{match[0].inspect}" }
 
           rule.callback.call(*match) do |tok, res|
-            if tok.is_a? String
-              tok = Token[tok]
-            end
-
-            debug { "    yielding #{tok.name.inspect}, #{res.inspect}" }
-            b.call(tok, res)
+            debug { "    yielding #{tok.to_s.inspect}, #{res.inspect}" }
+            b.call(Token[tok], res)
           end
 
           if rule.next_state == :pop!

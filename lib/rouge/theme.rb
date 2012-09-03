@@ -54,7 +54,7 @@ module Rouge
 
   class CSSTheme < Theme
     def initialize(opts={})
-      @opts = opts
+      @scope = opts[:scope] || '.highlight'
     end
 
     def render(&b)
@@ -78,11 +78,9 @@ module Rouge
     end
 
     def single_css_selector(token)
-      if token == Token['Text']
-        '.highlight'
-      else
-        ".highlight .#{token.shortname}"
-      end
+      return @scope if token == Token['Text']
+
+      "#{@scope} .#{token.shortname}"
     end
 
     # yield all of the tokens that should be styled the same

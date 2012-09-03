@@ -18,4 +18,10 @@ describe Rouge::Token do
     assert { Rouge::Token['Name'].shortname == 'n' }
     assert { Rouge::Token['Literal.String.Backtick'].shortname == 'sb' }
   end
+
+  it 'calculates ancestors' do
+    ancestors = Rouge::Token['A.B.C.D'].ancestors.map(&:name)
+
+    assert { ancestors == %w(A.B.C.D A.B.C A.B A) }
+  end
 end

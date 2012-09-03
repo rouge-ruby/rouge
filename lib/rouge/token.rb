@@ -40,6 +40,15 @@ module Rouge
       @sub_tokens ||= {}
     end
 
+    def ancestors(&b)
+      return enum_for(:ancestors) unless block_given?
+
+      if parent
+        yield self
+        parent.ancestors(&b)
+      end
+    end
+
     def ===(other)
       immediate = if self.class == other.class
         self == other

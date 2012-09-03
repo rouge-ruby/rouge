@@ -71,16 +71,18 @@ module Rouge
       end
 
       def get(name)
+        return name if name.is_a? Token
+
         base[name]
       end
+
+      alias [] get
 
       def token(name, shortname)
         tok = get(name)
         tok.shortname = shortname
         tok
       end
-
-      alias [] get
 
       def each_token(&b)
         recurse = proc do |token|

@@ -159,9 +159,7 @@ module Rouge
         if block_given?
           next_state = token
         else
-          if token.is_a? String
-            token = Token[token]
-          end
+          token = Token[token]
 
           callback = proc { |match, &b| b.call token, match }
         end

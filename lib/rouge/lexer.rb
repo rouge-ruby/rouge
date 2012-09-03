@@ -1,3 +1,6 @@
+# stdlib
+require 'strscan'
+
 module Rouge
   class Lexer
     class << self
@@ -98,10 +101,10 @@ module Rouge
       lex(stream).to_a
     end
 
-    def lex(stream, &b)
-      return enum_for(:lex, stream) unless block_given?
+    def lex(string, &b)
+      return enum_for(:lex, string) unless block_given?
 
-      stream_tokens(stream, &b)
+      stream_tokens(StringScanner.new(string), &b)
     end
 
     def stream_tokens(stream, &b)
@@ -115,24 +118,20 @@ module Rouge
       attr_reader :next_state
       attr_reader :re
       def initialize(re, callback, next_state)
-        @orig_re = re
-        @re = Regexp.new(%/\\A(?:#{re.source})/, re.options)
+        @re = re
         @callback = callback
         @next_state = next_state
       end
 
       def inspect
-        "#<Rule #{@orig_re.inspect}>"
+        "#<Rule #{@re.inspect}>"
       end
 
       def consume(stream, &b)
-        # TODO: I'm sure there is a much faster way of doing this.
-        # also, encapsulate the stream in its own class.
-        match = stream.match(@re)
+        stream.scan(@re)
 
-        if match
-          stream.slice!(0...$&.size)
-          yield match
+        if stream.matched?
+          yield stream
           return true
         end
 
@@ -171,7 +170,7 @@ module Rouge
         else
           token = Token[token]
 
-          callback = proc { |match, &b| b.call token, match }
+          callback = proc { |ss, &b| b.call token, ss[0] }
         end
 
         rules << Rule.new(re, callback, next_state)
@@ -212,10 +211,9 @@ module Rouge
     end
 
     def stream_tokens(stream, &b)
-      stream = stream.dup
       stack = [get_state(:root)]
 
-      stream_with_stack(stream.dup, stack, &b)
+      stream_with_stack(stream, stack, &b)
     end
 
     def stream_with_stack(stream, stack, &b)
@@ -223,12 +221,12 @@ module Rouge
 
       until stream.empty?
         debug { "stack: #{stack.map(&:name).inspect}" }
-        debug { "stream: #{stream.slice(0..20).inspect}" }
+        debug { "stream: #{stream.peek(20).inspect}" }
         success = step(stack.last, stream, stack, &b)
 
         if !success
           debug { "    no match, yielding Error" }
-          b.call(Token['Error'], stream.slice!(0..0))
+          b.call(Token['Error'], stream.getch)
         end
       end
     end

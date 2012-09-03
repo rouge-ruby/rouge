@@ -46,9 +46,9 @@ describe Rouge::Lexer do
   it 'does callbacks' do
     callback_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
-        rule /(a)(b)/ do |_, a, b, &out|
-          out.call 'A', a
-          out.call 'B', b
+        rule /(a)(b)/ do |s, &out|
+          out.call 'A', s[1]
+          out.call 'B', s[2]
         end
       end
     end

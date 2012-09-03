@@ -3,6 +3,7 @@ module Rouge
     class Diff < RegexLexer
       tag 'diff'
       aliases 'patch'
+      extensions 'diff', 'patch'
 
       state :header do
         rule /^diff .*?\n(?=---|\+\+\+)/m, 'Generic.Heading'

@@ -53,6 +53,16 @@ module Rouge
         args.each { |arg| Lexer.register(arg, self) }
       end
 
+      def extensions(*exts)
+        exts.each do |ext|
+          Lexer.extension_registry[ext] = self
+        end
+      end
+
+      def extension_registry
+        @extension_registry ||= {}
+      end
+
     private
       def registry
         @registry ||= {}

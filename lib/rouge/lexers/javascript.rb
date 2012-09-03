@@ -3,6 +3,7 @@ module Rouge
     class JavascriptLexer < RegexLexer
       tag 'javascript'
       aliases 'js'
+      extensions 'js'
 
       state :comments_and_whitespace do
         rule /\s+/, 'Text'

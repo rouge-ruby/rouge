@@ -3,6 +3,7 @@ module Rouge
     class ShellLexer < RegexLexer
       tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
+      extensions 'sh', 'bash', 'zsh', 'ksh'
 
       KEYWORDS = %w(
         if fi else while do done for then return function

@@ -1,3 +1,6 @@
+# stdlib
+require 'cgi'
+
 module Rouge
   module Formatters
     class HTML < Formatter
@@ -9,9 +12,7 @@ module Rouge
         yield "<pre class=#{@css_class.inspect}>"
         tokens.each do |tok, val|
           # TODO: properly html-encode val
-          val.gsub! '&', '&amp;'
-          val.gsub! '<', '&lt;'
-          val.gsub! '>', '&gt;'
+          val = CGI.escape_html(val)
 
           case tok.shortname
           when ''

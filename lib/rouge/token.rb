@@ -3,6 +3,7 @@ module Rouge
     attr_reader :name
     attr_reader :parent
     attr_accessor :shortname
+    alias to_s name
 
     def make_single(name)
       name = name.to_s

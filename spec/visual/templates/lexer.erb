@@ -5,6 +5,7 @@
 
     <style type="text/css">
       <%= @theme.render %>
+      <%= @theme.class.main_style.render('body') %>
 
       pre {
         padding: 15px;
@@ -20,7 +21,7 @@
     </style>
   </head>
 
-  <body class="highlight">
+  <body>
     <section class="legend">
       <h2>Legend</h2>
       <pre class="highlight"><%

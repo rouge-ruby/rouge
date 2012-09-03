@@ -14,9 +14,15 @@ module Rouge
 
       state :slash_starts_regex do
         mixin :comments_and_whitespace
+
         rule %r(
-          /(\\.|[^[/\\\n]|\[(\\.|[^\]\\\n])*])+/ # a nonempty regex
-          (?:[gim]+\b|\B) # regex flags
+          / # opening slash
+          ( \\. # escape sequences
+          | [^/\\\n] # regular characters
+          | \[ (\\. | [^\]\\\n])* \] # character classes
+          )+
+          / # closing slash
+          (?:[gim]+\b|\B) # flags
         )x, 'Literal.String.Regex'
 
         # if it's not matched by the above r.e., it's not
@@ -55,7 +61,7 @@ module Rouge
       ).join('|')
 
       state :root do
-        rule %r(^(?=\s|/|<!--)), 'Text', :slash_starts_regex
+        rule %r(\n(?=\s|/|<!--)), 'Text', :slash_starts_regex
         mixin :comments_and_whitespace
         rule %r(\+\+|--|~|&&|\?|\|\||\\(?=\n)|<<|>>>?|===|!==),
           'Operator', :slash_starts_regex

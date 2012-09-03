@@ -106,7 +106,7 @@ module Rouge
       attr_reader :re
       def initialize(re, callback, next_state)
         @orig_re = re
-        @re = Regexp.new %/\\A(?:#{re.source})/
+        @re = Regexp.new(%/\\A(?:#{re.source})/, re.options)
         @callback = callback
         @next_state = next_state
       end

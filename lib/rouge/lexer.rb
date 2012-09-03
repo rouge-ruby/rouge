@@ -158,6 +158,50 @@ module Rouge
       end
     end
 
+    class ScanState
+      def self.delegate(m, target)
+        define_method(m) do |*a, &b|
+          send(target).send(m, *a, &b)
+        end
+      end
+
+      attr_accessor :scanner
+      attr_accessor :stack
+      def initialize(scanner, stack)
+        @scanner = scanner
+        @stack = stack
+      end
+
+      def pop!
+        raise 'empty stack!' if stack.empty?
+
+        stack.pop
+      end
+
+      delegate :push, :stack
+
+      delegate :[], :scanner
+      delegate :captures, :scanner
+      delegate :peek, :scanner
+      delegate :eos?, :scanner
+
+      def state
+        raise 'empty stack!' if stack.empty?
+        stack.last
+      end
+
+      def scan(re, &b)
+        scanner.scan(re)
+
+        if scanner.matched?
+          yield self
+          return true
+        end
+
+        return false
+      end
+    end
+
     class StateDSL
       attr_reader :rules
       def initialize(rules)
@@ -205,49 +249,47 @@ module Rouge
     end
 
     def get_state(name)
-      state = states[name.to_s] 
+      state = states[name.to_s]
       raise "unknown state: #{name}" unless state
       state.load!
     end
 
     def stream_tokens(stream, &b)
-      stack = [get_state(:root)]
+      scan_state = ScanState.new(stream, [self.get_state(:root)])
 
-      stream_with_stack(stream, stack, &b)
+      stream_with_state(scan_state, &b)
     end
 
-    def stream_with_stack(stream, stack, &b)
-      return true if stream.empty?
-
-      until stream.empty?
-        debug { "stack: #{stack.map(&:name).inspect}" }
-        debug { "stream: #{stream.peek(20).inspect}" }
-        success = step(stack.last, stream, stack, &b)
+    def stream_with_state(scan_state, &b)
+      until scan_state.eos?
+        debug { "stack: #{scan_state.stack.map(&:name).inspect}" }
+        debug { "stream: #{scan_state.stream.peek(20).inspect}" }
+        success = step(scan_state.state, scan_state, &b)
 
         if !success
           debug { "    no match, yielding Error" }
-          b.call(Token['Error'], stream.getch)
+          b.call(Token['Error'], scan_state.scanner.getch)
         end
       end
     end
 
-    def step(state, stream, stack, &b)
+    def step(state, scan_state, &b)
       state.rules.each do |rule|
-        return true if run_rule(rule, stream, stack, &b)
+        return true if run_rule(rule, scan_state, &b)
       end
 
       false
     end
 
   private
-    def run_rule(rule, stream, stack, &b)
+    def run_rule(rule, scan_state, &b)
       case rule
       when String
         debug { "  entering mixin #{rule}" }
-        step(get_state(rule), stream, stack, &b)
+        step(get_state(rule), scan_state, &b)
       when Rule
         debug { "  trying #{rule.inspect}" }
-        rule.consume(stream) do |match|
+        scan_state.scan(rule.re) do |match|
           debug { "    got #{match[0].inspect}" }
 
           rule.callback.call(*match) do |tok, res|
@@ -257,10 +299,10 @@ module Rouge
 
           if rule.next_state == :pop!
             debug { "    popping stack" }
-            stack.pop
+            scan_state.pop!
           elsif rule.next_state
             debug { "    entering #{rule.next_state}" }
-            stack.push get_state(rule.next_state)
+            scan_state.push get_state(rule.next_state)
           end
         end
       end

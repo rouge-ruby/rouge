@@ -2,7 +2,7 @@ module Rouge
   module Themes
     # stolen from pygments
     class Colorful < CSSTheme
-        style                              :fg => "#bbbbbb", :bg => 'black'
+        style 'Text',                      :fg => "#bbbbbb", :bg => 'black'
 
         style 'Comment',                   :fg => "#888"
         style 'Comment.Preproc',           :fg => "#579"

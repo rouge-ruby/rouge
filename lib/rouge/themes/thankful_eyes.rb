@@ -18,7 +18,7 @@ module Rouge
       backlit =        '#4df4ff'
       schrill =        '#ffb000'
 
-      style :fg => unicorn, :bg => krasna
+      style 'Text', :fg => unicorn, :bg => krasna
 
       style 'Comment', :fg => cool_as_ice
       style 'Error',

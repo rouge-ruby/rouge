@@ -26,17 +26,9 @@ module Rouge
         @styles ||= {}
       end
 
-      def main_style
-        @main_style ||= Style.new
-      end
-
       def style(*tokens)
         style = Style.new
         style.merge!(tokens.pop) if tokens.last.is_a? Hash
-
-        if tokens.empty?
-          @main_style = style
-        end
 
         tokens.each do |tok|
           styles[tok.to_s] = style
@@ -71,8 +63,6 @@ module Rouge
       self.class.styles.each do |tokname, style|
         style.render(css_selector(Token[tokname]), &b)
       end
-
-      self.class.main_style.render('.highlight', &b)
     end
 
   private
@@ -83,11 +73,16 @@ module Rouge
       inflate_token(token).map do |tok|
         raise "unknown token: #{tok.inspect}" if tok.shortname.nil?
 
-        base = ".highlight"
-        base << " .#{tok.shortname}" unless tok.shortname.empty?
-
-        base
+        single_css_selector(tok)
       end.join(', ')
+    end
+
+    def single_css_selector(token)
+      if token == Token['Text']
+        '.highlight'
+      else
+        ".highlight .#{token.shortname}"
+      end
     end
 
     # yield all of the tokens that should be styled the same

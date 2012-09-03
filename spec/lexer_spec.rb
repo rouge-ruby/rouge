@@ -82,4 +82,28 @@ describe Rouge::Lexer do
     result = callback_lexer.lex('abcd')
     assert { result.select { |(t,_)| t.name == 'Error' } == [] }
   end
+
+  it 'supports stateful lexes' do
+    stateful = Class.new(Rouge::RegexLexer) do
+      state :root do
+        rule /\d+/ do |ss, out|
+          out << ['digit', ss[0]]
+          @count = ss[0].to_i
+        end
+
+        rule /\+/ do |ss, out|
+          @count += 1
+          if @count <= 5
+            out << ['lt', ss[0]]
+          else
+            out << ['gt', ss[0]]
+          end
+        end
+      end
+    end
+
+    result = stateful.lex('4++')
+    types = result.map { |(t,_)| t.name }
+    assert { types == %w(digit lt gt) }
+  end
 end

@@ -46,9 +46,9 @@ describe Rouge::Lexer do
   it 'does callbacks' do
     callback_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
-        rule /(a)(b)/ do |s, &out|
-          out.call 'A', s[1]
-          out.call 'B', s[2]
+        rule /(a)(b)/ do |s, out|
+          out << ['A', s[1]]
+          out << ['B', s[2]]
         end
       end
     end
@@ -58,5 +58,28 @@ describe Rouge::Lexer do
     assert { result.size == 2 }
     assert { result[0] == [Rouge::Token['A'], 'a'] }
     assert { result[1] == [Rouge::Token['B'], 'b'] }
+  end
+
+  it 'pops from the callback' do
+    callback_lexer = Class.new(Rouge::RegexLexer) do
+      state :root do
+        rule /a/, 'A', :a
+        rule /d/, 'D'
+      end
+
+      state :a do
+        rule /b/, 'B', :b
+      end
+
+      state :b do
+        rule /c/ do |ss, out|
+          out << ['C', ss[0]]
+          pop!; pop! # go back to the root
+        end
+      end
+    end
+
+    result = callback_lexer.lex('abcd')
+    assert { result.select { |(t,_)| t.name == 'Error' } == [] }
   end
 end

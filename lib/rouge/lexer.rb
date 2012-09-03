@@ -214,7 +214,7 @@ module Rouge
         else
           token = Token[token]
 
-          callback = proc { |ss, &b| b.call token, ss[0] }
+          callback = proc { |ss, b| b << [token, ss[0]] }
         end
 
         rules << Rule.new(re, callback, next_state)
@@ -292,7 +292,9 @@ module Rouge
         scan_state.scan(rule.re) do |match|
           debug { "    got #{match[0].inspect}" }
 
-          rule.callback.call(*match) do |tok, res|
+          Enumerator.new do |y|
+            scan_state.instance_exec(scan_state, y, &rule.callback)
+          end.each do |tok, res|
             debug { "    yielding #{tok.to_s.inspect}, #{res.inspect}" }
             b.call(Token[tok], res)
           end

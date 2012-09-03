@@ -27,9 +27,9 @@ module Rouge
 
         rule /\b(#{BUILTINS})\s*\b(?!\.)/, 'Name.Builtin'
 
-        rule /(\b\w+)(=)/ do |m, &out|
-          out.call 'Name.Variable', m[1]
-          out.call 'Operator', m[2]
+        rule /(\b\w+)(=)/ do |m, out|
+          out << ['Name.Variable', m[1]]
+          out << ['Operator', m[2]]
         end
 
         rule /[\[\]{}()=]/, 'Operator'

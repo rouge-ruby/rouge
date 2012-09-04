@@ -4,7 +4,7 @@ module Rouge
       tag 'text'
 
       def stream_tokens(stream, &b)
-        yield Token['Text'], stream
+        yield Token['Text'], stream.string
       end
     end
   end

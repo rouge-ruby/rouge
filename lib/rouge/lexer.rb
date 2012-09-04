@@ -232,6 +232,16 @@ module Rouge
         token(tok, scanner[@group_count += 1])
       end
 
+      def delegate(lexer, text=nil)
+        debug { "    delegating to #{lexer.name}" }
+        text ||= scanner[0]
+
+        lexer.lex(text) do |tok, val|
+          debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }
+          token(tok, val)
+        end
+      end
+
       def state
         raise 'empty stack!' if stack.empty?
         stack.last

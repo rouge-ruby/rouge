@@ -108,4 +108,27 @@ describe Rouge::Lexer do
     types = result.map { |(t,_)| t.name }
     assert { types == %w(digit lt gt) }
   end
+
+  it 'delegates' do
+    class MasterLexer < Rouge::RegexLexer
+      state :root do
+        rule /a/, 'A'
+        rule /{(.*?)}/ do |m|
+          token 'brace', '{'
+          delegate BracesLexer.new, m[1]
+          token 'brace', '}'
+        end
+      end
+    end
+
+    class BracesLexer < Rouge::RegexLexer
+      state :root do
+        rule /b/, 'B'
+      end
+    end
+
+    result = MasterLexer.lex('a{b}a')
+    errors = result.select { |(t,_)| t.name == 'Error' }
+    assert { errors.empty? }
+  end
 end

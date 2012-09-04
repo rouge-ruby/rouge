@@ -46,7 +46,8 @@ module Rouge
             'Name.Decorator',
             'Name.Namespace',
             'Name.Builtin.Pseudo',
-            'Name.Exception', :fg => go_get_it, :bold => true
+            'Name.Exception',
+            'Name.Tag', :fg => go_get_it, :bold => true
       style 'Literal.Number', :fg => pink_merengue, :bold => true
       style 'Literal.String', :fg => dune, :bold => true
       style 'Literal.String.Escape',
@@ -54,15 +55,13 @@ module Rouge
             'Literal.String.Interpol',
             'Literal.String.Other',
             'Literal.String.Symbol', :fg => backlit, :bold => true
-      style 'Name.Attribute', :fg => '#7D9029'
       style 'Name.Builtin', :fg => sandy
       style 'Name.Entity', :fg => '#999999', :bold => true
-      style 'Name.Label', :fg => '#A0A000'
-      style 'Name.Tag', :fg => '#008000', :bold => true
       style 'Text.Whitespace', :fg => '#BBBBBB'
       style 'Name.Variable',
-            'Name.Function', :fg => chilly
-
+            'Name.Function',
+            'Name.Label',
+            'Name.Attribute', :fg => chilly
     end
   end
 end

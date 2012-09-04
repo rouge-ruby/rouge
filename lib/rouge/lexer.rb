@@ -206,6 +206,14 @@ module Rouge
         stack.push(state.relative_state(state_name))
       end
 
+      def in_state?(state_name)
+        stack.map(&:name).include? state_name.to_s
+      end
+
+      def state?(state_name)
+        state_name.to_s == state.name
+      end
+
       delegate :debug, :lexer
 
       delegate :[], :scanner

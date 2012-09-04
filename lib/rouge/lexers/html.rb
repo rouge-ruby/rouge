@@ -56,13 +56,9 @@ module Rouge
 
       state :style_content do
         rule %r(<\s*/\s*style\s*>)m, 'Name.Tag', :pop!
-
-        # TODO: implement the CSS lexer
-        #
-        # rule %r(.*(?=<\s*/\s*style\s*>)) do
-        #   delegate CSSLexer
-        # end
-        rule %r(.*(?=<\s*/\s*style\s*>))m, 'Text'
+        rule %r(.*(?=<\s*/\s*style\s*>))m do
+          delegate CSSLexer
+        end
       end
     end
   end

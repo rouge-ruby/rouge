@@ -43,12 +43,12 @@ describe Rouge::Lexer do
     assert { a_lexer.lex('}').to_a == [[Rouge::Token['Error'], '}']] }
   end
 
-  it 'does callbacks' do
+  it 'does callbacks and grouping' do
     callback_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
-        rule /(a)(b)/ do |s, out|
-          out << ['A', s[1]]
-          out << ['B', s[2]]
+        rule /(a)(b)/ do |s|
+          group 'A'
+          group 'B'
         end
       end
     end
@@ -72,32 +72,29 @@ describe Rouge::Lexer do
       end
 
       state :b do
-        rule /c/ do |ss, out|
-          out << ['C', ss[0]]
+        rule /c/ do |ss|
+          token 'C'
           pop!; pop! # go back to the root
         end
       end
     end
 
     result = callback_lexer.lex('abcd')
-    assert { result.select { |(t,_)| t.name == 'Error' } == [] }
+    errors = result.select { |(t,_)| t.name == 'Error' }
+    assert { errors.empty? }
   end
 
   it 'supports stateful lexes' do
     stateful = Class.new(Rouge::RegexLexer) do
       state :root do
-        rule /\d+/ do |ss, out|
-          out << ['digit', ss[0]]
+        rule /\d+/ do |ss|
+          token 'digit'
           @count = ss[0].to_i
         end
 
-        rule /\+/ do |ss, out|
+        rule /\+/ do |ss|
           @count += 1
-          if @count <= 5
-            out << ['lt', ss[0]]
-          else
-            out << ['gt', ss[0]]
-          end
+          token(@count <= 5 ? 'lt' : 'gt')
         end
       end
     end

@@ -141,9 +141,14 @@ module Rouge
 
     class State
       attr_reader :name
-      def initialize(name, &defn)
+      def initialize(lexer_class, name, &defn)
+        @lexer_class = lexer_class
         @name = name
         @defn = defn
+      end
+
+      def relative_state(state_name)
+        @lexer_class.get_state(state_name)
       end
 
       def rules
@@ -167,23 +172,50 @@ module Rouge
 
       attr_accessor :scanner
       attr_accessor :stack
-      def initialize(scanner, stack)
+      attr_accessor :lexer
+      def initialize(lexer, scanner, stack=nil)
+        @lexer = lexer
         @scanner = scanner
-        @stack = stack
+        @stack = stack || [lexer.get_state(:root)]
       end
 
       def pop!
         raise 'empty stack!' if stack.empty?
 
+        debug { "    popping stack" }
         stack.pop
       end
 
-      delegate :push, :stack
+      def push(state_name)
+        debug { "    pushing #{state_name}" }
+        stack.push(state.relative_state(state_name))
+      end
+
+      delegate :debug, :lexer
 
       delegate :[], :scanner
       delegate :captures, :scanner
       delegate :peek, :scanner
       delegate :eos?, :scanner
+
+      def run_callback(&callback)
+        Enumerator.new do |y|
+          @output_stream = y
+          @group_count = 0
+          instance_exec(self, &callback)
+          @output_stream = nil
+        end
+      end
+
+      def token(tok, val=nil)
+        raise 'no output stream' unless @output_stream
+
+        @output_stream << [Token[tok], val || scanner[0]]
+      end
+
+      def group(tok)
+        token(tok, scanner[@group_count += 1])
+      end
 
       def state
         raise 'empty stack!' if stack.empty?
@@ -208,13 +240,21 @@ module Rouge
         @rules = rules
       end
 
-      def rule(re, token=nil, next_state=nil, &callback)
+      def rule(re, tok=nil, next_state=nil, &callback)
         if block_given?
-          next_state = token
+          next_state = tok
         else
-          token = Token[token]
+          tok = Token[tok]
 
-          callback = proc { |ss, b| b << [token, ss[0]] }
+          callback = proc do |ss|
+            token tok, ss[0]
+            case next_state
+            when :pop!
+              pop!
+            when Symbol
+              push next_state
+            end # else pass
+          end
         end
 
         rules << Rule.new(re, callback, next_state)
@@ -231,7 +271,7 @@ module Rouge
 
     def self.state(name, &b)
       name = name.to_s
-      states[name] = State.new(name, &b)
+      states[name] = State.new(self, name, &b)
     end
 
     def initialize(parent=nil, opts={}, &defn)
@@ -244,18 +284,24 @@ module Rouge
       super(opts, &defn)
     end
 
-    def states
-      self.class.states
-    end
+    def self.get_state(name)
+      return name if name.is_a? State
 
-    def get_state(name)
       state = states[name.to_s]
       raise "unknown state: #{name}" unless state
       state.load!
     end
 
+    def self.[](name)
+      get_state(name)
+    end
+
+    def get_state(name)
+      self.class.get_state(name)
+    end
+
     def stream_tokens(stream, &b)
-      scan_state = ScanState.new(stream, [self.get_state(:root)])
+      scan_state = ScanState.new(self, stream)
 
       stream_with_state(scan_state, &b)
     end
@@ -264,7 +310,7 @@ module Rouge
       until scan_state.eos?
         debug { "stack: #{scan_state.stack.map(&:name).inspect}" }
         debug { "stream: #{scan_state.scanner.peek(20).inspect}" }
-        success = step(scan_state.state, scan_state, &b)
+        success = step(get_state(scan_state.state), scan_state, &b)
 
         if !success
           debug { "    no match, yielding Error" }
@@ -292,19 +338,9 @@ module Rouge
         scan_state.scan(rule.re) do |match|
           debug { "    got #{match[0].inspect}" }
 
-          Enumerator.new do |y|
-            scan_state.instance_exec(scan_state, y, &rule.callback)
-          end.each do |tok, res|
+          scan_state.run_callback(&rule.callback).each do |tok, res|
             debug { "    yielding #{tok.to_s.inspect}, #{res.inspect}" }
             b.call(Token[tok], res)
-          end
-
-          if rule.next_state == :pop!
-            debug { "    popping stack" }
-            scan_state.pop!
-          elsif rule.next_state
-            debug { "    entering #{rule.next_state}" }
-            scan_state.push get_state(rule.next_state)
           end
         end
       end

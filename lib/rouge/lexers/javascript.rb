@@ -63,7 +63,8 @@ module Rouge
       state :root do
         rule %r(\n(?=\s|/|<!--)), 'Text', :slash_starts_regex
         mixin :comments_and_whitespace
-        rule %r(\+\+|--|~|&&|\?|\|\||\\(?=\n)|<<|>>>?|===|!==),
+        rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
+               | !== | \? | : )x,
           'Operator', :slash_starts_regex
         rule %r([-<>+*%&|\^/!=]=?), 'Operator', :slash_starts_regex
         rule /[{(\[;,]/, 'Punctuation', :slash_starts_regex

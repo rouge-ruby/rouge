@@ -4,8 +4,8 @@ require 'pathname'
 module Rouge
   class << self
     def highlight(text, lexer, formatter)
-      lexer = Lexer.find(lexer) unless lexer.is_a?(Lexer)
-      raise "unknown lexer #{lexer_name}" unless lexer
+      lexer = Lexer.find(lexer) unless lexer.respond_to? :lex
+      raise "unknown lexer #{lexer}" unless lexer
 
       formatter.render(lexer.lex(text))
     end

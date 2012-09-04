@@ -34,6 +34,6 @@
     <%= @highlighted %>
 
     <h2>Raw</h2>
-    <pre><%= @sample %></pre>
+    <pre><%= CGI.escape_html(@sample) %></pre>
   </body>
 </html>

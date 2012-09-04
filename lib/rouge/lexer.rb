@@ -14,8 +14,8 @@ module Rouge
         end
       end
 
-      def lex(stream, opts={})
-        new(opts).lex(stream)
+      def lex(stream, opts={}, &b)
+        new(opts).lex(stream, &b)
       end
 
     protected

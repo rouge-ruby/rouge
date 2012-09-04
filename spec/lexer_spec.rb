@@ -9,10 +9,15 @@ describe Rouge::Lexer do
 
     token_A = Rouge::Token[:A]
     token_B = Rouge::Token[:B]
-    result = a_lexer.lex('aa').to_a
 
-    assert { result.size == 2 }
-    assert { result == [[token_A, 'a']] * 2 }
+    # consolidation
+    result = a_lexer.lex('aa').to_a
+    assert { result.size == 1 }
+    assert { result == [[token_A, 'aa']] }
+
+    result = a_lexer.lex('abab').to_a
+    assert { result.size == 4 }
+    assert { result == [[token_A, 'a'], [token_B, 'b']] * 2 }
   end
 
   it 'makes sublexers' do

@@ -104,7 +104,22 @@ module Rouge
     def lex(string, &b)
       return enum_for(:lex, string) unless block_given?
 
-      stream_tokens(StringScanner.new(string), &b)
+      last_token = nil
+      last_val = nil
+      stream_tokens(StringScanner.new(string)) do |tok, val|
+        next if val.empty?
+
+        if tok == last_token
+          last_val << val
+          next
+        end
+
+        b.call(last_token, last_val) if last_token
+        last_token = tok
+        last_val = val
+      end
+
+      b.call(last_token, last_val) if last_token
     end
 
     def stream_tokens(stream, &b)

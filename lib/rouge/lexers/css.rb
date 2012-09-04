@@ -64,7 +64,7 @@ module Rouge
         upper-alpha upper-latin upper-roman uppercase url
         visible w-resize wait wider x-fast x-high x-large x-loud
         x-low x-small x-soft xx-large xx-small yes
-      ).join('|')
+      )
 
       builtins = %w(
         indigo gold firebrick indianred yellow darkolivegreen
@@ -92,7 +92,7 @@ module Rouge
         lightslategray lawngreen lightgreen tomato hotpink
         lightyellow lavenderblush linen mediumaquamarine green
         blueviolet peachpuff
-      ).join('|')
+      )
 
       state :root do
         mixin :basics
@@ -148,9 +148,17 @@ module Rouge
       state :stanza do
         mixin :basics
         rule /}/, 'Punctuation', :pop!
-        rule /(?:#{keywords})\s*:/m, 'Keyword', :stanza_value
-        rule /(?:#{builtins})\s*:/m, 'Name.Builtin', :stanza_value
-        rule /#{identifier}\s*:/m, 'Name', :stanza_value
+        rule /(#{identifier}\s*):/m do |m|
+          if keywords.include? m[1]
+            token 'Keyword'
+          elsif builtins.include? m[1]
+            token 'Name.Builtin'
+          else
+            token 'Name'
+          end
+
+          push :stanza_value
+        end
       end
 
       state :stanza_value do

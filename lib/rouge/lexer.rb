@@ -263,7 +263,7 @@ module Rouge
     def stream_with_state(scan_state, &b)
       until scan_state.eos?
         debug { "stack: #{scan_state.stack.map(&:name).inspect}" }
-        debug { "stream: #{scan_state.stream.peek(20).inspect}" }
+        debug { "stream: #{scan_state.scanner.peek(20).inspect}" }
         success = step(scan_state.state, scan_state, &b)
 
         if !success

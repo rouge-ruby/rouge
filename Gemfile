@@ -8,5 +8,7 @@ gem 'wrong', '~> 0.6.2'
 
 gem 'rake'
 
+gem 'redcarpet'
+
 # for visual tests
 gem 'sinatra'

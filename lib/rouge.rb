@@ -19,6 +19,7 @@ load load_dir.join('rouge/lexers/text.rb')
 load load_dir.join('rouge/lexers/diff.rb')
 load load_dir.join('rouge/lexers/shell.rb')
 load load_dir.join('rouge/lexers/javascript.rb')
+load load_dir.join('rouge/lexers/html.rb')
 
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')

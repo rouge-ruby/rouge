@@ -43,6 +43,12 @@ Here's how you might use it:
 ``` ruby
 class MyLexer < Rouge::RegexLexer
   state :root do
+    # the "easy way"
+    rule /abc/, 'A.Token'
+    rule /abc/, 'A.Token', :next_state
+    rule /abc/, 'A.Token', :pop!
+
+    # the "flexible way"
     rule /abc/ do |m|
       # m is the match, for accessing match groups manually
 
@@ -66,6 +72,10 @@ class MyLexer < Rouge::RegexLexer
       # if no second argument is supplied, it is assumed to be the whole
       # match string.
       delegate SomeOtherLexer, str
+
+      # the context object is scoped to a lex, so you can stash state here
+      @count ||= 0
+      @count += 1
     end
 
     rule /(a)(b)/ do

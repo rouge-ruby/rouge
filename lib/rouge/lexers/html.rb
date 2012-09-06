@@ -50,14 +50,14 @@ module Rouge
       state :script_content do
         rule %r(<\s*/\s*script\s*>)m, 'Name.Tag', :pop!
         rule %r(.*?(?=<\s*/\s*script\s*>))m do
-          delegate JavascriptLexer
+          delegate Javascript
         end
       end
 
       state :style_content do
         rule %r(<\s*/\s*style\s*>)m, 'Name.Tag', :pop!
         rule %r(.*(?=<\s*/\s*style\s*>))m do
-          delegate CSSLexer
+          delegate CSS
         end
       end
     end

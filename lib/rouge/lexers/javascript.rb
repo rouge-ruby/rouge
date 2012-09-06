@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    class JavascriptLexer < RegexLexer
+    class Javascript < RegexLexer
       tag 'javascript'
       aliases 'js'
       extensions 'js'

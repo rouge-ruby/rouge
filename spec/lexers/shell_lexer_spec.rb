@@ -1,5 +1,5 @@
-describe Rouge::Lexers::ShellLexer do
-  let(:subject) { Rouge::Lexers::ShellLexer.new }
+describe Rouge::Lexers::Shell do
+  let(:subject) { Rouge::Lexers::Shell.new }
 
   def assert_no_errors(text)
     tokens = subject.get_tokens(text)

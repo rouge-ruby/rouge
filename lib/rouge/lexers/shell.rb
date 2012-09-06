@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    class ShellLexer < RegexLexer
+    class Shell < RegexLexer
       tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
       extensions 'sh', 'bash', 'zsh', 'ksh'

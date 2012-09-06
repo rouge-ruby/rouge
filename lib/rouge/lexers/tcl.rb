@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    class TCLLexer < RegexLexer
+    class TCL < RegexLexer
       tag 'tcl'
 
       KEYWORDS = %w(

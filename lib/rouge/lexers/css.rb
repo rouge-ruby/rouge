@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    class CSSLexer < RegexLexer
+    class CSS < RegexLexer
       tag 'css'
       extensions 'css'
 

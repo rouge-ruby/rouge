@@ -116,6 +116,27 @@ module Rouge
     end
   end
 
+  module HasModes
+    def mode(arg=:absent)
+      return @mode if arg == :absent
+
+      @modes ||= {}
+      @modes[arg] ||= get_mode(arg)
+    end
+
+    def get_mode(mode)
+      return self if self.mode == mode
+
+      new_name = "#{self.name}.#{mode}"
+      Class.new(self) { name(new_name); mode!(mode) }
+    end
+
+    def mode!(arg)
+      @mode = arg
+      send("make_#{arg}!")
+    end
+  end
+
   class CSSTheme < Theme
     def initialize(opts={})
       @scope = opts[:scope] || '.highlight'

@@ -22,45 +22,23 @@ module Rouge
       palette base0E: "#aa759f"
       palette base0F: "#8f5536"
 
-      class << self
-        %w(light dark).each do |mode|
-          other = mode == "dark" ? "light" : "dark"
-          ivar = "@#{mode}"
-          is_ivar = "@is_#{mode}"
-          bang = "#{mode}!"
-          make_mode = "make_#{mode}!"
-          query = "#{mode}?"
+      extend HasModes
 
-          define_method(mode) do
-            return self if send(query)
-            cached = instance_variable_get(ivar)
-            return cached if cached
+      def self.light!
+        mode :dark # indicate that there is a dark variant
+        mode! :light
+      end
 
-            new_name = "#{self.name}.#{mode}"
-
-            new_theme = Class.new(self) { name(new_name); send(make_mode) }
-            instance_variable_set(ivar, new_theme)
-            new_theme
-          end
-
-          define_method(query) do
-            !!instance_variable_get(:@mode) == mode
-          end
-
-          define_method(bang) do
-            send(make_mode)
-            send(other) # populate the cache
-          end
-        end
+      def self.dark!
+        mode :light # indicate that there is a light variant
+        mode! :dark
       end
 
       def self.make_dark!
-        @mode = 'dark'
         style 'Text', :fg => :base05, :bg => :base00
       end
 
       def self.make_light!
-        @mode = 'light'
         style 'Text', :fg => :base02
       end
 

@@ -99,6 +99,52 @@ module Rouge
 
       style 'Literal.Number',
             'Literal.String.Symbol', :fg => :base0B
+
+      class Solarized < Base16
+        name 'base16.solarized'
+        light!
+        # author "Ethan Schoonover (http://ethanschoonover.com/solarized)"
+
+        palette base00: "#002b36"
+        palette base01: "#073642"
+        palette base02: "#586e75"
+        palette base03: "#657b83"
+        palette base04: "#839496"
+        palette base05: "#93a1a1"
+        palette base06: "#eee8d5"
+        palette base07: "#fdf6e3"
+        palette base08: "#dc322f"
+        palette base09: "#cb4b16"
+        palette base0A: "#b58900"
+        palette base0B: "#859900"
+        palette base0C: "#2aa198"
+        palette base0D: "#268bd2"
+        palette base0E: "#6c71c4"
+        palette base0F: "#d33682"
+      end
+
+      class Monokai < Base16
+        name 'base16.monokai'
+        dark!
+
+        # author "Wimer Hazenberg (http://www.monokai.nl)"
+        palette base00: "#272822"
+        palette base01: "#383830"
+        palette base02: "#49483e"
+        palette base03: "#75715e"
+        palette base04: "#a59f85"
+        palette base05: "#f8f8f2"
+        palette base06: "#f5f4f1"
+        palette base07: "#f9f8f5"
+        palette base08: "#f92672"
+        palette base09: "#fd971f"
+        palette base0A: "#f4bf75"
+        palette base0B: "#a6e22e"
+        palette base0C: "#a1efe4"
+        palette base0D: "#66d9ef"
+        palette base0E: "#ae81ff"
+        palette base0F: "#cc6633"
+      end
     end
   end
 end

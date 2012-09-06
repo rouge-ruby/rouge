@@ -255,7 +255,7 @@ module Rouge
         stack.last
       end
 
-      MAX_STEPS = 10000
+      MAX_STEPS = 200000
       def scan(re, &b)
         @steps ||= 0
         @steps += 1

@@ -18,6 +18,9 @@ class VisualTestApp < Sinatra::Application
   get '/:lexer' do |lexer_name|
     lexer_class = Rouge::Lexer.find(lexer_name)
     halt 404 unless lexer_class
+    theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
+    halt 404 unless theme_class
+
     @sample = File.read(SAMPLES.join(lexer_class.tag))
 
     lexer_options = {}
@@ -25,8 +28,8 @@ class VisualTestApp < Sinatra::Application
 
     formatter = Rouge::Formatters::HTML.new
     @lexer = lexer_class.new(lexer_options)
+    @theme = theme_class.new
     @highlighted = Rouge.highlight(@sample, @lexer, formatter)
-    @theme = Rouge::Themes::ThankfulEyes.new
 
     erb :lexer
   end

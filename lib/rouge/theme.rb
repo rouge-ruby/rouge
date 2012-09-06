@@ -68,7 +68,7 @@ module Rouge
         return @name if n.nil?
 
         @name = n.to_s
-        registry[@name] = self
+        Theme.registry[@name] = self
       end
 
       def find(n)

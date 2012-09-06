@@ -1,5 +1,39 @@
 module Rouge
   class Theme
+    class InheritableHash < Hash
+      def initialize(parent=nil)
+        @parent = parent
+      end
+
+      def [](k)
+        _sup = super
+        return _sup if own_keys.include?(k)
+
+        _sup || parent[k]
+      end
+
+      def parent
+        @parent ||= {}
+      end
+
+      def include?(k)
+        super or parent.include?(k)
+      end
+
+      def each(&b)
+        keys.each do |k|
+          b.call(k, self[k])
+        end
+      end
+
+      alias own_keys keys
+      def keys
+        keys = own_keys.concat(parent.keys)
+        keys.uniq!
+        keys
+      end
+    end
+
     class Style < Hash
       def initialize(theme, hsh={})
         super()
@@ -34,7 +68,7 @@ module Rouge
 
     @palette = {}
     def self.palette(arg={})
-      @palette ||= superclass.palette.dup
+      @palette ||= InheritableHash.new(superclass.palette)
 
       if arg.is_a? Hash
         @palette.merge! arg
@@ -49,11 +83,12 @@ module Rouge
       end
     end
 
-    class << self
-      def styles
-        @styles ||= {}
-      end
+    @styles = {}
+    def self.styles
+      @styles ||= InheritableHash.new(superclass.styles)
+    end
 
+    class << self
       def style(*tokens)
         style = tokens.last.is_a?(Hash) ? tokens.pop : {}
 
@@ -121,7 +156,7 @@ module Rouge
 
       yield tok
       tok.sub_tokens.each_value do |st|
-        next if styles.include? st.name
+        next if styles[st.name]
 
         inflate_token(st, &b)
       end

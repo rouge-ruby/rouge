@@ -34,7 +34,9 @@ class VisualTestApp < Sinatra::Application
     erb :lexer
   end
 
+
   get '/' do
-    'TODO'
+    @samples = SAMPLES.entries.reject { |s| s.basename.to_s =~ /^\.|~$/ }
+    erb :index
   end
 end

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rouge Visual Tests</title>
+</head>
+
+<body>
+  <h2>Lexers:</h2>
+  <ul>
+    <% @samples.each do |sample| %>
+      <li><a href="/<%= sample.basename %>"><%= sample.basename %></a></li>
+    <% end %>
+  </ul>
+</body>
+</html>

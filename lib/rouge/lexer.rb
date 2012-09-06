@@ -255,7 +255,15 @@ module Rouge
         stack.last
       end
 
+      MAX_STEPS = 10000
       def scan(re, &b)
+        @steps ||= 0
+        @steps += 1
+
+        if @steps >= MAX_STEPS
+          raise "too many scans near: #{scanner.peek(20)}..."
+        end
+
         scanner.scan(re)
 
         if scanner.matched?

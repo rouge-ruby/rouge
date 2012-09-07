@@ -91,5 +91,60 @@ module Rouge
         rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
       end
     end
+
+    class JSON < RegexLexer
+      tag 'json'
+      filenames '*.json'
+      mimetypes 'application/json'
+
+      # TODO: is this too much of a performance hit?  JSON is quite simple,
+      # so I'd think this wouldn't be too bad, but for large documents this
+      # could mean doing two full lexes.
+      def self.analyze_text(text)
+        text.lexes_cleanly?(self) ? 0.8 : 0
+      end
+
+      state :root do
+        mixin :whitespace
+        # special case for empty objects
+        rule /(\{)(\s*)(\})/ do
+          group 'Punctuation'
+          group 'Text.Whitespace'
+          group 'Punctuation'
+        end
+        rule /{/,  'Punctuation', :object_key
+        rule /\[/, 'Punctuation', :array
+        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, 'Literal.Number.Float'
+        rule /-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, 'Literal.Number.Integer'
+        mixin :has_string
+      end
+
+      state :whitespace do
+        rule /\s+/m, 'Text.Whitespace'
+      end
+
+      state :has_string do
+        rule /"(\\.|[^"])*"/, 'Literal.String.Double'
+      end
+
+      state :object_key do
+        mixin :whitespace
+        rule /:/, 'Punctuation', :object_val
+        rule /}/, 'Error', :pop!
+        mixin :has_string
+      end
+
+      state :object_val do
+        rule /,/, 'Punctuation', :pop!
+        rule(/}/) { token 'Punctuation'; pop!; pop! }
+        mixin :root
+      end
+
+      state :array do
+        rule /\]/, 'Punctuation', :pop!
+        rule /,/, 'Punctuation'
+        mixin :root
+      end
+    end
   end
 end

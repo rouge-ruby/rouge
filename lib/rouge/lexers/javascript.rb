@@ -69,6 +69,7 @@ module Rouge
       ).join('|')
 
       state :root do
+        rule /\A\s*#!.*?\n/m, 'Comment.Preproc'
         rule %r(^(?=\s|/|<!--)), 'Text', :slash_starts_regex
         mixin :comments_and_whitespace
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===

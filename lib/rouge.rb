@@ -28,6 +28,8 @@ load load_dir.join('rouge/lexers/html.rb')
 load load_dir.join('rouge/lexers/tcl.rb')
 load load_dir.join('rouge/lexers/python.rb')
 
+load load_dir.join('rouge/lexers/haskell.rb')
+
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')
 

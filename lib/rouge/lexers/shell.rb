@@ -3,7 +3,12 @@ module Rouge
     class Shell < RegexLexer
       tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
-      extensions 'sh', 'bash', 'zsh', 'ksh'
+      filenames '*.sh', '*.bash', '*.zsh', '*.ksh'
+      mimetypes 'application/x-sh', 'application/x-shellscript'
+
+      def self.analyze_text(text)
+        text.shebang?(/(ba|z|k)?sh/) ? 1 : 0
+      end
 
       KEYWORDS = %w(
         if fi else while do done for then return function

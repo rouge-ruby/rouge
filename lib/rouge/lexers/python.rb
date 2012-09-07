@@ -3,7 +3,12 @@ module Rouge
     class Python < RegexLexer
       tag 'python'
       aliases 'py'
-      extensions 'py'
+      filenames '*.py', '*.pyw', '*.sc', 'SConstruct', 'SConscript', '*.tac'
+      mimetypes 'text/x-python', 'application/x-python'
+
+      def self.analyze_text(text)
+        return 1 if text.shebang?(/pythonw?(3|2(\.\d)?)?/)
+      end
 
       keywords = %w(
         assert break continue del elif else except exec

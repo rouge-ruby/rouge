@@ -2,6 +2,14 @@ module Rouge
   module Lexers
     class TCL < RegexLexer
       tag 'tcl'
+      filenames '*.tcl'
+      mimetypes 'text/x-tcl', 'text/x-script.tcl', 'application/x-tcl'
+
+      def self.analyze_text(text)
+        return 1 if text.shebang? 'tclsh'
+        return 1 if text.shebang? 'wish'
+        return 1 if text.shebang? 'jimsh'
+      end
 
       KEYWORDS = %w(
         after apply array break catch continue elseif else error

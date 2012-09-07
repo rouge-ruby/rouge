@@ -2,7 +2,13 @@ module Rouge
   module Lexers
     class HTML < RegexLexer
       tag 'html'
-      extensions 'htm', 'html'
+      filenames '*.htm', '*.html', '*.xhtml', '*.xslt'
+      mimetypes 'text/html', 'application/xhtml+xml'
+
+      def self.analyze_text(text)
+        return 1 if text.doctype?(/\bhtml\b/i)
+        return 1 if text =~ /<\s*html\b/
+      end
 
       state :root do
         rule /[^<&]+/m, 'Text'

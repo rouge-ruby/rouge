@@ -2,7 +2,8 @@ module Rouge
   module Lexers
     class CSS < RegexLexer
       tag 'css'
-      extensions 'css'
+      filenames '*.css'
+      mimetypes 'text/css'
 
       identifier = /[a-zA-Z0-9_-]+/
       number = /-?(?:[0-9]+(\.[0-9]+)?|\.[0-9]+)/

@@ -3,7 +3,15 @@ module Rouge
     class Javascript < RegexLexer
       tag 'javascript'
       aliases 'js'
-      extensions 'js'
+      filenames '*.js'
+      mimetypes 'application/javascript', 'application/x-javascript',
+                'text/javascript', 'text/x-javascript'
+
+      def self.analyze_text(text)
+        return 1 if text.shebang?('node')
+        return 1 if text.shebang?('jsc')
+        # TODO: rhino, spidermonkey, etc
+      end
 
       state :comments_and_whitespace do
         rule /\s+/, 'Text'

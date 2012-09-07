@@ -2,8 +2,16 @@ module Rouge
   module Lexers
     class Diff < RegexLexer
       tag 'diff'
-      aliases 'patch'
-      extensions 'diff', 'patch'
+      aliases 'patch', 'udiff'
+      filenames '*.diff', '*.patch'
+      mimetypes 'text/x-diff', 'text/x-patch'
+
+      def self.analyze_text(text)
+        return 1   if text.start_with?('Index: ')
+        return 1   if text.start_with?('diff ')
+
+        return 0.9 if text =~ /\A---.*?\n\+\+\+/m
+      end
 
       state :header do
         rule /^diff .*?\n(?=---|\+\+\+)/m, 'Generic.Heading'

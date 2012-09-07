@@ -41,6 +41,53 @@ module Rouge
         registry[name.to_s]
       end
 
+      def guess(info={})
+        by_mimetype = guess_by_mimetype(info[:mimetype]) if info[:mimetype]
+        return by_mimetype if by_mimetype
+
+        by_filename = guess_by_filename(info[:filename]) if info[:filename]
+        return by_filename if by_filename
+
+        by_source = guess_by_source(info[:source]) if info[:source]
+        return by_source if by_source
+
+        # guessing failed, just parse it as text
+        return Lexers::Text
+      end
+
+      def guess_by_mimetype(mt)
+        registry.values.detect do |lexer|
+          lexer.mimetypes.include? mt
+        end
+      end
+
+      def guess_by_filename(fname)
+        fname = File.basename(fname)
+        registry.values.detect do |lexer|
+          lexer.filenames.any? do |pattern|
+            File.fnmatch?(pattern, fname)
+          end
+        end
+      end
+
+      def guess_by_source(source)
+        source = TextAnalyzer.new(source)
+
+        best_result = 0
+        best_match = nil
+        registry.values.each do |lexer|
+          result = lexer.analyze_text(source) || 0
+          return lexer if result == 1
+
+          if result > best_result
+            best_match = lexer
+            best_result = result
+          end
+        end
+
+        best_match
+      end
+
       def register(name, lexer)
         registry[name.to_s] = lexer
       end
@@ -56,14 +103,12 @@ module Rouge
         args.each { |arg| Lexer.register(arg, self) }
       end
 
-      def extensions(*exts)
-        exts.each do |ext|
-          Lexer.extension_registry[ext] = self
-        end
+      def filenames(*fnames)
+        (@filenames ||= []).concat(fnames)
       end
 
-      def extension_registry
-        @extension_registry ||= {}
+      def mimetypes(*mts)
+        (@mimetypes ||= []).concat(mts)
       end
 
     private
@@ -124,6 +169,13 @@ module Rouge
 
     def stream_tokens(stream, &b)
       raise 'abstract'
+    end
+
+    # return a number between 0 and 1 indicating the
+    # likelihood that the text given should be lexed
+    # with this lexer.
+    def self.analyze_text(text)
+      0
     end
   end
 

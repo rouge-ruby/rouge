@@ -11,6 +11,14 @@ module Rouge
   class CLI < Thor
     default_task :highlight
 
+    def self.start(argv=ARGV, *a)
+      unless %w(highlight style).include?(argv.first)
+        argv.unshift 'highlight'
+      end
+
+      super(argv, *a)
+    end
+
     desc 'highlight [FILE]', 'highlight some code'
     option :file, :aliases => '-f',  :desc => 'the file to operate on'
     option :lexer, :aliases => '-l',

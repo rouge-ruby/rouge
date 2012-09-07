@@ -50,7 +50,8 @@ module Rouge
       dotted_identifier = /[a-z_.][a-z0-9_.]*/i
       state :root do
         rule /\n+/m, 'Text'
-        rule /^(\s*)([rRuU]{,2}""".*?""")/m do
+        rule /^(:)(\s*)([ru]{,2}""".*?""")/mi do
+          group 'Punctuation'
           group 'Text'
           group 'Literal.String.Doc'
         end

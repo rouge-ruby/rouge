@@ -22,16 +22,12 @@ module Rouge
 
       style 'Text', :fg => :unicorn, :bg => :krasna
 
-      style 'Comment', :fg => :cool_as_ice
+      style 'Comment', :fg => :cool_as_ice, :italic => true
       style 'Error',
             'Generic.Error', :fg => :aluminum1, :bg => :scarletred2
       style 'Keyword', :fg => :sandy, :bold => true
       style 'Operator',
             'Punctuation', :fg => :backlit, :bold => true
-      style 'Comment.Preproc',
-            'Comment.Multiline',
-            'Comment.Single',
-            'Comment.Special', :fg => :cool_as_ice, :italic => true
       style 'Generic.Deleted', :fg => :scarletred2
       style 'Generic.Inserted', :fg => :go_get_it
       style 'Generic.Emph', :italic => true

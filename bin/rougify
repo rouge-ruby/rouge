@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+ROOT_DIR = Pathname.new(__FILE__).dirname.parent
+load ROOT_DIR.join('lib/rouge.rb')
+load ROOT_DIR.join('lib/rouge/cli.rb')
+
+begin
+  Rouge::CLI.start
+rescue => e
+  $stderr.puts e.message
+  exit 1
+end

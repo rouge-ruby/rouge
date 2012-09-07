@@ -22,14 +22,14 @@ describe Rouge::Lexers::Shell do
     sh
   end
 
-  # # pending
-  # it 'parses case statement with globs correctly' do
-  #   assert_no_errors <<-sh
-  #     case $foo in
-  #       a[b]) echo "LOL" ;;
-  #     esac
-  #   sh
-  # end
+  # pending
+  it 'parses case statement with globs correctly' do
+    assert_no_errors <<-sh
+      case $foo in
+        a[b]) echo "LOL" ;;
+      esac
+    sh
+  end
 
   describe 'guessing' do
     include Support::Guessing

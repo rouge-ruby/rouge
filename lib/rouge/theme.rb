@@ -176,7 +176,7 @@ module Rouge
       return enum_for(:inflate_token, tok) unless block_given?
 
       yield tok
-      tok.sub_tokens.each_value do |st|
+      tok.sub_tokens.each do |(_, st)|
         next if styles[st.name]
 
         inflate_token(st, &b)

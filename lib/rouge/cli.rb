@@ -46,6 +46,14 @@ module Rouge
       puts Rouge.highlight(source, lexer, formatter)
     end
 
+    desc 'style THEME', 'render THEME as css'
+    def style(theme_name='thankful_eyes')
+      theme = Theme.find(theme_name)
+      raise "unknown theme: #{theme_name}" unless theme
+
+      puts theme.new(options).render
+    end
+
   private
     # TODO: does Thor do this for me?
     def normalize_hash_keys(hash)

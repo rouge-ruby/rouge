@@ -1,9 +1,9 @@
 describe Rouge::Lexers::HTML do
   let(:subject) { Rouge::Lexers::HTML.new }
+  include Support::Lexing
+
   it 'lexes embedded script tags' do
-    result = subject.lex('<script>x && x < y;</script>').to_a
-    errors = result.select { |(t, _)| t.name == 'Error' }
-    assert { errors.empty? }
+    assert_no_errors '<script>x && x < y;</script>'
   end
 
   describe 'guessing' do

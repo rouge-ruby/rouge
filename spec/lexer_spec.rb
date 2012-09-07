@@ -1,4 +1,6 @@
 describe Rouge::Lexer do
+  include Support::Lexing
+
   it 'makes a simple lexer' do
     a_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
@@ -84,9 +86,7 @@ describe Rouge::Lexer do
       end
     end
 
-    result = callback_lexer.lex('abcd')
-    errors = result.select { |(t,_)| t.name == 'Error' }
-    assert { errors.empty? }
+    assert_no_errors 'abcd', callback_lexer
   end
 
   it 'supports stateful lexes' do
@@ -127,8 +127,6 @@ describe Rouge::Lexer do
       end
     end
 
-    result = MasterLexer.lex('a{b}a')
-    errors = result.select { |(t,_)| t.name == 'Error' }
-    assert { errors.empty? }
+    assert_no_errors 'a{b}a', MasterLexer
   end
 end

@@ -1,18 +1,7 @@
 describe Rouge::Lexers::Shell do
   let(:subject) { Rouge::Lexers::Shell.new }
 
-  def assert_no_errors(text)
-    tokens = subject.get_tokens(text)
-
-    errors = tokens.select do |(tok, val)|
-      tok.name.include? 'Error'
-    end
-
-    assert { errors.empty? }
-
-    tokens
-  end
-
+  include Support::Lexing
   it 'parses a basic shell string' do
     tokens = subject.get_tokens('foo=bar')
     assert { tokens.size == 3 }

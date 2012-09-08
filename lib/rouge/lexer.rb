@@ -307,18 +307,24 @@ module Rouge
         stack.last
       end
 
-      MAX_STEPS = 200000
+      MAX_NULL_STEPS = 5
       def scan(re, &b)
-        @steps ||= 0
-        @steps += 1
+        @null_steps ||= 0
 
-        if @steps >= MAX_STEPS
-          raise "too many scans near: #{scanner.peek(20)}..."
+        if @null_steps >= MAX_NULL_STEPS
+          debug { "    too many scans without consuming the string!" }
+          return false
         end
 
         scanner.scan(re)
 
         if scanner.matched?
+          if scanner.matched_size == 0
+            @null_steps += 1
+          else
+            @null_steps = 0
+          end
+
           yield self
           return true
         end

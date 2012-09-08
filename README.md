@@ -1,6 +1,8 @@
 # Rouge
 
-This project needs your help!  There are lots of lexers to be implemented / ported / fixed, and features that need to be added or implemented.  If you'd like to help out, send me a pull request (even if it's not done yet!).  Bonus points for feature branches.
+This project needs your help!  There are lots of lexers to be implemented / ported / fixed, and features that need to be added or implemented.  If you'd like to help out, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.
+
+[issues]: /jayferd/rouge/issues
 
 ## Usage
 

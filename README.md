@@ -83,7 +83,7 @@ class MyLexer < Rouge::RegexLexer
     rule /(a)(b)/ do
       # "group" yields the matched groups in order
       group 'Letter.A'
-      group 'Letter.B
+      group 'Letter.B'
     end
   end
 end

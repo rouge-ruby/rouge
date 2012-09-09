@@ -31,6 +31,7 @@ load load_dir.join('rouge/lexers/python.rb')
 
 load load_dir.join('rouge/lexers/haskell.rb')
 load load_dir.join('rouge/lexers/scheme.rb')
+load load_dir.join('rouge/lexers/common_lisp.rb')
 
 load load_dir.join('rouge/lexers/c.rb')
 load load_dir.join('rouge/lexers/cpp.rb')

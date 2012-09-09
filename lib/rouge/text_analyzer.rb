@@ -22,7 +22,7 @@ module Rouge
       @doctype = $1
     end
 
-    def doctype?(type)
+    def doctype?(type=//)
       type === doctype
     end
 

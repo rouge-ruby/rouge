@@ -286,10 +286,13 @@ module Rouge
         end
       end
 
-      def token(tok, val=nil)
+      def token(tok, val=:__absent__)
+        val = scanner[0] if val == :__absent__
+        val ||= ''
+
         raise 'no output stream' unless @output_stream
 
-        @output_stream << [Token[tok], val || scanner[0]]
+        @output_stream << [Token[tok], val]
       end
 
       def group(tok)

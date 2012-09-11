@@ -214,8 +214,12 @@ module Rouge
         @defn = defn
       end
 
-      def relative_state(state_name)
-        @lexer_class.get_state(state_name)
+      def relative_state(state_name=nil, &b)
+        if state_name
+          @lexer_class.get_state(state_name)
+        else
+          State.new(@lexer_class, b.inspect, &b).load!
+        end
       end
 
       def rules
@@ -253,9 +257,9 @@ module Rouge
         stack.pop
       end
 
-      def push(state_name)
-        debug { "    pushing #{state_name}" }
-        stack.push(state.relative_state(state_name))
+      def push(state_name=nil, &b)
+        debug { "    pushing #{state_name || 'anonymous state'}" }
+        stack.push(state.relative_state(state_name, &b))
       end
 
       def in_state?(state_name)

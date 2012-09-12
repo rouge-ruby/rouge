@@ -28,15 +28,11 @@ module Rouge
         rule /\$/, 'Literal.String', :inlinemath
         rule /\\(begin|end)\{.*?\}/, 'Name.Tag'
 
-        rule /(\\verb)\b(.)/ do |m|
+        rule /(\\verb)\b(\S)(.*?)(\2)/ do |m|
           group 'Name.Builtin'
           group 'Name.Constant'
-          delim = Regexp.escape(m[2])
-
-          push do
-            rule /#{delim}/, 'Name.Constant', :pop!
-            rule /[^#{delim}]+/m, 'Literal.String.Other'
-          end
+          group 'Literal.String.Other'
+          group 'Name.Constant'
         end
 
         rule command, 'Keyword', :command

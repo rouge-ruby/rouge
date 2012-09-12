@@ -205,7 +205,7 @@ module Rouge
           push :heredoc_queue unless state? :heredoc_queue
         end
 
-        rule /(<<-?)(["'])(\2)(.*?\n)/ do |m|
+        rule /(<<-?)(["'])(\2)/ do |m|
           token 'Operator', m[1]
           token 'Name.Constant', "#{m[2]}#{m[3]}#{m[4]}"
           @heredoc_queue << [m[1] == '<<-', '']
@@ -214,8 +214,7 @@ module Rouge
       end
 
       state :heredoc_queue do
-        rule /\n/ do
-          token 'Text'
+        rule /(?=\n)/ do
           pop!; push :resolve_heredocs
         end
 
@@ -223,20 +222,27 @@ module Rouge
       end
 
       state :resolve_heredocs do
-        rule /(.*)\n/ do |m|
+        mixin :string_intp_escaped
+
+        rule /(\n)([^#\\\n]*)$/ do |m|
           tolerant, heredoc_name = @heredoc_queue.first
-          check = tolerant ? m[1].strip : m[1].rstrip
+          check = tolerant ? m[2].strip : m[2].rstrip
+
+          group 'Literal.String.Heredoc'
 
           # check if we found the end of the heredoc
           if check == heredoc_name
-            token 'Name.Constant'
+            group 'Name.Constant'
             @heredoc_queue.shift
             # if there's no more, we're done looking.
             pop! if @heredoc_queue.empty?
           else
-            token 'Literal.String.Heredoc'
+            group 'Literal.String.Heredoc'
           end
         end
+
+        rule /[#\\\n]/, 'Literal.String.Heredoc'
+        rule /[^#\\\n]+/, 'Literal.String.Heredoc'
       end
 
       state :funcname do

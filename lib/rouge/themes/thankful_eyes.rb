@@ -46,13 +46,12 @@ module Rouge
             'Name.Builtin.Pseudo',
             'Name.Exception',
             'Name.Tag', :fg => :go_get_it, :bold => true
-      style 'Literal.Number', :fg => :pink_merengue, :bold => true
+      style 'Literal.Number',
+            'Literal.String.Symbol', :fg => :pink_merengue, :bold => true
       style 'Literal.String', :fg => :dune, :bold => true
       style 'Literal.String.Escape',
             'Literal.String.Char',
-            'Literal.String.Interpol',
-            'Literal.String.Other',
-            'Literal.String.Symbol', :fg => :backlit, :bold => true
+            'Literal.String.Interpol', :fg => :backlit, :bold => true
       style 'Name.Builtin', :fg => :sandy
       style 'Name.Entity', :fg => '#999999', :bold => true
       style 'Text.Whitespace', :fg => '#BBBBBB'

@@ -51,13 +51,21 @@ module Rouge
           token toktype
 
           push do
-            rule /\\[##{open}#{close}\\]/, toktype
-            mixin :string_intp_escaped if interp
+            rule /\\[##{open}#{close}\\]/, 'Literal.String.Escape'
             # nesting rules only with asymmetric delimiters
             if open != close
-              rule /#{open}/, toktype, self
+              rule /#{open}/ do
+                token toktype
+                push
+              end
             end
             rule /#{close}/, toktype, :pop!
+
+            if interp
+              mixin :string_intp_escaped
+            else
+              rule /[\\#]/, toktype
+            end
 
             rule /[^##{open}#{close}\\]+/m, toktype
           end

@@ -1,0 +1,22 @@
+describe Rouge::Lexers::Perl do
+  let(:subject) { Rouge::Lexers::Perl.new }
+
+  describe 'guessing' do
+    include Support::Guessing
+
+    it 'guesses by filename' do
+      assert_guess :filename => 'foo.pl'
+      assert_guess :filename => 'foo.pm'
+    end
+
+    it 'guesses by mimetype' do
+      assert_guess :mimetype => 'text/x-perl'
+      assert_guess :mimetype => 'application/x-perl'
+    end
+
+    it 'guesses by source' do
+      assert_guess :source => '#!/usr/local/bin/perl'
+      assert_guess :source => 'my $foo = 1;'
+    end
+  end
+end

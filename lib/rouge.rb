@@ -28,6 +28,7 @@ load load_dir.join('rouge/lexers/xml.rb')
 
 load load_dir.join('rouge/lexers/tcl.rb')
 load load_dir.join('rouge/lexers/python.rb')
+load load_dir.join('rouge/lexers/ruby.rb')
 
 load load_dir.join('rouge/lexers/haskell.rb')
 load load_dir.join('rouge/lexers/scheme.rb')

@@ -375,6 +375,14 @@ module Rouge
       @states ||= {}
     end
 
+    def self.start_procs
+      @start_procs ||= []
+    end
+
+    def self.start(&b)
+      start_procs << b
+    end
+
     def self.state(name, &b)
       name = name.to_s
       states[name] = State.new(self, name, &b)
@@ -408,6 +416,10 @@ module Rouge
 
     def stream_tokens(stream, &b)
       scan_state = ScanState.new(self, stream)
+
+      self.class.start_procs.each do |pr|
+        scan_state.instance_eval(&pr)
+      end
 
       stream_with_state(scan_state, &b)
     end

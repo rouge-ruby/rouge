@@ -12,7 +12,7 @@ module Rouge
   module Plugins
     module Redcarpet
       def block_code(code, language)
-        name, opts = language.split('?')
+        name, opts = language ? language.split('?', 2) : [nil, '']
 
         # parse the options hash from a cgi-style string
         opts = CGI.parse(opts || '').map do |k, vals|

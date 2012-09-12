@@ -45,4 +45,14 @@ foo=1
     # TODO: test that an option is actually there
     assert { result.include?(%<<pre class="highlight shell">>) }
   end
+
+  it 'works when no language is provided' do
+    result = markdown.render <<-mkd
+```
+#!/usr/bin/env ruby
+$stdin.each { |l| $stdout.puts l.reverse }
+```
+    mkd
+    assert { result.include?(%(<pre class="highlight ruby">)) }
+  end
 end

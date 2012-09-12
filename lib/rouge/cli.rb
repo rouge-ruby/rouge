@@ -12,6 +12,11 @@ module Rouge
     default_task :highlight
 
     def self.start(argv=ARGV, *a)
+      if argv.include? '-v' or argv.include? '--version'
+        puts Rouge.version
+        exit 0
+      end
+
       unless %w(highlight style).include?(argv.first)
         argv.unshift 'highlight'
       end

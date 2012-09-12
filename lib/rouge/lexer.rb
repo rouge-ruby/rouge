@@ -450,7 +450,9 @@ module Rouge
       case rule
       when String
         debug { "  entering mixin #{rule}" }
-        step(get_state(rule), scan_state, &b)
+        res = step(get_state(rule), scan_state, &b)
+        debug { "  exiting  mixin #{rule}" }
+        res
       when Rule
         debug { "  trying #{rule.inspect}" }
         scan_state.scan(rule.re) do |match|

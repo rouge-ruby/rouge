@@ -1,3 +1,6 @@
+# stdlib
+require 'set'
+
 module Rouge
   module Lexers
     class CommonLisp < RegexLexer

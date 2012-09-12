@@ -18,8 +18,10 @@ load load_dir.join('rouge/version.rb')
 load load_dir.join('rouge/text_analyzer.rb')
 load load_dir.join('rouge/token.rb')
 load load_dir.join('rouge/lexer.rb')
+
 load load_dir.join('rouge/lexers/text.rb')
 load load_dir.join('rouge/lexers/diff.rb')
+load load_dir.join('rouge/lexers/tex.rb')
 
 load load_dir.join('rouge/lexers/shell.rb')
 

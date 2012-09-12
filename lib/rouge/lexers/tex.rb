@@ -18,21 +18,21 @@ module Rouge
 
       state :general do
         rule /%.*$/, 'Comment'
-        rule /[{}&_^]/, 'Name.Builtin'
+        rule /[{}&_^]/, 'Punctuation'
       end
 
       state :root do
-        rule /\\\[/, 'Literal.String.Backtick', :displaymath
-        rule /\\\(/, 'Literal.String', :inlinemath
-        rule /\$\$/, 'Literal.String.Backtick', :displaymath
-        rule /\$/, 'Literal.String', :inlinemath
+        rule /\\\[/, 'Punctuation', :displaymath
+        rule /\\\(/, 'Punctuation', :inlinemath
+        rule /\$\$/, 'Punctuation', :displaymath
+        rule /\$/, 'Punctuation', :inlinemath
         rule /\\(begin|end)\{.*?\}/, 'Name.Tag'
 
         rule /(\\verb)\b(\S)(.*?)(\2)/ do |m|
           group 'Name.Builtin'
-          group 'Name.Constant'
+          group 'Keyword.Pseudo'
           group 'Literal.String.Other'
-          group 'Name.Constant'
+          group 'Keyword.Pseudo'
         end
 
         rule command, 'Keyword', :command
@@ -49,14 +49,14 @@ module Rouge
       end
 
       state :inlinemath do
-        rule /\\\)/, 'Literal.String', :pop!
-        rule /\$/, 'Literal.String', :pop!
+        rule /\\\)/, 'Punctuation', :pop!
+        rule /\$/, 'Punctuation', :pop!
         mixin :math
       end
 
       state :displaymath do
-        rule /\\\]/, 'Literal.String.Backtick', :pop!
-        rule /\$\$/, 'Literal.String.Backtick', :pop!
+        rule /\\\]/, 'Punctuation', :pop!
+        rule /\$\$/, 'Punctuation', :pop!
         rule /\$/, 'Name.Builtin'
         mixin :math
       end

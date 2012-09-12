@@ -258,8 +258,15 @@ module Rouge
       end
 
       def push(state_name=nil, &b)
-        debug { "    pushing #{state_name || 'anonymous state'}" }
-        stack.push(state.relative_state(state_name, &b))
+        # use the top of the stack by default
+        if state_name || b
+          push_state = state.relative_state(state_name, &b)
+        else
+          push_state = self.state
+        end
+
+        debug { "    pushing #{push_state.name}" }
+        stack.push(push_state)
       end
 
       def in_state?(state_name)

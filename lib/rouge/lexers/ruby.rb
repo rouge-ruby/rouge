@@ -301,6 +301,7 @@ module Rouge
         mixin :string_intp
         rule /\\([\\abefnrstv#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})/,
           'Literal.String.Escape'
+        rule /\\./, 'Literal.String.Escape'
       end
 
       state :method_call do

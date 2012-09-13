@@ -1,0 +1,145 @@
+module Rouge
+  module Lexers
+    class PHP < RegexLexer
+      tag 'php'
+      aliases 'php', 'php3', 'php4', 'php5'
+      filenames '*.php', '*.php[345]'
+      mimetypes 'text/x-php'
+
+      def initialize(opts={})
+        # if truthy, the lexer starts highlighting with php code
+        # (no <?php required)
+        @start_inline = opts.delete(:start_inline)
+        @funcnamehighlighting = opts.delete(:funcnamehighlighting) { true }
+        @disabledmodules = opts.delete(:disabledmodules) { [] }
+      end
+
+      def builtins
+        return [] unless @funcnamehighlighting
+
+        @builtins ||= Set.new.tap do |builtins|
+          require Pathname.new(__FILE__).dirname.join('php/builtins.rb')
+
+          self.class.builtins.each do |mod, fns|
+            next if @disabledmodules.include? mod
+            builtins.merge(fns)
+          end
+        end
+      end
+
+      def start_inline?
+        !!@start_inline
+      end
+
+      start do
+        push :php if lexer.start_inline?
+      end
+
+      keywords = %w(
+        and E_PARSE old_function E_ERROR or as E_WARNING parent eval
+        PHP_OS break exit case extends PHP_VERSION cfunction FALSE
+        print for require continue foreach require_once declare return
+        default static do switch die stdClass echo else TRUE elseif
+        var empty if xor enddeclare include virtual endfor include_once
+        while endforeach global __FILE__ endif list __LINE__ endswitch
+        new __sleep endwhile not array __wakeup E_ALL NULL final
+        php_user_filter interface implements public private protected
+        abstract clone try catch throw this use namespace
+      )
+
+      state :root do
+        rule /<\?(php)?/, 'Comment.Preproc', :php
+        rule /.*?(?=<\?)/, 'Other'
+        rule /</, 'Other'
+      end
+
+      state :php do
+        rule /\?>/, 'Comment.Preproc', :pop!
+        # heredocs
+        rule /<<<('?)([a-z_]\w*)\1\n.*?\n\2;?\n/im, 'String'
+        rule /\s+/, 'Text'
+        rule /#.*?\n/, 'Comment.Single'
+        rule %r(//.*?\n), 'Comment.Single'
+        # empty comment, otherwise seen as the start of a docstring
+        rule %r(/\*\*/)
+        rule %r(/\*\*.*?\*/)m, 'Literal.String.Doc'
+        rule %r(/\*.*?\*/)m, 'Comment.Multiline'
+        rule /(->|::)(\s*)([a-zA-Z_][a-zA-Z0-9_]*)/ do
+          group 'Operator'; group 'Text'; group 'Name.Attribute'
+        end
+
+        rule /[~!%^&*+=\|:.<>\/?@-]+/, 'Operator'
+        rule /[\[\]{}();,]+/, 'Punctuation'
+        rule /class\b/, 'Keyword', :classname
+        # anonymous functions
+        rule /(function)(\s*)(?=\()/ do
+          group 'Keyword'; group 'Text'
+        end
+
+        # named functions
+        rule /(function)(\s+)(&?)(\s*)/ do
+          group 'Keyword'; group 'Text'; group 'Operator'; group 'Text'
+          push :funcname
+        end
+
+        rule /(const)(\s+)([a-zA-Z_]\w*)/i do
+          group 'Keyword'; group 'Text'; group 'Name.Constant'
+        end
+
+        rule /(?:#{keywords.join('|')})\b/, 'Keyword'
+        rule /(true|false|null)\b/, 'Keyword.Constant'
+        rule /\$\{\$+[a-z_]\w*\}/i, 'Name.Variable'
+        rule /\$+[a-z_]\w*/i, 'Name.Variable'
+
+        # may be intercepted for builtin highlighting
+        rule /[\\a-z_][\\\w]*/i, 'Name.Other'
+
+        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, 'Literal.Number.Float'
+        rule /\d+e[+-]?\d+/i, 'Literal.Number.Float'
+        rule /0[0-7]+/, 'Literal.Number.Oct'
+        rule /0x[a-f0-9]+/i, 'Literal.Number.Hex'
+        rule /\d+/, 'Literal.Number.Integer'
+        rule /'([^'\\]*(?:\\.[^'\\]*)*)'/, 'Literal.String.Single'
+        rule /`([^`\\]*(?:\\.[^`\\]*)*)`/, 'Literal.String.Backtick'
+        rule /"/, 'Literal.String.Double', :string
+      end
+
+      state :classname do
+        rule /\s+/, 'Text'
+        rule /[a-z_][\\\w]*/i, 'Name.Class', :pop!
+      end
+
+      state :funcname do
+        rule /[a-z_]\w*/i, 'Name.Function', :pop!
+      end
+
+      state :string do
+        rule /"/, 'Literal.String.Double', :pop!
+        rule /[^\\{$"]+/, 'Literal.String.Double'
+        rule /\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
+          'Literal.String.Escape'
+        rule /\$[a-zA-Z_][a-zA-Z0-9_]*(\[\S+\]|->[a-zA-Z_][a-zA-Z0-9_]*)?/
+
+        lsi = 'Literal.String.Interpol'
+        rule /\{\$\{/, lsi, :interp_double
+        rule /\{(?=\$)/, lsi, :interp_single
+        rule /(\{)(\S+)(\})/ do
+          group lsi; group 'Name.Variable'; group lsi
+        end
+
+        rule /[${\\]+/, 'Literal.String.Double'
+      end
+
+      def stream_tokens(source, &b)
+        super(source) do |tok, val|
+          if tok.name == 'Name.Other' and builtins.include? val
+            yield [Token['Name.Builtin'], val]
+          else
+            yield [tok, val]
+          end
+        end
+      end
+    end
+  end
+end
+

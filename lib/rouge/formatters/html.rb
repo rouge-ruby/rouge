@@ -4,6 +4,8 @@ require 'cgi'
 module Rouge
   module Formatters
     class HTML < Formatter
+      tag 'html'
+
       def initialize(opts={})
         @css_class = opts[:css_class] || 'highlight'
       end

@@ -4,7 +4,7 @@ module Rouge
     class Colorful < CSSTheme
       name 'colorful'
 
-      style 'Text',                      :fg => "#bbbbbb", :bg => 'black'
+      style 'Text',                      :fg => "#bbbbbb", :bg => '#000'
 
       style 'Comment',                   :fg => "#888"
       style 'Comment.Preproc',           :fg => "#579"

@@ -41,14 +41,21 @@ module Rouge
         merge!(hsh)
       end
 
+      [:fg, :bg].each do |mode|
+        define_method mode do
+          return self[mode] unless @theme
+          @theme.palette(self[mode]) if self[mode]
+        end
+      end
+
       def render(selector, &b)
         return enum_for(:render, selector).to_a.join("\n") unless b
 
         return if empty?
 
         yield "#{selector} {"
-        yield "  color: #{@theme.palette(self[:fg])};" if self[:fg]
-        yield "  background-color: #{@theme.palette(self[:bg])};" if self[:bg]
+        yield "  color: #{fg};" if fg
+        yield "  background-color: #{bg};" if bg
         yield "  font-weight: bold;" if self[:bold]
         yield "  font-style: italic;" if self[:italic]
         yield "  text-decoration: underline;" if self[:underline]
@@ -88,6 +95,10 @@ module Rouge
       @styles ||= InheritableHash.new(superclass.styles)
     end
 
+    def self.render(opts={}, &b)
+      new(opts).render(&b)
+    end
+
     class << self
       def style(*tokens)
         style = tokens.last.is_a?(Hash) ? tokens.pop : {}
@@ -97,6 +108,14 @@ module Rouge
         tokens.each do |tok|
           styles[tok.to_s] = style
         end
+      end
+
+      def get_style(token)
+        token.ancestors do |anc|
+          return styles[anc.name] if styles[anc.name]
+        end
+
+        styles['Text']
       end
 
       def name(n=nil)

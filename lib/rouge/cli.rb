@@ -25,11 +25,13 @@ module Rouge
     end
 
     desc 'highlight [FILE]', 'highlight some code'
-    option :file, :aliases => '-f',  :desc => 'the file to operate on'
+    option :input_file, :aliases => '-i',  :desc => 'the file to operate on'
     option :lexer, :aliases => '-l',
       :desc => ('Which lexer to use.  If not provided, rougify will try to ' +
                 'guess based on --mimetype, the filename, and the file ' +
                 'contents.')
+    option :formatter, :aliases => '-f', :default => 'html',
+      :desc => ('Which formatter to use.')
     option :mimetype, :aliases => '-m',
       :desc => ('a mimetype that Rouge will use to guess the correct lexer. ' +
                 'This is ignored if --lexer is specified.')
@@ -52,8 +54,10 @@ module Rouge
         raise "unknown lexer: #{options[:lexer]}" unless lexer_class
       end
 
+      formatter_class = Formatter.find(options[:formatter])
+
       # only HTML is supported for now
-      formatter = Formatters::HTML.new(normalize_hash_keys(options[:formatter_opts]))
+      formatter = formatter_class.new(normalize_hash_keys(options[:formatter_opts]))
       lexer = lexer_class.new(normalize_hash_keys(options[:lexer_opts]))
 
       puts Rouge.highlight(source, lexer, formatter)

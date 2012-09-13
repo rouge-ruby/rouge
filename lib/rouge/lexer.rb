@@ -359,8 +359,8 @@ module Rouge
         else
           tok = Token[tok]
 
-          callback = proc do |ss|
-            token tok, ss[0]
+          callback = proc do
+            token tok
             case next_state
             when :pop!
               pop!

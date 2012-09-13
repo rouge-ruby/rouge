@@ -4,33 +4,8 @@ require 'strscan'
 module Rouge
   class Lexer
     class << self
-      def make(opts={}, &b)
-        _sup = self
-
-        Class.new(self) do
-          @lazy_load_proc = b
-          @default_options = _sup.default_options.merge(opts)
-          @parent = _sup
-        end
-      end
-
       def lex(stream, opts={}, &b)
         new(opts).lex(stream, &b)
-      end
-
-    protected
-      def force_load!
-        return self if @force_load
-        @force_load = true
-        @lazy_load_proc && instance_eval(&@lazy_load_proc)
-
-        self
-      end
-    public
-
-      def new(*a, &b)
-        force_load!
-        super(*a, &b)
       end
 
       def default_options
@@ -121,7 +96,6 @@ module Rouge
 
     def initialize(opts={}, &b)
       options(opts)
-      @lazy_load_proc = b
     end
 
     def options(o={})
@@ -307,7 +281,7 @@ module Rouge
       end
 
       def delegate(lexer, text=nil)
-        debug { "    delegating to #{lexer.name}" }
+        debug { "    delegating to #{lexer.inspect}" }
         text ||= scanner[0]
 
         lexer.lex(text) do |tok, val|
@@ -393,16 +367,6 @@ module Rouge
     def self.state(name, &b)
       name = name.to_s
       states[name] = State.new(self, name, &b)
-    end
-
-    def initialize(parent=nil, opts={}, &defn)
-      if parent.is_a? Hash
-        opts = parent
-        parent = nil
-      end
-
-      @parent = parent
-      super(opts, &defn)
     end
 
     def self.get_state(name)

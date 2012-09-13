@@ -38,6 +38,13 @@ module Rouge
         rule /[-{}]/, 'Comment.Multiline'
       end
 
+      state :comment_preproc do
+        rule /-}/, 'Comment.Preproc', :pop!
+        rule /{-/, 'Comment.Preproc', :comment
+        rule /[^-{}]+/, 'Comment.Preproc'
+        rule /[-{}]/, 'Comment.Preproc'
+      end
+
       state :root do
         mixin :basic
 

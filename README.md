@@ -8,14 +8,13 @@ This project needs your help!  There are lots of lexers to be implemented / port
 
 ``` ruby
 # make some nice lexed html, compatible with pygments stylesheets
+source = File.read('/etc/bashrc')
 formatter = Rouge::Formatters::HTML.new(:css_class => '.highlight')
 lexer = Rouge::Lexers::Shell.new
-Rouge.highlight(File.read('/etc/bash.bashrc'), lexer, formatter)
-# or
-formatter.render(lexer.lex(File.read('/etc/bashrc')))
+formatter.render(lexer.lex(source))
 
-# apply a theme
-Rouge::Themes::ThankfulEyes.new(:scope => '.highlight').render
+# Get some CSS
+Rouge::Themes::ThankfulEyes.render(:scope => '.highlight')
 ```
 
 Rouge aims to be simple to extend, and to be a drop-in replacement pygments, with the same quality of output.
@@ -27,6 +26,17 @@ Rouge aims to be simple to extend, and to be a drop-in replacement pygments, wit
 ### Advantages to CodeRay
 * The HTML output from Rouge is fully compatible with stylesheets designed for pygments.
 * The lexers are implemented with a dedicated DSL, rather than being hand-coded.
+
+## You can even use it with Redcarpet
+
+``` ruby
+require 'rouge/redcarpet'
+class HTML < Redcarpet::Render::HTML
+  include Rouge::Plugins::Redcarpet # yep, that's it.
+end
+```
+
+If you have `:fenced_code_blocks` enabled, you can specify languages, and even options with CGI syntax, like `php?start_inline=1`, or `erb?parent=javascript`.
 
 ## Contributing
 
@@ -57,10 +67,10 @@ class MyLexer < Rouge::RegexLexer
       # you can do the following things:
       pop!
       push :another_state
+      push # assumed to be the current state
       state? :some_state # check if the current state is :some_state
       in_state? :some_state # check if :some_state is in the state stack
 
-      peek(5) # inspect the next 5 characters in the input
       eos? # check if the stream is empty
 
       # yield a token.  if no second argument is supplied, the value is
@@ -75,9 +85,14 @@ class MyLexer < Rouge::RegexLexer
       # match string.
       delegate SomeOtherLexer, str
 
-      # the context object is scoped to a lex, so you can stash state here
+      # the context object is the lexer itself, so you can stash state here
       @count ||= 0
       @count += 1
+
+      # advanced: push a dynamically created anonymous state
+      push do
+        rule /.../, 'A.Token'
+      end
     end
 
     rule /(a)(b)/ do
@@ -85,6 +100,10 @@ class MyLexer < Rouge::RegexLexer
       group 'Letter.A'
       group 'Letter.B'
     end
+  end
+
+  start do
+    # this is run whenever a fresh lex is started
   end
 end
 ```

@@ -31,7 +31,7 @@ module Rouge
           )+
           / # closing slash
           (?:[gim]+\b|\B) # flags
-        )x, 'Literal.String.Regex'
+        )x, 'Literal.String.Regex', :pop!
 
         # if it's not matched by the above r.e., it's not
         # a valid expression, so we use :bad_regex to eat until the
@@ -70,7 +70,7 @@ module Rouge
 
       state :root do
         rule /\A\s*#!.*?\n/m, 'Comment.Preproc'
-        rule %r(^(?=\s|/|<!--)), 'Text', :slash_starts_regex
+        rule %r((?<=\n)(?=\s|/|<!--)), 'Text', :slash_starts_regex
         mixin :comments_and_whitespace
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
                | !== | \? | : )x,

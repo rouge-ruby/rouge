@@ -28,7 +28,7 @@ module Rouge
             'Generic.Error', :fg => :aluminum1, :bg => :scarletred2
       style 'Keyword', :fg => :sandy, :bold => true
       style 'Operator',
-            'Punctuation', :fg => :backlit, :bold => true
+            'Punctuation', :fg => :backlit
       style 'Generic.Deleted', :fg => :scarletred2
       style 'Generic.Inserted', :fg => :go_get_it
       style 'Generic.Emph', :italic => true
@@ -44,17 +44,17 @@ module Rouge
             'Name.Class',
             'Name.Decorator',
             'Name.Namespace',
-            'Name.Label',
             'Name.Builtin.Pseudo',
-            'Name.Exception',
-            'Name.Tag', :fg => :go_get_it, :bold => true
+            'Name.Exception', :fg => :go_get_it, :bold => true
+      style 'Name.Label',
+            'Name.Tag', :fg => :schrill, :bold => true
       style 'Literal.Number',
             'Literal.String.Symbol', :fg => :pink_merengue, :bold => true
       style 'Literal.String', :fg => :dune, :bold => true
       style 'Literal.String.Escape',
             'Literal.String.Char',
             'Literal.String.Interpol', :fg => :backlit, :bold => true
-      style 'Name.Builtin', :fg => :sandy
+      style 'Name.Builtin', :bold => true
       style 'Name.Entity', :fg => '#999999', :bold => true
       style 'Text.Whitespace', :fg => '#BBBBBB'
       style 'Name.Function',

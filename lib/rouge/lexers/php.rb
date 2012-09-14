@@ -130,6 +130,16 @@ module Rouge
         rule /[${\\]+/, 'Literal.String.Double'
       end
 
+      state :interp_double do
+        rule /\}\}/, 'Literal.String.Interpol', :pop!
+        mixin :php
+      end
+
+      state :interp_single do
+        rule /\}/, 'Literal.String.Interpol', :pop!
+        mixin :php
+      end
+
       def stream_tokens(source, &b)
         super(source) do |tok, val|
           if tok.name == 'Name.Other' and builtins.include? val

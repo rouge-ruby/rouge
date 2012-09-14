@@ -66,7 +66,7 @@ module Rouge
           'Literal.String.Char'
         rule /#t|#f/, 'Name.Constant'
         rule /(?:'|#|`|,@|,|\.)/, 'Operator'
-        rule /(?:#{keywords.map(&escape).join('|')})/,
+        rule /(?:#{keywords.map(&escape).join('|')})(?=[^\w-])/,
           'Keyword'
 
         rule /(['#])(\s*)(\()/m do
@@ -82,7 +82,7 @@ module Rouge
       end
 
       state :command do
-        rule /(?:#{builtins.map(&escape).join('|')})/, 'Name.Builtin', :pop!
+        rule /(?:#{builtins.map(&escape).join('|')})(?=[^\w-])/, 'Name.Builtin', :pop!
         rule id, 'Name.Function', :pop!
         rule(//) { pop! }
       end

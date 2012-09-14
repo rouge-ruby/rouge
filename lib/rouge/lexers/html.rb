@@ -48,9 +48,27 @@ module Rouge
 
       state :attr do
         # TODO: are backslash escapes valid here?
-        rule /".*?"/,   'Literal.String', :pop!
-        rule /'.*?'/,   'Literal.String', :pop!
+        rule /"/ do
+          token 'Literal.String'
+          pop!; push :dq
+        end
+
+        rule /'/ do
+          token 'Literal.String'
+          pop!; push :sq
+        end
+
         rule /[^\s>]+/, 'Literal.String', :pop!
+      end
+
+      state :dq do
+        rule /"/, 'Literal.String', :pop!
+        rule /[^"]+/, 'Literal.String'
+      end
+
+      state :sq do
+        rule /'/, 'Literal.String', :pop!
+        rule /[^']+/, 'Literal.String'
       end
 
       state :script_content do

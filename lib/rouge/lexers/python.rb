@@ -152,6 +152,19 @@ module Rouge
         rule /\n/, 'Literal.String'
       end
 
+      state :escape do
+        rule %r(\\
+          ( [\\abfnrtv"']
+          | \n
+          | N{.*?}
+          | u[a-fA-F0-9]{4}
+          | U[a-fA-F0-9]{8}
+          | x[a-fA-F0-9]{2}
+          | [0-7]{1,3}
+          )
+        )x, 'Literal.String.Escape'
+      end
+
       state :dqs do
         rule /"/, 'Literal.String', :pop!
         rule /\\\\|\\"|\\\n/, 'Literal.String.Escape'
@@ -182,6 +195,7 @@ module Rouge
           mixin :"#{qtype}"
         end
       end
+
     end
   end
 end

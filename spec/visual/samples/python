@@ -1,3 +1,16 @@
+def lex(code, lexer):
+    """
+    Lex ``code`` with ``lexer`` and return an iterable of tokens.
+    """
+    try:
+        return lexer.get_tokens(code)
+    except TypeError, err:
+        if isinstance(err.args[0], str) and \
+           'unbound method get_tokens' in err.args[0]:
+            raise TypeError('lex() argument must be a lexer instance, '
+                            'not a class')
+        raise
+
 # unicode docstrings
 def foo():
     ur"""unicode-raw"""

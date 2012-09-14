@@ -16,7 +16,7 @@ module Rouge
         @parent = opts.delete(:parent) || 'html'
         if @parent.is_a? String
           lexer_class = Lexer.find(@parent)
-          @parent = lexer_class.new
+          @parent = lexer_class.new(opts)
         end
 
         @ruby_lexer = Ruby.new(opts)

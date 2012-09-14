@@ -42,7 +42,16 @@ module Rouge
         # rule /\|\|/, 'Operator'
 
         rule /<<</, 'Operator' # here-string
-        rule /<<-?\s*(\'?)\\?(\w+)[\w\W]+?\2/, 'Literal.String'
+        rule /<<-?\s*(\'?)\\?(\w+)\1/ do |m|
+          lsh = 'Literal.String.Heredoc'
+          token lsh
+          heredocstr = Regexp.escape(m[2])
+
+          push do
+            rule /\s*#{heredocstr}\s*\n/, lsh, :pop!
+            rule /.*?\n/, lsh
+          end
+        end
       end
 
       state :double_quotes do

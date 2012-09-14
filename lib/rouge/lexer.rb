@@ -214,119 +214,6 @@ module Rouge
       end
     end
 
-    class ScanState
-      def self.delegate(m, target)
-        define_method(m) do |*a, &b|
-          send(target).send(m, *a, &b)
-        end
-      end
-
-      attr_accessor :scanner
-      attr_accessor :stack
-      attr_accessor :lexer
-      def initialize(lexer, scanner=nil, stack=nil)
-        @lexer = lexer
-        @scanner = scanner
-        @stack = stack || [lexer.get_state(:root)]
-      end
-
-      def pop!
-        raise 'empty stack!' if stack.empty?
-
-        debug { "    popping stack" }
-        stack.pop
-      end
-
-      def push(state_name=nil, &b)
-        # use the top of the stack by default
-        if state_name || b
-          push_state = state.relative_state(state_name, &b)
-        else
-          push_state = self.state
-        end
-
-        debug { "    pushing #{push_state.name}" }
-        stack.push(push_state)
-      end
-
-      def in_state?(state_name)
-        stack.map(&:name).include? state_name.to_s
-      end
-
-      def state?(state_name)
-        state_name.to_s == state.name
-      end
-
-      delegate :debug, :lexer
-
-      delegate :[], :scanner
-      delegate :captures, :scanner
-      delegate :peek, :scanner
-      delegate :eos?, :scanner
-
-      def run_callback(&callback)
-        Enumerator.new do |y|
-          @output_stream = y
-          @group_count = 0
-          instance_exec(self, &callback)
-          @output_stream = nil
-        end
-      end
-
-      def token(tok, val=:__absent__)
-        val = scanner[0] if val == :__absent__
-        val ||= ''
-
-        raise 'no output stream' unless @output_stream
-
-        @output_stream << [Token[tok], val]
-      end
-
-      def group(tok)
-        token(tok, scanner[@group_count += 1])
-      end
-
-      def delegate(lexer, text=nil)
-        debug { "    delegating to #{lexer.inspect}" }
-        text ||= scanner[0]
-
-        lexer.lex(text, :continue => true) do |tok, val|
-          debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }
-          token(tok, val)
-        end
-      end
-
-      def state
-        raise 'empty stack!' if stack.empty?
-        stack.last
-      end
-
-      MAX_NULL_STEPS = 5
-      def scan(re, &b)
-        @null_steps ||= 0
-
-        if @null_steps >= MAX_NULL_STEPS
-          debug { "    too many scans without consuming the string!" }
-          return false
-        end
-
-        scanner.scan(re)
-
-        if scanner.matched?
-          if scanner.matched_size == 0
-            @null_steps += 1
-          else
-            @null_steps = 0
-          end
-
-          yield self
-          return true
-        end
-
-        return false
-      end
-    end
-
     class StateDSL
       attr_reader :rules
       def initialize(rules)
@@ -391,61 +278,151 @@ module Rouge
       self.class.get_state(name)
     end
 
-    def scan_state
-      @scan_state ||= ScanState.new(self)
+    def stack
+      @stack ||= [get_state(:root)]
+    end
+
+    def state
+      stack.last or raise 'empty stack!'
     end
 
     def reset!
       @scan_state = nil
 
       self.class.start_procs.each do |pr|
-        scan_state.instance_eval(&pr)
+        instance_eval(&pr)
       end
     end
 
     def stream_tokens(stream, &b)
-      scan_state.scanner = stream
-
-      until scan_state.eos?
+      until stream.eos?
         debug { "lexer: #{self.class.tag}" }
-        debug { "stack: #{scan_state.stack.map(&:name).inspect}" }
-        debug { "stream: #{scan_state.scanner.peek(20).inspect}" }
-        success = step(get_state(scan_state.state), scan_state, &b)
+        debug { "stack: #{stack.map(&:name).inspect}" }
+        debug { "stream: #{stream.peek(20).inspect}" }
+        success = step(get_state(state), stream, &b)
 
         if !success
           debug { "    no match, yielding Error" }
-          b.call(Token['Error'], scan_state.scanner.getch)
+          b.call(Token['Error'], stream.getch)
         end
       end
     end
 
-    def step(state, scan_state, &b)
+    def step(state, stream, &b)
       state.rules.each do |rule|
-        return true if run_rule(rule, scan_state, &b)
+        return true if run_rule(rule, stream, &b)
       end
 
       false
     end
 
-  private
-    def run_rule(rule, scan_state, &b)
+    def run_rule(rule, stream, &b)
       case rule
       when String
         debug { "  entering mixin #{rule}" }
-        res = step(get_state(rule), scan_state, &b)
+        res = step(get_state(rule), stream, &b)
         debug { "  exiting  mixin #{rule}" }
         res
       when Rule
         debug { "  trying #{rule.inspect}" }
-        scan_state.scan(rule.re) do |match|
-          debug { "    got #{match[0].inspect}" }
+        scan(stream, rule.re) do
+          debug { "    got #{stream[0].inspect}" }
 
-          scan_state.run_callback(&rule.callback).each do |tok, res|
+          run_callback(stream, &rule.callback).each do |tok, res|
             debug { "    yielding #{tok.to_s.inspect}, #{res.inspect}" }
             b.call(Token[tok], res)
           end
         end
       end
+    end
+
+    # DELETEME: refactoring compat.
+    def lexer; self; end
+
+    def run_callback(stream, &callback)
+      Enumerator.new do |y|
+        @output_stream = y
+        @group_count = 0
+        @last_matches = stream
+        instance_exec(stream, &callback)
+        @last_matches = nil
+        @output_stream = nil
+      end
+    end
+
+    MAX_NULL_STEPS = 5
+    def scan(scanner, re, &b)
+      @null_steps ||= 0
+
+      if @null_steps >= MAX_NULL_STEPS
+        debug { "    too many scans without consuming the string!" }
+        return false
+      end
+
+      scanner.scan(re)
+
+      if scanner.matched?
+        if scanner.matched_size == 0
+          @null_steps += 1
+        else
+          @null_steps = 0
+        end
+
+        yield self
+        return true
+      end
+
+      return false
+    end
+
+    def token(tok, val=:__absent__)
+      val = @last_matches[0] if val == :__absent__
+      val ||= ''
+
+      raise 'no output stream' unless @output_stream
+
+      @output_stream << [Token[tok], val]
+    end
+
+    def group(tok)
+      token(tok, @last_matches[@group_count += 1])
+    end
+
+    def delegate(lexer, text=nil)
+      debug { "    delegating to #{lexer.inspect}" }
+      text ||= @last_matches[0]
+
+      lexer.lex(text, :continue => true) do |tok, val|
+        debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }
+        token(tok, val)
+      end
+    end
+
+    def push(state_name=nil, &b)
+      # use the top of the stack by default
+      if state_name || b
+        push_state = state.relative_state(state_name, &b)
+      else
+        push_state = self.state
+      end
+
+      debug { "    pushing #{push_state.name}" }
+      stack.push(push_state)
+    end
+
+    def pop!
+      raise 'empty stack!' if stack.empty?
+
+      debug { "    popping stack" }
+      stack.pop
+    end
+
+    def in_state?(state_name)
+      stack.map(&:name).include? state_name.to_s
+    end
+
+    def state?(state_name)
+      state_name.to_s == state.name
     end
 
   end

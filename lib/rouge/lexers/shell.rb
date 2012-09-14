@@ -53,6 +53,11 @@ module Rouge
         rule /[^"`\\$]+/, 'Literal.String.Double'
       end
 
+      state :single_quotes do
+        rule /'/, 'Literal.String.Single', :pop!
+        rule /[^']+/, 'Literal.String.Single'
+      end
+
       state :data do
         rule /\\./, 'Literal.String.Escape'
         rule /\$?"/, 'Literal.String.Double', :double_quotes
@@ -62,7 +67,7 @@ module Rouge
         # POSIX: Enclosing characters in single-quotes ( '' )
         # shall preserve the literal value of each character within the
         # single-quotes. A single-quote cannot occur within single-quotes.
-        rule /$?'[^']*'/, 'Literal.String.Single'
+        rule /$?'/, 'Literal.String.Single', :single_quotes
 
         rule /\*/, 'Keyword'
 

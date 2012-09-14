@@ -23,6 +23,7 @@ module Rouge
       style 'Text', :fg => :unicorn, :bg => :krasna
 
       style 'Comment', :fg => :cool_as_ice, :italic => true
+      style 'Comment.Preproc', :fg => :go_get_it, :bold => true, :italic => true
       style 'Error',
             'Generic.Error', :fg => :aluminum1, :bg => :scarletred2
       style 'Keyword', :fg => :sandy, :bold => true
@@ -43,6 +44,7 @@ module Rouge
             'Name.Class',
             'Name.Decorator',
             'Name.Namespace',
+            'Name.Label',
             'Name.Builtin.Pseudo',
             'Name.Exception',
             'Name.Tag', :fg => :go_get_it, :bold => true
@@ -55,10 +57,9 @@ module Rouge
       style 'Name.Builtin', :fg => :sandy
       style 'Name.Entity', :fg => '#999999', :bold => true
       style 'Text.Whitespace', :fg => '#BBBBBB'
-      style 'Name.Variable',
-            'Name.Function',
-            'Name.Label',
+      style 'Name.Function',
             'Name.Attribute', :fg => :chilly
+      style 'Name.Variable', :fg => :chilly, :bold => true
     end
   end
 end

@@ -32,7 +32,7 @@ module Rouge
       end
 
       start do
-        push :php if lexer.start_inline?
+        push :php if start_inline?
       end
 
       keywords = %w(

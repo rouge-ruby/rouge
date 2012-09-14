@@ -336,9 +336,6 @@ module Rouge
       end
     end
 
-    # DELETEME: refactoring compat.
-    def lexer; self; end
-
     def run_callback(stream, &callback)
       Enumerator.new do |y|
         @output_stream = y

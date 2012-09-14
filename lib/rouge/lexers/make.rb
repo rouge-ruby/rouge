@@ -20,15 +20,16 @@ module Rouge
 
       line = /(?:\\.|\\\n|[^\\\n])*/m
 
-      attr_reader :shell
       def initialize(opts={})
         super
         @shell = Shell.new(opts)
       end
 
+      start { @shell.reset! }
+
       state :root do
         rule /^(?:[\t ]+.*\n|\n)+/ do
-          delegate lexer.shell
+          delegate @shell
         end
 
         # rule /\$\((?:.*\\\n|.*\n)+/ do
@@ -86,14 +87,14 @@ module Rouge
           push :shell_line
         end
 
-        rule(//) { lexer.shell.reset!; pop! }
+        rule(//) { @shell.reset!; pop! }
       end
 
       state :shell do
         # macro interpolation
         rule /\$\(\s*[a-z_]\w*\s*\)/i, 'Name.Variable'
-        rule(/.+?(?=\$\(|\)|\n)/m) { delegate lexer.shell }
-        rule(/\$\(|\)|\n/) { delegate lexer.shell }
+        rule(/.+?(?=\$\(|\)|\n)/m) { delegate @shell }
+        rule(/\$\(|\)|\n/) { delegate @shell }
       end
 
       state :shell_line do

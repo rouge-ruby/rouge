@@ -10,8 +10,6 @@ module Rouge
         return 0.4 if text =~ /<%.*%>/
       end
 
-      attr_reader :parent
-      attr_reader :ruby_lexer
       def initialize(opts={})
         @parent = opts.delete(:parent) || 'html'
         if @parent.is_a? String
@@ -24,6 +22,11 @@ module Rouge
         super(opts)
       end
 
+      start do
+        @parent.reset!
+        @ruby_lexer.reset!
+      end
+
       open  = /<%%|<%=|<%#|<%-|<%/
       close = /%%>|-%>|%>/
 
@@ -33,7 +36,7 @@ module Rouge
         rule open, 'Comment.Preproc', :ruby
 
         rule /.+?(?=#{open})|.+/m do
-          delegate lexer.parent
+          delegate @parent
         end
       end
 
@@ -46,7 +49,7 @@ module Rouge
         rule close, 'Comment.Preproc', :pop!
 
         rule /.+?(?=#{close})|.+/m do
-          delegate lexer.ruby_lexer
+          delegate @ruby_lexer
         end
       end
     end

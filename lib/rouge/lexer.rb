@@ -120,8 +120,14 @@ module Rouge
       lex(stream).to_a
     end
 
-    def lex(string, &b)
+    def reset!
+      # noop, called after each lex is finished
+    end
+
+    def lex(string, opts={}, &b)
       return enum_for(:lex, string) unless block_given?
+
+      reset! unless opts[:continue]
 
       last_token = nil
       last_val = nil
@@ -218,7 +224,7 @@ module Rouge
       attr_accessor :scanner
       attr_accessor :stack
       attr_accessor :lexer
-      def initialize(lexer, scanner, stack=nil)
+      def initialize(lexer, scanner=nil, stack=nil)
         @lexer = lexer
         @scanner = scanner
         @stack = stack || [lexer.get_state(:root)]
@@ -284,7 +290,7 @@ module Rouge
         debug { "    delegating to #{lexer.inspect}" }
         text ||= scanner[0]
 
-        lexer.lex(text) do |tok, val|
+        lexer.lex(text, :continue => true) do |tok, val|
           debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }
           token(tok, val)
         end
@@ -385,18 +391,23 @@ module Rouge
       self.class.get_state(name)
     end
 
-    def stream_tokens(stream, &b)
-      scan_state = ScanState.new(self, stream)
+    def scan_state
+      @scan_state ||= ScanState.new(self)
+    end
+
+    def reset!
+      @scan_state = nil
 
       self.class.start_procs.each do |pr|
         scan_state.instance_eval(&pr)
       end
-
-      stream_with_state(scan_state, &b)
     end
 
-    def stream_with_state(scan_state, &b)
+    def stream_tokens(stream, &b)
+      scan_state.scanner = stream
+
       until scan_state.eos?
+        debug { "lexer: #{self.class.tag}" }
         debug { "stack: #{scan_state.stack.map(&:name).inspect}" }
         debug { "stream: #{scan_state.scanner.peek(20).inspect}" }
         success = step(get_state(scan_state.state), scan_state, &b)

@@ -82,7 +82,7 @@ module Rouge
 
         rule /;/, 'Text'
         rule /\s+/, 'Text'
-        rule /[^=\s{}()$"\'`\\<]+/, 'Text'
+        rule /[^=\*\s{}()$"\'`\\<]+/, 'Text'
         rule /\d+(?= |\Z)/, 'Number'
         rule /</, 'Text'
         mixin :interp

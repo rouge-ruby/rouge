@@ -1,3 +1,5 @@
+VERSION := 0.1.$(shell git log --oneline | wc -l | sed -e "s/ //g")
+
 # Generated automatically from Makefile.pre by makesetup.
 # Top-level Makefile for Python
 #

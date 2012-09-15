@@ -28,14 +28,6 @@ module Rouge
       start { @shell.reset! }
 
       state :root do
-        rule /^(?:[\t ]+.*\n|\n)+/ do
-          delegate @shell
-        end
-
-        # rule /\$\((?:.*\\\n|.*\n)+/ do
-        #   delegate Shell
-        # end
-
         rule /\s+/, 'Text'
 
         rule /#.*?\n/, 'Comment'
@@ -93,8 +85,23 @@ module Rouge
       state :shell do
         # macro interpolation
         rule /\$\(\s*[a-z_]\w*\s*\)/i, 'Name.Variable'
-        rule(/.+?(?=\$\(|\)|\n)/m) { delegate @shell }
-        rule(/\$\(|\)|\n/) { delegate @shell }
+        # $(shell ...)
+        rule /(\$\()(\s*)(shell)(\s+)/m do
+          group 'Name.Function'; group 'Text'
+          group 'Name.Builtin'; group 'Text'
+          push :shell_expr
+        end
+
+        rule(/\\./m) { delegate @shell }
+        stop = /\$\(|\(|\)|\n|\\/
+        rule(/.+?(?=#{stop})/m) { delegate @shell }
+        rule(stop) { delegate @shell }
+      end
+
+      state :shell_expr do
+        rule(/\(/) { delegate @shell; push }
+        rule /\)/, 'Name.Variable', :pop!
+        mixin :shell
       end
 
       state :shell_line do

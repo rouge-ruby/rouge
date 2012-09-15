@@ -1,6 +1,9 @@
+<p>It's html outside php!</p>
 <?php
 
 $test = function($a) { $lambda = 1; }
+
+?><a href="<?= $url ?>">I can close php tags and get html!</a><?php
 
 /** snippet from wordpress */
 if (! isset($wp_did_header)):
@@ -518,3 +521,4 @@ function &byref() {
     return $x;
 }
 ?>
+<p>it's html here at the end, too.</p>

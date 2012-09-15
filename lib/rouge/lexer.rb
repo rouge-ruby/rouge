@@ -8,8 +8,10 @@ module Rouge
         new(opts).lex(stream, &b)
       end
 
-      def default_options
+      def default_options(o={})
         @default_options ||= {}
+        @default_options.merge!(o)
+        @default_options
       end
 
       def find(name)

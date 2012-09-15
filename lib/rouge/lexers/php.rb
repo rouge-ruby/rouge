@@ -1,10 +1,12 @@
 module Rouge
   module Lexers
-    class PHP < RegexLexer
+    class PHP < TemplateLexer
       tag 'php'
       aliases 'php', 'php3', 'php4', 'php5'
       filenames '*.php', '*.php[345]'
       mimetypes 'text/x-php'
+
+      default_options :parent => 'html'
 
       def initialize(opts={})
         # if truthy, the lexer starts highlighting with php code
@@ -12,6 +14,8 @@ module Rouge
         @start_inline = opts.delete(:start_inline)
         @funcnamehighlighting = opts.delete(:funcnamehighlighting) { true }
         @disabledmodules = opts.delete(:disabledmodules) { [] }
+
+        super(opts)
       end
 
       def builtins
@@ -48,9 +52,8 @@ module Rouge
       )
 
       state :root do
-        rule /<\?(php)?/, 'Comment.Preproc', :php
-        rule /.*?(?=<\?)/, 'Other'
-        rule /</, 'Other'
+        rule /<\?(php|=)?/, 'Comment.Preproc', :php
+        rule(/.*?(?=<\?)|.*/m) { delegate parent }
       end
 
       state :php do

@@ -11,19 +11,13 @@ module Rouge
       end
 
       def initialize(opts={})
-        @parent = opts.delete(:parent) || 'html'
-        if @parent.is_a? String
-          lexer_class = Lexer.find(@parent)
-          @parent = lexer_class.new(opts)
-        end
-
         @ruby_lexer = Ruby.new(opts)
 
         super(opts)
       end
 
       start do
-        @parent.reset!
+        parent.reset!
         @ruby_lexer.reset!
       end
 
@@ -36,7 +30,7 @@ module Rouge
         rule open, 'Comment.Preproc', :ruby
 
         rule /.+?(?=#{open})|.+/m do
-          delegate @parent
+          delegate parent
         end
       end
 

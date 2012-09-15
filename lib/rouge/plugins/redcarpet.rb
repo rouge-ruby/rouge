@@ -28,6 +28,13 @@ module Rouge
           Lexer.find(name)
         end || Lexers::Text
 
+        # XXX HACK: Redcarpet strips hard tabs out of code blocks,
+        # so we assume you're not using leading spaces that aren't tabs,
+        # and just replace them here.
+        if lexer_class.tag == 'make'
+          code.gsub! /^    /, "\t"
+        end
+
         lexer = lexer_class.new(opts)
         formatter = Formatters::HTML.new(:css_class => "highlight #{lexer_class.tag}")
 

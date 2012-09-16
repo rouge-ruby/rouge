@@ -6,6 +6,10 @@ This project needs your help!  There are lots of lexers to be implemented / port
 
 ## Usage
 
+First, take a look at the [pretty colors][].
+
+[pretty colors]: http://jayferd.us/posts/2012-09-14-rouge
+
 ``` ruby
 # make some nice lexed html, compatible with pygments stylesheets
 source = File.read('/etc/bashrc')

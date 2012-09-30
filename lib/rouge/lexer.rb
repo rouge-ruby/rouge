@@ -340,6 +340,12 @@ module Rouge
 
     MAX_NULL_STEPS = 5
     def scan(scanner, re, &b)
+      # XXX HACK XXX
+      # StringScanner's implementation of ^ is b0rken.
+      # TODO: this doesn't cover cases like /(a|^b)/, but it's
+      # the most common, for now...
+      return false if re.source[0] == ?^ && !scanner.beginning_of_line?
+
       @null_steps ||= 0
 
       if @null_steps >= MAX_NULL_STEPS

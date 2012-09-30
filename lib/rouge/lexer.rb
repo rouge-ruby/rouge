@@ -175,17 +175,6 @@ module Rouge
       def inspect
         "#<Rule #{@re.inspect}>"
       end
-
-      def consume(stream, &b)
-        stream.scan(@re)
-
-        if stream.matched?
-          yield stream
-          return true
-        end
-
-        false
-      end
     end
 
     class State

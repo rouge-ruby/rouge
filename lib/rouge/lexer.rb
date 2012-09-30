@@ -331,9 +331,9 @@ module Rouge
       Enumerator.new do |y|
         @output_stream = y
         @group_count = 0
-        @last_matches = stream
+        @last_match = stream
         instance_exec(stream, &callback)
-        @last_matches = nil
+        @last_match = nil
         @output_stream = nil
       end
     end
@@ -364,21 +364,21 @@ module Rouge
     end
 
     def token(tok, val=:__absent__)
-      val = @last_matches[0] if val == :__absent__
+      val = @last_match[0] if val == :__absent__
       val ||= ''
 
       raise 'no output stream' unless @output_stream
 
-      @output_stream << [Token[tok], val]
+      @output_stream << [Token[tok], val] unless val.empty?
     end
 
     def group(tok)
-      token(tok, @last_matches[@group_count += 1])
+      token(tok, @last_match[@group_count += 1])
     end
 
     def delegate(lexer, text=nil)
       debug { "    delegating to #{lexer.inspect}" }
-      text ||= @last_matches[0]
+      text ||= @last_match[0]
 
       lexer.lex(text, :continue => true) do |tok, val|
         debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }

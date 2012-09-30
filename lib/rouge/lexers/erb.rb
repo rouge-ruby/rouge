@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    class ERB < RegexLexer
+    class ERB < TemplateLexer
       tag 'erb'
       aliases 'eruby', 'rhtml'
 

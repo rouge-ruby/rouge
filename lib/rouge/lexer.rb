@@ -398,11 +398,11 @@ module Rouge
       stack.push(push_state)
     end
 
-    def pop!
+    def pop!(times=1)
       raise 'empty stack!' if stack.empty?
 
-      debug { "    popping stack" }
-      stack.pop
+      debug { "    popping stack: #{times}" }
+      times.times { stack.pop }
     end
 
     def in_state?(state_name)

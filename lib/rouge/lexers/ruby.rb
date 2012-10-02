@@ -17,8 +17,8 @@ module Rouge
         rule %r(
           :  # initial :
           @{0,2} # optional ivar, for :@foo and :@@foo
-          [a-z_]\w*[!?] # the symbol
-        )x, 'Literal.String.Symbol'
+          [a-z_]\w*[!?]? # the symbol
+        )xi, 'Literal.String.Symbol'
 
         # special symbols
         rule %r(:(?:\*\*|[-+]@|[/\%&\|^`~]|\[\]=?|<<|>>|<=?>|<=?|===?)),

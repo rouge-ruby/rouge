@@ -436,5 +436,7 @@ module Rouge
         @parent = lexer_class.new(self.options)
       end
     end
+
+    start { @parent.reset! }
   end
 end

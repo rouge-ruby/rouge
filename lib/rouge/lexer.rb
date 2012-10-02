@@ -411,6 +411,12 @@ module Rouge
       times.times { stack.pop }
     end
 
+    def reset_stack
+      debug { '    resetting stack' }
+      stack.clear
+      stack.push get_state(:root)
+    end
+
     def in_state?(state_name)
       stack.map(&:name).include? state_name.to_s
     end

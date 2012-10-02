@@ -30,6 +30,7 @@ load load_dir.join('rouge/lexers/shell.rb')
 load load_dir.join('rouge/lexers/javascript.rb')
 load load_dir.join('rouge/lexers/css.rb')
 load load_dir.join('rouge/lexers/html.rb')
+load load_dir.join('rouge/lexers/haml.rb')
 load load_dir.join('rouge/lexers/xml.rb')
 load load_dir.join('rouge/lexers/php.rb')
 

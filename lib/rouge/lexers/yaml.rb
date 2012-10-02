@@ -201,7 +201,7 @@ module Rouge
       end
 
       state :block_scalar_content do
-        rule /\n/, 'Text'
+        rule /\n+/, 'Text'
 
         # empty lines never dedent, but they might be part of the scalar.
         rule /^[ ]+$/ do |m|

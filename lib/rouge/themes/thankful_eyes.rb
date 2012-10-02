@@ -32,13 +32,14 @@ module Rouge
       style 'Generic.Deleted', :fg => :scarletred2
       style 'Generic.Inserted', :fg => :go_get_it
       style 'Generic.Emph', :italic => true
-      style 'Generic.Subheading', :fg => '#800080', :bold => true
-      style 'Generic.Traceback', :fg => '#0040D0'
+      style 'Generic.Strong', :bold => true
+      style 'Generic.Traceback', :fg => :eggshell_cloud, :bg => :slate_blue
       style 'Keyword.Constant', :fg => :pink_merengue, :bold => true
       style 'Keyword.Namespace',
             'Keyword.Pseudo',
             'Keyword.Reserved',
-            'Generic.Heading', :fg => :schrill, :bold => true
+            'Generic.Heading',
+            'Generic.Subheading', :fg => :schrill, :bold => true
       style 'Keyword.Type',
             'Name.Constant',
             'Name.Class',

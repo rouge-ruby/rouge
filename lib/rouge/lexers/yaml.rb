@@ -77,20 +77,20 @@ module Rouge
         # trailing or pre-comment whitespace
         rule /[ ]+(?=#|$)/, 'Text'
 
-        rule /(?<=\A|\n)%YAML\b/ do
+        rule /^%YAML\b/ do
           token 'Name.Tag'
           reset_indent
           push :yaml_directive
         end
 
-        rule /(?<=\A|\n)%TAG\b/ do
+        rule /^%TAG\b/ do
           token 'Name.Tag'
           reset_indent
           push :tag_directive
         end
 
         # doc-start and doc-end indicators
-        rule /(?<=\A|\n)(?:---|\.\.\.)(?= |$)/ do
+        rule /^(?:---|\.\.\.)(?= |$)/ do
           token 'Name.Namespace'
           reset_indent
           push :block_line
@@ -260,8 +260,8 @@ module Rouge
 
       state :quoted_scalar_whitespaces do
         # leading and trailing whitespace is ignored
-        rule /(?<=\n)[ ]+/, 'Text'
-        rule /[ ]+(?=\n)/, 'Text'
+        rule /^[ ]+/, 'Text'
+        rule /[ ]+$/, 'Text'
 
         rule /\n+/m, 'Text'
 
@@ -286,9 +286,9 @@ module Rouge
       end
 
       state :plain_scalar_in_block_context_new_line do
-        rule /(?<=\n)[ ]+\n/, 'Text'
+        rule /^[ ]+\n/, 'Text'
         rule /\n+/m, 'Text'
-        rule /(?<=\n)(?=---|\.\.\.)/ do
+        rule /^(?=---|\.\.\.)/ do
           pop! 3
         end
 
@@ -329,7 +329,7 @@ module Rouge
       state :plain_scalar_in_flow_context do
         rule /[ ]*(?=[,:?\[\]{}])/, 'Text', :pop!
         rule /[ ]+(?=#)/, 'Text', :pop!
-        rule /(?<=\n)[ ]+/, 'Text'
+        rule /^[ ]+/, 'Text'
         rule /[ ]+$/, 'Text'
         rule /\n+/, 'Text'
         rule /[ ]+/, 'Name.Variable'

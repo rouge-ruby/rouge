@@ -201,12 +201,12 @@ module Rouge
 
       state :html_comment_block do
         rule /#{dot}+/, 'Comment'
-        mixin :end_section
+        mixin :indented_block
       end
 
       state :haml_comment_block do
         rule /#{dot}+/, 'Comment.Preproc'
-        mixin :end_section
+        mixin :indented_block
       end
 
       state :filter_block do
@@ -219,7 +219,7 @@ module Rouge
         end
 
         mixin :interpolation
-        mixin :end_section
+        mixin :indented_block
       end
 
       state :interpolation do
@@ -230,7 +230,7 @@ module Rouge
         end
       end
 
-      state :end_section do
+      state :indented_block do
         rule(/\n/) { token 'Text'; reset_stack }
       end
     end

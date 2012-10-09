@@ -133,7 +133,7 @@ module Rouge
 
       last_token = nil
       last_val = nil
-      stream_tokens(StringScanner.new(string)) do |tok, val|
+      lex_with_postprocessing(StringScanner.new(string)) do |tok, val|
         next if val.empty?
 
         if tok == last_token
@@ -147,6 +147,24 @@ module Rouge
       end
 
       b.call(last_token, last_val) if last_token
+    end
+
+    def lex_with_postprocessing(stream, &b)
+      stream_tokens(stream) do |tok, val|
+        _, processor = self.class.postprocesses.find { |t, _| t == tok }
+
+        if processor
+          # TODO: DRY this up with run_callback
+          Enumerator.new do |y|
+            @output_stream = y
+            instance_exec(tok, val, &processor)
+          end.each do |newtok, newval|
+            yield Token[newtok], newval
+          end
+        else
+          yield tok, val
+        end
+      end
     end
 
     def stream_tokens(stream, &b)
@@ -247,6 +265,15 @@ module Rouge
 
     def self.start(&b)
       start_procs << b
+    end
+
+    def self.postprocess(toktype, &b)
+      postprocesses << [Token[toktype], b]
+    end
+
+    @postprocesses = []
+    def self.postprocesses
+      @postprocesses ||= InheritableList.new(superclass.postprocesses)
     end
 
     def self.state(name, &b)

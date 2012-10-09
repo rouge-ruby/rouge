@@ -437,6 +437,6 @@ module Rouge
       end
     end
 
-    start { @parent.reset! }
+    start { parent.reset! }
   end
 end

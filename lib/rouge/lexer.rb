@@ -240,8 +240,9 @@ module Rouge
       @states ||= {}
     end
 
+    @start_procs = []
     def self.start_procs
-      @start_procs ||= []
+      @start_procs ||= InheritableList.new(superclass.start_procs)
     end
 
     def self.start(&b)

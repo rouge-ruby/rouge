@@ -207,31 +207,26 @@ module Rouge
         structure-object symbol synonym-stream t two-way-stream vector
       )
 
-      def stream_tokens(*a, &b)
-        super(*a) do |tok, val|
-          case tok
-          when Token['Name.Variable']
-            if BUILTIN_FUNCTIONS.include? val
-              yield Token['Name.Builtin'], val
-            elsif SPECIAL_FORMS.include? val
-              yield Token['Keyword'], val
-            elsif MACROS.include? val
-              yield Token['Name.Builtin'], val
-            elsif LAMBDA_LIST_KEYWORDS.include? val
-              yield Token['Keyword'], val
-            elsif DECLARATIONS.include? val
-              yield Token['Keyword'], val
-            elsif BUILTIN_TYPES.include? val
-              yield Token['Keyword.Type'], val
-            elsif BUILTIN_CLASSES.include? val
-              yield Token['Name.Class'], val
-            else
-              yield tok, val
-            end
-          else
-            yield tok, val
-          end
+      postprocess 'Name.Variable' do |tok, val|
+        tok = if BUILTIN_FUNCTIONS.include? val
+          'Name.Builtin'
+        elsif SPECIAL_FORMS.include? val
+          'Keyword'
+        elsif MACROS.include? val
+          'Name.Builtin'
+        elsif LAMBDA_LIST_KEYWORDS.include? val
+          'Keyword'
+        elsif DECLARATIONS.include? val
+          'Keyword'
+        elsif BUILTIN_TYPES.include? val
+          'Keyword.Type'
+        elsif BUILTIN_CLASSES.include? val
+          'Name.Class'
+        else
+          'Name.Variable'
         end
+
+        token tok, val
       end
 
       nonmacro = /\\.|[a-zA-Z0-9!$%&*+-\/<=>?@\[\]^_{}~]/

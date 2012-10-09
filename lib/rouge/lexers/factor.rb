@@ -286,19 +286,14 @@ module Rouge
         rule /\S+/, 'Name.Namespace'
       end
 
-      def stream_tokens(*a, &b)
-        super(*a) do |tok, val|
-          case tok
-          when Token['Postprocess.Word']
-            if self.class.builtins.values.any? { |b| b.include? val }
-              tok = Token['Name.Builtin']
-            else
-              tok = Token['Text']
-            end
-          end
-
-          yield tok, val
+      postprocess 'Postprocess.Word' do |tok, val|
+        tok = if self.class.builtins.values.any? { |b| b.include? val }
+          'Name.Builtin'
+        else
+          'Name'
         end
+
+        token tok, val
       end
     end
   end

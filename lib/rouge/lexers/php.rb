@@ -143,16 +143,11 @@ module Rouge
         mixin :php
       end
 
-      def stream_tokens(source, &b)
-        super(source) do |tok, val|
-          if tok.name == 'Name.Other' and builtins.include? val
-            yield [Token['Name.Builtin'], val]
-          else
-            yield [tok, val]
-          end
-        end
+      postprocess 'Name.Other' do |tok, val|
+        tok = 'Name.Builtin' if builtins.include? val
+
+        token tok, val
       end
     end
   end
 end
-

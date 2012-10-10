@@ -15,18 +15,9 @@ module Rouge
 
     class State
       attr_reader :name
-      def initialize(lexer_class, name, &defn)
-        @lexer_class = lexer_class
+      def initialize(name, &defn)
         @name = name
         @defn = defn
-      end
-
-      def relative_state(state_name=nil, &b)
-        if state_name
-          @lexer_class.get_state(state_name)
-        else
-          State.new(@lexer_class, b.inspect, &b).load!
-        end
       end
 
       def rules
@@ -100,7 +91,7 @@ module Rouge
 
     def self.state(name, &b)
       name = name.to_s
-      states[name] = State.new(self, name, &b)
+      states[name] = State.new(name, &b)
     end
 
     def self.get_state(name)
@@ -115,8 +106,8 @@ module Rouge
       get_state(name)
     end
 
-    def get_state(name)
-      self.class.get_state(name)
+    def get_state(state_name)
+      self.class.get_state(state_name)
     end
 
     def stack
@@ -262,11 +253,13 @@ module Rouge
     end
 
     def push(state_name=nil, &b)
-      # use the top of the stack by default
-      if state_name || b
-        push_state = state.relative_state(state_name, &b)
+      push_state = if state_name
+        get_state(state_name)
+      elsif block_given?
+        State.new(b.inspect, &b).load!
       else
-        push_state = self.state
+        # use the top of the stack by default
+        self.state
       end
 
       debug { "    pushing #{push_state.name}" }

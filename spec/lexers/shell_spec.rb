@@ -3,15 +3,13 @@ describe Rouge::Lexers::Shell do
 
   include Support::Lexing
   it 'parses a basic shell string' do
-    tokens = subject.get_tokens('foo=bar')
+    tokens = subject.lex('foo=bar').to_a
     assert { tokens.size == 3 }
-    assert { tokens[0][0].name == 'Name.Variable' }
+    assert { tokens.first[0].name == 'Name.Variable' }
   end
 
   it 'parses /etc/bash.bashrc' do
-    source = File.read('/etc/bash.bashrc')
-    tokens = subject.get_tokens(source)
-    assert { tokens } # TODO: make this stricter
+    assert_no_errors File.read('/etc/bash.bashrc')
   end
 
   it 'parses case statements correctly' do

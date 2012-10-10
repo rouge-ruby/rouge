@@ -1,5 +1,7 @@
 module Rouge
   module Lexers
+    # A lexer for the Haml templating system for Ruby.
+    # @see http://haml.info
     class Haml < RegexLexer
       tag 'haml'
       aliases 'HAML'
@@ -11,9 +13,10 @@ module Rouge
         return 0.1 if text.start_with? '!!!'
       end
 
-      # option :filters is a hash of filter name to lexer of how
-      # various filters should be highlighted.  By default, :javascript
-      # and :stylesheet are supported.
+      # @option opts :filters
+      #   A hash of filter name to lexer of how various filters should be
+      #   highlighted.  By default, :javascript, :css, :ruby, and :erb
+      #   are supported.
       def initialize(opts={})
         (opts.delete(:filters) || {}).each do |name, lexer|
           unless lexer.respond_to? :lex
@@ -41,10 +44,10 @@ module Rouge
           'css' => CSS.new(options),
           'ruby' => ruby,
           'erb' => ERB.new(options),
+          'markdown' => Markdown.new(options),
           # TODO
           # 'sass' => Sass.new(options),
           # 'textile' => Textile.new(options),
-          # 'markdown' => Markdown.new(options),
           # 'maruku' => Maruku.new(options),
         }
       end

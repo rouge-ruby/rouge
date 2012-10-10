@@ -123,7 +123,7 @@ module Rouge
       # indented line in the block context
       state :block_line do
         # line end
-          rule /[ ]*(?=#|$)/, 'Text', :pop!
+        rule /[ ]*(?=#|$)/, 'Text', :pop!
         rule /[ ]+/, 'Text'
         # tags, anchors, and aliases
         mixin :descriptors

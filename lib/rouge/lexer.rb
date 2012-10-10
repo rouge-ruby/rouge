@@ -4,6 +4,10 @@ require 'strscan'
 module Rouge
   class Lexer
     class << self
+      # Lexes `stream` with the given options.  The lex is delegated to a
+      # new instance.
+      #
+      # @see #lex
       def lex(stream, opts={}, &b)
         new(opts).lex(stream, &b)
       end
@@ -14,10 +18,23 @@ module Rouge
         @default_options
       end
 
+      # Given a string, return the correct lexer class.
       def find(name)
         registry[name.to_s]
       end
 
+      # Guess which lexer to use based on a hash of info.
+      #
+      # @option info :mimetype
+      #   A mimetype to guess by
+      # @option info :filename
+      #   A filename to guess by
+      # @option info :source
+      #   The source itself, which, if guessing by mimetype or filename
+      #   fails, will be searched for shebangs, <!DOCTYPE ...> tags, and
+      #   other hints.
+      #
+      # @see Lexer.analyze_text
       def guess(info={})
         by_mimetype = guess_by_mimetype(info[:mimetype]) if info[:mimetype]
         return by_mimetype if by_mimetype
@@ -69,6 +86,16 @@ module Rouge
         registry[name.to_s] = lexer
       end
 
+      # Used to specify or get the canonical name of this lexer class.
+      #
+      # @example
+      #   class MyLexer < Lexer
+      #     tag 'foo'
+      #   end
+      #
+      #   MyLexer.tag # => 'foo'
+      #
+      #   Lexer.find('foo') # => MyLexer
       def tag(t=nil)
         return @tag if t.nil?
 
@@ -76,14 +103,35 @@ module Rouge
         aliases @tag
       end
 
+      # Used to specify alternate names this lexer class may be found by.
+      #
+      # @example
+      #   class Erb < Lexer
+      #     tag 'erb'
+      #     aliases 'eruby', 'rhtml'
+      #   end
+      #
+      #   Lexer.find('eruby') # => Erb
       def aliases(*args)
         args.each { |arg| Lexer.register(arg, self) }
       end
 
+      # Specify a list of filename globs associated with this lexer
+      #
+      # @example
+      #   class Ruby < Lexer
+      #     filenames '*.rb', '*.ruby', 'Gemfile', 'Rakefile'
+      #   end
       def filenames(*fnames)
         (@filenames ||= []).concat(fnames)
       end
 
+      # Specify a list of mimetypes associated with this lexer.
+      #
+      # @example
+      #   class Html < Lexer
+      #     mimetypes 'text/html', 'application/xhtml+xml'
+      #   end
       def mimetypes(*mts)
         (@mimetypes ||= []).concat(mts)
       end
@@ -114,14 +162,28 @@ module Rouge
       end
     end
 
+    # Leave a debug message if the `:debug` option is set.  The message
+    # is given as a block because some debug messages contain calculated
+    # information that is unnecessary for lexing in the real world.
+    #
+    # @example
+    #   debug { "hello, world!" }
     def debug(&b)
       puts(b.call) if option :debug
     end
 
+    # @abstract
+    #
+    # Called after each lex is finished.  The default implementation
+    # is a noop.
     def reset!
-      # noop, called after each lex is finished
     end
 
+    # Given a string, yield [token, chunk] pairs.  If no block is given,
+    # an enumerator is returned.
+    #
+    # @option opts :continue
+    #   Continue the lex from the previous state (i.e. don't call #reset!)
     def lex(string, opts={}, &b)
       return enum_for(:lex, string) unless block_given?
 
@@ -145,13 +207,26 @@ module Rouge
       b.call(last_token, last_val) if last_token
     end
 
+    # @abstract
+    #
+    # Yield [token, chunk] pairs, given a prepared input stream.  This
+    # must be implemented.
+    #
+    # @param [StringScanner] stream
+    #   the stream
     def stream_tokens(stream, &b)
       raise 'abstract'
     end
 
-    # return a number between 0 and 1 indicating the
-    # likelihood that the text given should be lexed
-    # with this lexer.
+    # @abstract
+    #
+    # return a number between 0 and 1 indicating the likelihood that
+    # the text given should be lexed with this lexer.  The default
+    # implementation returns 0.
+    #
+    # @param [TextAnalyzer] text
+    #   the text to be analyzed, with a couple of handy methods on it,
+    #   like {TextAnalyzer#shebang?} and {TextAnalyzer#doctype?}
     def self.analyze_text(text)
       0
     end
@@ -241,6 +316,10 @@ module Rouge
       @start_procs ||= InheritableList.new(superclass.start_procs)
     end
 
+    # Specify an action to be run every fresh lex.
+    #
+    # @example
+    #   start { puts "I'm lexing a new string!" }
     def self.start(&b)
       start_procs << b
     end
@@ -309,6 +388,7 @@ module Rouge
       end
     end
 
+    # @private
     def stream_without_postprocessing(stream, &b)
       until stream.eos?
         debug { "lexer: #{self.class.tag}" }

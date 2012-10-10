@@ -12,3 +12,6 @@ gem 'redcarpet'
 
 # for visual tests
 gem 'sinatra'
+
+# docs
+gem 'yard'

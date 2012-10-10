@@ -3,3 +3,7 @@ Gemfile.lock
 
 # build artifacts
 *.gem
+
+# docs
+/.yardoc
+/doc

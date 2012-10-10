@@ -6,6 +6,20 @@ task :spec do
   sh "ruby -I./lib -r ./spec/spec_helper #{switch_spec_files} -e Minitest::Unit.autorun"
 end
 
+task :doc do
+  sh 'yard'
+end
+
+namespace :doc do
+  task :server do
+    sh 'yard server --reload'
+  end
+
+  task :clean do
+    sh 'rm -rf ./doc/ ./.yardoc/'
+  end
+end
+
 def php_references(&b)
   return enum_for :php_references unless block_given?
 

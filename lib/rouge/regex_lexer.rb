@@ -2,12 +2,10 @@ module Rouge
   class RegexLexer < Lexer
     class Rule
       attr_reader :callback
-      attr_reader :next_state
       attr_reader :re
-      def initialize(re, callback, next_state)
+      def initialize(re, callback)
         @re = re
         @callback = callback
-        @next_state = next_state
       end
 
       def inspect
@@ -66,7 +64,7 @@ module Rouge
           end
         end
 
-        rules << Rule.new(re, callback, next_state)
+        rules << Rule.new(re, callback)
       end
 
       def mixin(lexer_name)

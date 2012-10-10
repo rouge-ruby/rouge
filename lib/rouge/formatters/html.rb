@@ -3,13 +3,17 @@ require 'cgi'
 
 module Rouge
   module Formatters
+    # Transforms a token stream into HTML output.
     class HTML < Formatter
       tag 'html'
 
+      # @option opts :css_class
+      # A css class to be used for the generated <pre> tag.
       def initialize(opts={})
         @css_class = opts[:css_class] || 'highlight'
       end
 
+      # @yield the html output.
       def stream(tokens, &b)
         yield "<pre class=#{@css_class.inspect}>"
         tokens.each do |tok, val|

@@ -96,7 +96,7 @@ module Rouge
 
     # -*- instance methods -*- #
 
-    def initialize(opts={}, &b)
+    def initialize(opts={})
       options(opts)
     end
 
@@ -116,10 +116,6 @@ module Rouge
 
     def debug(&b)
       puts(b.call) if option :debug
-    end
-
-    def get_tokens(stream)
-      lex(stream).to_a
     end
 
     def reset!

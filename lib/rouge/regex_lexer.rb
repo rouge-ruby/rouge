@@ -102,10 +102,6 @@ module Rouge
       state.load!
     end
 
-    def self.[](name)
-      get_state(name)
-    end
-
     def get_state(state_name)
       self.class.get_state(state_name)
     end

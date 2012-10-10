@@ -20,7 +20,6 @@ describe Rouge::Lexers::Shell do
     sh
   end
 
-  # pending
   it 'parses case statement with globs correctly' do
     assert_no_errors <<-sh
       case $foo in

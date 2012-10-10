@@ -115,7 +115,7 @@ module Rouge
     end
 
     def reset!
-      @scan_state = nil
+      @stack = nil
 
       self.class.start_procs.each do |pr|
         instance_eval(&pr)

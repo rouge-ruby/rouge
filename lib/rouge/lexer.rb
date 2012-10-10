@@ -2,6 +2,8 @@
 require 'strscan'
 
 module Rouge
+  # @abstract
+  # A lexer transforms text into a stream of [token, chunk] pairs.
   class Lexer
     class << self
       # Lexes `stream` with the given options.  The lex is delegated to a
@@ -82,6 +84,7 @@ module Rouge
         best_match
       end
 
+      # @private
       def register(name, lexer)
         registry[name.to_s] = lexer
       end
@@ -148,12 +151,14 @@ module Rouge
       options(opts)
     end
 
+    # get and/or specify the options for this lexer.
     def options(o={})
       (@options ||= {}).merge!(o)
 
       self.class.default_options.merge(@options)
     end
 
+    # get or specify one option for this lexer
     def option(k, v=:absent)
       if v == :absent
         options[k]

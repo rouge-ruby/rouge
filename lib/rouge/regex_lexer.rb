@@ -127,12 +127,8 @@ module Rouge
         _, processor = self.class.postprocesses.find { |t, _| t == tok }
 
         if processor
-          # TODO: DRY this up with run_callback
-          Enumerator.new do |y|
-            @output_stream = y
+          with_output_stream(b) do
             instance_exec(tok, val, &processor)
-          end.each do |newtok, newval|
-            yield Token[newtok], newval
           end
         else
           yield tok, val
@@ -175,22 +171,17 @@ module Rouge
         scan(stream, rule.re) do
           debug { "    got #{stream[0].inspect}" }
 
-          run_callback(stream, &rule.callback).each do |tok, res|
-            debug { "    yielding #{tok.to_s.inspect}, #{res.inspect}" }
-            b.call(Token[tok], res)
-          end
+          run_callback(stream, rule.callback, &b)
         end
       end
     end
 
-    def run_callback(stream, &callback)
-      Enumerator.new do |y|
-        @output_stream = y
+    def run_callback(stream, callback, &output_stream)
+      with_output_stream(output_stream) do
         @group_count = 0
         @last_match = stream
         instance_exec(stream, &callback)
         @last_match = nil
-        @output_stream = nil
       end
     end
 
@@ -283,5 +274,17 @@ module Rouge
       state_name.to_s == state.name
     end
 
+  private
+    def with_output_stream(output_stream, &b)
+      @output_stream = Yielder.new do |tok, val|
+        debug { "    yielding #{tok.to_s.inspect}, #{val.inspect}" }
+        output_stream.call(Token[tok], val)
+      end
+
+      yield
+
+    ensure
+      @output_stream = nil
+    end
   end
 end

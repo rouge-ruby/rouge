@@ -76,12 +76,14 @@ module Rouge
         end
       end
 
-      def get_style(token)
+      def get_own_style(token)
         token.ancestors do |anc|
           return styles[anc.name] if styles[anc.name]
         end
+      end
 
-        styles['Text']
+      def get_style(token)
+        get_own_style(token) || style['Text']
       end
 
       def name(n=nil)

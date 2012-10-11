@@ -146,12 +146,15 @@ module Rouge
     # private
       def escape_sequence(token)
         @escape_sequences ||= {}
-        @escape_sequences[token.name] ||= begin
-          esc = EscapeSequence.new(theme.get_style(token))
-          # don't highlight text backgrounds
-          esc.style.delete(:bg) if token.name == 'Text'
-          esc
-        end
+        @escape_sequences[token.name] ||=
+          EscapeSequence.new(theme.get_own_style(token) || text_style)
+      end
+
+      def text_style
+        style = theme.get_style(Token['Text'])
+        # don't highlight text backgrounds
+        style.delete :bg
+        style
       end
     end
   end

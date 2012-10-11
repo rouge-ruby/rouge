@@ -17,7 +17,7 @@ module Rouge
         exit 0
       end
 
-      unless %w(highlight style).include?(argv.first)
+      unless %w(highlight style --help -h help).include?(argv.first)
         argv.unshift 'highlight'
       end
 

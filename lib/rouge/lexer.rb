@@ -3,7 +3,7 @@ require 'strscan'
 
 module Rouge
   # @abstract
-  # A lexer transforms text into a stream of [token, chunk] pairs.
+  # A lexer transforms text into a stream of `[token, chunk]` pairs.
   class Lexer
     class << self
       # Lexes `stream` with the given options.  The lex is delegated to a
@@ -119,7 +119,7 @@ module Rouge
         args.each { |arg| Lexer.register(arg, self) }
       end
 
-      # Specify a list of filename globs associated with this lexer
+      # Specify a list of filename globs associated with this lexer.
       #
       # @example
       #   class Ruby < Lexer
@@ -147,6 +147,15 @@ module Rouge
 
     # -*- instance methods -*- #
 
+    # Create a new lexer with the given options.  Individual lexers may
+    # specify extra options.  The only current globally accepted option
+    # is `:debug`.
+    #
+    # @option opts :debug
+    #   Prints debug information to stdout.  The particular info depends
+    #   on the lexer in question.  In regex lexers, this will log the
+    #   state stack at the beginning of each step, along with each regex
+    #   tried and each stream consumed.  Try it, it's pretty useful.
     def initialize(opts={})
       options(opts)
     end
@@ -214,7 +223,7 @@ module Rouge
 
     # @abstract
     #
-    # Yield [token, chunk] pairs, given a prepared input stream.  This
+    # Yield `[token, chunk]` pairs, given a prepared input stream.  This
     # must be implemented.
     #
     # @param [StringScanner] stream
@@ -225,7 +234,7 @@ module Rouge
 
     # @abstract
     #
-    # return a number between 0 and 1 indicating the likelihood that
+    # Return a number between 0 and 1 indicating the likelihood that
     # the text given should be lexed with this lexer.  The default
     # implementation returns 0.
     #

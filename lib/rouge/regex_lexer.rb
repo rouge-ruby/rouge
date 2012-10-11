@@ -56,7 +56,7 @@ module Rouge
       #
       # @param [Regexp] re
       #   a regular expression for this rule to test.
-      # @param [String] token
+      # @param [String] tok
       #   the token type to yield if `re` matches.
       # @param [#to_s] next_state
       #   (optional) a state to push onto the stack if `re` matches.
@@ -187,11 +187,11 @@ module Rouge
     # The process for lexing works as follows, until the stream is empty:
     #
     # 1. We look at the state on top of the stack (which by default is
-    #    [:root]).
+    #    `[:root]`).
     # 2. Each rule in that state is tried until one is successful.  If one
     #    is found, that rule's callback is evaluated - which may yield
     #    tokens and manipulate the state stack.  Otherwise, one character
-    #    is consumed with an 'Error' token, and we continue at (1.)
+    #    is consumed with an `'Error'` token, and we continue at (1.)
     #
     # @see #step #step (where (2.) is implemented)
     def stream_tokens(stream, &b)
@@ -265,8 +265,7 @@ module Rouge
     end
 
     # The number of successive scans permitted without consuming
-    # the input stream.  If this is exceeded, one character is
-    # consumed with the 'Error' token, and the lex is continued.
+    # the input stream.  If this is exceeded, the match fails.
     MAX_NULL_SCANS = 5
 
     # @private
@@ -323,8 +322,8 @@ module Rouge
     end
 
     # Delegate the lex to another lexer.  The #lex method will be called
-    # with :continue set to true, so that #reset! will not be called.  In
-    # this way, a single lexer can be repeatedly delegated to while
+    # with `:continue` set to true, so that #reset! will not be called.
+    # In this way, a single lexer can be repeatedly delegated to while
     # maintaining its own internal state stack.
     #
     # @param [#lex] lexer
@@ -367,7 +366,7 @@ module Rouge
       times.times { stack.pop }
     end
 
-    # reset the stack back to [:root].
+    # reset the stack back to `[:root]`.
     def reset_stack
       debug { '    resetting stack' }
       stack.clear

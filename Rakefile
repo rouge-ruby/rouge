@@ -8,12 +8,12 @@ task :spec do
 end
 
 task :doc do
-  sh 'yard'
+  sh 'bundle exec yard'
 end
 
 namespace :doc do
   task :server do
-    sh 'yard server --reload'
+    sh 'bundle exec yard server --reload'
   end
 
   task :clean do

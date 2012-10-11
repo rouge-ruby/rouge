@@ -15,3 +15,4 @@ gem 'sinatra'
 
 # docs
 gem 'yard'
+gem 'github-markup'

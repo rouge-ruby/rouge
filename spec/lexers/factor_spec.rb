@@ -1,4 +1,4 @@
-describe Rouge::Lexers::Ruby do
+describe Rouge::Lexers::Factor do
   let(:subject) { Rouge::Lexers::Factor.new }
 
   describe 'guessing' do

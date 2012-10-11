@@ -147,7 +147,13 @@ module Rouge
       def escape_sequence(token)
         @escape_sequences ||= {}
         @escape_sequences[token.name] ||=
-          EscapeSequence.new(theme.get_own_style(token) || text_style)
+          EscapeSequence.new(get_style(token))
+      end
+
+      def get_style(token)
+        return text_style if token.name == 'Text'
+
+        theme.get_own_style(token) || text_style
       end
 
       def text_style

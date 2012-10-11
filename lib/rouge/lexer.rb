@@ -75,7 +75,7 @@ module Rouge
         fname = File.basename(fname)
         registry.values.detect do |lexer|
           lexer.filenames.any? do |pattern|
-            File.fnmatch?(pattern, fname)
+            File.fnmatch?(pattern, fname, File::FNM_DOTMATCH)
           end
         end
       end

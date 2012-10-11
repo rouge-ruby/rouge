@@ -57,6 +57,7 @@ module Rouge
         rule /__(?:#{__reserved.join('|')})\b/, 'Keyword.Reserved'
         rule /(?:true|false|NULL)\b/, 'Name.Builtin'
         rule id, 'Name'
+        rule /\s+/m, 'Text'
       end
 
       state :case do

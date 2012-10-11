@@ -105,7 +105,7 @@ module Rouge
       # so I'd think this wouldn't be too bad, but for large documents this
       # could mean doing two full lexes.
       def self.analyze_text(text)
-        text.lexes_cleanly?(self) ? 0.8 : 0
+        return 0.8 if text =~ /\A\s*{/m && text.lexes_cleanly?(self)
       end
 
       state :root do

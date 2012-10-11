@@ -145,8 +145,8 @@ module Rouge
 
         # a tag in the form '!', '!suffix' or '!handle!suffix'
         rule %r(
-          !(?:[\w-]*) #handle
-          (?:![\w;/?:@&=+$,.!~*\'()\[\]%-]+)? #suffix
+          (?:![\w-]+)? # handle
+          !(?:[\w;/?:@&=+$,.!~*\'()\[\]%-]*) # suffix
         )x, 'Keyword.Type'
 
         # an anchor

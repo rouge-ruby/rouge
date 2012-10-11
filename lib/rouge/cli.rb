@@ -30,7 +30,7 @@ module Rouge
       :desc => ('Which lexer to use.  If not provided, rougify will try to ' +
                 'guess based on --mimetype, the filename, and the file ' +
                 'contents.')
-    option :formatter, :aliases => '-f', :default => 'html',
+    option :formatter, :aliases => '-f', :default => 'terminal256',
       :desc => ('Which formatter to use.')
     option :mimetype, :aliases => '-m',
       :desc => ('a mimetype that Rouge will use to guess the correct lexer. ' +

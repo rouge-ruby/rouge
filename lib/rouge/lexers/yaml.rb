@@ -2,8 +2,14 @@ module Rouge
   module Lexers
     class YAML < RegexLexer
       desc "Yaml Ain't Markup Language (yaml.org)"
+      mimetypes 'text/x-yaml'
       tag 'yaml'
       aliases 'yml'
+
+      def self.analyze_text(text)
+        # look for the %YAML directive
+        return 1 if text =~ /\A\s*%YAML/m
+      end
 
       filenames '*.yaml', '*.yml'
       # NB: Tabs are forbidden in YAML, which is why you see things

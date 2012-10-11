@@ -81,6 +81,8 @@ module Rouge
       end
 
       def guess_by_source(source)
+        assert_utf8!(source)
+
         source = TextAnalyzer.new(source)
 
         best_result = 0
@@ -155,6 +157,13 @@ module Rouge
         (@mimetypes ||= []).concat(mts)
       end
 
+      # @private
+      def assert_utf8!(str)
+        return if str.encoding.name == 'UTF-8'
+        raise EncodingError.new("Bad encoding: #{str.encoding.name}. " +
+                                "Please convert your string to UTF-8.")
+      end
+
     private
       def registry
         @registry ||= {}
@@ -216,6 +225,8 @@ module Rouge
     #   Continue the lex from the previous state (i.e. don't call #reset!)
     def lex(string, opts={}, &b)
       return enum_for(:lex, string) unless block_given?
+
+      Lexer.assert_utf8!(string)
 
       reset! unless opts[:continue]
 

@@ -42,6 +42,10 @@ end
 
 If you have `:fenced_code_blocks` enabled, you can specify languages, and even options with CGI syntax, like `php?start_inline=1`, or `erb?parent=javascript`.
 
+## Encodings
+
+Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a different encoding, please convert it to UTF-8 first.
+
 ## Contributing
 
 ### Run the tests

@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Haskell < RegexLexer
+      desc "The Haskell programming language (haskell.org)"
+
       tag 'haskell'
       aliases 'hs'
       filenames '*.hs'

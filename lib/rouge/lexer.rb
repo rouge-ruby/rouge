@@ -25,6 +25,20 @@ module Rouge
         registry[name.to_s]
       end
 
+      # Specify or get this lexer's description.
+      def desc(arg=:absent)
+        if arg == :absent
+          @desc
+        else
+          @desc = arg
+        end
+      end
+
+      # @return a list of all lexers.
+      def all
+        registry.values.uniq
+      end
+
       # Guess which lexer to use based on a hash of info.
       #
       # @option info :mimetype
@@ -103,7 +117,7 @@ module Rouge
         return @tag if t.nil?
 
         @tag = t.to_s
-        aliases @tag
+        Lexer.register(@tag, self)
       end
 
       # Used to specify alternate names this lexer class may be found by.
@@ -116,7 +130,9 @@ module Rouge
       #
       #   Lexer.find('eruby') # => Erb
       def aliases(*args)
+        args.map!(&:to_s)
         args.each { |arg| Lexer.register(arg, self) }
+        (@aliases ||= []).concat(args)
       end
 
       # Specify a list of filename globs associated with this lexer.

@@ -1,6 +1,7 @@
 module Rouge
   module Lexers
     class Make < RegexLexer
+      desc "Makefile syntax"
       tag 'make'
       aliases 'makefile', 'mf', 'gnumake', 'bsdmake'
       filenames '*.make', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile'

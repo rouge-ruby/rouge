@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Scheme < RegexLexer
+      desc "The Scheme variant of Lisp"
+
       tag 'scheme'
       filenames '*.scm', '*.ss', '*.rkt'
       mimetypes 'text/x-scheme', 'application/x-scheme'

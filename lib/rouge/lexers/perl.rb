@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Perl < RegexLexer
+      desc "The Perl scripting language (perl.org)"
+
       tag 'perl'
       aliases 'pl'
 

@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Text < Lexer
+      desc "A boring lexer that doesn't highlight anything"
+
       tag 'text'
       filenames '*.txt'
       mimetypes 'text/plain'

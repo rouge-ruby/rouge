@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class CSS < RegexLexer
+      desc "Cascading Style Sheets, used to style web pages"
+
       tag 'css'
       filenames '*.css'
       mimetypes 'text/css'

@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Javascript < RegexLexer
+      desc "JavaScript, the browser scripting language"
+
       tag 'javascript'
       aliases 'js'
       filenames '*.js'
@@ -94,6 +96,7 @@ module Rouge
     end
 
     class JSON < RegexLexer
+      desc "JavaScript Object Notation (json.org)"
       tag 'json'
       filenames '*.json'
       mimetypes 'application/json'

@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Java < RegexLexer
+      desc "The Java programming language (java.com)"
+
       tag 'java'
       filenames '*.java'
       mimetypes 'text/x-java'

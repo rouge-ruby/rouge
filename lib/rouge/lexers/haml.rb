@@ -3,6 +3,8 @@ module Rouge
     # A lexer for the Haml templating system for Ruby.
     # @see http://haml.info
     class Haml < RegexLexer
+      desc "The Haml templating system for Ruby (haml.info)"
+
       tag 'haml'
       aliases 'HAML'
 

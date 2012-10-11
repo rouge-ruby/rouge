@@ -5,6 +5,8 @@ module Rouge
       filenames '*.c', '*.h', '*.idc'
       mimetypes 'text/x-chdr', 'text/x-csrc'
 
+      desc "The C programming language"
+
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/

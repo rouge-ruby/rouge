@@ -17,7 +17,7 @@ module Rouge
         exit 0
       end
 
-      unless %w(highlight style --help -h help).include?(argv.first)
+      unless %w(highlight style list --help -h help).include?(argv.first)
         argv.unshift 'highlight'
       end
 
@@ -69,6 +69,22 @@ module Rouge
       raise "unknown theme: #{theme_name}" unless theme
 
       puts theme.new(options).render
+    end
+
+    desc 'list', 'list the available lexers, formatters, and styles'
+    def list
+      puts "== Available Lexers =="
+      all_lexers = Lexer.all
+      max_len = all_lexers.map { |l| l.tag.size }.max
+
+      Lexer.all.each do |lexer|
+        desc = "#{lexer.desc}"
+        if lexer.aliases.any?
+          desc << " [aliases: #{lexer.aliases.join(',')}]"
+        end
+        puts "%s: %s" % [lexer.tag, desc]
+        puts
+      end
     end
 
   private

@@ -4,6 +4,7 @@ require 'set'
 module Rouge
   module Lexers
     class CommonLisp < RegexLexer
+      desc "The Common Lisp variant of Lisp (common-lisp.net)"
       tag 'common_lisp'
       aliases 'cl', 'common-lisp'
 

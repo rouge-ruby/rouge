@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Cpp < RegexLexer
+      desc "The C++ programming language"
+
       tag 'cpp'
       aliases 'c++'
       # the many varied filenames of c++ source files...

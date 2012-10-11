@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class ERB < TemplateLexer
+      desc "Embedded ruby template files"
+
       tag 'erb'
       aliases 'eruby', 'rhtml'
 

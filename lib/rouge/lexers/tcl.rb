@@ -1,6 +1,7 @@
 module Rouge
   module Lexers
     class TCL < RegexLexer
+      desc "The Tool Command Language (tcl.tk)"
       tag 'tcl'
       filenames '*.tcl'
       mimetypes 'text/x-tcl', 'text/x-script.tcl', 'application/x-tcl'

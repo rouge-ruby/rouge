@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Shell < RegexLexer
+      desc "Various shell languages, including sh and bash"
+
       tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
       filenames '*.sh', '*.bash', '*.zsh', '*.ksh'

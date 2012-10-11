@@ -1,6 +1,7 @@
 module Rouge
   module Lexers
     class Factor < RegexLexer
+      desc "Factor, the practical stack language (factorcode.org)"
       tag 'factor'
       filenames '*.factor'
       mimetypes 'text/x-factor'

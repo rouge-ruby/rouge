@@ -1,6 +1,7 @@
 module Rouge
   module Lexers
     class Python < RegexLexer
+      desc "The Python programming language (python.org)"
       tag 'python'
       aliases 'py'
       filenames '*.py', '*.pyw', '*.sc', 'SConstruct', 'SConscript', '*.tac'

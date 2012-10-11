@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Markdown < RegexLexer
+      desc "Markdown, a light-weight markup language for authors"
+
       tag 'markdown'
       aliases 'md', 'mkd'
       filenames '*.markdown', '*.md', '*.mkd'

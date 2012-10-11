@@ -1,6 +1,7 @@
 module Rouge
   module Lexers
     class YAML < RegexLexer
+      desc "Yaml Ain't Markup Language (yaml.org)"
       tag 'yaml'
       aliases 'yml'
 

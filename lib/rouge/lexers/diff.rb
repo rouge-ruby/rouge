@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Diff < RegexLexer
+      desc "Lexes unified diffs or patches"
+
       tag 'diff'
       aliases 'patch', 'udiff'
       filenames '*.diff', '*.patch'

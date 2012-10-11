@@ -43,13 +43,23 @@ def render_keywords(keywords, &b)
   yield 'end'
 end
 
-task :vimkeywords do
+def vim_keywords
   syntax_file = ENV['syntax_file'] || '/usr/share/vim/vimcurrent/syntax/vim.vim'
-  output = nil
+  out = nil
 
   File.open(syntax_file, 'r') do |f|
-    output = render_keywords(get_keywords(f))
+    out = render_keywords(get_keywords(f))
   end
 
-  File.open('./lib/rouge/lexers/viml/keywords.rb', 'w') { |f| f << output }
+  out
+end
+
+namespace :builtins do
+  task :vim do
+    keywords = vim_keywords
+
+    File.open('./lib/rouge/lexers/viml/keywords.rb', 'w') do |f|
+      f << keywords
+    end
+  end
 end

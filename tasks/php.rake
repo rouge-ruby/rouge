@@ -44,10 +44,12 @@ def php_builtins_source
   yield   "end"
 end
 
-task :phpbuiltins do
-  File.open('lib/rouge/lexers/php/builtins.rb', 'w') do |f|
-    php_builtins_source do |line|
-      f.puts line
+namespace :builtins do
+  task :php do
+    File.open('lib/rouge/lexers/php/builtins.rb', 'w') do |f|
+      php_builtins_source do |line|
+        f.puts line
+      end
     end
   end
 end

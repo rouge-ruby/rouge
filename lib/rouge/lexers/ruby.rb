@@ -142,7 +142,7 @@ module Rouge
           (module)
           (\s+)
           ([a-zA-Z_][a-zA-Z0-9_]*(::[a-zA-Z_][a-zA-Z0-9_]*)*)
-        ) do
+        )x do
           group 'Keyword'
           group 'Text'
           group 'Name.Namespace'

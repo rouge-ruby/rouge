@@ -8,6 +8,11 @@ module Rouge
 
       mimetypes 'text/x-vim'
 
+      def self.keywords
+        load Pathname.new(__FILE__).dirname.join('viml/keywords.rb')
+        self.keywords
+      end
+
       state :root do
         rule /^(\s*)(".*?)$/ do
           group 'Text'; group 'Comment'
@@ -42,7 +47,6 @@ module Rouge
       end
 
       postprocess 'Postprocess.Name' do |tok, name|
-        require Pathname.new(__FILE__).dirname.join('viml/keywords')
         keywords = self.class.keywords
 
         if mapping_contains?(keywords[:command], name)

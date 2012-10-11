@@ -18,12 +18,15 @@ module Rouge
         super(opts)
       end
 
+      def self.builtins
+        load Pathname.new(__FILE__).dirname.join('php/builtins.rb')
+        self.builtins
+      end
+
       def builtins
         return [] unless @funcnamehighlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          require Pathname.new(__FILE__).dirname.join('php/builtins.rb')
-
           self.class.builtins.each do |mod, fns|
             next if @disabledmodules.include? mod
             builtins.merge(fns)

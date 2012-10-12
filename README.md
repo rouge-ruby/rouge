@@ -34,7 +34,7 @@ Rouge aims to be simple to extend, and to be a drop-in replacement pygments, wit
 ## You can even use it with Redcarpet
 
 ``` ruby
-require 'rouge/redcarpet'
+require 'rouge/plugins/redcarpet'
 class HTML < Redcarpet::Render::HTML
   include Rouge::Plugins::Redcarpet # yep, that's it.
 end

@@ -23,7 +23,7 @@ module Rouge
 
         lexer_class = case name
         when 'guess', nil
-          lexer = Lexer.guess(:source => code, :mimetype => opts[:mimetype])
+          Lexer.guess(:source => code, :mimetype => opts[:mimetype])
         when String
           Lexer.find(name)
         end || Lexers::Text

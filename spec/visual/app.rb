@@ -24,7 +24,9 @@ class VisualTestApp < Sinatra::Application
     @sample = File.read(SAMPLES.join(lexer_class.tag))
 
     lexer_options = {}
-    lexer_options[:debug] = true if params[:debug]
+    params.each do |k, v|
+      lexer_options[k.to_sym] = v
+    end
 
     formatter = Rouge::Formatters::HTML.new
     @lexer = lexer_class.new(lexer_options)

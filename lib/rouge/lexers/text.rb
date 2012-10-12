@@ -7,8 +7,14 @@ module Rouge
       filenames '*.txt'
       mimetypes 'text/plain'
 
+      default_options :token => 'Text'
+
+      def token
+        @token ||= Token[option :token]
+      end
+
       def stream_tokens(stream, &b)
-        yield Token['Text'], stream.string
+        yield self.token, stream.string
       end
     end
   end

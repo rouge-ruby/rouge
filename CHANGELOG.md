@@ -1,3 +1,17 @@
+## version 0.2.2: 2012-10-13
+
+  * In terminal256, stop highlighting backgrounds of text-like tokens
+  * Fix a bug which was breaking guessing with filenames beginning with .
+  * Fix the require path for redcarpet in the README (@JustinCampbell)
+  * New lexers: clojure, groovy, sass, scss
+  * YAML: detect files with the %YAML directive
+  * Fail fast for non-UTF-8 strings
+  * Formatter#render deprecated, renamed to Formatter#format.
+    To be removed in v0.3.
+  * Lexer#tag delegates to the class
+  * Better keyword/builtin highlighting for CSS
+  * Add the `:token` option to the text lexer
+
 ## version 0.2.1: 2012-10-11
 
   * Began the changelog

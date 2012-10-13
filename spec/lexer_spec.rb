@@ -22,7 +22,7 @@ describe Rouge::Lexer do
     assert { result == [[token_A, 'a'], [token_B, 'b']] * 2 }
   end
 
-  it 'makes sublexers' do
+  it 'pushes and pops states' do
     a_lexer = Class.new(Rouge::RegexLexer) do
       state :brace do
         rule /b/, 'B'

@@ -266,6 +266,7 @@ module Rouge
 
       reset! unless opts[:continue]
 
+      # consolidate consecutive tokens of the same type
       last_token = nil
       last_val = nil
       stream_tokens(StringScanner.new(string)) do |tok, val|

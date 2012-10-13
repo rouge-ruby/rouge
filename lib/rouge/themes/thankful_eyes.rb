@@ -59,6 +59,7 @@ module Rouge
       style 'Name.Entity', :fg => '#999999', :bold => true
       style 'Text.Whitespace', :fg => '#BBBBBB'
       style 'Name.Function',
+            'Name.Property',
             'Name.Attribute', :fg => :chilly
       style 'Name.Variable', :fg => :chilly, :bold => true
     end

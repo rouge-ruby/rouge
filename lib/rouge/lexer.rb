@@ -250,6 +250,11 @@ module Rouge
       b.call(last_token, last_val) if last_token
     end
 
+    # delegated to {Lexer.tag}
+    def tag
+      self.class.tag
+    end
+
     # @abstract
     #
     # Yield `[token, chunk]` pairs, given a prepared input stream.  This

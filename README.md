@@ -32,6 +32,7 @@ Rouge aims to be simple to extend, and to be a drop-in replacement pygments, wit
 ### Advantages to CodeRay
 * The HTML output from Rouge is fully compatible with stylesheets designed for pygments.
 * The lexers are implemented with a dedicated DSL, rather than being hand-coded.
+* Rouge supports every language CodeRay does except for Pascal/Delphi (pull requests happily accepted!), and more.
 
 ## You can even use it with Redcarpet
 

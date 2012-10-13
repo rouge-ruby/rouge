@@ -1,5 +1,8 @@
 require 'rouge/plugins/redcarpet'
 describe Rouge::Plugins::Redcarpet do
+  # skip if redcarpet isn't loaded
+  next unless Object.const_defined? :Redcarpet
+
   let(:redcarpet) {
     Class.new(Redcarpet::Render::HTML) do
       include Rouge::Plugins::Redcarpet

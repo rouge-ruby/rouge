@@ -8,7 +8,8 @@ gem 'wrong', '~> 0.6.2'
 
 gem 'rake'
 
-gem 'redcarpet'
+# don't try to install redcarpet under jruby
+gem 'redcarpet', :platforms => :ruby
 
 # for visual tests
 gem 'sinatra'

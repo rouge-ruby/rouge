@@ -3,6 +3,8 @@ module Rouge
     # A lexer for the Haml templating system for Ruby.
     # @see http://haml.info
     class Haml < RegexLexer
+      include Indentation
+
       desc "The Haml templating system for Ruby (haml.info)"
 
       tag 'haml'
@@ -55,33 +57,6 @@ module Rouge
       end
 
       start { ruby.reset!; html.reset! }
-
-      # push a state for the next indented block
-      def starts_block(block_state)
-        @block_state = block_state
-        @block_indentation = @last_indentation || ''
-        debug { "    haml: starts_block #{block_state.inspect}" }
-        debug { "    haml: block_indentation: #{@block_indentation.inspect}" }
-      end
-
-      def indentation(indent_str)
-        debug { "    haml: indentation #{indent_str.inspect}" }
-        debug { "    haml: block_indentation: #{@block_indentation.inspect}" }
-        @last_indentation = indent_str
-
-        # if it's an indent and we know where to go next,
-        # push that state.  otherwise, push content and
-        # clear the block state.
-        if (@block_state &&
-            indent_str.start_with?(@block_indentation) &&
-            indent_str != @block_indentation
-        )
-          push @block_state
-        else
-          @block_state = @block_indentation = nil
-          push :content
-        end
-      end
 
       identifier = /[\w:-]+/
       ruby_var = /[a-z]\w*/

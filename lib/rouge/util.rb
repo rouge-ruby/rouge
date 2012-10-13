@@ -70,4 +70,40 @@ module Rouge
     end
     alias << push
   end
+
+  # shared methods for some indentation-sensitive lexers
+  module Indentation
+    def reset!
+      super
+      @block_state = @block_indentation = nil
+    end
+
+    # push a state for the next indented block
+    def starts_block(block_state)
+      @block_state = block_state
+      @block_indentation = @last_indentation || ''
+      debug { "    starts_block #{block_state.inspect}" }
+      debug { "    block_indentation: #{@block_indentation.inspect}" }
+    end
+
+    # handle a single indented line
+    def indentation(indent_str)
+      debug { "    indentation #{indent_str.inspect}" }
+      debug { "    block_indentation: #{@block_indentation.inspect}" }
+      @last_indentation = indent_str
+
+      # if it's an indent and we know where to go next,
+      # push that state.  otherwise, push content and
+      # clear the block state.
+      if (@block_state &&
+          indent_str.start_with?(@block_indentation) &&
+          indent_str != @block_indentation
+      )
+        push @block_state
+      else
+        @block_state = @block_indentation = nil
+        push :content
+      end
+    end
+  end
 end

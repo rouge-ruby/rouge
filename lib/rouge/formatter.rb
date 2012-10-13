@@ -18,8 +18,13 @@ module Rouge
     end
 
     # Format a token stream.
-    def render(tokens)
+    def format(tokens)
       enum_for(:stream, tokens).to_a.join
+    end
+
+    def render(tokens)
+      warn 'Formatter#render is deprecated, use #format instead.'
+      format(tokens)
     end
 
     # @abstract

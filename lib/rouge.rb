@@ -7,7 +7,7 @@ module Rouge
       lexer = Lexer.find(lexer) unless lexer.respond_to? :lex
       raise "unknown lexer #{lexer}" unless lexer
 
-      formatter.render(lexer.lex(text))
+      formatter.format(lexer.lex(text))
     end
   end
 end

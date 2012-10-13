@@ -25,6 +25,40 @@ module Rouge
         registry[name.to_s]
       end
 
+      # Find a lexer, with fancy shiny features.
+      #
+      # * The string you pass can include CGI-style options
+      #
+      #     Lexer.find_fancy('erb?parent=tex')
+      #
+      # * You can pass the special name 'guess' so we guess for you,
+      #   and you can pass a second argument of the code to guess by
+      #
+      #     Lexer.find_fancy('guess', "#!/bin/bash\necho Hello, world")
+      #
+      # This is used in the Redcarpet plugin as well as Rouge's own
+      # markdown lexer for highlighting internal code blocks.
+      #
+      def find_fancy(str, code=nil)
+        name, opts = str ? str.split('?', 2) : [nil, '']
+
+        # parse the options hash from a cgi-style string
+        opts = CGI.parse(opts || '').map do |k, vals|
+          [ k.to_sym, vals.empty? ? true : vals[0] ]
+        end
+
+        opts = Hash[opts]
+
+        lexer_class = case name
+        when 'guess', nil
+          self.guess(:source => code, :mimetype => opts[:mimetype])
+        when String
+          self.find(name)
+        end
+
+        lexer_class && lexer_class.new(opts)
+      end
+
       # Specify or get this lexer's description.
       def desc(arg=:absent)
         if arg == :absent

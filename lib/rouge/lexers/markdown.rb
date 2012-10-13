@@ -30,29 +30,13 @@ module Rouge
 
         # TODO: syntax highlight the code block, github style
         rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?)(\2)/m do |m|
-          sublexer, opts = m[3].strip.split('?', 2)
-
-          if sublexer
-            sublexer = Lexer.find(sublexer)
-
-            # parse the options hash from a cgi-style string
-            opts = CGI.parse(opts || '').map do |k, vals|
-              [ k.to_sym, vals.empty? ? true : vals[0] ]
-            end
-
-            opts = Hash[opts]
-
-            sublexer &&= sublexer.new(opts)
-          end
+          sublexer = Lexer.find_fancy(m[3].strip, m[4])
+          sublexer ||= Text.new(:token => 'Literal.String.Backtick')
 
           token 'Text', m[1]
           token 'Punctuation', m[2]
           token 'Name.Label', m[3]
-          if sublexer
-            delegate sublexer, m[4]
-          else
-            token 'Literal.String.Backtick', m[4]
-          end
+          delegate sublexer, m[4]
           token 'Punctuation', m[5]
         end
 

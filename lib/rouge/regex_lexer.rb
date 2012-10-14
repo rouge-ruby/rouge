@@ -196,7 +196,7 @@ module Rouge
     # @see #step #step (where (2.) is implemented)
     def stream_tokens(stream, &b)
       stream_without_postprocessing(stream) do |tok, val|
-        _, processor = self.class.postprocesses.find { |t, _| t == tok }
+        _, processor = self.class.postprocesses.find { |t, _| t === tok }
 
         if processor
           with_output_stream(b) do
@@ -385,6 +385,7 @@ module Rouge
 
   private
     def with_output_stream(output_stream, &b)
+      old_output_stream = @output_stream
       @output_stream = Yielder.new do |tok, val|
         debug { "    yielding #{tok.to_s.inspect}, #{val.inspect}" }
         output_stream.call(Token[tok], val)
@@ -393,7 +394,7 @@ module Rouge
       yield
 
     ensure
-      @output_stream = nil
+      @output_stream = old_output_stream
     end
   end
 end

@@ -45,6 +45,7 @@ load load_dir.join('rouge/lexers/php.rb')
 load load_dir.join('rouge/lexers/haml.rb')
 load load_dir.join('rouge/lexers/sass.rb')
 load load_dir.join('rouge/lexers/scss.rb')
+load load_dir.join('rouge/lexers/coffeescript.rb')
 
 load load_dir.join('rouge/lexers/erb.rb')
 

@@ -1,6 +1,8 @@
 module Rouge
   module Lexers
     class Smalltalk < RegexLexer
+      desc 'The Smalltalk programming language'
+
       tag 'smalltalk'
       aliases 'st', 'squeak'
       filenames '*.st'

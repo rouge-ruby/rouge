@@ -3,6 +3,8 @@ module Rouge
     class Sass < RegexLexer
       include Indentation
 
+      desc 'The Sass stylesheet language language (sass-lang.com)'
+
       tag 'sass'
       filenames '*.sass'
       mimetypes 'text/x-sass'

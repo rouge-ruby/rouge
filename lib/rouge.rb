@@ -65,6 +65,8 @@ load load_dir.join('rouge/lexers/c.rb')
 load load_dir.join('rouge/lexers/cpp.rb')
 load load_dir.join('rouge/lexers/java.rb')
 
+load load_dir.join('rouge/lexers/smalltalk.rb')
+
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')
 load load_dir.join('rouge/formatters/terminal256.rb')

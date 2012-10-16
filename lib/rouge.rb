@@ -48,6 +48,7 @@ load load_dir.join('rouge/lexers/scss.rb')
 load load_dir.join('rouge/lexers/coffeescript.rb')
 
 load load_dir.join('rouge/lexers/erb.rb')
+load load_dir.join('rouge/lexers/handlebars.rb')
 
 load load_dir.join('rouge/lexers/tcl.rb')
 load load_dir.join('rouge/lexers/python.rb')

@@ -1,3 +1,8 @@
+## version 0.2.3: 2012-10-16
+
+  * Fixed several postprocessing-related bugs
+  * New lexers: coffeescript, sass, smalltalk, handlebars/mustache
+
 ## version 0.2.2: 2012-10-13
 
   * In terminal256, stop highlighting backgrounds of text-like tokens

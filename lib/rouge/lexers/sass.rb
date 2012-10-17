@@ -76,6 +76,8 @@ module Rouge
             push :value
           end
 
+          rule /@extend\b/, 'Keyword', :selector
+
           rule /(@include)(\s+)(#{id})/ do
             group 'Keyword'; group 'Text'; group 'Name.Decorator'
             push :value
@@ -96,6 +98,7 @@ module Rouge
           rule /[$]#{id}/, 'Name.Variable'
           rule /url[(]/, 'Literal.String.Other', :string_url
           rule /#{id}(?=\s*[(])/, 'Name.Function'
+          rule /%#{id}/, 'Name.Decorator'
 
           # named literals
           rule /(true|false)\b/, 'Name.Pseudo'
@@ -149,6 +152,7 @@ module Rouge
           rule /:/, 'Name.Decorator', :pseudo_class
           rule /[.]/, 'Name.Class', :class
           rule /#/, 'Name.Namespace', :id
+          rule /%/, 'Name.Variable', :placeholder
           rule id, 'Name.Tag'
           rule /&/, 'Keyword'
           rule /[~^*!&\[\]()<>\|+=@:;,.\/?-]/, 'Operator'
@@ -189,6 +193,11 @@ module Rouge
 
         state :id do
           rule id, 'Name.Namespace'
+          mixin :selector_piece
+        end
+
+        state :placeholder do
+          rule id, 'Name.Variable'
           mixin :selector_piece
         end
 

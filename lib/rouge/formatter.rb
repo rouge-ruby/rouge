@@ -1,6 +1,7 @@
 module Rouge
   # A Formatter takes a token stream and formats it for human viewing.
   class Formatter
+    # @private
     REGISTRY = {}
 
     # Specify or get the unique tag for this formatter.  This is used
@@ -27,6 +28,7 @@ module Rouge
       enum_for(:stream, tokens).to_a.join
     end
 
+    # @deprecated Use {#format} instead.
     def render(tokens)
       warn 'Formatter#render is deprecated, use #format instead.'
       format(tokens)

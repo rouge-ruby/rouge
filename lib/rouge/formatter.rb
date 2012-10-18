@@ -17,6 +17,11 @@ module Rouge
       REGISTRY[tag]
     end
 
+    # Format a token stream.  Delegates to {#format}.
+    def self.format(tokens, opts={})
+      new(opts).format(tokens)
+    end
+
     # Format a token stream.
     def format(tokens)
       enum_for(:stream, tokens).to_a.join

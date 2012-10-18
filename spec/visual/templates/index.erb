@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Rouge Visual Tests</title>
-</head>
+<style type="text/css">
+  h2 a { color: white; }
+  body {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+  }
+</style>
 
-<body>
-  <h2>Lexers:</h2>
-  <ul>
-    <% @samples.each do |sample| %>
-      <li><a href="/<%= sample.basename %>"><%= sample.basename %></a></li>
-    <% end %>
-  </ul>
-</body>
-</html>
+<% @samples.each do |sample| %>
+  <h2><a href="/<%= sample.tag %>"><%= sample.tag %></a></h2>
+  <%= Rouge.highlight(sample.demo, sample, 'html') %>
+<% end %>

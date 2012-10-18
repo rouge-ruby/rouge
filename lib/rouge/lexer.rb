@@ -68,6 +68,21 @@ module Rouge
         end
       end
 
+      # Specify or get the path name containing a small demo for
+      # this lexer (can be overriden by {demo}).
+      def demo_file(arg=:absent)
+        return @demo_file = Pathname.new(arg) unless arg == :absent
+
+        @demo_file = Pathname.new(__FILE__).dirname.join('demos', tag)
+      end
+
+      # Specify or get a small demo string for this lexer
+      def demo(arg=:absent)
+        return @demo = arg unless arg == :absent
+
+        @demo = File.read(demo_file)
+      end
+
       # @return a list of all lexers.
       def all
         registry.values.uniq

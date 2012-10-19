@@ -1,3 +1,10 @@
+(define my-hex #x10c)
+(define my-bin #b1001011101)
+(define my-oct #o1234)
+(define my-dec #d10)
+(define my-exact #e10.2)
+(define my-inexact #i10.2)
+
 ;;; installed-scm-file
 
 ;;;; Copyright (C) 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.

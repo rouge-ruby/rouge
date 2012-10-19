@@ -59,11 +59,18 @@ module Rouge
         # comments
         rule /;.*$/, 'Comment.Single'
         rule /\s+/m, 'Text'
-        rule /-?\d+\.\d+/, 'Number.Float'
+        rule /-?\d+\.\d+/, 'Literal.Number.Float'
+        rule /-?\d+/, 'Literal.Number.Integer'
 
-        # support for uncommon kinds of numbers -
-        # have to figure out what the characters mean
-        # rule /(#e|#i|#b|#o|#d|#x)[\d.]+/, 'Number'
+        # Racket infinitites
+        rule /[+-]inf[.][f0]/, 'Literal.Number'
+
+        rule /#b[01]+/, 'Literal.Number.Binary'
+        rule /#o[0-7]+/, 'Literal.Number.Oct'
+        rule /#d[0-9]+/, 'Literal.Number.Integer'
+        rule /#x[0-9a-f]+/i, 'Literal.Number.Hex'
+        rule /#[ei][\d.]+/, 'Literal.Number.Other'
+
         rule /"(\\\\|\\"|[^"])*"/, 'Literal.String'
         rule /'#{id}/i, 'Literal.String.Symbol'
         rule /#\\([()\/'"._!\$%& ?=+-]{1}|[a-z0-9]+)/i,

@@ -81,17 +81,34 @@ module Rouge
         )
       end
 
+      id = /[$a-zA-Z_][a-zA-Z0-9_]*/
+
       state :root do
         rule /\A\s*#!.*?\n/m, 'Comment.Preproc'
         rule %r((?<=\n)(?=\s|/|<!--)), 'Text', :slash_starts_regex
         mixin :comments_and_whitespace
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
-               | !== | \? | : )x,
+               | !== )x,
           'Operator', :slash_starts_regex
         rule %r([-<>+*%&|\^/!=]=?), 'Operator', :slash_starts_regex
-        rule /[{(\[;,]/, 'Punctuation', :slash_starts_regex
-        rule /[})\].]/, 'Punctuation'
-        rule /[$a-zA-Z_][a-zA-Z0-9_]*/ do |m|
+        rule /[(\[;,]/, 'Punctuation', :slash_starts_regex
+        rule /[)\].]/, 'Punctuation'
+
+        rule /[?]/ do
+          token 'Punctuation'
+          push :ternary
+          push :slash_starts_regex
+        end
+
+        rule /[{](?=\s*(#{id}|"[^\n]*?")\s*:)/, 'Punctuation', :object
+
+        rule /[{]/ do
+          token 'Punctuation'
+          push :block
+          push :slash_starts_regex
+        end
+
+        rule id do |m|
           if self.class.keywords.include? m[0]
             token 'Keyword'
             push :slash_starts_regex
@@ -114,6 +131,33 @@ module Rouge
         rule /[0-9]+/, 'Literal.Number.Integer'
         rule /"(\\\\|\\"|[^"])*"/, 'Literal.String.Double'
         rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
+      end
+
+      # braced parts that aren't object literals
+      state :block do
+        rule /(#{id})(\s*)(:)/ do
+          group 'Name.Label'; group 'Text'
+          group 'Punctuation'
+        end
+
+        rule /[}]/, 'Punctuation', :pop!
+        mixin :root
+      end
+
+      # object literals
+      state :object do
+        rule /[}]/, 'Punctuation', :pop!
+        rule /(#{id})(\s*)(:)/ do
+          group 'Name.Attribute'; group 'Text'
+          group 'Punctuation'
+        end
+        mixin :root
+      end
+
+      # ternary expressions, where <id>: is not a label!
+      state :ternary do
+        rule /:/, 'Punctuation', :pop!
+        mixin :root
       end
     end
 

@@ -6,7 +6,19 @@ var myRegex = /asdf/;
 var badRegex = /123;
 var myObject = { a: 1, b: 2 }
 
-var ternary = 0 ? 1 : {a : 2 ? d : 3 }
+var ternary = 0 ? 1 : {a : 2 ? d : 3 };
+var ternary2 = a ? { b : c } + d : e;
+var ternary3 = a ? {
+  b : c,
+  d: e ? function() {
+    // TODO: if myLabel is on the first line, this is interpreted as
+    // an object...
+    myLabel:
+    while(true) {
+      break myLabel;
+    }
+  } + f: g
+}
 
 Blag = {};
 jQuery.noConflict();

@@ -1,3 +1,6 @@
+## version 0.2.5: 2012-10-20
+  * hotfix: ship the demos with the gem.
+
 ## version 0.2.4: 2012-10-20
 
   * Several improvements to the javasript and scheme lexers

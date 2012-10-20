@@ -17,7 +17,7 @@ First, take a look at the [pretty colors][].
 source = File.read('/etc/bashrc')
 formatter = Rouge::Formatters::HTML.new(:css_class => '.highlight')
 lexer = Rouge::Lexers::Shell.new
-formatter.render(lexer.lex(source))
+formatter.format(lexer.lex(source))
 
 # Get some CSS
 Rouge::Themes::ThankfulEyes.render(:scope => '.highlight')

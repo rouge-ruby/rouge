@@ -10,7 +10,7 @@ This project needs your help!  There are lots of lexers to be implemented / port
 
 First, take a look at the [pretty colors][].
 
-[pretty colors]: http://jayferd.us/posts/2012-09-14-rouge
+[pretty colors]: http://rouge.jayferd.us/demo
 
 ``` ruby
 # make some nice lexed html, compatible with pygments stylesheets

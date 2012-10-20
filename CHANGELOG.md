@@ -1,3 +1,12 @@
+## version 0.2.4: 2012-10-20
+
+  * Several improvements to the javasript and scheme lexers
+  * Lexer.demo, with small demos for each lexer
+  * Rouge.highlight takes a string for the formatter
+  * Formatter.format delegates to the instance
+  * sass: Support the @extend syntax, fix new-style attributes, and
+    support 3.2 placeholder syntax
+
 ## version 0.2.3: 2012-10-16
 
   * Fixed several postprocessing-related bugs

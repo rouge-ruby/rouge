@@ -15,6 +15,16 @@ module Rouge
         @callback = callback
       end
 
+      # Does the regex start with a ^?
+      #
+      # Since Regexps are immuntable, this is cached to avoid
+      # calling Regexp#source more than once.
+      def beginning_of_line?
+        return @beginning_of_line if instance_variable_defined?(:@beginning_of_line)
+
+        @beginning_of_line = re.source[0] == ?^
+      end
+
       def inspect
         "#<Rule #{@re.inspect}>"
       end
@@ -246,6 +256,12 @@ module Rouge
         res
       when Rule
         debug { "  trying #{rule.inspect}" }
+        # XXX HACK XXX
+        # StringScanner's implementation of ^ is b0rken.
+        # TODO: this doesn't cover cases like /(a|^b)/, but it's
+        # the most common, for now...
+        return false if rule.beginning_of_line? && !stream.beginning_of_line?
+
         scan(stream, rule.re) do
           debug { "    got #{stream[0].inspect}" }
 
@@ -270,12 +286,6 @@ module Rouge
 
     # @private
     def scan(scanner, re, &b)
-      # XXX HACK XXX
-      # StringScanner's implementation of ^ is b0rken.
-      # TODO: this doesn't cover cases like /(a|^b)/, but it's
-      # the most common, for now...
-      return false if re.beginning_of_line? && !scanner.beginning_of_line?
-
       @null_steps ||= 0
 
       if @null_steps >= MAX_NULL_SCANS
@@ -400,15 +410,4 @@ module Rouge
 end
 
 class Regexp
-  # Does this expression start with a ^?
-  # 
-  # Since Regexps are immuntable, this method is cached to avoid
-  # calling Regexp#source more than once.
-  def beginning_of_line?
-    if defined? @beginning_of_line
-      @beginning_of_line
-    else
-      @beginning_of_line = source[0] == ?^
-    end
-  end
 end

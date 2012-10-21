@@ -132,6 +132,15 @@ module Rouge
     def render(&b)
       return enum_for(:render).to_a.join("\n") unless b
 
+      # shared styles for tableized line numbers
+      yield "table.highlight { border-spacing: 0; }"
+      yield "table.highlight pre { margin: 0; padding: 3px; }"
+      yield "table.highlight .gutter {"
+      yield "  text-align: right;"
+      yield "  padding-left: 5px;"
+      yield "  padding-right: 5px;"
+      yield "}"
+
       styles.each do |tokname, style|
         style.render(css_selector(Token[tokname]), &b)
       end

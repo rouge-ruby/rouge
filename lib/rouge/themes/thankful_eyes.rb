@@ -21,6 +21,7 @@ module Rouge
       palette :schrill        => '#ffb000'
 
       style 'Text', :fg => :unicorn, :bg => :krasna
+      style 'Generic.Lineno', :fg => :eggshell_cloud, :bg => :slate_blue
 
       style 'Comment', :fg => :cool_as_ice, :italic => true
       style 'Comment.Preproc', :fg => :go_get_it, :bold => true, :italic => true

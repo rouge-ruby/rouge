@@ -176,5 +176,7 @@ module Rouge
     token 'Generic.Strong',              'gs'
     token 'Generic.Subheading',          'gu'
     token 'Generic.Traceback',           'gt'
+
+    token 'Generic.Lineno',              'gl'
   end
 end

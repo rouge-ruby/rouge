@@ -1,5 +1,4 @@
 <style type="text/css">
-  h2 a { color: white; }
   body {
     -webkit-column-count: 2;
     -moz-column-count: 2;
@@ -8,5 +7,5 @@
 
 <% @samples.each do |sample| %>
   <h2><a href="/<%= sample.tag %>"><%= sample.tag %></a></h2>
-  <%= Rouge.highlight(sample.demo, sample, 'html') %>
+  <%= Rouge.highlight(sample.demo, sample, @formatter) %>
 <% end %>

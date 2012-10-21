@@ -11,29 +11,71 @@ module Rouge
       # A css class to be used for the generated <pre> tag.
       def initialize(opts={})
         @css_class = opts[:css_class] || 'highlight'
+        @line_numbers = opts.fetch(:line_numbers) { false }
       end
 
       # @yield the html output.
       def stream(tokens, &b)
+        if @line_numbers
+          stream_tableized(tokens, &b)
+        else
+          stream_untableized(tokens, &b)
+        end
+      end
+
+      def stream_untableized(tokens, &b)
         yield "<pre class=#{@css_class.inspect}>"
         tokens.each do |tok, val|
-          # TODO: properly html-encode val
-          val = CGI.escape_html(val)
-
-          case tok.shortname
-          when ''
-            yield val
-          when nil
-            raise "unknown token: #{tok.inspect}"
-          else
-            yield '<span class='
-            yield tok.shortname.inspect
-            yield '>'
-            yield val
-            yield '</span>'
-          end
+          span(tok, val, &b)
         end
         yield '</pre>'
+      end
+
+      def stream_tableized(tokens, &b)
+        num_lines = 0
+        code = ''
+
+        tokens.each do |tok, val|
+          num_lines += val.scan(/\n/).size
+          span(tok, val) { |str| code << str }
+        end
+
+        # generate a string of newline-separated line numbers for the gutter
+        numbers = num_lines.times.map do |x|
+          %<<div class="lineno">#{x+1}</div>>
+        end.join
+
+        yield "<table class=#{@css_class.inspect}><tbody><tr>"
+
+        # the "gl" class applies the style for Generic.Lineno
+        yield '<td class="gutter gl"><pre>'
+        yield numbers
+        yield '</pre></td>'
+
+        yield '<td class="code"><pre>'
+        yield code
+        yield '</pre></td>'
+
+        yield '</tr></tbody></table>'
+      end
+
+    private
+      def span(tok, val, &b)
+        # TODO: properly html-encode val
+        val = CGI.escape_html(val)
+
+        case tok.shortname
+        when ''
+          yield val
+        when nil
+          raise "unknown token: #{tok.inspect}"
+        else
+          yield '<span class='
+          yield tok.shortname.inspect
+          yield '>'
+          yield val
+          yield '</span>'
+        end
       end
     end
   end

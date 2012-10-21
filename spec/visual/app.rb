@@ -31,7 +31,7 @@ class VisualTestApp < Sinatra::Application
       lexer_options[k.to_sym] = v
     end
 
-    formatter = Rouge::Formatters::HTML.new
+    formatter = Rouge::Formatters::HTML.new(:line_numbers => true)
     @lexer = lexer_class.new(lexer_options)
     @highlighted = Rouge.highlight(@sample, @lexer, formatter)
 
@@ -42,6 +42,8 @@ class VisualTestApp < Sinatra::Application
   get '/' do
     @samples = SAMPLES.entries.reject { |s| s.basename.to_s =~ /^\.|~$/ }
     @samples.map!(&Rouge::Lexer.method(:find))
+
+    @formatter = Rouge::Formatters::HTML.new(:line_numbers => true)
 
     erb :index
   end

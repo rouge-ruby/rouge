@@ -259,7 +259,7 @@ module Rouge
     # @example
     #   debug { "hello, world!" }
     def debug(&b)
-      puts(b.call) if option :debug
+      puts(b.call) if defined?(@debug) ? @debug : @debug ||= option(:debug)
     end
 
     # @abstract

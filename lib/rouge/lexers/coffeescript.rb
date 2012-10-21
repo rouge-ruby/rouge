@@ -44,7 +44,11 @@ module Rouge
       end
 
       state :multiline_regex do
+        # this order is important, so that #{ isn't interpreted
+        # as a comment
+        mixin :has_interpolation
         mixin :comments_and_whitespace
+
         rule %r(///([gim]+\b|\B)), 'Literal.String.Regex', :pop!
         rule %r(/), 'Literal.String.Regex'
         rule %r([^/#]+), 'Literal.String.Regex'

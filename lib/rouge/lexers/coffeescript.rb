@@ -93,7 +93,19 @@ module Rouge
 
         rule /#{id}(?=\s*:)/, 'Name.Attribute', :slash_starts_regex
 
-        rule /#{id}/, 'Name.Other', :slash_starts_regex
+        rule /#{id}/ do |m|
+          if self.class.keywords.include? m[0]
+            token 'Keyword'
+          elsif self.class.constants.include? m[0]
+            token 'Name.Constant'
+          elsif self.class.builtins.include? m[0]
+            token 'Name.Builtin'
+          else
+            token 'Name.Other'
+          end
+
+          push :slash_starts_regex
+        end
 
         rule /[{(\[;,]/, 'Punctuation', :slash_starts_regex
         rule /[})\].]/, 'Punctuation'
@@ -155,20 +167,6 @@ module Rouge
         rule /'''/, 'Literal.String', :pop!
         rule /'/, 'Literal.String'
         mixin :single_strings
-      end
-
-      postprocess 'Name' do |tok, val|
-        if tok.name == 'Name.Attribute'
-          # pass. leave attributes alone.
-        elsif self.class.keywords.include? val
-          tok = 'Keyword'
-        elsif self.class.constants.include? val
-          tok = 'Name.Constant'
-        elsif self.class.builtins.include? val
-          tok = 'Name.Builtin'
-        end
-
-        token tok, val
       end
     end
   end

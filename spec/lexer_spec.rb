@@ -129,4 +129,20 @@ describe Rouge::Lexer do
 
     assert_no_errors 'a{b}a', MasterLexer
   end
+
+  it 'detects the beginnings of lines with ^ rules' do
+    class MyLexer < Rouge::RegexLexer
+      state :root do
+        rule /^a/, 'start'
+        rule /a/, 'not-start'
+      end
+    end
+
+    assert_has_token('start', 'a', MyLexer)
+    assert_has_token('start', "\na", MyLexer)
+    deny_has_token('not-start', 'a', MyLexer)
+    assert_has_token('not-start', 'aa', MyLexer)
+
+
+  end
 end

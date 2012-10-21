@@ -36,7 +36,6 @@ module Rouge
       end
 
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
-      lval = /@?#{id}([.]#{id})*/
 
       state :comments_and_whitespace do
         rule /\s+/m, 'Text'

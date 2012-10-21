@@ -45,18 +45,20 @@ module Rouge
           %<<div class="lineno">#{x+1}</div>>
         end.join
 
-        yield "<table class=#{@css_class.inspect}><tbody><tr>"
+        yield "<pre class=#{@css_class.inspect}>"
+        yield "<table><tbody><tr>"
 
         # the "gl" class applies the style for Generic.Lineno
-        yield '<td class="gutter gl"><pre>'
+        yield '<td class="gutter gl">'
         yield numbers
-        yield '</pre></td>'
+        yield '</td>'
 
-        yield '<td class="code"><pre>'
+        yield '<td class="code">'
         yield code
-        yield '</pre></td>'
+        yield '</td>'
 
         yield '</tr></tbody></table>'
+        yield '</pre>'
       end
 
     private

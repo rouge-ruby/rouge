@@ -19,6 +19,8 @@ class VisualTestApp < Sinatra::Application
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
     @theme = theme_class.new
+
+    @formatter = Rouge::Formatters::HTML.new(:line_numbers => params[:line_numbers])
   end
 
   get '/:lexer' do |lexer_name|
@@ -31,9 +33,8 @@ class VisualTestApp < Sinatra::Application
       lexer_options[k.to_sym] = v
     end
 
-    formatter = Rouge::Formatters::HTML.new(:line_numbers => true)
     @lexer = lexer_class.new(lexer_options)
-    @highlighted = Rouge.highlight(@sample, @lexer, formatter)
+    @highlighted = Rouge.highlight(@sample, @lexer, @formatter)
 
     erb :lexer
   end
@@ -42,8 +43,6 @@ class VisualTestApp < Sinatra::Application
   get '/' do
     @samples = SAMPLES.entries.reject { |s| s.basename.to_s =~ /^\.|~$/ }
     @samples.map!(&Rouge::Lexer.method(:find))
-
-    @formatter = Rouge::Formatters::HTML.new(:line_numbers => true)
 
     erb :index
   end

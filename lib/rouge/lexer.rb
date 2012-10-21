@@ -259,7 +259,9 @@ module Rouge
     # @example
     #   debug { "hello, world!" }
     def debug(&b)
-      puts(b.call) if defined?(@debug) ? @debug : @debug ||= option(:debug)
+      @debug = option(:debug) unless instance_variable_defined?(:@debug)
+
+      puts(b.call) if @debug
     end
 
     # @abstract

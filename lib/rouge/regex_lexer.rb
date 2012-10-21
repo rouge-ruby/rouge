@@ -274,7 +274,7 @@ module Rouge
       # StringScanner's implementation of ^ is b0rken.
       # TODO: this doesn't cover cases like /(a|^b)/, but it's
       # the most common, for now...
-      return false if re.source[0] == ?^ && !scanner.beginning_of_line?
+      return false if re.beginning_of_line? && !scanner.beginning_of_line?
 
       @null_steps ||= 0
 
@@ -395,6 +395,20 @@ module Rouge
 
     ensure
       @output_stream = old_output_stream
+    end
+  end
+end
+
+class Regexp
+  # Does this expression start with a ^?
+  # 
+  # Since Regexps are immuntable, this method is cached to avoid
+  # calling Regexp#source more than once.
+  def beginning_of_line?
+    if defined? @beginning_of_line
+      @beginning_of_line
+    else
+      @beginning_of_line = source[0] == ?^
     end
   end
 end

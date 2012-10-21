@@ -258,6 +258,7 @@ module Rouge
         debug { "  trying #{rule.inspect}" }
         # XXX HACK XXX
         # StringScanner's implementation of ^ is b0rken.
+        # see http://bugs.ruby-lang.org/issues/7092
         # TODO: this doesn't cover cases like /(a|^b)/, but it's
         # the most common, for now...
         return false if rule.beginning_of_line? && !stream.beginning_of_line?

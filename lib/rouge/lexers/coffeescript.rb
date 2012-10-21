@@ -156,15 +156,11 @@ module Rouge
 
       postprocess 'Name' do |tok, val|
         if tok.name == 'Name.Attribute'
-          if self.class.keywords.include? val
-            tok = 'Error' # keywords as attributes = nono
-          else
-            # pass. leave attributes alone.
-          end
+          # pass. leave attributes alone.
         elsif self.class.keywords.include? val
           tok = 'Keyword'
         elsif self.class.constants.include? val
-            tok = 'Name.Constant'
+          tok = 'Name.Constant'
         elsif self.class.builtins.include? val
           tok = 'Name.Builtin'
         end

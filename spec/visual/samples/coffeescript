@@ -5,23 +5,16 @@ a multiline comment
 { property         : 1 }
 
 # these shouldn't be highlighted as constants, since this is
-# totally legit
+# totally legit in coffeescript
 { true: 1, false: 0 }
 foo.true = foo.false = @undefined = @null
-
-# these should
-{ 1: true, 0: false }
-
-# however, these are syntax errors.
 { if: 0, try: 1, in: 2 }
 foo.instanceof = foo.typeof = @finally = @super
 
-# these are fine, though
+# these should
+{ 1: true, 0: false }
 1 instanceof Number
 typeof "foo"
-
-# but it's fine with strings
-foo['instanceof'] = foo['in']
 
 # these refer to builtins
 window.foo = bar(Array)

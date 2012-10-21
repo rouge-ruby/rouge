@@ -1,3 +1,12 @@
+## version 0.2.6: 2012-10-21
+  * coffeescript: don't yield error tokens for keywords as attributes
+  * add the `--scope=SELECTOR` option to `rougify style`
+  * Add the `:line_numbers` option to the HTML formatter to get line
+    numbers!  The styling for the line numbers is determined by
+    the theme's styling for `'Generic.Lineno'`
+  * Massive performance improvements by reducing calls to `option`
+    and to `Regexp#source` (@korny)
+
 ## version 0.2.5: 2012-10-20
   * hotfix: ship the demos with the gem.
 

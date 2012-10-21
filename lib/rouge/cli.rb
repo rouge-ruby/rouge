@@ -64,6 +64,7 @@ module Rouge
     end
 
     desc 'style THEME', 'render THEME as css'
+    option :scope, :desc => "a css selector to scope the styles to"
     def style(theme_name='thankful_eyes')
       theme = Theme.find(theme_name)
       raise "unknown theme: #{theme_name}" unless theme

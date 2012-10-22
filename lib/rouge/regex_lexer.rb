@@ -79,20 +79,13 @@ module Rouge
       #   {RegexLexer#token}, and {RegexLexer#delegate}.  The first
       #   argument can be used to access the match groups.
       def rule(re, tok=nil, next_state=nil, &callback)
-        if block_given?
-          next_state = tok
+        callback ||= case next_state
+        when :pop!
+          proc { token tok; pop! }
+        when Symbol
+          proc { token tok; push next_state }
         else
-          tok = Token[tok]
-
-          callback = proc do
-            token tok
-            case next_state
-            when :pop!
-              pop!
-            when Symbol
-              push next_state
-            end # else pass
-          end
+          proc { token tok }
         end
 
         rules << Rule.new(re, callback)

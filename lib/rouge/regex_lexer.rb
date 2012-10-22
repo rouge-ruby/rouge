@@ -120,25 +120,6 @@ module Rouge
       start_procs << b
     end
 
-    # Specify a filter to be applied as the lexer yields tokens.
-    #
-    # @param toktype
-    #   The token type to postprocess
-    # @yield [tok, val]
-    #   The token and the matched value.  The block will be evaluated in
-    #   the context of the lexer, and it must yield an equivalent
-    #   token/value pair, usually by calling #token.
-    def self.postprocess(toktype, &b)
-      postprocesses << [Token[toktype], b]
-    end
-
-    # where the postprocess blocks are stored.
-    # @see postprocess
-    def self.postprocesses
-      @postprocesses ||= InheritableList.new(superclass.postprocesses)
-    end
-    @postprocesses = []
-
     # Define a new state for this lexer with the given name.
     # The block will be evaluated in the context of a {StateDSL}.
     def self.state(name, &b)
@@ -198,21 +179,6 @@ module Rouge
     #
     # @see #step #step (where (2.) is implemented)
     def stream_tokens(stream, &b)
-      stream_without_postprocessing(stream) do |tok, val|
-        _, processor = self.class.postprocesses.find { |t, _| t === tok }
-
-        if processor
-          with_output_stream(b) do
-            instance_exec(tok, val, &processor)
-          end
-        else
-          yield tok, val
-        end
-      end
-    end
-
-    # @private
-    def stream_without_postprocessing(stream, &b)
       until stream.eos?
         debug { "lexer: #{self.class.tag}" }
         debug { "stack: #{stack.map(&:name).inspect}" }

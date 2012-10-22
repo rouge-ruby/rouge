@@ -41,24 +41,23 @@ module Rouge
         rule /\b(NONE|bold|italic|underline|dark|light)\b/, 'Name.Builtin'
 
         rule /[absg]:\w+\b/, 'Name.Variable'
-        rule /\b\w+\b/, 'Postprocess.Name'
+        rule /\b\w+\b/ do |m|
+          name = m[0]
+          keywords = self.class.keywords
+
+          if mapping_contains?(keywords[:command], name)
+            token 'Keyword'
+          elsif mapping_contains?(keywords[:option], name)
+            token 'Name.Builtin'
+          elsif mapping_contains?(keywords[:auto], name)
+            token 'Name.Builtin'
+          else
+            token 'Text'
+          end
+        end
 
         # no errors in VimL!
         rule /./m, 'Text'
-      end
-
-      postprocess 'Postprocess.Name' do |tok, name|
-        keywords = self.class.keywords
-
-        if mapping_contains?(keywords[:command], name)
-          token 'Keyword', name
-        elsif mapping_contains?(keywords[:option], name)
-          token 'Name.Builtin', name
-        elsif mapping_contains?(keywords[:auto], name)
-          token 'Name.Builtin', name
-        else
-          token 'Text', name
-        end
       end
 
       def mapping_contains?(mapping, word)

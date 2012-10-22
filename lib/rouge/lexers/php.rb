@@ -43,17 +43,19 @@ module Rouge
         push :php if start_inline?
       end
 
-      keywords = %w(
-        and E_PARSE old_function E_ERROR or as E_WARNING parent eval
-        PHP_OS break exit case extends PHP_VERSION cfunction FALSE
-        print for require continue foreach require_once declare return
-        default static do switch die stdClass echo else TRUE elseif
-        var empty if xor enddeclare include virtual endfor include_once
-        while endforeach global __FILE__ endif list __LINE__ endswitch
-        new __sleep endwhile not array __wakeup E_ALL NULL final
-        php_user_filter interface implements public private protected
-        abstract clone try catch throw this use namespace
-      )
+      def self.keywords
+        @keywords ||= Set.new %w(
+          and E_PARSE old_function E_ERROR or as E_WARNING parent eval
+          PHP_OS break exit case extends PHP_VERSION cfunction FALSE
+          print for require continue foreach require_once declare return
+          default static do switch die stdClass echo else TRUE elseif
+          var empty if xor enddeclare include virtual endfor include_once
+          while endforeach global __FILE__ endif list __LINE__ endswitch
+          new __sleep endwhile not array __wakeup E_ALL NULL final
+          php_user_filter interface implements public private protected
+          abstract clone try catch throw this use namespace
+        )
+      end
 
       state :root do
         rule /<\?(php|=)?/, 'Comment.Preproc', :php
@@ -93,13 +95,22 @@ module Rouge
           group 'Keyword'; group 'Text'; group 'Name.Constant'
         end
 
-        rule /(?:#{keywords.join('|')})\b/, 'Keyword'
         rule /(true|false|null)\b/, 'Keyword.Constant'
         rule /\$\{\$+[a-z_]\w*\}/i, 'Name.Variable'
         rule /\$+[a-z_]\w*/i, 'Name.Variable'
 
         # may be intercepted for builtin highlighting
-        rule /[\\a-z_][\\\w]*/i, 'Name.Other'
+        rule /[\\a-z_][\\\w]*/i do |m|
+          name = m[0]
+
+          if self.class.keywords.include? name
+            token 'Keyword'
+          elsif self.builtins.include? name
+            token 'Name.Builtin'
+          else
+            token 'Name.Other'
+          end
+        end
 
         rule /(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, 'Literal.Number.Float'
         rule /\d+e[+-]?\d+/i, 'Literal.Number.Float'
@@ -145,12 +156,6 @@ module Rouge
       state :interp_single do
         rule /\}/, 'Literal.String.Interpol', :pop!
         mixin :php
-      end
-
-      postprocess 'Name.Other' do |tok, val|
-        tok = 'Name.Builtin' if builtins.include? val
-
-        token tok, val
       end
     end
   end

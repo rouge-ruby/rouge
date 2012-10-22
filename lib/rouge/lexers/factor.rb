@@ -262,8 +262,15 @@ module Rouge
         rule /(?:deprecated|final|foldable|flushable|inline|recursive)(?=\s)/,
           'Keyword'
 
-        # words, to be postprocessed for builtins and things
-        rule /\S+/, 'Postprocess.Word'
+        rule /\S+/ do |m|
+          name = m[0]
+
+          if self.class.builtins.values.any? { |b| b.include? name }
+            token 'Name.Builtin'
+          else
+            token 'Name'
+          end
+        end
       end
 
       state :stack_effect do
@@ -285,16 +292,6 @@ module Rouge
         rule /;(?=\s)/, 'Keyword', :pop!
         rule /\s+/, 'Text'
         rule /\S+/, 'Name.Namespace'
-      end
-
-      postprocess 'Postprocess.Word' do |tok, val|
-        tok = if self.class.builtins.values.any? { |b| b.include? val }
-          'Name.Builtin'
-        else
-          'Name'
-        end
-
-        token tok, val
       end
     end
   end

@@ -208,28 +208,6 @@ module Rouge
         structure-object symbol synonym-stream t two-way-stream vector
       )
 
-      postprocess 'Name.Variable' do |tok, val|
-        tok = if BUILTIN_FUNCTIONS.include? val
-          'Name.Builtin'
-        elsif SPECIAL_FORMS.include? val
-          'Keyword'
-        elsif MACROS.include? val
-          'Name.Builtin'
-        elsif LAMBDA_LIST_KEYWORDS.include? val
-          'Keyword'
-        elsif DECLARATIONS.include? val
-          'Keyword'
-        elsif BUILTIN_TYPES.include? val
-          'Keyword.Type'
-        elsif BUILTIN_CLASSES.include? val
-          'Name.Class'
-        else
-          'Name.Variable'
-        end
-
-        token tok, val
-      end
-
       nonmacro = /\\.|[a-zA-Z0-9!$%&*+-\/<=>?@\[\]^_{}~]/
       constituent = /#{nonmacro}|[#.:]/
       terminated = /(?=[ "'()\n,;`])/ # whitespace or terminating macro chars
@@ -319,7 +297,27 @@ module Rouge
         # functions and variables
         # note that these get filtered through in stream_tokens
         rule /\*#{symbol}\*/, 'Name.Variable.Global'
-        rule symbol, 'Name.Variable'
+        rule symbol do |m|
+          sym = m[0]
+
+          if BUILTIN_FUNCTIONS.include? sym
+            token 'Name.Builtin'
+          elsif SPECIAL_FORMS.include? sym
+            token 'Keyword'
+          elsif MACROS.include? sym
+            token 'Name.Builtin'
+          elsif LAMBDA_LIST_KEYWORDS.include? sym
+            token 'Keyword'
+          elsif DECLARATIONS.include? sym
+            token 'Keyword'
+          elsif BUILTIN_TYPES.include? sym
+            token 'Keyword.Type'
+          elsif BUILTIN_CLASSES.include? sym
+            token 'Name.Class'
+          else
+            token 'Name.Variable'
+          end
+        end
 
         rule /\(/, 'Punctuation', :root
         rule /\)/, 'Punctuation' do

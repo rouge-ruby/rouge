@@ -11,18 +11,28 @@ module Rouge
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
-      keywords = %w(
-        auto break case const continue default do else enum extern
-        for goto if register restricted return sizeof static struct
-        switch typedef union volatile virtual while
-      )
+      def self.keywords
+        @keywords ||= Set.new %w(
+          auto break case const continue default do else enum extern
+          for goto if register restricted return sizeof static struct
+          switch typedef union volatile virtual while
+        )
+      end
 
-      keywords_type = %w(int long float short double char unsigned signed void)
+      def self.keywords_type
+        @keywords_type ||= Set.new %w(
+          int long float short double char unsigned signed void
+        )
+      end
 
-      __reserved = %w(
-        asm int8 based except int16 stdcall cdecl fastcall int32
-        declspec finally int61 try leave
-      )
+      def self.reserved
+        @reserved ||= Set.new %w(
+          __asm __int8 __based __except __int16 __stdcall __cdecl
+          __fastcall __int32 __declspec __finally __int61 __try __leave
+          inline _inline __inline naked _naked __naked restrict _restrict
+          __restrict thread _thread __thread typename _typename __typename
+        )
+      end
 
       state :whitespace do
         rule /^#if\s+0\b/, 'Comment.Preproc', :if_0
@@ -41,6 +51,8 @@ module Rouge
       end
 
       state :statements do
+        rule /\s+/m, 'Text'
+
         rule /L?"/, 'Literal.String', :string
         rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, 'Literal.String.Char'
         rule %r((\d+\.\d*|\.\d+|\d+)[e][+-]?\d+[lu]*)i, 'Literal.Number.Float'
@@ -51,13 +63,20 @@ module Rouge
         rule %r([~!%^&*+=\|?:<>/-]), 'Operator'
         rule /[()\[\],.]/, 'Punctuation'
         rule /\bcase\b/, 'Keyword', :case
-        rule /(?:#{keywords.join('|')})\b/, 'Keyword'
-        rule /(?:#{keywords_type.join('|')})\b/, 'Keyword.Type'
-        rule /(?:_{0,2}inline|naked|restrict|thread|typename)\b/, 'Keyword.Reserved'
-        rule /__(?:#{__reserved.join('|')})\b/, 'Keyword.Reserved'
         rule /(?:true|false|NULL)\b/, 'Name.Builtin'
-        rule id, 'Name'
-        rule /\s+/m, 'Text'
+        rule id do |m|
+          name = m[0]
+
+          if self.class.keywords.include? name
+            token 'Keyword'
+          elsif self.class.keywords_type.include? name
+            token 'Keyword.Type'
+          elsif self.class.reserved.include? name
+            token 'Keyword.Reserved'
+          else
+            token 'Name'
+          end
+        end
       end
 
       state :case do

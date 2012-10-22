@@ -240,37 +240,25 @@ module Rouge
     # @return false otherwise.
     def step(state, stream, &b)
       state.rules.each do |rule|
-        return true if run_rule(rule, stream, &b)
+        case rule
+        when String
+          debug { "  entering mixin #{rule}" }
+          return true if step(get_state(rule), stream, &b)
+          debug { "  exiting  mixin #{rule}" }
+        when Rule
+          debug { "  trying #{rule.inspect}" }
+
+          if run_rule(rule, stream)
+            debug { "    got #{stream[0].inspect}" }
+
+            run_callback(stream, rule.callback, &b)
+
+            return true
+          end
+        end
       end
 
       false
-    end
-
-    # @private
-    def run_rule(rule, stream, &b)
-      case rule
-      when String
-        debug { "  entering mixin #{rule}" }
-        res = step(get_state(rule), stream, &b)
-        debug { "  exiting  mixin #{rule}" }
-        res
-      when Rule
-        debug { "  trying #{rule.inspect}" }
-        # XXX HACK XXX
-        # StringScanner's implementation of ^ is b0rken.
-        # see http://bugs.ruby-lang.org/issues/7092
-        # TODO: this doesn't cover cases like /(a|^b)/, but it's
-        # the most common, for now...
-        return false if rule.beginning_of_line? && !stream.beginning_of_line?
-
-        scan(stream, rule.re) or return false
-
-        debug { "    got #{stream[0].inspect}" }
-
-        run_callback(stream, rule.callback, &b)
-
-        true
-      end
     end
 
     # @private
@@ -288,15 +276,20 @@ module Rouge
     MAX_NULL_SCANS = 5
 
     # @private
-    def scan(scanner, re, &b)
-      @null_steps ||= 0
+    def run_rule(rule, scanner, &b)
+      # XXX HACK XXX
+      # StringScanner's implementation of ^ is b0rken.
+      # see http://bugs.ruby-lang.org/issues/7092
+      # TODO: this doesn't cover cases like /(a|^b)/, but it's
+      # the most common, for now...
+      return false if rule.beginning_of_line? && !scanner.beginning_of_line?
 
-      if @null_steps >= MAX_NULL_SCANS
+      if (@null_steps ||= 0) >= MAX_NULL_SCANS
         debug { "    too many scans without consuming the string!" }
         return false
       end
 
-      scanner.scan(re) or return false
+      scanner.scan(rule.re) or return false
 
       if scanner.matched_size.zero?
         @null_steps += 1

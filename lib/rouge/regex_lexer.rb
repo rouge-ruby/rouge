@@ -263,11 +263,13 @@ module Rouge
         # the most common, for now...
         return false if rule.beginning_of_line? && !stream.beginning_of_line?
 
-        scan(stream, rule.re) do
-          debug { "    got #{stream[0].inspect}" }
+        scan(stream, rule.re) or return false
 
-          run_callback(stream, rule.callback, &b)
-        end
+        debug { "    got #{stream[0].inspect}" }
+
+        run_callback(stream, rule.callback, &b)
+
+        true
       end
     end
 
@@ -294,20 +296,15 @@ module Rouge
         return false
       end
 
-      scanner.scan(re)
+      scanner.scan(re) or return false
 
-      if scanner.matched?
-        if scanner.matched_size == 0
-          @null_steps += 1
-        else
-          @null_steps = 0
-        end
-
-        yield self
-        return true
+      if scanner.matched_size.zero?
+        @null_steps += 1
+      else
+        @null_steps = 0
       end
 
-      return false
+      true
     end
 
     # Yield a token.

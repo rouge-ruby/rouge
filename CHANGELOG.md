@@ -1,3 +1,11 @@
+## version 0.2.7: 2012-10-22
+
+  * Major performance improvements.  80% running time reduction for
+    some files since v0.2.5 (thanks again @korny!)
+  * Deprecated `postprocess` for performance reasons - it wasn't that
+    useful in the first place.
+  * The shell lexer should now recognize .bashrc, .profile and friends
+
 ## version 0.2.6: 2012-10-21
   * coffeescript: don't yield error tokens for keywords as attributes
   * add the `--scope=SELECTOR` option to `rougify style`

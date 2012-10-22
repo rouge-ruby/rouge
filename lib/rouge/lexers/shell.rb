@@ -5,7 +5,9 @@ module Rouge
 
       tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
-      filenames '*.sh', '*.bash', '*.zsh', '*.ksh'
+      filenames '*.sh', '*.bash', '*.zsh', '*.ksh',
+                '.bashrc', '.zshrc', '.kshrc', '.profile'
+
       mimetypes 'application/x-sh', 'application/x-shellscript'
 
       def self.analyze_text(text)

@@ -45,10 +45,15 @@ module Rouge
         @rules ||= []
       end
 
-      def load!
+      def load!(lexer_class)
         return self if @loaded
         @loaded = true
         StateDSL.new(rules).instance_eval(&@defn)
+
+        rules.map! do |rule|
+          rule.is_a?(String) ? lexer_class.get_state(rule) : rule
+        end
+
         self
       end
     end
@@ -133,7 +138,7 @@ module Rouge
 
       state = states[name.to_s]
       raise "unknown state: #{name}" unless state
-      state.load!
+      state.load!(self)
     end
 
     # @private
@@ -200,10 +205,10 @@ module Rouge
     def step(state, stream, &b)
       state.rules.each do |rule|
         case rule
-        when String
-          debug { "  entering mixin #{rule}" }
-          return true if step(get_state(rule), stream, &b)
-          debug { "  exiting  mixin #{rule}" }
+        when State
+          debug { "  entering mixin #{rule.name}" }
+          return true if step(rule, stream, &b)
+          debug { "  exiting  mixin #{rule.name}" }
         when Rule
           debug { "  trying #{rule.inspect}" }
 
@@ -307,7 +312,7 @@ module Rouge
       push_state = if state_name
         get_state(state_name)
       elsif block_given?
-        State.new(b.inspect, &b).load!
+        State.new(b.inspect, &b).load!(self.class)
       else
         # use the top of the stack by default
         self.state

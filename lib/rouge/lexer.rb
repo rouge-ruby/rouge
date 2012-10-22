@@ -264,14 +264,14 @@ module Rouge
       # For performance reasons, the "debug" option of a lexer cannot
       # be changed once it has begun lexing.  This method will redefine
       # itself on the first call to a noop if "debug" is not set.
-      body = if option(:debug)
-        proc { |&bl| puts bl.call }
+      if option(:debug)
+        class << self
+          def debug; puts yield; end
+        end
       else
-        proc {}
-      end
-
-      (class << self; self; end).class_eval do
-        define_method(:debug, &body)
+        class << self
+          def debug; end
+        end
       end
 
       debug(&b)

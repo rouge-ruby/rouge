@@ -328,7 +328,10 @@ module Rouge
       raise 'empty stack!' if stack.empty?
 
       debug { "    popping stack: #{times}" }
-      times.times { stack.pop }
+
+      stack.pop(times)
+
+      nil
     end
 
     # reset the stack back to `[:root]`.

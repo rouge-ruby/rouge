@@ -3,7 +3,6 @@
 var myFloat = 0.123;
 var myOctal = 0x123;
 var myRegex = /asdf/;
-var badRegex = /123;
 var myObject = { a: 1, b: 2 }
 
 var ternary = 0 ? 1 : {a : 2 ? d : 3 };

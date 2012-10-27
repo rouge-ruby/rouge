@@ -3,10 +3,12 @@ module Support
     def filter_by_token(tokname, text, lexer=nil)
       lexer ||= subject
 
+      target_token = Rouge::Token[tokname]
+
       tokens = lexer.lex(text)
 
       tokens.select do |(tok, val)|
-        tok.name.start_with? tokname
+        target_token === tok
       end
     end
 

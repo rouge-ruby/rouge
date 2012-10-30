@@ -1,3 +1,8 @@
+## version 0.2.8: 2012-10-30
+
+  * Bugfix for tableized line numbers when the code doesn't end
+    with a newline.
+
 ## version 0.2.7: 2012-10-22
 
   * Major performance improvements.  80% running time reduction for

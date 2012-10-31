@@ -1,14 +1,4 @@
 module Rouge
-  class Yielder
-    def initialize(&pr)
-      @proc = pr
-    end
-
-    def <<(*a)
-      @proc && @proc.call(*a)
-    end
-  end
-
   class InheritableHash < Hash
     def initialize(parent=nil)
       @parent = parent

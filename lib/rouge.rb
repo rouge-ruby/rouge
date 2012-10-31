@@ -1,6 +1,7 @@
 # stdlib
 require 'pathname'
 
+# The containing module for Rouge
 module Rouge
   class << self
     # Highlight some text with a given lexer and formatter.

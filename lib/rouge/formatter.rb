@@ -19,13 +19,15 @@ module Rouge
     end
 
     # Format a token stream.  Delegates to {#format}.
-    def self.format(tokens, opts={})
-      new(opts).format(tokens)
+    def self.format(tokens, opts={}, &b)
+      new(opts).format(tokens, &b)
     end
 
     # Format a token stream.
-    def format(tokens)
-      enum_for(:stream, tokens).to_a.join
+    def format(tokens, &b)
+      return enum_for(:stream, tokens).to_a.join unless b
+
+      stream(tokens, &b)
     end
 
     # @deprecated Use {#format} instead.

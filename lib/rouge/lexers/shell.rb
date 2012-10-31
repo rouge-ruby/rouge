@@ -87,7 +87,7 @@ module Rouge
         rule /;/, 'Text'
         rule /\s+/, 'Text'
         rule /[^=\*\s{}()$"\'`\\<]+/, 'Text'
-        rule /\d+(?= |\Z)/, 'Number'
+        rule /\d+(?= |\Z)/, 'Literal.Number'
         rule /</, 'Text'
         mixin :interp
       end
@@ -108,7 +108,7 @@ module Rouge
       state :math do
         rule /\)\)/, 'Keyword', :pop!
         rule %r([-+*/%^|&]|\*\*|\|\|), 'Operator'
-        rule /\d+/, 'Number'
+        rule /\d+/, 'Literal.Number'
         mixin :root
       end
 

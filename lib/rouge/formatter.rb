@@ -25,9 +25,12 @@ module Rouge
 
     # Format a token stream.
     def format(tokens, &b)
-      return enum_for(:stream, tokens).to_a.join unless b
+      return stream(tokens, &b) if block_given?
 
-      stream(tokens, &b)
+      out = ''
+      stream(tokens) { |piece| out << piece }
+
+      out
     end
 
     # @deprecated Use {#format} instead.

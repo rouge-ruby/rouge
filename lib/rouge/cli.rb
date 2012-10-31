@@ -60,7 +60,7 @@ module Rouge
       formatter = formatter_class.new(normalize_hash_keys(options[:formatter_opts]))
       lexer = lexer_class.new(normalize_hash_keys(options[:lexer_opts]))
 
-      puts Rouge.highlight(source, lexer, formatter)
+      formatter.format(lexer.lex(source), &method(:print))
     end
 
     desc 'style THEME', 'render THEME as css'
@@ -69,7 +69,7 @@ module Rouge
       theme = Theme.find(theme_name)
       raise "unknown theme: #{theme_name}" unless theme
 
-      puts theme.new(options).render
+      theme.new(options).render(&method(:puts))
     end
 
     desc 'list', 'list the available lexers, formatters, and styles'

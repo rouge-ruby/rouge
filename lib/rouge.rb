@@ -3,14 +3,14 @@ require 'pathname'
 
 module Rouge
   class << self
-    def highlight(text, lexer, formatter)
+    def highlight(text, lexer, formatter, &b)
       lexer = Lexer.find(lexer) unless lexer.respond_to? :lex
       raise "unknown lexer #{lexer}" unless lexer
 
       formatter = Formatter.find(formatter) unless formatter.respond_to? :format
       raise "unknown formatter #{formatter}" unless formatter
 
-      formatter.format(lexer.lex(text))
+      formatter.format(lexer.lex(text), &b)
     end
   end
 end

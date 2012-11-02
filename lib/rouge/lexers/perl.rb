@@ -55,7 +55,7 @@ module Rouge
         rule %r({(\\\\|\\}|[^}])*}[egimosx]*), re_tok, :pop!
         rule %r(<(\\\\|\\>|[^>])*>[egimosx]*), re_tok, :pop!
         rule %r(\[(\\\\|\\\]|[^\]])*\][egimosx]*), re_tok, :pop!
-        rule %r(\((\\\\|\\\)|[^\)])*\)[egimosx]*), re_tok, :pop!
+        rule %r[\((\\\\|\\\)|[^\)])*\)[egimosx]*], re_tok, :pop!
         rule %r(@(\\\\|\\\@|[^\@])*@[egimosx]*), re_tok, :pop!
         rule %r(%(\\\\|\\\%|[^\%])*%[egimosx]*), re_tok, :pop!
         rule %r(\$(\\\\|\\\$|[^\$])*\$[egimosx]*), re_tok, :pop!
@@ -87,7 +87,7 @@ module Rouge
         rule %r(s{(\\\\|\\}|[^}])*}\s*), re_tok, :balanced_regex
         rule %r(s<(\\\\|\\>|[^>])*>\s*), re_tok, :balanced_regex
         rule %r(s\[(\\\\|\\\]|[^\]])*\]\s*), re_tok, :balanced_regex
-        rule %r(s\((\\\\|\\\)|[^\)])*\)\s*), re_tok, :balanced_regex
+        rule %r[s\((\\\\|\\\)|[^\)])*\)\s*], re_tok, :balanced_regex
 
         rule %r(m?/(\\\\|\\/|[^/\n])*/[gcimosx]*), re_tok
         rule %r(m(?=[/!\\{<\[\(@%\$])), re_tok, :balanced_regex

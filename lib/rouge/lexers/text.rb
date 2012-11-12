@@ -13,8 +13,8 @@ module Rouge
         @token ||= Token[option :token]
       end
 
-      def stream_tokens(stream, &b)
-        yield self.token, stream.string
+      def stream_tokens(string, &b)
+        yield self.token, string
       end
     end
   end

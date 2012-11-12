@@ -299,7 +299,7 @@ module Rouge
       # consolidate consecutive tokens of the same type
       last_token = nil
       last_val = nil
-      stream_tokens(StringScanner.new(string)) do |tok, val|
+      stream_tokens(string) do |tok, val|
         next if val.empty?
 
         if tok == last_token

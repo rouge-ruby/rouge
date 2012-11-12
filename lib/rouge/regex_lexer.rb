@@ -183,7 +183,9 @@ module Rouge
     #    is consumed with an `'Error'` token, and we continue at (1.)
     #
     # @see #step #step (where (2.) is implemented)
-    def stream_tokens(stream, &b)
+    def stream_tokens(str, &b)
+      stream = StringScanner.new(str)
+
       until stream.eos?
         debug { "lexer: #{self.class.tag}" }
         debug { "stack: #{stack.map(&:name).inspect}" }

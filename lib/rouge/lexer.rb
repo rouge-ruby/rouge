@@ -265,13 +265,9 @@ module Rouge
       # be changed once it has begun lexing.  This method will redefine
       # itself on the first call to a noop if "debug" is not set.
       if option(:debug)
-        class << self
-          def debug; puts yield; end
-        end
+        def self.debug; puts yield; end
       else
-        class << self
-          def debug; end
-        end
+        def self.debug; end
       end
 
       debug(&b)

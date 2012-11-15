@@ -135,7 +135,10 @@ module Rouge
       end
 
       state :root do
+        rule /\n\s*/m, 'Text', :expr_start
+        rule /\s+/, 'Text' # NB: NOT /m
         rule /#.*$/, 'Comment.Single'
+
         rule %r(=begin\b.*?end\b)m, 'Comment.Multiline'
         rule /(?:#{keywords.join('|')})\b/, 'Keyword', :expr_start
         rule /(?:#{keywords_pseudo.join('|')})\b/, 'Keyword.Pseudo', :expr_start
@@ -194,8 +197,6 @@ module Rouge
         rule /[-+\/*%=<>&!^|~]=?/, 'Operator', :expr_start
         rule %r<[({,?:\\;/]>, 'Punctuation', :expr_start
         rule %r<[)}]>, 'Punctuation'
-        rule /\n\s*/m, 'Text', :expr_start
-        rule /\s+/, 'Text' # NB: NOT /m
       end
 
       state :has_heredocs do

@@ -73,7 +73,7 @@ module Rouge
         when ''
           yield val
         when nil
-          raise "unknown token: #{tok.inspect}"
+          raise "unknown token: #{tok.inspect} for #{val.inspect}"
         else
           yield '<span class='
           yield tok.shortname.inspect

@@ -51,6 +51,7 @@ load load_dir.join('rouge/lexers/shell.rb')
 load load_dir.join('rouge/lexers/viml.rb')
 load load_dir.join('rouge/lexers/nginx.rb')
 load load_dir.join('rouge/lexers/conf.rb')
+load load_dir.join('rouge/lexers/sed.rb')
 
 load load_dir.join('rouge/lexers/javascript.rb')
 load load_dir.join('rouge/lexers/css.rb')

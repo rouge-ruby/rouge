@@ -72,6 +72,7 @@ module Rouge
       end
 
       state :data do
+        rule /\s+/, 'Text'
         rule /\\./, 'Literal.String.Escape'
         rule /\$?"/, 'Literal.String.Double', :double_quotes
 
@@ -85,7 +86,6 @@ module Rouge
         rule /\*/, 'Keyword'
 
         rule /;/, 'Text'
-        rule /\s+/, 'Text'
         rule /[^=\*\s{}()$"\'`\\<]+/, 'Text'
         rule /\d+(?= |\Z)/, 'Literal.Number'
         rule /</, 'Text'

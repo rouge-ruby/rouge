@@ -4,6 +4,7 @@ gemspec
 
 gem 'minitest'
 gem 'wrong', '~> 0.7.0'
+gem 'predicated'
 
 gem 'rake'
 

@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'minitest'
-gem 'wrong', '~> 0.6.2'
+gem 'wrong', '~> 0.7.0'
 
 gem 'rake'
 

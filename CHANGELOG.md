@@ -1,3 +1,13 @@
+## version 0.2.9: 2012-11-28
+
+  * New lexers: io, sed, conf, and nginx
+  * fixed an error on numbers in the shell lexer
+  * performance bumps for shell and ruby by prioritizing more
+    common patterns
+  * (@korny) Future-proofed the regexes in the Perl lexer
+  * `rougify` now streams the formatted text to stdout as it's
+    available instead of waiting for the lex to be done.
+
 ## version 0.2.8: 2012-10-30
 
   * Bugfix for tableized line numbers when the code doesn't end

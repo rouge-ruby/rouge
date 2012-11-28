@@ -74,6 +74,7 @@ load load_dir.join('rouge/lexers/perl.rb')
 load load_dir.join('rouge/lexers/factor.rb')
 load load_dir.join('rouge/lexers/clojure.rb')
 load load_dir.join('rouge/lexers/groovy.rb')
+load load_dir.join('rouge/lexers/io.rb')
 
 load load_dir.join('rouge/lexers/haskell.rb')
 load load_dir.join('rouge/lexers/scheme.rb')

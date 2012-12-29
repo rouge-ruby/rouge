@@ -1,5 +1,6 @@
 # stdlib
 require 'strscan'
+require 'cgi'
 
 module Rouge
   # @abstract

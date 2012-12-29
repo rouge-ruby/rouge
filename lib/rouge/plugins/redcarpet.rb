@@ -2,9 +2,6 @@
 #
 #    require 'rouge/plugins/redcarpet'
 
-# stdlib
-require 'cgi'
-
 module Rouge
   module Plugins
     module Redcarpet

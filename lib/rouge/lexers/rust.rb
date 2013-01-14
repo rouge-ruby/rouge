@@ -67,6 +67,7 @@ module Rouge
         rule /\n/, 'Text', :start_line
         mixin :whitespace
         rule /\b(?:#{Rust.keywords.join('|')})\b/, 'Keyword'
+        mixin :has_literals
 
         rule %r([=-]>), 'Keyword'
         rule %r(<->), 'Keyword'
@@ -90,8 +91,6 @@ module Rouge
             token 'Name'
           end
         end
-
-        mixin :has_literals
       end
 
       state :has_literals do

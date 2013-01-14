@@ -1,3 +1,9 @@
+## version 0.2.10: 2013-01-14
+
+  * New lexer: rust (rust-lang.org)
+  * Include rouge.gemspec with the built gem
+  * Update the PHP builtins
+
 ## version 0.2.9: 2012-11-28
 
   * New lexers: io, sed, conf, and nginx

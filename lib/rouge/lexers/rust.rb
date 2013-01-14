@@ -110,8 +110,6 @@ module Rouge
         exp = /e[-+]?[0-9_]+/
         flt = /f32|f64/
 
-        # A B C AB AC BC ABC
-        # AB?C? A?BC? A?B?C
         rule %r(
           [0-9]+
           (#{dot}  #{exp}? #{flt}?

@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   desc
   s.homepage = "http://github.com/jayferd/rouge"
   s.rubyforge_project = "rouge"
-  s.files = Dir['Gemfile', 'cacher.gemspec', 'lib/**/*.rb', 'bin/rougify', 'lib/rouge/demos/*']
+  s.files = Dir['Gemfile', 'rouge.gemspec', 'lib/**/*.rb', 'bin/rougify', 'lib/rouge/demos/*']
   s.executables = %w(rougify)
 
   s.add_dependency 'thor'

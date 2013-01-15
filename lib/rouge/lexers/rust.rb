@@ -96,8 +96,6 @@ module Rouge
       state :has_literals do
         # constants
         rule /\b(?:true|false|nil)\b/, 'Keyword.Constant'
-        # ()
-        rule /[(]\s*[)]/, 'Keyword.Constant'
         # characters
         rule %r(
           ' (?: #{escapes} | [^\\] ) '

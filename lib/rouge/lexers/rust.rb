@@ -84,7 +84,7 @@ module Rouge
 
         # macros
         rule /\bmacro_rules!/, 'Name.Decorator', :macro_rules
-        rule /#{id}!/, 'Name.Decorator'
+        rule /#{id}!/, 'Name.Decorator', :macro
 
         rule /#{id}/ do |m|
           name = m[0]
@@ -96,7 +96,9 @@ module Rouge
         end
       end
 
-      state :macro_rules do
+      state :macro do
+        mixin :has_literals
+
         rule /[(]/ do
           @macro_parens += 1
           token 'Punctuation'
@@ -108,10 +110,19 @@ module Rouge
           token 'Punctuation'
         end
 
+        # same as the rule in root, but don't push another macro state
+        rule /#{id}!/, 'Name.Decorator'
+        mixin :root
+
+        # No syntax errors in macros
+        rule /./, 'Text'
+      end
+
+      state :macro_rules do
         rule /[$]#{id}(:#{id})?/, 'Name.Variable'
         rule /[$]/, 'Name.Variable'
 
-        mixin :root
+        mixin :macro
       end
 
       state :has_literals do

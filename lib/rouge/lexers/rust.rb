@@ -33,6 +33,8 @@ module Rouge
         )
       end
 
+      start { @macro_parens = 0 }
+
       id = /[a-z_]\w*/i
       hex = /[0-9a-f]/i
       escapes = %r(
@@ -74,13 +76,14 @@ module Rouge
         rule /[()\[\]{}|,:;]/, 'Punctuation'
         rule /[*!@~&+%^<>=-]/, 'Operator'
 
-        rule /[.]?#{id}(?=\s*[(])/m, 'Name.Function'
-        rule /[.]#{id}/, 'Name.Property'
+        rule /([.]\s*)?#{id}(?=\s*[(])/m, 'Name.Function'
+        rule /[.]\s*#{id}/, 'Name.Property'
         rule /(#{id})(::)/m do
           group 'Name.Namespace'; group 'Punctuation'
         end
 
         # macros
+        rule /\bmacro_rules!/, 'Name.Decorator', :macro_rules
         rule /#{id}!/, 'Name.Decorator'
 
         rule /#{id}/ do |m|
@@ -91,6 +94,24 @@ module Rouge
             token 'Name'
           end
         end
+      end
+
+      state :macro_rules do
+        rule /[(]/ do
+          @macro_parens += 1
+          token 'Punctuation'
+        end
+
+        rule /[)]/ do
+          @macro_parens -= 1
+          pop! if @macro_parens.zero?
+          token 'Punctuation'
+        end
+
+        rule /[$]#{id}(:#{id})?/, 'Name.Variable'
+        rule /[$]/, 'Name.Variable'
+
+        mixin :root
       end
 
       state :has_literals do

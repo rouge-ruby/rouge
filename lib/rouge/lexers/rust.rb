@@ -33,7 +33,15 @@ module Rouge
         )
       end
 
-      start { @macro_parens = 0 }
+      def macro_closed?
+        @macro_delims.values.all?(&:zero?)
+      end
+
+      start {
+        @macro_delims = { ']' => 0, ')' => 0, '}' => 0 }
+      }
+
+      delim_map = { '[' => ']', '(' => ')', '{' => '}' }
 
       id = /[a-z_]\w*/i
       hex = /[0-9a-f]/i
@@ -99,14 +107,16 @@ module Rouge
       state :macro do
         mixin :has_literals
 
-        rule /[(]/ do
-          @macro_parens += 1
+        rule /[\[{(]/ do |m|
+          @macro_delims[delim_map[m[0]]] += 1
+          debug { "    macro_delims: #{@macro_delims.inspect}" }
           token 'Punctuation'
         end
 
-        rule /[)]/ do
-          @macro_parens -= 1
-          pop! if @macro_parens.zero?
+        rule /[\]})]/ do |m|
+          @macro_delims[m[0]] -= 1
+          debug { "    macro_delims: #{@macro_delims.inspect}" }
+          pop! if macro_closed?
           token 'Punctuation'
         end
 

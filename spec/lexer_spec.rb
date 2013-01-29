@@ -91,6 +91,10 @@ describe Rouge::Lexer do
 
   it 'supports stateful lexes' do
     stateful = Class.new(Rouge::RegexLexer) do
+      def incr
+        @count += 1
+      end
+
       state :root do
         rule /\d+/ do |ss|
           token 'digit'
@@ -98,7 +102,7 @@ describe Rouge::Lexer do
         end
 
         rule /\+/ do |ss|
-          @count += 1
+          incr
           token(@count <= 5 ? 'lt' : 'gt')
         end
       end
@@ -142,7 +146,5 @@ describe Rouge::Lexer do
     assert_has_token('start', "\na", MyLexer)
     deny_has_token('not-start', 'a', MyLexer)
     assert_has_token('not-start', 'aa', MyLexer)
-
-
   end
 end

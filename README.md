@@ -2,12 +2,15 @@
 
 [![Build Status](https://secure.travis-ci.org/jayferd/rouge.png)](http://travis-ci.org/jayferd/rouge)
 
+Rouge is a pure-ruby syntax highlighter.  It can highlight nearly 40 languages, and output HTML or ANSI 256-color text.  Its HTML output is compatible with stylesheets designed for [pygments][]
+
 If you'd like to help out with this project, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.  In particular, I would appreciate help with the following lexers, from someone who has more experience with the language than I do:
 
 * Objective-C
 * Delphi/Pascal
 
-[issues]: /jayferd/rouge/issues
+[issues]: /jayferd/rouge/issues "Help Out"
+[pygments]: http://pygments.org/ "Pygments"
 
 ## Usage
 
@@ -16,7 +19,7 @@ First, take a look at the [pretty colors][].
 [pretty colors]: http://rouge.jayferd.us/demo
 
 ``` ruby
-# make some nice lexed html, compatible with pygments stylesheets
+# make some nice lexed html
 source = File.read('/etc/bashrc')
 formatter = Rouge::Formatters::HTML.new(:css_class => '.highlight')
 lexer = Rouge::Lexers::Shell.new

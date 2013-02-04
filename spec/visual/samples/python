@@ -20,9 +20,11 @@ def foo():
 
 def foo():
     """it's working"""
+    """he said "hi" """
 
 def foo():
     '''he said "hi"'''
+    '''it's working'''
 
 # unicode docstrings
 def foo():

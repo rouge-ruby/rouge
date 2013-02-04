@@ -146,7 +146,16 @@ module Rouge
 
       state :strings do
         rule /%(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, 'Literal.String.Interpol'
-        rule /[^\\'"%\n]+/, 'Literal.String'
+      end
+
+      state :strings_double do
+        rule /[^\\"%\n]+/, 'Literal.String'
+        mixin :strings
+      end
+
+      state :strings_single do
+        rule /[^\\'%\n]+/, 'Literal.String'
+        mixin :strings
       end
 
       state :nl do
@@ -169,24 +178,25 @@ module Rouge
       state :dqs do
         rule /"/, 'Literal.String', :pop!
         rule /\\\\|\\"|\\\n/, 'Literal.String.Escape'
-        mixin :strings
+        mixin :strings_double
       end
 
       state :sqs do
         rule /'/, 'Literal.String', :pop!
         rule /\\\\|\\'|\\\n/, 'Literal.String.Escape'
-        mixin :strings
+        mixin :strings_single
       end
 
       state :tdqs do
         rule /"""/, 'Literal.String', :pop!
-        mixin :strings
+        mixin :strings_double
         mixin :nl
       end
 
       state :tsqs do
         rule /'''/, 'Literal.String', :pop!
-        mixin :strings
+        rule /[^\\'%\n]+/, 'Literal.String'
+        mixin :strings_single
         mixin :nl
       end
 

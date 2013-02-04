@@ -11,6 +11,19 @@ def lex(code, lexer):
                             'not a class')
         raise
 
+# quotes in strings
+def foo():
+    "it's working"
+
+def foo():
+    'he said "hi"'
+
+def foo():
+    """it's working"""
+
+def foo():
+    '''he said "hi"'''
+
 # unicode docstrings
 def foo():
     ur"""unicode-raw"""

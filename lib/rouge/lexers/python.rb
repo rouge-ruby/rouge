@@ -197,7 +197,6 @@ module Rouge
       state :tsqs do
         rule /'''/, 'Literal.String', :pop!
         rule /'/, 'Literal.String'
-        rule /[^\\'%\n]+/, 'Literal.String'
         mixin :strings_single
         mixin :nl
       end

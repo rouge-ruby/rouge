@@ -1,3 +1,9 @@
+## version 0.2.11: 2013-02-04
+
+  * New lexer: C# (csharp)
+  * rust: better macro handling
+  * Python bugfix for "'" and '"'
+
 ## version 0.2.10: 2013-01-14
 
   * New lexer: rust (rust-lang.org)

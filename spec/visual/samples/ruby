@@ -81,6 +81,10 @@ a.()
 %s#ruby allows strange#$constructs
 %s#ruby allows strange#@@constructs
 
+%( hash mark: # )
+%r( hash mark: # )
+%w( ! $ % # )
+
 ##################################################################
 # HEREDOCS
 foo(<<-A, <<-B)

@@ -64,6 +64,7 @@ module Rouge
 
             if interp
               mixin :string_intp_escaped
+              rule /#/, toktype
             else
               rule /[\\#]/, toktype
             end

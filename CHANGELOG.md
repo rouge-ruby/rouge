@@ -1,3 +1,8 @@
+## version 0.2.12: 2013-02-07
+
+  * Python: bugfix for lone quotes in triple-quoted strings
+  * Ruby: bugfix for `#` in `%`-delimited strings
+
 ## version 0.2.11: 2013-02-04
 
   * New lexer: C# (csharp)

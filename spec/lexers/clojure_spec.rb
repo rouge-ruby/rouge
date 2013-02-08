@@ -6,6 +6,7 @@ describe Rouge::Lexers::Clojure do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.clj'
+      assert_guess :filename => 'foo.cljs'
     end
 
     it 'guesses by mimetype' do

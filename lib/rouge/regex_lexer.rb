@@ -368,6 +368,3 @@ module Rouge
     end
   end
 end
-
-class Regexp
-end

@@ -31,6 +31,12 @@ Rouge::Themes::ThankfulEyes.render(:scope => '.highlight')
 
 Rouge aims to be simple to extend, and to be a drop-in replacement pygments, with the same quality of output.
 
+Also, Rouge ships with a `rougify` command which allows you to easily highlight files in your terminal: 
+
+``` bash
+$ rougify foo.rb
+```
+
 ### Advantages to pygments.rb
 * No python bridge is necessary - you can deploy it on Heroku effortlessly, without the need for [epic hacks][].
 [epic hacks]: https://github.com/rumblelabs/pygments-heroku
@@ -124,3 +130,7 @@ class MyLexer < Rouge::RegexLexer
   end
 end
 ```
+
+## License
+
+Rouge is released under the MIT license. Please see the `LICENSE` file for more information.

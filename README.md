@@ -69,6 +69,10 @@ You can test the core of Rouge simply by running `rake` (no `bundle exec` requir
 
 To test a lexer visually, run `rackup` from the root and go to `localhost:9292/#{some_lexer}` where `some_lexer` is the tag or an alias of a lexer you'd like to test.
 
+### API Documentation
+
+is at http://rubydoc.info/gems/rouge/frames.
+
 ### Using the lexer DSL
 
 You can probably learn a lot just by reading through the existing lexers.  Basically, a lexer consists of a collection of states, each of which has several rules.  A rule consists of a regular expression and an action, which yields tokens and manipulates the state stack.  Each rule in the state on top of the stack is tried *in order* until a match is found, at which point the action is run, the match consumed from the stream, and the process repeated with the new lexer on the top of the stack.  Each lexer has a special state called `:root`, and the initial state stack consists of just this state.

@@ -98,6 +98,7 @@ module Rouge
     # XXX IMPORTANT XXX
     # For compatibility, this list must be kept in sync with
     # pygments.token.STANDARD_TYPES
+    # please see https://github.com/jayferd/rouge/wiki/List-of-tokens
     token 'Text',                        ''
     token 'Text.Whitespace',             'w'
     token 'Error',                       'err'

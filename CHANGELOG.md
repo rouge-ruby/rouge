@@ -1,3 +1,9 @@
+## version 0.2.13: 2013-02-12
+
+  * Highlight ClojureScipt files (`*.cljs`) as Clojure (@blom)
+  * README and doc enhancements (plus an actual wiki!) (@robin850)
+  * Don't open `Regexp`, especially if we're not adding anything to it.
+
 ## version 0.2.12: 2013-02-07
 
   * Python: bugfix for lone quotes in triple-quoted strings

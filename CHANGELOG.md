@@ -7,7 +7,7 @@
 
   * New lexer: C# (csharp)
   * rust: better macro handling
-  * Python bugfix for "'" and '"'
+  * Python bugfix for "'" and '"' (@garybernhardt)
 
 ## version 0.2.10: 2013-01-14
 

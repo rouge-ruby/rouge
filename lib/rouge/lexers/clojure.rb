@@ -4,7 +4,7 @@ module Rouge
       desc "The Clojure programming language (clojure.org)"
 
       tag 'clojure'
-      aliases 'clj'
+      aliases 'clj', 'cljs'
 
       filenames '*.clj', '*.cljs'
 

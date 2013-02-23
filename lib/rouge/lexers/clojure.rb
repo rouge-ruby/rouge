@@ -91,7 +91,7 @@ module Rouge
         end
 
         rule identifier do |m|
-          token name_token(m[0]) || 'Name.Variable'
+          token name_token(m[0]) || 'Name'
         end
 
         # vectors

@@ -43,6 +43,7 @@ load load_dir.join('rouge/lexers/diff.rb')
 load load_dir.join('rouge/lexers/tex.rb')
 load load_dir.join('rouge/lexers/markdown.rb')
 load load_dir.join('rouge/lexers/yaml.rb')
+load load_dir.join('rouge/lexers/ini.rb')
 
 load load_dir.join('rouge/lexers/sql.rb')
 

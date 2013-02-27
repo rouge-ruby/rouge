@@ -8,8 +8,14 @@ describe Rouge::Lexers::Shell do
     assert { tokens.first[0].name == 'Name.Variable' }
   end
 
-  it 'parses /etc/bash.bashrc' do
-    assert_no_errors File.read('/etc/bash.bashrc')
+  it 'parses bashrc' do
+    if File.exists?('/etc/bash.bashrc')
+      assert_no_errors File.read('/etc/bash.bashrc')
+    elsif File.exists?('/etc/bashrc')
+      assert_no_errors File.read('/etc/bashrc')
+    else
+      skip "no bashrc file present"
+    end
   end
 
   it 'parses case statements correctly' do

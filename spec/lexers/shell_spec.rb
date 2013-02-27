@@ -8,10 +8,6 @@ describe Rouge::Lexers::Shell do
     assert { tokens.first[0].name == 'Name.Variable' }
   end
 
-  it 'parses /etc/bash.bashrc' do
-    assert_no_errors File.read('/etc/bash.bashrc')
-  end
-
   it 'parses case statements correctly' do
     assert_no_errors <<-sh
       case $foo in

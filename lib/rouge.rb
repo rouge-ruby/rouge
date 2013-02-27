@@ -80,6 +80,7 @@ load load_dir.join('rouge/lexers/groovy.rb')
 load load_dir.join('rouge/lexers/io.rb')
 
 load load_dir.join('rouge/lexers/haskell.rb')
+load load_dir.join('rouge/lexers/literate_haskell.rb')
 load load_dir.join('rouge/lexers/scheme.rb')
 load load_dir.join('rouge/lexers/common_lisp.rb')
 

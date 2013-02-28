@@ -8,7 +8,7 @@ module Rouge
       mimetypes 'text/x-toml'
 
       def self.analyze_text(text)
-        return 1 if text =~ /\A\s*\w+\s*\=\s*\w*\s(\[[\w.]+\])?/
+        return 1 if text =~ /\A\[[\w.]+\]\s*\w+\s*=\s*("\w+")+/
       end
 
       identifier = /[\w.\S]+/

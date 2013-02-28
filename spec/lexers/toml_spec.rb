@@ -13,7 +13,7 @@ describe Rouge::Lexers::TOML do
     end
 
     it 'guesses by source' do
-      assert_guess :source => "[foo]\nbar=1979-05-27T07:32:00Z"
+      assert_guess :source => "[foo]\nhi = \"mom\""
     end
   end
 end

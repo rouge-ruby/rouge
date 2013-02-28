@@ -15,7 +15,7 @@ module Rouge
 
       state :basic do
         rule /\s+/, 'Text'
-        rule /#[^#]*?$/, 'Comment'
+        rule /#.*?$/, 'Comment'
         rule /(true|false)/, 'Keyword.Constant'
         rule /(?<!=)\s*\[[\w\d\S]+\]/, 'Name.Namespace'
 

@@ -39,12 +39,15 @@ module Rouge
 
       state :value do
         rule /\n/, 'Text', :pop!
+        mixin :content
+      end
+
+      state :content do
         mixin :basic
         rule /"/, 'Literal.String', :dq
         mixin :esc_str
         rule /\,/, 'Punctuation'
-        rule /\[/, 'Punctuation'
-        rule /\]/, 'Punctuation'
+        rule /\[/, 'Punctuation', :array
       end
 
       state :dq do
@@ -55,6 +58,11 @@ module Rouge
 
       state :esc_str do
         rule /\\[0t\tn\n "\\ r]/, 'Literal.String.Escape'
+      end
+
+      state :array do
+        mixin :content
+        rule /\]/, 'Punctuation', :pop!
       end
     end
   end

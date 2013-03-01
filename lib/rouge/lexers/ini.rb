@@ -9,7 +9,7 @@ module Rouge
       mimetypes 'text/x-ini'
 
       def self.analyze_text(text)
-        return 1 if text =~ /\A\[[\w.]+\]\s*\w+=\w+/
+        return 0.1 if text =~ /\A\[[\w.]+\]\s*\w+=\w+/
       end
 
       identifier = /[\w.]+/

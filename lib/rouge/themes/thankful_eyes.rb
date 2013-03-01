@@ -51,6 +51,7 @@ module Rouge
       style 'Name.Label',
             'Name.Tag', :fg => :schrill, :bold => true
       style 'Literal.Number',
+            'Literal.Date',
             'Literal.String.Symbol', :fg => :pink_merengue, :bold => true
       style 'Literal.String', :fg => :dune, :bold => true
       style 'Literal.String.Escape',

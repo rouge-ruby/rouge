@@ -1,3 +1,15 @@
+## version 0.2.14: 2013-02-12
+
+  * New lexers:
+    - puppet
+    - literate coffeescript
+    - literate haskell
+    - ini
+    - toml (@coffeejunk)
+  * clojure: `cljs` alias, and make it more visually balanced by using
+    `Name` instead of `Name.Variable`.
+  * Stop trying to read /etc/bash.bashrc in the specs (@coffeejunk)
+
 ## version 0.2.13: 2013-02-12
 
   * Highlight ClojureScipt files (`*.cljs`) as Clojure (@blom)

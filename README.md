@@ -67,7 +67,7 @@ Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a dif
 
 You can test the core of Rouge simply by running `rake` (no `bundle exec` required).  It's also set up with `guard`, if you like.
 
-To test a lexer visually, run `rackup` from the root and go to `localhost:9292/#{some_lexer}` where `some_lexer` is the tag or an alias of a lexer you'd like to test.
+To test a lexer visually, run `rackup` from the root and go to `localhost:9292/#{some_lexer}` where `some_lexer` is the tag or an alias of a lexer you'd like to test.  If you add `?debug=1`, helpful debugging info will be printed on stdout.
 
 ### API Documentation
 

@@ -33,7 +33,7 @@ module Rouge
         rule %r((local)\b), 'Keyword.Declaration'
         rule %r((true|false|nil)\b), 'Keyword.Constant'
         
-        rule %r((function)\b), 'Keyword', :funcname
+        rule %r((function)\b), 'Keyword', :function_name
         
         rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?), 'Name'
         
@@ -41,10 +41,12 @@ module Rouge
         rule %r("), 'Literal.String.Double' # combined(:string_escape, :dqs)
       end
       
-      state :funcname do
+      state :function_name do
         rule /\s+/, 'Text'
-        rule %r((?:([A-Za-z_][A-Za-z0-9_]*)(\.))?([A-Za-z_][A-Za-z0-9_]*)), 'Name.Function', :pop!
-          # bygroups(Name.Class, Punctuation, Name.Function)
+        rule %r((?:([A-Za-z_][A-Za-z0-9_]*)(\.))?([A-Za-z_][A-Za-z0-9_]*)) do
+          group 'Name.Class'; group 'Name.Punctuation'; group 'Name.Function'
+          pop!
+        end
         # inline function
         rule %r(\(), 'Punctuation', :pop!
       end

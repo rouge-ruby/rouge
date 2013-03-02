@@ -1,3 +1,5 @@
+#!/usr/local/bin/lua
+
 --[[ Example code by Steve Donovan from luanova.org ]]
 
 -- basic1.lua

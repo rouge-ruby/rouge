@@ -12,6 +12,12 @@ module Rouge
       end
    
       state :root do
+        # lua allows a file to start with a shebang
+        rule %r(#!(.*?)$), 'Comment.Preproc'
+        rule //, 'Text', :base
+      end
+                  
+      state :base do
         rule %r(--\[(=*)\[.*?\]\1\])ms, 'Comment.Multiline'
         rule %r(--.*$), 'Comment.Single'
         

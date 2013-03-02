@@ -37,32 +37,47 @@ module Rouge
         
         rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?), 'Name'
         
-        rule %r('), 'Literal.String.Single' # combined(:string_escape, :sqs)
-        rule %r("), 'Literal.String.Double' # combined(:string_escape, :dqs)
+        rule %r('), 'Literal.String.Single', :escape_sqs
+        rule %r("), 'Literal.String.Double', :escape_dqs
       end
       
       state :function_name do
         rule /\s+/, 'Text'
         rule %r((?:([A-Za-z_][A-Za-z0-9_]*)(\.))?([A-Za-z_][A-Za-z0-9_]*)) do
-          group 'Name.Class'; group 'Name.Punctuation'; group 'Name.Function'
+          group 'Name.Class'; group 'Punctuation'; group 'Name.Function'
           pop!
         end
         # inline function
         rule %r(\(), 'Punctuation', :pop!
       end
       
+      state :escape_sqs do
+        mixin :string_escape
+        mixin :sqs
+      end
+      
+      state :escape_dqs do
+        mixin :string_escape
+        mixin :dqs
+      end
+      
       state :string_escape do
-        rule %r('\\([abfnrtv\\"']|\d{1,3})'), 'Literal.String.Escape'
+        rule %r(\\([abfnrtv\\"']|\d{1,3})), 'Literal.String.Escape'
       end
       
       state :sqs do
         rule %r('), 'Literal.String', :pop!
-        # include('string')
+        mixin :string
       end
       
       state :dqs do
         rule %r("), 'Literal.String', :pop!
-        # include('string')
+        mixin :string
+      end
+      
+      # Lua is 8-bit clean, every character is valid in a string
+      state :string do
+        rule /./, 'Literal.String'
       end
       
     end

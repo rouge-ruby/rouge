@@ -38,8 +38,7 @@ $ rougify foo.rb
 ```
 
 ### Advantages to pygments.rb
-* No python bridge is necessary - you can deploy it on Heroku effortlessly, without the need for [epic hacks][].
-[epic hacks]: https://github.com/rumblelabs/pygments-heroku
+* No need to [spawn Python processes](https://github.com/tmm1/pygments.rb).
 
 ### Advantages to CodeRay
 * The HTML output from Rouge is fully compatible with stylesheets designed for pygments.

@@ -1,7 +1,7 @@
 module Rouge
   module Lexers
     class TOML < RegexLexer
-      desc 'the TOML configuration format'
+      desc 'the TOML configuration format (https://github.com/mojombo/toml)'
       tag 'toml'
 
       filenames '*.toml'

@@ -1,3 +1,12 @@
+## version 0.2.15: 2013-03-03
+
+  * New lexer: lua (thanks, @nathany!)
+  * Add extra filetypes that map to Ruby (`Capfile`, `Vagrantfile`,
+    `*.ru` and `*.prawn`) (@nathany)
+  * Bugfix: add demos for ini and toml
+  * The `thankful_eyes` theme now colors `Literal.Date`
+  * No more gigantic load list in `lib/rouge.rb`
+
 ## version 0.2.14: 2013-02-28
 
   * New lexers:

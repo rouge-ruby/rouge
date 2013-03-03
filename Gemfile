@@ -12,6 +12,7 @@ gem 'redcarpet', :platforms => :ruby
 
 # for visual tests
 gem 'sinatra'
+gem 'shotgun'
 
 # docs
 gem 'yard'

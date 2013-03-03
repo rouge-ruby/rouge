@@ -7,10 +7,32 @@ module Rouge
       
       mimetypes 'text/x-lua', 'application/x-lua'
       
+      def initialize(opts={})
+        @function_highlighting = opts.delete(:function_highlighting) { true }
+        @disabled_modules = opts.delete(:disabled_modules) { [] }
+        super(opts)
+      end
+      
       def self.analyze_text(text)
         return 1 if text.shebang? 'lua'
       end
+      
+      def self.builtins
+        load Pathname.new(__FILE__).dirname.join('lua/builtins.rb')
+        self.builtins
+      end
    
+      def builtins
+        return [] unless @function_highlighting
+
+        @builtins ||= Set.new.tap do |builtins|
+          self.class.builtins.each do |mod, fns|
+            next if @disabled_modules.include? mod
+            builtins.merge(fns)
+          end
+        end
+      end
+      
       state :root do
         # lua allows a file to start with a shebang
         rule %r(#!(.*?)$), 'Comment.Preproc'
@@ -41,7 +63,19 @@ module Rouge
         
         rule %r((function)\b), 'Keyword', :function_name
         
-        rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?), 'Name'
+        rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?) do |m|
+          name = m[0]
+          if self.builtins.include?(name)
+            token 'Name.Builtin'
+          elsif name =~ /\./
+            a, b = name.split('.', 2)
+            token 'Name', a
+            token 'Punctuation', '.'
+            token 'Name', b
+          else
+            token 'Name'
+          end
+        end
         
         rule %r('), 'Literal.String.Single', :escape_sqs
         rule %r("), 'Literal.String.Double', :escape_dqs

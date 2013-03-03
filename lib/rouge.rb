@@ -38,62 +38,7 @@ load load_dir.join('rouge/lexer.rb')
 load load_dir.join('rouge/regex_lexer.rb')
 load load_dir.join('rouge/template_lexer.rb')
 
-load load_dir.join('rouge/lexers/text.rb')
-load load_dir.join('rouge/lexers/diff.rb')
-load load_dir.join('rouge/lexers/tex.rb')
-load load_dir.join('rouge/lexers/markdown.rb')
-load load_dir.join('rouge/lexers/yaml.rb')
-load load_dir.join('rouge/lexers/toml.rb')
-load load_dir.join('rouge/lexers/ini.rb')
-
-load load_dir.join('rouge/lexers/sql.rb')
-
-load load_dir.join('rouge/lexers/make.rb')
-load load_dir.join('rouge/lexers/shell.rb')
-load load_dir.join('rouge/lexers/viml.rb')
-load load_dir.join('rouge/lexers/nginx.rb')
-load load_dir.join('rouge/lexers/conf.rb')
-load load_dir.join('rouge/lexers/sed.rb')
-load load_dir.join('rouge/lexers/puppet.rb')
-
-load load_dir.join('rouge/lexers/javascript.rb')
-load load_dir.join('rouge/lexers/css.rb')
-load load_dir.join('rouge/lexers/html.rb')
-load load_dir.join('rouge/lexers/xml.rb')
-load load_dir.join('rouge/lexers/php.rb')
-
-load load_dir.join('rouge/lexers/haml.rb')
-load load_dir.join('rouge/lexers/sass.rb')
-load load_dir.join('rouge/lexers/scss.rb')
-load load_dir.join('rouge/lexers/coffeescript.rb')
-load load_dir.join('rouge/lexers/literate_coffeescript.rb')
-
-load load_dir.join('rouge/lexers/erb.rb')
-load load_dir.join('rouge/lexers/handlebars.rb')
-
-load load_dir.join('rouge/lexers/tcl.rb')
-load load_dir.join('rouge/lexers/python.rb')
-load load_dir.join('rouge/lexers/ruby.rb')
-load load_dir.join('rouge/lexers/perl.rb')
-load load_dir.join('rouge/lexers/factor.rb')
-load load_dir.join('rouge/lexers/clojure.rb')
-load load_dir.join('rouge/lexers/groovy.rb')
-load load_dir.join('rouge/lexers/io.rb')
-load load_dir.join('rouge/lexers/lua.rb')
-
-load load_dir.join('rouge/lexers/haskell.rb')
-load load_dir.join('rouge/lexers/literate_haskell.rb')
-load load_dir.join('rouge/lexers/scheme.rb')
-load load_dir.join('rouge/lexers/common_lisp.rb')
-
-load load_dir.join('rouge/lexers/c.rb')
-load load_dir.join('rouge/lexers/cpp.rb')
-load load_dir.join('rouge/lexers/java.rb')
-load load_dir.join('rouge/lexers/rust.rb')
-
-load load_dir.join('rouge/lexers/csharp.rb')
-
-load load_dir.join('rouge/lexers/smalltalk.rb')
+Dir.glob(load_dir.join('rouge/lexers/*.rb')).each { |f| load f }
 
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')

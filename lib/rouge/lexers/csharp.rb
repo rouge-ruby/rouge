@@ -50,13 +50,13 @@ module Rouge
         rule /@"(\\.|.)*?"/, 'Literal.String'
         rule /"(\\.|.)*?["\n]/, 'Literal.String'
         rule /'(\\.|.)'/, 'Literal.String.Char'
+        rule /0x[0-9a-f]+[lu]?/i, 'Literal.Number'
         rule %r(
           [0-9]
           ([.][0-9]*)? # decimal
           (e[+-][0-9]+)? # exponent
-          [fld]? # type
+          [fldu]? # type
         )ix, 'Literal.Number'
-        rule /0x[0-9a-f]+l?/i, 'Literal.Number'
         rule /^#[ \t]*(#{cpp_keywords.join('|')})\b.*?\n/,
           'Comment.Preproc'
         rule /\b(#{keywords.join('|')})\b/, 'Keyword'

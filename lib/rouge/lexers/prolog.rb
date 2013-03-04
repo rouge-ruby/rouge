@@ -39,7 +39,7 @@ module Rouge
       end
 
       state :variables do
-        rule /[A-Z]+\S*/, 'Name.Variable'
+        rule /[A-Z]+\w*/, 'Name.Variable'
         rule /_[[:word:]]*/, 'Name.Variable'
       end
 

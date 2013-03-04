@@ -26,7 +26,7 @@ module Rouge
       end
 
       state :atoms do
-        rule /[[:lower:]]+(_|[[:lower]]|[[:digit:]])*/, 'Literal.String.Atom'
+        rule /[[:lower:]]([_[:lower:][:digit:]])*/, 'Literal.String.Atom'
         rule /'[^']*'/, 'Literal.String.Atom'
       end
 

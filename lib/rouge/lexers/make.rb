@@ -8,7 +8,7 @@ module Rouge
       mimetypes 'text/x-makefile'
 
       def self.analyze_text(text)
-        return 0.2 if text =~ /^\.PHONY:/
+        return 0.6 if text =~ /^\.PHONY:/
       end
 
       bsd_special = %w(

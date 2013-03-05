@@ -12,9 +12,5 @@ describe Rouge::Lexers::INI do
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-ini'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => "[foo]\nbar=1"
-    end
   end
 end

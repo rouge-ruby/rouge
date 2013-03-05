@@ -14,17 +14,5 @@ describe Rouge::Lexers::Prolog do
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-prolog'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => <<-PROLOG
-mother_child(trude, sally).
-
-father_child(tom, sally).
-father_child(tom, erica).
-father_child(mike, tom).
-
-sibling(X, Y)      :- parent_child(Z, X), parent_child(Z, Y).
-      PROLOG
-    end
   end
 end

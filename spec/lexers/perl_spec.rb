@@ -17,7 +17,6 @@ describe Rouge::Lexers::Perl do
 
     it 'guesses by source' do
       assert_guess :source => '#!/usr/local/bin/perl'
-      assert_guess :source => 'my $foo = 1;'
     end
   end
 end

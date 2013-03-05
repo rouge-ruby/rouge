@@ -16,6 +16,7 @@ describe Rouge::Lexers::Text do
 
     it 'guesses by source' do
       assert_guess :source => 'zorbl'
+      assert_guess :source => '-:-:-:-:-'
     end
   end
 end

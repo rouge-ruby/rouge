@@ -9,10 +9,5 @@ describe Rouge::Lexers::ERB do
       assert_guess :filename => 'foo.eruby'
       assert_guess :filename => 'foo.rhtml'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => '<% foo %>'
-      assert_guess :source => '<%%>'
-    end
   end
 end

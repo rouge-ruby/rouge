@@ -8,8 +8,8 @@ module Rouge
       mimetypes 'text/x-prolog'
 
       def self.analyze_text(text)
-        return 0.5 if text =~ /\A\w+(\(\w+\,\s*\w+\))*\./
-        return 0.5 if text.include? ':-'
+        return 0.1 if text =~ /\A\w+(\(\w+\,\s*\w+\))*\./
+        return 0.1 if text.include? ':-'
       end
 
       state :basic do

@@ -13,9 +13,11 @@ module Rouge
       )
 
       def self.analyze_text(text)
-        return 0.5 if text.doctype?
-        return 0.5 if text[0..1000] =~ %r(<.+?>.*?</.+?>)m
+        return 0.9 if text.doctype?
         return 0.8 if text =~ /\A<\?xml\b/
+        start = text[0..1000]
+        return 0.6 if start =~ %r(<xml\b)
+        return 0.3 if start =~ %r(<.+?>.*?</.+?>)m
       end
 
       state :root do

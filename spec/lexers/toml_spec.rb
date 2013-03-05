@@ -11,9 +11,5 @@ describe Rouge::Lexers::TOML do
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-toml'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => "[foo]\nhi = \"mom\""
-    end
   end
 end

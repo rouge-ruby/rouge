@@ -105,7 +105,8 @@ module Rouge
         return lexers if lexers.size == 1
 
         if source
-          return [best_by_source(lexers, source)].compact
+          source_threshold = lexers.size < all.size ? 0 : 0.5
+          return [best_by_source(lexers, source, source_threshold)].compact
         end
 
         []
@@ -185,12 +186,12 @@ module Rouge
         out
       end
 
-      def best_by_source(lexers, source)
+      def best_by_source(lexers, source, threshold=0)
         assert_utf8!(source)
 
         source = TextAnalyzer.new(source)
 
-        best_result = 0
+        best_result = threshold
         best_match = nil
         registry.values.each do |lexer|
           result = lexer.analyze_text(source) || 0
@@ -389,7 +390,8 @@ module Rouge
     #
     # Return a number between 0 and 1 indicating the likelihood that
     # the text given should be lexed with this lexer.  The default
-    # implementation returns 0.
+    # implementation returns 0.  Values under 0.5 will only be used
+    # to disambiguate filename or mimetype matches.
     #
     # @param [TextAnalyzer] text
     #   the text to be analyzed, with a couple of handy methods on it,

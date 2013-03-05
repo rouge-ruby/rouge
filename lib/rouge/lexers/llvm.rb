@@ -8,7 +8,7 @@ module Rouge
       mimetypes 'text/x-llvm'
 
       def self.analyze_text(text)
-        return 1 if text =~ /\A%\w+\s=\s/
+        return 0.1 if text =~ /\A%\w+\s=\s/
       end
 
       state :root do

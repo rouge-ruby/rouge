@@ -94,7 +94,7 @@ module Rouge
       # This accepts the same arguments as Lexer.guess, but will never throw
       # an error.  It will return a (possibly empty) list of potential lexers
       # to use.
-      def multi_guess(info={})
+      def guesses(info={})
         mimetype, filename, source = info.values_at(:mimetype, :filename, :source)
         all = lexers = registry.values.uniq
 
@@ -135,7 +135,7 @@ module Rouge
       # @see Lexer.analyze_text
       # @see Lexer.multi_guess
       def guess(info={})
-        lexers = multi_guess(info)
+        lexers = guesses(info)
 
         return Lexers::Text if lexers.empty?
         return lexers[0] if lexers.size == 1

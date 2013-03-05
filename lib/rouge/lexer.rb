@@ -96,7 +96,8 @@ module Rouge
       # to use.
       def guesses(info={})
         mimetype, filename, source = info.values_at(:mimetype, :filename, :source)
-        all = lexers = registry.values.uniq
+        lexers = registry.values.uniq
+        total_size = lexers.size
 
         lexers = filter_by_mimetype(lexers, mimetype) if mimetype
         return lexers if lexers.size == 1
@@ -105,7 +106,10 @@ module Rouge
         return lexers if lexers.size == 1
 
         if source
-          source_threshold = lexers.size < all.size ? 0 : 0.5
+          # If we're filtering against *all* lexers, we only use confident return
+          # values from analyze_text.  But if we've filtered down already, we can trust
+          # the analysis more.
+          source_threshold = lexers.size < total_size ? 0 : 0.5
           return [best_by_source(lexers, source, source_threshold)].compact
         end
 

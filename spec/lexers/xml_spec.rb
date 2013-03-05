@@ -8,9 +8,7 @@ describe Rouge::Lexers::XML do
       assert_guess :filename => 'foo.xml'
       assert_guess :filename => 'foo.xsl'
       assert_guess :filename => 'foo.rss'
-      # TODO: implement disambiguation for multiple types
-      # This currently returns HTML
-      # assert_guess :filename => 'foo.xslt'
+      assert_guess :filename => 'foo.xslt'
       assert_guess :filename => 'foo.xsd'
       assert_guess :filename => 'foo.wsdl'
     end

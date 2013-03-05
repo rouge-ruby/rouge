@@ -3,7 +3,7 @@ module Rouge
     class HTML < RegexLexer
       desc "HTML, the markup language of the web"
       tag 'html'
-      filenames '*.htm', '*.html', '*.xhtml', '*.xslt'
+      filenames '*.htm', '*.html', '*.xhtml'
       mimetypes 'text/html', 'application/xhtml+xml'
 
       def self.analyze_text(text)

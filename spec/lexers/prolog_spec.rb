@@ -8,7 +8,7 @@ describe Rouge::Lexers::Prolog do
       assert_guess :filename => 'foo.pro'
       assert_guess :filename => 'foo.P'
       assert_guess :filename => 'foo.prolog'
-      assert_guess :filename => 'foo.pl'
+      assert_guess :filename => 'foo.pl', :source => ':-'
     end
 
     it 'guesses by mimetype' do

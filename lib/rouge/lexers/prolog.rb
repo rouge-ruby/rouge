@@ -4,7 +4,7 @@ module Rouge
       desc "The Prolog programming language (http://en.wikipedia.org/wiki/Prolog)"
       tag 'prolog'
       aliases 'prolog'
-      filenames '*.pro', '*.P', '*.prolog'
+      filenames '*.pro', '*.P', '*.prolog', '*.pl'
       mimetypes 'text/x-prolog'
 
       def self.analyze_text(text)

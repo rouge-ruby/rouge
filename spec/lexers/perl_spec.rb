@@ -5,7 +5,8 @@ describe Rouge::Lexers::Perl do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.pl'
+      # *.pl needs source hints because it's also used by Prolog
+      assert_guess :filename => 'foo.pl', :source => 'my $foo = 1'
       assert_guess :filename => 'foo.pm'
     end
 

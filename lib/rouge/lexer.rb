@@ -91,6 +91,37 @@ module Rouge
 
       # Guess which lexer to use based on a hash of info.
       #
+      # This accepts the same arguments as Lexer.guess, but will never throw
+      # an error.  It will return a (possibly empty) list of potential lexers
+      # to use.
+      def multi_guess(info={})
+        mimetype, filename, source = info.values_at(:mimetype, :filename, :source)
+        all = lexers = registry.values.uniq
+
+        lexers = filter_by_mimetype(lexers, mimetype) if mimetype
+        return lexers if lexers.size == 1
+
+        lexers = filter_by_filename(lexers, filename) if filename
+        return lexers if lexers.size == 1
+
+        if source
+          return [best_by_source(lexers, source)].compact
+        end
+
+        []
+      end
+
+      class AmbiguousGuess < StandardError
+        attr_reader :alternatives
+        def initialize(alternatives); @alternatives = alternatives; end
+
+        def message
+          "Ambiguous guess: can't decide between #{alternatives.map(&:tag).inspect}"
+        end
+      end
+
+      # Guess which lexer to use based on a hash of info.
+      #
       # @option info :mimetype
       #   A mimetype to guess by
       # @option info :filename
@@ -101,36 +132,60 @@ module Rouge
       #   other hints.
       #
       # @see Lexer.analyze_text
+      # @see Lexer.multi_guess
       def guess(info={})
-        by_mimetype = guess_by_mimetype(info[:mimetype]) if info[:mimetype]
-        return by_mimetype if by_mimetype
+        lexers = multi_guess(info)
 
-        by_filename = guess_by_filename(info[:filename]) if info[:filename]
-        return by_filename if by_filename
+        return Lexers::Text if lexers.empty?
+        return lexers[0] if lexers.size == 1
 
-        by_source = guess_by_source(info[:source]) if info[:source]
-        return by_source if by_source
-
-        # guessing failed, just parse it as text
-        return Lexers::Text
+        raise AmbiguousGuess.new(lexers)
       end
 
       def guess_by_mimetype(mt)
-        registry.values.detect do |lexer|
-          lexer.mimetypes.include? mt
-        end
+        guess :mimetype => mt
       end
 
       def guess_by_filename(fname)
-        fname = File.basename(fname)
-        registry.values.detect do |lexer|
-          lexer.filenames.any? do |pattern|
-            File.fnmatch?(pattern, fname, File::FNM_DOTMATCH)
-          end
-        end
+        guess :filename => fname
       end
 
       def guess_by_source(source)
+        guess :source => source
+      end
+
+    private
+      def filter_by_mimetype(lexers, mt)
+        lexers.select { |lexer| lexer.mimetypes.include? mt }
+      end
+
+      def filter_by_filename(lexers, fname)
+        fname = File.basename(fname)
+        out = []
+        best_seen = nil
+
+        lexers.each do |lexer|
+          score = lexer.filenames.map do |pattern|
+            if File.fnmatch?(pattern, fname, File::FNM_DOTMATCH)
+              # specificity is better the fewer wildcards there are
+              pattern.scan(/[*?\[]/).size
+            end
+          end.compact.min
+
+          next unless score
+
+          if best_seen.nil? || score < best_seen
+            best_seen = score
+            out = [lexer]
+          elsif score == best_seen
+            out << lexer
+          end
+        end
+
+        out
+      end
+
+      def best_by_source(lexers, source)
         assert_utf8!(source)
 
         source = TextAnalyzer.new(source)
@@ -150,11 +205,13 @@ module Rouge
         best_match
       end
 
+    protected
       # @private
       def register(name, lexer)
         registry[name.to_s] = lexer
       end
 
+    public
       # Used to specify or get the canonical name of this lexer class.
       #
       # @example

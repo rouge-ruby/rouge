@@ -160,11 +160,17 @@ module Rouge
         lexers.select { |lexer| lexer.mimetypes.include? mt }
       end
 
+      # returns a list of lexers that match the given filename with
+      # equal specificity (i.e. number of wildcards in the pattern).
+      # This helps disambiguate between, e.g. the Nginx lexer, which
+      # matches `nginx.conf`, and the Conf lexer, which matches `*.conf`.
+      # In this case, nginx will win because the pattern has no wildcards,
+      # while `*.conf` has one.
       def filter_by_filename(lexers, fname)
         fname = File.basename(fname)
+
         out = []
         best_seen = nil
-
         lexers.each do |lexer|
           score = lexer.filenames.map do |pattern|
             if File.fnmatch?(pattern, fname, File::FNM_DOTMATCH)

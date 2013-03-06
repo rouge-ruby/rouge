@@ -1,3 +1,16 @@
+## version 0.3.0: 2013-03-06
+
+  * Refactor source guessing to return fewer false positives, and
+    to be better at disambiguating between filename matches (such as
+    `nginx.conf` vs. `*.conf`, or `*.pl` for both prolog and perl)
+  * Added `Lexer.guesses` which can return multiple or zero results for a
+    guess.
+  * Fix number literals in C#
+  * New lexers:
+    - Gherkin (cucumber)
+    - Prolog (@coffeejunk)
+    - LLVM (@coffeejunk)
+
 ## version 0.2.15: 2013-03-03
 
   * New lexer: lua (thanks, @nathany!)

@@ -11,9 +11,5 @@ describe Rouge::Lexers::LLVM do
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-llvm'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => '%result = mul i32 %X, 8'
-    end
   end
 end

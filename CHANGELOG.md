@@ -1,3 +1,7 @@
+## version 0.3.1: 2013-03-11
+
+  * Hotfix release: fix errors loading the SCSS lexer on some systems.
+
 ## version 0.3.0: 2013-03-06
 
   * Refactor source guessing to return fewer false positives, and

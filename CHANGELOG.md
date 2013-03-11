@@ -1,3 +1,7 @@
+## version 0.3.2: 2013-03-11
+
+  * Another hotfix release for the Sass/SCSS lexers, because I am being dumb
+
 ## version 0.3.1: 2013-03-11
 
   * Hotfix release: fix errors loading the SCSS lexer on some systems.

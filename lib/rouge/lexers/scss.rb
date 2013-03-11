@@ -1,3 +1,5 @@
+require 'rouge/lexers/sass/common'
+
 module Rouge
   module Lexers
     class Scss < RegexLexer
@@ -25,7 +27,7 @@ module Rouge
         rule(/[;{}]/) { token 'Punctuation'; reset_stack }
       end
 
-      instance_eval(&Sass::COMMON)
+      instance_eval(&SASS_COMMON)
     end
   end
 end

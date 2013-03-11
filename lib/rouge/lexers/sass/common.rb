@@ -3,6 +3,8 @@ module Rouge
     # shared states with SCSS
     # TODO: make this less nasty to do
     SASS_COMMON = proc do
+      id = /[\w-]+/
+
       state :content_common do
         rule /@for\b/, 'Keyword', :for
         rule /@(debug|warn|if|while)/, 'Keyword', :value

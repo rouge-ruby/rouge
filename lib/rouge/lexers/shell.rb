@@ -36,7 +36,7 @@ module Rouge
 
         rule /\b(#{BUILTINS})\s*\b(?!\.)/, 'Name.Builtin'
 
-        rule /^\$ +/, 'Generic.Prompt'
+        rule /^\S*[\$%>#] +/, 'Generic.Prompt'
 
         rule /(\b\w+)(=)/ do |m|
           group 'Name.Variable'

@@ -30,6 +30,12 @@ describe Rouge::Lexers::Shell do
     assert { tokens.first[0].name == 'Generic.Prompt' }
   end
 
+  it 'does not confuse a prompt with a variable' do
+    tokens = subject.lex('$foo').to_a
+    assert { tokens.size == 1 }
+    assert { tokens.first[0].name == 'Name.Variable' }
+  end
+
   describe 'guessing' do
     include Support::Guessing
 

@@ -36,7 +36,7 @@ module Rouge
           box-align box-decoration-break box-direction box-flex
           box-flex-group box-lines box-ordinal-group box-orient
           box-pack box-shadow box-sizing break-after break-before
-          break-inside caption-side @charset clear clip clip-path
+          break-inside caption-side clear clip clip-path
           clip-rule color color-profile columns column-count
           column-fill column-gap column-rule column-rule-color
           column-rule-style column-rule-width column-span
@@ -48,7 +48,7 @@ module Rouge
           drop-initial-value elevation empty-cells filter fit
           fit-position flex flex-basis flex-direction flex-flow
           flex-grow flex-shrink flex-wrap float float-offset
-          font @font-face font-family font-feature-settings
+          font font-family font-feature-settings
           font-kerning font-language-override font-size
           font-size-adjust font-stretch font-style font-synthesis
           font-variant font-variant-alternates font-variant-caps
@@ -61,8 +61,8 @@ module Rouge
           hyphenate-after hyphenate-before hyphenate-character
           hyphenate-lines hyphenate-resource hyphens icon
           image-orientation image-rendering image-resolution
-          ime-mode @import inline-box-align justify-content
-          @keyframes left letter-spacing line-break line-height
+          ime-mode inline-box-align justify-content
+          left letter-spacing line-break line-height
           line-stacking line-stacking-ruby line-stacking-shift
           line-stacking-strategy list-style list-style-image
           list-style-position list-style-type margin
@@ -70,13 +70,13 @@ module Rouge
           mark marker-offset marks mark-after mark-before
           marquee-direction marquee-loop marquee-play-count
           marquee-speed marquee-style mask max-height max-width
-          @media min-height min-width move-to @namespace nav-down
+          min-height min-width move-to nav-down
           nav-index nav-left nav-right nav-up object-fit
           object-position opacity order orphans outline
           outline-color outline-offset outline-style
           outline-width overflow overflow-style overflow-wrap
           overflow-x overflow-y padding padding-bottom
-          padding-left padding-right padding-top @page
+          padding-left padding-right padding-top
           page page-break-after page-break-before
           page-break-inside page-policy pause pause-after
           pause-before perspective perspective-origin
@@ -86,7 +86,7 @@ module Rouge
           richness right rotation rotation-point ruby-align
           ruby-overhang ruby-position ruby-span size speak
           speak-as speak-header speak-numeral speak-punctuation
-          speech-rate src stress string-set @supports
+          speech-rate src stress string-set
           tab-size table-layout target target-name
           target-new target-position text-align
           text-align-last text-combine-horizontal
@@ -102,7 +102,7 @@ module Rouge
           transform transform-origin transform-style
           transition transition-delay transition-duration
           transition-property transition-timing-function
-          unicode-bidi vertical-align @viewport
+          unicode-bidi vertical-align
           visibility voice-balance voice-duration
           voice-family voice-pitch voice-pitch-range
           voice-range voice-rate voice-stress voice-volume

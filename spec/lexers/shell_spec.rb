@@ -24,6 +24,12 @@ describe Rouge::Lexers::Shell do
     sh
   end
 
+  it 'parses a basic shell string with a prompt' do
+    tokens = subject.lex('$ foo=bar').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.first[0].name == 'Generic.Prompt' }
+  end
+
   describe 'guessing' do
     include Support::Guessing
 

@@ -24,6 +24,12 @@ describe Rouge::Lexers::Shell do
     sh
   end
 
+  it 'parses comments correctly' do
+    tokens = subject.lex('foo=bar # this is a comment').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.last[0].name == 'Comment' }
+  end
+
   it 'parses a basic shell string with a prompt' do
     tokens = subject.lex('$ foo=bar').to_a
     assert { tokens.size == 4 }

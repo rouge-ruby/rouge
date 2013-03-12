@@ -29,7 +29,7 @@ module Rouge
       ).join('|')
 
       state :basic do
-        rule /#.*\n/, 'Comment'
+        rule /#.*$/, 'Comment'
 
         rule /\b(#{KEYWORDS})\s*\b/, 'Keyword'
         rule /\bcase\b/, 'Keyword', :case

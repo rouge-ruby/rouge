@@ -24,6 +24,55 @@ describe Rouge::Lexers::Shell do
     sh
   end
 
+  it 'parses comments correctly' do
+    tokens = subject.lex('foo=bar # this is a comment').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.last[0].name == 'Comment' }
+  end
+
+  it 'parses a basic shell string with a prompt' do
+    # Single '$' prompt
+    tokens = subject.lex('$ foo=bar').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.first[0].name == 'Generic.Prompt' }
+    # Single '>' prompt
+    tokens = subject.lex('> foo=bar').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.first[0].name == 'Generic.Prompt' }
+    # Single '%' prompt
+    tokens = subject.lex('% foo=bar').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.first[0].name == 'Generic.Prompt' }
+    # Complex prompt with trailing '$'
+    tokens = subject.lex('me@host:~$ foo=bar').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.first[0].name == 'Generic.Prompt' }
+    # Complex prompt with trailing '>'
+    tokens = subject.lex('me@host:~> foo=bar').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.first[0].name == 'Generic.Prompt' }
+    # Complex prompt with trailing '%'
+    tokens = subject.lex('me@host:~% foo=bar').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.first[0].name == 'Generic.Prompt' }
+    # Complex prompt with trailing '#'
+    tokens = subject.lex('root@host:/root# foo=bar').to_a
+    assert { tokens.size == 4 }
+    assert { tokens.first[0].name == 'Generic.Prompt' }
+  end
+
+  it 'does not confuse a prompt with a variable' do
+    tokens = subject.lex('$foo').to_a
+    assert { tokens.size == 1 }
+    assert { tokens.first[0].name == 'Name.Variable' }
+  end
+
+  it 'does not confuse a prompt with a comment' do
+    tokens = subject.lex('# commentaire').to_a
+    assert { tokens.size == 1 }
+    assert { tokens.first[0].name == 'Comment' }
+  end
+
   describe 'guessing' do
     include Support::Guessing
 

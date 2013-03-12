@@ -29,12 +29,14 @@ module Rouge
       ).join('|')
 
       state :basic do
-        rule /#.*\n/, 'Comment'
+        rule /#.*$/, 'Comment'
 
         rule /\b(#{KEYWORDS})\s*\b/, 'Keyword'
         rule /\bcase\b/, 'Keyword', :case
 
         rule /\b(#{BUILTINS})\s*\b(?!\.)/, 'Name.Builtin'
+
+        rule /^\S*[\$%>#] +/, 'Generic.Prompt'
 
         rule /(\b\w+)(=)/ do |m|
           group 'Name.Variable'

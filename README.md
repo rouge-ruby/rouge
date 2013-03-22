@@ -56,13 +56,17 @@ end
 
 If you have `:fenced_code_blocks` enabled, you can specify languages, and even options with CGI syntax, like `php?start_inline=1`, or `erb?parent=javascript`.
 
-Also, @Linuus has created a [Rouge plugin for Middleman][middleman-rouge] that highlights all the fenced code blocks in your pages.  Sweet!
-
-[middleman-rouge]: https://github.com/Linuus/middleman-rouge
-
 ## Encodings
 
 Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a different encoding, please convert it to UTF-8 first.
+
+## Other integrations
+
+* Middleman: [middleman-rouge][] (@Linuus)
+* RDoc: [rdoc-rouge][] (@zzak)
+
+[middleman-rouge]: https://github.com/Linuus/middleman-rouge
+[rdoc-rouge]: https://github.com/zzak/rdoc-rouge
 
 ## Contributing
 

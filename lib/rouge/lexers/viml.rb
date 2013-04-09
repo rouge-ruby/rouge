@@ -63,7 +63,8 @@ module Rouge
       def mapping_contains?(mapping, word)
         shortest, longest = find_likely_mapping(mapping, word)
 
-        word.start_with?(shortest) and longest.start_with?(word)
+        shortest and word.start_with?(shortest) and
+        longest and longest.start_with?(word)
       end
 
       # binary search through the mappings to find the one that's likely

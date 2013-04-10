@@ -1,3 +1,9 @@
+## version 0.3.3: 2013-04-09
+
+  * Basic prompt support in the shell lexer
+  * Add CSS3 attributes to CSS/Sass/SCSS lexers
+  * Bugfix for a crash in the vim lexer
+
 ## version 0.3.2: 2013-03-11
 
   * Another hotfix release for the Sass/SCSS lexers, because I am being dumb

@@ -1,3 +1,13 @@
+;;; dommy example
+
+(-> (sel1 :#my-button)
+    (remove-attr! :disabled)
+    do-something
+    (add-class! :action)
+    (listen! :click (fn [e] (js/console.log e)))))
+
+'#this-is-a-valid-symbol###
+
 ;;; escape_semicolon.clj
 
 (= c (int \;)) (do (.readLine s) :line-start)

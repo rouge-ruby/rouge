@@ -61,6 +61,7 @@ module Rouge
       end
 
       identifier = %r([\w!$%*+,<=>?/.-]+)
+      keyword = %r([\w!\#$%*+,<=>?/.-]+)
 
       def name_token(name)
         return 'Keyword' if self.class.keywords.include?(name)
@@ -77,10 +78,10 @@ module Rouge
         rule /0x-?[0-9a-fA-F]+/, 'Literal.Number.Hex'
 
         rule /"(\\.|[^"])*"/, 'Literal.String'
-        rule /'#{identifier}/, 'Literal.String.Symbol'
+        rule /'#{keyword}/, 'Literal.String.Symbol'
+        rule /:#{keyword}/, 'Name.Constant'
         rule /\\(.|[a-z]+)/i, 'Literal.String.Char'
 
-        rule /:#{identifier}/, 'Name.Constant'
 
         rule /~@|[`\'#^~&]/, 'Operator'
 

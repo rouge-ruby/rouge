@@ -1,3 +1,8 @@
+## version 0.3.4: 2013-05-02
+
+  * New lexer: go (thanks @hashmal!)
+  * Clojure bugfix: allow # in keywords and symbols
+
 ## version 0.3.3: 2013-04-09
 
   * Basic prompt support in the shell lexer

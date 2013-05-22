@@ -48,15 +48,39 @@ module Rouge
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9]*/
 
-      state :whitespace do
-        rule /^#if\s+0/, 'Comment.Preproc', :if_0
-        rule /^#/, 'Comment.Preproc', :macro
-        rule /^#{ws}#if\s+0\b/, 'Comment.Preproc', :if_0
-        rule /^#{ws}#/, 'Comment.Preproc', :macro
-        rule /\s+/m, 'Text'
+      start { push :bol }
+
+      state :bol do
+        mixin :inline_whitespace
+        rule /#if\s+0/ do
+          token 'Comment.Preproc'
+          pop!; push :if_0
+        end
+
+        rule /#/ do
+          token 'Comment.Preproc'
+          pop!; push :macro
+        end
+
+        rule(//) { pop! }
+      end
+
+      state :inline_whitespace do
+        rule /[ \t\r]+/, 'Text'
         rule /\\\n/, 'Text'
-        rule %r(/(\\\n)?/(\n|(.|\n)*?[^\\]\n)), 'Comment.Single'
-        rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/), 'Comment.Multiline'
+        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, 'Comment.Multiline'
+      end
+
+      state :whitespace do
+        mixin :inline_whitespace
+        rule %r(/(\\\n)?/(\n|(.|\n)*?[^\\]\n)), 'Comment.Single', :bol
+        rule /\n/, 'Text', :bol
+      end
+
+      state :multiline_comment do
+        rule %r([*](\\\n)?/), 'Comment.Multiline', :pop!
+        rule %r([*]), 'Comment.Multiline'
+        rule %r([^*]+), 'Comment.Multiline'
       end
 
       state :root do
@@ -117,7 +141,10 @@ module Rouge
         rule %r(//.*$), 'Comment.Single'
         rule %r(/), 'Comment.Preproc'
         rule /(?<=\\)\n/, 'Comment.Preproc'
-        rule /\n/, 'Comment.Preproc', :pop!
+        rule /\n/ do
+          token 'Comment.Preproc'
+          pop!; push :bol
+        end
       end
 
       state :if_0 do

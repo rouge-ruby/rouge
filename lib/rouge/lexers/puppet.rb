@@ -55,10 +55,10 @@ module Rouge
         rule cap_id, 'Name.Class'
 
         rule /[+=|~-]>|<[|~-]/, 'Punctuation'
-        rule /[:{();\[\]]/, 'Punctuation'
+        rule /[:}();\[\]]/, 'Punctuation'
 
         # HACK for case statements and selectors
-        rule /}/, 'Punctuation', :regex_allowed
+        rule /{/, 'Punctuation', :regex_allowed
         rule /,/, 'Punctuation', :regex_allowed
 
         rule /(in|and|or)\b/, 'Operator.Word'

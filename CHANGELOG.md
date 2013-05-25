@@ -1,3 +1,11 @@
+## version 0.3.5: 2013-05-24
+
+  * Added a github theme (thanks @simonc!) (#75)
+  * Correctly highlight ruby 1.9-style symbols and %i() syntax
+    (thanks @simonc!) (#74)
+  * Fixed a performance bug in the C++ lexer (#73)
+    reported by @jeffgran
+
 ## version 0.3.4: 2013-05-02
 
   * New lexer: go (thanks @hashmal!)

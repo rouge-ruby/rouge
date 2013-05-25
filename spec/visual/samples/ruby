@@ -1,3 +1,14 @@
+#######
+# ruby 1.9 examples
+#######
+
+%i(this is an array of symbols)
+%I(this is too, but with #{@interpolation})
+hash = { answer: 42 }
+link_to 'new', new_article_path, class: 'btn'
+# not a symbol
+a ? b:c
+
 ########
 # function definitions
 ########

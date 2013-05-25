@@ -27,6 +27,7 @@ module Rouge
           'Literal.String.Symbol'
 
         rule /:'(\\\\|\\'|[^'])*'/, 'Literal.String.Symbol'
+        rule /\b[a-z_]\w*?:\s+/, 'Literal.String.Symbol'
         rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
         rule /:"/, 'Literal.String.Symbol', :simple_sym
         rule /"/, 'Literal.String.Double', :simple_string
@@ -35,10 +36,10 @@ module Rouge
         # %-style delimiters
         # %(abc), %[abc], %<abc>, %.abc., %r.abc., etc
         delimiter_map = { '{' => '}', '[' => ']', '(' => ')', '<' => '>' }
-        rule /%([rqswQWx])?([^\w\s])/ do |m|
+        rule /%([rqswQWxiI])?([^\w\s])/ do |m|
           open = Regexp.escape(m[2])
           close = Regexp.escape(delimiter_map[m[2]] || m[2])
-          interp = /[rQWx]/ === m[1]
+          interp = /[rQWxI]/ === m[1]
           toktype = 'Literal.String.Other'
 
           debug { "    open: #{open.inspect}" }
@@ -154,8 +155,8 @@ module Rouge
           group 'Name.Namespace'
         end
 
-        rule /def\b/, 'Keyword', :funcname
-        rule /class\b/, 'Keyword', :classname
+        rule /def\s+/, 'Keyword', :funcname
+        rule /class\s+/, 'Keyword', :classname
 
         rule /(?:#{builtins_q.join('|')})\?/, 'Name.Builtin', :expr_start
         rule /(?:#{builtins_b.join('|')})!/,  'Name.Builtin', :expr_start
@@ -331,7 +332,7 @@ module Rouge
 
         # special case for using a single space.  Ruby demands that
         # these be in a single line, otherwise it would make no sense.
-        rule /(\s*)(%[rqswQWx]? \S* )/ do
+        rule /(\s*)(%[rqswQWxiI]? \S* )/ do
           group 'Text'
           group 'Literal.String.Other'
           pop!

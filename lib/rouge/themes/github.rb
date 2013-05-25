@@ -63,6 +63,7 @@ module Rouge
       style 'Operator.Word',                  :fg => '#000000', :bold => true
       style 'Operator',                       :fg => '#000000', :bold => true
       style 'Text.Whitespace',                :fg => '#bbbbbb'
+      style 'Text',                           :bg => '#f8f8f8'
     end
   end
 end

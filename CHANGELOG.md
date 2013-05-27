@@ -1,3 +1,7 @@
+## version 0.3.6: 2013-05-27
+
+  * fixed bad release that included unfinished D and wdiff lexers :\
+
 ## version 0.3.5: 2013-05-24
 
   * Added a github theme (thanks @simonc!) (#75)

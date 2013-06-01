@@ -23,6 +23,10 @@ ul#nav li.new {
     color: #0f0;
 }
 
+#thing {
+  font: normal 400 12px/35px Helvetica, Arial, sans-serif;
+}
+
 @media screen {
   body {
     background: #ccc;

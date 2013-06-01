@@ -195,7 +195,7 @@ module Rouge
         rule /url\(.*?\)/, 'Literal.String.Other'
         rule /#[0-9a-f]{1,6}/i, 'Literal.Number' # colors
         rule /#{number}(?:em|px|%|pt|pc|in|mm|m|ex|s)?\b/, 'Literal.Number'
-        rule /[\[\]():\/.]/, 'Punctuation'
+        rule /[\[\]():\/.,]/, 'Punctuation'
         rule /"(\\\\|\\"|[^"])*"/, 'Literal.String.Single'
         rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Double'
         rule(identifier) do |m|

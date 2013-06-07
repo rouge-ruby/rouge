@@ -136,7 +136,7 @@ module Rouge
         rule /[^\\{$"]+/, 'Literal.String.Double'
         rule /\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
           'Literal.String.Escape'
-        rule /\$[a-zA-Z_][a-zA-Z0-9_]*(\[\S+\]|->[a-zA-Z_][a-zA-Z0-9_]*)?/
+        rule /\$[a-zA-Z_][a-zA-Z0-9_]*(\[\S+\]|->[a-zA-Z_][a-zA-Z0-9_]*)?/, 'Name.Variable'
 
         lsi = 'Literal.String.Interpol'
         rule /\{\$\{/, lsi, :interp_double

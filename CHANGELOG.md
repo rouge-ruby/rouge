@@ -1,3 +1,13 @@
+## version 0.3.7: 2013-06-07
+
+  * bugfix: Add the local lib dir to the path in ./bin/rougify
+    so the internal `require` works properly.
+  * php: Properly lex variables in double-quoted strings and provide the
+    correct token for heredocs (thanks @hrysd!)
+  * Add a `:wrap` option to the html formatter (default true) to provide
+    the `<pre>` wrapper.  This allows skipping the wrapper entirely for
+    postprocessing.  (thanks @cjohansen!)
+
 ## version 0.3.6: 2013-05-27
 
   * fixed bad release that included unfinished D and wdiff lexers :\

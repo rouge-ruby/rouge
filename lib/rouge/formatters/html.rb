@@ -12,6 +12,7 @@ module Rouge
       def initialize(opts={})
         @css_class = opts[:css_class] || 'highlight'
         @line_numbers = opts.fetch(:line_numbers) { false }
+        @wrap = opts.fetch(:wrap, true)
       end
 
       # @yield the html output.
@@ -24,11 +25,11 @@ module Rouge
       end
 
       def stream_untableized(tokens, &b)
-        yield "<pre class=#{@css_class.inspect}>"
+        yield "<pre class=#{@css_class.inspect}>" if @wrap
         tokens.each do |tok, val|
           span(tok, val, &b)
         end
-        yield '</pre>'
+        yield '</pre>' if @wrap
       end
 
       def stream_tableized(tokens, &b)
@@ -48,7 +49,7 @@ module Rouge
           %<<div class="lineno">#{x+1}</div>>
         end.join
 
-        yield "<pre class=#{@css_class.inspect}>"
+        yield "<pre class=#{@css_class.inspect}>" if @wrap
         yield "<table><tbody><tr>"
 
         # the "gl" class applies the style for Generic.Lineno
@@ -61,7 +62,7 @@ module Rouge
         yield '</td>'
 
         yield '</tr></tbody></table>'
-        yield '</pre>'
+        yield '</pre>' if @wrap
       end
 
     private

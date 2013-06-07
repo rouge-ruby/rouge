@@ -65,7 +65,7 @@ module Rouge
       state :php do
         rule /\?>/, 'Comment.Preproc', :pop!
         # heredocs
-        rule /<<<('?)([a-z_]\w*)\1\n.*?\n\2;?\n/im, 'String'
+        rule /<<<('?)([a-z_]\w*)\1\n.*?\n\2;?\n/im, 'Literal.String.Heredoc'
         rule /\s+/, 'Text'
         rule /#.*?\n/, 'Comment.Single'
         rule %r(//.*?\n), 'Comment.Single'
@@ -136,7 +136,7 @@ module Rouge
         rule /[^\\{$"]+/, 'Literal.String.Double'
         rule /\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
           'Literal.String.Escape'
-        rule /\$[a-zA-Z_][a-zA-Z0-9_]*(\[\S+\]|->[a-zA-Z_][a-zA-Z0-9_]*)?/
+        rule /\$[a-zA-Z_][a-zA-Z0-9_]*(\[\S+\]|->[a-zA-Z_][a-zA-Z0-9_]*)?/, 'Name.Variable'
 
         lsi = 'Literal.String.Interpol'
         rule /\{\$\{/, lsi, :interp_double

@@ -182,6 +182,7 @@ module Rouge
           group 'Text.Whitespace'
           group 'Punctuation'
         end
+        rule /true|false/, 'Keyword.Constant'
         rule /{/,  'Punctuation', :object_key
         rule /\[/, 'Punctuation', :array
         rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, 'Literal.Number.Float'

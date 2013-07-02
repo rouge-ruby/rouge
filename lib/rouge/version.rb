@@ -1,5 +1,5 @@
 module Rouge
   def self.version
-    "0.3.7"
+    "0.3.8"
   end
 end

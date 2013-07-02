@@ -1,3 +1,10 @@
+## version 0.3.8: 2013-07-02
+
+  * new lexers:
+    - erlang! (thanks @potomak!)
+    - http (with content-type based delegation)
+  * bugfix: highlight true and false in JSON
+
 ## version 0.3.7: 2013-06-07
 
   * bugfix: Add the local lib dir to the path in ./bin/rougify

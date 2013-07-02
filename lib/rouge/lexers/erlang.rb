@@ -86,7 +86,7 @@ module Rouge
         rule(%r{[+-]?#{base_re}#[0-9a-zA-Z]+}, "Literal.Number.Integer")
         rule(/[+-]?\d+/, "Literal.Number.Integer")
         rule(/[+-]?\d+.\d+/, "Literal.Number.Float")
-        rule(%r{[]\[:_@\".{}()|;,]}, "Punctuation")
+        rule(%r{[\]\[:_@\".{}()|;,]}, "Punctuation")
         rule(variable_re, "Name.Variable")
         rule(atom_re, "Name")
         rule(%r{\?#{macro_re}}, "Name.Constant")

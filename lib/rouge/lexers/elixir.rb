@@ -19,7 +19,7 @@ module Rouge
       ]
 
       state :root do
-        rule /\s+/m, 'Text.Whitespace'
+        rule /\s+/m, 'Text'
         rule /#.*$/, 'Comment.Single'
         rule /\b(case|cond|end|bc|lc|if|unless|try|loop|receive|fn|defmodule|defp?|defprotocol|defimpl|defrecord|defmacrop?|defdelegate| defexception|exit|raise|throw|unless|after|rescue|catch|else)\b(?![?!])|(?<!\.)\b(do|\-\>)\b\s*/, 'Keyword'
         rule /\b(import|require|use|recur|quote|unquote|super|refer)\b(?![?!])/, 'Keyword.Namespace'

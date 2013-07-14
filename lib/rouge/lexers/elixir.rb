@@ -21,18 +21,27 @@ module Rouge
       state :root do
         rule /\s+/m, 'Text'
         rule /#.*$/, 'Comment.Single'
-        rule /\b(case|cond|end|bc|lc|if|unless|try|loop|receive|fn|defmodule|defp?|defprotocol|defimpl|defrecord|defmacrop?|defdelegate| defexception|exit|raise|throw|unless|after|rescue|catch|else)\b(?![?!])|(?<!\.)\b(do|\-\>)\b\s*/, 'Keyword'
+        rule %r{\b(case|cond|end|bc|lc|if|unless|try|loop|receive|fn|defmodule|
+             defp?|defprotocol|defimpl|defrecord|defmacrop?|defdelegate|
+             defexception|exit|raise|throw|unless|after|rescue|catch|else)\b(?![?!])|
+             (?<!\.)\b(do|\-\>)\b\s*}x, 'Keyword'
         rule /\b(import|require|use|recur|quote|unquote|super|refer)\b(?![?!])/, 'Keyword.Namespace'
         rule /(?<!\.)\b(and|not|or|when|xor|in)\b/, 'Operator.Word'
-        rule %r{%=|\*=|\*\*=|\+=|\-=|\^=|\|\|=|<=>|<(?!<|=)|>(?!<|=|>)|<=|>=|===|==|=~|!=|!~|(?=[ \t])\?|(?<=[ \t])!+|&&|\|\||\^|\*|\+|\-|/|\||\+\+|\-\-|\*\*|\/\/|\<\-|\<\>|<<|>>|=|\.}, 'Operator'
-        rule %r{(?<!:)(:)([a-zA-Z_]\w*([?!]|=(?![>=]))?|\<\>|===?|>=?|<=?|<=>|&&?|%\(\)|%\[\]|%\{\}|\+\+?|\-\-?|\|\|?|\!|//|[%&`/\|]|\*\*?|=?~|<\-)|([a-zA-Z_]\w*([?!])?)(:)(?!:)}, 'Literal.String.Symbol'
+        rule %r{%=|\*=|\*\*=|\+=|\-=|\^=|\|\|=|
+             <=>|<(?!<|=)|>(?!<|=|>)|<=|>=|===|==|=~|!=|!~|(?=[\s\t])\?|
+             (?<=[\s\t])!+|&&|\|\||\^|\*|\+|\-|/|
+             \||\+\+|\-\-|\*\*|\/\/|\<\-|\<\>|<<|>>|=|\.}x, 'Operator'
+        rule %r{(?<!:)(:)([a-zA-Z_]\w*([?!]|=(?![>=]))?|\<\>|===?|>=?|<=?|
+             <=>|&&?|%\(\)|%\[\]|%\{\}|\+\+?|\-\-?|\|\|?|\!|//|[%&`/\|]|
+             \*\*?|=?~|<\-)|([a-zA-Z_]\w*([?!])?)(:)(?!:)}, 'Literal.String.Symbol'
         rule /:"/, 'Literal.String.Symbol', :interpoling_symbol
         rule /\b(nil|true|false)\b(?![?!])|\b[A-Z]\w*\b/, 'Name.Constant'
         rule /\b(__(FILE|LINE|MODULE|MAIN|FUNCTION)__)\b(?![?!])/, 'Name.Builtin.Pseudo'
         rule /[a-zA-Z_!][\w_]*[!\?]?/, 'Name'
         rule %r{[(){};,/\|:\\\[\]]}, 'Punctuation'
         rule /@[a-zA-Z_]\w*|&\d/, 'Name.Variable'
-        rule /\b(0[xX][0-9A-Fa-f]+|\d(_?\d)*(\.(?![^\d\s])(_?\d)*)?([eE][-+]?\d(_?\d)*)?|0[bB][01]+)\b/, 'Literal.Number'
+        rule %r{\b(0[xX][0-9A-Fa-f]+|\d(_?\d)*(\.(?![^\d\s])
+             (_?\d)*)?([eE][-+]?\d(_?\d)*)?|0[bB][01]+)\b}x, 'Literal.Number'
         rule %r{%r\/.*\/}, 'Literal.String.Regex'
 
         mixin :strings

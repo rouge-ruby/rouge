@@ -48,7 +48,6 @@ module Rouge
         BRACES.each do |_, _, name|
           mixin :"braces_#{name}"
         end
-        mixin :braces_lt
       end
 
       BRACES.each do |lbrace, rbrace, name|

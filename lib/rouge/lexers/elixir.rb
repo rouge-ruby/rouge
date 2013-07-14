@@ -38,7 +38,7 @@ module Rouge
         rule /\b(nil|true|false)\b(?![?!])|\b[A-Z]\w*\b/, 'Name.Constant'
         rule /\b(__(FILE|LINE|MODULE|MAIN|FUNCTION)__)\b(?![?!])/, 'Name.Builtin.Pseudo'
         rule /[a-zA-Z_!][\w_]*[!\?]?/, 'Name'
-        rule %r{[(){};,/\|:\\\[\]]}, 'Punctuation'
+        rule %r{::|[(){};,/\|:\\\[\]]}, 'Punctuation'
         rule /@[a-zA-Z_]\w*|&\d/, 'Name.Variable'
         rule %r{\b(0[xX][0-9A-Fa-f]+|\d(_?\d)*(\.(?![^\d\s])
              (_?\d)*)?([eE][-+]?\d(_?\d)*)?|0[bB][01]+)\b}x, 'Literal.Number'

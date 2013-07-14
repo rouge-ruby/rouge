@@ -12,10 +12,10 @@ module Rouge
       mimetypes 'text/x-elixir', 'application/x-elixir'
 
       BRACES = [
-        ['\\{', '\\}', 'cb'],
-        ['\\[', '\\]', 'sb'],
-        ['\\(', '\\)', 'pa'],
-        ['\\<', '\\>', 'lt']
+        ['\{', '\}', 'cb'],
+        ['\[', '\]', 'sb'],
+        ['\(', '\)', 'pa'],
+        ['\<', '\>', 'lt']
       ]
 
       state :root do

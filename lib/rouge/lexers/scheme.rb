@@ -4,7 +4,7 @@ module Rouge
       desc "The Scheme variant of Lisp"
 
       tag 'scheme'
-      filenames '*.scm', '*.ss', '*.rkt'
+      filenames '*.scm', '*.ss'
       mimetypes 'text/x-scheme', 'application/x-scheme'
 
       def self.keywords

@@ -17,6 +17,8 @@ describe Rouge::Lexers::Racket do
 
     it 'guesses by text' do
       assert_guess :source => "#lang racket\n(define x 2)"
+      assert_guess :source => '#lang scribble'
+      assert_guess :source => '#lang typed/racket'
     end
   end
 end

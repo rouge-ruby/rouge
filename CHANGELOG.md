@@ -1,3 +1,9 @@
+## version 0.3.9: 2013-07-19
+
+  * new lexers:
+    - elixir (thanks @splattael!)
+    - racket (thanks @greghendershott!)
+
 ## version 0.3.8: 2013-07-02
 
   * new lexers:

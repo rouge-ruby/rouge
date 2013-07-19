@@ -1,10 +1,16 @@
 #lang racket
 
-;; See "<<<" for two small changes, then jump down
-;; to `send/suspend'.
+;; Single-line comment
 
-'(a list)
+#| Multi-line comment on one line |#
+
+#| Multi-line comment on
+   two lines |#
+
 'symbol
+`symbol
+'(a quoted list)
+`(a quasiquoted expr with ,unquasiquoted item)
 #:keyword
 -inf.f
 +inf.f
@@ -14,6 +20,10 @@
 +max.0
 -nan.0
 +nan.0
+
+(define (1-crazy-identifier-疯狂的标识符-τρελό-αναγνωριστικό x)
+  (add1 x))
+(check-equal? (1-crazy-identifier-疯狂的标识符-τρελό-αναγνωριστικό 1) 2)
 
 (require xml net/url
          racket/control) ;; <<< new import

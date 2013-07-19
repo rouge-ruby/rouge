@@ -55,7 +55,7 @@ module Rouge
           udp-send-to/enable-break udp-send/enable-break udp? unless
           unquote unquote-splicing unsyntax unsyntax-splicing when
           with-continuation-mark with-handlers with-handlers*
-          with-syntax ) + ["\u03BB"] # λ
+          with-syntax λ)
       end
 
       def self.builtins
@@ -477,7 +477,7 @@ module Rouge
         )
       end
 
-      id = /[a-z0-9!$\%&*+,\/:<=>?@^_~|\u{03BB}-]+/i
+      id = /[[:alnum:]!$\%&*+,\/:<=>?@^_~|-]+/i
 
       state :root do
         # comments

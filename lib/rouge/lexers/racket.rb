@@ -477,7 +477,9 @@ module Rouge
         )
       end
 
-      id = /[[:alnum:]!$\%&*+,\/:<=>?@^_~|-]+/i
+      # Since Racket allows identifiers to consist of nearly anything,
+      # it's simpler to describe what an ID is _not_.
+      id = /[^\s\(\)\[\]\{\}'`,.]+/i
 
       state :root do
         # comments
@@ -492,7 +494,7 @@ module Rouge
         rule /-?\d+\.\d+/, 'Literal.Number.Float'
         rule /-?\d+/, 'Literal.Number.Integer'
 
-        rule /#:#{id}+/, 'Name.Tag'
+        rule /#:#{id}+/, 'Name.Tag'  # keyword
 
         rule /#b[01]+/, 'Literal.Number.Binary'
         rule /#o[0-7]+/, 'Literal.Number.Oct'
@@ -501,7 +503,7 @@ module Rouge
         rule /#[ei][\d.]+/, 'Literal.Number.Other'
 
         rule /"(\\\\|\\"|[^"])*"/, 'Literal.String'
-        rule /'#{id}/i, 'Literal.String.Symbol'
+        rule /['`]#{id}/i, 'Literal.String.Symbol'
         rule /#\\([()\/'"._!\$%& ?=+-]{1}|[a-z0-9]+)/i,
           'Literal.String.Char'
         rule /#t|#f/, 'Name.Constant'

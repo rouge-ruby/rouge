@@ -6,7 +6,6 @@ describe Rouge::Lexers::Scheme do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.scm'
-      assert_guess :filename => 'foo.rkt'
       assert_guess :filename => 'foo.ss'
     end
 

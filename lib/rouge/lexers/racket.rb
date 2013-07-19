@@ -475,7 +475,7 @@ module Rouge
         )
       end
 
-        id = /[a-z0-9!$\%&*+,\/:<=>?@^_~|\u{03BB}-]+/i
+      id = /[a-z0-9!$\%&*+,\/:<=>?@^_~|\u{03BB}-]+/i
 
       state :root do
         # comments

@@ -8,6 +8,10 @@ module Rouge
       filenames '*.rkt', '*.rktd', '*.rktl'
       mimetypes 'text/x-racket', 'application/x-racket'
 
+      def self.analyze_text(text)
+        return 1 if text.strip.start_with? '#lang racket'
+      end
+
       def self.keywords
         @keywords ||= Set.new %w(
           ... and begin begin-for-syntax begin0 case case-lambda cond

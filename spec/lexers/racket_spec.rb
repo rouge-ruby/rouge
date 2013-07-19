@@ -14,5 +14,9 @@ describe Rouge::Lexers::Racket do
       assert_guess :mimetype => 'text/x-racket'
       assert_guess :mimetype => 'application/x-racket'
     end
+
+    it 'guesses by text' do
+      assert_guess :source => "#lang racket\n(define x 2)"
+    end
   end
 end

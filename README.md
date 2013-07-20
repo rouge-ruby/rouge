@@ -70,6 +70,10 @@ Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a dif
 
 ## Contributing
 
+### Installing Ruby
+
+If you're here to implement a lexer for your awesome language, there's a good chance you don't already have a ruby development environment set up.  Follow the [instructions on the wiki](https://github.com/jayferd/rouge/wiki/Setting-up-Ruby) to get up and running.  If you have trouble getting set up, let me know - I'm always happy to help.
+
 ### Run the tests
 
 You can test the core of Rouge simply by running `rake` (no `bundle exec` required).  It's also set up with `guard`, if you like.

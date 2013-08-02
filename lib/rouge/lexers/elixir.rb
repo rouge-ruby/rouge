@@ -24,7 +24,7 @@ module Rouge
         rule %r{\b(case|cond|end|bc|lc|if|unless|try|loop|receive|fn|defmodule|
              defp?|defprotocol|defimpl|defrecord|defmacrop?|defdelegate|
              defexception|exit|raise|throw|unless|after|rescue|catch|else)\b(?![?!])|
-             (?<!\.)\b(do|\-\>)\b\s*}x, 'Keyword'
+             (?<!\.)\b(do|\-\>)\b}x, 'Keyword'
         rule /\b(import|require|use|recur|quote|unquote|super|refer)\b(?![?!])/, 'Keyword.Namespace'
         rule /(?<!\.)\b(and|not|or|when|xor|in)\b/, 'Operator.Word'
         rule %r{%=|\*=|\*\*=|\+=|\-=|\^=|\|\|=|

@@ -1,3 +1,8 @@
+## version 0.3.10: 2013-07-31
+
+  * Add the `license` key in the gemspec
+  * new lexer: R
+
 ## version 0.3.9: 2013-07-19
 
   * new lexers:

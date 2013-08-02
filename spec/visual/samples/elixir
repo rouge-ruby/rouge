@@ -361,3 +361,12 @@ defmodule Module do
         "could not call #{fun} on module #{module} because it was already compiled"
   end
 end
+
+defp interpret(input) do
+  cond do
+    is_empty? input -> :silence
+    all_caps? input -> :exclamation
+    question? input -> :question
+    true            -> :statement
+  end
+end

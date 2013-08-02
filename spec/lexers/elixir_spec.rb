@@ -25,6 +25,15 @@ describe Rouge::Lexers::Elixir do
         ['Name.Constant', 'Builtin']
     end
 
+    it 'lexes keywords without following whitespaces' do
+      assert_tokens %{cond do\nend},
+        ['Keyword', 'cond'],
+        ['Text',    ' '],
+        ['Keyword', 'do'],
+        ['Text',    "\n"],
+        ['Keyword', 'end']
+    end
+
     private
 
     def assert_tokens(text, *expected)

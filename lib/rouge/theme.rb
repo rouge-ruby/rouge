@@ -20,19 +20,22 @@ module Rouge
         return if empty?
 
         yield "#{selector} {"
-        yield "  color: #{fg};" if fg
-        yield "  background-color: #{bg};" if bg
-        yield "  font-weight: bold;" if self[:bold]
-        yield "  font-style: italic;" if self[:italic]
-        yield "  text-decoration: underline;" if self[:underline]
-
-        (self[:rules] || []).each do |rule|
+        rendered_rules.each do |rule|
           yield "  #{rule};"
         end
-
         yield "}"
       end
 
+      def rendered_rules(&b)
+        return enum_for(:rendered_rules) unless b
+        yield "color: #{fg}" if fg
+        yield "background-color: #{bg}" if bg
+        yield "font-weight: bold" if self[:bold]
+        yield "font-style: italic" if self[:italic]
+        yield "text-decoration: underline" if self[:underline]
+
+        (self[:rules] || []).each(&b)
+      end
     end
 
     def styles
@@ -142,11 +145,14 @@ module Rouge
       end
     end
 
+    def style_for(tok)
+      styles.fetch(tok.name) do
+        tok.parent ? style_for(tok.parent) : Style.new(self)
+      end
+    end
+
   private
     def css_selector(token)
-      tokens = [token]
-      parent = token.parent
-
       inflate_token(token).map do |tok|
         raise "unknown token: #{tok.inspect}" if tok.shortname.nil?
 

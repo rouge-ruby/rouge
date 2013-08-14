@@ -12,6 +12,7 @@ module Rouge
       def initialize(opts={})
         @css_class = opts[:css_class] || 'highlight'
         @line_numbers = opts.fetch(:line_numbers) { false }
+        @inline_theme = opts.fetch(:inline_theme) { nil }
         @wrap = opts.fetch(:wrap, true)
       end
 
@@ -76,9 +77,18 @@ module Rouge
         when nil
           raise "unknown token: #{tok.inspect} for #{val.inspect}"
         else
-          yield '<span class='
-          yield tok.shortname.inspect
-          yield '>'
+          if @inline_theme
+            rules = @inline_theme.style_for(tok).rendered_rules
+
+            yield '<span style='
+            yield rules.to_a.join(';').inspect
+            yield '>'
+          else
+            yield '<span class='
+            yield tok.shortname.inspect
+            yield '>'
+          end
+
           yield val
           yield '</span>'
         end

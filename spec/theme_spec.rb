@@ -3,13 +3,15 @@ describe Rouge::Theme do
     str.strip.gsub(/\s+/, ' ')
   end
 
-  it 'auto-fills css classes' do
-    class MyTheme < Rouge::CSSTheme
-      style 'Literal.String', :bold => true
-      style 'Literal.String.Backtick', :italic => true
-    end
+  class MyTheme < Rouge::CSSTheme
+    style 'Literal.String', :bold => true
+    style 'Literal.String.Backtick', :italic => true
+  end
 
-    rendered = MyTheme.new.render
+  let(:theme) { MyTheme.new }
+
+  it 'auto-fills css classes' do
+    rendered = theme.render
 
     # should also style, for example, String.Char
     assert { rendered =~ /\.sc/ }
@@ -28,5 +30,15 @@ describe Rouge::Theme do
     css
 
     assert { squish(output) == squish(expected) }
+  end
+
+  it 'fetches a style for a token' do
+    bold = theme.style_for(Token['Literal.String'])
+    assert { bold == { :bold => true } }
+  end
+
+  it 'fetches a the closest style for a token' do
+    bold = theme.style_for(Token['Literal.String.Double'])
+    assert { bold == { :bold => true } }
   end
 end

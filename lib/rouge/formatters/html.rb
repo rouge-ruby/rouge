@@ -7,8 +7,20 @@ module Rouge
     class HTML < Formatter
       tag 'html'
 
-      # @option opts :css_class
-      # A css class to be used for the generated <pre> tag.
+      # @option opts [String] :css_class ('highlight')
+      # @option opts [true/false] :line_numbers (false)
+      # @option opts [Rouge::CSSTheme] :inline_theme (nil)
+      # @option opts [true/false] :wrap (true)
+      #
+      # Initialize with options.
+      #
+      # If `:inline_theme` is given, then instead of rendering the
+      # tokens as <span> tags with CSS classes, the styles according to
+      # the given theme will be inlined in "style" attributes.  This is
+      # useful for formats in which stylesheets are not available.
+      #
+      # Content will be wrapped in a `<pre>` tag with the given
+      # `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
         @css_class = opts[:css_class] || 'highlight'
         @line_numbers = opts.fetch(:line_numbers) { false }
@@ -25,6 +37,7 @@ module Rouge
         end
       end
 
+    private
       def stream_untableized(tokens, &b)
         yield "<pre class=#{@css_class.inspect}>" if @wrap
         tokens.each do |tok, val|
@@ -66,7 +79,6 @@ module Rouge
         yield '</pre>' if @wrap
       end
 
-    private
       def span(tok, val, &b)
         # TODO: properly html-encode val
         val = CGI.escape_html(val)

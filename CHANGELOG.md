@@ -1,3 +1,12 @@
+## version 0.4.0: 2013-08-14
+
+  * Add the `:inline_theme` option to `Formatters::HTML` for environments
+    that don't support stylesheets (like super-old email clients)
+  * Improve documentation of `Formatters::HTML` options
+  * bugfix: don't include subsequent whitespace in an elixir keyword.
+    In certain fonts/themes, this can cause inconsistent indentation if
+    bold spaces are wider than non-bold spaces.  (thanks @splattael!)
+
 ## version 0.3.10: 2013-07-31
 
   * Add the `license` key in the gemspec

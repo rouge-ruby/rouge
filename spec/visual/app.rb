@@ -20,7 +20,10 @@ class VisualTestApp < Sinatra::Application
     halt 404 unless theme_class
     @theme = theme_class.new
 
-    @formatter = Rouge::Formatters::HTML.new(:line_numbers => params[:line_numbers])
+    formatter_opts = { :line_numbers => params[:line_numbers] }
+    formatter_opts[:inline_theme] = @theme if params[:inline]
+
+    @formatter = Rouge::Formatters::HTML.new(formatter_opts)
   end
 
   get '/:lexer' do |lexer_name|

@@ -22,9 +22,9 @@ module Rouge
       # Content will be wrapped in a `<pre>` tag with the given
       # `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
-        @css_class = opts[:css_class] || 'highlight'
-        @line_numbers = opts.fetch(:line_numbers) { false }
-        @inline_theme = opts.fetch(:inline_theme) { nil }
+        @css_class = opts.fetch(:css_class, 'highlight')
+        @line_numbers = opts.fetch(:line_numbers, false)
+        @inline_theme = opts.fetch(:inline_theme, nil)
         @wrap = opts.fetch(:wrap, true)
       end
 

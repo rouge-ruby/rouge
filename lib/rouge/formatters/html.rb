@@ -55,8 +55,11 @@ module Rouge
           span(tok, val) { |str| code << str }
         end
 
-        # add an extra line number for non-newline-terminated strings
-        num_lines += 1 if code[-1] != "\n"
+        # add an extra line for non-newline-terminated strings
+        if code[-1] != "\n"
+          num_lines += 1
+          code << "\n"
+        end
 
         # generate a string of newline-separated line numbers for the gutter
         numbers = num_lines.times.map do |x|

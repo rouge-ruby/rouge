@@ -283,7 +283,7 @@ module Rouge
         rule /#\d+[=#]/, 'Operator'
 
         # read-time comment
-        rule /#+nil#{terminated}\s*\(/, 'Comment.Preproc', :commented_form
+        rule /#+nil#{terminated}\s*\(/, 'Comment', :commented_form
 
         # read-time conditional
         rule /#[+-]/, 'Operator'
@@ -338,8 +338,9 @@ module Rouge
       end
 
       state :commented_form do
-        rule /\(/, 'Comment.Preproc', :commented_form
-        rule /\)/, 'Comment.Preproc', :pop!
+        rule /\(/, 'Comment', :commented_form
+        rule /\)/, 'Comment', :pop!
+        rule /[^()]+/, 'Comment'
       end
     end
   end

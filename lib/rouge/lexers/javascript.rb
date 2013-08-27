@@ -19,7 +19,7 @@ module Rouge
         rule /\s+/, 'Text'
         rule /<!--/, 'Comment' # really...?
         rule %r(//.*?\n), 'Comment.Single'
-        rule %r(/\*.*?\*/), 'Comment.Multiline'
+        rule %r(/\*.*?\*/)m, 'Comment.Multiline'
       end
 
       state :slash_starts_regex do
@@ -100,7 +100,7 @@ module Rouge
           push :slash_starts_regex
         end
 
-        rule /[{](?=\s*(#{id}|"[^\n]*?")\s*:)/, 'Punctuation', :object
+        rule /[{](?=\s*(#{id}|"[^\n]*?")\s*:)/m, 'Punctuation', :object
 
         rule /[{]/ do
           token 'Punctuation'
@@ -151,6 +151,7 @@ module Rouge
           group 'Name.Attribute'; group 'Text'
           group 'Punctuation'
         end
+        rule /:/, 'Punctuation'
         mixin :root
       end
 

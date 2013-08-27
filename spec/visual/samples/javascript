@@ -19,6 +19,16 @@ var ternary3 = a ? {
   } + f: g
 }
 
+/*!
+ * multiline comment
+ */
+
+var quotedKeys = {
+  "one": 1,
+  "two": 2,
+  "three": 3,
+};
+
 Blag = {};
 jQuery.noConflict();
 

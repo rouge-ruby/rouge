@@ -163,12 +163,12 @@ module Rouge
         rule(ESCAPE_SEQUENCE, "Literal.String.Escape")
         rule(/\\./,           "Error")
         rule(/"/,             "Literal.String", :pop!)
-        rule(/./,             "Literal.String")
+        rule(/[^"\\]+/m,      "Literal.String")
       end
 
       state :raw_string do
         rule(/`/,             "Literal.String", :pop!)
-        rule(/./m,            "Literal.String")
+        rule(/[^`]+/m,        "Literal.String")
       end
     end
   end

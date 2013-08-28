@@ -90,7 +90,7 @@ module Rouge
       end
 
       def get_style(token)
-        get_own_style(token) || style['Text']
+        get_own_style(token) || style[Text]
       end
 
       def name(n=nil)

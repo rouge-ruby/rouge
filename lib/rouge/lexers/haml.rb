@@ -71,42 +71,42 @@ module Rouge
       comma_dot = /,\s*\n|#{dot}/
 
       state :root do
-        rule /\s*\n/, 'Text'
-        rule(/\s*/) { |m| token 'Text'; indentation(m[0]) }
+        rule /\s*\n/, Text
+        rule(/\s*/) { |m| token Text; indentation(m[0]) }
       end
 
       state :content do
         mixin :css
-        rule(/%#{identifier}/) { token 'Name.Tag'; pop!; push :tag }
-        rule /!!!#{dot}*\n/, 'Name.Namespace', :pop!
+        rule(/%#{identifier}/) { token Name::Tag; pop!; push :tag }
+        rule /!!!#{dot}*\n/, Name::Namespace, :pop!
         rule %r(
           (/) (\[#{dot}*?\]) (#{dot}*\n)
         )x do
-          group 'Comment'; group 'Comment.Special'; group 'Comment'
+          group Comment; group Comment::Special; group Comment
           pop!
         end
 
         rule %r(/#{dot}*\n) do
-          token 'Comment'
+          token Comment
           pop!
           starts_block :html_comment_block
         end
 
         rule /-##{dot}*\n/ do
-          token 'Comment'
+          token Comment
           pop!
           starts_block :haml_comment_block
         end
 
         rule /-/ do
-          token 'Punctuation'
+          token Punctuation
           reset_stack
           push :ruby_line
         end
 
         # filters
         rule /:(#{dot}*)\n/ do |m|
-          token 'Name.Decorator'
+          token Name::Decorator
           pop!
           starts_block :filter_block
 
@@ -122,19 +122,19 @@ module Rouge
       end
 
       state :css do
-        rule(/\.#{identifier}/) { token 'Name.Class'; pop!; push :tag }
-        rule(/##{identifier}/) { token 'Name.Function'; pop!; push :tag }
+        rule(/\.#{identifier}/) { token Name::Class; pop!; push :tag }
+        rule(/##{identifier}/) { token Name::Function; pop!; push :tag }
       end
 
       state :tag do
         mixin :css
         rule(/\{#{comma_dot}*?\}/) { delegate ruby }
         rule(/\[#{dot}*?\]/) { delegate ruby }
-        rule /\(/, 'Punctuation', :html_attributes
-        rule /\s*\n/, 'Text', :pop!
+        rule /\(/, Punctuation, :html_attributes
+        rule /\s*\n/, Text, :pop!
 
         # whitespace chompers
-        rule /[<>]{1,2}(?=[ \t=])/, 'Punctuation'
+        rule /[<>]{1,2}(?=[ \t=])/, Punctuation
 
         mixin :eval_or_plain
       end
@@ -142,13 +142,13 @@ module Rouge
       state :plain do
         rule(/([^#\n]|#[^{\n]|(\\\\)*\\#\{)+/) { delegate html }
         mixin :interpolation
-        rule(/\n/) { token 'Text'; reset_stack }
+        rule(/\n/) { token Text; reset_stack }
       end
 
       state :eval_or_plain do
-        rule /[&!]?==/, 'Punctuation', :plain
+        rule /[&!]?==/, Punctuation, :plain
         rule /[&!]?[=!]/ do
-          token 'Punctuation'
+          token Punctuation
           reset_stack
           push :ruby_line
         end
@@ -157,35 +157,35 @@ module Rouge
       end
 
       state :ruby_line do
-        rule /\n/, 'Text', :pop!
+        rule /\n/, Text, :pop!
         rule(/,[ \t]*\n/) { delegate ruby }
-        rule /[ ]\|[ \t]*\n/, 'Literal.String.Escape'
+        rule /[ ]\|[ \t]*\n/, Str::Escape
         rule(/.*?(?=(,$| \|)?[ \t]*$)/) { delegate ruby }
       end
 
       state :html_attributes do
-        rule /\s+/, 'Text'
-        rule /#{identifier}\s*=/, 'Name.Attribute', :html_attribute_value
-        rule identifier, 'Name.Attribute'
-        rule /\)/, 'Text', :pop!
+        rule /\s+/, Text
+        rule /#{identifier}\s*=/, Name::Attribute, :html_attribute_value
+        rule identifier, Name::Attribute
+        rule /\)/, Text, :pop!
       end
 
       state :html_attribute_value do
-        rule /\s+/, 'Text'
-        rule ruby_var, 'Name.Variable', :pop!
-        rule /@#{ruby_var}/, 'Name.Variable.Instance', :pop!
-        rule /\$#{ruby_var}/, 'Name.Variable.Global', :pop!
-        rule /'(\\\\|\\'|[^'\n])*'/, 'Literal.String', :pop!
-        rule /"(\\\\|\\"|[^"\n])*"/, 'Literal.String', :pop!
+        rule /\s+/, Text
+        rule ruby_var, Name::Variable, :pop!
+        rule /@#{ruby_var}/, Name::Variable::Instance, :pop!
+        rule /\$#{ruby_var}/, Name::Variable::Global, :pop!
+        rule /'(\\\\|\\'|[^'\n])*'/, Str, :pop!
+        rule /"(\\\\|\\"|[^"\n])*"/, Str, :pop!
       end
 
       state :html_comment_block do
-        rule /#{dot}+/, 'Comment'
+        rule /#{dot}+/, Comment
         mixin :indented_block
       end
 
       state :haml_comment_block do
-        rule /#{dot}+/, 'Comment.Preproc'
+        rule /#{dot}+/, Comment::Preproc
         mixin :indented_block
       end
 
@@ -194,7 +194,7 @@ module Rouge
           if @filter_lexer
             delegate @filter_lexer
           else
-            token 'Name.Decorator'
+            token Name::Decorator
           end
         end
 
@@ -204,14 +204,14 @@ module Rouge
 
       state :interpolation do
         rule /(#\{)(#{dot}*?)(\})/ do |m|
-          token 'Literal.String.Interpol', m[1]
+          token Str::Interpol, m[1]
           delegate ruby, m[2]
-          token 'Literal.String.Interpol', m[3]
+          token Str::Interpol, m[3]
         end
       end
 
       state :indented_block do
-        rule(/\n/) { token 'Text'; reset_stack }
+        rule(/\n/) { token Text; reset_stack }
       end
     end
   end

@@ -1,17 +1,7 @@
 describe Rouge::Token do
   it 'has a name' do
-    assert { Rouge::Token['Text'].name == 'Text' }
-    assert { Rouge::Token['Literal.String'].name == 'Literal.String' }
-  end
-
-  it 'compares equal values' do
-    assert { Rouge::Token['Foo.Bar'] === Rouge::Token['Foo.Bar'] }
-    deny   { Rouge::Token['Foo.Bar'] === Rouge::Token['Foo.Baz'] }
-  end
-
-  it 'compares children' do
-    assert { Rouge::Token['Foo'] === Rouge::Token['Foo.Bar'] }
-    deny   { Rouge::Token['Foo.Bar'] === Rouge::Token['Foo'] }
+    assert { Rouge::Token['Text'].qualname == 'Text' }
+    assert { Rouge::Token['Literal.String'].qualname == 'Literal.String' }
   end
 
   it 'has shortnames' do
@@ -20,8 +10,8 @@ describe Rouge::Token do
   end
 
   it 'calculates ancestors' do
-    ancestors = Rouge::Token['A.B.C.D'].ancestors.map(&:name)
+    chain = Rouge::Token['Literal.String.Backtick'].token_chain.map(&:qualname)
 
-    assert { ancestors == %w(A.B.C.D A.B.C A.B A) }
+    assert { chain == %w(Literal Literal.String Literal.String.Backtick) }
   end
 end

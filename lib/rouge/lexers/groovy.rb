@@ -40,62 +40,62 @@ module Rouge
           (\s*) (\() # signature start
         )x do |m|
           delegate self.clone, m[1]
-          token 'Name.Function', m[2]
-          token 'Text', m[3]
-          token 'Operator', m[4]
+          token Name::Function, m[2]
+          token Text, m[3]
+          token Operator, m[4]
         end
 
         # whitespace
-        rule /[^\S\n]+/, 'Text'
-        rule %r(//.*?\n), 'Comment.Single'
-        rule %r(/[*].*?[*]/), 'Comment.Multiline'
-        rule /@\w[\w\d.]*/, 'Name.Decorator'
-        rule /(class|interface)\b/,  'Keyword.Declaration', :class
-        rule /package\b/, 'Keyword.Namespace', :import
-        rule /import\b/, 'Keyword.Namespace', :import
+        rule /[^\S\n]+/, Text
+        rule %r(//.*?\n), Comment::Single
+        rule %r(/[*].*?[*]/), Comment::Multiline
+        rule /@\w[\w\d.]*/, Name::Decorator
+        rule /(class|interface)\b/,  Keyword::Declaration, :class
+        rule /package\b/, Keyword::Namespace, :import
+        rule /import\b/, Keyword::Namespace, :import
 
-        rule /"(\\\\|\\"|[^"])*"/, 'Literal.String.Double'
-        rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
-        rule %r(\$/((?!/\$).)*/\$), 'Literal.String'
-        rule %r(/(\\\\|\\"|[^/])*/), 'Literal.String'
-        rule /'\\.'|'[^\\]'|'\\u[0-9a-f]{4}'/, 'Literal.String.Char'
+        rule /"(\\\\|\\"|[^"])*"/, Str::Double
+        rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule %r(\$/((?!/\$).)*/\$), Str
+        rule %r(/(\\\\|\\"|[^/])*/), Str
+        rule /'\\.'|'[^\\]'|'\\u[0-9a-f]{4}'/, Str::Char
         rule /(\.)([a-zA-Z_][a-zA-Z0-9_]*)/ do
-          group 'Operator'
-          group 'Name.Attribute'
+          group Operator
+          group Name::Attribute
         end
 
-        rule /[a-zA-Z_][a-zA-Z0-9_]*:/, 'Name.Label'
+        rule /[a-zA-Z_][a-zA-Z0-9_]*:/, Name::Label
         rule /[a-zA-Z_\$][a-zA-Z0-9_]*/ do |m|
           if self.class.keywords.include? m[0]
-            token 'Keyword'
+            token Keyword
           elsif self.class.declarations.include? m[0]
-            token 'Keyword.Declaration'
+            token Keyword::Declaration
           elsif self.class.types.include? m[0]
-            token 'Keyword.Type'
+            token Keyword::Type
           elsif self.class.constants.include? m[0]
-            token 'Keyword.Constant'
+            token Keyword::Constant
           else
-            token 'Name'
+            token Name
           end
         end
 
-        rule %r([~^*!%&\[\](){}<>\|+=:;,./?-]), 'Operator'
+        rule %r([~^*!%&\[\](){}<>\|+=:;,./?-]), Operator
 
         # numbers
-        rule /\d+\.\d+([eE]\d+)?[fd]?/, 'Literal.Number.Float'
-        rule /0x[0-9a-f]+/, 'Literal.Number.Hex'
-        rule /[0-9]+L?/, 'Literal.Number.Integer'
-        rule /\n/, 'Text'
+        rule /\d+\.\d+([eE]\d+)?[fd]?/, Num::Float
+        rule /0x[0-9a-f]+/, Num::Hex
+        rule /[0-9]+L?/, Num::Integer
+        rule /\n/, Text
       end
 
       state :class do
-        rule /\s+/, 'Text'
-        rule /\w[\w\d]*/, 'Name.Class', :pop!
+        rule /\s+/, Text
+        rule /\w[\w\d]*/, Name::Class, :pop!
       end
 
       state :import do
-        rule /\s+/, 'Text'
-        rule /[\w\d.]+[*]?/, 'Name.Namespace', :pop!
+        rule /\s+/, Text
+        rule /[\w\d.]+[*]?/, Name::Namespace, :pop!
       end
     end
   end

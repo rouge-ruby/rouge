@@ -10,59 +10,59 @@ module Rouge
 
       state :root do
         rule /(include)(\s+)([^\s;]+)/ do
-          group 'Keyword'; group 'Text'; group 'Name'
+          group Keyword; group Text; group Name
         end
 
-        rule id, 'Keyword', :statement
+        rule id, Keyword, :statement
 
         mixin :base
       end
 
       state :block do
-        rule /}/, 'Punctuation', :pop!
-        rule id, 'Keyword.Namespace', :statement
+        rule /}/, Punctuation, :pop!
+        rule id, Keyword::Namespace, :statement
         mixin :base
       end
 
       state :statement do
         rule /{/ do
-          token 'Punctuation'; pop!; push :block
+          token Punctuation; pop!; push :block
         end
 
-        rule /;/, 'Punctuation', :pop!
+        rule /;/, Punctuation, :pop!
 
         mixin :base
       end
 
       state :base do
-        rule /\s+/, 'Text'
+        rule /\s+/, Text
 
-        rule /#.*?\n/, 'Comment.Single'
-        rule /(?:on|off)\b/, 'Name.Constant'
-        rule /[$][\w-]+/, 'Name.Variable'
+        rule /#.*?\n/, Comment::Single
+        rule /(?:on|off)\b/, Name::Constant
+        rule /[$][\w-]+/, Name::Variable
 
         # host/port
         rule /([a-z0-9.-]+)(:)([0-9]+)/i do
-          group 'Name.Function'; group 'Punctuation'
-          group 'Literal.Number.Integer'
+          group Name::Function; group Punctuation
+          group Num::Integer
         end
 
         # mimetype
-        rule %r([a-z-]+/[a-z-]+)i, 'Name.Class'
+        rule %r([a-z-]+/[a-z-]+)i, Name::Class
 
-        rule /[0-9]+[kmg]?\b/i, 'Literal.Number.Integer'
+        rule /[0-9]+[kmg]?\b/i, Num::Integer
         rule /(~)(\s*)([^\s{]+)/ do
-          group 'Punctuation'; group 'Text'; group 'Literal.String.Regex'
+          group Punctuation; group Text; group Str::Regex
         end
 
-        rule /[:=~]/, 'Punctuation'
+        rule /[:=~]/, Punctuation
 
         # pathname
-        rule %r(/#{id}?), 'Name'
+        rule %r(/#{id}?), Name
 
-        rule /[^#\s;{}$\\]+/, 'Literal.String' # catchall
+        rule /[^#\s;{}$\\]+/, Str # catchall
 
-        rule /[$;]/, 'Text'
+        rule /[$;]/, Text
       end
     end
   end

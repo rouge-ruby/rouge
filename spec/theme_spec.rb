@@ -4,8 +4,8 @@ describe Rouge::Theme do
   end
 
   class MyTheme < Rouge::CSSTheme
-    style 'Literal.String', :bold => true
-    style 'Literal.String.Backtick', :italic => true
+    style Literal::String, :bold => true
+    style Literal::String::Backtick, :italic => true
   end
 
   let(:theme) { MyTheme.new }

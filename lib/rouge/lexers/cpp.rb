@@ -53,12 +53,12 @@ module Rouge
       state :bol do
         mixin :inline_whitespace
         rule /#if\s+0/ do
-          token 'Comment.Preproc'
+          token Comment::Preproc
           pop!; push :if_0
         end
 
         rule /#/ do
-          token 'Comment.Preproc'
+          token Comment::Preproc
           pop!; push :macro
         end
 
@@ -66,92 +66,92 @@ module Rouge
       end
 
       state :inline_whitespace do
-        rule /[ \t\r]+/, 'Text'
-        rule /\\\n/, 'Text'
-        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, 'Comment.Multiline'
+        rule /[ \t\r]+/, Text
+        rule /\\\n/, Text
+        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
       end
 
       state :whitespace do
         mixin :inline_whitespace
-        rule %r(/(\\\n)?/(\n|(.|\n)*?[^\\]\n)), 'Comment.Single', :bol
-        rule /\n/, 'Text', :bol
+        rule %r(/(\\\n)?/(\n|(.|\n)*?[^\\]\n)), Comment::Single, :bol
+        rule /\n/, Text, :bol
       end
 
       state :multiline_comment do
-        rule %r([*](\\\n)?/), 'Comment.Multiline', :pop!
-        rule %r([*]), 'Comment.Multiline'
-        rule %r([^*]+), 'Comment.Multiline'
+        rule %r([*](\\\n)?/), Comment::Multiline, :pop!
+        rule %r([*]), Comment::Multiline
+        rule %r([^*]+), Comment::Multiline
       end
 
       state :root do
         mixin :whitespace
 
-        rule /L?"/, 'Literal.String', :string
-        rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, 'Literal.String.Char'
-        rule %r((\d+\.\d*|\.\d+|\d+)[e][+-]?\d+[lu]*)i, 'Literal.Number.Float'
-        rule /0x[0-9a-f]+[lu]*/i, 'Literal.Number.Hex'
-        rule /0[0-7]+[lu]*/i, 'Literal.Number.Oct'
-        rule /\d+[lu]*/i, 'Literal.Number.Integer'
-        rule %r(\*/), 'Error'
-        rule %r([~!%^&*+=\|?:<>/-]), 'Operator'
-        rule /[()\[\],.;{}]/, 'Punctuation'
+        rule /L?"/, Str, :string
+        rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
+        rule %r((\d+\.\d*|\.\d+|\d+)[e][+-]?\d+[lu]*)i, Num::Float
+        rule /0x[0-9a-f]+[lu]*/i, Num::Hex
+        rule /0[0-7]+[lu]*/i, Num::Oct
+        rule /\d+[lu]*/i, Num::Integer
+        rule %r(\*/), Error
+        rule %r([~!%^&*+=\|?:<>/-]), Operator
+        rule /[()\[\],.;{}]/, Punctuation
 
-        rule /class\b/, 'Keyword', :classname
+        rule /class\b/, Keyword, :classname
 
         # Offload C++ extensions, http://offload.codeplay.com/
-        rule /(?:__offload|__blockingoffload|__outer)\b/, 'Keyword.Pseudo'
+        rule /(?:__offload|__blockingoffload|__outer)\b/, Keyword::Pseudo
 
-        rule /(true|false)\b/, 'Keyword.Constant'
-        rule /NULL\b/, 'Name.Builtin'
-        rule /#{id}:(?!:)/, 'Name.Label'
+        rule /(true|false)\b/, Keyword::Constant
+        rule /NULL\b/, Name::Builtin
+        rule /#{id}:(?!:)/, Name::Label
         rule id do |m|
           name = m[0]
 
           if self.class.keywords.include? name
-            token 'Keyword'
+            token Keyword
           elsif self.class.keywords_type.include? name
-            token 'Keyword.Type'
+            token Keyword::Type
           elsif self.class.reserved.include? name
-            token 'Keyword.Reserved'
+            token Keyword::Reserved
           else
-            token 'Name'
+            token Name
           end
         end
       end
 
       state :classname do
-        rule id, 'Name.Class', :pop!
+        rule id, Name::Class, :pop!
 
         # template specification
-        rule /\s*(?=>)/m, 'Text', :pop!
+        rule /\s*(?=>)/m, Text, :pop!
         mixin :whitespace
       end
 
       state :string do
-        rule /"/, 'Literal.String', :pop!
-        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, 'Literal.String.Escape'
-        rule /[^\\"\n]+/, 'Literal.String'
-        rule /\\\n/, 'Literal.String'
-        rule /\\/, 'Literal.String' # stray backslash
+        rule /"/, Str, :pop!
+        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
+        rule /[^\\"\n]+/, Str
+        rule /\\\n/, Str
+        rule /\\/, Str # stray backslash
       end
 
       state :macro do
-        rule %r([^/\n]+), 'Comment.Preproc'
-        rule %r(/[*].*?[*]/)m, 'Comment.Multiliine'
-        rule %r(//.*$), 'Comment.Single'
-        rule %r(/), 'Comment.Preproc'
-        rule /(?<=\\)\n/, 'Comment.Preproc'
+        rule %r([^/\n]+), Comment::Preproc
+        rule %r(/[*].*?[*]/)m, Comment::Multiline
+        rule %r(//.*$), Comment::Single
+        rule %r(/), Comment::Preproc
+        rule /(?<=\\)\n/, Comment::Preproc
         rule /\n/ do
-          token 'Comment.Preproc'
+          token Comment::Preproc
           pop!; push :bol
         end
       end
 
       state :if_0 do
-        rule /^\s*#if.*?(?<!\\)\n/, 'Comment.Preproc', :if_0
-        rule /^\s*#el(?:se|if).*\n/, 'Comment.Preproc', :pop!
-        rule /^\s*#endif.*?(?<!\\)\n/, 'Comment.Preproc', :pop!
-        rule /.*?\n/, 'Comment'
+        rule /^\s*#if.*?(?<!\\)\n/, Comment::Preproc, :if_0
+        rule /^\s*#el(?:se|if).*\n/, Comment::Preproc, :pop!
+        rule /^\s*#endif.*?(?<!\\)\n/, Comment::Preproc, :pop!
+        rule /.*?\n/, Comment
       end
     end
   end

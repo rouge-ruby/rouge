@@ -137,38 +137,38 @@ module Rouge
                                )\b/x
 
       state :simple_tokens do
-        rule(COMMENT,               "Comment")
-        rule(KEYWORD,               "Keyword")
-        rule(PREDECLARED_TYPES,     "Keyword.Type")
-        rule(PREDECLARED_FUNCTIONS, "Name.Builtin")
-        rule(PREDECLARED_CONSTANTS, "Name.Constant")
-        rule(IMAGINARY_LIT,         "Literal.Number")
-        rule(FLOAT_LIT,             "Literal.Number")
-        rule(INT_LIT,               "Literal.Number")
-        rule(CHAR_LIT,              "Literal.String.Char")
-        rule(OPERATOR,              "Operator")
-        rule(SEPARATOR,             "Punctuation")
-        rule(IDENTIFIER,            "Name")
-        rule(WHITE_SPACE,           "Other")
+        rule(COMMENT,               Comment)
+        rule(KEYWORD,               Keyword)
+        rule(PREDECLARED_TYPES,     Keyword::Type)
+        rule(PREDECLARED_FUNCTIONS, Name::Builtin)
+        rule(PREDECLARED_CONSTANTS, Name::Constant)
+        rule(IMAGINARY_LIT,         Num)
+        rule(FLOAT_LIT,             Num)
+        rule(INT_LIT,               Num)
+        rule(CHAR_LIT,              Str::Char)
+        rule(OPERATOR,              Operator)
+        rule(SEPARATOR,             Punctuation)
+        rule(IDENTIFIER,            Name)
+        rule(WHITE_SPACE,           Other)
       end
 
       state :root do
         mixin :simple_tokens
 
-        rule(/`/,             "Literal.String", :raw_string)
-        rule(/"/,             "Literal.String", :interpreted_string)
+        rule(/`/,             Str, :raw_string)
+        rule(/"/,             Str, :interpreted_string)
       end
 
       state :interpreted_string do
-        rule(ESCAPE_SEQUENCE, "Literal.String.Escape")
-        rule(/\\./,           "Error")
-        rule(/"/,             "Literal.String", :pop!)
-        rule(/[^"\\]+/m,      "Literal.String")
+        rule(ESCAPE_SEQUENCE, Str::Escape)
+        rule(/\\./,           Error)
+        rule(/"/,             Str, :pop!)
+        rule(/[^"\\]+/,       Str)
       end
 
       state :raw_string do
-        rule(/`/,             "Literal.String", :pop!)
-        rule(/[^`]+/m,        "Literal.String")
+        rule(/`/,             Str, :pop!)
+        rule(/[^`]+/m,        Str)
       end
     end
   end

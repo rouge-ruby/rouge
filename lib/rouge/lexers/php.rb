@@ -58,103 +58,102 @@ module Rouge
       end
 
       state :root do
-        rule /<\?(php|=)?/, 'Comment.Preproc', :php
+        rule /<\?(php|=)?/, Comment::Preproc, :php
         rule(/.*?(?=<\?)|.*/m) { delegate parent }
       end
 
       state :php do
-        rule /\?>/, 'Comment.Preproc', :pop!
+        rule /\?>/, Comment::Preproc, :pop!
         # heredocs
-        rule /<<<('?)([a-z_]\w*)\1\n.*?\n\2;?\n/im, 'Literal.String.Heredoc'
-        rule /\s+/, 'Text'
-        rule /#.*?\n/, 'Comment.Single'
-        rule %r(//.*?\n), 'Comment.Single'
+        rule /<<<('?)([a-z_]\w*)\1\n.*?\n\2;?\n/im, Str::Heredoc
+        rule /\s+/, Text
+        rule /#.*?\n/, Comment::Single
+        rule %r(//.*?\n), Comment::Single
         # empty comment, otherwise seen as the start of a docstring
         rule %r(/\*\*/)
-        rule %r(/\*\*.*?\*/)m, 'Literal.String.Doc'
-        rule %r(/\*.*?\*/)m, 'Comment.Multiline'
+        rule %r(/\*\*.*?\*/)m, Str::Doc
+        rule %r(/\*.*?\*/)m, Comment::Multiline
         rule /(->|::)(\s*)([a-zA-Z_][a-zA-Z0-9_]*)/ do
-          group 'Operator'; group 'Text'; group 'Name.Attribute'
+          group Operator; group Text; group Name::Attribute
         end
 
-        rule /[~!%^&*+=\|:.<>\/?@-]+/, 'Operator'
-        rule /[\[\]{}();,]+/, 'Punctuation'
-        rule /class\b/, 'Keyword', :classname
+        rule /[~!%^&*+=\|:.<>\/?@-]+/, Operator
+        rule /[\[\]{}();,]+/, Punctuation
+        rule /class\b/, Keyword, :classname
         # anonymous functions
         rule /(function)(\s*)(?=\()/ do
-          group 'Keyword'; group 'Text'
+          group Keyword; group Text
         end
 
         # named functions
         rule /(function)(\s+)(&?)(\s*)/ do
-          group 'Keyword'; group 'Text'; group 'Operator'; group 'Text'
+          group Keyword; group Text; group Operator; group Text
           push :funcname
         end
 
         rule /(const)(\s+)([a-zA-Z_]\w*)/i do
-          group 'Keyword'; group 'Text'; group 'Name.Constant'
+          group Keyword; group Text; group Name::Constant
         end
 
-        rule /(true|false|null)\b/, 'Keyword.Constant'
-        rule /\$\{\$+[a-z_]\w*\}/i, 'Name.Variable'
-        rule /\$+[a-z_]\w*/i, 'Name.Variable'
+        rule /(true|false|null)\b/, Keyword::Constant
+        rule /\$\{\$+[a-z_]\w*\}/i, Name::Variable
+        rule /\$+[a-z_]\w*/i, Name::Variable
 
         # may be intercepted for builtin highlighting
         rule /[\\a-z_][\\\w]*/i do |m|
           name = m[0]
 
           if self.class.keywords.include? name
-            token 'Keyword'
+            token Keyword
           elsif self.builtins.include? name
-            token 'Name.Builtin'
+            token Name::Builtin
           else
-            token 'Name.Other'
+            token Name::Other
           end
         end
 
-        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, 'Literal.Number.Float'
-        rule /\d+e[+-]?\d+/i, 'Literal.Number.Float'
-        rule /0[0-7]+/, 'Literal.Number.Oct'
-        rule /0x[a-f0-9]+/i, 'Literal.Number.Hex'
-        rule /\d+/, 'Literal.Number.Integer'
-        rule /'([^'\\]*(?:\\.[^'\\]*)*)'/, 'Literal.String.Single'
-        rule /`([^`\\]*(?:\\.[^`\\]*)*)`/, 'Literal.String.Backtick'
-        rule /"/, 'Literal.String.Double', :string
+        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, Num::Float
+        rule /\d+e[+-]?\d+/i, Num::Float
+        rule /0[0-7]+/, Num::Oct
+        rule /0x[a-f0-9]+/i, Num::Hex
+        rule /\d+/, Num::Integer
+        rule /'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
+        rule /`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
+        rule /"/, Str::Double, :string
       end
 
       state :classname do
-        rule /\s+/, 'Text'
-        rule /[a-z_][\\\w]*/i, 'Name.Class', :pop!
+        rule /\s+/, Text
+        rule /[a-z_][\\\w]*/i, Name::Class, :pop!
       end
 
       state :funcname do
-        rule /[a-z_]\w*/i, 'Name.Function', :pop!
+        rule /[a-z_]\w*/i, Name::Function, :pop!
       end
 
       state :string do
-        rule /"/, 'Literal.String.Double', :pop!
-        rule /[^\\{$"]+/, 'Literal.String.Double'
+        rule /"/, Str::Double, :pop!
+        rule /[^\\{$"]+/, Str::Double
         rule /\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
-          'Literal.String.Escape'
-        rule /\$[a-zA-Z_][a-zA-Z0-9_]*(\[\S+\]|->[a-zA-Z_][a-zA-Z0-9_]*)?/, 'Name.Variable'
+          Str::Escape
+        rule /\$[a-zA-Z_][a-zA-Z0-9_]*(\[\S+\]|->[a-zA-Z_][a-zA-Z0-9_]*)?/, Name::Variable
 
-        lsi = 'Literal.String.Interpol'
-        rule /\{\$\{/, lsi, :interp_double
-        rule /\{(?=\$)/, lsi, :interp_single
+        rule /\{\$\{/, Str::Interpol, :interp_double
+        rule /\{(?=\$)/, Str::Interpol, :interp_single
         rule /(\{)(\S+)(\})/ do
-          group lsi; group 'Name.Variable'; group lsi
+          group Str::Interpol; group Name::Variable; group Str::Interpol
         end
 
-        rule /[${\\]+/, 'Literal.String.Double'
+        rule /[${\\]+/, Str::Double
       end
 
       state :interp_double do
-        rule /\}\}/, 'Literal.String.Interpol', :pop!
+        rule /\}\}/, Str::Interpol, :pop!
         mixin :php
       end
 
       state :interp_single do
-        rule /\}/, 'Literal.String.Interpol', :pop!
+        rule /\}/, Str::Interpol, :pop!
         mixin :php
       end
     end

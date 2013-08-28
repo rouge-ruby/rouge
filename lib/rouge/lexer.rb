@@ -6,6 +6,8 @@ module Rouge
   # @abstract
   # A lexer transforms text into a stream of `[token, chunk]` pairs.
   class Lexer
+    include Token::Tokens
+
     class << self
       # Lexes `stream` with the given options.  The lex is delegated to a
       # new instance.
@@ -141,7 +143,7 @@ module Rouge
       def guess(info={})
         lexers = guesses(info)
 
-        return Lexers::Text if lexers.empty?
+        return Lexers::PlainText if lexers.empty?
         return lexers[0] if lexers.size == 1
 
         raise AmbiguousGuess.new(lexers)

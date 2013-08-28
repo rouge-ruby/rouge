@@ -214,65 +214,65 @@ module Rouge
       symbol = /(\|[^\|]+\||#{nonmacro}#{constituent}*)/
 
       state :root do
-        rule /\s+/m, 'Text'
-        rule /;.*$/, 'Comment.Single'
-        rule /#\|/, 'Comment.Multiline', :multiline_comment
+        rule /\s+/m, Text
+        rule /;.*$/, Comment::Single
+        rule /#\|/, Comment::Multiline, :multiline_comment
 
         # encoding comment
-        rule /#\d*Y.*$/, 'Comment.Special'
-        rule /"(\\.|[^"\\])*"/, 'Literal.String'
+        rule /#\d*Y.*$/, Comment::Special
+        rule /"(\\.|[^"\\])*"/, Str
 
-        rule /[:']#{symbol}/, 'Literal.String.Symbol'
-        rule /['`]/, 'Operator'
+        rule /[:']#{symbol}/, Str::Symbol
+        rule /['`]/, Operator
 
         # numbers
-        rule /[-+]?\d+\.?#{terminated}/, 'Literal.Number.Integer'
-        rule %r([-+]?\d+/\d+#{terminated}), 'Literal.Number.Integer'
+        rule /[-+]?\d+\.?#{terminated}/, Num::Integer
+        rule %r([-+]?\d+/\d+#{terminated}), Num::Integer
         rule %r(
           [-+]?
           (\d*\.\d+([defls][-+]?\d+)?
           |\d+(\.\d*)?[defls][-+]?\d+)
           #{terminated}
-        )x, 'Literal.Number.Float'
+        )x, Num::Float
 
         # sharpsign strings and characters
-        rule /#\\.#{terminated}/, 'Literal.String.Char'
-        rule /#\\#{symbol}/, 'Literal.String.Char'
+        rule /#\\.#{terminated}/, Str::Char
+        rule /#\\#{symbol}/, Str::Char
 
-        rule /#\(/, 'Operator', :root
+        rule /#\(/, Operator, :root
 
         # bitstring
-        rule /#\d*\*[01]*/, 'Literal.Other'
+        rule /#\d*\*[01]*/, Other
 
         # uninterned symbol
-        rule /#:#{symbol}/, 'Literal.String.Symbol'
+        rule /#:#{symbol}/, Str::Symbol
 
         # read-time and load-time evaluation
-        rule /#[.,]/, 'Operator'
+        rule /#[.,]/, Operator
 
         # function shorthand
-        rule /#'/, 'Name.Function'
+        rule /#'/, Name::Function
 
         # binary rational
-        rule /#b[+-]?[01]+(\/[01]+)?/i, 'Literal.Number'
+        rule /#b[+-]?[01]+(\/[01]+)?/i, Num
 
         # octal rational
-        rule /#o[+-]?[0-7]+(\/[0-7]+)?/i, 'Literal.Number.Oct'
+        rule /#o[+-]?[0-7]+(\/[0-7]+)?/i, Num::Oct
 
         # hex rational
-        rule /#x[+-]?[0-9a-f]+(\/[0-9a-f]+)?/i, 'Literal.Number'
+        rule /#x[+-]?[0-9a-f]+(\/[0-9a-f]+)?/i, Num
 
         # complex
         rule /(#c)(\()/i do
-          group 'Literal.Number'
-          group 'Punctuation'
+          group Num
+          group Punctuation
           push :root
         end
 
         # arrays and structures
         rule /(#(?:\d+a|s))(\()/i do
-          group 'Literal.Other'
-          group 'Punctuation'
+          group Literal::Other
+          group Punctuation
           push :root
         end
 
@@ -280,67 +280,67 @@ module Rouge
         rule /#p?"(\\.|[^"])*"/i
 
         # reference
-        rule /#\d+[=#]/, 'Operator'
+        rule /#\d+[=#]/, Operator
 
         # read-time comment
-        rule /#+nil#{terminated}\s*\(/, 'Comment', :commented_form
+        rule /#+nil#{terminated}\s*\(/, Comment, :commented_form
 
         # read-time conditional
-        rule /#[+-]/, 'Operator'
+        rule /#[+-]/, Operator
 
         # special operators that should have been parsed already
-        rule /(,@|,|\.)/, 'Operator'
+        rule /(,@|,|\.)/, Operator
 
         # special constants
-        rule /(t|nil)#{terminated}/, 'Name.Constant'
+        rule /(t|nil)#{terminated}/, Name::Constant
 
         # functions and variables
         # note that these get filtered through in stream_tokens
-        rule /\*#{symbol}\*/, 'Name.Variable.Global'
+        rule /\*#{symbol}\*/, Name::Variable::Global
         rule symbol do |m|
           sym = m[0]
 
           if BUILTIN_FUNCTIONS.include? sym
-            token 'Name.Builtin'
+            token Name::Builtin
           elsif SPECIAL_FORMS.include? sym
-            token 'Keyword'
+            token Keyword
           elsif MACROS.include? sym
-            token 'Name.Builtin'
+            token Name::Builtin
           elsif LAMBDA_LIST_KEYWORDS.include? sym
-            token 'Keyword'
+            token Keyword
           elsif DECLARATIONS.include? sym
-            token 'Keyword'
+            token Keyword
           elsif BUILTIN_TYPES.include? sym
-            token 'Keyword.Type'
+            token Keyword::Type
           elsif BUILTIN_CLASSES.include? sym
-            token 'Name.Class'
+            token Name::Class
           else
-            token 'Name.Variable'
+            token Name::Variable
           end
         end
 
-        rule /\(/, 'Punctuation', :root
-        rule /\)/, 'Punctuation' do
+        rule /\(/, Punctuation, :root
+        rule /\)/, Punctuation do
           if stack.empty?
-            token 'Error'
+            token Error
           else
-            token 'Punctuation'
+            token Punctuation
             pop!
           end
         end
       end
 
       state :multiline_comment do
-        rule /#\|/, 'Comment.Multiline', :multiline_comment
-        rule /\|#/, 'Comment.Multiline', :pop!
-        rule /[^\|#]+/, 'Comment.Multiline'
-        rule /[\|#]/, 'Comment.Multiline'
+        rule /#\|/, Comment::Multiline, :multiline_comment
+        rule /\|#/, Comment::Multiline, :pop!
+        rule /[^\|#]+/, Comment::Multiline
+        rule /[\|#]/, Comment::Multiline
       end
 
       state :commented_form do
-        rule /\(/, 'Comment', :commented_form
-        rule /\)/, 'Comment', :pop!
-        rule /[^()]+/, 'Comment'
+        rule /\(/, Comment, :commented_form
+        rule /\)/, Comment, :pop!
+        rule /[^()]+/, Comment
       end
     end
   end

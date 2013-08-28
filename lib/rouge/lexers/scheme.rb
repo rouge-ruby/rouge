@@ -57,47 +57,47 @@ module Rouge
 
       state :root do
         # comments
-        rule /;.*$/, 'Comment.Single'
-        rule /\s+/m, 'Text'
-        rule /-?\d+\.\d+/, 'Literal.Number.Float'
-        rule /-?\d+/, 'Literal.Number.Integer'
+        rule /;.*$/, Comment::Single
+        rule /\s+/m, Text
+        rule /-?\d+\.\d+/, Num::Float
+        rule /-?\d+/, Num::Integer
 
         # Racket infinitites
-        rule /[+-]inf[.][f0]/, 'Literal.Number'
+        rule /[+-]inf[.][f0]/, Num
 
-        rule /#b[01]+/, 'Literal.Number.Binary'
-        rule /#o[0-7]+/, 'Literal.Number.Oct'
-        rule /#d[0-9]+/, 'Literal.Number.Integer'
-        rule /#x[0-9a-f]+/i, 'Literal.Number.Hex'
-        rule /#[ei][\d.]+/, 'Literal.Number.Other'
+        rule /#b[01]+/, Num::Bin
+        rule /#o[0-7]+/, Num::Oct
+        rule /#d[0-9]+/, Num::Integer
+        rule /#x[0-9a-f]+/i, Num::Hex
+        rule /#[ei][\d.]+/, Num::Other
 
-        rule /"(\\\\|\\"|[^"])*"/, 'Literal.String'
-        rule /'#{id}/i, 'Literal.String.Symbol'
+        rule /"(\\\\|\\"|[^"])*"/, Str
+        rule /'#{id}/i, Str::Symbol
         rule /#\\([()\/'"._!\$%& ?=+-]{1}|[a-z0-9]+)/i,
-          'Literal.String.Char'
-        rule /#t|#f/, 'Name.Constant'
-        rule /(?:'|#|`|,@|,|\.)/, 'Operator'
+          Str::Char
+        rule /#t|#f/, Name::Constant
+        rule /(?:'|#|`|,@|,|\.)/, Operator
 
         rule /(['#])(\s*)(\()/m do
-          group 'Literal.String.Symbol'
-          group 'Text'
-          group 'Punctuation'
+          group Str::Symbol
+          group Text
+          group Punctuation
         end
 
-        rule /\(/, 'Punctuation', :command
-        rule /\)/, 'Punctuation'
+        rule /\(/, Punctuation, :command
+        rule /\)/, Punctuation
 
-        rule id, 'Name.Variable'
+        rule id, Name::Variable
       end
 
       state :command do
-        rule id, 'Name.Function' do |m|
+        rule id, Name::Function do |m|
           if self.class.keywords.include? m[0]
-            token 'Keyword'
+            token Keyword
           elsif self.class.builtins.include? m[0]
-            token 'Name.Builtin'
+            token Name::Builtin
           else
-            token 'Name.Function'
+            token Name::Function
           end
 
           pop!

@@ -36,15 +36,15 @@ module Rouge
       rest_of_line = /.*?(?=[#\n])/
 
       state :basic do
-        rule %r(#.*$), 'Comment'
-        rule /[ \r\t]+/, 'Text'
+        rule %r(#.*$), Comment
+        rule /[ \r\t]+/, Text
       end
 
       state :root do
         mixin :basic
-        rule %r(\n), 'Text'
-        rule %r(""".*?""")m, 'Literal.String'
-        rule %r(@[^\s@]+), 'Name.Tag'
+        rule %r(\n), Text
+        rule %r(""".*?""")m, Str
+        rule %r(@[^\s@]+), Name::Tag
         mixin :has_table
         mixin :has_examples
       end
@@ -55,23 +55,23 @@ module Rouge
 
           keyword = m[1]
           if self.class.keywords[:element].include? keyword
-            group 'Keyword.Namespace'; push :description
+            group Keyword::Namespace; push :description
           elsif self.class.keywords[:feature].include? keyword
-            group 'Keyword.Declaration'; push :feature_description
+            group Keyword::Declaration; push :feature_description
           elsif self.class.keywords[:examples].include? keyword
-            group 'Name.Namespace'; push :example_description
+            group Name::Namespace; push :example_description
           else
-            group 'Error'
+            group Error
           end
 
-          group 'Punctuation'
+          group Punctuation
         end
       end
 
       state :has_examples do
         mixin :has_scenarios
-        rule Gherkin.step_regex, 'Name.Function' do
-          token 'Name.Function'
+        rule Gherkin.step_regex, Name::Function do
+          token Name::Function
           reset_stack; push :step
         end
       end
@@ -81,9 +81,9 @@ module Rouge
       end
 
       state :table_header do
-        rule /[^|\s]+/, 'Name.Variable'
+        rule /[^|\s]+/, Name::Variable
         rule /\n/ do
-          token 'Text'
+          token Text
           pop!; push :table
         end
         mixin :table
@@ -92,37 +92,37 @@ module Rouge
       state :table do
         rule(/^(?=\s*[^\s|])/) { reset_stack }
         mixin :basic
-        rule /[|]/, 'Punctuation'
-        rule /[^|\s]+/, 'Name'
+        rule /[|]/, Punctuation
+        rule /[^|\s]+/, Name
       end
 
       state :description do
         mixin :basic
         mixin :has_examples
-        rule /\n/, 'Text'
-        rule rest_of_line, 'Text'
+        rule /\n/, Text
+        rule rest_of_line, Text
       end
 
       state :feature_description do
         mixin :basic
         mixin :has_scenarios
-        rule /\n/, 'Text'
-        rule rest_of_line, 'Text'
+        rule /\n/, Text
+        rule rest_of_line, Text
       end
 
       state :example_description do
         mixin :basic
         mixin :has_table
-        rule /\n/, 'Text'
-        rule rest_of_line, 'Text'
+        rule /\n/, Text
+        rule rest_of_line, Text
       end
 
       state :step do
         mixin :basic
-        rule /<.*?>/, 'Name.Variable'
-        rule /".*?"/, 'Literal.String'
-        rule /\S+/, 'Text'
-        rule rest_of_line, 'Text', :pop!
+        rule /<.*?>/, Name::Variable
+        rule /".*?"/, Str
+        rule /\S+/, Text
+        rule rest_of_line, Text, :pop!
       end
     end
   end

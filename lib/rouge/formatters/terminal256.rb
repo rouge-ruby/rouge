@@ -118,7 +118,7 @@ module Rouge
           when 3
             color.chars.map { |c| "#{c}#{c}" }
           when 6
-            color.scan /../
+            color.scan(/../)
           else
             raise "invalid color: #{color}"
           end
@@ -127,19 +127,23 @@ module Rouge
         end
 
         def self.closest_color(r, g, b)
-          distance = 257 * 257 * 3 # (max distance, from #000000 to #ffffff)
+          @@colors_cache ||= {}
+          key = (r << 16) + (g << 8) + b
+          @@colors_cache.fetch(key) do
+            distance = 257 * 257 * 3 # (max distance, from #000000 to #ffffff)
 
-          match = 0
+            match = 0
 
-          xterm_colors.each_with_index do |(cr, cg, cb), i|
-            d = (r - cr)**2 + (g - cg)**2 + (b - cb)**2
-            next if d >= distance
+            xterm_colors.each_with_index do |(cr, cg, cb), i|
+              d = (r - cr)**2 + (g - cg)**2 + (b - cb)**2
+              next if d >= distance
 
-            match = i
-            distance = d
+              match = i
+              distance = d
+            end
+
+            match
           end
-
-          match
         end
       end
 
@@ -151,7 +155,7 @@ module Rouge
       end
 
       def get_style(token)
-        return text_style if token.name == 'Text'
+        return text_style if token == Token::Tokens::Text
 
         theme.get_own_style(token) || text_style
       end

@@ -14,30 +14,30 @@ module Rouge
       id = /[\w-]+/
 
       state :root do
-        rule /[ \t]*\n/, 'Text'
-        rule(/[ \t]*/) { |m| token 'Text'; indentation(m[0]) }
+        rule /[ \t]*\n/, Text
+        rule(/[ \t]*/) { |m| token Text; indentation(m[0]) }
       end
 
       state :content do
         # block comments
         rule %r(//.*?\n) do
-          token 'Comment.Single'
+          token Comment::Single
           pop!; starts_block :single_comment
         end
 
         rule %r(/[*].*?\n) do
-          token 'Comment.Multiline'
+          token Comment::Multiline
           pop!; starts_block :multi_comment
         end
 
-        rule /@import\b/, 'Keyword', :import
+        rule /@import\b/, Keyword, :import
 
         mixin :content_common
 
-        rule %r(=#{id}), 'Name.Function', :value
-        rule %r([+]#{id}), 'Name.Decorator', :value
+        rule %r(=#{id}), Name::Function, :value
+        rule %r([+]#{id}), Name::Decorator, :value
 
-        rule /:/, 'Name.Attribute', :old_style_attr
+        rule /:/, Name::Attribute, :old_style_attr
 
         rule(/(?=.+?:([^a-z]|$))/) { push :attribute }
 
@@ -45,17 +45,17 @@ module Rouge
       end
 
       state :single_comment do
-        rule /.*?\n/, 'Comment.Single', :pop!
+        rule /.*?\n/, Comment::Single, :pop!
       end
 
       state :multi_comment do
-        rule /.*?\n/, 'Comment.Multiline', :pop!
+        rule /.*?\n/, Comment::Multiline, :pop!
       end
 
       state :import do
-        rule /[ \t]+/, 'Text'
-        rule /\S+/, 'Literal.String'
-        rule /\n/, 'Text', :pop!
+        rule /[ \t]+/, Text
+        rule /\S+/, Str
+        rule /\n/, Text, :pop!
       end
 
       state :old_style_attr do
@@ -64,10 +64,10 @@ module Rouge
       end
 
       state :end_section do
-        rule(/\n/) { token 'Text'; reset_stack }
+        rule(/\n/) { token Text; reset_stack }
       end
 
-      instance_eval(&SASS_COMMON)
+      include SassCommon
     end
   end
 end

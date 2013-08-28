@@ -20,18 +20,18 @@ module Rouge
           :  # initial :
           @{0,2} # optional ivar, for :@foo and :@@foo
           [a-z_]\w*[!?]? # the symbol
-        )xi, 'Literal.String.Symbol'
+        )xi, Str::Symbol
 
         # special symbols
         rule %r(:(?:\*\*|[-+]@|[/\%&\|^`~]|\[\]=?|<<|>>|<=?>|<=?|===?)),
-          'Literal.String.Symbol'
+          Str::Symbol
 
-        rule /:'(\\\\|\\'|[^'])*'/, 'Literal.String.Symbol'
-        rule /\b[a-z_]\w*?:\s+/, 'Literal.String.Symbol'
-        rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
-        rule /:"/, 'Literal.String.Symbol', :simple_sym
-        rule /"/, 'Literal.String.Double', :simple_string
-        rule /(?<!\.)`/, 'Literal.String.Backtick', :simple_backtick
+        rule /:'(\\\\|\\'|[^'])*'/, Str::Symbol
+        rule /\b[a-z_]\w*?:\s+/, Str::Symbol
+        rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule /:"/, Str::Symbol, :simple_sym
+        rule /"/, Str::Double, :simple_string
+        rule /(?<!\.)`/, Str::Backtick, :simple_backtick
 
         # %-style delimiters
         # %(abc), %[abc], %<abc>, %.abc., %r.abc., etc
@@ -40,21 +40,21 @@ module Rouge
           open = Regexp.escape(m[2])
           close = Regexp.escape(delimiter_map[m[2]] || m[2])
           interp = /[rQWxI]/ === m[1]
-          toktype = 'Literal.String.Other'
+          toktype = Str::Other
 
           debug { "    open: #{open.inspect}" }
           debug { "    close: #{close.inspect}" }
 
           # regexes
           if m[1] == 'r'
-            toktype = 'Literal.String.Regex'
+            toktype = Str::Regex
             push :regex_flags
           end
 
           token toktype
 
           push do
-            rule /\\[##{open}#{close}\\]/, 'Literal.String.Escape'
+            rule /\\[##{open}#{close}\\]/, Str::Escape
             # nesting rules only with asymmetric delimiters
             if open != close
               rule /#{open}/ do
@@ -77,13 +77,13 @@ module Rouge
       end
 
       state :regex_flags do
-        rule /[mixounse]*/, 'Literal.String.Regex', :pop!
+        rule /[mixounse]*/, Str::Regex, :pop!
       end
 
       # double-quoted string and symbol
-      [[:string, 'Literal.String.Double', '"'],
-       [:sym, 'Literal.String.Symbol', '"'],
-       [:backtick, 'Literal.String.Backtick', '`']].each do |name, tok, fin|
+      [[:string, Str::Double, '"'],
+       [:sym, Str::Symbol, '"'],
+       [:backtick, Str::Backtick, '`']].each do |name, tok, fin|
         state :"simple_#{name}" do
           mixin :string_intp_escaped
           rule /[^\\#{fin}#]+/m, tok
@@ -105,7 +105,7 @@ module Rouge
       )
 
       builtins_g = %w(
-        Array Float Integer String __id__ __send__ abort ancestors
+        Array Float Integer Str __id__ __send__ abort ancestors
         at_exit autoload binding callcc caller catch chomp chop
         class_eval class_variables clone const_defined\? const_get
         const_missing const_set constants display dup eval exec exit
@@ -138,45 +138,45 @@ module Rouge
       end
 
       state :root do
-        rule /\n\s*/m, 'Text', :expr_start
-        rule /\s+/, 'Text' # NB: NOT /m
-        rule /#.*$/, 'Comment.Single'
+        rule /\n\s*/m, Text, :expr_start
+        rule /\s+/, Text # NB: NOT /m
+        rule /#.*$/, Comment::Single
 
-        rule %r(=begin\b.*?end\b)m, 'Comment.Multiline'
-        rule /(?:#{keywords.join('|')})\b/, 'Keyword', :expr_start
-        rule /(?:#{keywords_pseudo.join('|')})\b/, 'Keyword.Pseudo', :expr_start
+        rule %r(=begin\b.*?end\b)m, Comment::Multiline
+        rule /(?:#{keywords.join('|')})\b/, Keyword, :expr_start
+        rule /(?:#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo, :expr_start
         rule %r(
           (module)
           (\s+)
           ([a-zA-Z_][a-zA-Z0-9_]*(::[a-zA-Z_][a-zA-Z0-9_]*)*)
         )x do
-          group 'Keyword'
-          group 'Text'
-          group 'Name.Namespace'
+          group Keyword
+          group Text
+          group Name::Namespace
         end
 
-        rule /def\s+/, 'Keyword', :funcname
-        rule /class\s+/, 'Keyword', :classname
+        rule /def\s+/, Keyword, :funcname
+        rule /class\s+/, Keyword, :classname
 
-        rule /(?:#{builtins_q.join('|')})\?/, 'Name.Builtin', :expr_start
-        rule /(?:#{builtins_b.join('|')})!/,  'Name.Builtin', :expr_start
+        rule /(?:#{builtins_q.join('|')})\?/, Name::Builtin, :expr_start
+        rule /(?:#{builtins_b.join('|')})!/,  Name::Builtin, :expr_start
         rule /(?<!\.)(?:#{builtins_g.join('|')})\b/,
-          'Name.Builtin', :method_call
+          Name::Builtin, :method_call
 
-        rule /__END__/, 'Comment.Preproc', :end_part
+        rule /__END__/, Comment::Preproc, :end_part
 
-        rule /0_?[0-7]+(?:_[0-7]+)*/, 'Literal.Number.Oct'
-        rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, 'Literal.Number.Hex'
-        rule /0b[01]+(?:_[01]+)*/, 'Literal.Number.Bin'
-        rule /[\d]+(?:_\d+)*/, 'Literal.Number.Integer'
+        rule /0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
+        rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
+        rule /0b[01]+(?:_[01]+)*/, Num::Bin
+        rule /[\d]+(?:_\d+)*/, Num::Integer
 
         # names
-        rule /@@[a-z_]\w*/i, 'Name.Variable.Class'
-        rule /@[a-z_]\w*/i, 'Name.Variable.Instance'
-        rule /\$\w+/, 'Name.Variable.Global'
-        rule %r(\$[!@&`'+~=/\\,;.<>_*\$?:"]), 'Name.Variable.Global'
-        rule /\$-[0adFiIlpvw]/, 'Name.Variable.Global'
-        rule /::/, 'Operator'
+        rule /@@[a-z_]\w*/i, Name::Variable::Class
+        rule /@[a-z_]\w*/i, Name::Variable::Instance
+        rule /\$\w+/, Name::Variable::Global
+        rule %r(\$[!@&`'+~=/\\,;.<>_*\$?:"]), Name::Variable::Global
+        rule /\$-[0adFiIlpvw]/, Name::Variable::Global
+        rule /::/, Operator
 
         mixin :strings
 
@@ -186,33 +186,33 @@ module Rouge
           \?(\\[MC]-)*     # modifiers
           (\\([\\abefnrstv\#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})|\S)
           (?!\w)
-        )x, 'Literal.String.Char'
+        )x, Str::Char
 
         mixin :has_heredocs
 
-        rule /[A-Z][a-zA-Z0-9_]+/, 'Name.Constant', :method_call
+        rule /[A-Z][a-zA-Z0-9_]+/, Name::Constant, :method_call
         rule /(\.|::)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/,
-          'Name.Function', :expr_start
-        rule /[a-zA-Z_]\w*[?!]/, 'Name', :expr_start
-        rule /[a-zA-Z_]\w*/, 'Name', :method_call
+          Name::Function, :expr_start
+        rule /[a-zA-Z_]\w*[?!]/, Name, :expr_start
+        rule /[a-zA-Z_]\w*/, Name, :method_call
         rule /\[|\]|\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\.{1,3}/,
-          'Operator', :expr_start
-        rule /[-+\/*%=<>&!^|~]=?/, 'Operator', :expr_start
-        rule %r<[({,?:\\;/]>, 'Punctuation', :expr_start
-        rule %r<[)}]>, 'Punctuation'
+          Operator, :expr_start
+        rule /[-+\/*%=<>&!^|~]=?/, Operator, :expr_start
+        rule %r<[({,?:\\;/]>, Punctuation, :expr_start
+        rule %r<[)}]>, Punctuation
       end
 
       state :has_heredocs do
         rule /(?<!\w)(<<-?)(["`']?)([a-zA-Z_]\w*)(\2)/ do |m|
-          token 'Operator', m[1]
-          token 'Name.Constant', "#{m[2]}#{m[3]}#{m[4]}"
+          token Operator, m[1]
+          token Name::Constant, "#{m[2]}#{m[3]}#{m[4]}"
           @heredoc_queue << [m[1] == '<<-', m[3]]
           push :heredoc_queue unless state? :heredoc_queue
         end
 
         rule /(<<-?)(["'])(\2)/ do |m|
-          token 'Operator', m[1]
-          token 'Name.Constant', "#{m[2]}#{m[3]}#{m[4]}"
+          token Operator, m[1]
+          token Name::Constant, "#{m[2]}#{m[3]}#{m[4]}"
           @heredoc_queue << [m[1] == '<<-', '']
           push :heredoc_queue unless state? :heredoc_queue
         end
@@ -233,26 +233,26 @@ module Rouge
           tolerant, heredoc_name = @heredoc_queue.first
           check = tolerant ? m[2].strip : m[2].rstrip
 
-          group 'Literal.String.Heredoc'
+          group Str::Heredoc
 
           # check if we found the end of the heredoc
           if check == heredoc_name
-            group 'Name.Constant'
+            group Name::Constant
             @heredoc_queue.shift
             # if there's no more, we're done looking.
             pop! if @heredoc_queue.empty?
           else
-            group 'Literal.String.Heredoc'
+            group Str::Heredoc
           end
         end
 
-        rule /[#\\\n]/, 'Literal.String.Heredoc'
-        rule /[^#\\\n]+/, 'Literal.String.Heredoc'
+        rule /[#\\\n]/, Str::Heredoc
+        rule /[^#\\\n]+/, Str::Heredoc
       end
 
       state :funcname do
-        rule /\s+/, 'Text'
-        rule /\(/, 'Punctuation', :defexpr
+        rule /\s+/, Text
+        rule /\(/, Punctuation, :defexpr
         rule %r(
           (?:([a-zA-Z_][\w_]*)(\.))?
           (
@@ -262,9 +262,9 @@ module Rouge
           )
         )x do |m|
           debug { "matches: #{[m[0], m[1], m[2], m[3]].inspect}" }
-          group 'Name.Class'
-          group 'Operator'
-          group 'Name.Function'
+          group Name::Class
+          group Operator
+          group Name::Function
           pop!
         end
 
@@ -272,47 +272,47 @@ module Rouge
       end
 
       state :classname do
-        rule /\s+/, 'Text'
-        rule /\(/, 'Punctuation', :defexpr
+        rule /\s+/, Text
+        rule /\(/, Punctuation, :defexpr
 
         # class << expr
-        rule /<</, 'Operator', :pop!
-        rule /[A-Z_]\w*/, 'Name.Class'
+        rule /<</, Operator, :pop!
+        rule /[A-Z_]\w*/, Name::Class
 
         rule(//) { pop! }
       end
 
       state :defexpr do
         rule /(\))(\.|::)?/ do
-          group 'Punctuation'
-          group 'Operator'
+          group Punctuation
+          group Operator
           pop!
         end
-        rule /\(/, 'Operator', :defexpr
+        rule /\(/, Operator, :defexpr
         mixin :root
       end
 
       state :in_interp do
-        rule /}/, 'Literal.String.Interpol', :pop!
+        rule /}/, Str::Interpol, :pop!
         mixin :root
       end
 
       state :string_intp do
-        rule /\#{/, 'Literal.String.Interpol', :in_interp
-        rule /#(@@?|\$)[a-z_]\w*/i, 'Literal.String.Interpol'
+        rule /\#{/, Str::Interpol, :in_interp
+        rule /#(@@?|\$)[a-z_]\w*/i, Str::Interpol
       end
 
       state :string_intp_escaped do
         mixin :string_intp
         rule /\\([\\abefnrstv#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})/,
-          'Literal.String.Escape'
-        rule /\\./, 'Literal.String.Escape'
+          Str::Escape
+        rule /\\./, Str::Escape
       end
 
       state :method_call do
         rule %r((\s+)(/)(?=\S|\s*/)) do
-          group 'Text'
-          group 'Literal.String.Regex'
+          group Text
+          group Str::Regex
           pop!
           push :slash_regex
         end
@@ -324,8 +324,8 @@ module Rouge
 
       state :expr_start do
         rule %r((\s*)(/)) do
-          group 'Text'
-          group 'Literal.String.Regex'
+          group Text
+          group Str::Regex
           pop!
           push :slash_regex
         end
@@ -333,8 +333,8 @@ module Rouge
         # special case for using a single space.  Ruby demands that
         # these be in a single line, otherwise it would make no sense.
         rule /(\s*)(%[rqswQWxiI]? \S* )/ do
-          group 'Text'
-          group 'Literal.String.Other'
+          group Text
+          group Str::Other
           pop!
         end
 
@@ -343,19 +343,19 @@ module Rouge
 
       state :slash_regex do
         mixin :string_intp
-        rule %r(\\\\), 'Literal.String.Regex'
-        rule %r(\\/), 'Literal.String.Regex'
-        rule %r([\\#]), 'Literal.String.Regex'
-        rule %r([^\\/#]+)m, 'Literal.String.Regex'
+        rule %r(\\\\), Str::Regex
+        rule %r(\\/), Str::Regex
+        rule %r([\\#]), Str::Regex
+        rule %r([^\\/#]+)m, Str::Regex
         rule %r(/) do
-          token 'Literal.String.Regex'
+          token Str::Regex
           pop!; push :regex_flags
         end
       end
 
       state :end_part do
-        # eat up the rest of the stream as Comment.Preproc
-        rule /.+/m, 'Comment.Preproc', :pop!
+        # eat up the rest of the stream as Comment::Preproc
+        rule /.+/m, Comment::Preproc, :pop!
       end
     end
   end

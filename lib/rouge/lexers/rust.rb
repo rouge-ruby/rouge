@@ -52,9 +52,9 @@ module Rouge
 
       state :start_line do
         mixin :whitespace
-        rule /\s+/, 'Text'
+        rule /\s+/, Text
         rule /#\[/ do
-          token 'Comment.Preproc'; push :attribute
+          token Comment::Preproc; push :attribute
         end
         rule(//) { pop! }
       end
@@ -62,44 +62,44 @@ module Rouge
       state :attribute do
         mixin :whitespace
         mixin :has_literals
-        rule /[(,)=]/, 'Comment.Preproc'
-        rule /\]/, 'Comment.Preproc', :pop!
-        rule id, 'Comment.Preproc'
+        rule /[(,)=]/, Comment::Preproc
+        rule /\]/, Comment::Preproc, :pop!
+        rule id, Comment::Preproc
       end
 
       state :whitespace do
-        rule /\s+/, 'Text'
-        rule %r(//[^\n]*), 'Comment'
-        rule %r(/[*].*?[*]/)m, 'Comment.Multiline'
+        rule /\s+/, Text
+        rule %r(//[^\n]*), Comment
+        rule %r(/[*].*?[*]/)m, Comment::Multiline
       end
 
       state :root do
-        rule /\n/, 'Text', :start_line
+        rule /\n/, Text, :start_line
         mixin :whitespace
-        rule /\b(?:#{Rust.keywords.join('|')})\b/, 'Keyword'
+        rule /\b(?:#{Rust.keywords.join('|')})\b/, Keyword
         mixin :has_literals
 
-        rule %r([=-]>), 'Keyword'
-        rule %r(<->), 'Keyword'
-        rule /[()\[\]{}|,:;]/, 'Punctuation'
-        rule /[*!@~&+%^<>=-]/, 'Operator'
+        rule %r([=-]>), Keyword
+        rule %r(<->), Keyword
+        rule /[()\[\]{}|,:;]/, Punctuation
+        rule /[*!@~&+%^<>=-]/, Operator
 
-        rule /([.]\s*)?#{id}(?=\s*[(])/m, 'Name.Function'
-        rule /[.]\s*#{id}/, 'Name.Property'
+        rule /([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
+        rule /[.]\s*#{id}/, Name::Property
         rule /(#{id})(::)/m do
-          group 'Name.Namespace'; group 'Punctuation'
+          group Name::Namespace; group Punctuation
         end
 
         # macros
-        rule /\bmacro_rules!/, 'Name.Decorator', :macro_rules
-        rule /#{id}!/, 'Name.Decorator', :macro
+        rule /\bmacro_rules!/, Name::Decorator, :macro_rules
+        rule /#{id}!/, Name::Decorator, :macro
 
         rule /#{id}/ do |m|
           name = m[0]
           if self.class.builtins.include? name
-            token 'Name.Builtin'
+            token Name::Builtin
           else
-            token 'Name'
+            token Name
           end
         end
       end
@@ -110,40 +110,40 @@ module Rouge
         rule /[\[{(]/ do |m|
           @macro_delims[delim_map[m[0]]] += 1
           debug { "    macro_delims: #{@macro_delims.inspect}" }
-          token 'Punctuation'
+          token Punctuation
         end
 
         rule /[\]})]/ do |m|
           @macro_delims[m[0]] -= 1
           debug { "    macro_delims: #{@macro_delims.inspect}" }
           pop! if macro_closed?
-          token 'Punctuation'
+          token Punctuation
         end
 
         # same as the rule in root, but don't push another macro state
-        rule /#{id}!/, 'Name.Decorator'
+        rule /#{id}!/, Name::Decorator
         mixin :root
 
         # No syntax errors in macros
-        rule /./, 'Text'
+        rule /./, Text
       end
 
       state :macro_rules do
-        rule /[$]#{id}(:#{id})?/, 'Name.Variable'
-        rule /[$]/, 'Name.Variable'
+        rule /[$]#{id}(:#{id})?/, Name::Variable
+        rule /[$]/, Name::Variable
 
         mixin :macro
       end
 
       state :has_literals do
         # constants
-        rule /\b(?:true|false|nil)\b/, 'Keyword.Constant'
+        rule /\b(?:true|false|nil)\b/, Keyword::Constant
         # characters
         rule %r(
           ' (?: #{escapes} | [^\\] ) '
-        )x, 'Literal.String.Char'
+        )x, Str::Char
 
-        rule /"/, 'Literal.String', :string
+        rule /"/, Str, :string
 
         # numbers
         dot = /[.][0-9_]+/
@@ -156,21 +156,21 @@ module Rouge
           |#{dot}? #{exp}  #{flt}?
           |#{dot}? #{exp}? #{flt}
           )
-        )x, 'Literal.Number.Float'
+        )x, Num::Float
 
         rule %r(
           ( 0b[10_]+
           | 0x[0-9a-fA-F-]+
           | [0-9]+
           ) (u#{size}?|i#{size})?
-        )x, 'Literal.Number.Integer'
+        )x, Num::Integer
 
       end
 
       state :string do
-        rule /"/, 'Literal.String', :pop!
-        rule escapes, 'Literal.String.Escape'
-        rule /%%/, 'Literal.String.Interpol'
+        rule /"/, Str, :pop!
+        rule escapes, Str::Escape
+        rule /%%/, Str::Interpol
         rule %r(
           %
           ( [0-9]+ [$] )?  # Parameter
@@ -178,8 +178,8 @@ module Rouge
           ( [0-9]+ [$]? )? # Width
           ( [.] [0-9]+ )?  # Precision
           [bcdfiostuxX?]   # Type
-        )x, 'Literal.String.Interpol'
-        rule /[^%"\\]+/m, 'Literal.String'
+        )x, Str::Interpol
+        rule /[^%"\\]+/m, Str
       end
     end
   end

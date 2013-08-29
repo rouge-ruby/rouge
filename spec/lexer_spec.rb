@@ -9,17 +9,14 @@ describe Rouge::Lexer do
       end
     end
 
-    token_A = Rouge::Token[:A]
-    token_B = Rouge::Token[:B]
-
     # consolidation
     result = a_lexer.lex('aa').to_a
     assert { result.size == 1 }
-    assert { result == [[token_A, 'aa']] }
+    assert { result == [['A', 'aa']] }
 
     result = a_lexer.lex('abab').to_a
     assert { result.size == 4 }
-    assert { result == [[token_A, 'a'], [token_B, 'b']] * 2 }
+    assert { result == [['A', 'a'], ['B', 'b']] * 2 }
   end
 
   it 'pushes and pops states' do
@@ -43,11 +40,11 @@ describe Rouge::Lexer do
     t = Rouge::Token
     assert {
       a_lexer.lex('{a}').to_a ==
-        [[t['Brace'], '{'], [t['Error'], 'a'], [t['Brace'], '}']]
+        [['Brace', '{'], [t['Error'], 'a'], ['Brace', '}']]
     }
 
-    assert { a_lexer.lex('b').to_a == [[Rouge::Token['Error'], 'b']] }
-    assert { a_lexer.lex('}').to_a == [[Rouge::Token['Error'], '}']] }
+    assert { a_lexer.lex('b').to_a == [[t['Error'], 'b']] }
+    assert { a_lexer.lex('}').to_a == [[t['Error'], '}']] }
   end
 
   it 'does callbacks and grouping' do
@@ -63,8 +60,8 @@ describe Rouge::Lexer do
     result = callback_lexer.lex('ab').to_a
 
     assert { result.size == 2 }
-    assert { result[0] == [Rouge::Token['A'], 'a'] }
-    assert { result[1] == [Rouge::Token['B'], 'b'] }
+    assert { result[0] == ['A', 'a'] }
+    assert { result[1] == ['B', 'b'] }
   end
 
   it 'pops from the callback' do
@@ -109,7 +106,7 @@ describe Rouge::Lexer do
     end
 
     result = stateful.lex('4++')
-    types = result.map { |(t,_)| t.name }
+    types = result.map { |(t,_)| t }
     assert { types == %w(digit lt gt) }
   end
 

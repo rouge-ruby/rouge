@@ -20,7 +20,11 @@ module Rouge
       end
 
       def inspect
-        "<Token #{@name}>"
+        "<Token #{qualname}>"
+      end
+
+      def matches?(other)
+        other.token_chain.include? self
       end
 
       def token_chain

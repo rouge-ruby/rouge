@@ -90,7 +90,7 @@ module Rouge
       end
 
       def get_style(token)
-        get_own_style(token) || style[Text]
+        get_own_style(token) || styles[Token::Tokens::Text]
       end
 
       def name(n=nil)
@@ -150,9 +150,7 @@ module Rouge
     end
 
     def style_for(tok)
-      styles.fetch(tok) do
-        tok.parent ? style_for(tok.parent) : Style.new(self)
-      end
+      self.class.get_style(tok)
     end
 
   private

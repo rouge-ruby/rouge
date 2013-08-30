@@ -178,12 +178,12 @@ module Rouge
       state :root do
         mixin :whitespace
         # special case for empty objects
-        rule /(\{)(\s*)(\})/ do
+        rule /(\{)(\s*)(\})/m do
           group Punctuation
           group Text::Whitespace
           group Punctuation
         end
-        rule /true|false/, Keyword::Constant
+        rule /(?:true|false)\b/, Keyword::Constant
         rule /{/,  Punctuation, :object_key
         rule /\[/, Punctuation, :array
         rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float
@@ -201,9 +201,9 @@ module Rouge
 
       state :object_key do
         mixin :whitespace
+        mixin :has_string
         rule /:/, Punctuation, :object_val
         rule /}/, Error, :pop!
-        mixin :has_string
       end
 
       state :object_val do

@@ -19,26 +19,19 @@ describe Rouge::Lexers::Elixir do
     include Support::Lexing
 
     it 'lexes double colon as punctuation' do
-      assert_tokens 'Elixir::Builtin',
+      assert_tokens_equal 'Elixir::Builtin',
         ['Name.Constant', 'Elixir'],
         ['Punctuation',   '::'],
         ['Name.Constant', 'Builtin']
     end
 
     it 'lexes keywords without following whitespaces' do
-      assert_tokens %{cond do\nend},
+      assert_tokens_equal %{cond do\nend},
         ['Keyword', 'cond'],
         ['Text',    ' '],
         ['Keyword', 'do'],
         ['Text',    "\n"],
         ['Keyword', 'end']
-    end
-
-    private
-
-    def assert_tokens(text, *expected)
-      actual = subject.lex(text).map { |token, value| [ token.name, value ] }
-      assert_equal expected, actual
     end
   end
 end

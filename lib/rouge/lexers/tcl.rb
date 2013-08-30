@@ -41,21 +41,21 @@ module Rouge
       NOT_CHARS = lambda { |list| Regexp.new %/[^#{list.join}]/ }
 
       state :word do
-        rule /\{\*\}/, 'Keyword'
+        rule /\{\*\}/, Keyword
 
         mixin :brace_abort
         mixin :interp
-        rule /\{/, 'Punctuation', :brace
-        rule /\(/, 'Punctuation',   :paren
-        rule /"/,  'Literal.String.Double', :string
-        rule /#{NOT_CHARS[END_WORD]}+?(?=#{CHARS[OPEN+['\\\\']]})/, 'Text'
+        rule /\{/, Punctuation, :brace
+        rule /\(/, Punctuation,   :paren
+        rule /"/,  Str::Double, :string
+        rule /#{NOT_CHARS[END_WORD]}+?(?=#{CHARS[OPEN+['\\\\']]})/, Text
       end
 
       def self.gen_command_state(name='')
         state(:"command#{name}") do
           mixin :word
 
-          rule /##{NOT_CHARS[END_LINE]}+/, 'Comment.Single'
+          rule /##{NOT_CHARS[END_LINE]}+/, Comment::Single
 
           rule /(?=#{CHARS[END_WORD]})/ do
             push :"params#{name}"
@@ -63,11 +63,11 @@ module Rouge
 
           rule /#{NOT_CHARS[END_WORD]}+/ do |m|
             if KEYWORDS.include? m[0]
-              token 'Keyword'
+              token Keyword
             elsif BUILTINS.include? m[0]
-              token 'Name.Builtin'
+              token Name::Builtin
             else
-              token 'Text'
+              token Text
             end
           end
 
@@ -80,7 +80,7 @@ module Rouge
 
         state :"params_in_#{name}" do
           rule close do
-            token 'Punctuation'
+            token Punctuation
             pop!; pop!
           end
 
@@ -88,16 +88,16 @@ module Rouge
           # closing delimiters should be okay, since this is standard
           # practice, like {]]]]}
           if opts[:strict]
-            rule CHARS[CLOSE - [close]], 'Error'
+            rule CHARS[CLOSE - [close]], Error
           else
-            rule CHARS[CLOSE - [close]], 'Text'
+            rule CHARS[CLOSE - [close]], Text
           end
 
           mixin :params
         end
 
         state name do
-          rule close, 'Punctuation', :pop!
+          rule close, Punctuation, :pop!
           mixin :"command_in_#{name}"
         end
       end
@@ -116,20 +116,20 @@ module Rouge
           if in_state? :brace
             pop! until state? :brace
             pop!
-            token 'Punctuation'
+            token Punctuation
           else
-            token 'Error'
+            token Error
           end
         end
       end
 
       state :params do
-        rule /;/, 'Punctuation', :pop!
-        rule /\n/, 'Text', :pop!
-        rule /else|elseif|then/, 'Keyword'
+        rule /;/, Punctuation, :pop!
+        rule /\n/, Text, :pop!
+        rule /else|elseif|then/, Keyword
         mixin :word
         mixin :whitespace
-        rule /#{NOT_CHARS[END_WORD]}+/, 'Text'
+        rule /#{NOT_CHARS[END_WORD]}+/, Text
       end
 
       gen_delimiter_states :brace,   /\}/, :strict => false
@@ -143,26 +143,26 @@ module Rouge
 
       state :whitespace do
         # not a multiline regex because we want to capture \n sometimes
-        rule /\s+/, 'Text'
+        rule /\s+/, Text
       end
 
       state :interp do
-        rule /\[/, 'Punctuation', :bracket
-        rule /\$[a-z0-9.:-]+/, 'Name.Variable'
-        rule /\$\{.*?\}/m, 'Name.Variable'
-        rule /\$/, 'Text'
+        rule /\[/, Punctuation, :bracket
+        rule /\$[a-z0-9.:-]+/, Name::Variable
+        rule /\$\{.*?\}/m, Name::Variable
+        rule /\$/, Text
 
         # escape sequences
-        rule /\\[0-7]{3}/, 'Literal.String.Escape'
-        rule /\\x[0-9a-f]{2}/i, 'Literal.String.Escape'
-        rule /\\u[0-9a-f]{4}/i, 'Literal.String.Escape'
-        rule /\\./m, 'Literal.String.Escape'
+        rule /\\[0-7]{3}/, Str::Escape
+        rule /\\x[0-9a-f]{2}/i, Str::Escape
+        rule /\\u[0-9a-f]{4}/i, Str::Escape
+        rule /\\./m, Str::Escape
       end
 
       state :string do
-        rule /"/, 'Literal.String.Double', :pop!
+        rule /"/, Str::Double, :pop!
         mixin :interp
-        rule /[^\\\[\$"{}]+/m, 'Literal.String.Double'
+        rule /[^\\\[\$"{}]+/m, Str::Double
 
         # strings have to keep count of their internal braces, to support
         # for example { "{ }" }.
@@ -170,17 +170,17 @@ module Rouge
           @brace_count ||= 0
           @brace_count += 1
 
-          token 'Literal.String.Double'
+          token Str::Double
         end
 
         rule /}/ do
           if in_state? :brace and @brace_count.to_i == 0
             pop! until state? :brace
             pop!
-            token 'Punctuation'
+            token Punctuation
           else
             @brace_count -= 1
-            token 'Literal.String.Double'
+            token Str::Double
           end
         end
       end

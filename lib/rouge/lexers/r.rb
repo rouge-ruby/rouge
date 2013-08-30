@@ -21,33 +21,33 @@ module Rouge
       end
 
       state :root do
-        rule /#.*?\n/, 'Comment.Single'
-        rule /\s+/m, 'Text'
+        rule /#.*?\n/, Comment::Single
+        rule /\s+/m, Text
         rule /[.]?[a-zA-Z_][\w.]*/ do |m|
           if self.class.keywords.include? m[0]
-            token 'Keyword'
+            token Keyword
           else
-            token 'Name'
+            token Name
           end
         end
 
-        rule /`.*?`/, 'Literal.String.Backtick'
-        rule /'(\\.|.)*?'/m, 'Literal.String.Single'
-        rule /"(\\.|.)*?"/m, 'Literal.String.Double'
+        rule /`.*?`/, Str::Backtick
+        rule /'(\\.|.)*?'/m, Str::Single
+        rule /"(\\.|.)*?"/m, Str::Double
 
-        rule /\b(NULL|Inf|TRUE|FALSE|NaN)\b/, 'Keyword.Constant'
+        rule /\b(NULL|Inf|TRUE|FALSE|NaN)\b/, Keyword::Constant
         rule /\bNA(_(integer|real|complex|character)_)?\b/,
-          'Keyword.Constant'
-        rule /\b[TF]\b/, 'Keyword.Variable'
+          Keyword::Constant
+        rule /\b[TF]\b/, Keyword::Variable
 
-        rule /0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, 'Literal.Number.Hex'
+        rule /0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
         rule /[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/,
-          'Literal.Number'
+          Num
 
-        rule /[\[\]{}();,]/, 'Punctuation'
+        rule /[\[\]{}();,]/, Punctuation
 
-        rule %r([-<>?*+^/!=~$@:%&|]), 'Operator'
-        rule /[.][.][.]/, 'Keyword'
+        rule %r([-<>?*+^/!=~$@:%&|]), Operator
+        rule /[.][.][.]/, Keyword
       end
     end
   end

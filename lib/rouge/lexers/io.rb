@@ -22,43 +22,43 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, 'Text'
-        rule %r(//.*?\n), 'Comment.Single'
-        rule %r(#.*?\n), 'Comment.Single'
-        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, 'Comment.Multiline'
-        rule %r(/[+]), 'Comment.Multiline', :nested_comment
+        rule /\s+/m, Text
+        rule %r(//.*?\n), Comment::Single
+        rule %r(#.*?\n), Comment::Single
+        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
+        rule %r(/[+]), Comment::Multiline, :nested_comment
 
-        rule /"(\\\\|\\"|[^"])*"/, 'Literal.String'
+        rule /"(\\\\|\\"|[^"])*"/, Str
 
-        rule %r(:?:=), 'Keyword'
-        rule /[()]/, 'Punctuation'
+        rule %r(:?:=), Keyword
+        rule /[()]/, Punctuation
 
-        rule %r([-=;,*+><!/|^.%&\[\]{}]), 'Operator'
+        rule %r([-=;,*+><!/|^.%&\[\]{}]), Operator
 
-        rule /[A-Z]\w*/, 'Name.Class'
+        rule /[A-Z]\w*/, Name::Class
 
         rule /[a-z_]\w*/ do |m|
           name = m[0]
 
           if self.class.constants.include? name
-            token 'Keyword.Constant'
+            token Keyword::Constant
           elsif self.class.builtins.include? name
-            token 'Name.Builtin'
+            token Name::Builtin
           else
-            token 'Name'
+            token Name
           end
         end
 
-        rule %r((\d+[.]?\d*|\d*[.]\d+)(e[+-]?[0-9]+)?)i, 'Literal.Number.Float'
-        rule /\d+/, 'Literal.Number.Integer'
+        rule %r((\d+[.]?\d*|\d*[.]\d+)(e[+-]?[0-9]+)?)i, Num::Float
+        rule /\d+/, Num::Integer
 
-        rule /@@?/, 'Keyword'
+        rule /@@?/, Keyword
       end
 
       state :nested_comment do
-        rule %r([^/+]+)m, 'Comment.Multiline'
-        rule %r(/[+]), 'Comment.Multiline', :nested_comment
-        rule %r([+]/), 'Comment.Multiline', :pop!
+        rule %r([^/+]+)m, Comment::Multiline
+        rule %r(/[+]), Comment::Multiline, :nested_comment
+        rule %r([+]/), Comment::Multiline, :pop!
       end
     end
   end

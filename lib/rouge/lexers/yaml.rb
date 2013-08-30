@@ -73,32 +73,32 @@ module Rouge
       start { reset_indent }
 
       state :basic do
-        rule /#.*$/, 'Comment.Single'
+        rule /#.*$/, Comment::Single
       end
 
       state :root do
         mixin :basic
 
-        rule /\n+/, 'Text'
+        rule /\n+/, Text
 
         # trailing or pre-comment whitespace
-        rule /[ ]+(?=#|$)/, 'Text'
+        rule /[ ]+(?=#|$)/, Text
 
         rule /^%YAML\b/ do
-          token 'Name.Tag'
+          token Name::Tag
           reset_indent
           push :yaml_directive
         end
 
         rule /^%TAG\b/ do
-          token 'Name.Tag'
+          token Name::Tag
           reset_indent
           push :tag_directive
         end
 
         # doc-start and doc-end indicators
         rule /^(?:---|\.\.\.)(?= |$)/ do
-          token 'Name.Namespace'
+          token Name::Namespace
           reset_indent
           push :block_line
         end
@@ -106,32 +106,32 @@ module Rouge
         # indentation spaces
         rule /[ ]*(?!\s|$)/ do
           text, err = save_indent
-          token 'Text', text
-          token 'Error', err
+          token Text, text
+          token Error, err
           push :block_line; push :indentation
         end
       end
 
       state :indentation do
-        rule(/\s*?\n/) { token 'Text'; pop! 2 }
+        rule(/\s*?\n/) { token Text; pop! 2 }
         # whitespace preceding block collection indicators
         rule /[ ]+(?=[-:?](?:[ ]|$))/ do
-          token 'Text'
+          token Text
           continue_indent
         end
 
         # block collection indicators
-        rule(/[?:-](?=[ ]|$)/) { token 'Punctuation.Indicator'; set_indent }
+        rule(/[?:-](?=[ ]|$)/) { token Punctuation::Indicator; set_indent }
 
         # the beginning of a block line
-        rule(/[ ]*/) { token 'Text'; continue_indent; pop! }
+        rule(/[ ]*/) { token Text; continue_indent; pop! }
       end
 
       # indented line in the block context
       state :block_line do
         # line end
-        rule /[ ]*(?=#|$)/, 'Text', :pop!
-        rule /[ ]+/, 'Text'
+        rule /[ ]*(?=#|$)/, Text, :pop!
+        rule /[ ]+/, Text
         # tags, anchors, and aliases
         mixin :descriptors
         # block collections and scalars
@@ -141,54 +141,54 @@ module Rouge
 
         # a plain scalar
         rule /(?=#{plain_scalar_start}|[?:-][^ \t\n\r\f\v])/ do
-          token 'Name.Variable'
+          token Name::Variable
           push :plain_scalar_in_block_context
         end
       end
 
       state :descriptors do
         # a full-form tag
-        rule /!<[0-9A-Za-z;\/?:@&=+$,_.!~*'()\[\]%-]+>/, 'Keyword.Type'
+        rule /!<[0-9A-Za-z;\/?:@&=+$,_.!~*'()\[\]%-]+>/, Keyword::Type
 
         # a tag in the form '!', '!suffix' or '!handle!suffix'
         rule %r(
           (?:![\w-]+)? # handle
           !(?:[\w;/?:@&=+$,.!~*\'()\[\]%-]*) # suffix
-        )x, 'Keyword.Type'
+        )x, Keyword::Type
 
         # an anchor
-        rule /&[\w-]+/, 'Name.Label'
+        rule /&[\w-]+/, Name::Label
 
         # an alias
-        rule /\*[\w-]+/, 'Name.Variable'
+        rule /\*[\w-]+/, Name::Variable
       end
 
       state :block_nodes do
         # implicit key
         rule /:(?=\s|$)/ do
-          token 'Punctuation.Indicator'
+          token Punctuation::Indicator
           set_indent :implicit => true
         end
 
         # literal and folded scalars
         rule /[\|>]/ do
-          token 'Punctuation.Indicator'
+          token Punctuation::Indicator
           push :block_scalar_content
           push :block_scalar_header
         end
       end
 
       state :flow_nodes do
-        rule /\[/, 'Punctuation.Indicator', :flow_sequence
-        rule /\{/, 'Punctuation.Indicator', :flow_mapping
-        rule /'/, 'Literal.String.Single', :single_quoted_scalar
-        rule /"/, 'Literal.String.Double', :double_quoted_scalar
+        rule /\[/, Punctuation::Indicator, :flow_sequence
+        rule /\{/, Punctuation::Indicator, :flow_mapping
+        rule /'/, Str::Single, :single_quoted_scalar
+        rule /"/, Str::Double, :double_quoted_scalar
       end
 
       state :flow_collection do
-        rule /\s+/m, 'Text'
+        rule /\s+/m, Text
         mixin :basic
-        rule /[?:,]/, 'Punctuation.Indicator'
+        rule /[?:,]/, Punctuation::Indicator
         mixin :descriptors
         mixin :flow_nodes
 
@@ -198,17 +198,17 @@ module Rouge
       end
 
       state :flow_sequence do
-        rule /\]/, 'Punctuation.Indicator', :pop!
+        rule /\]/, Punctuation::Indicator, :pop!
         mixin :flow_collection
       end
 
       state :flow_mapping do
-        rule /\}/, 'Punctuation.Indicator', :pop!
+        rule /\}/, Punctuation::Indicator, :pop!
         mixin :flow_collection
       end
 
       state :block_scalar_content do
-        rule /\n+/, 'Text'
+        rule /\n+/, Text
 
         # empty lines never dedent, but they might be part of the scalar.
         rule /^[ ]+$/ do |m|
@@ -217,14 +217,14 @@ module Rouge
 
           indent_mark = @block_scalar_indent || indent_size
 
-          token 'Text', text[0...indent_mark]
-          token 'Name.Constant', text[indent_mark..-1]
+          token Text, text[0...indent_mark]
+          token Name::Constant, text[indent_mark..-1]
         end
 
         # TODO: ^ doesn't actually seem to affect the match at all.
         # Find a way to work around this limitation.
         rule /^[ ]*/ do |m|
-          token 'Text'
+          token Text
 
           indent_size = m[0].size
 
@@ -236,7 +236,7 @@ module Rouge
           end
         end
 
-        rule /[^\n\r\f\v]+/, 'Name.Constant'
+        rule /[^\n\r\f\v]+/, Name::Constant
       end
 
       state :block_scalar_header do
@@ -255,53 +255,53 @@ module Rouge
             @block_scalar_indent = indent + increment.to_i
           end
 
-          token 'Punctuation.Indicator'
+          token Punctuation::Indicator
         end
       end
 
       state :ignored_line do
         mixin :basic
-        rule /[ ]+/, 'Text'
-        rule /\n/, 'Text', :pop!
+        rule /[ ]+/, Text
+        rule /\n/, Text, :pop!
       end
 
       state :quoted_scalar_whitespaces do
         # leading and trailing whitespace is ignored
-        rule /^[ ]+/, 'Text'
-        rule /[ ]+$/, 'Text'
+        rule /^[ ]+/, Text
+        rule /[ ]+$/, Text
 
-        rule /\n+/m, 'Text'
+        rule /\n+/m, Text
 
-        rule /[ ]+/, 'Name.Variable'
+        rule /[ ]+/, Name::Variable
       end
 
       state :single_quoted_scalar do
         mixin :quoted_scalar_whitespaces
-        rule /\\'/, 'Literal.String.Escape'
-        rule /'/, 'Literal.String', :pop!
-        rule /[^\s']+/, 'Literal.String'
+        rule /\\'/, Str::Escape
+        rule /'/, Str, :pop!
+        rule /[^\s']+/, Str
       end
 
       state :double_quoted_scalar do
-        rule /"/, 'Literal.String', :pop!
+        rule /"/, Str, :pop!
         mixin :quoted_scalar_whitespaces
         # escapes
-        rule /\\[0abt\tn\nvfre "\\N_LP]/, 'Literal.String.Escape'
+        rule /\\[0abt\tn\nvfre "\\N_LP]/, Str::Escape
         rule /\\(?:x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
-          'Literal.String.Escape'
-        rule /[^ \t\n\r\f\v"\\]+/, 'Literal.String'
+          Str::Escape
+        rule /[^ \t\n\r\f\v"\\]+/, Str
       end
 
       state :plain_scalar_in_block_context_new_line do
-        rule /^[ ]+\n/, 'Text'
-        rule /\n+/m, 'Text'
+        rule /^[ ]+\n/, Text
+        rule /\n+/m, Text
         rule /^(?=---|\.\.\.)/ do
           pop! 3
         end
 
         # dedent detection
         rule /^[ ]*/ do |m|
-          token 'Text'
+          token Text
           pop!
 
           indent_size = m[0].size
@@ -318,34 +318,34 @@ module Rouge
 
       state :plain_scalar_in_block_context do
         # the : indicator ends a scalar
-        rule /[ ]*(?=:[ \n]|:$)/, 'Text', :pop!
-        rule /[ ]*:/, 'Literal.String'
-        rule /[ ]+(?=#)/, 'Text', :pop!
-        rule /[ ]+$/, 'Text'
+        rule /[ ]*(?=:[ \n]|:$)/, Text, :pop!
+        rule /[ ]*:/, Str
+        rule /[ ]+(?=#)/, Text, :pop!
+        rule /[ ]+$/, Text
         # check for new documents or dedents at the new line
         rule /\n+/ do
-          token 'Text'
+          token Text
           push :plain_scalar_in_block_context_new_line
         end
 
-        rule /[ ]+/, 'Literal.String'
+        rule /[ ]+/, Str
         # regular non-whitespace characters
-        rule /[^\s:]+/, 'Literal.String'
+        rule /[^\s:]+/, Str
       end
 
       state :plain_scalar_in_flow_context do
-        rule /[ ]*(?=[,:?\[\]{}])/, 'Text', :pop!
-        rule /[ ]+(?=#)/, 'Text', :pop!
-        rule /^[ ]+/, 'Text'
-        rule /[ ]+$/, 'Text'
-        rule /\n+/, 'Text'
-        rule /[ ]+/, 'Name.Variable'
-        rule /[^\s,:?\[\]{}]+/, 'Name.Variable'
+        rule /[ ]*(?=[,:?\[\]{}])/, Text, :pop!
+        rule /[ ]+(?=#)/, Text, :pop!
+        rule /^[ ]+/, Text
+        rule /[ ]+$/, Text
+        rule /\n+/, Text
+        rule /[ ]+/, Name::Variable
+        rule /[^\s,:?\[\]{}]+/, Name::Variable
       end
 
       state :yaml_directive do
         rule /([ ]+)(\d+\.\d+)/ do
-          group 'Text'; group 'Number'
+          group Text; group Num
           pop!; push :ignored_line
         end
       end
@@ -355,8 +355,8 @@ module Rouge
           ([ ]+)(!|![\w-]*!) # prefix
           ([ ]+)(!|!?[\w;/?:@&=+$,.!~*'()\[\]%-]+) # tag handle
         )x do
-          group 'Text'; group 'Keyword.Type'
-          group 'Text'; group 'Keyword.Type'
+          group Text; group Keyword::Type
+          group Text; group Keyword::Type
           pop!; push :ignored_line
         end
       end

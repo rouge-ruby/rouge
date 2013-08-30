@@ -35,52 +35,52 @@ module Rouge
       end
 
       state :whitespace do
-        rule /^#if\s+0\b/, 'Comment.Preproc', :if_0
-        rule /^#/, 'Comment.Preproc', :macro
-        rule /^#{ws}#if\s+0\b/, 'Comment.Preproc', :if_0
-        rule /^#{ws}#/, 'Comment.Preproc', :macro
+        rule /^#if\s+0\b/, Comment::Preproc, :if_0
+        rule /^#/, Comment::Preproc, :macro
+        rule /^#{ws}#if\s+0\b/, Comment::Preproc, :if_0
+        rule /^#{ws}#/, Comment::Preproc, :macro
         rule /^(\s*)(#{id}:(?!:))/ do
-          group 'Text'
-          group 'Name.Label'
+          group Text
+          group Name::Label
         end
 
-        rule /\s+/m, 'Text'
-        rule /\\\n/, 'Text' # line continuation
-        rule %r(//(\n|(.|\n)*?[^\\]\n)), 'Comment.Single'
-        rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/), 'Comment.Multiline'
+        rule /\s+/m, Text
+        rule /\\\n/, Text # line continuation
+        rule %r(//(\n|(.|\n)*?[^\\]\n)), Comment::Single
+        rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/), Comment::Multiline
       end
 
       state :statements do
-        rule /\s+/m, 'Text'
+        rule /\s+/m, Text
 
-        rule /L?"/, 'Literal.String', :string
-        rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, 'Literal.String.Char'
-        rule %r((\d+\.\d*|\.\d+|\d+)[e][+-]?\d+[lu]*)i, 'Literal.Number.Float'
-        rule /0x[0-9a-f]+[lu]*/i, 'Literal.Number.Hex'
-        rule /0[0-7]+[lu]*/i, 'Literal.Number.Oct'
-        rule /\d+[lu]*/i, 'Literal.Number.Integer'
-        rule %r(\*/), 'Error'
-        rule %r([~!%^&*+=\|?:<>/-]), 'Operator'
-        rule /[()\[\],.]/, 'Punctuation'
-        rule /\bcase\b/, 'Keyword', :case
-        rule /(?:true|false|NULL)\b/, 'Name.Builtin'
+        rule /L?"/, Str, :string
+        rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
+        rule %r((\d+\.\d*|\.\d+|\d+)[e][+-]?\d+[lu]*)i, Num::Float
+        rule /0x[0-9a-f]+[lu]*/i, Num::Hex
+        rule /0[0-7]+[lu]*/i, Num::Oct
+        rule /\d+[lu]*/i, Num::Integer
+        rule %r(\*/), Error
+        rule %r([~!%^&*+=\|?:<>/-]), Operator
+        rule /[()\[\],.]/, Punctuation
+        rule /\bcase\b/, Keyword, :case
+        rule /(?:true|false|NULL)\b/, Name::Builtin
         rule id do |m|
           name = m[0]
 
           if self.class.keywords.include? name
-            token 'Keyword'
+            token Keyword
           elsif self.class.keywords_type.include? name
-            token 'Keyword.Type'
+            token Keyword::Type
           elsif self.class.reserved.include? name
-            token 'Keyword.Reserved'
+            token Keyword::Reserved
           else
-            token 'Name'
+            token Name
           end
         end
       end
 
       state :case do
-        rule /:/, 'Punctuation', :pop!
+        rule /:/, Punctuation, :pop!
         mixin :statements
       end
 
@@ -96,10 +96,10 @@ module Rouge
         )mx do |m|
           # TODO: do this better.
           delegate C, m[1]
-          token 'Name.Function', m[2]
+          token Name::Function, m[2]
           delegate C, m[3]
           delegate C, m[4]
-          token 'Punctuation', m[5]
+          token Punctuation, m[5]
           push :function
         end
 
@@ -112,10 +112,10 @@ module Rouge
         )mx do |m|
           # TODO: do this better.
           delegate C, m[1]
-          token 'Name.Function'
+          token Name::Function
           delegate C, m[3]
           delegate C, m[4]
-          token 'Punctuation'
+          token Punctuation
           push :statement
         end
 
@@ -123,42 +123,42 @@ module Rouge
       end
 
       state :statement do
-        rule /;/, 'Punctuation', :pop!
+        rule /;/, Punctuation, :pop!
         mixin :whitespace
         mixin :statements
-        rule /[{}]/, 'Punctuation'
+        rule /[{}]/, Punctuation
       end
 
       state :function do
         mixin :whitespace
         mixin :statements
-        rule /;/, 'Punctuation'
-        rule /{/, 'Punctuation', :function
-        rule /}/, 'Punctuation', :pop!
+        rule /;/, Punctuation
+        rule /{/, Punctuation, :function
+        rule /}/, Punctuation, :pop!
       end
 
       state :string do
-        rule /"/, 'Literal.String', :pop!
-        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, 'Literal.String.Escape'
-        rule /[^\\"\n]+/, 'Literal.String'
-        rule /\\\n/, 'Literal.String'
-        rule /\\/, 'Literal.String' # stray backslash
+        rule /"/, Str, :pop!
+        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
+        rule /[^\\"\n]+/, Str
+        rule /\\\n/, Str
+        rule /\\/, Str # stray backslash
       end
 
       state :macro do
-        rule %r([^/\n]+), 'Comment.Preproc'
-        rule %r(/[*].*?[*]/)m, 'Comment.Multiliine'
-        rule %r(//.*$), 'Comment.Single'
-        rule %r(/), 'Comment.Preproc'
-        rule /(?<=\\)\n/, 'Comment.Preproc'
-        rule /\n/, 'Comment.Preproc', :pop!
+        rule %r([^/\n]+), Comment::Preproc
+        rule %r(/[*].*?[*]/)m, Comment::Multiline
+        rule %r(//.*$), Comment::Single
+        rule %r(/), Comment::Preproc
+        rule /(?<=\\)\n/, Comment::Preproc
+        rule /\n/, Comment::Preproc, :pop!
       end
 
       state :if_0 do
-        rule /^\s*#if.*?(?<!\\)\n/, 'Comment.Preproc', :if_0
-        rule /^\s*#el(?:se|if).*\n/, 'Comment.Preproc', :pop!
-        rule /^\s*#endif.*?(?<!\\)\n/, 'Comment.Preproc', :pop!
-        rule /.*?\n/, 'Comment'
+        rule /^\s*#if.*?(?<!\\)\n/, Comment::Preproc, :if_0
+        rule /^\s*#el(?:se|if).*\n/, Comment::Preproc, :pop!
+        rule /^\s*#endif.*?(?<!\\)\n/, Comment::Preproc, :pop!
+        rule /.*?\n/, Comment
       end
     end
   end

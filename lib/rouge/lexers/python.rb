@@ -50,116 +50,116 @@ module Rouge
       identifier =        /[a-z_][a-z0-9_]*/i
       dotted_identifier = /[a-z_.][a-z0-9_.]*/i
       state :root do
-        rule /\n+/m, 'Text'
+        rule /\n+/m, Text
         rule /^(:)(\s*)([ru]{,2}""".*?""")/mi do
-          group 'Punctuation'
-          group 'Text'
-          group 'Literal.String.Doc'
+          group Punctuation
+          group Text
+          group Str::Doc
         end
 
-        rule /[^\S\n]+/, 'Text'
-        rule /#.*$/, 'Comment'
-        rule /[\[\]{}:(),;]/, 'Punctuation'
-        rule /\\\n/, 'Text'
-        rule /\\/, 'Text'
+        rule /[^\S\n]+/, Text
+        rule /#.*$/, Comment
+        rule /[\[\]{}:(),;]/, Punctuation
+        rule /\\\n/, Text
+        rule /\\/, Text
 
-        rule /(in|is|and|or|not)\b/, 'Operator.Word'
-        rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, 'Operator'
+        rule /(in|is|and|or|not)\b/, Operator::Word
+        rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
 
-        rule /(?:#{keywords.join('|')})\b/, 'Keyword'
+        rule /(?:#{keywords.join('|')})\b/, Keyword
 
         rule /(def)((?:\s|\\\s)+)/ do
-          group 'Keyword' # def
-          group 'Text' # whitespae
+          group Keyword # def
+          group Text # whitespae
           push :funcname
         end
 
         rule /(class)((?:\s|\\\s)+)/ do
-          group 'Keyword'
-          group 'Text'
+          group Keyword
+          group Text
           push :classname
         end
 
         rule /(from)((?:\s|\\\s)+)/ do
-          group 'Keyword.Namespace'
-          group 'Text'
+          group Keyword::Namespace
+          group Text
           push :fromimport
         end
 
         rule /(import)((?:\s|\\\s)+)/ do
-          group 'Keyword.Namespace'
-          group 'Text'
+          group Keyword::Namespace
+          group Text
           push :import
         end
 
         # using negative lookbehind so we don't match property names
-        rule /(?<!\.)(?:#{builtins.join('|')})/, 'Name.Builtin'
-        rule /(?<!\.)(?:#{builtins_pseudo.join('|')})/, 'Name.Builtin.Pseudo'
+        rule /(?<!\.)(?:#{builtins.join('|')})/, Name::Builtin
+        rule /(?<!\.)(?:#{builtins_pseudo.join('|')})/, Name::Builtin::Pseudo
 
         # TODO: not in python 3
-        rule /`.*?`/, 'Literal.String.Backtick'
-        rule /(?:r|ur|ru)"""/i, 'Literal.String', :tdqs
-        rule /(?:r|ur|ru)'''/i, 'Literal.String', :tsqs
-        rule /(?:r|ur|ru)"/i,   'Literal.String', :dqs
-        rule /(?:r|ur|ru)'/i,   'Literal.String', :sqs
-        rule /u?"""/i,          'Literal.String', :escape_tdqs
-        rule /u?'''/i,          'Literal.String', :escape_tsqs
-        rule /u?"/i,            'Literal.String', :escape_dqs
-        rule /u?'/i,            'Literal.String', :escape_sqs
+        rule /`.*?`/, Str::Backtick
+        rule /(?:r|ur|ru)"""/i, Str, :tdqs
+        rule /(?:r|ur|ru)'''/i, Str, :tsqs
+        rule /(?:r|ur|ru)"/i,   Str, :dqs
+        rule /(?:r|ur|ru)'/i,   Str, :sqs
+        rule /u?"""/i,          Str, :escape_tdqs
+        rule /u?'''/i,          Str, :escape_tsqs
+        rule /u?"/i,            Str, :escape_dqs
+        rule /u?'/i,            Str, :escape_sqs
 
-        rule /@#{dotted_identifier}/i, 'Name.Decorator'
-        rule identifier, 'Name'
+        rule /@#{dotted_identifier}/i, Name::Decorator
+        rule identifier, Name
 
-        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, 'Literal.Number.Float'
-        rule /\d+e[+-]?[0-9]+/i, 'Literal.Number.Float'
-        rule /0[0-7]+/, 'Literal.Number.Oct'
-        rule /0x[a-f0-9]+/i, 'Literal.Number.Hex'
-        rule /\d+L/, 'Literal.Number.Integer.Long'
-        rule /\d+/, 'Literal.Number.Integer'
+        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
+        rule /\d+e[+-]?[0-9]+/i, Num::Float
+        rule /0[0-7]+/, Num::Oct
+        rule /0x[a-f0-9]+/i, Num::Hex
+        rule /\d+L/, Num::Integer::Long
+        rule /\d+/, Num::Integer
       end
 
       state :funcname do
-        rule identifier, 'Name.Function', :pop!
+        rule identifier, Name::Function, :pop!
       end
 
       state :classname do
-        rule identifier, 'Name.Class', :pop!
+        rule identifier, Name::Class, :pop!
       end
 
       state :import do
         # non-line-terminating whitespace
-        rule /(?:[ \t]|\\\n)+/, 'Text'
+        rule /(?:[ \t]|\\\n)+/, Text
 
-        rule /as\b/, 'Keyword.Namespace'
-        rule /,/, 'Operator'
-        rule dotted_identifier, 'Name.Namespace'
+        rule /as\b/, Keyword::Namespace
+        rule /,/, Operator
+        rule dotted_identifier, Name::Namespace
         rule(//) { pop! } # anything else -> go back
       end
 
       state :fromimport do
         # non-line-terminating whitespace
-        rule /(?:[ \t]|\\\n)+/, 'Text'
+        rule /(?:[ \t]|\\\n)+/, Text
 
-        rule /import\b/, 'Keyword.Namespace', :pop!
-        rule dotted_identifier, 'Name.Namespace'
+        rule /import\b/, Keyword::Namespace, :pop!
+        rule dotted_identifier, Name::Namespace
       end
 
       state :strings do
-        rule /%(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, 'Literal.String.Interpol'
+        rule /%(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
       end
 
       state :strings_double do
-        rule /[^\\"%\n]+/, 'Literal.String'
+        rule /[^\\"%\n]+/, Str
         mixin :strings
       end
 
       state :strings_single do
-        rule /[^\\'%\n]+/, 'Literal.String'
+        rule /[^\\'%\n]+/, Str
         mixin :strings
       end
 
       state :nl do
-        rule /\n/, 'Literal.String'
+        rule /\n/, Str
       end
 
       state :escape do
@@ -172,31 +172,31 @@ module Rouge
           | x[a-fA-F0-9]{2}
           | [0-7]{1,3}
           )
-        )x, 'Literal.String.Escape'
+        )x, Str::Escape
       end
 
       state :dqs do
-        rule /"/, 'Literal.String', :pop!
-        rule /\\\\|\\"|\\\n/, 'Literal.String.Escape'
+        rule /"/, Str, :pop!
+        rule /\\\\|\\"|\\\n/, Str::Escape
         mixin :strings_double
       end
 
       state :sqs do
-        rule /'/, 'Literal.String', :pop!
-        rule /\\\\|\\'|\\\n/, 'Literal.String.Escape'
+        rule /'/, Str, :pop!
+        rule /\\\\|\\'|\\\n/, Str::Escape
         mixin :strings_single
       end
 
       state :tdqs do
-        rule /"""/, 'Literal.String', :pop!
-        rule /"/, 'Literal.String'
+        rule /"""/, Str, :pop!
+        rule /"/, Str
         mixin :strings_double
         mixin :nl
       end
 
       state :tsqs do
-        rule /'''/, 'Literal.String', :pop!
-        rule /'/, 'Literal.String'
+        rule /'''/, Str, :pop!
+        rule /'/, Str
         mixin :strings_single
         mixin :nl
       end

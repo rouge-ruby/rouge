@@ -16,48 +16,48 @@ module Rouge
 
       state :root do
         rule /^(\s*)(".*?)$/ do
-          group 'Text'; group 'Comment'
+          group Text; group Comment
         end
 
-        rule /^\s*\\/, 'Literal.String.Escape'
+        rule /^\s*\\/, Str::Escape
 
-        rule /[ \t]+/, 'Text'
+        rule /[ \t]+/, Text
 
         # TODO: regexes can have other delimiters
-        rule %r(/(\\\\|\\/|[^\n/])*/), 'Literal.String.Regex'
-        rule %r("(\\\\|\\"|[^\n"])*"), 'Literal.String.Double'
-        rule %r('(\\\\|\\'|[^\n'])*'), 'Literal.String.Single'
+        rule %r(/(\\\\|\\/|[^\n/])*/), Str::Regex
+        rule %r("(\\\\|\\"|[^\n"])*"), Str::Double
+        rule %r('(\\\\|\\'|[^\n'])*'), Str::Single
 
         # if it's not a string, it's a comment.
-        rule /(?<=\s)"[^-:.%#=*].*?$/, 'Comment'
+        rule /(?<=\s)"[^-:.%#=*].*?$/, Comment
 
-        rule /-?\d+/, 'Literal.Number'
-        rule /#[0-9a-f]{6}/i, 'Literal.Number.Hex'
-        rule /^:/, 'Punctuation'
-        rule /[():<>+=!\[\]{}\|,~.-]/, 'Punctuation'
+        rule /-?\d+/, Num
+        rule /#[0-9a-f]{6}/i, Num::Hex
+        rule /^:/, Punctuation
+        rule /[():<>+=!\[\]{}\|,~.-]/, Punctuation
         rule /\b(let|if|else|endif|elseif|fun|function|endfunction)\b/,
-          'Keyword'
+          Keyword
 
-        rule /\b(NONE|bold|italic|underline|dark|light)\b/, 'Name.Builtin'
+        rule /\b(NONE|bold|italic|underline|dark|light)\b/, Name::Builtin
 
-        rule /[absg]:\w+\b/, 'Name.Variable'
+        rule /[absg]:\w+\b/, Name::Variable
         rule /\b\w+\b/ do |m|
           name = m[0]
           keywords = self.class.keywords
 
           if mapping_contains?(keywords[:command], name)
-            token 'Keyword'
+            token Keyword
           elsif mapping_contains?(keywords[:option], name)
-            token 'Name.Builtin'
+            token Name::Builtin
           elsif mapping_contains?(keywords[:auto], name)
-            token 'Name.Builtin'
+            token Name::Builtin
           else
-            token 'Text'
+            token Text
           end
         end
 
         # no errors in VimL!
-        rule /./m, 'Text'
+        rule /./m, Text
       end
 
       def mapping_contains?(mapping, word)

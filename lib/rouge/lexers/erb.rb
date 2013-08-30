@@ -27,9 +27,9 @@ module Rouge
       close = /%%>|-%>|%>/
 
       state :root do
-        rule /<%#/, 'Comment', :comment
+        rule /<%#/, Comment, :comment
 
-        rule open, 'Comment.Preproc', :ruby
+        rule open, Comment::Preproc, :ruby
 
         rule /.+?(?=#{open})|.+/m do
           delegate parent
@@ -37,12 +37,12 @@ module Rouge
       end
 
       state :comment do
-        rule close, 'Comment', :pop!
-        rule /.+(?=#{close})|.+/m, 'Comment'
+        rule close, Comment, :pop!
+        rule /.+(?=#{close})|.+/m, Comment
       end
 
       state :ruby do
-        rule close, 'Comment.Preproc', :pop!
+        rule close, Comment::Preproc, :pop!
 
         rule /.+?(?=#{close})|.+/m do
           delegate @ruby_lexer

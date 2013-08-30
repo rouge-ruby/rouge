@@ -64,60 +64,60 @@ module Rouge
       base_re = %r{(?:[2-9]|[12][0-9]|3[0-6])}
 
       state :root do
-        rule(/\s+/, "Text")
-        rule(/%.*\n/, "Comment")
-        rule(%r{(#{keywords.join('|')})\b}, "Keyword")
-        rule(%r{(#{builtins.join('|')})\b}, "Name.Builtin")
-        rule(%r{(#{word_operators.join('|')})\b}, "Operator.Word")
-        rule(/^-/, "Punctuation", :directive)
-        rule(operators, "Operator")
-        rule(/"/, "Literal.String", :string)
-        rule(/<</, "Name.Label")
-        rule(/>>/, "Name.Label")
+        rule(/\s+/, Text)
+        rule(/%.*\n/, Comment)
+        rule(%r{(#{keywords.join('|')})\b}, Keyword)
+        rule(%r{(#{builtins.join('|')})\b}, Name::Builtin)
+        rule(%r{(#{word_operators.join('|')})\b}, Operator::Word)
+        rule(/^-/, Punctuation, :directive)
+        rule(operators, Operator)
+        rule(/"/, Str, :string)
+        rule(/<</, Name::Label)
+        rule(/>>/, Name::Label)
         rule %r{(#{atom_re})(:)} do
-          group "Name.Namespace"
-          group "Punctuation"
+          group Name::Namespace
+          group Punctuation
         end
         rule %r{(?:^|(?<=:))(#{atom_re})(\s*)(\()} do
-          group "Name.Function"
-          group "Text"
-          group "Punctuation"
+          group Name::Function
+          group Text
+          group Punctuation
         end
-        rule(%r{[+-]?#{base_re}#[0-9a-zA-Z]+}, "Literal.Number.Integer")
-        rule(/[+-]?\d+/, "Literal.Number.Integer")
-        rule(/[+-]?\d+.\d+/, "Literal.Number.Float")
-        rule(%r{[\]\[:_@\".{}()|;,]}, "Punctuation")
-        rule(variable_re, "Name.Variable")
-        rule(atom_re, "Name")
-        rule(%r{\?#{macro_re}}, "Name.Constant")
-        rule(%r{\$(?:#{escape_re}|\\[ %]|[^\\])}, "Literal.String.Char")
-        rule(%r{##{atom_re}(:?\.#{atom_re})?}, "Name.Label")
+        rule(%r{[+-]?#{base_re}#[0-9a-zA-Z]+}, Num::Integer)
+        rule(/[+-]?\d+/, Num::Integer)
+        rule(/[+-]?\d+.\d+/, Num::Float)
+        rule(%r{[\]\[:_@\".{}()|;,]}, Punctuation)
+        rule(variable_re, Name::Variable)
+        rule(atom_re, Name)
+        rule(%r{\?#{macro_re}}, Name::Constant)
+        rule(%r{\$(?:#{escape_re}|\\[ %]|[^\\])}, Str::Char)
+        rule(%r{##{atom_re}(:?\.#{atom_re})?}, Name::Label)
       end
 
       state :string do
-        rule(escape_re, "Literal.String.Escape")
-        rule(/"/, "Literal.String", :pop!)
-        rule(%r{~[0-9.*]*[~#+bBcdefginpPswWxX]}, "Literal.String.Interpol")
-        rule(%r{[^"\\~]+}, "Literal.String")
-        rule(/~/, "Literal.String")
+        rule(escape_re, Str::Escape)
+        rule(/"/, Str, :pop!)
+        rule(%r{~[0-9.*]*[~#+bBcdefginpPswWxX]}, Str::Interpol)
+        rule(%r{[^"\\~]+}, Str)
+        rule(/~/, Str)
       end
 
       state :directive do
         rule %r{(define)(\s*)(\()(#{macro_re})} do
-          group "Name.Entity"
-          group "Text"
-          group "Punctuation"
-          group "Name.Constant"
+          group Name::Entity
+          group Text
+          group Punctuation
+          group Name::Constant
           pop!
         end
         rule %r{(record)(\s*)(\()(#{macro_re})} do
-          group "Name.Entity"
-          group "Text"
-          group "Punctuation"
-          group "Name.Label"
+          group Name::Entity
+          group Text
+          group Punctuation
+          group Name::Label
           pop!
         end
-        rule(atom_re, "Name.Entity", :pop!)
+        rule(atom_re, Name::Entity, :pop!)
       end
     end
   end

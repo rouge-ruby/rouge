@@ -30,52 +30,52 @@ module Rouge
       )
 
       state :whitespace do
-        rule /\s+/m, 'Text'
-        rule %r(//.*?\n), 'Comment.Single'
-        rule %r(/[*].*?[*]/)m, 'Comment.Multiline'
+        rule /\s+/m, Text
+        rule %r(//.*?\n), Comment::Single
+        rule %r(/[*].*?[*]/)m, Comment::Multiline
       end
 
       state :root do
         mixin :whitespace
 
-        rule /^\s*\[.*?\]/, 'Name.Attribute'
-        rule /[$]\s*"/, 'Literal.String', :splice_string
-        rule /[$]\s*<#/, 'Literal.String', :splice_recstring
-        rule /<#/, 'Literal.String', :recstring
+        rule /^\s*\[.*?\]/, Name::Attribute
+        rule /[$]\s*"/, Str, :splice_string
+        rule /[$]\s*<#/, Str, :splice_recstring
+        rule /<#/, Str, :recstring
 
-        rule /(<\[)\s*(#{id}:)?/, 'Keyword'
-        rule /\]>/, 'Keyword'
+        rule /(<\[)\s*(#{id}:)?/, Keyword
+        rule /\]>/, Keyword
 
-        rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, 'Punctuation'
-        rule /@"(\\.|.)*?"/, 'Literal.String'
-        rule /"(\\.|.)*?["\n]/, 'Literal.String'
-        rule /'(\\.|.)'/, 'Literal.String.Char'
-        rule /0x[0-9a-f]+[lu]?/i, 'Literal.Number'
+        rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
+        rule /@"(\\.|.)*?"/, Str
+        rule /"(\\.|.)*?["\n]/, Str
+        rule /'(\\.|.)'/, Str::Char
+        rule /0x[0-9a-f]+[lu]?/i, Num
         rule %r(
           [0-9]
           ([.][0-9]*)? # decimal
           (e[+-][0-9]+)? # exponent
           [fldu]? # type
-        )ix, 'Literal.Number'
+        )ix, Num
         rule /^#[ \t]*(#{cpp_keywords.join('|')})\b.*?\n/,
-          'Comment.Preproc'
-        rule /\b(#{keywords.join('|')})\b/, 'Keyword'
-        rule /\b(#{keywords_type.join('|')})\b/, 'Keyword.Type'
-        rule /class|struct/, 'Keyword', :class
-        rule /namespace|using/, 'Keyword', :namespace
-        rule /#{id}(?=\s*[(])/, 'Name.Function'
-        rule id, 'Name'
+          Comment::Preproc
+        rule /\b(#{keywords.join('|')})\b/, Keyword
+        rule /\b(#{keywords_type.join('|')})\b/, Keyword::Type
+        rule /class|struct/, Keyword, :class
+        rule /namespace|using/, Keyword, :namespace
+        rule /#{id}(?=\s*[(])/, Name::Function
+        rule id, Name
       end
 
       state :class do
         mixin :whitespace
-        rule id, 'Name.Class', :pop!
+        rule id, Name::Class, :pop!
       end
 
       state :namespace do
         mixin :whitespace
-        rule /(?=[(])/, 'Text', :pop!
-        rule /(#{id}|[.])+/, 'Name.Namespace', :pop!
+        rule /(?=[(])/, Text, :pop!
+        rule /(#{id}|[.])+/, Name::Namespace, :pop!
       end
 
     end

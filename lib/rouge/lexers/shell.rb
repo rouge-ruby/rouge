@@ -29,27 +29,27 @@ module Rouge
       ).join('|')
 
       state :basic do
-        rule /#.*$/, 'Comment'
+        rule /#.*$/, Comment
 
-        rule /\b(#{KEYWORDS})\s*\b/, 'Keyword'
-        rule /\bcase\b/, 'Keyword', :case
+        rule /\b(#{KEYWORDS})\s*\b/, Keyword
+        rule /\bcase\b/, Keyword, :case
 
-        rule /\b(#{BUILTINS})\s*\b(?!\.)/, 'Name.Builtin'
+        rule /\b(#{BUILTINS})\s*\b(?!\.)/, Name::Builtin
 
-        rule /^\S*[\$%>#] +/, 'Generic.Prompt'
+        rule /^\S*[\$%>#] +/, Generic::Prompt
 
         rule /(\b\w+)(=)/ do |m|
-          group 'Name.Variable'
-          group 'Operator'
+          group Name::Variable
+          group Operator
         end
 
-        rule /[\[\]{}()=]/, 'Operator'
-        rule /&&|\|\|/, 'Operator'
-        # rule /\|\|/, 'Operator'
+        rule /[\[\]{}()=]/, Operator
+        rule /&&|\|\|/, Operator
+        # rule /\|\|/, Operator
 
-        rule /<<</, 'Operator' # here-string
+        rule /<<</, Operator # here-string
         rule /<<-?\s*(\'?)\\?(\w+)\1/ do |m|
-          lsh = 'Literal.String.Heredoc'
+          lsh = Str::Heredoc
           token lsh
           heredocstr = Regexp.escape(m[2])
 
@@ -63,82 +63,82 @@ module Rouge
       state :double_quotes do
         # NB: "abc$" is literally the string abc$.
         # Here we prevent :interp from interpreting $" as a variable.
-        rule /(?:\$#?)?"/, 'Literal.String.Double', :pop!
+        rule /(?:\$#?)?"/, Str::Double, :pop!
         mixin :interp
-        rule /[^"`\\$]+/, 'Literal.String.Double'
+        rule /[^"`\\$]+/, Str::Double
       end
 
       state :single_quotes do
-        rule /'/, 'Literal.String.Single', :pop!
-        rule /[^']+/, 'Literal.String.Single'
+        rule /'/, Str::Single, :pop!
+        rule /[^']+/, Str::Single
       end
 
       state :data do
-        rule /\s+/, 'Text'
-        rule /\\./, 'Literal.String.Escape'
-        rule /\$?"/, 'Literal.String.Double', :double_quotes
+        rule /\s+/, Text
+        rule /\\./, Str::Escape
+        rule /\$?"/, Str::Double, :double_quotes
 
         # single quotes are much easier than double quotes - we can
         # literally just scan until the next single quote.
         # POSIX: Enclosing characters in single-quotes ( '' )
         # shall preserve the literal value of each character within the
         # single-quotes. A single-quote cannot occur within single-quotes.
-        rule /$?'/, 'Literal.String.Single', :single_quotes
+        rule /$?'/, Str::Single, :single_quotes
 
-        rule /\*/, 'Keyword'
+        rule /\*/, Keyword
 
-        rule /;/, 'Text'
-        rule /[^=\*\s{}()$"\'`\\<]+/, 'Text'
-        rule /\d+(?= |\Z)/, 'Literal.Number'
-        rule /</, 'Text'
+        rule /;/, Text
+        rule /[^=\*\s{}()$"'`\\<]+/, Text
+        rule /\d+(?= |\Z)/, Num
+        rule /</, Text
         mixin :interp
       end
 
       state :curly do
-        rule /}/, 'Keyword', :pop!
-        rule /:-/, 'Keyword'
-        rule /[a-zA-Z0-9_]+/, 'Name.Variable'
-        rule /[^}:"'`$]+/, 'Punctuation'
+        rule /}/, Keyword, :pop!
+        rule /:-/, Keyword
+        rule /[a-zA-Z0-9_]+/, Name::Variable
+        rule /[^}:"`'$]+/, Punctuation
         mixin :root
       end
 
       state :paren do
-        rule /\)/, 'Keyword', :pop!
+        rule /\)/, Keyword, :pop!
         mixin :root
       end
 
       state :math do
-        rule /\)\)/, 'Keyword', :pop!
-        rule %r([-+*/%^|&]|\*\*|\|\|), 'Operator'
-        rule /\d+/, 'Literal.Number'
+        rule /\)\)/, Keyword, :pop!
+        rule %r([-+*/%^|&]|\*\*|\|\|), Operator
+        rule /\d+/, Num
         mixin :root
       end
 
       state :case do
-        rule /\besac\b/, 'Keyword', :pop!
-        rule /\|/, 'Punctuation'
-        rule /\)/, 'Punctuation', :case_stanza
+        rule /\besac\b/, Keyword, :pop!
+        rule /\|/, Punctuation
+        rule /\)/, Punctuation, :case_stanza
         mixin :root
       end
 
       state :case_stanza do
-        rule /;;/, 'Punctuation', :pop!
+        rule /;;/, Punctuation, :pop!
         mixin :root
       end
 
       state :backticks do
-        rule /`/, 'Literal.String.Backtick', :pop!
+        rule /`/, Str::Backtick, :pop!
         mixin :root
       end
 
       state :interp do
-        rule /\\$/, 'Literal.String.Escape' # line continuation
-        rule /\\./, 'Literal.String.Escape'
-        rule /\$\(\(/, 'Keyword', :math
-        rule /\$\(/, 'Keyword', :paren
-        rule /\${#?/, 'Keyword', :curly
-        rule /`/, 'Literal.String.Backtick', :backticks
-        rule /\$#?(\w+|.)/, 'Name.Variable'
+        rule /\\$/, Str::Escape # line continuation
+        rule /\\./, Str::Escape
+        rule /\$\(\(/, Keyword, :math
+        rule /\$\(/, Keyword, :paren
+        rule /\${#?/, Keyword, :curly
+        rule /`/, Str::Backtick, :backticks
+        rule /\$#?(\w+|.)/, Name::Variable
       end
 
       state :root do

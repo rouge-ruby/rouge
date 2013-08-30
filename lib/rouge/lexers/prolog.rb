@@ -13,35 +13,35 @@ module Rouge
       end
 
       state :basic do
-        rule /\s+/, 'Text'
-        rule /^#.*/, 'Comment.Single'
-        rule /\/\*/, 'Comment.Multiline', :nested_comment
+        rule /\s+/, Text
+        rule /^#.*/, Comment::Single
+        rule /\/\*/, Comment::Multiline, :nested_comment
 
-        rule /[\[\](){}|.,;!]/, 'Punctuation'
-        rule /:-|-->/, 'Punctuation'
+        rule /[\[\](){}|.,;!]/, Punctuation
+        rule /:-|-->/, Punctuation
 
-        rule /"[^"]*"/, 'Literal.String.Double'
+        rule /"[^"]*"/, Str::Double
 
-        rule /\d+\.\d+/, 'Literal.Number.Float'
-        rule /\d+/, 'Literal.Number'
+        rule /\d+\.\d+/, Num::Float
+        rule /\d+/, Num
       end
 
       state :atoms do
-        rule /[[:lower:]]([_[:lower:][:digit:]])*/, 'Literal.String.Symbol'
-        rule /'[^']*'/, 'Literal.String.Symbol'
+        rule /[[:lower:]]([_[:lower:][:digit:]])*/, Str::Symbol
+        rule /'[^']*'/, Str::Symbol
       end
 
       state :operators do
         rule /(<|>|=<|>=|==|=:=|=|\/|\/\/|\*|\+|-)(?=\s|[a-zA-Z0-9\[])/,
-          'Operator'
-        rule /is/, 'Operator'
-        rule /(mod|div|not)/, 'Operator'
-        rule /[#&*+-.\/:<=>?@^~]+/, 'Operator'
+          Operator
+        rule /is/, Operator
+        rule /(mod|div|not)/, Operator
+        rule /[#&*+-.\/:<=>?@^~]+/, Operator
       end
 
       state :variables do
-        rule /[A-Z]+\w*/, 'Name.Variable'
-        rule /_[[:word:]]*/, 'Name.Variable'
+        rule /[A-Z]+\w*/, Name::Variable
+        rule /_[[:word:]]*/, Name::Variable
       end
 
       state :root do
@@ -52,9 +52,9 @@ module Rouge
       end
 
       state :nested_comment do
-        rule /\/\*/, 'Comment.Multiline', :push
-        rule /\s*\*[^*\/]+/, 'Comment.Multiline'
-        rule /\*\//, 'Comment.Multiline', :pop!
+        rule /\/\*/, Comment::Multiline, :push
+        rule /\s*\*[^*\/]+/, Comment::Multiline
+        rule /\*\//, Comment::Multiline, :pop!
       end
     end
   end

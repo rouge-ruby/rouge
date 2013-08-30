@@ -19,40 +19,40 @@ module Rouge
       ]
 
       state :root do
-        rule /\s+/m, 'Text'
-        rule /#.*$/, 'Comment.Single'
+        rule /\s+/m, Text
+        rule /#.*$/, Comment::Single
         rule %r{\b(case|cond|end|bc|lc|if|unless|try|loop|receive|fn|defmodule|
              defp?|defprotocol|defimpl|defrecord|defmacrop?|defdelegate|
              defexception|exit|raise|throw|unless|after|rescue|catch|else)\b(?![?!])|
-             (?<!\.)\b(do|\-\>)\b}x, 'Keyword'
-        rule /\b(import|require|use|recur|quote|unquote|super|refer)\b(?![?!])/, 'Keyword.Namespace'
-        rule /(?<!\.)\b(and|not|or|when|xor|in)\b/, 'Operator.Word'
+             (?<!\.)\b(do|\-\>)\b}x, Keyword
+        rule /\b(import|require|use|recur|quote|unquote|super|refer)\b(?![?!])/, Keyword::Namespace
+        rule /(?<!\.)\b(and|not|or|when|xor|in)\b/, Operator::Word
         rule %r{%=|\*=|\*\*=|\+=|\-=|\^=|\|\|=|
              <=>|<(?!<|=)|>(?!<|=|>)|<=|>=|===|==|=~|!=|!~|(?=[\s\t])\?|
              (?<=[\s\t])!+|&&|\|\||\^|\*|\+|\-|/|
-             \||\+\+|\-\-|\*\*|\/\/|\<\-|\<\>|<<|>>|=|\.}x, 'Operator'
+             \||\+\+|\-\-|\*\*|\/\/|\<\-|\<\>|<<|>>|=|\.}x, Operator
         rule %r{(?<!:)(:)([a-zA-Z_]\w*([?!]|=(?![>=]))?|\<\>|===?|>=?|<=?|
              <=>|&&?|%\(\)|%\[\]|%\{\}|\+\+?|\-\-?|\|\|?|\!|//|[%&`/\|]|
-             \*\*?|=?~|<\-)|([a-zA-Z_]\w*([?!])?)(:)(?!:)}, 'Literal.String.Symbol'
-        rule /:"/, 'Literal.String.Symbol', :interpoling_symbol
-        rule /\b(nil|true|false)\b(?![?!])|\b[A-Z]\w*\b/, 'Name.Constant'
-        rule /\b(__(FILE|LINE|MODULE|MAIN|FUNCTION)__)\b(?![?!])/, 'Name.Builtin.Pseudo'
-        rule /[a-zA-Z_!][\w_]*[!\?]?/, 'Name'
-        rule %r{::|[(){};,/\|:\\\[\]]}, 'Punctuation'
-        rule /@[a-zA-Z_]\w*|&\d/, 'Name.Variable'
+             \*\*?|=?~|<\-)|([a-zA-Z_]\w*([?!])?)(:)(?!:)}, Str::Symbol
+        rule /:"/, Str::Symbol, :interpoling_symbol
+        rule /\b(nil|true|false)\b(?![?!])|\b[A-Z]\w*\b/, Name::Constant
+        rule /\b(__(FILE|LINE|MODULE|MAIN|FUNCTION)__)\b(?![?!])/, Name::Builtin::Pseudo
+        rule /[a-zA-Z_!][\w_]*[!\?]?/, Name
+        rule %r{::|[(){};,/\|:\\\[\]]}, Punctuation
+        rule /@[a-zA-Z_]\w*|&\d/, Name::Variable
         rule %r{\b(0[xX][0-9A-Fa-f]+|\d(_?\d)*(\.(?![^\d\s])
-             (_?\d)*)?([eE][-+]?\d(_?\d)*)?|0[bB][01]+)\b}x, 'Literal.Number'
-        rule %r{%r\/.*\/}, 'Literal.String.Regex'
+             (_?\d)*)?([eE][-+]?\d(_?\d)*)?|0[bB][01]+)\b}x, Num
+        rule %r{%r\/.*\/}, Str::Regex
 
         mixin :strings
       end
 
       state :strings do
-        rule /(%[A-Ba-z])?"""(?:.|\n)*?"""/, 'Literal.String.Doc'
-        rule /'''(?:.|\n)*?'''/, 'Literal.String.Doc'
-        rule /"/, 'Literal.String.Doc', :dqs
-        rule /'.*?'/, 'Literal.String.Single'
-        rule %r{(?<!\w)\?(\\(x\d{1,2}|\h{1,2}(?!\h)\b|0[0-7]{0,2}(?![0-7])\b[^x0MC])|(\\[MC]-)+\w|[^\s\\])}, 'Literal.String.Other'
+        rule /(%[A-Ba-z])?"""(?:.|\n)*?"""/, Str::Doc
+        rule /'''(?:.|\n)*?'''/, Str::Doc
+        rule /"/, Str::Doc, :dqs
+        rule /'.*?'/, Str::Single
+        rule %r{(?<!\w)\?(\\(x\d{1,2}|\h{1,2}(?!\h)\b|0[0-7]{0,2}(?![0-7])\b[^x0MC])|(\\[MC]-)+\w|[^\s\\])}, Str::Other
 
         BRACES.each do |_, _, name|
           mixin :"braces_#{name}"
@@ -61,43 +61,43 @@ module Rouge
 
       BRACES.each do |lbrace, rbrace, name|
         state :"braces_#{name}" do
-          rule /%[a-z]#{lbrace}/, 'Literal.String.Double', :"braces_#{name}_intp"
-          rule /%[A-Z]#{lbrace}/, 'Literal.String.Double', :"braces_#{name}_no_intp"
+          rule /%[a-z]#{lbrace}/, Str::Double, :"braces_#{name}_intp"
+          rule /%[A-Z]#{lbrace}/, Str::Double, :"braces_#{name}_no_intp"
         end
 
         state :"braces_#{name}_intp" do
-          rule /#{rbrace}[a-z]*/, 'Literal.String.Double', :pop!
+          rule /#{rbrace}[a-z]*/, Str::Double, :pop!
           mixin :enddoublestr
         end
 
         state :"braces_#{name}_no_intp" do
-          rule /.*#{rbrace}[a-z]*/, 'Literal.String.Double', :pop!
+          rule /.*#{rbrace}[a-z]*/, Str::Double, :pop!
         end
       end
 
       state :dqs do
-        rule /"/, 'Literal.String.Double', :pop!
+        rule /"/, Str::Double, :pop!
         mixin :enddoublestr
       end
 
       state :interpoling do
-        rule /#\{/, 'Literal.String.Interpol', :interpoling_string
+        rule /#\{/, Str::Interpol, :interpoling_string
       end
 
       state :interpoling_string do
-        rule /\}/, 'Literal.String.Interpol', :pop!
+        rule /\}/, Str::Interpol, :pop!
         mixin :root
       end
 
       state :interpoling_symbol do
-        rule /"/, 'Literal.String.Symbol', :pop!
+        rule /"/, Str::Symbol, :pop!
         mixin :interpoling
-        rule /[^#"]+/, 'Literal.String.Symbol'
+        rule /[^#"]+/, Str::Symbol
       end
 
       state :enddoublestr do
         mixin :interpoling
-        rule /[^#"]+/, 'Literal.String.Double'
+        rule /[^#"]+/, Str::Double
       end
     end
   end

@@ -194,7 +194,7 @@ module Rouge
 
         if !success
           debug { "    no match, yielding Error" }
-          b.call(Token['Error'], stream.getch)
+          b.call(Token::Tokens::Error, stream.getch)
         end
       end
     end
@@ -279,7 +279,7 @@ module Rouge
 
       raise 'no output stream' unless @output_stream
 
-      @output_stream << [Token[tok], val] unless val.empty?
+      @output_stream << [tok, val] unless val.empty?
     end
 
     # Yield a token with the next matched group.  Subsequent calls
@@ -358,7 +358,7 @@ module Rouge
       old_output_stream = @output_stream
       @output_stream = Enumerator::Yielder.new do |tok, val|
         debug { "    yielding #{tok.to_s.inspect}, #{val.inspect}" }
-        output_stream.call(Token[tok], val)
+        output_stream.call(tok, val)
       end
 
       yield

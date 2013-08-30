@@ -16,10 +16,10 @@ module Rouge
       end
 
       state :comments_and_whitespace do
-        rule /\s+/, 'Text'
-        rule /<!--/, 'Comment' # really...?
-        rule %r(//.*?\n), 'Comment.Single'
-        rule %r(/\*.*?\*/)m, 'Comment.Multiline'
+        rule /\s+/, Text
+        rule /<!--/, Comment # really...?
+        rule %r(//.*?\n), Comment::Single
+        rule %r(/\*.*?\*/)m, Comment::Multiline
       end
 
       state :slash_starts_regex do
@@ -33,17 +33,17 @@ module Rouge
           )+
           / # closing slash
           (?:[gim]+\b|\B) # flags
-        )x, 'Literal.String.Regex', :pop!
+        )x, Str::Regex, :pop!
 
         # if it's not matched by the above r.e., it's not
         # a valid expression, so we use :bad_regex to eat until the
         # end of the line.
-        rule %r(/), 'Literal.String.Regex', :bad_regex
-        rule //, 'Text', :pop!
+        rule %r(/), Str::Regex, :bad_regex
+        rule //, Text, :pop!
       end
 
       state :bad_regex do
-        rule /[^\n]+/, 'Error', :pop!
+        rule /[^\n]+/, Error, :pop!
       end
 
       def self.keywords
@@ -84,80 +84,80 @@ module Rouge
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
-        rule /\A\s*#!.*?\n/m, 'Comment.Preproc'
-        rule %r((?<=\n)(?=\s|/|<!--)), 'Text', :slash_starts_regex
+        rule /\A\s*#!.*?\n/m, Comment::Preproc
+        rule %r((?<=\n)(?=\s|/|<!--)), Text, :slash_starts_regex
         mixin :comments_and_whitespace
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
                | !== )x,
-          'Operator', :slash_starts_regex
-        rule %r([-<>+*%&|\^/!=]=?), 'Operator', :slash_starts_regex
-        rule /[(\[;,]/, 'Punctuation', :slash_starts_regex
-        rule /[)\].]/, 'Punctuation'
+          Operator, :slash_starts_regex
+        rule %r([-<>+*%&|\^/!=]=?), Operator, :slash_starts_regex
+        rule /[(\[;,]/, Punctuation, :slash_starts_regex
+        rule /[)\].]/, Punctuation
 
         rule /[?]/ do
-          token 'Punctuation'
+          token Punctuation
           push :ternary
           push :slash_starts_regex
         end
 
-        rule /[{](?=\s*(#{id}|"[^\n]*?")\s*:)/m, 'Punctuation', :object
+        rule /[{](?=\s*(#{id}|"[^\n]*?")\s*:)/m, Punctuation, :object
 
         rule /[{]/ do
-          token 'Punctuation'
+          token Punctuation
           push :block
           push :slash_starts_regex
         end
 
         rule id do |m|
           if self.class.keywords.include? m[0]
-            token 'Keyword'
+            token Keyword
             push :slash_starts_regex
           elsif self.class.declarations.include? m[0]
-            token 'Keyword.Declaration'
+            token Keyword::Declaration
             push :slash_starts_regex
           elsif self.class.reserved.include? m[0]
-            token 'Keyword.Reserved'
+            token Keyword::Reserved
           elsif self.class.constants.include? m[0]
-            token 'Keyword.Constant'
+            token Keyword::Constant
           elsif self.class.builtins.include? m[0]
-            token 'Name.Builtin'
+            token Name::Builtin
           else
-            token 'Name.Other'
+            token Name::Other
           end
         end
 
-        rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, 'Literal.Number.Float'
-        rule /0x[0-9a-fA-F]+/, 'Literal.Number.Hex'
-        rule /[0-9]+/, 'Literal.Number.Integer'
-        rule /"(\\\\|\\"|[^"])*"/, 'Literal.String.Double'
-        rule /'(\\\\|\\'|[^'])*'/, 'Literal.String.Single'
+        rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
+        rule /0x[0-9a-fA-F]+/, Num::Hex
+        rule /[0-9]+/, Num::Integer
+        rule /"(\\\\|\\"|[^"])*"/, Str::Double
+        rule /'(\\\\|\\'|[^'])*'/, Str::Single
       end
 
       # braced parts that aren't object literals
       state :block do
         rule /(#{id})(\s*)(:)/ do
-          group 'Name.Label'; group 'Text'
-          group 'Punctuation'
+          group Name::Label; group Text
+          group Punctuation
         end
 
-        rule /[}]/, 'Punctuation', :pop!
+        rule /[}]/, Punctuation, :pop!
         mixin :root
       end
 
       # object literals
       state :object do
-        rule /[}]/, 'Punctuation', :pop!
+        rule /[}]/, Punctuation, :pop!
         rule /(#{id})(\s*)(:)/ do
-          group 'Name.Attribute'; group 'Text'
-          group 'Punctuation'
+          group Name::Attribute; group Text
+          group Punctuation
         end
-        rule /:/, 'Punctuation'
+        rule /:/, Punctuation
         mixin :root
       end
 
       # ternary expressions, where <id>: is not a label!
       state :ternary do
-        rule /:/, 'Punctuation', :pop!
+        rule /:/, Punctuation, :pop!
         mixin :root
       end
     end
@@ -178,43 +178,43 @@ module Rouge
       state :root do
         mixin :whitespace
         # special case for empty objects
-        rule /(\{)(\s*)(\})/ do
-          group 'Punctuation'
-          group 'Text.Whitespace'
-          group 'Punctuation'
+        rule /(\{)(\s*)(\})/m do
+          group Punctuation
+          group Text::Whitespace
+          group Punctuation
         end
-        rule /true|false/, 'Keyword.Constant'
-        rule /{/,  'Punctuation', :object_key
-        rule /\[/, 'Punctuation', :array
-        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, 'Literal.Number.Float'
-        rule /-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, 'Literal.Number.Integer'
+        rule /(?:true|false)\b/, Keyword::Constant
+        rule /{/,  Punctuation, :object_key
+        rule /\[/, Punctuation, :array
+        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float
+        rule /-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, Num::Integer
         mixin :has_string
       end
 
       state :whitespace do
-        rule /\s+/m, 'Text.Whitespace'
+        rule /\s+/m, Text::Whitespace
       end
 
       state :has_string do
-        rule /"(\\.|[^"])*"/, 'Literal.String.Double'
+        rule /"(\\.|[^"])*"/, Str::Double
       end
 
       state :object_key do
         mixin :whitespace
-        rule /:/, 'Punctuation', :object_val
-        rule /}/, 'Error', :pop!
         mixin :has_string
+        rule /:/, Punctuation, :object_val
+        rule /}/, Error, :pop!
       end
 
       state :object_val do
-        rule /,/, 'Punctuation', :pop!
-        rule(/}/) { token 'Punctuation'; pop!; pop! }
+        rule /,/, Punctuation, :pop!
+        rule(/}/) { token Punctuation; pop!; pop! }
         mixin :root
       end
 
       state :array do
-        rule /\]/, 'Punctuation', :pop!
-        rule /,/, 'Punctuation'
+        rule /\]/, Punctuation, :pop!
+        rule /,/, Punctuation
         mixin :root
       end
     end

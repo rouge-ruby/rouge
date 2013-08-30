@@ -1,183 +1,180 @@
 module Rouge
   class Token
-    attr_reader :name
-    attr_reader :parent
-    attr_accessor :shortname
-    alias to_s name
-
-    def make_single(name)
-      name = name.to_s
-      new_name = [self.name, name].compact.join('.')
-
-      new_token = self.clone
-      parent = self
-      new_token.instance_eval do
-        @name = new_name
-        @parent = parent
-        @sub_tokens = {}
-      end
-
-      sub_tokens[name] = new_token
-
-      new_token
-    end
-
-    def make(name, shortname=nil)
-      names = name.split('.')
-      names.inject(self) do |tok, name|
-        tok.make_single(name)
-      end
-    end
-
-    def [](name)
-      name = name.to_s
-
-      name.split('.').inject(self) do |tok, name|
-        tok.sub_tokens[name] || tok.make_single(name)
-      end
-    end
-
-    def sub_tokens
-      @sub_tokens ||= {}
-    end
-
-    def ancestors(&b)
-      return enum_for(:ancestors) unless block_given?
-
-      if parent
-        yield self
-        parent.ancestors(&b)
-      end
-    end
-
-    def ===(other)
-      immediate = if self.class == other.class
-        self == other
-      else
-        self.name == other
-      end
-
-      immediate || !!(other.parent && self === other.parent)
-    end
-
-    def inspect
-      parts = [name.inspect]
-      parts << shortname.inspect if shortname
-      "#<Token #{parts.join(' ')}>"
-    end
-
     class << self
-      def base
-        @base ||= new
+      def name; @name; end
+      def parent; @parent; end
+      def shortname; @shortname; end
+
+      def cache
+        @cache ||= {}
       end
 
-      def get(name)
-        return name if name.is_a? Token
-
-        base[name]
+      def sub_tokens
+        @sub_tokens ||= {}
       end
 
-      alias [] get
+      def [](qualname)
+        return qualname unless qualname.is_a? ::String
 
-      def token(name, shortname)
-        tok = get(name)
-        tok.shortname = shortname
-        tok
+        Token.cache[qualname]
+      end
+
+      def inspect
+        "<Token #{qualname}>"
+      end
+
+      def matches?(other)
+        other.token_chain.include? self
+      end
+
+      def token_chain
+        @token_chain ||= ancestors.take_while { |x| x != Token }.reverse
+      end
+
+      def qualname
+        @qualname ||= token_chain.map(&:name).join('.')
+      end
+
+      def register!
+        Token.cache[self.qualname] = self
+        parent.sub_tokens[self.name] = self
+      end
+
+      def make_token(name, shortname, &b)
+        parent = self
+        Class.new(parent) do
+          @parent = parent
+          @name = name
+          @shortname = shortname
+          register!
+          class_eval(&b) if b
+        end
+      end
+
+      def token(name, shortname, &b)
+        tok = make_token(name, shortname, &b)
+        const_set(name, tok)
       end
 
       def each_token(&b)
-        recurse = proc do |token|
-          b.call(token)
-          token.sub_tokens.each_value(&recurse)
+        Token.cache.each do |(_, t)|
+          b.call(t)
         end
-
-        base.sub_tokens.each_value(&recurse)
       end
     end
 
-    # XXX IMPORTANT XXX
-    # For compatibility, this list must be kept in sync with
-    # pygments.token.STANDARD_TYPES
-    # please see https://github.com/jayferd/rouge/wiki/List-of-tokens
-    token 'Text',                        ''
-    token 'Text.Whitespace',             'w'
-    token 'Error',                       'err'
-    token 'Other',                       'x'
+    module Tokens
+      def self.token(name, shortname, &b)
+        tok = Token.make_token(name, shortname, &b)
+        const_set(name, tok)
+      end
 
-    token 'Keyword',                     'k'
-    token 'Keyword.Constant',            'kc'
-    token 'Keyword.Declaration',         'kd'
-    token 'Keyword.Namespace',           'kn'
-    token 'Keyword.Pseudo',              'kp'
-    token 'Keyword.Reserved',            'kr'
-    token 'Keyword.Type',                'kt'
+      # XXX IMPORTANT XXX
+      # For compatibility, this list must be kept in sync with
+      # pygments.token.STANDARD_TYPES
+      # please see https://github.com/jayferd/rouge/wiki/List-of-tokens
+      token :Text, '' do
+        token :Whitespace, 'w'
+      end
 
-    token 'Name',                        'n'
-    token 'Name.Attribute',              'na'
-    token 'Name.Builtin',                'nb'
-    token 'Name.Builtin.Pseudo',         'bp'
-    token 'Name.Class',                  'nc'
-    token 'Name.Constant',               'no'
-    token 'Name.Decorator',              'nd'
-    token 'Name.Entity',                 'ni'
-    token 'Name.Exception',              'ne'
-    token 'Name.Function',               'nf'
-    token 'Name.Property',               'py'
-    token 'Name.Label',                  'nl'
-    token 'Name.Namespace',              'nn'
-    token 'Name.Other',                  'nx'
-    token 'Name.Tag',                    'nt'
-    token 'Name.Variable',               'nv'
-    token 'Name.Variable.Class',         'vc'
-    token 'Name.Variable.Global',        'vg'
-    token 'Name.Variable.Instance',      'vi'
+      token :Error, 'err'
+      token :Other, 'x'
 
-    token 'Literal',                     'l'
-    token 'Literal.Date',                'ld'
+      token :Keyword, 'k' do
+        token :Constant,    'kc'
+        token :Declaration, 'kd'
+        token :Namespace,   'kn'
+        token :Pseudo,      'kp'
+        token :Reserved,    'kr'
+        token :Type,        'kt'
+        token :Variable,    'kv'
+      end
 
-    token 'Literal.String',              's'
-    token 'Literal.String.Backtick',     'sb'
-    token 'Literal.String.Char',         'sc'
-    token 'Literal.String.Doc',          'sd'
-    token 'Literal.String.Double',       's2'
-    token 'Literal.String.Escape',       'se'
-    token 'Literal.String.Heredoc',      'sh'
-    token 'Literal.String.Interpol',     'si'
-    token 'Literal.String.Other',        'sx'
-    token 'Literal.String.Regex',        'sr'
-    token 'Literal.String.Single',       's1'
-    token 'Literal.String.Symbol',       'ss'
+      token :Name, 'n' do
+        token :Attribute,    'na'
+        token :Builtin,      'nb' do
+          token :Pseudo,     'bp'
+        end
+        token :Class,        'nc'
+        token :Constant,     'no'
+        token :Decorator,    'nd'
+        token :Entity,       'ni'
+        token :Exception,    'ne'
+        token :Function,     'nf'
+        token :Property,     'py'
+        token :Label,        'nl'
+        token :Namespace,    'nn'
+        token :Other,        'nx'
+        token :Tag,          'nt'
+        token :Variable,     'nv' do
+          token :Class,      'vc'
+          token :Global,     'vg'
+          token :Instance,   'vi'
+        end
+      end
 
-    token 'Literal.Number',              'm'
-    token 'Literal.Number.Float',        'mf'
-    token 'Literal.Number.Hex',          'mh'
-    token 'Literal.Number.Integer',      'mi'
-    token 'Literal.Number.Integer.Long', 'il'
-    token 'Literal.Number.Oct',          'mo'
+      token :Literal,      'l' do
+        token :Date,       'ld'
 
-    token 'Operator',                    'o'
-    token 'Operator.Word',               'ow'
+        token :String,     's' do
+          token :Backtick, 'sb'
+          token :Char,     'sc'
+          token :Doc,      'sd'
+          token :Double,   's2'
+          token :Escape,   'se'
+          token :Heredoc,  'sh'
+          token :Interpol, 'si'
+          token :Other,    'sx'
+          token :Regex,    'sr'
+          token :Single,   's1'
+          token :Symbol,   'ss'
+        end
 
-    token 'Punctuation',                 'p'
+        token :Number,     'm' do
+          token :Float,    'mf'
+          token :Hex,      'mh'
+          token :Integer,  'mi' do
+            token :Long,   'il'
+          end
+          token :Oct,      'mo'
+          token :Bin,      'mb'
+          token :Other,    'mx'
+        end
+      end
 
-    token 'Comment',                     'c'
-    token 'Comment.Multiline',           'cm'
-    token 'Comment.Preproc',             'cp'
-    token 'Comment.Single',              'c1'
-    token 'Comment.Special',             'cs'
+      token :Operator, 'o' do
+        token :Word,   'ow'
+      end
 
-    token 'Generic',                     'g'
-    token 'Generic.Deleted',             'gd'
-    token 'Generic.Emph',                'ge'
-    token 'Generic.Error',               'gr'
-    token 'Generic.Heading',             'gh'
-    token 'Generic.Inserted',            'gi'
-    token 'Generic.Output',              'go'
-    token 'Generic.Prompt',              'gp'
-    token 'Generic.Strong',              'gs'
-    token 'Generic.Subheading',          'gu'
-    token 'Generic.Traceback',           'gt'
+      token :Punctuation, 'p' do
+        token :Indicator, 'pi'
+      end
 
-    token 'Generic.Lineno',              'gl'
+      token :Comment,     'c' do
+        token :Doc,       'cd'
+        token :Multiline, 'cm'
+        token :Preproc,   'cp'
+        token :Single,    'c1'
+        token :Special,   'cs'
+      end
+
+      token :Generic,      'g' do
+        token :Deleted,    'gd'
+        token :Emph,       'ge'
+        token :Error,      'gr'
+        token :Heading,    'gh'
+        token :Inserted,   'gi'
+        token :Output,     'go'
+        token :Prompt,     'gp'
+        token :Strong,     'gs'
+        token :Subheading, 'gu'
+        token :Traceback,  'gt'
+        token :Lineno,     'gl'
+      end
+
+      # convenience
+      Num = Literal::Number
+      Str = Literal::String
+    end
   end
 end

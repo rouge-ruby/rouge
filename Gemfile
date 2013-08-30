@@ -17,3 +17,5 @@ gem 'shotgun'
 # docs
 gem 'yard'
 gem 'github-markup'
+
+gem 'pry'

@@ -21,35 +21,35 @@ module Rouge
       end
 
       state :root do
-        rule /[^<&]+/, 'Text'
-        rule /&\S*?;/, 'Name.Entity'
-        rule /<!\[CDATA\[.*?\]\]\>/, 'Comment.Preproc'
-        rule /<!--/, 'Comment', :comment
-        rule /<\?.*?\?>/, 'Comment.Preproc'
-        rule /<![^>]*>/, 'Comment.Preproc'
+        rule /[^<&]+/, Text
+        rule /&\S*?;/, Name::Entity
+        rule /<!\[CDATA\[.*?\]\]\>/, Comment::Preproc
+        rule /<!--/, Comment, :comment
+        rule /<\?.*?\?>/, Comment::Preproc
+        rule /<![^>]*>/, Comment::Preproc
 
         # open tags
-        rule %r(<\s*[\w:.-]+)m, 'Name.Tag', :tag
+        rule %r(<\s*[\w:.-]+)m, Name::Tag, :tag
 
         # self-closing tags
-        rule %r(<\s*/\s*[\w:.-]+\s*>)m, 'Name.Tag'
+        rule %r(<\s*/\s*[\w:.-]+\s*>)m, Name::Tag
       end
 
       state :comment do
-        rule /[^-]+/m, 'Comment'
-        rule /-->/, 'Comment', :pop!
-        rule /-/, 'Comment'
+        rule /[^-]+/m, Comment
+        rule /-->/, Comment, :pop!
+        rule /-/, Comment
       end
 
       state :tag do
-        rule /\s+/m, 'Text'
-        rule /[\w.:-]+\s*=/m, 'Name.Attribute', :attr
-        rule %r(/?\s*>), 'Name.Tag', :pop!
+        rule /\s+/m, Text
+        rule /[\w.:-]+\s*=/m, Name::Attribute, :attr
+        rule %r(/?\s*>), Name::Tag, :pop!
       end
 
       state :attr do
-        rule /\s+/m, 'Text'
-        rule /".*?"|'.*?'|[^\s>]+/, 'Literal.String', :pop!
+        rule /\s+/m, Text
+        rule /".*?"|'.*?'|[^\s>]+/, Str, :pop!
       end
     end
   end

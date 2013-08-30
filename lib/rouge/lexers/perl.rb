@@ -46,7 +46,7 @@ module Rouge
         utime values vec wait waitpid wantarray warn write
       )
 
-      re_tok = 'Literal.String.Regex'
+      re_tok = Str::Regex
 
       state :balanced_regex do
         rule %r(/(\\\\|\\/|[^/])*/[egimosx]*)m, re_tok, :pop!
@@ -62,19 +62,19 @@ module Rouge
       end
 
       state :root do
-        rule /#.*?$/, 'Comment.Single'
-        rule /^=[a-zA-Z0-9]+\s+.*?\n=cut/, 'Comment.Multiline'
-        rule /(?:#{keywords.join('|')})\b/, 'Keyword'
+        rule /#.*?$/, Comment::Single
+        rule /^=[a-zA-Z0-9]+\s+.*?\n=cut/, Comment::Multiline
+        rule /(?:#{keywords.join('|')})\b/, Keyword
 
         rule /(format)(\s+)([a-zA-Z0-9_]+)(\s*)(=)(\s*\n)/ do
-          group 'Keyword'; group 'Text'
-          group 'Name'; group 'Text'
-          group 'Punctuation'; group 'Text'
+          group Keyword; group Text
+          group Name; group Text
+          group Punctuation; group Text
 
           push :format
         end
 
-        rule /(?:eq|lt|gt|le|ge|ne|not|and|or|cmp)\b/, 'Operator.Word'
+        rule /(?:eq|lt|gt|le|ge|ne|not|and|or|cmp)\b/, Operator::Word
 
         # common delimiters
         rule %r(s/(\\\\|\\/|[^/])*/(\\\\|\\/|[^/])*/[egimosx]*), re_tok
@@ -94,92 +94,91 @@ module Rouge
         rule %r(((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[gcimosx]*),
           re_tok, :balanced_regex
 
-        rule /\s+/, 'Text'
-        rule /(?:#{builtins.join('|')})\b/, 'Name.Builtin'
+        rule /\s+/, Text
+        rule /(?:#{builtins.join('|')})\b/, Name::Builtin
         rule /((__(DATA|DIE|WARN)__)|(STD(IN|OUT|ERR)))\b/,
-          'Name.Builtin.Pseudo'
+          Name::Builtin::Pseudo
 
-        rule /<<([\'"]?)([a-zA-Z_][a-zA-Z0-9_]*)\1;?\n.*?\n\2\n/m,
-          'Literal.String'
+        rule /<<([\'"]?)([a-zA-Z_][a-zA-Z0-9_]*)\1;?\n.*?\n\2\n/m, Str
 
-        rule /__END__\b/, 'Comment.Preproc', :end_part
-        rule /\$\^[ADEFHILMOPSTWX]/, 'Name.Variable.Global'
-        rule /\$[\\"\[\]'&`+*.,;=%~?@$!<>(^\|\/-](?!\w)/, 'Name.Variable.Global'
-        rule /[$@%#]+/, 'Name.Variable', :varname
+        rule /__END__\b/, Comment::Preproc, :end_part
+        rule /\$\^[ADEFHILMOPSTWX]/, Name::Variable::Global
+        rule /\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/-](?!\w)/, Name::Variable::Global
+        rule /[$@%#]+/, Name::Variable, :varname
 
-        rule /0_?[0-7]+(_[0-7]+)*/, 'Literal.Number.Oct'
-        rule /0x[0-9A-Fa-f]+(_[0-9A-Fa-f]+)*/, 'Literal.Number.Hex'
-        rule /0b[01]+(_[01]+)*/, 'Literal.Number.Bin'
+        rule /0_?[0-7]+(_[0-7]+)*/, Num::Oct
+        rule /0x[0-9A-Fa-f]+(_[0-9A-Fa-f]+)*/, Num::Hex
+        rule /0b[01]+(_[01]+)*/, Num::Bin
         rule /(\d*(_\d*)*\.\d+(_\d*)*|\d+(_\d*)*\.\d+(_\d*)*)(e[+-]?\d+)?/i,
-          'Literal.Number.Float'
-        rule /\d+(_\d*)*e[+-]?\d+(_\d*)*/i, 'Literal.Number.Float'
-        rule /\d+(_\d+)*/, 'Literal.Number.Integer'
+          Num::Float
+        rule /\d+(_\d*)*e[+-]?\d+(_\d*)*/i, Num::Float
+        rule /\d+(_\d+)*/, Num::Integer
 
-        rule /'(\\\\|\\'|[^'])*'/, 'Literal.String'
-        rule /"(\\\\|\\"|[^"])*"/, 'Literal.String'
-        rule /`(\\\\|\\`|[^`])*`/, 'Literal.String.Backtick'
+        rule /'(\\\\|\\'|[^'])*'/, Str
+        rule /"(\\\\|\\"|[^"])*"/, Str
+        rule /`(\\\\|\\`|[^`])*`/, Str::Backtick
         rule /<([^\s>]+)>/, re_tok
-        rule /(q|qq|qw|qr|qx)\{/, 'Literal.String.Other', :cb_string
-        rule /(q|qq|qw|qr|qx)\(/, 'Literal.String.Other', :rb_string
-        rule /(q|qq|qw|qr|qx)\[/, 'Literal.String.Other', :sb_string
-        rule /(q|qq|qw|qr|qx)</, 'Literal.String.Other', :lt_string
-        rule /(q|qq|qw|qr|qx)([^a-zA-Z0-9])(.|\n)*?\2/, 'Literal.String.Other'
+        rule /(q|qq|qw|qr|qx)\{/, Str::Other, :cb_string
+        rule /(q|qq|qw|qr|qx)\(/, Str::Other, :rb_string
+        rule /(q|qq|qw|qr|qx)\[/, Str::Other, :sb_string
+        rule /(q|qq|qw|qr|qx)</, Str::Other, :lt_string
+        rule /(q|qq|qw|qr|qx)([^a-zA-Z0-9])(.|\n)*?\2/, Str::Other
 
-        rule /package\s+/, 'Keyword', :modulename
-        rule /sub\s+/, 'Keyword', :funcname
+        rule /package\s+/, Keyword, :modulename
+        rule /sub\s+/, Keyword, :funcname
         rule /\[\]|\*\*|::|<<|>>|>=|<=|<=>|={3}|!=|=~|!~|&&?|\|\||\.{1,3}/,
-          'Operator'
-        rule /[-+\/*%=<>&^\|!\\~]=?/, 'Operator'
-        rule /[()\[\]:;,<>\/?{}]/, 'Punctuation'
+          Operator
+        rule /[-+\/*%=<>&^\|!\\~]=?/, Operator
+        rule /[()\[\]:;,<>\/?{}]/, Punctuation
         rule(/(?=\w)/) { push :name }
       end
 
       state :format do
-        rule /\.\n/, 'Literal.String.Interpol', :pop!
-        rule /.*?\n/, 'Literal.String.Interpol'
+        rule /\.\n/, Str::Interpol, :pop!
+        rule /.*?\n/, Str::Interpol
       end
 
       state :name_common do
-        rule /\w+::/, 'Name.Namespace'
-        rule /[\w:]+/, 'Name.Variable', :pop!
+        rule /\w+::/, Name::Namespace
+        rule /[\w:]+/, Name::Variable, :pop!
       end
 
       state :varname do
-        rule /\s+/, 'Text'
-        rule /\{/, 'Punctuation', :pop! # hash syntax
-        rule /\)|,/, 'Punctuation', :pop! # arg specifier
+        rule /\s+/, Text
+        rule /\{/, Punctuation, :pop! # hash syntax
+        rule /\)|,/, Punctuation, :pop! # arg specifier
         mixin :name_common
       end
 
       state :name do
         mixin :name_common
-        rule /[A-Z_]+(?=[^a-zA-Z0-9_])/, 'Name.Constant', :pop!
+        rule /[A-Z_]+(?=[^a-zA-Z0-9_])/, Name::Constant, :pop!
         rule(/(?=\W)/) { pop! }
       end
 
       state :modulename do
-        rule /[a-z_]\w*/i, 'Name.Namespace', :pop!
+        rule /[a-z_]\w*/i, Name::Namespace, :pop!
       end
 
       state :funcname do
-        rule /[a-zA-Z_]\w*[!?]?/, 'Name.Function'
-        rule /\s+/, 'Text'
+        rule /[a-zA-Z_]\w*[!?]?/, Name::Function
+        rule /\s+/, Text
 
         # argument declaration
         rule /(\([$@%]*\))(\s*)/ do
-          group 'Punctuation'
-          group 'Text'
+          group Punctuation
+          group Text
         end
 
-        rule /.*?{/, 'Punctuation', :pop!
-        rule /;/, 'Punctuation', :pop!
+        rule /.*?{/, Punctuation, :pop!
+        rule /;/, Punctuation, :pop!
       end
 
       [[:cb, '\{', '\}'],
        [:rb, '\(', '\)'],
        [:sb, '\[', '\]'],
        [:lt, '<',  '>']].each do |name, open, close|
-        tok = 'Literal.String.Other'
+        tok = Str::Other
         state :"#{name}_string" do
           rule /\\[#{open}#{close}\\]/, tok
           rule /\\/, tok
@@ -191,7 +190,7 @@ module Rouge
 
       state :end_part do
         # eat the rest of the stream
-        rule /.+/m, 'Comment.Preproc', :pop!
+        rule /.+/m, Comment::Preproc, :pop!
       end
     end
   end

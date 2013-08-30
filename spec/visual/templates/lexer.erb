@@ -10,7 +10,7 @@
   <h2>Legend</h2>
   <pre class="highlight"><%
     Rouge::Token.each_token do |token|
-      %><span class="<%= token.shortname %>"><%= token.name %></span>
+      %><span class="<%= token.shortname %>"><%= token.qualname %></span>
 <%      end
   %></pre>
 </section>

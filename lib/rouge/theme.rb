@@ -1,5 +1,7 @@
 module Rouge
   class Theme
+    include Token::Tokens
+
     class Style < Hash
       def initialize(theme, hsh={})
         super()
@@ -75,18 +77,20 @@ module Rouge
         style = Style.new(self, style)
 
         tokens.each do |tok|
-          styles[tok.to_s] = style
+          styles[tok] = style
         end
       end
 
       def get_own_style(token)
-        token.ancestors do |anc|
-          return styles[anc.name] if styles[anc.name]
+        token.token_chain.each do |anc|
+          return styles[anc] if styles[anc]
         end
+
+        nil
       end
 
       def get_style(token)
-        get_own_style(token) || style['Text']
+        get_own_style(token) || styles[Token::Tokens::Text]
       end
 
       def name(n=nil)
@@ -140,15 +144,13 @@ module Rouge
       yield "#{@scope} table td { padding: 5px; }"
       yield "#{@scope} table .gutter { text-align: right; }"
 
-      styles.each do |tokname, style|
-        style.render(css_selector(Token[tokname]), &b)
+      styles.each do |tok, style|
+        style.render(css_selector(tok), &b)
       end
     end
 
     def style_for(tok)
-      styles.fetch(tok.name) do
-        tok.parent ? style_for(tok.parent) : Style.new(self)
-      end
+      self.class.get_style(tok)
     end
 
   private
@@ -175,7 +177,7 @@ module Rouge
 
       yield tok
       tok.sub_tokens.each do |(_, st)|
-        next if styles[st.name]
+        next if styles[st]
 
         inflate_token(st, &b)
       end

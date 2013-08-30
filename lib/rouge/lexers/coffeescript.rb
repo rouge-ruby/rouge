@@ -38,9 +38,9 @@ module Rouge
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
 
       state :comments_and_whitespace do
-        rule /\s+/m, 'Text'
-        rule /###.*?###/m, 'Comment.Multiline'
-        rule /#.*?\n/, 'Comment.Single'
+        rule /\s+/m, Text
+        rule /###.*?###/m, Comment::Multiline
+        rule /#.*?\n/, Comment::Single
       end
 
       state :multiline_regex do
@@ -49,22 +49,22 @@ module Rouge
         mixin :has_interpolation
         mixin :comments_and_whitespace
 
-        rule %r(///([gim]+\b|\B)), 'Literal.String.Regex', :pop!
-        rule %r(/), 'Literal.String.Regex'
-        rule %r([^/#]+), 'Literal.String.Regex'
+        rule %r(///([gim]+\b|\B)), Str::Regex, :pop!
+        rule %r(/), Str::Regex
+        rule %r([^/#]+), Str::Regex
       end
 
       state :slash_starts_regex do
         mixin :comments_and_whitespace
         rule %r(///) do
-          token 'Literal.String.Regex'
+          token Str::Regex
           pop!; push :multiline_regex
         end
 
         rule %r(
           /(\\.|[^\[/\\\n]|\[(\\.|[^\]\\\n])*\])+/ # a regex
           ([gim]+\b|\B)
-        )x, 'Literal.String.Regex', :pop!
+        )x, Str::Regex, :pop!
 
         rule(//) { pop! }
       end
@@ -75,97 +75,97 @@ module Rouge
         rule %r(
           [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|[?]|:|=|
           [|][|]|\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&|^/])=?
-        )x, 'Operator', :slash_starts_regex
+        )x, Operator, :slash_starts_regex
 
-        rule /[-=]>/, 'Name.Function'
+        rule /[-=]>/, Name::Function
 
         rule /(@)([ \t]*)(#{id})/ do
-          group 'Name.Variable.Instance'; group 'Text'
-          group 'Name.Attribute'
+          group Name::Variable::Instance; group Text
+          group Name::Attribute
           push :slash_starts_regex
         end
 
         rule /([.])([ \t]*)(#{id})/ do
-          group 'Punctuation'; group 'Text'
-          group 'Name.Attribute'
+          group Punctuation; group Text
+          group Name::Attribute
           push :slash_starts_regex
         end
 
-        rule /#{id}(?=\s*:)/, 'Name.Attribute', :slash_starts_regex
+        rule /#{id}(?=\s*:)/, Name::Attribute, :slash_starts_regex
 
         rule /#{id}/ do |m|
           if self.class.keywords.include? m[0]
-            token 'Keyword'
+            token Keyword
           elsif self.class.constants.include? m[0]
-            token 'Name.Constant'
+            token Name::Constant
           elsif self.class.builtins.include? m[0]
-            token 'Name.Builtin'
+            token Name::Builtin
           else
-            token 'Name.Other'
+            token Name::Other
           end
 
           push :slash_starts_regex
         end
 
-        rule /[{(\[;,]/, 'Punctuation', :slash_starts_regex
-        rule /[})\].]/, 'Punctuation'
+        rule /[{(\[;,]/, Punctuation, :slash_starts_regex
+        rule /[})\].]/, Punctuation
 
-        rule /\d+[.]\d+([eE]\d+)?[fd]?/, 'Literal.Number.Float'
-        rule /0x[0-9a-fA-F]+/, 'Literal.Number.Hex'
-        rule /\d+/, 'Literal.Number.Integer'
-        rule /"""/, 'Literal.String', :tdqs
-        rule /'''/, 'Literal.String', :tsqs
-        rule /"/, 'Literal.String', :dqs
-        rule /'/, 'Literal.String', :sqs
+        rule /\d+[.]\d+([eE]\d+)?[fd]?/, Num::Float
+        rule /0x[0-9a-fA-F]+/, Num::Hex
+        rule /\d+/, Num::Integer
+        rule /"""/, Str, :tdqs
+        rule /'''/, Str, :tsqs
+        rule /"/, Str, :dqs
+        rule /'/, Str, :sqs
       end
 
       state :strings do
         # all coffeescript strings are multi-line
-        rule /[^#\\'"]+/m, 'Literal.String'
+        rule /[^#\\'"]+/m, Str
 
-        rule /\\./, 'Literal.String.Escape'
-        rule /#/, 'Literal.String'
+        rule /\\./, Str::Escape
+        rule /#/, Str
       end
 
       state :double_strings do
-        rule /'/, 'Literal.String'
+        rule /'/, Str
         mixin :has_interpolation
         mixin :strings
       end
 
       state :single_strings do
-        rule /"/, 'Literal.String'
+        rule /"/, Str
         mixin :strings
       end
 
       state :interpolation do
-        rule /}/, 'Literal.String.Interpol', :pop!
+        rule /}/, Str::Interpol, :pop!
         mixin :root
       end
 
       state :has_interpolation do
-        rule /[#][{]/, 'Literal.String.Interpol', :interpolation
+        rule /[#][{]/, Str::Interpol, :interpolation
       end
 
       state :dqs do
-        rule /"/, 'Literal.String', :pop!
+        rule /"/, Str, :pop!
         mixin :double_strings
       end
 
       state :tdqs do
-        rule /"""/, 'Literal.String', :pop!
-        rule /"/, 'Literal.String'
+        rule /"""/, Str, :pop!
+        rule /"/, Str
         mixin :double_strings
       end
 
       state :sqs do
-        rule /'/, 'Literal.String', :pop!
+        rule /'/, Str, :pop!
         mixin :single_strings
       end
 
       state :tsqs do
-        rule /'''/, 'Literal.String', :pop!
-        rule /'/, 'Literal.String'
+        rule /'''/, Str, :pop!
+        rule /'/, Str
         mixin :single_strings
       end
     end

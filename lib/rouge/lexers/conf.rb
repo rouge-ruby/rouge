@@ -9,12 +9,12 @@ module Rouge
 
       # short and sweet
       state :root do
-        rule /#.*?\n/, 'Comment'
-        rule /".*?"/, 'Literal.String.Double'
-        rule /'.*?'/, 'Literal.String.Single'
-        rule /[a-z]\w*/i, 'Name'
-        rule /\d+/, 'Literal.Number'
-        rule /[^\d\w#"']+/, 'Text'
+        rule /#.*?\n/, Comment
+        rule /".*?"/, Str::Double
+        rule /'.*?'/, Str::Single
+        rule /[a-z]\w*/i, Name
+        rule /\d+/, Num
+        rule /[^\d\w#"']+/, Text
       end
     end
   end

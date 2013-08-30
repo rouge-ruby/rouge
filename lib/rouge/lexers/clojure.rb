@@ -64,45 +64,45 @@ module Rouge
       keyword = %r([\w!\#$%*+,<=>?/.-]+)
 
       def name_token(name)
-        return 'Keyword' if self.class.keywords.include?(name)
-        return 'Name.Builtin' if self.class.builtins.include?(name)
+        return Keyword if self.class.keywords.include?(name)
+        return Name::Builtin if self.class.builtins.include?(name)
         nil
       end
 
       state :root do
-        rule /;.*?\n/, 'Comment.Single'
-        rule /\s+/m, 'Text.Whitespace'
+        rule /;.*?\n/, Comment::Single
+        rule /\s+/m, Text::Whitespace
 
-        rule /-?\d+\.\d+/, 'Literal.Number.Float'
-        rule /-?\d+/, 'Literal.Number.Integer'
-        rule /0x-?[0-9a-fA-F]+/, 'Literal.Number.Hex'
+        rule /-?\d+\.\d+/, Num::Float
+        rule /-?\d+/, Num::Integer
+        rule /0x-?[0-9a-fA-F]+/, Num::Hex
 
-        rule /"(\\.|[^"])*"/, 'Literal.String'
-        rule /'#{keyword}/, 'Literal.String.Symbol'
-        rule /:#{keyword}/, 'Name.Constant'
-        rule /\\(.|[a-z]+)/i, 'Literal.String.Char'
+        rule /"(\\.|[^"])*"/, Str
+        rule /'#{keyword}/, Str::Symbol
+        rule /:#{keyword}/, Name::Constant
+        rule /\\(.|[a-z]+)/i, Str::Char
 
 
-        rule /~@|[`\'#^~&]/, 'Operator'
+        rule /~@|[`\'#^~&]/, Operator
 
         rule /(\()(\s*)(#{identifier})/m do |m|
-          token 'Punctuation', m[1]
-          token 'Text.Whitespace', m[2]
-          token(name_token(m[3]) || 'Name.Function', m[3])
+          token Punctuation, m[1]
+          token Text::Whitespace, m[2]
+          token(name_token(m[3]) || Name::Function, m[3])
         end
 
         rule identifier do |m|
-          token name_token(m[0]) || 'Name'
+          token name_token(m[0]) || Name
         end
 
         # vectors
-        rule /[\[\]]/, 'Punctuation'
+        rule /[\[\]]/, Punctuation
 
         # maps
-        rule /[{}]/, 'Punctuation'
+        rule /[{}]/, Punctuation
 
         # parentheses
-        rule /[()]/, 'Punctuation'
+        rule /[()]/, Punctuation
       end
     end
   end

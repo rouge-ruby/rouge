@@ -163,135 +163,135 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, 'Text'
+        rule /\s+/m, Text
 
         rule /(:|::|MACRO:|MEMO:|GENERIC:|HELP:)(\s+)(\S+)/m do
-          group 'Keyword'; group 'Text'
-          group 'Name.Function'
+          group Keyword; group Text
+          group Name::Function
         end
 
         rule /(M:|HOOK:|GENERIC#)(\s+)(\S+)(\s+)(\S+)/m do
-          group 'Keyword'; group 'Text'
-          group 'Name.Class'; group 'Text'
-          group 'Name.Function'
+          group Keyword; group Text
+          group Name::Class; group Text
+          group Name::Function
         end
 
-        rule /\((?=\s)/, 'Name.Function', :stack_effect
-        rule /;(?=\s)/, 'Keyword'
+        rule /\((?=\s)/, Name::Function, :stack_effect
+        rule /;(?=\s)/, Keyword
 
         rule /(USING:)((?:\s|\\\s)+)/m do
-          group 'Keyword.Namespace'; group 'Text'
+          group Keyword::Namespace; group Text
           push :import
         end
 
         rule /(IN:|USE:|UNUSE:|QUALIFIED:|QUALIFIED-WITH:)(\s+)(\S+)/m do
-          group 'Keyword.Namespace'; group 'Text'; group 'Name.Namespace'
+          group Keyword::Namespace; group Text; group Name::Namespace
         end
 
         rule /(FROM:|EXCLUDE:)(\s+)(\S+)(\s+)(=>)/m do
-          group 'Keyword.Namespace'; group 'Text'
-          group 'Name.Namespace'; group 'Text'
-          group 'Punctuation'
+          group Keyword::Namespace; group Text
+          group Name::Namespace; group Text
+          group Punctuation
         end
 
-        rule /(?:ALIAS|DEFER|FORGET|POSTPONE):/, 'Keyword.Namespace'
+        rule /(?:ALIAS|DEFER|FORGET|POSTPONE):/, Keyword::Namespace
 
         rule /(TUPLE:)(\s+)(\S+)(\s+)(<)(\s+)(\S+)/m do
-          group 'Keyword'; group 'Text'
-          group 'Name.Class'; group 'Text'
-          group 'Punctuation'; group 'Text'
-          group 'Name.Class'
+          group Keyword; group Text
+          group Name::Class; group Text
+          group Punctuation; group Text
+          group Name::Class
           push :slots
         end
 
         rule /(TUPLE:)(\s+)(\S+)/m do
-          group 'Keyword'; group 'Text'; group 'Name.Class'
+          group Keyword; group Text; group Name::Class
           push :slots
         end
 
         rule /(UNION:|INTERSECTION:)(\s+)(\S+)/m do
-          group 'Keyword'; group 'Text'; group 'Name.Class'
+          group Keyword; group Text; group Name::Class
         end
 
         rule /(PREDICATE:)(\s+)(\S+)(\s+)(<)(\s+)(\S+)/m do
-          group 'Keyword'; group 'Text'
-          group 'Name.Class'; group 'Text'
-          group 'Punctuation'; group 'Text'
-          group 'Name.Class'
+          group Keyword; group Text
+          group Name::Class; group Text
+          group Punctuation; group Text
+          group Name::Class
         end
 
         rule /(C:)(\s+)(\S+)(\s+)(\S+)/m do
-          group 'Keyword'; group 'Text'
-          group 'Name.Function'; group 'Text'
-          group 'Name.Class'
+          group Keyword; group Text
+          group Name::Function; group Text
+          group Name::Class
         end
 
         rule %r(
           (INSTANCE|SLOT|MIXIN|SINGLETONS?|CONSTANT|SYMBOLS?|ERROR|SYNTAX
            |ALIEN|TYPEDEF|FUNCTION|STRUCT):
-        )x, 'Keyword'
+        )x, Keyword
 
-        rule /(?:<PRIVATE|PRIVATE>)/, 'Keyword.Namespace'
+        rule /(?:<PRIVATE|PRIVATE>)/, Keyword::Namespace
 
         rule /(MAIN:)(\s+)(\S+)/ do
-          group 'Keyword.Namespace'; group 'Text'; group 'Name.Function'
+          group Keyword::Namespace; group Text; group Name::Function
         end
 
         # strings
-        rule /"""\s+.*?\s+"""/, 'Literal.String'
-        rule /"(\\.|[^\\])*?"/, 'Literal.String'
-        rule /(CHAR:)(\s+)(\\[\\abfnrstv]*|\S)(?=\s)/, 'Literal.String.Char'
+        rule /"""\s+.*?\s+"""/, Str
+        rule /"(\\.|[^\\])*?"/, Str
+        rule /(CHAR:)(\s+)(\\[\\abfnrstv]*|\S)(?=\s)/, Str::Char
 
         # comments
-        rule /!\s+.*$/, 'Comment'
-        rule /#!\s+.*$/, 'Comment'
+        rule /!\s+.*$/, Comment
+        rule /#!\s+.*$/, Comment
 
         # booleans
-        rule /[tf](?=\s)/, 'Name.Constant'
+        rule /[tf](?=\s)/, Name::Constant
 
         # numbers
-        rule /-?\d+\.\d+(?=\s)/, 'Literal.Number.Float'
-        rule /-?\d+(?=\s)/, 'Literal.Number.Integer'
+        rule /-?\d+\.\d+(?=\s)/, Num::Float
+        rule /-?\d+(?=\s)/, Num::Integer
 
-        rule /HEX:\s+[a-fA-F\d]+(?=\s)/m, 'Literal.Number.Hex'
-        rule /BIN:\s+[01]+(?=\s)/, 'Literal.Number.Bin'
-        rule /OCT:\s+[0-7]+(?=\s)/, 'Literal.Number.Oct'
+        rule /HEX:\s+[a-fA-F\d]+(?=\s)/m, Num::Hex
+        rule /BIN:\s+[01]+(?=\s)/, Num::Bin
+        rule /OCT:\s+[0-7]+(?=\s)/, Num::Oct
 
-        rule %r([-+/*=<>^](?=\s)), 'Operator'
+        rule %r([-+/*=<>^](?=\s)), Operator
 
         rule /(?:deprecated|final|foldable|flushable|inline|recursive)(?=\s)/,
-          'Keyword'
+          Keyword
 
         rule /\S+/ do |m|
           name = m[0]
 
           if self.class.builtins.values.any? { |b| b.include? name }
-            token 'Name.Builtin'
+            token Name::Builtin
           else
-            token 'Name'
+            token Name
           end
         end
       end
 
       state :stack_effect do
-        rule /\s+/, 'Text'
-        rule /\(/, 'Name.Function', :stack_effect
-        rule /\)/, 'Name.Function', :pop!
+        rule /\s+/, Text
+        rule /\(/, Name::Function, :stack_effect
+        rule /\)/, Name::Function, :pop!
 
-        rule /--/, 'Name.Function'
-        rule /\S+/, 'Name.Variable'
+        rule /--/, Name::Function
+        rule /\S+/, Name::Variable
       end
 
       state :slots do
-        rule /\s+/, 'Text'
-        rule /;(?=\s)/, 'Keyword', :pop!
-        rule /\S+/, 'Name.Variable'
+        rule /\s+/, Text
+        rule /;(?=\s)/, Keyword, :pop!
+        rule /\S+/, Name::Variable
       end
 
       state :import do
-        rule /;(?=\s)/, 'Keyword', :pop!
-        rule /\s+/, 'Text'
-        rule /\S+/, 'Name.Namespace'
+        rule /;(?=\s)/, Keyword, :pop!
+        rule /\s+/, Text
+        rule /\S+/, Name::Namespace
       end
     end
   end

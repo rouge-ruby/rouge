@@ -14,11 +14,11 @@ module Rouge
         rule(/\\{+/) { delegate parent }
 
         # block comments
-        rule /{{!--/, 'Comment', :comment
-        rule /{{!.*?}}/, 'Comment'
+        rule /{{!--/, Comment, :comment
+        rule /{{!.*?}}/, Comment
 
         rule /{{{?/ do
-          token 'Keyword'
+          token Keyword
           push :stache
           push :open_sym
         end
@@ -31,44 +31,44 @@ module Rouge
       end
 
       state :comment do
-        rule(/{{/) { token 'Comment'; push }
-        rule(/}}/) { token 'Comment'; pop! }
-        rule(/[^{}]+/m) { token 'Comment' }
-        rule(/[{}]/) { token 'Comment' }
+        rule(/{{/) { token Comment; push }
+        rule(/}}/) { token Comment; pop! }
+        rule(/[^{}]+/m) { token Comment }
+        rule(/[{}]/) { token Comment }
       end
 
       state :stache do
-        rule /}}}?/, 'Keyword', :pop!
-        rule /\s+/m, 'Text'
-        rule /[=]/, 'Operator'
-        rule /[\[\]]/, 'Punctuation'
-        rule /[.](?=[}\s])/, 'Name.Variable'
-        rule /[.][.]/, 'Name.Variable'
-        rule %r([/.]), 'Punctuation'
-        rule /"(\\.|.)*?"/, 'Literal.String.Double'
-        rule /'(\\.|.)*?'/, 'Literal.String.Single'
-        rule /\d+(?=}\s)/, 'Literal.Number'
-        rule /(true|false)(?=[}\s])/, 'Keyword.Constant'
-        rule /else(?=[}\s])/, 'Keyword'
-        rule /this(?=[}\s])/, 'Name.Builtin.Pseudo'
-        rule /@#{id}/, 'Name.Attribute'
-        rule id, 'Name.Variable'
+        rule /}}}?/, Keyword, :pop!
+        rule /\s+/m, Text
+        rule /[=]/, Operator
+        rule /[\[\]]/, Punctuation
+        rule /[.](?=[}\s])/, Name::Variable
+        rule /[.][.]/, Name::Variable
+        rule %r([/.]), Punctuation
+        rule /"(\\.|.)*?"/, Str::Double
+        rule /'(\\.|.)*?'/, Str::Single
+        rule /\d+(?=}\s)/, Num
+        rule /(true|false)(?=[}\s])/, Keyword::Constant
+        rule /else(?=[}\s])/, Keyword
+        rule /this(?=[}\s])/, Name::Builtin::Pseudo
+        rule /@#{id}/, Name::Attribute
+        rule id, Name::Variable
       end
 
       state :open_sym do
         rule %r([#/]) do
-          token 'Keyword'
+          token Keyword
           pop!; push :block_name
         end
 
-        rule /[>^&]/, 'Keyword'
+        rule /[>^&]/, Keyword
 
         rule(//) { pop! }
       end
 
       state :block_name do
-        rule /if(?=[}\s])/, 'Keyword'
-        rule id, 'Name.Namespace', :pop!
+        rule /if(?=[}\s])/, Keyword
+        rule id, Name::Namespace, :pop!
         rule(//) { pop! }
       end
     end

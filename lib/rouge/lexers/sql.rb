@@ -85,52 +85,52 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, 'Text'
-        rule /--.*?\n/, 'Comment.Single'
-        rule %r(/\*), 'Comment.Multiline', :multiline_comments
-        rule /\d+/, 'Literal.Number.Integer'
-        rule /'/, 'Literal.String.Single', :single_string
-        rule /"/, 'Name.Variable', :double_string
-        rule /`/, 'Name.Variable', :backtick
+        rule /\s+/m, Text
+        rule /--.*?\n/, Comment::Single
+        rule %r(/\*), Comment::Multiline, :multiline_comments
+        rule /\d+/, Num::Integer
+        rule /'/, Str::Single, :single_string
+        rule /"/, Name::Variable, :double_string
+        rule /`/, Name::Variable, :backtick
 
         rule /\w[\w\d]*/ do |m|
           if self.class.keywords.include? m[0].upcase
-            token 'Keyword'
+            token Keyword
           else
-            token 'Name'
+            token Name
           end
         end
 
-        rule %r([+*/<>=~!@#%^&|?^-]), 'Operator'
-        rule /[;:()\[\],.]/, 'Punctuation'
+        rule %r([+*/<>=~!@#%^&|?^-]), Operator
+        rule /[;:()\[\],.]/, Punctuation
       end
 
       state :multiline_comments do
-        rule %r(/[*]), 'Comment.Multiline', :multiline_comments
-        rule %r([*]/), 'Comment.Multiline', :pop!
-        rule %r([^/*]+), 'Comment.Multiline'
-        rule %r([/*]), 'Comment.Multiline'
+        rule %r(/[*]), Comment::Multiline, :multiline_comments
+        rule %r([*]/), Comment::Multiline, :pop!
+        rule %r([^/*]+), Comment::Multiline
+        rule %r([/*]), Comment::Multiline
       end
 
       state :backtick do
-        rule /\\./, 'Literal.String.Escape'
-        rule /``/, 'Literal.String.Escape'
-        rule /`/, 'Name.Variable', :pop!
-        rule /[^\\`]+/, 'Name.Variable'
+        rule /\\./, Str::Escape
+        rule /``/, Str::Escape
+        rule /`/, Name::Variable, :pop!
+        rule /[^\\`]+/, Name::Variable
       end
 
       state :single_string do
-        rule /\\./, 'Literal.String.Escape'
-        rule /''/, 'Literal.String.Escape'
-        rule /'/, 'Literal.String.Single', :pop!
-        rule /[^\\']+/, 'Literal.String.Single'
+        rule /\\./, Str::Escape
+        rule /''/, Str::Escape
+        rule /'/, Str::Single, :pop!
+        rule /[^\\']+/, Str::Single
       end
 
       state :double_string do
-        rule /\\./, 'Literal.String.Escape'
-        rule /""/, 'Literal.String.Escape'
-        rule /"/, 'Name.Variable', :pop!
-        rule /[^\\"]+/, 'Name.Variable'
+        rule /\\./, Str::Escape
+        rule /""/, Str::Escape
+        rule /"/, Name::Variable, :pop!
+        rule /[^\\"]+/, Name::Variable
       end
     end
   end

@@ -52,12 +52,12 @@ module Rouge
         # TODO: are backslash escapes valid here?
         rule /"/ do
           token Str
-          pop!; push :dq
+          goto :dq
         end
 
         rule /'/ do
           token Str
-          pop!; push :sq
+          goto :sq
         end
 
         rule /[^\s>]+/, Str, :pop!

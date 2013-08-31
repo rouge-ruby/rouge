@@ -247,7 +247,7 @@ module Rouge
           )(?=[ ]|$)
         )x do |m|
           @block_scalar_indent = nil
-          pop!; push :ignored_line
+          goto :ignored_line
           next if m[0].empty?
 
           increment = m[1] || m[2]

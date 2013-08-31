@@ -58,7 +58,7 @@ module Rouge
         mixin :comments_and_whitespace
         rule %r(///) do
           token Str::Regex
-          pop!; push :multiline_regex
+          goto :multiline_regex
         end
 
         rule %r(

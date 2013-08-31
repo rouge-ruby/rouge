@@ -84,7 +84,7 @@ module Rouge
         rule /[^|\s]+/, Name::Variable
         rule /\n/ do
           token Text
-          pop!; push :table
+          goto :table
         end
         mixin :table
       end

@@ -54,12 +54,12 @@ module Rouge
         mixin :inline_whitespace
         rule /#if\s+0/ do
           token Comment::Preproc
-          pop!; push :if_0
+          goto :if_0
         end
 
         rule /#/ do
           token Comment::Preproc
-          pop!; push :macro
+          goto :macro
         end
 
         rule(//) { pop! }
@@ -143,7 +143,7 @@ module Rouge
         rule /(?<=\\)\n/, Comment::Preproc
         rule /\n/ do
           token Comment::Preproc
-          pop!; push :bol
+          goto :bol
         end
       end
 

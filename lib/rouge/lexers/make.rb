@@ -70,7 +70,7 @@ module Rouge
         rule /\\./, Text
         rule /\n/ do
           token Text
-          pop!; push :block_body
+          goto :block_body
         end
       end
 

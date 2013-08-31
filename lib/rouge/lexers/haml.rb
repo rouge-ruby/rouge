@@ -77,7 +77,7 @@ module Rouge
 
       state :content do
         mixin :css
-        rule(/%#{identifier}/) { token Name::Tag; pop!; push :tag }
+        rule(/%#{identifier}/) { token Name::Tag; goto :tag }
         rule /!!!#{dot}*\n/, Name::Namespace, :pop!
         rule %r(
           (/) (\[#{dot}*?\]) (#{dot}*\n)
@@ -122,8 +122,8 @@ module Rouge
       end
 
       state :css do
-        rule(/\.#{identifier}/) { token Name::Class; pop!; push :tag }
-        rule(/##{identifier}/) { token Name::Function; pop!; push :tag }
+        rule(/\.#{identifier}/) { token Name::Class; goto :tag }
+        rule(/##{identifier}/) { token Name::Function; goto :tag }
       end
 
       state :tag do

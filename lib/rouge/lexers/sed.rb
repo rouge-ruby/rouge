@@ -23,7 +23,7 @@ module Rouge
         state :brackets do
           rule /\^?/ do
             token Punctuation
-            pop!; push :brackets_int
+            goto :brackets_int
           end
         end
 
@@ -79,7 +79,7 @@ module Rouge
           token Punctuation, m[6]
 
 
-          pop!; push :flags
+          goto :flags
         end
 
         rule /(y)(.)(#{edot}*?)(\2)(#{edot}*?)(\2)/m do |m|
@@ -95,7 +95,7 @@ module Rouge
 
         # commands that take a text segment as an argument
         rule /([aic])(\s*)/ do
-          group Keyword; group Text; pop!; push :text
+          group Keyword; group Text; goto :text
         end
 
         rule /[pd]/, Keyword

@@ -58,7 +58,7 @@ module Rouge
       state :open_sym do
         rule %r([#/]) do
           token Keyword
-          pop!; push :block_name
+          goto :block_name
         end
 
         rule /[>^&]/, Keyword

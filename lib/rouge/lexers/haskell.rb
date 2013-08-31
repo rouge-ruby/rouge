@@ -153,8 +153,7 @@ module Rouge
 
         rule /./ do
           token Str::Char
-          pop!
-          push :character_end
+          goto :character_end
         end
       end
 

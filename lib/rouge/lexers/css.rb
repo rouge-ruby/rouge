@@ -229,7 +229,7 @@ module Rouge
       state :at_content do
         rule /}/ do
           token Punctuation
-          pop!; pop!
+          pop! 2
         end
       end
 

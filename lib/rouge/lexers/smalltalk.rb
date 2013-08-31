@@ -67,7 +67,7 @@ module Rouge
       state :parenth do
         rule /[)]/ do
           token Str::Symbol
-          pop!; push :after_object
+          goto :after_object
         end
 
         mixin :inner_parenth

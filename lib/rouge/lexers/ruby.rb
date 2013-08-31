@@ -220,7 +220,7 @@ module Rouge
 
       state :heredoc_queue do
         rule /(?=\n)/ do
-          pop!; push :resolve_heredocs
+          goto :resolve_heredocs
         end
 
         mixin :root

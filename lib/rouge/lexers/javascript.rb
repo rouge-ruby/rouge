@@ -208,7 +208,7 @@ module Rouge
 
       state :object_val do
         rule /,/, Punctuation, :pop!
-        rule(/}/) { token Punctuation; pop!; pop! }
+        rule(/}/) { token Punctuation; pop!(2) }
         mixin :root
       end
 

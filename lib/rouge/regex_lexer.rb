@@ -336,6 +336,12 @@ module Rouge
       nil
     end
 
+    # replace the head of the stack with the given state
+    def goto(state_name)
+      raise 'empty stack!' if stack.empty?
+      stack[-1] = get_state(state_name)
+    end
+
     # reset the stack back to `[:root]`.
     def reset_stack
       debug { '    resetting stack' }

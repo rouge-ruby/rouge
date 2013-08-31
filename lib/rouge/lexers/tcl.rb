@@ -81,7 +81,7 @@ module Rouge
         state :"params_in_#{name}" do
           rule close do
             token Punctuation
-            pop!; pop!
+            pop! 2
           end
 
           # mismatched delimiters.  Braced strings with mismatched

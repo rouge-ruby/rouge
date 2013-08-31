@@ -155,8 +155,15 @@ module Rouge
           group Name::Namespace
         end
 
-        rule /def\s+/, Keyword, :funcname
-        rule /class\s+/, Keyword, :classname
+        rule /(def\b)(\s*)/ do
+          group Keyword; group Text
+          push :funcname
+        end
+
+        rule /(class\b)(\s*)/ do
+          group Keyword; group Text
+          push :classname
+        end
 
         rule /(?:#{builtins_q.join('|')})\?/, Name::Builtin, :expr_start
         rule /(?:#{builtins_b.join('|')})!/,  Name::Builtin, :expr_start
@@ -258,7 +265,7 @@ module Rouge
           (
             [a-zA-Z_][\w_]*[!?]? |
             \*\*? | [-+]@? | [/%&\|^`~] | \[\]=? |
-            << | >> | <=?> | >=? | ===?
+            <<? | >>? | <=>? | >= | ===?
           )
         )x do |m|
           debug { "matches: #{[m[0], m[1], m[2], m[3]].inspect}" }

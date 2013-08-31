@@ -19,6 +19,10 @@ class (get_foo("blub"))::Foo
   end
 end
 
+def -@
+  0 - self
+end
+
 class get_the_fuck("out")::Of::My
   def parser_definition
     ruby!

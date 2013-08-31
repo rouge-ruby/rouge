@@ -357,7 +357,7 @@ module Rouge
     def with_output_stream(output_stream, &b)
       old_output_stream = @output_stream
       @output_stream = Enumerator::Yielder.new do |tok, val|
-        debug { "    yielding #{tok.to_s.inspect}, #{val.inspect}" }
+        debug { "    yielding #{tok.qualname}, #{val.inspect}" }
         output_stream.call(tok, val)
       end
 

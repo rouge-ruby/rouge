@@ -307,10 +307,9 @@ module Rouge
           indent_size = m[0].size
 
           # dedent = end of scalar
-          if m[0].size <= self.indent
+          if indent_size <= self.indent
             pop!
-            val, err = save_indent
-            # push :block_line
+            save_indent
             push :indentation
           end
         end

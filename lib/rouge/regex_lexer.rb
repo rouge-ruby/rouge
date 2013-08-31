@@ -351,7 +351,10 @@ module Rouge
 
     # Check if `state_name` is in the state stack.
     def in_state?(state_name)
-      stack.map(&:name).include? state_name.to_s
+      state_name = state_name.to_s
+      stack.any? do |state|
+        state.name == state_name.to_s
+      end
     end
 
     # Check if `state_name` is the state on top of the state stack.

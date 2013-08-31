@@ -9,6 +9,6 @@ load ROOT_DIR.join('lib/rouge/cli.rb')
 begin
   Rouge::CLI.start
 rescue => e
-  $stderr.puts e.message
+  $stderr.puts "rouge: #{e.message}"
   exit 1
 end

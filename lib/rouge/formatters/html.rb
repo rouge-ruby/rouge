@@ -48,15 +48,20 @@ module Rouge
 
       def stream_tableized(tokens, &b)
         num_lines = 0
-        code = ''
+        last_val = ''
+        formatted = ''
 
         tokens.each do |tok, val|
+          last_val = val
           num_lines += val.scan(/\n/).size
-          span(tok, val) { |str| code << str }
+          span(tok, val) { |str| formatted << str }
         end
 
-        # add an extra line number for non-newline-terminated strings
-        num_lines += 1 if code[-1] != "\n"
+        # add an extra line for non-newline-terminated strings
+        if last_val[-1] != "\n"
+          num_lines += 1
+          span(Token['Text.Whitespace'], "\n") { |str| formatted << str }
+        end
 
         # generate a string of newline-separated line numbers for the gutter
         numbers = num_lines.times.map do |x|
@@ -72,7 +77,7 @@ module Rouge
         yield '</td>'
 
         yield '<td class="code">'
-        yield code
+        yield formatted
         yield '</td>'
 
         yield '</tr></tbody></table>'

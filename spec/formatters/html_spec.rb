@@ -32,4 +32,25 @@ describe Rouge::Formatters::HTML do
       assert { output == '<span style="font-weight: bold">foo</span>' }
     end
   end
+
+  describe 'tableized line numbers' do
+    let(:options) { { :line_numbers => true } }
+
+    let(:text) { Rouge::Lexers::Clojure.demo }
+    let(:tokens) { Rouge::Lexers::Clojure.lex(text) }
+
+    let(:output) { subject.format(tokens) }
+    let(:line_numbers) { output.scan(/<div class="lineno"/).size }
+
+    let(:output_code) {
+      output =~ %r(<td class="code">(.*?)</td>)m
+      $1
+    }
+
+    let(:code_lines) { output_code.scan(/\n/).size }
+
+    it 'preserves the number of lines' do
+      assert { code_lines == line_numbers }
+    end
+  end
 end

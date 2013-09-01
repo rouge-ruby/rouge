@@ -94,9 +94,13 @@ Here's how you might use it:
 class MyLexer < Rouge::RegexLexer
   state :root do
     # the "easy way"
-    rule /abc/, 'A.Token'
-    rule /abc/, 'A.Token', :next_state
-    rule /abc/, 'A.Token', :pop!
+
+    # simple rules
+    rule /0x[0-9a-f]+/, Num::Hex
+
+    # simple state stack manipulation
+    rule /{-/, Comment, :next_state
+    rule /-}/, Comment, :pop!
 
     # the "flexible way"
     rule /abc/ do |m|
@@ -109,13 +113,11 @@ class MyLexer < Rouge::RegexLexer
       state? :some_state # check if the current state is :some_state
       in_state? :some_state # check if :some_state is in the state stack
 
-      eos? # check if the stream is empty
-
       # yield a token.  if no second argument is supplied, the value is
       # taken to be the whole match.
       # The sum of all the tokens yielded must be equivalent to the whole
       # match - otherwise characters will go missing from the user's input.
-      token 'A.Token.Type', m[0]
+      token Generic::Output, m[0]
 
       # calls SomeOtherLexer.lex(str) and yields its output.  See the
       # HTML lexer for a nice example of this.
@@ -129,14 +131,14 @@ class MyLexer < Rouge::RegexLexer
 
       # advanced: push a dynamically created anonymous state
       push do
-        rule /.../, 'A.Token'
+        rule /.../, Generic::Output
       end
     end
 
-    rule /(a)(b)/ do
+    rule /(\w+)(:)/
       # "group" yields the matched groups in order
-      group 'Letter.A'
-      group 'Letter.B'
+      group Name::Label
+      group Punctuation
     end
   end
 

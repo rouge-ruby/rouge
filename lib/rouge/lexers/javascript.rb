@@ -136,8 +136,7 @@ module Rouge
       # braced parts that aren't object literals
       state :block do
         rule /(#{id})(\s*)(:)/ do
-          group Name::Label; group Text
-          group Punctuation
+          groups Name::Label, Text, Punctuation
         end
 
         rule /[}]/, Punctuation, :pop!
@@ -148,8 +147,7 @@ module Rouge
       state :object do
         rule /[}]/, Punctuation, :pop!
         rule /(#{id})(\s*)(:)/ do
-          group Name::Attribute; group Text
-          group Punctuation
+          groups Name::Attribute, Text, Punctuation
         end
         rule /:/, Punctuation
         mixin :root
@@ -179,9 +177,7 @@ module Rouge
         mixin :whitespace
         # special case for empty objects
         rule /(\{)(\s*)(\})/m do
-          group Punctuation
-          group Text::Whitespace
-          group Punctuation
+          groups Punctuation, Text::Whitespace, Punctuation
         end
         rule /(?:true|false)\b/, Keyword::Constant
         rule /{/,  Punctuation, :object_key

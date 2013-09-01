@@ -242,16 +242,15 @@ module Rouge
         mixin :basics
         rule /}/, Punctuation, :pop!
         rule /(#{identifier})(\s*)(:)/m do |m|
-          if self.class.attributes.include? m[1]
-            group Name::Label
+          name_tok = if self.class.attributes.include? m[1]
+            Name::Label
           elsif self.class.vendor_prefixes.any? { |p| m[1].start_with?(p) }
-            group Name::Label
+            Name::Label
           else
-            group Name::Property
+            Name::Property
           end
 
-          group Text
-          group Punctuation
+          groups name_tok, Text, Punctuation
 
           push :stanza_value
         end

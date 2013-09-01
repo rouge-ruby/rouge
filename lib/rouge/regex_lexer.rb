@@ -284,6 +284,12 @@ module Rouge
       yield_token(tok, @last_match[@group_count += 1])
     end
 
+    def groups(*tokens)
+      tokens.each_with_index do |tok, i|
+        yield_token(tok, @last_match[i+1])
+      end
+    end
+
     # Delegate the lex to another lexer.  The #lex method will be called
     # with `:continue` set to true, so that #reset! will not be called.
     # In this way, a single lexer can be repeatedly delegated to while

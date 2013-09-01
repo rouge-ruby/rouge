@@ -150,18 +150,16 @@ module Rouge
           (\s+)
           ([a-zA-Z_][a-zA-Z0-9_]*(::[a-zA-Z_][a-zA-Z0-9_]*)*)
         )x do
-          group Keyword
-          group Text
-          group Name::Namespace
+          groups Keyword, Text, Name::Namespace
         end
 
         rule /(def\b)(\s*)/ do
-          group Keyword; group Text
+          groups Keyword, Text
           push :funcname
         end
 
         rule /(class\b)(\s*)/ do
-          group Keyword; group Text
+          groups Keyword, Text
           push :classname
         end
 
@@ -269,9 +267,7 @@ module Rouge
           )
         )x do |m|
           debug { "matches: #{[m[0], m[1], m[2], m[3]].inspect}" }
-          group Name::Class
-          group Operator
-          group Name::Function
+          groups Name::Class, Operator, Name::Function
           pop!
         end
 
@@ -291,8 +287,7 @@ module Rouge
 
       state :defexpr do
         rule /(\))(\.|::)?/ do
-          group Punctuation
-          group Operator
+          groups Punctuation, Operator
           pop!
         end
         rule /\(/, Operator, :defexpr
@@ -318,30 +313,25 @@ module Rouge
 
       state :method_call do
         rule %r((\s+)(/)(?=\S|\s*/)) do
-          group Text
-          group Str::Regex
-          pop!
-          push :slash_regex
+          groups Text, Str::Regex
+          goto :slash_regex
         end
 
         rule(%r((?=\s*/))) { pop! }
 
-        rule(//) { pop!; push :expr_start }
+        rule(//) { goto :expr_start }
       end
 
       state :expr_start do
         rule %r((\s*)(/)) do
-          group Text
-          group Str::Regex
-          pop!
-          push :slash_regex
+          groups Text, Str::Regex
+          goto :slash_regex
         end
 
         # special case for using a single space.  Ruby demands that
         # these be in a single line, otherwise it would make no sense.
         rule /(\s*)(%[rqswQWxiI]? \S* )/ do
-          group Text
-          group Str::Other
+          groups Text, Str::Other
           pop!
         end
 
@@ -356,7 +346,7 @@ module Rouge
         rule %r([^\\/#]+)m, Str::Regex
         rule %r(/) do
           token Str::Regex
-          pop!; push :regex_flags
+          goto :regex_flags
         end
       end
 

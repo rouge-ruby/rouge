@@ -60,7 +60,7 @@ module Rouge
         # add an extra line for non-newline-terminated strings
         if last_val[-1] != "\n"
           num_lines += 1
-          span(Token['Text.Whitespace'], "\n") { |str| formatted << str }
+          span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
         end
 
         # generate a string of newline-separated line numbers for the gutter

@@ -275,17 +275,13 @@ module Rouge
     #   to the entire last match.
     def token(tok, val=:__absent__)
       val = @last_match[0] if val == :__absent__
-      val ||= ''
-
-      raise 'no output stream' unless @output_stream
-
-      @output_stream << [tok, val] unless val.empty?
+      yield_token(tok, val)
     end
 
     # Yield a token with the next matched group.  Subsequent calls
     # to this method will yield subsequent groups.
     def group(tok)
-      token(tok, @last_match[@group_count += 1])
+      yield_token(tok, @last_match[@group_count += 1])
     end
 
     # Delegate the lex to another lexer.  The #lex method will be called
@@ -374,6 +370,11 @@ module Rouge
 
     ensure
       @output_stream = old_output_stream
+    end
+
+    def yield_token(tok, val)
+      return if val.nil? || val.empty?
+      @output_stream.yield(tok, val)
     end
   end
 end

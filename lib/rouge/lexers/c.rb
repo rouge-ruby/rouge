@@ -34,20 +34,30 @@ module Rouge
         )
       end
 
-      state :whitespace do
-        rule /^#if\s+0\b/, Comment::Preproc, :if_0
-        rule /^#/, Comment::Preproc, :macro
-        rule /^#{ws}#if\s+0\b/, Comment::Preproc, :if_0
-        rule /^#{ws}#/, Comment::Preproc, :macro
-        rule /^(\s*)(#{id}:(?!:))/ do
-          group Text
-          group Name::Label
-        end
+      start { push :bol }
 
-        rule /\s+/m, Text
+      state :bol do
+        mixin :inline_whitespace
+
+        rule /#if\s0/, Comment::Preproc, :if_0
+
+        rule /#/, Comment::Preproc, :macro
+
+        rule /#{id}:(?!:)/, Name::Label
+
+        rule(//) { pop! }
+      end
+
+      state :inline_whitespace do
+        rule /[ \t\r]+/, Text
         rule /\\\n/, Text # line continuation
-        rule %r(//(\n|(.|\n)*?[^\\]\n)), Comment::Single
-        rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/), Comment::Multiline
+        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
+      end
+
+      state :whitespace do
+        rule /\n+/, Text, :bol
+        rule %r(//(\\.|.)*?\n), Comment::Single, :bol
+        mixin :inline_whitespace
       end
 
       state :statements do
@@ -155,9 +165,9 @@ module Rouge
       end
 
       state :if_0 do
-        rule /^\s*#if.*?(?<!\\)\n/, Comment::Preproc, :if_0
+        rule /^\s*#if.*?(?<!\\)\n/, Comment, :if_0
         rule /^\s*#el(?:se|if).*\n/, Comment::Preproc, :pop!
-        rule /^\s*#endif.*?(?<!\\)\n/, Comment::Preproc, :pop!
+        rule /^\s*#endif.*?(?<!\\)\n/, Comment, :pop!
         rule /.*?\n/, Comment
       end
     end

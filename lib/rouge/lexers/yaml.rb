@@ -37,9 +37,7 @@ module Rouge
       end
 
       # Save a possible indentation level
-      def save_indent(opts={})
-        debug { "    yaml: save_indent" }
-        match = @last_match[0]
+      def save_indent(match)
         @next_indent = match.size
         debug { "    yaml: indent: #{self.indent}/#@next_indent" }
         debug { "    yaml: popping indent stack - before: #@indent_stack" }
@@ -55,9 +53,9 @@ module Rouge
         end
       end
 
-      def continue_indent
+      def continue_indent(match)
         debug { "    yaml: continue_indent" }
-        @next_indent += @last_match[0].size
+        @next_indent += match.size
       end
 
       def set_indent(opts={})
@@ -104,8 +102,8 @@ module Rouge
         end
 
         # indentation spaces
-        rule /[ ]*(?!\s|$)/ do
-          text, err = save_indent
+        rule /[ ]*(?!\s|$)/ do |m|
+          text, err = save_indent(m[0])
           token Text, text
           token Error, err
           push :block_line; push :indentation
@@ -115,16 +113,16 @@ module Rouge
       state :indentation do
         rule(/\s*?\n/) { token Text; pop! 2 }
         # whitespace preceding block collection indicators
-        rule /[ ]+(?=[-:?](?:[ ]|$))/ do
+        rule /[ ]+(?=[-:?](?:[ ]|$))/ do |m|
           token Text
-          continue_indent
+          continue_indent(m[0])
         end
 
         # block collection indicators
         rule(/[?:-](?=[ ]|$)/) { token Punctuation::Indicator; set_indent }
 
         # the beginning of a block line
-        rule(/[ ]*/) { token Text; continue_indent; pop! }
+        rule(/[ ]*/) { |m| token Text; continue_indent(m[0]); pop! }
       end
 
       # indented line in the block context
@@ -309,7 +307,7 @@ module Rouge
           # dedent = end of scalar
           if indent_size <= self.indent
             pop!
-            save_indent
+            save_indent(m[0])
             push :indentation
           end
         end

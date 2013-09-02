@@ -165,6 +165,7 @@ module Rouge
     # start_procs.
     def reset!
       @stack = nil
+      @current_stream = nil
 
       self.class.start_procs.each do |pr|
         instance_eval(&pr)
@@ -185,6 +186,8 @@ module Rouge
     # @see #step #step (where (2.) is implemented)
     def stream_tokens(str, &b)
       stream = StringScanner.new(str)
+
+      @current_stream = stream
 
       until stream.eos?
         debug { "lexer: #{self.class.tag}" }
@@ -231,9 +234,7 @@ module Rouge
     def run_callback(stream, callback, &output_stream)
       with_output_stream(output_stream) do
         @group_count = 0
-        @last_match = stream
         instance_exec(stream, &callback)
-        @last_match = nil
       end
     end
 
@@ -274,19 +275,19 @@ module Rouge
     #   (optional) the string value to yield.  If absent, this defaults
     #   to the entire last match.
     def token(tok, val=:__absent__)
-      val = @last_match[0] if val == :__absent__
+      val = @current_stream[0] if val == :__absent__
       yield_token(tok, val)
     end
 
     # Yield a token with the next matched group.  Subsequent calls
     # to this method will yield subsequent groups.
     def group(tok)
-      yield_token(tok, @last_match[@group_count += 1])
+      yield_token(tok, @current_stream[@group_count += 1])
     end
 
     def groups(*tokens)
       tokens.each_with_index do |tok, i|
-        yield_token(tok, @last_match[i+1])
+        yield_token(tok, @current_stream[i+1])
       end
     end
 
@@ -301,7 +302,7 @@ module Rouge
     #   The text to delegate.  This defaults to the last matched string.
     def delegate(lexer, text=nil)
       debug { "    delegating to #{lexer.inspect}" }
-      text ||= @last_match[0]
+      text ||= @current_stream[0]
 
       lexer.lex(text, :continue => true) do |tok, val|
         debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }

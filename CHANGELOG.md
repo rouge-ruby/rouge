@@ -1,3 +1,23 @@
+## version 0.5.0: 2013-09-02
+
+  * [Various performance optimizations][perf-0.5]
+  * javascript:
+    - quoted object keys were not being highlighted correctly
+    - multiline comments were not being highlighted
+  * common lisp: fix commented forms
+  * golang: performance bump
+  * ruby: fix edge case for `def-@`
+  * c: fix a pathological performance case
+  * fix line number alignment on non-newline-terminated code (#91)
+
+### Breaking API Changes in v0.5.0
+
+  * `Rouge::Lexers::Text` renamed to `Rouge::Lexers::PlainText`
+  * Tokens are now constants, rather than strings.  This only affects
+    you if you've written a custom lexer, formatter, or theme.
+
+[perf-0.5]: https://github.com/jayferd/rouge/pull/41#issuecomment-23561787
+
 ## version 0.4.0: 2013-08-14
 
   * Add the `:inline_theme` option to `Formatters::HTML` for environments

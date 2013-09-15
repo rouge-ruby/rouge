@@ -293,7 +293,7 @@ module Rouge
           groups Punctuation, Operator
           pop!
         end
-        rule /\(/, Operator, :defexpr
+        rule /\(/, Punctuation, :defexpr
         mixin :root
       end
 

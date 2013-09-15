@@ -1,3 +1,8 @@
+## version 0.5.1: 2013-09-15
+
+  * Fix non-default themes (thanks @tiroc!)
+  * Minor lexing bugfixes in ruby
+
 ## version 0.5.0: 2013-09-02
 
   * [Various performance optimizations][perf-0.5]

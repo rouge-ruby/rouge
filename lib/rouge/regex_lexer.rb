@@ -35,35 +35,46 @@ module Rouge
     #
     # @see RegexLexer.state
     class State
-      attr_reader :name
-      def initialize(name, &defn)
+      attr_reader :name, :rules
+      def initialize(name, rules)
         @name = name
-        @defn = defn
-      end
-
-      def rules
-        @rules ||= []
-      end
-
-      def load!(lexer_class)
-        return self if @loaded
-        @loaded = true
-        StateDSL.new(rules).instance_eval(&@defn)
-
-        rules.map! do |rule|
-          rule.is_a?(String) ? lexer_class.get_state(rule) : rule
-        end
-
-        self
+        @rules = rules
       end
     end
 
     class StateDSL
       attr_reader :rules
-      def initialize(rules)
-        @rules = rules
+      def initialize(name, &defn)
+        @name = name
+        @defn = defn
+        @rules = []
       end
 
+      def to_state(lexer_class)
+        load!
+        rules = @rules.map do |rule|
+          rule.is_a?(String) ? lexer_class.get_state(rule) : rule
+        end
+        State.new(@name, rules)
+      end
+
+      def prepended(&defn)
+        parent_defn = @defn
+        StateDSL.new(@name) do
+          instance_eval(&defn)
+          instance_eval(&parent_defn)
+        end
+      end
+
+      def appended(&defn)
+        parent_defn = @defn
+        StateDSL.new(@name) do
+          instance_eval(&parent_defn)
+          instance_eval(&defn)
+        end
+      end
+
+    protected
       # Define a new rule for this state.
       #
       # @overload rule(re, token, next_state=nil)
@@ -99,8 +110,15 @@ module Rouge
       # Mix in the rules from another state into this state.  The rules
       # from the mixed-in state will be tried in order before moving on
       # to the rest of the rules in this state.
-      def mixin(lexer_name)
-        rules << lexer_name.to_s
+      def mixin(state)
+        rules << state.to_s
+      end
+
+    private
+      def load!
+        return if @loaded
+        @loaded = true
+        instance_eval(&@defn)
       end
     end
 
@@ -108,6 +126,16 @@ module Rouge
     # @see state
     def self.states
       @states ||= {}
+    end
+
+    def self.state_definitions
+      @state_definitions ||= InheritableHash.new(superclass.state_definitions)
+    end
+    @state_definitions = {}
+
+    def self.replace_state(name, new_defn)
+      states[name] = nil
+      state_definitions[name] = new_defn
     end
 
     # The routines to run at the beginning of a fresh lex.
@@ -129,16 +157,29 @@ module Rouge
     # The block will be evaluated in the context of a {StateDSL}.
     def self.state(name, &b)
       name = name.to_s
-      states[name] = State.new(name, &b)
+      state_definitions[name] = StateDSL.new(name, &b)
+    end
+
+    def self.prepend(name, &b)
+      name = name.to_s
+      dsl = state_definitions[name] or raise "no such state #{name.inspect}"
+      replace_state(name, dsl.prepended(&b))
+    end
+
+    def self.append(state, &b)
+      name = name.to_s
+      dsl = state_definitions[name] or raise "no such state #{name.inspect}"
+      replace_state(name, dsl.appended(&b))
     end
 
     # @private
     def self.get_state(name)
       return name if name.is_a? State
 
-      state = states[name.to_s]
-      raise "unknown state: #{name}" unless state
-      state.load!(self)
+      name = name.to_s
+
+      states[name] ||= state_definitions[name].to_state(self) \
+        or raise "unknown state: #{name}"
     end
 
     # @private
@@ -306,8 +347,12 @@ module Rouge
 
       lexer.lex(text, :continue => true) do |tok, val|
         debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }
-        token(tok, val)
+        yield_token(tok, val)
       end
+    end
+
+    def recurse(text=nil)
+      delegate(self.class, text)
     end
 
     # Push a state onto the stack.  If no state name is given and you've

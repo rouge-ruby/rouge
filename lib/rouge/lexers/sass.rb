@@ -2,7 +2,7 @@ require 'rouge/lexers/sass/common'
 
 module Rouge
   module Lexers
-    class Sass < RegexLexer
+    class Sass < SassCommon
       include Indentation
 
       desc 'The Sass stylesheet language language (sass-lang.com)'
@@ -66,8 +66,6 @@ module Rouge
       state :end_section do
         rule(/\n/) { token Text; reset_stack }
       end
-
-      include SassCommon
     end
   end
 end

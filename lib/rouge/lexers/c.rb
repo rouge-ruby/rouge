@@ -39,8 +39,7 @@ module Rouge
       state :bol do
         mixin :inline_whitespace
 
-        rule /#if\s0/, Comment::Preproc, :if_0
-
+        rule /#if\s0/, Comment, :if_0
         rule /#/, Comment::Preproc, :macro
 
         rule /#{id}:(?!:)/, Name::Label

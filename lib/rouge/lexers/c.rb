@@ -61,7 +61,7 @@ module Rouge
       end
 
       state :statements do
-        rule /\s+/m, Text
+        mixin :whitespace
 
         rule /L?"/, Str, :string
         rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
@@ -105,10 +105,10 @@ module Rouge
           (#{ws})({)         # open brace
         )mx do |m|
           # TODO: do this better.
-          delegate C, m[1]
+          recurse m[1]
           token Name::Function, m[2]
-          delegate C, m[3]
-          delegate C, m[4]
+          recurse m[3]
+          recurse m[4]
           token Punctuation, m[5]
           push :function
         end
@@ -121,10 +121,10 @@ module Rouge
           (#{ws})(;)       # semicolon
         )mx do |m|
           # TODO: do this better.
-          delegate C, m[1]
+          recurse m[1]
           token Name::Function
-          delegate C, m[3]
-          delegate C, m[4]
+          recurse m[3]
+          recurse m[4]
           token Punctuation
           push :statement
         end
@@ -156,18 +156,18 @@ module Rouge
       end
 
       state :macro do
-        rule %r([^/\n]+), Comment::Preproc
-        rule %r(/[*].*?[*]/)m, Comment::Multiline
-        rule %r(//.*$), Comment::Single
-        rule %r(/), Comment::Preproc
-        rule /(?<=\\)\n/, Comment::Preproc
+        # NB: pop! goes back to :bol
         rule /\n/, Comment::Preproc, :pop!
+        rule %r([^/\n\\]+), Comment::Preproc
+        rule /\\./m, Comment::Preproc
+        mixin :inline_whitespace
+        rule %r(/), Comment::Preproc
       end
 
       state :if_0 do
-        rule /^\s*#if.*?(?<!\\)\n/, Comment, :if_0
-        rule /^\s*#el(?:se|if).*\n/, Comment::Preproc, :pop!
-        rule /^\s*#endif.*?(?<!\\)\n/, Comment, :pop!
+        rule /^\s*#if\b.*?(?<!\\)\n/, Comment, :if_0
+        rule /^\s*#\s*el(?:se|if)/, Comment::Preproc, :pop!
+        rule /^\s*#\s*endif\b.*?(?<!\\)\n/m, Comment, :pop!
         rule /.*?\n/, Comment
       end
     end

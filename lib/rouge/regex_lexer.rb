@@ -351,6 +351,10 @@ module Rouge
       end
     end
 
+    def recurse(text=nil)
+      delegate(self.class, text)
+    end
+
     # Push a state onto the stack.  If no state name is given and you've
     # passed a block, a state will be dynamically created using the
     # {StateDSL}.

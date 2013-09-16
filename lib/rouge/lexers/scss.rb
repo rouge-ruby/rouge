@@ -2,7 +2,7 @@ require 'rouge/lexers/sass/common'
 
 module Rouge
   module Lexers
-    class Scss < RegexLexer
+    class Scss < SassCommon
       desc "SCSS stylesheets (sass-lang.com)"
       tag 'scss'
       filenames '*.scss'
@@ -26,8 +26,6 @@ module Rouge
         rule /\n/, Text
         rule(/[;{}]/) { token Punctuation; reset_stack }
       end
-
-      include SassCommon
     end
   end
 end

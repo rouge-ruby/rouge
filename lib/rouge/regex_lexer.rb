@@ -60,7 +60,7 @@ module Rouge
 
       def prepended(&defn)
         parent_defn = @defn
-        StateDSL.new(name) do
+        StateDSL.new(@name) do
           instance_eval(&defn)
           instance_eval(&parent_defn)
         end
@@ -68,7 +68,7 @@ module Rouge
 
       def appended(&defn)
         parent_defn = @defn
-        StateDSL.new(name) do
+        StateDSL.new(@name) do
           instance_eval(&parent_defn)
           instance_eval(&defn)
         end

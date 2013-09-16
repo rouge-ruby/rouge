@@ -347,7 +347,7 @@ module Rouge
 
       lexer.lex(text, :continue => true) do |tok, val|
         debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }
-        token(tok, val)
+        yield_token(tok, val)
       end
     end
 

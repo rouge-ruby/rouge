@@ -26,6 +26,8 @@
 
 class Highlighter : public QSyntaxHighlighter
 {
+   class InnerClass {}
+
    Q_OBJECT
 
 public:

@@ -1,3 +1,5 @@
+require Pathname.new(__FILE__).dirname.join('c.rb')
+
 module Rouge
   module Lexers
     class Cpp < C

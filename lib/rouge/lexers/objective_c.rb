@@ -1,4 +1,4 @@
-require Pathname.new(__FILE__).dirname.join('c.rb')
+require 'rouge/lexers/c'
 
 module Rouge
   module Lexers

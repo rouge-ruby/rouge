@@ -31,7 +31,7 @@ module Rouge
         # TODO: syntax highlight the code block, github style
         rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?)(\2)/m do |m|
           sublexer = Lexer.find_fancy(m[3].strip, m[4])
-          sublexer ||= Text.new(:token => Str::Backtick)
+          sublexer ||= PlainText.new(:token => Str::Backtick)
 
           token Text, m[1]
           token Punctuation, m[2]

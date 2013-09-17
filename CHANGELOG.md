@@ -1,3 +1,8 @@
+## version 0.5.3: 2013-09-15
+
+  * Critical bugfixes (#98 and #99) for Ruby and Markdown. Some inputs
+    would throw errors. (thanks @hrysd!)
+
 ## version 0.5.2: 2013-09-15
 
   * Bugfixes for C/C++

@@ -163,7 +163,8 @@ module Rouge
 
     private
       def filter_by_mimetype(lexers, mt)
-        lexers.select { |lexer| lexer.mimetypes.include? mt }
+        filtered = lexers.select { |lexer| lexer.mimetypes.include? mt }
+        filtered.any? ? filtered : lexers
       end
 
       # returns a list of lexers that match the given filename with
@@ -195,7 +196,7 @@ module Rouge
           end
         end
 
-        out
+        out.any? ? out : lexers
       end
 
       def best_by_source(lexers, source, threshold=0)

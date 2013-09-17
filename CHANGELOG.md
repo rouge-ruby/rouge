@@ -1,3 +1,10 @@
+## version 0.5.2: 2013-09-15
+
+  * Bugfixes for C/C++
+  * Major bugfix: YAML was in a broken state :\ (thanks @hrysd!)
+  * Implement lexer subclassing, with `append` and `prepend`
+  * new lexer: objective c (!)
+
 ## version 0.5.1: 2013-09-15
 
   * Fix non-default themes (thanks @tiroc!)

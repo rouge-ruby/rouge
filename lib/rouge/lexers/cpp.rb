@@ -30,10 +30,13 @@ module Rouge
 
       id = /[a-zA-Z_][a-zA-Z0-9]*/
 
-      prepend :statements do
-        rule /class\b/, Keyword, :classname
+      prepend :root do
         # Offload C++ extensions, http://offload.codeplay.com/
         rule /(?:__offload|__blockingoffload|__outer)\b/, Keyword::Pseudo
+      end
+
+      prepend :statements do
+        rule /class\b/, Keyword, :classname
       end
 
       state :classname do

@@ -22,6 +22,19 @@ module Rouge
       def self.keywords_type
         @keywords_type ||= Set.new %w(
           int long float short double char unsigned signed void
+
+          jmp_buf FILE DIR div_t ldiv_t mbstate_t sig_atomic_t fpos_t
+          clock_t time_t va_list size_t ssize_t off_t wchar_t ptrdiff_t
+          wctrans_t wint_t wctype_t
+
+          _Bool _Complex int8_t int16_t int32_t int64_t
+          uint8_t uint16_t uint32_t uint64_t int_least8_t
+          int_least16_t int_least32_t int_least64_t
+          uint_least8_t uint_least16_t uint_least32_t
+          uint_least64_t int_fast8_t int_fast16_t int_fast32_t
+          int_fast64_t uint_fast8_t uint_fast16_t uint_fast32_t
+          uint_fast64_t intptr_t uintptr_t intmax_t
+          uintmax_t
         )
       end
 

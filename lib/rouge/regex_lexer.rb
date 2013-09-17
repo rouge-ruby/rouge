@@ -182,8 +182,10 @@ module Rouge
 
       name = name.to_s
 
-      states[name] ||= state_definitions[name].to_state(self) \
-        or raise "unknown state: #{name}"
+      states[name] ||= begin
+        defn = state_definitions[name] or raise "unknown state: #{name.inspect}"
+        defn.to_state(self)
+      end
     end
 
     # @private

@@ -47,6 +47,10 @@ module Rouge
         )
       end
 
+      def self.builtins
+        @builtins ||= []
+      end
+
       start { push :bol }
 
       state :expr_bol do
@@ -102,6 +106,8 @@ module Rouge
             token Keyword::Type
           elsif self.class.reserved.include? name
             token Keyword::Reserved
+          elsif self.class.builtins.include? name
+            token Name::Builtin
           else
             token Name
           end

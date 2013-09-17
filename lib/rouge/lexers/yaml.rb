@@ -58,12 +58,12 @@ module Rouge
         @next_indent += match.size
       end
 
-      def set_indent(opts={})
+      def set_indent(match, opts={})
         if indent < @next_indent
           @indent_stack << @next_indent
         end
 
-        @next_indent += @last_match[0].size unless opts[:implicit]
+        @next_indent += match.size unless opts[:implicit]
       end
 
       plain_scalar_start = /[^ \t\n\r\f\v?:,\[\]{}#&*!\|>'"%@`]/
@@ -119,7 +119,7 @@ module Rouge
         end
 
         # block collection indicators
-        rule(/[?:-](?=[ ]|$)/) { token Punctuation::Indicator; set_indent }
+        rule(/[?:-](?=[ ]|$)/) { |m| token Punctuation::Indicator; set_indent m[0] }
 
         # the beginning of a block line
         rule(/[ ]*/) { |m| token Text; continue_indent(m[0]); pop! }
@@ -163,9 +163,9 @@ module Rouge
 
       state :block_nodes do
         # implicit key
-        rule /:(?=\s|$)/ do
+        rule /:(?=\s|$)/ do |m|
           token Punctuation::Indicator
-          set_indent :implicit => true
+          set_indent m[0], :implicit => true
         end
 
         # literal and folded scalars

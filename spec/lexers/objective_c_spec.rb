@@ -1,11 +1,11 @@
-describe Rouge::Lexers::Objective_c do
-  let(:subject) { Rouge::Lexers::Objective_c.new }
+describe Rouge::Lexers::ObjectiveC do
+  let(:subject) { Rouge::Lexers::ObjectiveC.new }
 
   describe 'guessing' do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.???'
+      assert_guess :filename => 'foo.m'
     end
 
     it 'guesses by mimetype' do
@@ -14,7 +14,9 @@ describe Rouge::Lexers::Objective_c do
     end
 
     it 'guesses by source' do
-      assert_guess :source => '????'
+      assert_guess :filename => 'foo.h', :source => '[foo bar: baz]'
+      assert_guess :filename => 'foo.h', :source => '@"foo"'
+      assert_guess :source => '@implementation Foo'
     end
   end
 end

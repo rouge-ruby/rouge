@@ -7,8 +7,11 @@ load ROOT_DIR.join('lib/rouge.rb')
 load ROOT_DIR.join('lib/rouge/cli.rb')
 
 begin
-  Rouge::CLI.start
-rescue => e
-  $stderr.puts "rouge: #{e.message}"
-  exit 1
+  Rouge::CLI.parse(ARGV).run
+rescue Rouge::CLI::Error => e
+  puts e.message
+  exit e.status
+rescue Interrupt
+  $stderr.puts "\nrouge: interrupted"
+  exit 2
 end

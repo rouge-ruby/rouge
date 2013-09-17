@@ -90,10 +90,15 @@ module Rouge
       end
 
       state :table do
-        rule(/^(?=\s*[^\s|])/) { reset_stack }
         mixin :basic
+        rule /\n/, Text, :table_bol
         rule /[|]/, Punctuation
         rule /[^|\s]+/, Name
+      end
+
+      state :table_bol do
+        rule(/(?=\s*[^\s|])/) { reset_stack }
+        rule(//) { pop! }
       end
 
       state :description do

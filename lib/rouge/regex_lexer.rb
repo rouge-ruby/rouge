@@ -368,7 +368,7 @@ module Rouge
       push_state = if state_name
         get_state(state_name)
       elsif block_given?
-        State.new(b.inspect, &b).load!(self.class)
+        StateDSL.new(b.inspect, &b).to_state(self.class)
       else
         # use the top of the stack by default
         self.state

@@ -6,7 +6,7 @@ describe Rouge::Lexers::C do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.c'
-      assert_guess :filename => 'foo.h'
+      assert_guess :filename => 'foo.h', :source => 'foo'
     end
 
     it 'guesses by mimetype' do

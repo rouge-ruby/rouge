@@ -22,6 +22,19 @@ module Rouge
       def self.keywords_type
         @keywords_type ||= Set.new %w(
           int long float short double char unsigned signed void
+
+          jmp_buf FILE DIR div_t ldiv_t mbstate_t sig_atomic_t fpos_t
+          clock_t time_t va_list size_t ssize_t off_t wchar_t ptrdiff_t
+          wctrans_t wint_t wctype_t
+
+          _Bool _Complex int8_t int16_t int32_t int64_t
+          uint8_t uint16_t uint32_t uint64_t int_least8_t
+          int_least16_t int_least32_t int_least64_t
+          uint_least8_t uint_least16_t uint_least32_t
+          uint_least64_t int_fast8_t int_fast16_t int_fast32_t
+          int_fast64_t uint_fast8_t uint_fast16_t uint_fast32_t
+          uint_fast64_t intptr_t uintptr_t intmax_t
+          uintmax_t
         )
       end
 
@@ -34,17 +47,29 @@ module Rouge
         )
       end
 
+      # high priority for filename matches
+      def self.analyze_text(*)
+        0.3
+      end
+
+      def self.builtins
+        @builtins ||= []
+      end
+
       start { push :bol }
 
-      state :bol do
+      state :expr_bol do
         mixin :inline_whitespace
 
         rule /#if\s0/, Comment, :if_0
         rule /#/, Comment::Preproc, :macro
 
-        rule /#{id}:(?!:)/, Name::Label
-
         rule(//) { pop! }
+      end
+
+      state :bol do
+        rule /#{id}:(?!:)/, Name::Label
+        mixin :expr_bol
       end
 
       state :inline_whitespace do
@@ -54,14 +79,18 @@ module Rouge
       end
 
       state :whitespace do
-        rule /\n+/, Text, :bol
+        rule /\n+/m, Text, :bol
         rule %r(//(\\.|.)*?\n), Comment::Single, :bol
         mixin :inline_whitespace
       end
 
+      state :expr_whitespace do
+        rule /\n+/m, Text, :expr_bol
+        mixin :whitespace
+      end
+
       state :statements do
         mixin :whitespace
-
         rule /L?"/, Str, :string
         rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
         rule %r((\d+\.\d*|\.\d+|\d+)[e][+-]?\d+[lu]*)i, Num::Float
@@ -82,6 +111,8 @@ module Rouge
             token Keyword::Type
           elsif self.class.reserved.include? name
             token Keyword::Reserved
+          elsif self.class.builtins.include? name
+            token Name::Builtin
           else
             token Name
           end
@@ -94,7 +125,7 @@ module Rouge
       end
 
       state :root do
-        mixin :whitespace
+        mixin :expr_whitespace
 
         # functions
         rule %r(
@@ -133,7 +164,7 @@ module Rouge
 
       state :statement do
         rule /;/, Punctuation, :pop!
-        mixin :whitespace
+        mixin :expr_whitespace
         mixin :statements
         rule /[{}]/, Punctuation
       end
@@ -164,8 +195,9 @@ module Rouge
       end
 
       state :if_0 do
-        rule /^\s*#if\b.*?(?<!\\)\n/, Comment, :if_0
-        rule /^\s*#\s*el(?:se|if)/, Comment::Preproc, :pop!
+        # NB: no \b here, to cover #ifdef and #ifndef
+        rule /^\s*#if/, Comment, :if_0
+        rule /^\s*#\s*el(?:se|if)/, Comment, :pop!
         rule /^\s*#\s*endif\b.*?(?<!\\)\n/m, Comment, :pop!
         rule /.*?\n/, Comment
       end

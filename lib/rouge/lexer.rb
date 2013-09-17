@@ -205,7 +205,7 @@ module Rouge
 
         best_result = threshold
         best_match = nil
-        registry.values.each do |lexer|
+        lexers.each do |lexer|
           result = lexer.analyze_text(source) || 0
           return lexer if result == 1
 

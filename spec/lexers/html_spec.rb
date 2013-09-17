@@ -1,10 +1,5 @@
 describe Rouge::Lexers::HTML do
   let(:subject) { Rouge::Lexers::HTML.new }
-  include Support::Lexing
-
-  it 'lexes embedded script tags' do
-    assert_no_errors '<script>x && x < y;</script>'
-  end
 
   describe 'guessing' do
     include Support::Guessing
@@ -39,6 +34,22 @@ describe Rouge::Lexers::HTML do
       source
 
       assert_guess :source => '<html></html>'
+    end
+  end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'lexes the demo with no errors' do
+      assert_no_errors(lexing_demo)
+    end
+
+    it 'lexes the sample without throwing' do
+      lex_sample.to_a
+    end
+
+    it 'lexes embedded script tags' do
+      assert_no_errors '<script>x && x < y;</script>'
     end
   end
 end

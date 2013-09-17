@@ -1,5 +1,23 @@
 module Support
   module Lexing
+    SPEC_DIR = Pathname.new(__FILE__).dirname.parent
+    SAMPLES_DIR = SPEC_DIR.join('visual/samples')
+    def lexing_sample(lexer=nil)
+      lexer ||= subject
+
+      File.read(SAMPLES_DIR.join(lexer_class_for(lexer).tag))
+    end
+
+    def lex_sample(lexer=nil)
+      lexer ||= subject
+      lexer.lex(lexing_sample(lexer))
+    end
+
+    def lexing_demo(lexer_class=nil)
+      lexer ||= subject
+      lexer_class_for(lexer).demo
+    end
+
     def filter_by_token(target_token, text, lexer=nil)
       lexer ||= subject
 
@@ -39,6 +57,18 @@ module Support
 
       actual = lexer.lex(text).map { |token, value| [ token.qualname, value ] }
       assert { expected == actual }
+    end
+
+  private
+    def lexer_class_for(obj)
+      case obj
+      when Class
+        obj
+      when Rouge::Lexer
+        obj.class
+      else
+        raise '???'
+      end
     end
   end
 end

@@ -1,15 +1,5 @@
 describe Rouge::Lexers::Haml do
   let(:subject) { Rouge::Lexers::Haml.new }
-  include Support::Lexing
-
-  it 'lexes custom filters' do
-    lexer = Rouge::Lexers::Haml.new(:filters => { :tex => 'tex' })
-
-    assert_has_token 'Comment', <<-tex, lexer
-      :tex
-        % this is a tex comment!
-    tex
-  end
 
   describe 'guessing' do
     include Support::Guessing
@@ -24,4 +14,24 @@ describe Rouge::Lexers::Haml do
     end
   end
 
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'lexes custom filters' do
+      lexer = Rouge::Lexers::Haml.new(:filters => { :tex => 'tex' })
+
+      assert_has_token 'Comment', <<-tex, lexer
+        :tex
+          % this is a tex comment!
+      tex
+    end
+
+    it 'lexes the demo with no errors' do
+      assert_no_errors(lexing_demo)
+    end
+
+    it 'lexes the sample without throwing' do
+      lex_sample.to_a
+    end
+  end
 end

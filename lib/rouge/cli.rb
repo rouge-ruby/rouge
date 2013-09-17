@@ -157,30 +157,47 @@ module Rouge
         new(opts)
       end
 
-      def initialize(opts={})
-        @input = case opts[:input_file]
+      def input_stream
+        @input_stream ||= case @input_file
         when '-'
-          $stdin.read
+          $stdin
         else
-          begin
-            File.read(opts[:input_file])
-          rescue => e
-            error! "unable to read #{opts[:input_file].inspect}: #{e.message}"
-          end
+          File.new(@input_file)
         end
+      end
+
+      def input
+        input_stream.read
+      rescue => e
+        error! "unable to read #{input_stream.inspect}: #{e.message}"
+      end
+
+      def lexer_class
+        @lexer_class ||= Lexer.guess(
+          :filename => @input_file,
+          :mimetype => @mimetype,
+          :source => input_stream,
+        )
+      end
+
+      def lexer
+        @lexer ||= lexer_class.new(@lexer_opts)
+      end
+
+      attr_reader :input_file, :lexer_name, :mimetype, :formatter
+
+      def initialize(opts={})
+        @input_file = opts[:input_file]
 
         if opts[:lexer]
-          lexer_class = Lexer.find(opts[:lexer]) \
+          @lexer_class = Lexer.find(opts[:lexer]) \
             or error! "unkown lexer #{opts[:lexer].inspect}"
         else
-          lexer_class = Lexer.guess(
-            :filename => opts[:input_file],
-            :mimetype => opts[:mimetype],
-            :source => @input,
-          )
+          @lexer_name = opts[:lexer]
+          @mimetype = opts[:mimetype]
         end
 
-        @lexer = lexer_class.new(opts[:lexer_opts])
+        @lexer_opts = opts[:lexer_opts]
 
         formatter_class = Formatter.find(opts[:formatter]) \
           or error!  "unknown formatter #{opts[:formatter]}"

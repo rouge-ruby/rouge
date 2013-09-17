@@ -40,6 +40,10 @@ module Rouge
         @name = name
         @rules = rules
       end
+
+      def inspect
+        "#<#{self.class.name} #{@name.inspect}>"
+      end
     end
 
     class StateDSL

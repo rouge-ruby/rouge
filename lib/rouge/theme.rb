@@ -163,7 +163,7 @@ module Rouge
     end
 
     def single_css_selector(token)
-      return @scope if token == Token['Text']
+      return @scope if token == Text
 
       "#{@scope} .#{token.shortname}"
     end

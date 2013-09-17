@@ -6,7 +6,6 @@ Rouge is a pure-ruby syntax highlighter.  It can highlight nearly 60 languages, 
 
 If you'd like to help out with this project, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.  In particular, I would appreciate help with the following lexers, from someone who has more experience with the language than I do:
 
-* Objective-C
 * Delphi/Pascal
 
 [issues]: /jayferd/rouge/issues "Help Out"

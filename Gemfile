@@ -19,4 +19,3 @@ gem 'yard'
 gem 'github-markup'
 
 gem 'pry'
-gem 'pry-debugger'

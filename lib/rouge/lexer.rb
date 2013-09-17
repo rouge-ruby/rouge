@@ -200,6 +200,15 @@ module Rouge
       end
 
       def best_by_source(lexers, source, threshold=0)
+        source = case source
+        when String
+          source
+        when ->(s){ s.respond_to? :read }
+          source.read
+        else
+          raise 'invalid source'
+        end
+
         assert_utf8!(source)
 
         source = TextAnalyzer.new(source)

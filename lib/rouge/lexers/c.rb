@@ -49,15 +49,18 @@ module Rouge
 
       start { push :bol }
 
-      state :bol do
+      state :expr_bol do
         mixin :inline_whitespace
 
         rule /#if\s0/, Comment, :if_0
         rule /#/, Comment::Preproc, :macro
 
-        rule /#{id}:(?!:)/, Name::Label
-
         rule(//) { pop! }
+      end
+
+      state :bol do
+        rule /#{id}:(?!:)/, Name::Label
+        mixin :expr_bol
       end
 
       state :inline_whitespace do
@@ -67,14 +70,18 @@ module Rouge
       end
 
       state :whitespace do
-        rule /\n+/, Text, :bol
+        rule /\n+/m, Text, :bol
         rule %r(//(\\.|.)*?\n), Comment::Single, :bol
         mixin :inline_whitespace
       end
 
+      state :expr_whitespace do
+        rule /\n+/m, Text, :expr_bol
+        mixin :whitespace
+      end
+
       state :statements do
         mixin :whitespace
-
         rule /L?"/, Str, :string
         rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
         rule %r((\d+\.\d*|\.\d+|\d+)[e][+-]?\d+[lu]*)i, Num::Float
@@ -107,7 +114,7 @@ module Rouge
       end
 
       state :root do
-        mixin :whitespace
+        mixin :expr_whitespace
 
         # functions
         rule %r(
@@ -146,7 +153,7 @@ module Rouge
 
       state :statement do
         rule /;/, Punctuation, :pop!
-        mixin :whitespace
+        mixin :expr_whitespace
         mixin :statements
         rule /[{}]/, Punctuation
       end

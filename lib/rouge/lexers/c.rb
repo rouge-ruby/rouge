@@ -184,8 +184,9 @@ module Rouge
       end
 
       state :if_0 do
-        rule /^\s*#if\b.*?(?<!\\)\n/, Comment, :if_0
-        rule /^\s*#\s*el(?:se|if)/, Comment::Preproc, :pop!
+        # NB: no \b here, to cover #ifdef and #ifndef
+        rule /^\s*#if/, Comment, :if_0
+        rule /^\s*#\s*el(?:se|if)/, Comment, :pop!
         rule /^\s*#\s*endif\b.*?(?<!\\)\n/m, Comment, :pop!
         rule /.*?\n/, Comment
       end

@@ -263,8 +263,6 @@ module Rouge
         until argv.empty?
           arg = argv.shift
           case arg
-          when /--(\w+)=(\S+)/
-            opts[$1.tr('-', '_').to_sym] = $2
           when /--(\w+)/
             opts[$1.tr('-', '_').to_sym] = argv.shift
           else

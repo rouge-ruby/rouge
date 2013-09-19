@@ -8,6 +8,14 @@ module Rouge
         @methods ||= %w(GET POST PUT DELETE HEAD OPTIONS TRACE)
       end
 
+      def content_lexer
+        return Lexers::PlainText unless @content_type
+
+        @content_lexer ||= Lexer.guess_by_mimetype(@content_type)
+      rescue Lexer::AmbiguousGuess
+        @content_lexer = Lexers::PlainText
+      end
+
       start { @content_type = 'text/plain' }
 
       state :root do
@@ -60,7 +68,7 @@ module Rouge
 
       state :content do
         rule /.+/m do |m|
-          delegate Lexer.guess_by_mimetype(@content_type)
+          delegate(content_lexer)
         end
       end
     end

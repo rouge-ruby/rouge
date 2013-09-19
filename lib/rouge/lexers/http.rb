@@ -59,7 +59,7 @@ module Rouge
       end
 
       state :content do
-        rule /.+/ do |m|
+        rule /.+/m do |m|
           delegate Lexer.guess_by_mimetype(@content_type)
         end
       end

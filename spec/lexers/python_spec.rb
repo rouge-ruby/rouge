@@ -22,16 +22,4 @@ describe Rouge::Lexers::Python do
       deny_guess   :source => '#!/usr/bin/env python4'
     end
   end
-
-  describe 'lexing' do
-    include Support::Lexing
-
-    it 'lexes the demo with no errors' do
-      assert_no_errors(lexing_demo)
-    end
-
-    it 'lexes the sample without throwing' do
-      lex_sample.to_a
-    end
-  end
 end

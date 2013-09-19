@@ -11,16 +11,4 @@ describe Rouge::Lexers::CSS do
       assert_guess :mimetype => 'text/css'
     end
   end
-
-  describe 'lexing' do
-    include Support::Lexing
-
-    it 'lexes the demo with no errors' do
-      assert_no_errors(lexing_demo)
-    end
-
-    it 'lexes the sample without throwing' do
-      lex_sample.to_a
-    end
-  end
 end

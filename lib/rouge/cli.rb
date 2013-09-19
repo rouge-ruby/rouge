@@ -2,6 +2,35 @@
 # to use this module, require 'rouge/cli'.
 
 module Rouge
+  class FileReader
+    attr_reader :input
+    def initialize(input)
+      @input = input
+    end
+
+    def file
+      case input
+      when '-'
+        $stdin
+      when String
+        File.new(input)
+      when ->(i){ i.respond_to? :read }
+        input
+      end
+    end
+
+    def read
+      @read ||= begin
+        file.read
+      rescue => e
+        $stderr.puts "unable to open #{input}: #{e.message}"
+        exit 1
+      ensure
+        file.close
+      end
+    end
+  end
+
   class CLI
     def self.doc
       return enum_for(:doc) unless block_given?
@@ -158,18 +187,11 @@ module Rouge
       end
 
       def input_stream
-        @input_stream ||= case @input_file
-        when '-'
-          $stdin
-        else
-          File.new(@input_file)
-        end
+        @input_stream ||= FileReader.new(@input_file)
       end
 
       def input
-        input_stream.read
-      rescue => e
-        error! "unable to read #{input_stream.inspect}: #{e.message}"
+        @input ||= input_stream.read
       end
 
       def lexer_class
@@ -206,7 +228,7 @@ module Rouge
       end
 
       def run
-        @formatter.format(@lexer.lex(@input)) do |chunk|
+        formatter.format(lexer.lex(input)) do |chunk|
           print chunk
         end
       end

@@ -67,6 +67,8 @@ module Rouge
         rule(//) { pop! }
       end
 
+      # :expr_bol is the same as :bol but without labels, since
+      # labels can only appear at the beginning of a statement.
       state :bol do
         rule /#{id}:(?!:)/, Name::Label
         mixin :expr_bol

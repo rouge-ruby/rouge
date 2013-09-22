@@ -1,3 +1,11 @@
+## version 0.5.4: 2013-09-21
+
+  * Cleaned up stray invalid error tokens
+  * Fix C++/objc loading bug in `rougify`
+  * Guessing alg tweaks: don't give up if no filename or mimetype matches
+  * Rebuilt the CLI without thor (removed the thor dependency)
+  * objc: Bugfix for `:forward_classname` error tokens
+
 ## version 0.5.3: 2013-09-15
 
   * Critical bugfixes (#98 and #99) for Ruby and Markdown. Some inputs

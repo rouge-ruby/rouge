@@ -133,6 +133,8 @@ module Rouge
       end
 
       state :forward_classname do
+        mixin :whitespace
+
         rule /(#{id})(\s*)(,)(\s*)/ do
           groups(Name::Class, Text, Punctuation, Text)
           push

@@ -8,7 +8,7 @@ If you'd like to help out with this project, assign yourself something from the 
 
 * Delphi/Pascal
 
-[issues]: /jayferd/rouge/issues "Help Out"
+[issues]: https://github.com/jayferd/rouge/issues "Help Out"
 [pygments]: http://pygments.org/ "Pygments"
 
 ## Usage

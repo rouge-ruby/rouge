@@ -108,20 +108,14 @@ module Rouge
       end
 
       state :sqs do
-        rule %r('), Str, :pop!
-        mixin :string
+        rule %r('), Str::Single, :pop!
+        rule %r([^']+), Str::Single
       end
 
       state :dqs do
-        rule %r("), Str, :pop!
-        mixin :string
+        rule %r("), Str::Double, :pop!
+        rule %r([^"]+), Str::Double
       end
-
-      # Lua is 8-bit clean, every character is valid in a string
-      state :string do
-        rule /./, Str
-      end
-
     end
   end
 end

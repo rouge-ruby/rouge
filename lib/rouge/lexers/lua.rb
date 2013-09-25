@@ -42,7 +42,7 @@ module Rouge
       end
 
       state :base do
-        rule %r(--\[(=*)\[.*?\]\1\])ms, Comment::Multiline
+        rule %r(--\[(=*)\[.*?\]\1\])m, Comment::Multiline
         rule %r(--.*$), Comment::Single
 
         rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
@@ -53,7 +53,7 @@ module Rouge
         rule %r(\n), Text
         rule %r([^\S\n]), Text
         # multiline strings
-        rule %r(\[(=*)\[.*?\]\1\])ms, Str
+        rule %r(\[(=*)\[.*?\]\1\])m, Str
 
         rule %r((==|~=|<=|>=|\.\.\.|\.\.|[=+\-*/%^<>#])), Operator
         rule %r([\[\]\{\}\(\)\.,:;]), Punctuation

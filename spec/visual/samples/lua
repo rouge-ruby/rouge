@@ -13,6 +13,8 @@ function index(web)
   return render_index()
 end
 
+snowman('☃')
+
 -- dispatch
 basic1:dispatch_get(index, "/", "/index")
 

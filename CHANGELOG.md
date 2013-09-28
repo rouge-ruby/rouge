@@ -1,3 +1,10 @@
+## version 1.0.0: 2013-09-28
+
+  * lua: encoding bugfix, and a performance tweak for string literals
+  * The Big 1.0!  From now on, strict semver will apply, and new lexers and
+    features will be introduced in minor releases, reserving patch releases
+    for bugfixes.
+
 ## version 0.5.4: 2013-09-21
 
   * Cleaned up stray invalid error tokens

@@ -1,5 +1,5 @@
 class Greeter
-  def initialize(name = "World")
+  def initialize(name="World")
     @name = name
   end
 

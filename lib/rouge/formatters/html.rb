@@ -65,7 +65,7 @@ module Rouge
 
         # generate a string of newline-separated line numbers for the gutter
         numbers = num_lines.times.map do |x|
-          %<<div class="lineno"><pre>#{x+1}</pre></div>>
+          %<<pre class="lineno">#{x+1}</pre>>
         end.join
 
         yield "<div class=#{@css_class.inspect}>" if @wrap

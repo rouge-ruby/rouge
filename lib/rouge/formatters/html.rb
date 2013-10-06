@@ -19,8 +19,8 @@ module Rouge
       # the given theme will be inlined in "style" attributes.  This is
       # useful for formats in which stylesheets are not available.
       #
-      # Content will be wrapped in a `<pre>` tag with the given
-      # `:css_class` unless `:wrap` is set to `false`.
+      # Content will be wrapped in a tag (`div` if tableized, `pre` if
+      # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
         @css_class = opts.fetch(:css_class, 'highlight')
         @line_numbers = opts.fetch(:line_numbers, false)
@@ -65,10 +65,10 @@ module Rouge
 
         # generate a string of newline-separated line numbers for the gutter
         numbers = num_lines.times.map do |x|
-          %<<div class="lineno">#{x+1}</div>>
+          %<<div class="lineno"><pre>#{x+1}</pre></div>>
         end.join
 
-        yield "<pre class=#{@css_class.inspect}>" if @wrap
+        yield "<div class=#{@css_class.inspect}>" if @wrap
         yield "<table><tbody><tr>"
 
         # the "gl" class applies the style for Generic.Lineno
@@ -77,11 +77,13 @@ module Rouge
         yield '</td>'
 
         yield '<td class="code">'
+        yield '<pre>'
         yield formatted
+        yield '</pre>'
         yield '</td>'
 
         yield '</tr></tbody></table>'
-        yield '</pre>' if @wrap
+        yield '</div>' if @wrap
       end
 
       def span(tok, val, &b)

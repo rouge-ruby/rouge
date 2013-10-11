@@ -9,6 +9,14 @@ require 'pathname'
 class VisualTestApp < Sinatra::Application
   BASE = Pathname.new(__FILE__).dirname
   SAMPLES = BASE.join('samples')
+  ROOT = BASE.parent.parent
+
+  ROUGE_LIB = ROOT.join('lib/rouge.rb')
+
+  def reload_source!
+    Object.send :remove_const, :Rouge
+    load ROUGE_LIB
+  end
 
   configure do
     set :root, BASE
@@ -16,6 +24,8 @@ class VisualTestApp < Sinatra::Application
   end
 
   before do
+    reload_source!
+
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
     @theme = theme_class.new

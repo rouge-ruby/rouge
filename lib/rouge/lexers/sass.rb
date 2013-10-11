@@ -1,7 +1,7 @@
-require 'rouge/lexers/sass/common'
-
 module Rouge
   module Lexers
+    Lexer.load_const :SassCommon, 'sass/common.rb'
+
     class Sass < SassCommon
       include Indentation
 

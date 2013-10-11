@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*- #
-#
-require 'rouge/lexers/lua'
 
 module Rouge
   module Lexers
+    Lexer.load_const :Lua, 'lua.rb'
+
     class Moonscript < RegexLexer
       desc "Moonscript (http://www.moonscript.org)"
       tag 'moonscript'

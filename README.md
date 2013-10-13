@@ -20,7 +20,7 @@ First, take a look at the [pretty colors][].
 ``` ruby
 # make some nice lexed html
 source = File.read('/etc/bashrc')
-formatter = Rouge::Formatters::HTML.new(:css_class => '.highlight')
+formatter = Rouge::Formatters::HTML.new(:css_class => 'highlight')
 lexer = Rouge::Lexers::Shell.new
 formatter.format(lexer.lex(source))
 

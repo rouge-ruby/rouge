@@ -46,7 +46,8 @@ module Rouge
         rule %r(\d+), Num::Integer
         rule %r(@#{ident}*), Name::Variable::Instance
         rule %r([A-Z][\w\d_]*), Name::Class
-        rule %r("?#{ident}+"?:), Literal::String::Symbol
+        rule %r("?[^"]+":), Literal::String::Symbol
+        rule %r(#{ident}:), Literal::String::Symbol
         rule %r(:#{ident}), Literal::String::Symbol
 
         rule %r(\s+), Text::Whitespace

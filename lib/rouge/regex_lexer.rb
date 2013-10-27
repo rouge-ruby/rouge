@@ -290,7 +290,7 @@ module Rouge
     MAX_NULL_SCANS = 5
 
     # @private
-    def run_rule(rule, scanner, &b)
+    def run_rule(rule, scanner)
       # XXX HACK XXX
       # StringScanner's implementation of ^ is b0rken.
       # see http://bugs.ruby-lang.org/issues/7092

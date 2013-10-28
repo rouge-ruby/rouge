@@ -1,7 +1,7 @@
 module Rouge
   module Lexers
     class VisualBasic < RegexLexer
-      desc "Matlab"
+      desc "Visual Basic"
       tag 'vb'
       aliases 'visualbasic'
       filenames '*.vbs'

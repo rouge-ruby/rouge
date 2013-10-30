@@ -1,4 +1,4 @@
-Rouge
+module Rouge
   module Themes
     class Monokai < CSSTheme
       name 'monokai'

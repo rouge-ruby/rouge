@@ -1,3 +1,15 @@
+## version 1.1.0: 2013-11-04
+
+  * For tableized line numbers, the table is no longer surrounded by a `<pre>`
+    tag, which is invalid HTML.  This was previously causing issues with HTML
+    post-processors such as loofah.  This may break some stylesheets, as it
+    changes the generated markup, but stylesheets only referring to the scope
+    passed to the formatter should be unaffected.
+  * New lexer: moonscript (thanks @nilnor!)
+  * New theme: monokai, for real this time! (thanks @3100!)
+  * Fix intermittent loading errors for good with `Lexer.load_const`, which
+    closes the long-standing #66
+
 ## version 1.0.0: 2013-09-28
 
   * lua: encoding bugfix, and a performance tweak for string literals

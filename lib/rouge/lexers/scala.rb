@@ -178,6 +178,7 @@ module Rouge
         rule op, Operator
 
         rule /([0-9][0-9]*\.[0-9]*|\.[0-9]+)([eE][+-]?[0-9]+)?[fFdD]?/, Num::Float
+        rule /([0-9][0-9]*[fFdD])/, Num::Float
         rule /0x[0-9a-fA-F]+/, Num::Hex
         rule /[0-9]+L?/, Num::Integer
         rule /\n/, Text

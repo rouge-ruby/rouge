@@ -8,6 +8,8 @@ module Rouge
 
       mimetypes 'text/x-scala', 'application/x-scala'
 
+      # As documented in the ENBF section of the scala specification
+      # http://www.scala-lang.org/docu/files/ScalaReference.pdf
       op = %r((?:
         [\-~\^\*!%&\\<>\|+=:/?@]|
         [\u00a6-\u00a7\u00a9\u00ac\u00ae\u00b0-\u00b1]|

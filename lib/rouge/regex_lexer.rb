@@ -287,7 +287,6 @@ module Rouge
           if size = stream.skip(rule.re)
             debug { "    got #{stream[0].inspect}" } if @debug
 
-            @group_count = 0
             instance_exec(stream, &rule.callback)
 
             if size.zero?
@@ -319,10 +318,12 @@ module Rouge
       yield_token(tok, val)
     end
 
+    # @deprecated
+    #
     # Yield a token with the next matched group.  Subsequent calls
     # to this method will yield subsequent groups.
     def group(tok)
-      yield_token(tok, @current_stream[@group_count += 1])
+      raise "RegexLexer#group is deprecated: use #groups instead"
     end
 
     def groups(*tokens)

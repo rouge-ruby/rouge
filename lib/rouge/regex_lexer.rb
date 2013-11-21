@@ -10,18 +10,10 @@ module Rouge
     class Rule
       attr_reader :callback
       attr_reader :re
+      attr_reader :beginning_of_line
       def initialize(re, callback)
         @re = re
         @callback = callback
-      end
-
-      # Does the regex start with a ^?
-      #
-      # Since Regexps are immuntable, this is cached to avoid
-      # calling Regexp#source more than once.
-      def beginning_of_line?
-        return @beginning_of_line if instance_variable_defined?(:@beginning_of_line)
-
         @beginning_of_line = re.source[0] == ?^
       end
 
@@ -101,11 +93,25 @@ module Rouge
       def rule(re, tok=nil, next_state=nil, &callback)
         callback ||= case next_state
         when :pop!
-          proc { token tok; pop! }
+          proc do |stream|
+            debug { "    yielding #{tok.qualname}, #{stream[0].inspect}" } if @debug
+            @output_stream.call(tok, stream[0])
+            debug { "    popping stack: #{1}" } if @debug
+            @stack.pop or raise 'empty stack!'
+          end
         when Symbol
-          proc { token tok; push next_state }
+          proc do |stream|
+            debug { "    yielding #{tok.qualname}, #{stream[0].inspect}" } if @debug
+            @output_stream.call(tok, stream[0])
+            state = @states[next_state] || self.class.get_state(next_state)
+            debug { "    pushing #{state.name}" } if @debug
+            @stack.push(state)
+          end
         else
-          proc { token tok }
+          proc do |stream|
+            debug { "    yielding #{tok.qualname}, #{stream[0].inspect}" } if @debug
+            @output_stream.call(tok, stream[0])
+          end
         end
 
         rules << Rule.new(re, callback)
@@ -180,10 +186,8 @@ module Rouge
     def self.get_state(name)
       return name if name.is_a? State
 
-      name = name.to_s
-
-      states[name] ||= begin
-        defn = state_definitions[name] or raise "unknown state: #{name.inspect}"
+      states[name.to_sym] ||= begin
+        defn = state_definitions[name.to_s] or raise "unknown state: #{name.inspect}"
         defn.to_state(self)
       end
     end
@@ -235,39 +239,66 @@ module Rouge
       stream = StringScanner.new(str)
 
       @current_stream = stream
+      @output_stream  = b
+      @states         = self.class.states
+      @null_steps     = 0
 
       until stream.eos?
-        debug { "lexer: #{self.class.tag}" }
-        debug { "stack: #{stack.map(&:name).inspect}" }
-        debug { "stream: #{stream.peek(20).inspect}" }
-        success = step(get_state(state), stream, &b)
+        if @debug
+          debug { "lexer: #{self.class.tag}" }
+          debug { "stack: #{stack.map(&:name).inspect}" }
+          debug { "stream: #{stream.peek(20).inspect}" }
+        end
+
+        success = step(state, stream)
 
         if !success
-          debug { "    no match, yielding Error" }
+          debug { "    no match, yielding Error" } if @debug
           b.call(Token::Tokens::Error, stream.getch)
         end
       end
     end
+
+    # The number of successive scans permitted without consuming
+    # the input stream.  If this is exceeded, the match fails.
+    MAX_NULL_SCANS = 5
 
     # Runs one step of the lex.  Rules in the current state are tried
     # until one matches, at which point its callback is called.
     #
     # @return true if a rule was tried successfully
     # @return false otherwise.
-    def step(state, stream, &b)
+    def step(state, stream)
       state.rules.each do |rule|
-        case rule
-        when State
-          debug { "  entering mixin #{rule.name}" }
-          return true if step(rule, stream, &b)
-          debug { "  exiting  mixin #{rule.name}" }
-        when Rule
-          debug { "  trying #{rule.inspect}" }
+        if rule.is_a?(State)
+          debug { "  entering mixin #{rule.name}" } if @debug
+          return true if step(rule, stream)
+          debug { "  exiting  mixin #{rule.name}" } if @debug
+        else
+          debug { "  trying #{rule.inspect}" } if @debug
 
-          if run_rule(rule, stream)
-            debug { "    got #{stream[0].inspect}" }
+          # XXX HACK XXX
+          # StringScanner's implementation of ^ is b0rken.
+          # see http://bugs.ruby-lang.org/issues/7092
+          # TODO: this doesn't cover cases like /(a|^b)/, but it's
+          # the most common, for now...
+          next if rule.beginning_of_line && !stream.beginning_of_line?
 
-            run_callback(stream, rule.callback, &b)
+          if size = stream.skip(rule.re)
+            debug { "    got #{stream[0].inspect}" } if @debug
+
+            @group_count = 0
+            instance_exec(stream, &rule.callback)
+
+            if size.zero?
+              @null_steps += 1
+              if @null_steps > MAX_NULL_SCANS
+                debug { "    too many scans without consuming the string!" } if @debug
+                return false
+              end
+            else
+              @null_steps = 0
+            end
 
             return true
           end
@@ -277,43 +308,6 @@ module Rouge
       false
     end
 
-    # @private
-    def run_callback(stream, callback, &output_stream)
-      with_output_stream(output_stream) do
-        @group_count = 0
-        instance_exec(stream, &callback)
-      end
-    end
-
-    # The number of successive scans permitted without consuming
-    # the input stream.  If this is exceeded, the match fails.
-    MAX_NULL_SCANS = 5
-
-    # @private
-    def run_rule(rule, scanner)
-      # XXX HACK XXX
-      # StringScanner's implementation of ^ is b0rken.
-      # see http://bugs.ruby-lang.org/issues/7092
-      # TODO: this doesn't cover cases like /(a|^b)/, but it's
-      # the most common, for now...
-      return false if rule.beginning_of_line? && !scanner.beginning_of_line?
-
-      if (@null_steps ||= 0) >= MAX_NULL_SCANS
-        debug { "    too many scans without consuming the string!" }
-        return false
-      end
-
-      scanner.scan(rule.re) or return false
-
-      if scanner.matched_size.zero?
-        @null_steps += 1
-      else
-        @null_steps = 0
-      end
-
-      true
-    end
-
     # Yield a token.
     #
     # @param tok
@@ -321,8 +315,7 @@ module Rouge
     # @param val
     #   (optional) the string value to yield.  If absent, this defaults
     #   to the entire last match.
-    def token(tok, val=:__absent__)
-      val = @current_stream[0] if val == :__absent__
+    def token(tok, val=@current_stream[0])
       yield_token(tok, val)
     end
 
@@ -348,11 +341,11 @@ module Rouge
     # @param [String] text
     #   The text to delegate.  This defaults to the last matched string.
     def delegate(lexer, text=nil)
-      debug { "    delegating to #{lexer.inspect}" }
+      debug { "    delegating to #{lexer.inspect}" } if @debug
       text ||= @current_stream[0]
 
       lexer.lex(text, :continue => true) do |tok, val|
-        debug { "    delegated token: #{tok.inspect}, #{val.inspect}" }
+        debug { "    delegated token: #{tok.inspect}, #{val.inspect}" } if @debug
         yield_token(tok, val)
       end
     end
@@ -374,7 +367,7 @@ module Rouge
         self.state
       end
 
-      debug { "    pushing #{push_state.name}" }
+      debug { "    pushing #{push_state.name}" } if @debug
       stack.push(push_state)
     end
 
@@ -383,7 +376,7 @@ module Rouge
     def pop!(times=1)
       raise 'empty stack!' if stack.empty?
 
-      debug { "    popping stack: #{times}" }
+      debug { "    popping stack: #{times}" } if @debug
 
       stack.pop(times)
 
@@ -398,7 +391,7 @@ module Rouge
 
     # reset the stack back to `[:root]`.
     def reset_stack
-      debug { '    resetting stack' }
+      debug { '    resetting stack' } if @debug
       stack.clear
       stack.push get_state(:root)
     end
@@ -417,19 +410,6 @@ module Rouge
     end
 
   private
-    def with_output_stream(output_stream, &b)
-      old_output_stream = @output_stream
-      @output_stream = Enumerator::Yielder.new do |tok, val|
-        debug { "    yielding #{tok.qualname}, #{val.inspect}" }
-        output_stream.call(tok, val)
-      end
-
-      yield
-
-    ensure
-      @output_stream = old_output_stream
-    end
-
     def yield_token(tok, val)
       return if val.nil? || val.empty?
       @output_stream.yield(tok, val)

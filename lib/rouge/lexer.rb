@@ -322,6 +322,8 @@ module Rouge
     #   tried and each stream consumed.  Try it, it's pretty useful.
     def initialize(opts={})
       options(opts)
+
+      @debug = option(:debug)
     end
 
     # get and/or specify the options for this lexer.
@@ -344,21 +346,13 @@ module Rouge
     # is given as a block because some debug messages contain calculated
     # information that is unnecessary for lexing in the real world.
     #
+    # Calls to this method should be guarded with "if @debug" for best
+    # performance when debugging is turned off.
+    #
     # @example
-    #   debug { "hello, world!" }
-    def debug(&b)
-      # This method is a hotspot, unfortunately.
-      #
-      # For performance reasons, the "debug" option of a lexer cannot
-      # be changed once it has begun lexing.  This method will redefine
-      # itself on the first call to a noop if "debug" is not set.
-      if option(:debug)
-        def self.debug; puts yield; end
-      else
-        def self.debug; end
-      end
-
-      debug(&b)
+    #   debug { "hello, world!" } if @debug
+    def debug
+      puts yield if @debug
     end
 
     # @abstract

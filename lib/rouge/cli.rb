@@ -42,6 +42,7 @@ module Rouge
       yield %|	help		#{Help.desc}|
       yield %|	style		#{Style.desc}|
       yield %|	list		#{List.desc}|
+      yield %|	version		#{Version.desc}|
       yield %||
       yield %|See `rougify help <command>` for more info.|
     end
@@ -80,6 +81,8 @@ module Rouge
 
     def self.class_from_arg(arg)
       case arg
+      when 'version', '--version'
+        Version
       when 'help'
         Help
       when 'highlight', 'hi'
@@ -88,6 +91,18 @@ module Rouge
         Style
       when 'list'
         List
+      end
+    end
+
+    class Version < CLI
+      def self.desc
+        "print the rouge version number"
+      end
+
+      def self.parse(*); new; end
+
+      def run
+        puts Rouge.version
       end
     end
 

@@ -326,6 +326,8 @@ module Rouge
       raise "RegexLexer#group is deprecated: use #groups instead"
     end
 
+    # Yield tokens corresponding to the matched groups of the current
+    # match.
     def groups(*tokens)
       tokens.each_with_index do |tok, i|
         yield_token(tok, @current_stream[i+1])

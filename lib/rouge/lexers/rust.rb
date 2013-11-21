@@ -109,13 +109,13 @@ module Rouge
 
         rule /[\[{(]/ do |m|
           @macro_delims[delim_map[m[0]]] += 1
-          debug { "    macro_delims: #{@macro_delims.inspect}" } if @debug
+          puts "    macro_delims: #{@macro_delims.inspect}" if @debug
           token Punctuation
         end
 
         rule /[\]})]/ do |m|
           @macro_delims[m[0]] -= 1
-          debug { "    macro_delims: #{@macro_delims.inspect}" } if @debug
+          puts "    macro_delims: #{@macro_delims.inspect}" if @debug
           pop! if macro_closed?
           token Punctuation
         end

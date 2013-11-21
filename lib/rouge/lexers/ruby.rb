@@ -42,8 +42,8 @@ module Rouge
           interp = /[rQWxI]/ === m[1]
           toktype = Str::Other
 
-          debug { "    open: #{open.inspect}" } if @debug
-          debug { "    close: #{close.inspect}" } if @debug
+          puts "    open: #{open.inspect}" if @debug
+          puts "    close: #{close.inspect}" if @debug
 
           # regexes
           if m[1] == 'r'
@@ -269,7 +269,7 @@ module Rouge
             <<? | >>? | <=>? | >= | ===?
           )
         )x do |m|
-          debug { "matches: #{[m[0], m[1], m[2], m[3]].inspect}" } if @debug
+          puts "matches: #{[m[0], m[1], m[2], m[3]].inspect}" if @debug
           groups Name::Class, Operator, Name::Function
           pop!
         end

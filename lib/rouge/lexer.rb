@@ -342,6 +342,9 @@ module Rouge
       end
     end
 
+    # @deprecated
+    # Instead of `debug { "foo" }`, simply `puts "foo" if @debug`.
+    #
     # Leave a debug message if the `:debug` option is set.  The message
     # is given as a block because some debug messages contain calculated
     # information that is unnecessary for lexing in the real world.
@@ -352,6 +355,7 @@ module Rouge
     # @example
     #   debug { "hello, world!" } if @debug
     def debug
+      warn "Lexer#debug is deprecated.  Simply puts if @debug instead."
       puts yield if @debug
     end
 

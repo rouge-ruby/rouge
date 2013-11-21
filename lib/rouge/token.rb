@@ -1,9 +1,9 @@
 module Rouge
   class Token
     class << self
-      def name; @name; end
-      def parent; @parent; end
-      def shortname; @shortname; end
+      attr_reader :name
+      attr_reader :parent
+      attr_reader :shortname
 
       def cache
         @cache ||= {}

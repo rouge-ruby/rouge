@@ -46,7 +46,7 @@ module Rouge
         yield '</pre>' if @wrap
       end
 
-      def stream_tableized(tokens, &b)
+      def stream_tableized(tokens)
         num_lines = 0
         last_val = ''
         formatted = ''
@@ -86,30 +86,27 @@ module Rouge
         yield '</div>' if @wrap
       end
 
-      def span(tok, val, &b)
-        # TODO: properly html-encode val
-        val = CGI.escape_html(val)
+      # TODO: properly html-encode val
+      TABLE_FOR_ESCAPE_HTML = {
+        '&' => '&amp;',
+        '<' => '&lt;',
+        '>' => '&gt;',
+      }
 
-        case tok.shortname
-        when ''
+      def span(tok, val)
+        val = val.gsub(/[&<>]/, TABLE_FOR_ESCAPE_HTML)
+        shortname = tok.shortname or raise "unknown token: #{tok.inspect} for #{val.inspect}"
+
+        if shortname.empty?
           yield val
-        when nil
-          raise "unknown token: #{tok.inspect} for #{val.inspect}"
         else
           if @inline_theme
             rules = @inline_theme.style_for(tok).rendered_rules
 
-            yield '<span style='
-            yield rules.to_a.join(';').inspect
-            yield '>'
+            yield "<span style=\"#{rules.to_a.join(';')}\">#{val}</span>"
           else
-            yield '<span class='
-            yield tok.shortname.inspect
-            yield '>'
+            yield "<span class=\"#{shortname}\">#{val}</span>"
           end
-
-          yield val
-          yield '</span>'
         end
       end
     end

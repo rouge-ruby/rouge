@@ -17,7 +17,7 @@ module Rouge
 
       # reset the indentation levels
       def reset_indent
-        debug { "    yaml: reset_indent" }
+        debug { "    yaml: reset_indent" } if @debug
         @indent_stack = [0]
         @next_indent = 0
         @block_scalar_indent = nil
@@ -39,12 +39,12 @@ module Rouge
       # Save a possible indentation level
       def save_indent(match)
         @next_indent = match.size
-        debug { "    yaml: indent: #{self.indent}/#@next_indent" }
-        debug { "    yaml: popping indent stack - before: #@indent_stack" }
+        debug { "    yaml: indent: #{self.indent}/#@next_indent" } if @debug
+        debug { "    yaml: popping indent stack - before: #@indent_stack" } if @debug
         if dedent?(@next_indent)
           @indent_stack.pop while dedent?(@next_indent)
-          debug { "    yaml: popping indent stack - after: #@indent_stack" }
-          debug { "    yaml: indent: #{self.indent}/#@next_indent" }
+          debug { "    yaml: popping indent stack - after: #@indent_stack" } if @debug
+          debug { "    yaml: indent: #{self.indent}/#@next_indent" } if @debug
 
           # dedenting to a state not previously indented to is an error
           [match[0...self.indent], match[self.indent..-1]]
@@ -54,7 +54,7 @@ module Rouge
       end
 
       def continue_indent(match)
-        debug { "    yaml: continue_indent" }
+        debug { "    yaml: continue_indent" } if @debug
         @next_indent += match.size
       end
 

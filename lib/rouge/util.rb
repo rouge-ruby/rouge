@@ -72,14 +72,14 @@ module Rouge
     def starts_block(block_state)
       @block_state = block_state
       @block_indentation = @last_indentation || ''
-      debug { "    starts_block #{block_state.inspect}" }
-      debug { "    block_indentation: #{@block_indentation.inspect}" }
+      debug { "    starts_block #{block_state.inspect}" } if @debug
+      debug { "    block_indentation: #{@block_indentation.inspect}" } if @debug
     end
 
     # handle a single indented line
     def indentation(indent_str)
-      debug { "    indentation #{indent_str.inspect}" }
-      debug { "    block_indentation: #{@block_indentation.inspect}" }
+      debug { "    indentation #{indent_str.inspect}" } if @debug
+      debug { "    block_indentation: #{@block_indentation.inspect}" } if @debug
       @last_indentation = indent_str
 
       # if it's an indent and we know where to go next,

@@ -86,7 +86,7 @@ module Rouge
       state :function_name do
         rule /\s+/, Text
         rule %r((?:([A-Za-z_][A-Za-z0-9_]*)(\.))?([A-Za-z_][A-Za-z0-9_]*)) do
-          group Name::Class; group Punctuation; group Name::Function
+          groups Name::Class, Punctuation, Name::Function
           pop!
         end
         # inline function

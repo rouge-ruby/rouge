@@ -264,15 +264,13 @@ module Rouge
 
         # complex
         rule /(#c)(\()/i do
-          group Num
-          group Punctuation
+          groups Num, Punctuation
           push :root
         end
 
         # arrays and structures
         rule /(#(?:\d+a|s))(\()/i do
-          group Literal::Other
-          group Punctuation
+          groups Literal::Other, Punctuation
           push :root
         end
 

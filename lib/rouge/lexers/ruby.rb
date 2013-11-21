@@ -241,17 +241,17 @@ module Rouge
           tolerant, heredoc_name = @heredoc_queue.first
           check = tolerant ? m[2].strip : m[2].rstrip
 
-          group Str::Heredoc
-
           # check if we found the end of the heredoc
-          if check == heredoc_name
-            group Name::Constant
+          line_tok = if check == heredoc_name
             @heredoc_queue.shift
             # if there's no more, we're done looking.
             pop! if @heredoc_queue.empty?
+            Name::Constant
           else
-            group Str::Heredoc
+            Str::Heredoc
           end
+
+          groups(Str::Heredoc, line_tok)
         end
 
         rule /[#\\\n]/, Str::Heredoc

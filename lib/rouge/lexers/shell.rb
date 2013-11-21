@@ -39,8 +39,7 @@ module Rouge
         rule /^\S*[\$%>#] +/, Generic::Prompt
 
         rule /(\b\w+)(=)/ do |m|
-          group Name::Variable
-          group Operator
+          groups Name::Variable, Operator
         end
 
         rule /[\[\]{}()=]/, Operator

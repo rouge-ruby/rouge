@@ -95,14 +95,14 @@ module Rouge
 
         # commands that take a text segment as an argument
         rule /([aic])(\s*)/ do
-          group Keyword; group Text; goto :text
+          groups Keyword, Text; goto :text
         end
 
         rule /[pd]/, Keyword
 
         # commands that take a number argument
         rule /([qQl])(\s+)(\d+)/i do
-          group Keyword; group Text; group Num
+          groups Keyword, Text, Num
           pop!
         end
 
@@ -111,13 +111,13 @@ module Rouge
 
         # commands that take a filename argument
         rule /([rRwW])(\s+)(\S+)/ do
-          group Keyword; group Text; group Name
+          groups Keyword, Text, Name
           pop!
         end
 
         # commands that take a label argument
         rule /([:btT])(\s+)(\S+)/ do
-          group Keyword; group Text; group Name::Label
+          groups Keyword, Text, Name::Label
           pop!
         end
       end

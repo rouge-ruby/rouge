@@ -67,8 +67,7 @@ module Rouge
         rule %r([<>!+*/-]), Operator
 
         rule /(class|include)(\s*)(#{qualname})/ do
-          group Keyword; group Text
-          group Name::Class
+          groups Keyword, Text, Name::Class
         end
 
         rule /node\b/, Keyword, :regex_allowed

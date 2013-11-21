@@ -80,14 +80,12 @@ module Rouge
         rule /[-=]>/, Name::Function
 
         rule /(@)([ \t]*)(#{id})/ do
-          group Name::Variable::Instance; group Text
-          group Name::Attribute
+          groups Name::Variable::Instance, Text, Name::Attribute
           push :slash_starts_regex
         end
 
         rule /([.])([ \t]*)(#{id})/ do
-          group Punctuation; group Text
-          group Name::Attribute
+          groups Punctuation, Text, Name::Attribute
           push :slash_starts_regex
         end
 

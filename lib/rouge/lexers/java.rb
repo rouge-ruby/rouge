@@ -48,8 +48,7 @@ module Rouge
         rule /"(\\\\|\\"|[^"])*"/, Str
         rule /'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
         rule /(\.)(#{id})/ do
-          group Operator
-          group Name::Attribute
+          groups Operator, Name::Attribute
         end
         rule /#{id}:/, Name::Label
         rule /\$?#{id}/, Name

@@ -82,7 +82,7 @@ module Rouge
         rule %r(
           (/) (\[#{dot}*?\]) (#{dot}*\n)
         )x do
-          group Comment; group Comment::Special; group Comment
+          groups Comment, Comment::Special, Comment
           pop!
         end
 

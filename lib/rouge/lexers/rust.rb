@@ -87,7 +87,7 @@ module Rouge
         rule /([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule /[.]\s*#{id}/, Name::Property
         rule /(#{id})(::)/m do
-          group Name::Namespace; group Punctuation
+          groups Name::Namespace, Punctuation
         end
 
         # macros

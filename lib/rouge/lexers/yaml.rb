@@ -342,8 +342,8 @@ module Rouge
 
       state :yaml_directive do
         rule /([ ]+)(\d+\.\d+)/ do
-          group Text; group Num
-          pop!; push :ignored_line
+          groups Text, Num
+          goto :ignored_line
         end
       end
 
@@ -352,9 +352,8 @@ module Rouge
           ([ ]+)(!|![\w-]*!) # prefix
           ([ ]+)(!|!?[\w;/?:@&=+$,.!~*'()\[\]%-]+) # tag handle
         )x do
-          group Text; group Keyword::Type
-          group Text; group Keyword::Type
-          pop!; push :ignored_line
+          groups Text, Keyword::Type, Text, Keyword::Type
+          goto :ignored_line
         end
       end
     end

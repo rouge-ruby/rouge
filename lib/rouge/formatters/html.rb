@@ -86,7 +86,6 @@ module Rouge
         yield '</div>' if @wrap
       end
 
-      # TODO: properly html-encode val
       TABLE_FOR_ESCAPE_HTML = {
         '&' => '&amp;',
         '<' => '&lt;',

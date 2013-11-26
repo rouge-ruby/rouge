@@ -83,7 +83,7 @@ module Rouge
             attrs = []
 
             attrs << ['38', '5', fg.to_s] if fg
-            attrs << ['45', '5', bg.to_s] if bg
+            attrs << ['48', '5', bg.to_s] if bg
             attrs << '01' if style[:bold]
             attrs << '04' if style[:italic] # underline, but hey, whatevs
             escape(attrs)

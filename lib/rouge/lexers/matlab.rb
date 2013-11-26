@@ -25,6 +25,18 @@ module Rouge
 
       state :root do
         rule /\s+/m, Text # Whitespace
+        rule %r([{]%.*?%[}])m, Comment::Multiline
+        rule /%.*$/, Comment::Single
+        rule /([.][.][.])(.*?)$/ do
+          groups(Keyword, Comment)
+        end
+
+        rule /^(!)(.*?)(?=%|$)/ do |m|
+          token Keyword, m[1]
+          delegate Shell, m[2]
+        end
+
+
         rule /[a-zA-Z][_a-zA-Z0-9]*/m do |m|
           match = m[0]
           if self.class.keywords.include? match
@@ -35,10 +47,8 @@ module Rouge
             token Name
           end
         end
-        rule %r{[(){};:,\/\\\]\[]}, Punctuation
 
-        rule %r(%\{.*?%\})m, Comment::Multiline
-        rule /%.*$/, Comment::Single
+        rule %r{[(){};:,\/\\\]\[]}, Punctuation
 
         rule /~=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
 
@@ -48,11 +58,13 @@ module Rouge
         rule /\d+L/, Num::Integer::Long
         rule /\d+/, Num::Integer
 
-        mixin :strings
+        rule /'/, Str::Single, :string
       end
 
-      state :strings do
-        rule /'.*?'/, Str::Single
+      state :string do
+        rule /[^']+/, Str::Single
+        rule /''/, Str::Escape
+        rule /'/, Str::Single, :pop!
       end
     end
   end

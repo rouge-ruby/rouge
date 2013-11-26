@@ -1,100 +1,348 @@
 # not required by the main lib.
 # to use this module, require 'rouge/cli'.
 
-# stdlib
-require 'optparse'
-
-# gems
-require 'thor'
-
 module Rouge
-  class CLI < Thor
-    default_task :highlight
-
-    def self.start(argv=ARGV, *a)
-      if argv.include? '-v' or argv.include? '--version'
-        puts Rouge.version
-        exit 0
-      end
-
-      unless %w(highlight style list --help -h help).include?(argv.first)
-        argv.unshift 'highlight'
-      end
-
-      super(argv, *a)
+  class FileReader
+    attr_reader :input
+    def initialize(input)
+      @input = input
     end
 
-    desc 'highlight [FILE]', 'highlight some code'
-    option :input_file, :aliases => '-i',  :desc => 'the file to operate on'
-    option :lexer, :aliases => '-l',
-      :desc => ('Which lexer to use.  If not provided, rougify will try to ' +
-                'guess based on --mimetype, the filename, and the file ' +
-                'contents.')
-    option :formatter, :aliases => '-f', :default => 'terminal256',
-      :desc => ('Which formatter to use.')
-    option :mimetype, :aliases => '-m',
-      :desc => ('a mimetype that Rouge will use to guess the correct lexer. ' +
-                'This is ignored if --lexer is specified.')
-    option :lexer_opts, :aliases => '-L', :type => :hash, :default => {},
-      :desc => ('a hash of options to pass to the lexer.')
-    option :formatter_opts, :aliases => '-F', :type => :hash, :default => {},
-      :desc => ('a hash of options to pass to the formatter.')
-    def highlight(file=nil)
-      filename = options[:file] || file
-      source = filename ? File.read(filename) : $stdin.read
+    def file
+      case input
+      when '-'
+        $stdin
+      when String
+        File.new(input)
+      when ->(i){ i.respond_to? :read }
+        input
+      end
+    end
 
-      if options[:lexer].nil?
-        lexer_class = Lexer.guess(
-          :filename => filename,
-          :mimetype => options[:mimetype],
-          :source   => source,
-        )
+    def read
+      @read ||= begin
+        file.read
+      rescue => e
+        $stderr.puts "unable to open #{input}: #{e.message}"
+        exit 1
+      ensure
+        file.close
+      end
+    end
+  end
+
+  class CLI
+    def self.doc
+      return enum_for(:doc) unless block_given?
+
+      yield %|usage: rougify [command] [args...]|
+      yield %||
+      yield %|where <command> is one of:|
+      yield %|	highlight	#{Highlight.desc}|
+      yield %|	help		#{Help.desc}|
+      yield %|	style		#{Style.desc}|
+      yield %|	list		#{List.desc}|
+      yield %|	version		#{Version.desc}|
+      yield %||
+      yield %|See `rougify help <command>` for more info.|
+    end
+
+    class Error < StandardError
+      attr_reader :message, :status
+      def initialize(message, status=1)
+        @message = message
+        @status = status
+      end
+    end
+
+    def self.parse(argv=ARGV)
+      argv = normalize_syntax(argv)
+
+      mode = argv.shift
+
+      klass = class_from_arg(mode)
+      return klass.parse(argv) if klass
+
+      case mode
+      when '-h', '--help', 'help', '-help'
+        Help.parse(argv)
       else
-        lexer_class = Lexer.find(options[:lexer])
-        raise "unknown lexer: #{options[:lexer]}" unless lexer_class
+        argv.unshift(mode) if mode
+        Highlight.parse(argv)
+      end
+    end
+
+    def initialize(options={})
+    end
+
+    def error!(msg, status=1)
+      raise Error.new(msg, status)
+    end
+
+    def self.class_from_arg(arg)
+      case arg
+      when 'version', '--version'
+        Version
+      when 'help'
+        Help
+      when 'highlight', 'hi'
+        Highlight
+      when 'style'
+        Style
+      when 'list'
+        List
+      end
+    end
+
+    class Version < CLI
+      def self.desc
+        "print the rouge version number"
       end
 
-      formatter_class = Formatter.find(options[:formatter])
+      def self.parse(*); new; end
 
-      # only HTML is supported for now
-      formatter = formatter_class.new(normalize_hash_keys(options[:formatter_opts]))
-      lexer = lexer_class.new(normalize_hash_keys(options[:lexer_opts]))
-
-      formatter.format(lexer.lex(source), &method(:print))
+      def run
+        puts Rouge.version
+      end
     end
 
-    desc 'style THEME', 'render THEME as css'
-    option :scope, :desc => "a css selector to scope the styles to"
-    def style(theme_name='thankful_eyes')
-      theme = Theme.find(theme_name)
-      raise "unknown theme: #{theme_name}" unless theme
+    class Help < CLI
+      def self.desc
+        "print help info"
+      end
 
-      theme.new(options).render(&method(:puts))
-    end
+      def self.doc
+        return enum_for(:doc) unless block_given?
 
-    desc 'list', 'list the available lexers, formatters, and styles'
-    def list
-      puts "== Available Lexers =="
-      all_lexers = Lexer.all
-      max_len = all_lexers.map { |l| l.tag.size }.max
+        yield %|usage: rougify help <command>|
+        yield %||
+        yield %|print help info for <command>.|
+      end
 
-      Lexer.all.each do |lexer|
-        desc = "#{lexer.desc}"
-        if lexer.aliases.any?
-          desc << " [aliases: #{lexer.aliases.join(',')}]"
+      def self.parse(argv)
+        opts = { :mode => CLI }
+        until argv.empty?
+          arg = argv.shift
+          klass = class_from_arg(arg)
+          if klass
+            opts[:mode] = klass
+            next
+          end
         end
-        puts "%s: %s" % [lexer.tag, desc]
-        puts
+        new(opts)
+      end
+
+      def initialize(opts={})
+        @mode = opts[:mode]
+      end
+
+      def run
+        @mode.doc.each(&method(:puts))
+      end
+    end
+
+    class Highlight < CLI
+      def self.desc
+        "highlight code"
+      end
+
+      def self.doc
+        return enum_for(:doc) unless block_given?
+
+        yield %[usage: rougify highlight <filename> [options...]]
+        yield %[       rougify highlight [options...]]
+        yield %[]
+        yield %[--input-file|-i <filename>  specify a file to read, or - to use stdin]
+        yield %[]
+        yield %[--lexer|-l <lexer>          specify the lexer to use.]
+        yield %[                            If not provided, rougify will try to guess]
+        yield %[                            based on --mimetype, the filename, and the]
+        yield %[                            file contents.]
+        yield %[]
+        yield %[--mimetype|-m <mimetype>    specify a mimetype for lexer guessing]
+        yield %[]
+        yield %[--lexer-opts|-L <opts>      specify lexer options in CGI format]
+        yield %[                            (opt1=val1&opt2=val2)]
+        yield %[]
+        yield %[--formatter-opts|-F <opts>  specify formatter options in CGI format]
+        yield %[                            (opt1=val1&opt2=val2)]
+      end
+
+      def self.parse(argv)
+        opts = {
+          :formatter => 'terminal256',
+          :input_file => '-',
+          :lexer_opts => {},
+          :formatter_opts => {},
+        }
+
+        until argv.empty?
+          arg = argv.shift
+          case arg
+          when '--input-file', '-i'
+            opts[:input_file] = argv.shift
+          when '--mimetype', '-m'
+            opts[:mimetype] = argv.shift
+          when '--lexer', '-l'
+            opts[:lexer] = argv.shift
+          when '--formatter', '-f'
+            opts[:formatter] = argv.shift
+          when '--lexer-opts', '-L'
+            opts[:lexer_opts] = parse_cgi(argv.shift)
+          when '--formatter-opts', '-F'
+            opts[:formatter_opts] = parse_cgi(argv.shift)
+          when /^--/
+            error! "unknown option #{arg.inspect}"
+          else
+            opts[:input_file] = arg
+          end
+        end
+
+        new(opts)
+      end
+
+      def input_stream
+        @input_stream ||= FileReader.new(@input_file)
+      end
+
+      def input
+        @input ||= input_stream.read
+      end
+
+      def lexer_class
+        @lexer_class ||= Lexer.guess(
+          :filename => @input_file,
+          :mimetype => @mimetype,
+          :source => input_stream,
+        )
+      end
+
+      def lexer
+        @lexer ||= lexer_class.new(@lexer_opts)
+      end
+
+      attr_reader :input_file, :lexer_name, :mimetype, :formatter
+
+      def initialize(opts={})
+        @input_file = opts[:input_file]
+
+        if opts[:lexer]
+          @lexer_class = Lexer.find(opts[:lexer]) \
+            or error! "unkown lexer #{opts[:lexer].inspect}"
+        else
+          @lexer_name = opts[:lexer]
+          @mimetype = opts[:mimetype]
+        end
+
+        @lexer_opts = opts[:lexer_opts]
+
+        formatter_class = Formatter.find(opts[:formatter]) \
+          or error!  "unknown formatter #{opts[:formatter]}"
+
+        @formatter = formatter_class.new(opts[:formatter_opts])
+      end
+
+      def run
+        formatter.format(lexer.lex(input)) do |chunk|
+          print chunk
+        end
+      end
+
+    private
+      def self.parse_cgi(str)
+        pairs = CGI.parse(str).map { |k, v| v.first }
+        Hash[pairs]
+      end
+    end
+
+    class Style < CLI
+      def self.desc
+        "print CSS styles"
+      end
+
+      def self.doc
+        return enum_for(:doc) unless block_given?
+
+        yield %|usage: rougify style [<theme-name>] [<options>]|
+        yield %||
+        yield %|Print CSS styles for the given theme.  Extra options are|
+        yield %|passed to the theme.  Theme defaults to thankful_eyes.|
+        yield %||
+        yield %|options:|
+        yield %|  --scope	(default: .highlight) a css selector to scope by|
+      end
+
+      def self.parse(argv)
+        opts = { :theme_name => 'thankful_eyes' }
+
+        until argv.empty?
+          arg = argv.shift
+          case arg
+          when /--(\w+)/
+            opts[$1.tr('-', '_').to_sym] = argv.shift
+          else
+            opts[:theme_name] = arg
+          end
+        end
+
+        new(opts)
+      end
+
+      def initialize(opts)
+        theme_class = Theme.find(opts.delete(:theme_name)) \
+          or error! "unknown theme: #{theme_name}"
+
+        @theme = theme_class.new(opts)
+      end
+
+      def run
+        @theme.render(&method(:puts))
+      end
+    end
+
+    class List < CLI
+      def self.desc
+        "list available lexers"
+      end
+
+      def self.doc
+        return enum_for(:doc) unless block_given?
+
+        yield %|usage: rouge list|
+        yield %||
+        yield %|print a list of all available lexers with their descriptions.|
+      end
+
+      def self.parse(argv)
+        new
+      end
+
+      def run
+        puts "== Available Lexers =="
+
+        Lexer.all.each do |lexer|
+          desc = "#{lexer.desc}"
+          if lexer.aliases.any?
+            desc << " [aliases: #{lexer.aliases.join(',')}]"
+          end
+          puts "%s: %s" % [lexer.tag, desc]
+          puts
+        end
       end
     end
 
   private
-    # TODO: does Thor do this for me?
-    def normalize_hash_keys(hash)
-      out = {}
-      hash.each do |k, v|
-        new_key = k.tr('-', '_').to_sym
-        out[new_key] = v
+    def self.normalize_syntax(argv)
+      out = []
+      argv.each do |arg|
+        case arg
+        when /^(--\w+)=(.*)$/
+          out << $1 << $2
+        when /^(-\w)(.+)$/
+          out << $1 << $2
+        else
+          out << arg
+        end
       end
 
       out

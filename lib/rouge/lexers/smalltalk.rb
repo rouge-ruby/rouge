@@ -12,14 +12,14 @@ module Rouge
 
       state :root do
         rule /(<)(\w+:)(.*?)(>)/ do
-          group Punctuation; group Keyword; group Text; group Punctuation
+          groups Punctuation, Keyword, Text, Punctuation
         end
 
         # mixin :squeak_fileout
         mixin :whitespaces
         mixin :method_definition
         rule /([|])([\w\s]*)([|])/ do
-          group Punctuation; group Name::Variable; group Punctuation
+          groups Punctuation, Name::Variable, Punctuation
         end
         mixin :objects
         rule /\^|:=|_/, Operator
@@ -30,23 +30,22 @@ module Rouge
 
       state :method_definition do
         rule /([a-z]\w*:)(\s*)(\w+)/i do
-          group Name::Function; group Text; group Name::Variable
+          groups Name::Function, Text, Name::Variable
         end
 
         rule /^(\s*)(\b[a-z]\w*\b)(\s*)$/i do
-          group Text; group Name::Function; group Text
+          groups Text, Name::Function, Text
         end
 
         rule %r(^(\s*)(#{ops}+)(\s*)(\w+)(\s*)$) do
-          group Text; group Name::Function;
-          group Text; group Name::Variable; group Text;
+          groups Text, Name::Function, Text, Name::Variable, Text
         end
       end
 
       state :block_variables do
         mixin :whitespaces
         rule /(:)(\s*)(\w+)/ do
-          group Operator; group Text; group Name::Variable
+          groups Operator, Text, Name::Variable
         end
 
         rule /[|]/, Punctuation, :pop!

@@ -86,7 +86,8 @@ x = (a == b) ?/* this is a comment */ c : d;
 a = /regex//2/1; //syntactically correct, returns NaN
 
 
-
+var template = "{{current}} of beer on the wall";
+var stanza = template.replace(/{{current}}/g, "99 bottles");
 
 /* original examples */
 

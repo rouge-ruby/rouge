@@ -31,7 +31,7 @@ module Rouge
         # TODO: syntax highlight the code block, github style
         rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?)(\2)/m do |m|
           sublexer = Lexer.find_fancy(m[3].strip, m[4])
-          sublexer ||= Text.new(:token => Str::Backtick)
+          sublexer ||= PlainText.new(:token => Str::Backtick)
 
           token Text, m[1]
           token Punctuation, m[2]
@@ -66,9 +66,7 @@ module Rouge
           (\[) (#{edot}+?) (\]) # the reference
           (\s*) (:) # colon
         )x do
-          group Text
-          group Punctuation; group Str::Symbol; group Punctuation
-          group Text; group Punctuation
+          groups Text, Punctuation, Str::Symbol, Punctuation, Text, Punctuation
 
           push :title
           push :url
@@ -76,9 +74,7 @@ module Rouge
 
         # links and images
         rule /(!?\[)(#{edot}+?)(\])/ do
-          group Punctuation
-          group Name::Variable
-          group Punctuation
+          groups Punctuation, Name::Variable, Punctuation
           push :link
         end
 
@@ -105,9 +101,7 @@ module Rouge
 
       state :link do
         rule /(\[)(#{edot}*?)(\])/ do
-          group Punctuation
-          group Str::Symbol
-          group Punctuation
+          groups Punctuation, Str::Symbol, Punctuation
           pop!
         end
 
@@ -127,9 +121,7 @@ module Rouge
 
         # the url
         rule /(<)(#{edot}*?)(>)/ do
-          group Name::Tag
-          group Str::Other
-          group Name::Tag
+          groups Name::Tag, Str::Other, Name::Tag
           pop!
         end
 

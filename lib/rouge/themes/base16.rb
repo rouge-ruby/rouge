@@ -35,48 +35,48 @@ module Rouge
       end
 
       def self.make_dark!
-        style 'Text', :fg => :base05, :bg => :base00
+        style Text, :fg => :base05, :bg => :base00
       end
 
       def self.make_light!
-        style 'Text', :fg => :base02
+        style Text, :fg => :base02
       end
 
       light!
 
-      style 'Error', :fg => :base00, :bg => :base08
-      style 'Comment', :fg => :base03
+      style Error, :fg => :base00, :bg => :base08
+      style Comment, :fg => :base03
 
-      style 'Comment.Preproc',
-            'Name.Tag', :fg => :base0A
+      style Comment::Preproc,
+            Name::Tag, :fg => :base0A
 
-      style 'Operator',
-            'Punctuation', :fg => :base05
+      style Operator,
+            Punctuation, :fg => :base05
 
-      style 'Generic.Inserted', :fg => :base0B
-      style 'Generic.Removed', :fg => :base08
-      style 'Generic.Heading', :fg => :base0D, :bg => :base00, :bold => true
+      style Generic::Inserted, :fg => :base0B
+      style Generic::Deleted, :fg => :base08
+      style Generic::Heading, :fg => :base0D, :bg => :base00, :bold => true
 
-      style 'Keyword', :fg => :base0E
-      style 'Keyword.Constant',
-            'Keyword.Type', :fg => :base09
+      style Keyword, :fg => :base0E
+      style Keyword::Constant,
+            Keyword::Type, :fg => :base09
 
-      style 'Keyword.Declaration', :fg => :base09
+      style Keyword::Declaration, :fg => :base09
 
-      style 'Literal.String', :fg => :base0B
-      style 'Literal.String.Regex', :fg => :base0C
+      style Literal::String, :fg => :base0B
+      style Literal::String::Regex, :fg => :base0C
 
-      style 'Literal.String.Interpol',
-            'Literal.String.Escape', :fg => :base0F
+      style Literal::String::Interpol,
+            Literal::String::Escape, :fg => :base0F
 
-      style 'Name.Namespace',
-            'Name.Class',
-            'Name.Constant', :fg => :base0A
+      style Name::Namespace,
+            Name::Class,
+            Name::Constant, :fg => :base0A
 
-      style 'Name.Attribute', :fg => :base0D
+      style Name::Attribute, :fg => :base0D
 
-      style 'Literal.Number',
-            'Literal.String.Symbol', :fg => :base0B
+      style Literal::Number,
+            Literal::String::Symbol, :fg => :base0B
 
       class Solarized < Base16
         name 'base16.solarized'

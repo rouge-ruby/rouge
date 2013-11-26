@@ -7,6 +7,8 @@ gem 'wrong'
 
 gem 'rake'
 
+gem 'racc'
+
 # don't try to install redcarpet under jruby
 gem 'redcarpet', :platforms => :ruby
 

@@ -10,7 +10,7 @@ module Rouge
 
       state :root do
         rule /(include)(\s+)([^\s;]+)/ do
-          group Keyword; group Text; group Name
+          groups Keyword, Text, Name
         end
 
         rule id, Keyword, :statement
@@ -43,8 +43,7 @@ module Rouge
 
         # host/port
         rule /([a-z0-9.-]+)(:)([0-9]+)/i do
-          group Name::Function; group Punctuation
-          group Num::Integer
+          groups Name::Function, Punctuation, Num::Integer
         end
 
         # mimetype
@@ -52,7 +51,7 @@ module Rouge
 
         rule /[0-9]+[kmg]?\b/i, Num::Integer
         rule /(~)(\s*)([^\s{]+)/ do
-          group Punctuation; group Text; group Str::Regex
+          groups Punctuation, Text, Str::Regex
         end
 
         rule /[:=~]/, Punctuation

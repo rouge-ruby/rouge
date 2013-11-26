@@ -17,6 +17,13 @@ module Rouge
         new(opts).lex(stream, &b)
       end
 
+      def load_const(const_name, relpath)
+        return if Lexers.const_defined?(const_name)
+
+        root = Pathname.new(__FILE__).dirname.join('lexers')
+        load root.join(relpath)
+      end
+
       def default_options(o={})
         @default_options ||= {}
         @default_options.merge!(o)
@@ -163,7 +170,8 @@ module Rouge
 
     private
       def filter_by_mimetype(lexers, mt)
-        lexers.select { |lexer| lexer.mimetypes.include? mt }
+        filtered = lexers.select { |lexer| lexer.mimetypes.include? mt }
+        filtered.any? ? filtered : lexers
       end
 
       # returns a list of lexers that match the given filename with
@@ -195,17 +203,26 @@ module Rouge
           end
         end
 
-        out
+        out.any? ? out : lexers
       end
 
       def best_by_source(lexers, source, threshold=0)
+        source = case source
+        when String
+          source
+        when ->(s){ s.respond_to? :read }
+          source.read
+        else
+          raise 'invalid source'
+        end
+
         assert_utf8!(source)
 
         source = TextAnalyzer.new(source)
 
         best_result = threshold
         best_match = nil
-        registry.values.each do |lexer|
+        lexers.each do |lexer|
           result = lexer.analyze_text(source) || 0
           return lexer if result == 1
 
@@ -305,6 +322,8 @@ module Rouge
     #   tried and each stream consumed.  Try it, it's pretty useful.
     def initialize(opts={})
       options(opts)
+
+      @debug = option(:debug)
     end
 
     # get and/or specify the options for this lexer.
@@ -323,25 +342,21 @@ module Rouge
       end
     end
 
+    # @deprecated
+    # Instead of `debug { "foo" }`, simply `puts "foo" if @debug`.
+    #
     # Leave a debug message if the `:debug` option is set.  The message
     # is given as a block because some debug messages contain calculated
     # information that is unnecessary for lexing in the real world.
     #
+    # Calls to this method should be guarded with "if @debug" for best
+    # performance when debugging is turned off.
+    #
     # @example
-    #   debug { "hello, world!" }
-    def debug(&b)
-      # This method is a hotspot, unfortunately.
-      #
-      # For performance reasons, the "debug" option of a lexer cannot
-      # be changed once it has begun lexing.  This method will redefine
-      # itself on the first call to a noop if "debug" is not set.
-      if option(:debug)
-        def self.debug; puts yield; end
-      else
-        def self.debug; end
-      end
-
-      debug(&b)
+    #   debug { "hello, world!" } if @debug
+    def debug
+      warn "Lexer#debug is deprecated.  Simply puts if @debug instead."
+      puts yield if @debug
     end
 
     # @abstract

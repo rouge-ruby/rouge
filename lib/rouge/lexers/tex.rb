@@ -30,10 +30,7 @@ module Rouge
         rule /\\(begin|end)\{.*?\}/, Name::Tag
 
         rule /(\\verb)\b(\S)(.*?)(\2)/ do |m|
-          group Name::Builtin
-          group Keyword::Pseudo
-          group Str::Other
-          group Keyword::Pseudo
+          groups Name::Builtin, Keyword::Pseudo, Str::Other, Keyword::Pseudo
         end
 
         rule command, Keyword, :command

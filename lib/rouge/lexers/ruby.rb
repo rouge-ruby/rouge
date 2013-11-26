@@ -42,8 +42,8 @@ module Rouge
           interp = /[rQWxI]/ === m[1]
           toktype = Str::Other
 
-          debug { "    open: #{open.inspect}" }
-          debug { "    close: #{close.inspect}" }
+          puts "    open: #{open.inspect}" if @debug
+          puts "    close: #{close.inspect}" if @debug
 
           # regexes
           if m[1] == 'r'
@@ -196,8 +196,11 @@ module Rouge
         mixin :has_heredocs
 
         rule /[A-Z][a-zA-Z0-9_]+/, Name::Constant, :method_call
-        rule /(\.|::)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/,
-          Name::Function, :expr_start
+        rule /(\.|::)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/ do
+          groups Punctuation, Name::Function
+          push :expr_start
+        end
+
         rule /[a-zA-Z_]\w*[?!]/, Name, :expr_start
         rule /[a-zA-Z_]\w*/, Name, :method_call
         rule /\[|\]|\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\.{1,3}/,
@@ -238,17 +241,17 @@ module Rouge
           tolerant, heredoc_name = @heredoc_queue.first
           check = tolerant ? m[2].strip : m[2].rstrip
 
-          group Str::Heredoc
-
           # check if we found the end of the heredoc
-          if check == heredoc_name
-            group Name::Constant
+          line_tok = if check == heredoc_name
             @heredoc_queue.shift
             # if there's no more, we're done looking.
             pop! if @heredoc_queue.empty?
+            Name::Constant
           else
-            group Str::Heredoc
+            Str::Heredoc
           end
+
+          groups(Str::Heredoc, line_tok)
         end
 
         rule /[#\\\n]/, Str::Heredoc
@@ -266,7 +269,7 @@ module Rouge
             <<? | >>? | <=>? | >= | ===?
           )
         )x do |m|
-          debug { "matches: #{[m[0], m[1], m[2], m[3]].inspect}" }
+          puts "matches: #{[m[0], m[1], m[2], m[3]].inspect}" if @debug
           groups Name::Class, Operator, Name::Function
           pop!
         end
@@ -290,7 +293,7 @@ module Rouge
           groups Punctuation, Operator
           pop!
         end
-        rule /\(/, Operator, :defexpr
+        rule /\(/, Punctuation, :defexpr
         mixin :root
       end
 

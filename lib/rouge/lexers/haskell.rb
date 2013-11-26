@@ -88,32 +88,32 @@ module Rouge
         rule /\bqualified\b/, Keyword
         # import X as Y
         rule /([A-Z][\w.]*)(\s+)(as)(\s+)([A-Z][a-zA-Z0-9_.]*)/ do
-          group Name::Namespace # X
-          group Text
-          group Keyword # as
-          group Text
-          group Name # Y
+          groups(
+            Name::Namespace, # X
+            Text, Keyword, # as
+            Text, Name # Y
+          )
           pop!
         end
 
         # import X hiding (functions)
         rule /([A-Z][\w.]*)(\s+)(hiding)(\s+)(\()/ do
-          group Name::Namespace # X
-          group Text
-          group Keyword # hiding
-          group Text
-          group Punctuation # (
-          pop!
-          push :funclist
+          groups(
+            Name::Namespace, # X
+            Text, Keyword, # hiding
+            Text, Punctuation # (
+          )
+          goto :funclist
         end
 
         # import X (functions)
         rule /([A-Z][\w.]*)(\s+)(\()/ do
-          group Name::Namespace # X
-          group Text
-          group Punctuation # (
-          pop!
-          push :funclist
+          groups(
+            Name::Namespace, # X
+            Text,
+            Punctuation # (
+          )
+          goto :funclist
         end
 
         rule /[\w.]+/, Name::Namespace, :pop!
@@ -123,9 +123,7 @@ module Rouge
         rule /\s+/, Text
         # module Foo (functions)
         rule /([A-Z][\w.]*)(\s+)(\()/ do
-          group Name::Namespace
-          group Text
-          group Punctuation
+          groups Name::Namespace, Text, Punctuation
           push :funclist
         end
 

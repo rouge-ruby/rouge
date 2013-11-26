@@ -166,64 +166,65 @@ module Rouge
         rule /\s+/m, Text
 
         rule /(:|::|MACRO:|MEMO:|GENERIC:|HELP:)(\s+)(\S+)/m do
-          group Keyword; group Text
-          group Name::Function
+          groups Keyword, Text, Name::Function
         end
 
         rule /(M:|HOOK:|GENERIC#)(\s+)(\S+)(\s+)(\S+)/m do
-          group Keyword; group Text
-          group Name::Class; group Text
-          group Name::Function
+          groups Keyword, Text, Name::Class, Text, Name::Function
         end
 
         rule /\((?=\s)/, Name::Function, :stack_effect
         rule /;(?=\s)/, Keyword
 
         rule /(USING:)((?:\s|\\\s)+)/m do
-          group Keyword::Namespace; group Text
+          groups Keyword::Namespace, Text
           push :import
         end
 
         rule /(IN:|USE:|UNUSE:|QUALIFIED:|QUALIFIED-WITH:)(\s+)(\S+)/m do
-          group Keyword::Namespace; group Text; group Name::Namespace
+          groups Keyword::Namespace, Text, Name::Namespace
         end
 
         rule /(FROM:|EXCLUDE:)(\s+)(\S+)(\s+)(=>)/m do
-          group Keyword::Namespace; group Text
-          group Name::Namespace; group Text
-          group Punctuation
+          groups Keyword::Namespace, Text, Name::Namespace, Text, Punctuation
         end
 
         rule /(?:ALIAS|DEFER|FORGET|POSTPONE):/, Keyword::Namespace
 
         rule /(TUPLE:)(\s+)(\S+)(\s+)(<)(\s+)(\S+)/m do
-          group Keyword; group Text
-          group Name::Class; group Text
-          group Punctuation; group Text
-          group Name::Class
+          groups(
+            Keyword, Text,
+            Name::Class, Text,
+            Punctuation, Text,
+            Name::Class
+          )
           push :slots
         end
 
         rule /(TUPLE:)(\s+)(\S+)/m do
-          group Keyword; group Text; group Name::Class
+          groups Keyword, Text, Name::Class
           push :slots
         end
 
         rule /(UNION:|INTERSECTION:)(\s+)(\S+)/m do
-          group Keyword; group Text; group Name::Class
+          groups Keyword, Text, Name::Class
         end
 
         rule /(PREDICATE:)(\s+)(\S+)(\s+)(<)(\s+)(\S+)/m do
-          group Keyword; group Text
-          group Name::Class; group Text
-          group Punctuation; group Text
-          group Name::Class
+          groups(
+            Keyword, Text,
+            Name::Class, Text,
+            Punctuation, Text,
+            Name::Class
+          )
         end
 
         rule /(C:)(\s+)(\S+)(\s+)(\S+)/m do
-          group Keyword; group Text
-          group Name::Function; group Text
-          group Name::Class
+          groups(
+            Keyword, Text,
+            Name::Function, Text,
+            Name::Class
+          )
         end
 
         rule %r(
@@ -234,7 +235,7 @@ module Rouge
         rule /(?:<PRIVATE|PRIVATE>)/, Keyword::Namespace
 
         rule /(MAIN:)(\s+)(\S+)/ do
-          group Keyword::Namespace; group Text; group Name::Function
+          groups Keyword::Namespace, Text, Name::Function
         end
 
         # strings

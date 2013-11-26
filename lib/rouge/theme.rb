@@ -142,6 +142,7 @@ module Rouge
       # shared styles for tableized line numbers
       yield "#{@scope} table { border-spacing: 0; }"
       yield "#{@scope} table td { padding: 5px; }"
+      yield "#{@scope} table pre { margin: 0; }"
       yield "#{@scope} table .gutter { text-align: right; }"
 
       styles.each do |tok, style|
@@ -163,7 +164,7 @@ module Rouge
     end
 
     def single_css_selector(token)
-      return @scope if token == Token['Text']
+      return @scope if token == Text
 
       "#{@scope} .#{token.shortname}"
     end

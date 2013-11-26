@@ -8,6 +8,14 @@ module Rouge
         @methods ||= %w(GET POST PUT DELETE HEAD OPTIONS TRACE)
       end
 
+      def content_lexer
+        return Lexers::PlainText unless @content_type
+
+        @content_lexer ||= Lexer.guess_by_mimetype(@content_type)
+      rescue Lexer::AmbiguousGuess
+        @content_lexer = Lexers::PlainText
+      end
+
       start { @content_type = 'text/plain' }
 
       state :root do
@@ -17,10 +25,12 @@ module Rouge
           ([^ ]+)([ ]+)                     # path
           (HTTPS?)(/)(1[.][01])(\r?\n|$)  # http version
         )ox do
-          group Name::Function; group Text
-          group Name::Namespace; group Text
-          group Keyword; group Operator
-          group Num; group Text
+          groups(
+            Name::Function, Text,
+            Name::Namespace, Text,
+            Keyword, Operator, Num, Text
+          )
+
           push :headers
         end
 
@@ -30,10 +40,11 @@ module Rouge
           (\d{3})([ ]+)               # status
           ([^\r\n]+)(\r?\n|$)       # status message
         )x do
-          group Keyword; group Operator
-          group Num; group Text
-          group Num; group Text
-          group Name::Exception; group Text
+          groups(
+            Keyword, Operator, Num, Text,
+            Num, Text,
+            Name::Exception, Text
+          )
           push :headers
         end
       end
@@ -46,21 +57,19 @@ module Rouge
             @content_type = value.split(';')[0].downcase
           end
 
-          group Name::Attribute; group Text
-          group Punctuation; group Text
-          group Str; group Text
+          groups Name::Attribute, Text, Punctuation, Text, Str, Text
         end
 
         rule /([^\r\n]+)(\r?\n|$)/ do
-          group Str; group Text
+          groups Str, Text
         end
 
         rule /\r?\n/, Text, :content
       end
 
       state :content do
-        rule /.+/ do |m|
-          delegate Lexer.guess_by_mimetype(@content_type)
+        rule /.+/m do |m|
+          delegate(content_lexer)
         end
       end
     end

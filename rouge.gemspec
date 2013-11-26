@@ -15,6 +15,4 @@ Gem::Specification.new do |s|
   s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'bin/rougify', 'lib/rouge/demos/*']
   s.executables = %w(rougify)
   s.license = 'MIT (see LICENSE file)'
-
-  s.add_dependency 'thor'
 end

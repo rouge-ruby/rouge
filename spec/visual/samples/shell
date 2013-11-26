@@ -5,6 +5,9 @@ if [ -n "\$BASH_VERSION" ]; then . "$RY_PREFIX/lib/ry.bash_completion"; fi
 sh
 }
 
+export PATH="$(ry fullpath "$@")";
+if [ -n "$BASH_VERSION" ]; then . "$RY_PREFIX/lib/ry.bash_completion"; fi
+
 # ltmain.sh - Provide generalized library-building support services.
 # NOTE: Changing this file will not affect anything until you rerun configure.
 #

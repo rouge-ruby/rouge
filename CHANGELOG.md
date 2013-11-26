@@ -1,3 +1,67 @@
+## version 1.1.0: 2013-11-04
+
+  * For tableized line numbers, the table is no longer surrounded by a `<pre>`
+    tag, which is invalid HTML.  This was previously causing issues with HTML
+    post-processors such as loofah.  This may break some stylesheets, as it
+    changes the generated markup, but stylesheets only referring to the scope
+    passed to the formatter should be unaffected.
+  * New lexer: moonscript (thanks @nilnor!)
+  * New theme: monokai, for real this time! (thanks @3100!)
+  * Fix intermittent loading errors for good with `Lexer.load_const`, which
+    closes the long-standing #66
+
+## version 1.0.0: 2013-09-28
+
+  * lua: encoding bugfix, and a performance tweak for string literals
+  * The Big 1.0!  From now on, strict semver will apply, and new lexers and
+    features will be introduced in minor releases, reserving patch releases
+    for bugfixes.
+
+## version 0.5.4: 2013-09-21
+
+  * Cleaned up stray invalid error tokens
+  * Fix C++/objc loading bug in `rougify`
+  * Guessing alg tweaks: don't give up if no filename or mimetype matches
+  * Rebuilt the CLI without thor (removed the thor dependency)
+  * objc: Bugfix for `:forward_classname` error tokens
+
+## version 0.5.3: 2013-09-15
+
+  * Critical bugfixes (#98 and #99) for Ruby and Markdown. Some inputs
+    would throw errors. (thanks @hrysd!)
+
+## version 0.5.2: 2013-09-15
+
+  * Bugfixes for C/C++
+  * Major bugfix: YAML was in a broken state :\ (thanks @hrysd!)
+  * Implement lexer subclassing, with `append` and `prepend`
+  * new lexer: objective c (!)
+
+## version 0.5.1: 2013-09-15
+
+  * Fix non-default themes (thanks @tiroc!)
+  * Minor lexing bugfixes in ruby
+
+## version 0.5.0: 2013-09-02
+
+  * [Various performance optimizations][perf-0.5]
+  * javascript:
+    - quoted object keys were not being highlighted correctly
+    - multiline comments were not being highlighted
+  * common lisp: fix commented forms
+  * golang: performance bump
+  * ruby: fix edge case for `def-@`
+  * c: fix a pathological performance case
+  * fix line number alignment on non-newline-terminated code (#91)
+
+### Breaking API Changes in v0.5.0
+
+  * `Rouge::Lexers::Text` renamed to `Rouge::Lexers::PlainText`
+  * Tokens are now constants, rather than strings.  This only affects
+    you if you've written a custom lexer, formatter, or theme.
+
+[perf-0.5]: https://github.com/jayferd/rouge/pull/41#issuecomment-23561787
+
 ## version 0.4.0: 2013-08-14
 
   * Add the `:inline_theme` option to `Formatters::HTML` for environments

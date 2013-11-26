@@ -34,7 +34,7 @@ module Rouge
         rule /#.*?\n/, Comment
 
         rule /(export)(\s+)(?=[a-zA-Z0-9_\${}\t -]+\n)/ do
-          group Keyword; group Text
+          groups Keyword, Text
           push :export
         end
 
@@ -51,7 +51,7 @@ module Rouge
         rule /"(\\\\|\\.|[^"\\])*"/, Str::Double
         rule /'(\\\\|\\.|[^'\\])*'/, Str::Single
         rule /([^\n:]+)(:+)([ \t]*)/ do
-          group Name::Label; group Operator; group Text
+          groups Name::Label, Operator, Text
           push :block_header
         end
       end
@@ -76,7 +76,7 @@ module Rouge
 
       state :block_body do
         rule /(\t[\t ]*)([@-]?)/ do |m|
-          group Text; group Punctuation
+          groups Text, Punctuation
           push :shell_line
         end
 
@@ -88,8 +88,7 @@ module Rouge
         rule /\$\(\s*[a-z_]\w*\s*\)/i, Name::Variable
         # $(shell ...)
         rule /(\$\()(\s*)(shell)(\s+)/m do
-          group Name::Function; group Text
-          group Name::Builtin; group Text
+          groups Name::Function, Text, Name::Builtin, Text
           push :shell_expr
         end
 

@@ -74,7 +74,7 @@ module Rouge
         rule %r(/\*\*.*?\*/)m, Str::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule /(->|::)(\s*)([a-zA-Z_][a-zA-Z0-9_]*)/ do
-          group Operator; group Text; group Name::Attribute
+          groups Operator, Text, Name::Attribute
         end
 
         rule /[~!%^&*+=\|:.<>\/?@-]+/, Operator
@@ -82,17 +82,17 @@ module Rouge
         rule /class\b/, Keyword, :classname
         # anonymous functions
         rule /(function)(\s*)(?=\()/ do
-          group Keyword; group Text
+          groups Keyword, Text
         end
 
         # named functions
         rule /(function)(\s+)(&?)(\s*)/ do
-          group Keyword; group Text; group Operator; group Text
+          groups Keyword, Text, Operator, Text
           push :funcname
         end
 
         rule /(const)(\s+)([a-zA-Z_]\w*)/i do
-          group Keyword; group Text; group Name::Constant
+          groups Keyword, Text, Name::Constant
         end
 
         rule /(true|false|null)\b/, Keyword::Constant
@@ -141,7 +141,7 @@ module Rouge
         rule /\{\$\{/, Str::Interpol, :interp_double
         rule /\{(?=\$)/, Str::Interpol, :interp_single
         rule /(\{)(\S+)(\})/ do
-          group Str::Interpol; group Name::Variable; group Str::Interpol
+          groups Str::Interpol, Name::Variable, Str::Interpol
         end
 
         rule /[${\\]+/, Str::Double

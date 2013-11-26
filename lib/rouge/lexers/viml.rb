@@ -16,7 +16,7 @@ module Rouge
 
       state :root do
         rule /^(\s*)(".*?)$/ do
-          group Text; group Comment
+          groups Text, Comment
         end
 
         rule /^\s*\\/, Str::Escape

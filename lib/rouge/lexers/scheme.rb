@@ -79,9 +79,7 @@ module Rouge
         rule /(?:'|#|`|,@|,|\.)/, Operator
 
         rule /(['#])(\s*)(\()/m do
-          group Str::Symbol
-          group Text
-          group Punctuation
+          groups Str::Symbol, Text, Punctuation
         end
 
         rule /\(/, Punctuation, :command

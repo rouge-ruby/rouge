@@ -82,7 +82,7 @@ module Rouge
         rule %r(
           (/) (\[#{dot}*?\]) (#{dot}*\n)
         )x do
-          group Comment; group Comment::Special; group Comment
+          groups Comment, Comment::Special, Comment
           pop!
         end
 
@@ -115,7 +115,7 @@ module Rouge
           @filter_lexer = self.filters[filter_name]
           @filter_lexer.reset! unless @filter_lexer.nil?
 
-          debug { "    haml: filter #{filter_name.inspect} #{@filter_lexer.inspect}" }
+          puts "    haml: filter #{filter_name.inspect} #{@filter_lexer.inspect}" if @debug
         end
 
         mixin :eval_or_plain

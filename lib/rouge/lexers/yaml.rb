@@ -17,7 +17,7 @@ module Rouge
 
       # reset the indentation levels
       def reset_indent
-        debug { "    yaml: reset_indent" }
+        puts "    yaml: reset_indent" if @debug
         @indent_stack = [0]
         @next_indent = 0
         @block_scalar_indent = nil
@@ -39,12 +39,12 @@ module Rouge
       # Save a possible indentation level
       def save_indent(match)
         @next_indent = match.size
-        debug { "    yaml: indent: #{self.indent}/#@next_indent" }
-        debug { "    yaml: popping indent stack - before: #@indent_stack" }
+        puts "    yaml: indent: #{self.indent}/#@next_indent" if @debug
+        puts "    yaml: popping indent stack - before: #@indent_stack" if @debug
         if dedent?(@next_indent)
           @indent_stack.pop while dedent?(@next_indent)
-          debug { "    yaml: popping indent stack - after: #@indent_stack" }
-          debug { "    yaml: indent: #{self.indent}/#@next_indent" }
+          puts "    yaml: popping indent stack - after: #@indent_stack" if @debug
+          puts "    yaml: indent: #{self.indent}/#@next_indent" if @debug
 
           # dedenting to a state not previously indented to is an error
           [match[0...self.indent], match[self.indent..-1]]
@@ -54,16 +54,16 @@ module Rouge
       end
 
       def continue_indent(match)
-        debug { "    yaml: continue_indent" }
+        puts "    yaml: continue_indent" if @debug
         @next_indent += match.size
       end
 
-      def set_indent(opts={})
+      def set_indent(match, opts={})
         if indent < @next_indent
           @indent_stack << @next_indent
         end
 
-        @next_indent += @last_match[0].size unless opts[:implicit]
+        @next_indent += match.size unless opts[:implicit]
       end
 
       plain_scalar_start = /[^ \t\n\r\f\v?:,\[\]{}#&*!\|>'"%@`]/
@@ -119,7 +119,7 @@ module Rouge
         end
 
         # block collection indicators
-        rule(/[?:-](?=[ ]|$)/) { token Punctuation::Indicator; set_indent }
+        rule(/[?:-](?=[ ]|$)/) { |m| token Punctuation::Indicator; set_indent m[0] }
 
         # the beginning of a block line
         rule(/[ ]*/) { |m| token Text; continue_indent(m[0]); pop! }
@@ -163,9 +163,9 @@ module Rouge
 
       state :block_nodes do
         # implicit key
-        rule /:(?=\s|$)/ do
+        rule /:(?=\s|$)/ do |m|
           token Punctuation::Indicator
-          set_indent :implicit => true
+          set_indent m[0], :implicit => true
         end
 
         # literal and folded scalars
@@ -342,8 +342,8 @@ module Rouge
 
       state :yaml_directive do
         rule /([ ]+)(\d+\.\d+)/ do
-          group Text; group Num
-          pop!; push :ignored_line
+          groups Text, Num
+          goto :ignored_line
         end
       end
 
@@ -352,9 +352,8 @@ module Rouge
           ([ ]+)(!|![\w-]*!) # prefix
           ([ ]+)(!|!?[\w;/?:@&=+$,.!~*'()\[\]%-]+) # tag handle
         )x do
-          group Text; group Keyword::Type
-          group Text; group Keyword::Type
-          pop!; push :ignored_line
+          groups Text, Keyword::Type, Text, Keyword::Type
+          goto :ignored_line
         end
       end
     end

@@ -30,8 +30,7 @@ module Rouge
         mixin :basic
 
         rule /(#{identifier})(\s*)(=)/ do
-          group Name::Property; group Text
-          group Punctuation
+          groups Name::Property, Text, Punctuation
           push :value
         end
 

@@ -52,9 +52,7 @@ module Rouge
       state :root do
         rule /\n+/m, Text
         rule /^(:)(\s*)([ru]{,2}""".*?""")/mi do
-          group Punctuation
-          group Text
-          group Str::Doc
+          groups Punctuation, Text, Str::Doc
         end
 
         rule /[^\S\n]+/, Text
@@ -69,26 +67,22 @@ module Rouge
         rule /(?:#{keywords.join('|')})\b/, Keyword
 
         rule /(def)((?:\s|\\\s)+)/ do
-          group Keyword # def
-          group Text # whitespae
+          groups Keyword, Text
           push :funcname
         end
 
         rule /(class)((?:\s|\\\s)+)/ do
-          group Keyword
-          group Text
+          groups Keyword, Text
           push :classname
         end
 
         rule /(from)((?:\s|\\\s)+)/ do
-          group Keyword::Namespace
-          group Text
+          groups Keyword::Namespace, Text
           push :fromimport
         end
 
         rule /(import)((?:\s|\\\s)+)/ do
-          group Keyword::Namespace
-          group Text
+          groups Keyword::Namespace, Text
           push :import
         end
 

@@ -2,14 +2,13 @@
 
 [![Build Status](https://secure.travis-ci.org/jayferd/rouge.png)](http://travis-ci.org/jayferd/rouge)
 
-Rouge is a pure-ruby syntax highlighter.  It can highlight nearly 50 languages, and output HTML or ANSI 256-color text.  Its HTML output is compatible with stylesheets designed for [pygments][].
+Rouge is a pure-ruby syntax highlighter.  It can highlight nearly 60 languages, and output HTML or ANSI 256-color text.  Its HTML output is compatible with stylesheets designed for [pygments][].
 
 If you'd like to help out with this project, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.  In particular, I would appreciate help with the following lexers, from someone who has more experience with the language than I do:
 
-* Objective-C
 * Delphi/Pascal
 
-[issues]: /jayferd/rouge/issues "Help Out"
+[issues]: https://github.com/jayferd/rouge/issues "Help Out"
 [pygments]: http://pygments.org/ "Pygments"
 
 ## Usage
@@ -21,7 +20,7 @@ First, take a look at the [pretty colors][].
 ``` ruby
 # make some nice lexed html
 source = File.read('/etc/bashrc')
-formatter = Rouge::Formatters::HTML.new(:css_class => '.highlight')
+formatter = Rouge::Formatters::HTML.new(:css_class => 'highlight')
 lexer = Rouge::Lexers::Shell.new
 formatter.format(lexer.lex(source))
 
@@ -48,7 +47,9 @@ $ rougify foo.rb
 ## You can even use it with Redcarpet
 
 ``` ruby
+require 'rouge'
 require 'rouge/plugins/redcarpet'
+
 class HTML < Redcarpet::Render::HTML
   include Rouge::Plugins::Redcarpet # yep, that's it.
 end
@@ -136,9 +137,8 @@ class MyLexer < Rouge::RegexLexer
     end
 
     rule /(\w+)(:)/
-      # "group" yields the matched groups in order
-      group Name::Label
-      group Punctuation
+      # "groups" yields the matched groups in order
+      groups Name::Label, Punctuation
     end
   end
 

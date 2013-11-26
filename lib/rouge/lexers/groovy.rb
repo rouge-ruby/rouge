@@ -60,8 +60,7 @@ module Rouge
         rule %r(/(\\\\|\\"|[^/])*/), Str
         rule /'\\.'|'[^\\]'|'\\u[0-9a-f]{4}'/, Str::Char
         rule /(\.)([a-zA-Z_][a-zA-Z0-9_]*)/ do
-          group Operator
-          group Name::Attribute
+          groups Operator, Name::Attribute
         end
 
         rule /[a-zA-Z_][a-zA-Z0-9_]*:/, Name::Label

@@ -19,8 +19,8 @@ module Rouge
       # the given theme will be inlined in "style" attributes.  This is
       # useful for formats in which stylesheets are not available.
       #
-      # Content will be wrapped in a `<pre>` tag with the given
-      # `:css_class` unless `:wrap` is set to `false`.
+      # Content will be wrapped in a tag (`div` if tableized, `pre` if
+      # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
         @css_class = opts.fetch(:css_class, 'highlight')
         @line_numbers = opts.fetch(:line_numbers, false)
@@ -46,7 +46,7 @@ module Rouge
         yield '</pre>' if @wrap
       end
 
-      def stream_tableized(tokens, &b)
+      def stream_tableized(tokens)
         num_lines = 0
         last_val = ''
         formatted = ''
@@ -65,10 +65,10 @@ module Rouge
 
         # generate a string of newline-separated line numbers for the gutter
         numbers = num_lines.times.map do |x|
-          %<<div class="lineno">#{x+1}</div>>
+          %<<pre class="lineno">#{x+1}</pre>>
         end.join
 
-        yield "<pre class=#{@css_class.inspect}>" if @wrap
+        yield "<div class=#{@css_class.inspect}>" if @wrap
         yield "<table><tbody><tr>"
 
         # the "gl" class applies the style for Generic.Lineno
@@ -77,37 +77,35 @@ module Rouge
         yield '</td>'
 
         yield '<td class="code">'
+        yield '<pre>'
         yield formatted
+        yield '</pre>'
         yield '</td>'
 
         yield '</tr></tbody></table>'
-        yield '</pre>' if @wrap
+        yield '</div>' if @wrap
       end
 
-      def span(tok, val, &b)
-        # TODO: properly html-encode val
-        val = CGI.escape_html(val)
+      TABLE_FOR_ESCAPE_HTML = {
+        '&' => '&amp;',
+        '<' => '&lt;',
+        '>' => '&gt;',
+      }
 
-        case tok.shortname
-        when ''
+      def span(tok, val)
+        val = val.gsub(/[&<>]/, TABLE_FOR_ESCAPE_HTML)
+        shortname = tok.shortname or raise "unknown token: #{tok.inspect} for #{val.inspect}"
+
+        if shortname.empty?
           yield val
-        when nil
-          raise "unknown token: #{tok.inspect} for #{val.inspect}"
         else
           if @inline_theme
             rules = @inline_theme.style_for(tok).rendered_rules
 
-            yield '<span style='
-            yield rules.to_a.join(';').inspect
-            yield '>'
+            yield "<span style=\"#{rules.to_a.join(';')}\">#{val}</span>"
           else
-            yield '<span class='
-            yield tok.shortname.inspect
-            yield '>'
+            yield "<span class=\"#{shortname}\">#{val}</span>"
           end
-
-          yield val
-          yield '</span>'
         end
       end
     end

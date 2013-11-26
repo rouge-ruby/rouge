@@ -83,7 +83,7 @@ module Rouge
             attrs = []
 
             attrs << ['38', '5', fg.to_s] if fg
-            attrs << ['45', '5', bg.to_s] if bg
+            attrs << ['48', '5', bg.to_s] if bg
             attrs << '01' if style[:bold]
             attrs << '04' if style[:italic] # underline, but hey, whatevs
             escape(attrs)
@@ -155,7 +155,7 @@ module Rouge
       end
 
       def get_style(token)
-        return text_style if token == Token::Tokens::Text
+        return text_style if token.ancestors.include? Token::Tokens::Text
 
         theme.get_own_style(token) || text_style
       end

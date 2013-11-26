@@ -1,3 +1,17 @@
+## version 1.2.0: 2013-11-26
+
+  * New lexers:
+    - MATLAB (thanks @adambard!)
+    - Scala (thanks @sgrif!)
+    - Standard ML (sml)
+    - OCaml
+  * Major performance overhaul, now ~2x faster (see [#114][]) (thanks @korny!)
+  * Deprecate `RegexLexer#group` (internal).  Use `#groups` instead.
+  * Updated PHP builtins
+  * CLI now responds to `rougify --version`
+
+[#114]: https://github.com/jayferd/rouge/pull/114
+
 ## version 1.1.0: 2013-11-04
 
   * For tableized line numbers, the table is no longer surrounded by a `<pre>`

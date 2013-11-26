@@ -155,7 +155,7 @@ module Rouge
       end
 
       def get_style(token)
-        return text_style if token == Token::Tokens::Text
+        return text_style if token.ancestors.include? Token::Tokens::Text
 
         theme.get_own_style(token) || text_style
       end

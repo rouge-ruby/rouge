@@ -27,7 +27,7 @@ module Rouge
       end
 
       def self.analyze_text(text)
-        return 1 if text =~ /@(end|implementation|protocol)\b/
+        return 1 if text =~ /@(end|implementation|protocol|property)\b/
 
         id = /[a-z$_][a-z0-9$_]*/i
         return 0.4 if text =~ %r(

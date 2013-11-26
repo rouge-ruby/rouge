@@ -8,6 +8,8 @@ If you'd like to help out with this project, assign yourself something from the 
 
 * Delphi/Pascal
 
+Also, if anyone with design skills feels like helping me make a website for rouge, I'd really appreciate the help.  So far all I've got is the [demo page][pretty colors].
+
 [issues]: https://github.com/jayferd/rouge/issues "Help Out"
 [pygments]: http://pygments.org/ "Pygments"
 

@@ -237,15 +237,13 @@ module Rouge
         @lexer_opts = opts[:lexer_opts]
 
         formatter_class = Formatter.find(opts[:formatter]) \
-          or error!  "unknown formatter #{opts[:formatter]}"
+          or error! "unknown formatter #{opts[:formatter]}"
 
         @formatter = formatter_class.new(opts[:formatter_opts])
       end
 
       def run
-        formatter.format(lexer.lex(input)) do |chunk|
-          print chunk
-        end
+        formatter.format(lexer.lex(input), &method(:print))
       end
 
     private

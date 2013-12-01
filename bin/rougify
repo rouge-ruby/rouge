@@ -2,7 +2,6 @@
 
 require 'pathname'
 ROOT_DIR = Pathname.new(__FILE__).dirname.parent
-$:.push(ROOT_DIR.join('lib').to_s)
 load ROOT_DIR.join('lib/rouge.rb')
 load ROOT_DIR.join('lib/rouge/cli.rb')
 

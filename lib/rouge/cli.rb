@@ -289,7 +289,8 @@ module Rouge
       end
 
       def initialize(opts)
-        theme_class = Theme.find(opts.delete(:theme_name)) \
+        theme_name = opts.delete(:theme_name)
+        theme_class = Theme.find(theme_name) \
           or error! "unknown theme: #{theme_name}"
 
         @theme = theme_class.new(opts)

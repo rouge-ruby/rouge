@@ -75,8 +75,12 @@ module Rouge
     def initialize(options={})
     end
 
-    def error!(msg, status=1)
+    def self.error!(msg, status=1)
       raise Error.new(msg, status)
+    end
+
+    def error!(*a)
+      self.class.error!(*a)
     end
 
     def self.class_from_arg(arg)

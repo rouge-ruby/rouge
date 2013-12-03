@@ -252,7 +252,7 @@ module Rouge
 
     private
       def self.parse_cgi(str)
-        pairs = CGI.parse(str).map { |k, v| v.first }
+        pairs = CGI.parse(str).map { |k, v| [k.to_sym, v.first] }
         Hash[pairs]
       end
     end

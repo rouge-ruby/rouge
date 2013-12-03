@@ -14,7 +14,7 @@ module Rouge
       state :root do
         rule /[^<&]+/m, Text
         rule /&\S*?;/, Name::Entity
-        rule /<!DOCTYPE .*?>/i, Comment::Preproc
+        rule /<!DOCTYPE .*?>/im, Comment::Preproc
         rule /<!\[CDATA\[.*?\]\]>/m, Comment::Preproc
         rule /<!--/, Comment, :comment
         rule /<\?.*?\?>/m, Comment::Preproc # php? really?

@@ -151,6 +151,10 @@ class MyLexer < Rouge::RegexLexer
 end
 ```
 
+## Tips
+
+I don't get paid to maintain rouge.  [If you've found this software useful, consider dropping a tip in the bucket](http://www.gittip.com/jayferd).
+
 ## License
 
 Rouge is released under the MIT license. Please see the `LICENSE` file for more information.

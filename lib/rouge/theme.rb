@@ -140,10 +140,8 @@ module Rouge
       return enum_for(:render).to_a.join("\n") unless b
 
       # shared styles for tableized line numbers
-      yield "#{@scope} table { border-spacing: 0; }"
       yield "#{@scope} table td { padding: 5px; }"
       yield "#{@scope} table pre { margin: 0; }"
-      yield "#{@scope} table .gutter { text-align: right; }"
 
       styles.each do |tok, style|
         style.render(css_selector(tok), &b)

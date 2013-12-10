@@ -69,10 +69,10 @@ module Rouge
         end.join
 
         yield "<div class=#{@css_class.inspect}>" if @wrap
-        yield "<table><tbody><tr>"
+        yield '<table style="border-spacing: 0"><tbody><tr>'
 
         # the "gl" class applies the style for Generic.Lineno
-        yield '<td class="gutter gl">'
+        yield '<td class="gutter gl" style="text-align: right">'
         yield numbers
         yield '</td>'
 

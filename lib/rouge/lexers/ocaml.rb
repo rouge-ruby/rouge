@@ -31,7 +31,7 @@ module Rouge
         @primitives ||= Set.new %w(unit int float bool string char list array)
       end
 
-      operator = %r([\[\];,{}_()!$%&*+./:<=>?@^|~-]+)
+      operator = %r([\[\];,{}_()!$%&*+./:<=>?@^|~#-]+)
       id = /[a-z][\w']*/i
       upper_id = /[A-Z][\w']*/
 

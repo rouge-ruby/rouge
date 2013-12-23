@@ -1,3 +1,11 @@
+## version 1.3.0: 2013-12-23
+
+  * assorted CLI bugfixes: better error handling, CGI-style options, no loadpath munging
+  * html: support multiline doctypes
+  * ocaml: bugfix for OO code: allows `#` as an operator
+  * inline some styles in tableized output instead of relying on the theme
+  * redcarpet: add overrideable `#rouge_formatter` for custom formatting options
+
 ## version 1.2.0: 2013-11-26
 
   * New lexers:

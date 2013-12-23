@@ -21,11 +21,11 @@ module Rouge
 
         formatter.format(lexer.lex(code))
       end
-    end
 
-  protected
-    def rouge_formatter(opts={})
-      Formatters::HTML.new(opts)
+    protected
+      def rouge_formatter(opts={})
+        Formatters::HTML.new(opts)
+      end
     end
   end
 end

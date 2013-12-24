@@ -4,7 +4,9 @@ module Rouge
   module Lexers
     class Gherkin < RegexLexer
       tag 'gherkin'
-      aliases 'cucumber'
+      aliases 'cucumber', 'behat'
+
+      desc 'A business-readable spec DSL ( github.com/cucumber/cucumber/wiki/Gherkin )'
 
       filenames '*.feature'
       mimetypes 'text/x-gherkin'

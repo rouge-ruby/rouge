@@ -1,3 +1,7 @@
+## version 1.3.1: 2013-12-23
+
+  * fill in some lexer descriptions and add the behat alias for gherkin
+
 ## version 1.3.0: 2013-12-23
 
   * assorted CLI bugfixes: better error handling, CGI-style options, no loadpath munging

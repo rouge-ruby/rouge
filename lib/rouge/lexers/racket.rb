@@ -2,7 +2,7 @@
 module Rouge
   module Lexers
     class Racket < RegexLexer
-      desc "Racket is a Lisp descended from Scheme"
+      desc "Racket is a Lisp descended from Scheme (racket-lang.org)"
 
       tag 'racket'
       filenames '*.rkt', '*.rktd', '*.rktl'

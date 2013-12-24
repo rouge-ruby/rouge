@@ -2,6 +2,7 @@ module Rouge
   module Lexers
     class LiterateCoffeescript < RegexLexer
       tag 'literate_coffeescript'
+      desc 'Literate coffeescript'
       aliases 'litcoffee'
       filenames '*.litcoffee'
 

@@ -6,6 +6,8 @@ module Rouge
       filenames '*.cs'
       mimetypes 'text/x-csharp'
 
+      desc 'a multi-paradigm language targeting .NET'
+
       # TODO: support more of unicode
       id = /@?[_a-z]\w*/i
 

@@ -3,8 +3,8 @@ module Rouge
     Lexer.load_const :C, 'c.rb'
 
     class ObjectiveC < C
-      desc 'objective_c'
       tag 'objective_c'
+      desc 'an extension of C commonly used to write Apple software'
       aliases 'objc'
       filenames '*.m', '*.h'
 

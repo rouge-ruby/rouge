@@ -31,7 +31,7 @@ formatter.format(lexer.lex(source))
 Rouge::Themes::ThankfulEyes.render(:scope => '.highlight')
 ```
 
-Rouge aims to be simple to extend, and to be a drop-in replacement pygments, with the same quality of output.
+Rouge aims to be simple to extend, and to be a drop-in replacement for pygments, with the same quality of output.
 
 Also, Rouge ships with a `rougify` command which allows you to easily highlight files in your terminal: 
 

@@ -95,7 +95,8 @@ module Rouge
         mixin :whitespace
         rule /L?"/, Str, :string
         rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
-        rule %r((\d+\.\d*|\.\d+|\d+)[e][+-]?\d+[lu]*)i, Num::Float
+        rule %r((\d+[.]\d*|[.]?\d+)e[+-]?\d+[lu]*)i, Num::Float
+        rule %r(\d+e[+-]?\d+[lu]*)i, Num::Float
         rule /0x[0-9a-f]+[lu]*/i, Num::Hex
         rule /0[0-7]+[lu]*/i, Num::Oct
         rule /\d+[lu]*/i, Num::Integer

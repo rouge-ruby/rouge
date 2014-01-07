@@ -1,3 +1,7 @@
+int quote_delims = 100'000'000
+int float_delims = 100.00'00
+int hex_delims = 0xFF'Fa12
+
 /* foo */ #if 0
  this is commented
 #endif

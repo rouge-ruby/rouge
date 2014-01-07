@@ -37,8 +37,17 @@ module Rouge
         rule /(?:__offload|__blockingoffload|__outer)\b/, Keyword::Pseudo
       end
 
+      # digits with optional inner quotes
+      # see www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3781.pdf
+      dq = /\d('?\d)*/
+
       prepend :statements do
         rule /class\b/, Keyword, :classname
+        rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lu]*)?)i, Num::Float
+        rule %r(#{dq}e[+-]?#{dq}[lu]*)i, Num::Float
+        rule /0x\h('?\h)*[lu]*/i, Num::Hex
+        rule /0[0-7]('?[0-7])*[lu]*/i, Num::Oct
+        rule /#{dq}[lu]*/i, Num::Integer
       end
 
       state :classname do

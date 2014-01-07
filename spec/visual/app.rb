@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'bundler'
-Bundler.require
+Bundler.require :development
 require 'rouge'
 
 # stdlib

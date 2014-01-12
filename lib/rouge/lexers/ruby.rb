@@ -320,6 +320,11 @@ module Rouge
           goto :slash_regex
         end
 
+        rule /(\s*)(%=)/ do
+          groups Text, Operator
+          goto :expr_start
+        end
+
         rule(%r((?=\s*/))) { pop! }
 
         rule(//) { goto :expr_start }

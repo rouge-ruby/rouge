@@ -228,6 +228,9 @@ DATA.read.split(/\n\n\n\s*/).each do |event|
 	end
 end
 
+foo = 3
+foo %= 2
+
 conflicts = 0
 events.to_a.sort_by do |(day, daytime),|
 	[%w(Mo Di Mi Do Fr).index(day) || 0, daytime]

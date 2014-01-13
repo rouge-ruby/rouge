@@ -1,3 +1,10 @@
+## version 1.3.2: 2014-01-13
+
+  * Now tested in Ruby 2.1
+  * C family bugfix: allow exponential floats without decimals (`1e-2`)
+  * cpp: allow single quotes as digit separators (`100'000'000`)
+  * ruby: highlight `%=` as an operator in the right context
+
 ## version 1.3.1: 2013-12-23
 
   * fill in some lexer descriptions and add the behat alias for gherkin

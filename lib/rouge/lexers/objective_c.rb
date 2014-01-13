@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    Lexer.load_const :C, 'c.rb'
+    load_const :C, 'c.rb'
 
     class ObjectiveC < C
       tag 'objective_c'

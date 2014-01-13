@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    Lexer.load_const :Lua, 'lua.rb'
+    load_const :Lua, 'lua.rb'
 
     class Moonscript < RegexLexer
       desc "Moonscript (http://www.moonscript.org)"

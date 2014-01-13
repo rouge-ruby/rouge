@@ -17,13 +17,6 @@ module Rouge
         new(opts).lex(stream, &b)
       end
 
-      def load_const(const_name, relpath)
-        return if Lexers.const_defined?(const_name)
-
-        root = Pathname.new(__FILE__).dirname.join('lexers')
-        load root.join(relpath)
-      end
-
       def default_options(o={})
         @default_options ||= {}
         @default_options.merge!(o)
@@ -425,6 +418,15 @@ module Rouge
     #   like {TextAnalyzer#shebang?} and {TextAnalyzer#doctype?}
     def self.analyze_text(text)
       0
+    end
+  end
+
+  module Lexers
+    def self.load_const(const_name, relpath)
+      return if const_defined?(const_name)
+
+      root = Pathname.new(__FILE__).dirname.join('lexers')
+      load root.join(relpath)
     end
   end
 end

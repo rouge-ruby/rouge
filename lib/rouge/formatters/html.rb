@@ -43,7 +43,7 @@ module Rouge
         tokens.each do |tok, val|
           span(tok, val, &b)
         end
-        yield '</pre>' if @wrap
+        yield "</pre>\n" if @wrap
       end
 
       def stream_tableized(tokens)
@@ -82,8 +82,8 @@ module Rouge
         yield '</pre>'
         yield '</td>'
 
-        yield '</tr></tbody></table>'
-        yield '</div>' if @wrap
+        yield "</tr></tbody></table>\n"
+        yield "</div>\n" if @wrap
       end
 
       TABLE_FOR_ESCAPE_HTML = {

@@ -5,7 +5,7 @@ describe Rouge::Formatters::HTML do
 
   it 'formats a simple token stream' do
     out = subject.format([[Token['Name'], 'foo']])
-    assert { out == '<pre class="highlight"><span class="n">foo</span></pre>' }
+    assert { out == %(<pre class="highlight"><span class="n">foo</span></pre>\n) }
   end
 
   describe 'skipping the wrapper' do

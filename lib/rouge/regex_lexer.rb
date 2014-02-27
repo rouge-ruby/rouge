@@ -99,6 +99,11 @@ module Rouge
             puts "    popping stack: #{1}" if @debug
             @stack.pop or raise 'empty stack!'
           end
+        when :push
+          proc do |stream|
+            puts "    pushing #{@stack.last.name}" if @debug
+            @stack.push(@stack.last)
+          end
         when Symbol
           proc do |stream|
             puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug

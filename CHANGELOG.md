@@ -1,3 +1,9 @@
+## version 1.3.3: 2014-03-02
+
+  * prolog bugfix: was raising an error on some inputs (#126)
+  * python bugfix: was inconsistently highlighting keywords/builtins mid-word (#127)
+  * html formatter: always end output with a newline (#125)
+
 ## version 1.3.2: 2014-01-13
 
   * Now tested in Ruby 2.1

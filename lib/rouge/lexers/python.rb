@@ -11,41 +11,49 @@ module Rouge
         return 1 if text.shebang?(/pythonw?(3|2(\.\d)?)?/)
       end
 
-      keywords = %w(
-        assert break continue del elif else except exec
-        finally for global if lambda pass print raise
-        return try while yield as with
-      )
+      def self.keywords
+        @keywords ||= %w(
+          assert break continue del elif else except exec
+          finally for global if lambda pass print raise
+          return try while yield as with
+        )
+      end
 
-      builtins = %w(
-        __import__ abs all any apply basestring bin bool buffer
-        bytearray bytes callable chr classmethod cmp coerce compile
-        complex delattr dict dir divmod enumerate eval execfile exit
-        file filter float frozenset getattr globals hasattr hash hex id
-        input int intern isinstance issubclass iter len list locals
-        long map max min next object oct open ord pow property range
-        raw_input reduce reload repr reversed round set setattr slice
-        sorted staticmethod str sum super tuple type unichr unicode
-        vars xrange zip
-      )
+      def self.builtins
+        @builtins ||= %w(
+          __import__ abs all any apply basestring bin bool buffer
+          bytearray bytes callable chr classmethod cmp coerce compile
+          complex delattr dict dir divmod enumerate eval execfile exit
+          file filter float frozenset getattr globals hasattr hash hex id
+          input int intern isinstance issubclass iter len list locals
+          long map max min next object oct open ord pow property range
+          raw_input reduce reload repr reversed round set setattr slice
+          sorted staticmethod str sum super tuple type unichr unicode
+          vars xrange zip
+        )
+      end
 
-      builtins_pseudo = %w(self None Ellipsis NotImplemented False True)
+      def self.builtins_pseudo
+        @builtins_pseudo ||= %w(self None Ellipsis NotImplemented False True)
+      end
 
-      exceptions = %w(
-        ArithmeticError AssertionError AttributeError
-        BaseException DeprecationWarning EOFError EnvironmentError
-        Exception FloatingPointError FutureWarning GeneratorExit IOError
-        ImportError ImportWarning IndentationError IndexError KeyError
-        KeyboardInterrupt LookupError MemoryError NameError
-        NotImplemented NotImplementedError OSError OverflowError
-        OverflowWarning PendingDeprecationWarning ReferenceError
-        RuntimeError RuntimeWarning StandardError StopIteration
-        SyntaxError SyntaxWarning SystemError SystemExit TabError
-        TypeError UnboundLocalError UnicodeDecodeError
-        UnicodeEncodeError UnicodeError UnicodeTranslateError
-        UnicodeWarning UserWarning ValueError VMSError Warning
-        WindowsError ZeroDivisionError
-      )
+      def self.exceptions
+        @exceptions ||= %w(
+          ArithmeticError AssertionError AttributeError
+          BaseException DeprecationWarning EOFError EnvironmentError
+          Exception FloatingPointError FutureWarning GeneratorExit IOError
+          ImportError ImportWarning IndentationError IndexError KeyError
+          KeyboardInterrupt LookupError MemoryError NameError
+          NotImplemented NotImplementedError OSError OverflowError
+          OverflowWarning PendingDeprecationWarning ReferenceError
+          RuntimeError RuntimeWarning StandardError StopIteration
+          SyntaxError SyntaxWarning SystemError SystemExit TabError
+          TypeError UnboundLocalError UnicodeDecodeError
+          UnicodeEncodeError UnicodeError UnicodeTranslateError
+          UnicodeWarning UserWarning ValueError VMSError Warning
+          WindowsError ZeroDivisionError
+        )
+      end
 
       identifier =        /[a-z_][a-z0-9_]*/i
       dotted_identifier = /[a-z_.][a-z0-9_.]*/i
@@ -63,8 +71,6 @@ module Rouge
 
         rule /(in|is|and|or|not)\b/, Operator::Word
         rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
-
-        rule /(?:#{keywords.join('|')})\b/, Keyword
 
         rule /(def)((?:\s|\\\s)+)/ do
           groups Keyword, Text
@@ -86,10 +92,6 @@ module Rouge
           push :import
         end
 
-        # using negative lookbehind so we don't match property names
-        rule /(?<!\.)(?:#{builtins.join('|')})/, Name::Builtin
-        rule /(?<!\.)(?:#{builtins_pseudo.join('|')})/, Name::Builtin::Pseudo
-
         # TODO: not in python 3
         rule /`.*?`/, Str::Backtick
         rule /(?:r|ur|ru)"""/i, Str, :tdqs
@@ -102,6 +104,22 @@ module Rouge
         rule /u?'/i,            Str, :escape_sqs
 
         rule /@#{dotted_identifier}/i, Name::Decorator
+
+        # using negative lookbehind so we don't match property names
+        rule /(?<!\.)#{identifier}/ do |m|
+          if self.class.keywords.include? m[0]
+            token Keyword
+          elsif self.class.exceptions.include? m[0]
+            token Name::Builtin
+          elsif self.class.builtins.include? m[0]
+            token Name::Builtin
+          elsif self.class.builtins_pseudo.include? m[0]
+            token Name::Builtin::Pseudo
+          else
+            token Name
+          end
+        end
+
         rule identifier, Name
 
         rule /(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float

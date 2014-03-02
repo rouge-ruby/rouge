@@ -86,4 +86,11 @@ def \
   : \
   pass
 
-
+def the_word_strand():
+    a = b.strip()
+    a = strand
+    b = band
+    c = strand
+    b = error
+    c = stror
+    c = string

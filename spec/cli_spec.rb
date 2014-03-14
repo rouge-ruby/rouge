@@ -53,7 +53,7 @@ describe Rouge::CLI do
       it 'lists available lexers' do
         out, err = capture_io { subject.run }
 
-        expected_tags = Rouge::Lexer.all.map(&:tag)
+        expected_tags = Rouge::Lexer.all.map(&:tag).sort
         actual_tags = out.scan(/^(.*?):/).flatten
 
         assert_equal expected_tags, actual_tags, "err: #{err.inspect}"

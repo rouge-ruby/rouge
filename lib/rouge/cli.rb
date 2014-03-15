@@ -323,7 +323,7 @@ module Rouge
       def run
         puts "== Available Lexers =="
 
-        Lexer.all.each do |lexer|
+        Lexer.all.sort_by(&:tag).each do |lexer|
           desc = "#{lexer.desc}"
           if lexer.aliases.any?
             desc << " [aliases: #{lexer.aliases.join(',')}]"

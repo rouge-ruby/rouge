@@ -31,9 +31,34 @@ formatter.format(lexer.lex(source))
 Rouge::Themes::ThankfulEyes.render(:scope => '.highlight')
 ```
 
+####Full options:
+
+Formatter options:
+
+      css_class: 'highlight'  #  Apply a class to the syntax-highlighted output.
+                              #  Set to false to not apply any css class
+      line_numbers: false     #  Generate line numbers.
+      inline_theme: nil       #  A Rouge::CSSTheme used to highlight the output with inline styles
+                              #  instead of classes. Allows string inputs (separate mode with a dot):
+                              #  %w[colorful github monokai monokai.sublime thankful_eyes base16
+                              #     base16.dark base16.light base16.solarized base16.monokai]
+      wrap: true              #  Wrap the highlighted content in a container
+                              #  Defaults to <pre> or <div> if :line_numbers are enabled
+                              #  Use :pre_code for redcarpet style format, or false for no container
+
+Lexer options:
+
+      debug: false            #  Print a trace of the lex on stdout
+      parent: ''              #  Allows you to specify which language the template is inside
+
+CSS theme options:
+
+      scope: '.highlight'     #  CSS selector that styles are applied to
+                              #  E.g. Rouge::Themes::Monokai.mode(:sublime).render(scope: 'code')
+
 Rouge aims to be simple to extend, and to be a drop-in replacement for pygments, with the same quality of output.
 
-Also, Rouge ships with a `rougify` command which allows you to easily highlight files in your terminal: 
+Also, Rouge ships with a `rougify` command which allows you to easily highlight files in your terminal:
 
 ``` bash
 $ rougify foo.rb

@@ -23,8 +23,19 @@ module Rouge
       # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
         @css_class = opts.fetch(:css_class, 'highlight')
+        @css_class = unless @css_class.start_with?('false') || @css_class.lstrip!
+          " class=\"#@css_class\""
+        end
         @line_numbers = opts.fetch(:line_numbers, false)
         @inline_theme = opts.fetch(:inline_theme, nil)
+        unless @inline_theme.is_a?(Rouge::CSSTheme) || @inline_theme.nil?
+          theme, mode = @inline_theme.split('.')
+          @inline_theme = if mode
+            Theme.find(theme).mode(mode).new
+          else
+            Theme.find(theme).new
+          end
+        end
         @wrap = opts.fetch(:wrap, true)
       end
 
@@ -39,11 +50,18 @@ module Rouge
 
     private
       def stream_untableized(tokens, &b)
-        yield "<pre class=#{@css_class.inspect}>" if @wrap
-        tokens.each do |tok, val|
-          span(tok, val, &b)
+        case @wrap
+        when :pre_code  # Redcarpet style
+          yield "<pre><code#@css_class>"
+          tokens.each{ |tok, val| span(tok, val, &b) }
+          yield "</code></pre>\n"
+        when :pre, true  # Catch-all backwards-compatible default
+          yield "<pre#@css_class>"
+          tokens.each{ |tok, val| span(tok, val, &b) }
+          yield "</pre>\n"
+        else  # False, nil
+          tokens.each{ |tok, val| span(tok, val, &b) }
         end
-        yield "</pre>\n" if @wrap
       end
 
       def stream_tableized(tokens)
@@ -68,7 +86,7 @@ module Rouge
           %<<pre class="lineno">#{x+1}</pre>>
         end.join
 
-        yield "<div class=#{@css_class.inspect}>" if @wrap
+        yield "<div#@css_class>" if @wrap
         yield '<table style="border-spacing: 0"><tbody><tr>'
 
         # the "gl" class applies the style for Generic.Lineno

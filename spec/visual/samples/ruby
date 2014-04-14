@@ -48,6 +48,9 @@ x=0
 #leere regex
 test //, 123
 
+{staples: /\ASTAPLE?S?\s*[0-9]/i,
+ target: "^TARGET "}
+
 while x<100
  puts"#{g[x]}"
  x+=1

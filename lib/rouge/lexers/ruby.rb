@@ -27,7 +27,7 @@ module Rouge
           Str::Symbol
 
         rule /:'(\\\\|\\'|[^'])*'/, Str::Symbol
-        rule /\b[a-z_]\w*?:\s+/, Str::Symbol
+        rule /\b[a-z_]\w*?:\s+/, Str::Symbol, :expr_start
         rule /'(\\\\|\\'|[^'])*'/, Str::Single
         rule /:"/, Str::Symbol, :simple_sym
         rule /"/, Str::Double, :simple_string

@@ -179,7 +179,7 @@ module Rouge
         rule /(\{)(\s*)(\})/m do
           groups Punctuation, Text::Whitespace, Punctuation
         end
-        rule /(?:true|false)\b/, Keyword::Constant
+        rule /(?:true|false|null)\b/, Keyword::Constant
         rule /{/,  Punctuation, :object_key
         rule /\[/, Punctuation, :array
         rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float

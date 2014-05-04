@@ -44,6 +44,7 @@ module Rouge
       end
 
       state :esc_str do
+        rule /\\u[0-9]{4}/, Str::Escape
         rule /\\./m, Str::Escape
       end
     end

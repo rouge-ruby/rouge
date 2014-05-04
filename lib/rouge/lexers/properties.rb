@@ -1,7 +1,7 @@
 module Rouge
   module Lexers
     class Properties < RegexLexer
-      desc '.properties file mainly used in Java related technologies to store the configurable parameters of an application or localisation data'
+      desc '.properties config files for Java'
       tag 'properties'
 
       filenames '*.properties'

@@ -1,3 +1,13 @@
+## version 1.3.4: 2014-05-03
+
+  * New lexers:
+    - QML (thanks @seanchas116)
+    - Applescript (thanks @joshhepworth)
+    - Properties (thanks @pkuczynski)
+  * Ruby bugfix for `{ key: /regex/ }` (#134)
+  * JSON bugfix: properly highlight null (thanks @zsalzbank)
+  * Implement a noop formatter for perf testing (thanks @splattael)
+
 ## version 1.3.3: 2014-03-02
 
   * prolog bugfix: was raising an error on some inputs (#126)

@@ -43,18 +43,9 @@ module Rouge
 
     private
       def stream_untableized(tokens, &b)
-        case @wrap
-        when :pre_code  # Redcarpet style
-          yield "<pre><code#@css_class>"
-          tokens.each{ |tok, val| span(tok, val, &b) }
-          yield "</code></pre>\n"
-        when :pre, true  # Catch-all backwards-compatible default
-          yield "<pre#@css_class>"
-          tokens.each{ |tok, val| span(tok, val, &b) }
-          yield "</pre>\n"
-        else  # False, nil
-          tokens.each{ |tok, val| span(tok, val, &b) }
-        end
+        yield "<pre><code#@css_class>" if @wrap
+        tokens.each{ |tok, val| span(tok, val, &b) }
+        yield "</code></pre>\n" if @wrap
       end
 
       def stream_tableized(tokens)

@@ -27,14 +27,8 @@ module Rouge
 
         @line_numbers = opts.fetch(:line_numbers, false)
         @inline_theme = opts.fetch(:inline_theme, nil)
-        unless @inline_theme.is_a?(Rouge::CSSTheme) || @inline_theme.nil?
-          theme, mode = @inline_theme.split('.')
-          @inline_theme = if mode
-            Theme.find(theme).mode(mode).new
-          else
-            Theme.find(theme).new
-          end
-        end
+        @inline_theme = Theme.find(@inline_theme) if @inline_theme.is_a? String
+
         @wrap = opts.fetch(:wrap, true)
       end
 

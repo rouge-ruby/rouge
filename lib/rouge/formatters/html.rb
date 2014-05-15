@@ -23,9 +23,8 @@ module Rouge
       # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
         @css_class = opts.fetch(:css_class, 'highlight')
-        @css_class = unless @css_class.start_with?('false') || @css_class.lstrip!
-          " class=\"#@css_class\""
-        end
+        @css_class = " class=#{@css_class.inspect}" if @css_class
+
         @line_numbers = opts.fetch(:line_numbers, false)
         @inline_theme = opts.fetch(:inline_theme, nil)
         unless @inline_theme.is_a?(Rouge::CSSTheme) || @inline_theme.nil?

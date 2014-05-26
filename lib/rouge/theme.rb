@@ -133,7 +133,7 @@ module Rouge
 
   class CSSTheme < Theme
     def initialize(opts={})
-      @scope = opts[:scope] || '.highlight'
+      @scope = opts[:scope] || 'code'
     end
 
     def render(&b)

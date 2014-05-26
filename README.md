@@ -28,7 +28,7 @@ lexer = Rouge::Lexers::Shell.new
 formatter.format(lexer.lex(source))
 
 # Get some CSS
-Rouge::Themes::ThankfulEyes.render(:scope => '.highlight')
+Rouge::Themes::ThankfulEyes.render(:scope => 'code')
 ```
 
 ####Full options:

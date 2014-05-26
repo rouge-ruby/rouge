@@ -272,6 +272,9 @@ module Rouge
         yield %||
         yield %|options:|
         yield %|  --scope	(default: .highlight) a css selector to scope by|
+        yield %||
+        yield %|available themes:|
+        yield %|  #{Theme.registry.keys.sort.join(', ')}|
       end
 
       def self.parse(argv)

@@ -1,3 +1,11 @@
+## version 1.4.0: 2014-05-28
+
+  * breaking: wrap code in `<pre ...><code>...</code></pre>` if `:wrap` is not overridden
+    (thanks @Arcovion)
+  * Allow passing a theme name as a string to `:inline_theme` (thanks @Arcovion)
+  * Add `:start_line` option for html line numbers (thanks @sencer)
+  * List available themes in `rougify help style`
+
 ## version 1.3.4: 2014-05-03
 
   * New lexers:

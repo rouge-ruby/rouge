@@ -65,10 +65,8 @@ module Rouge
           span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
         end
 
-        # generate a string of newline-separated line numbers for the gutter
-        numbers = num_lines.times.map do |x|
-          %<<pre class="lineno">#{x+1}</pre>>
-        end.join
+        # generate a string of newline-separated line numbers for the gutter>
+        numbers = %<<pre class="lineno">#{(1..num_lines).to_a.join("\n")}</pre>>
 
         yield "<div#@css_class>" if @wrap
         yield '<table style="border-spacing: 0"><tbody><tr>'

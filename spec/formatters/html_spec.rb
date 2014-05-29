@@ -40,7 +40,7 @@ describe Rouge::Formatters::HTML do
     let(:tokens) { Rouge::Lexers::Clojure.lex(text) }
 
     let(:output) { subject.format(tokens) }
-    let(:line_numbers) { output.scan(/<pre class="lineno"/).size }
+    let(:line_numbers) { output[%r[<pre class="lineno".*?</pre>]m].scan(/\d+/m).size }
 
     let(:output_code) {
       output =~ %r(<td class="code">(.*?)</td>)m

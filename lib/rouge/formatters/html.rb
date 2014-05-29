@@ -26,8 +26,9 @@ module Rouge
         @css_class = " class=#{@css_class.inspect}" if @css_class
 
         @line_numbers = opts.fetch(:line_numbers, false)
+        @start_line = opts.fetch(:start_line, 1)
         @inline_theme = opts.fetch(:inline_theme, nil)
-        @inline_theme = Theme.find(@inline_theme) if @inline_theme.is_a? String
+        @inline_theme = Theme.find(@inline_theme).new if @inline_theme.is_a? String
 
         @wrap = opts.fetch(:wrap, true)
       end
@@ -65,10 +66,9 @@ module Rouge
           span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
         end
 
-        # generate a string of newline-separated line numbers for the gutter
-        numbers = num_lines.times.map do |x|
-          %<<pre class="lineno">#{x+1}</pre>>
-        end.join
+        # generate a string of newline-separated line numbers for the gutter>
+        numbers = %<<pre class="lineno">#{(@start_line..num_lines+@start_line-1)
+          .to_a.join("\n")}</pre>>
 
         yield "<div#@css_class>" if @wrap
         yield '<table style="border-spacing: 0"><tbody><tr>'

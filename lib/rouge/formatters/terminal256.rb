@@ -19,7 +19,7 @@ module Rouge
         tokens.each do |tok, val|
           escape = escape_sequence(tok)
           yield escape.style_string
-          yield val
+          yield val.gsub("\n", "\n#{escape.style_string}")
           yield escape.reset_string
         end
       end

@@ -177,6 +177,8 @@ too
 2 /4
 asfsadf/
 
+foo[:bar] / baz[:zot]
+
 
 #from: http://coderay.rubychan.de/rays/show/383
 class Object

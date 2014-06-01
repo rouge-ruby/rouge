@@ -203,11 +203,11 @@ module Rouge
 
         rule /[a-zA-Z_]\w*[?!]/, Name, :expr_start
         rule /[a-zA-Z_]\w*/, Name, :method_call
-        rule /\[|\]|\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\.{1,3}/,
+        rule /\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\.{1,3}/,
           Operator, :expr_start
         rule /[-+\/*%=<>&!^|~]=?/, Operator, :expr_start
-        rule %r<[({,?:\\;/]>, Punctuation, :expr_start
-        rule %r<[)}]>, Punctuation
+        rule %r<[\[({,?:\\;/]>, Punctuation, :expr_start
+        rule %r<[\])}]>, Punctuation
       end
 
       state :has_heredocs do

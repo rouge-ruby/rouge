@@ -1,0 +1,134 @@
+func sayHello(person:String) -> String {
+    return "Hello, \(person). How are you?"
+}
+
+sayHello("Toto")
+
+func halfOpenRangeLength(start:Int, end:Int) -> Int {
+    return end - start
+}
+
+halfOpenRangeLength(3, 8)
+
+func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
+    var vowels = 0, consonants = 0, others = 0
+    
+    for character in string {
+        
+        switch String(character).lowercaseString {
+        case "a","o","i","u","e":
+            ++vowels
+        case "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z":
+            ++consonants
+        default:
+            ++others
+        }
+    }
+    
+    return (vowels,consonants,others)
+}
+
+count(sayHello("Tamunaaaa"))
+
+
+func join(#firstString:String,#secondString:String,joiner:String = " & ") -> String {
+    return "\(firstString)\(joiner)\(secondString)"
+}
+
+join(firstString: "Toto", secondString: "Tamuna", joiner: " + ")
+
+func alignedRight(inout #string:String, count:Int, pad:Character) -> String {
+    let amountToPad = count - countElements(string)
+    
+    for _ in 1...amountToPad {
+        string = pad + string
+    }
+    
+    return string;
+}
+
+var textToAlign = "Toto"
+alignedRight(string: &textToAlign, 10, "-")
+textToAlign
+
+// Function Types
+func addToInts(a:Int,b:Int) -> Int {
+    return a + b
+}
+
+let addNumbers: (Int,Int)->(Int) = addToInts;
+addNumbers(3,2)
+
+
+func printMathProblem(mathFunction:(Int,Int)->Int,a:Int,b:Int)->String {
+    return "Result " + String(mathFunction(a,b))
+}
+printMathProblem(addNumbers, 5, 10)
+
+
+// Function return types + Nested Functions
+func chooseSteperFunction(backward:Bool) -> (Int) -> Int {
+    func stepForward(input:Int)->Int {
+        return input + 1
+    }
+    
+    func stepBackward(input:Int)->Int {
+        return input + 1
+    }
+    
+    return backward ? stepBackward : stepForward
+}
+let currentValue = 5
+chooseSteperFunction(currentValue > 0)(currentValue)
+
+// Closures
+func comperator(s1:String,s2:String)->Bool {
+    return s2 > s1
+}
+let names = ["Chris", "Alex", "Ewa", "Barry", "Daniella"]
+let revised = sort(names, comperator)
+
+let revised2 = sort(names, {
+    (s1:String,s2:String)->Bool in
+        return s2 > s1
+    })
+
+let revised3 = sort(names, { s1, s2 in s1 > s2 })
+revised3
+
+let revised4 = sort(names) { $0 > $1 } // This is also a trailing closure
+revised4
+
+let revised5 = sort(names, >)
+
+// Long closures
+let digitNames = [
+    0: "Zero", 1: "One", 2: "Two",   3: "Three", 4: "Four",
+    5: "Five", 6: "Six", 7: "Seven", 8: "Eight", 9: "Nine"
+]
+let numbers = [16, 58, 510]
+
+let strings = numbers.map {
+    (var number) -> String in
+    var output = ""
+    while number > 0 {
+        output = digitNames[number % 10]! + output
+        number /= 10
+    }
+    return output
+}
+strings
+
+// Closure Value Capturing
+func makeIncrementor(firstNumber number:Int) -> () -> Int
+{
+    var runningTotal = 0
+    func incrementor()->Int {
+        runningTotal += number
+        return runningTotal
+    }
+    return incrementor
+}
+
+let incrementor = makeIncrementor(firstNumber: 4)
+incrementor()

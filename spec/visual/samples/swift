@@ -4,6 +4,8 @@ func sayHello(person:String) -> String {
 
 sayHello("Toto")
 
+var pi = 3.1415
+
 func halfOpenRangeLength(start:Int, end:Int) -> Int {
     return end - start
 }
@@ -28,14 +30,14 @@ func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
     return (vowels,consonants,others)
 }
 
-count(sayHello("Tamunaaaa"))
+count(sayHello("John"))
 
 
 func join(#firstString:String,#secondString:String,joiner:String = " & ") -> String {
     return "\(firstString)\(joiner)\(secondString)"
 }
 
-join(firstString: "Toto", secondString: "Tamuna", joiner: " + ")
+join(firstString: "Toto", secondString: "Someone Other", joiner: " + ")
 
 func alignedRight(inout #string:String, count:Int, pad:Character) -> String {
     let amountToPad = count - countElements(string)

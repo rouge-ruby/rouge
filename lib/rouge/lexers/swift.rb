@@ -9,7 +9,7 @@ module Rouge
       desc 'Multi paradigm, compiled programming language developed by Apple for iOS and OS X development.' # From Wikipedia.
 
       # TODO: support more of unicode
-      id = /@?[_a-z]\w*/i
+      id = /\#?[_a-z]\w*/i
 
       keywords = %w(
         class deinit enum extension func import init let protocol static struct subscript typealias var 
@@ -22,7 +22,7 @@ module Rouge
       )
 
       keywords_type = %w(
-        Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64
+        Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 Int
         Double Float
         Bool 
         String Character 
@@ -30,39 +30,31 @@ module Rouge
 
       state :whitespace do
         rule /\s+/m, Text
-        rule %r(//.*?\n), Comment::Single
-        rule %r(/[*].*?[*]/)m, Comment::Multiline
+        rule %r(\/\/.*?\n), Comment::Single
+        rule %r(\/[*].*?[*]\/)m, Comment::Multiline
       end
 
       state :root do
         mixin :whitespace
-        
-        
+        rule /\$(([1-9]\d*)?\d)/, Name::Variable
 
-        # rule /^\s*\[.*?\]/, Name::Attribute
-#         rule /[$]\s*"/, Str, :splice_string
-#         rule /[$]\s*<#/, Str, :splice_recstring
-#         rule /<#/, Str, :recstring
-# 
-#         rule /(<\[)\s*(#{id}:)?/, Keyword
-#         rule /\]>/, Keyword
-# 
-#         rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
-#         rule /@"(\\.|.)*?"/, Str
-#         rule /"(\\.|.)*?["\n]/, Str
-#         rule /'(\\.|.)'/, Str::Char
-#         rule /0x[0-9a-f]+[lu]?/i, Num
-#         rule %r(
-#           [0-9]
-#           ([.][0-9]*)? # decimal
-#           (e[+-][0-9]+)? # exponent
-#           [fldu]? # type
-#         )ix, Num
-         rule /\b(#{keywords.join('|')})\b/, Keyword
-         rule /\b(#{keywords_type.join('|')})\b/, Keyword::Type
-#         rule /class|struct|enum/, Keyword, :class
-         rule /#{id}(?=\s*[(])/, Name::Function
-         rule id, Name
+        rule %r{[~!%^&*()+=|\[\]{}:;,.<>\/?-]}, Punctuation
+        rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
+        rule /@"(\\.|.)*?"/, Str
+        rule /"(\\.|.)*?["\n]/, Str
+        rule /'(\\.|.)'/, Str::Char
+        rule /(\d+\*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
+        rule /\d+e[+-]?[0-9]+/i, Num::Float
+        rule /0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
+        rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
+        rule /0b[01]+(?:_[01]+)*/, Num::Bin
+        rule %r{[\d]+(?:_\d+)*}, Num::Integer
+        
+        rule %r{\b(#{keywords.join('|')})\b}, Keyword
+        rule %r{\b(#{keywords_type.join('|')})\b}, Keyword::Type
+        rule /class|struct|enum/, Keyword, :class
+        rule /(?!\b(if|while|for)\b)\b\w+(?=\s*\()/, Name::Function
+        rule id, Name
       end
 
       state :class do

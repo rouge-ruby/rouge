@@ -9,7 +9,7 @@ module Rouge
       desc 'Multi paradigm, compiled programming language developed by Apple for iOS and OS X development. (developer.apple.com/swift)'
 
       # TODO: support more of unicode
-      id = /\#?[_a-z]\w*/i
+      id = /\#?[_\u0000-\uFFFF]\w*/i
 
       def self.keywords
         @keywords ||= Set.new %w(

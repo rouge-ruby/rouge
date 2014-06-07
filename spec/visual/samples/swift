@@ -32,6 +32,11 @@ func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
 
 count(sayHello("John"))
 
+// Unicode and Emoji support
+let 😄face = "Happy Face"
+let ქართულადაც = "This is Georgian"
+let こんにちは = "...and Japanese"
+
 
 func join(#firstString:String,#secondString:String,joiner:String = " & ") -> String {
     return "\(firstString)\(joiner)\(secondString)"

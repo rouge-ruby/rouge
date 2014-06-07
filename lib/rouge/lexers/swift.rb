@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Rouge
   module Lexers
     class CSharp < RegexLexer

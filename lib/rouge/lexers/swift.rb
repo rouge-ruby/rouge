@@ -2,10 +2,8 @@ module Rouge
   module Lexers
     class CSharp < RegexLexer
       tag 'swift'
-      aliases 'apple_swift'
       filenames '*.swift'
-      mimetypes 'text/x-swift' # TODO: this has to be revised
-
+     
       desc 'Multi paradigm, compiled programming language developed by Apple for iOS and OS X development.' # From Wikipedia.
 
       # TODO: support more of unicode

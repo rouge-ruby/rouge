@@ -54,6 +54,17 @@ func alignedRight(inout #string:String, count:Int, pad:Character) -> String {
     return string;
 }
 
+/* This is multiline comment
+/* 
+   This part is nested into parten comment
+*/ 
+    Trailing part of parent comment
+*/
+
+let thisIsNotComment = true
+
+/* Singleline Comment */
+
 var textToAlign = "Toto"
 alignedRight(string: &textToAlign, 10, "-")
 textToAlign

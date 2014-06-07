@@ -31,7 +31,7 @@ module Rouge
       state :whitespace do
         rule /\s+/m, Text
         rule %r(\/\/.*?\n), Comment::Single
-        rule %r(\/[*].*?[*]\/)m, Comment::Multiline
+        rule %r((?<re>\/\*(?:(?>[^\/\*\*\/]+)|\g<re>)*\*\/))m, Comment::Multiline
       end
 
       state :root do

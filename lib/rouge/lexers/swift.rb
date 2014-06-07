@@ -4,7 +4,7 @@ module Rouge
       tag 'swift'
       filenames '*.swift'
      
-      desc 'Multi paradigm, compiled programming language developed by Apple for iOS and OS X development.' # From Wikipedia.
+      desc 'Multi paradigm, compiled programming language developed by Apple for iOS and OS X development. (developer.apple.com/swift)'
 
       # TODO: support more of unicode
       id = /\#?[_a-z]\w*/i

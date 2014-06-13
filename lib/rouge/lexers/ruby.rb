@@ -196,8 +196,8 @@ module Rouge
         mixin :has_heredocs
 
         rule /[A-Z][a-zA-Z0-9_]+/, Name::Constant, :method_call
-        rule /(\.|::)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/ do
-          groups Punctuation, Name::Function
+        rule /(\.|::)(\s*)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/ do
+          groups Punctuation, Text, Name::Function
           push :expr_start
         end
 

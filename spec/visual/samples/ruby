@@ -10,6 +10,28 @@ link_to 'new', new_article_path, class: 'btn'
 a ? b:c
 
 ########
+# method calls
+########
+
+foo.bar
+foo.bar.baz
+foo.bar(123).baz()
+
+foo.
+  bar
+
+foo
+  .bar()
+  .baz
+
+foo.
+  bar
+
+foo.
+  bar().
+  baz
+
+########
 # function definitions
 ########
 

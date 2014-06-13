@@ -36,7 +36,7 @@ module Rouge
 
       state :section do
         # Match section arguments
-        rule /\s+([^>]+)(>\n)/ do |m|
+        rule /(\s+[^>]+)(>\n)/ do |m|
           token Literal::String::Regex, m[1]
           token Text, m[2]
           pop!

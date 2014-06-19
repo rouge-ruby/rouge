@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    class CSharp < RegexLexer
+    class Swift < RegexLexer
       tag 'swift'
       filenames '*.swift'
      

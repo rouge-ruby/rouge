@@ -14,7 +14,7 @@ module Rouge
         @at_keywords ||= %w(
           selector private protected public encode synchronized try
           throw catch finally end property synthesize dynamic optional
-          interface implementation
+          interface implementation import
         )
       end
 

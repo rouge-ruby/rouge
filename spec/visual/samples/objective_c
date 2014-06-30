@@ -39,6 +39,8 @@ for (key in dictionary) {
 }
 
 // MyClass.h
+@import Foundation;
+
 @interface MyClass : NSObject
 {
     NSString *value;

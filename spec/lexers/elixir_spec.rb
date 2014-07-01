@@ -64,5 +64,14 @@ describe Rouge::Lexers::Elixir do
       assert_tokens_equal %{~r//},
         ['Literal.String.Regex', '~r//']
     end
+
+    it 'lexes & operator' do
+      assert_tokens_equal %{&(&1)},
+        ['Operator', '&'],
+        ['Punctuation', '('],
+        ['Name.Variable', '&1'],
+        ['Punctuation', ')']
+
+    end
   end
 end

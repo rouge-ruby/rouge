@@ -377,3 +377,4 @@ use Bitwise
 %{key: 1}
 %Struct{name: "value"}
 ~r/^(.+):(\d+)$/
+doubler = &(&1 * 2)

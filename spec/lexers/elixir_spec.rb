@@ -59,5 +59,10 @@ describe Rouge::Lexers::Elixir do
         ['Literal.Number', '1'],
         ['Punctuation', '}']
     end
+
+    it 'lexes regexp sigils' do
+      assert_tokens_equal %{~r//},
+        ['Literal.String.Regex', '~r//']
+    end
   end
 end

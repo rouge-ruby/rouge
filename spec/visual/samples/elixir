@@ -376,3 +376,4 @@ use Bitwise
 1 &&& 2
 %{key: 1}
 %Struct{name: "value"}
+~r/^(.+):(\d+)$/

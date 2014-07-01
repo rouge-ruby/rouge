@@ -370,3 +370,7 @@ defp interpret(input) do
     true            -> :statement
   end
 end
+
+use Bitwise
+~~~1
+1 &&& 2

@@ -374,3 +374,5 @@ end
 use Bitwise
 ~~~1
 1 &&& 2
+%{key: 1}
+%Struct{name: "value"}

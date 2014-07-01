@@ -43,5 +43,21 @@ describe Rouge::Lexers::Elixir do
         ['Operator', '&&&'],
         ['Literal.Number', '3']
     end
+
+    it 'lexes structs' do
+      assert_tokens_equal %{%Struct{}},
+        ['Punctuation', '%'],
+        ['Name.Constant', 'Struct'],
+        ['Punctuation', '{}']
+    end
+
+    it 'lexes map' do
+      assert_tokens_equal %{%{key: 1}},
+        ['Punctuation', '%{'],
+        ['Literal.String.Symbol', 'key:'],
+        ['Text', ' '],
+        ['Literal.Number', '1'],
+        ['Punctuation', '}']
+    end
   end
 end

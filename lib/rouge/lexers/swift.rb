@@ -53,8 +53,8 @@ module Rouge
         mixin :whitespace
         rule /\$(([1-9]\d*)?\d)/, Name::Variable
 
-        rule %r{[~!%^&*()+=|\[\]{}:;,.<>\/?-]}, Punctuation
-        rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
+        rule %r{[()\[\]{}:;,?]}, Punctuation
+        rule %r([-/=+*%<>!&|^.~]+), Operator
         rule /@?"/, Str, :dq
         rule /'(\\.|.)'/, Str::Char
         rule /(\d+\*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float

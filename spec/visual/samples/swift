@@ -14,9 +14,9 @@ halfOpenRangeLength(3, 8)
 
 func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
     var vowels = 0, consonants = 0, others = 0
-    
+
     for character in string {
-        
+
         switch String(character).lowercaseString {
         case "a","o","i","u","e":
             ++vowels
@@ -26,7 +26,7 @@ func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
             ++others
         }
     }
-    
+
     return (vowels,consonants,others)
 }
 
@@ -46,11 +46,11 @@ join(firstString: "Toto", secondString: "Someone Other", joiner: " + ")
 
 func alignedRight(inout #string:String, count:Int, pad:Character) -> String {
     let amountToPad = count - countElements(string)
-    
+
     for _ in 1...amountToPad {
         string = pad + string
     }
-    
+
     return string;
 }
 

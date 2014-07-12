@@ -63,9 +63,17 @@ module Rouge
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
-        
-        rule /(?!\b(if|while|for)\b)\b\w+(?=\s*\()/, Name::Function
-        
+
+        rule /(?!\b(if|while|for)\b)\b#{id}(?=\s*[(])/, Name::Function
+
+        rule /(#?#{id})(\s*)(:)/ do
+          groups Name::Variable, Text, Punctuation
+        end
+
+        rule /(let|var)\b(\s*)(#{id})/ do
+          groups Keyword, Text, Name::Variable
+        end
+
         rule id do |m|
           if self.class.keywords.include? m[0]
             token Keyword

@@ -90,7 +90,11 @@ module Rouge
       end
 
       def get_style(token)
-        get_own_style(token) || styles[Token::Tokens::Text]
+        get_own_style(token) || base_style
+      end
+
+      def base_style
+        styles[Token::Tokens::Text]
       end
 
       def name(n=nil)
@@ -146,6 +150,10 @@ module Rouge
       styles.each do |tok, style|
         style.render(css_selector(tok), &b)
       end
+    end
+
+    def render_base(selector, &b)
+      self.class.base_style.render(selector, &b)
     end
 
     def style_for(tok)

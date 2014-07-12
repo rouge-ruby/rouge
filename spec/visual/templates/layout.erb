@@ -5,7 +5,7 @@
 
   <style type="text/css">
     <%= @theme.render %>
-    <%= @theme.class.styles[Rouge::Token::Tokens::Text].render('body') %>
+    <%= @theme.render_base('pre') %>
 
     pre { font-family: 'Ubuntu Mono', 'Monaco', monospace; }
 

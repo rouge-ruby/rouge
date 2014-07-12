@@ -1,3 +1,12 @@
+## version 1.5.0: 2014-07-11
+
+  * new lexer: swift (thanks @totocaster!)
+  * update elixir for new upstream features (thanks @splattael!)
+  * ruby bugfixes:
+    - add support for method calls with trailing dots
+    - fix for `foo[bar] / baz` being highlighted as a regex
+  * terminal256 formatter: re-style each line - some platforms reset on each line
+
 ## version 1.4.0: 2014-05-28
 
   * breaking: wrap code in `<pre ...><code>...</code></pre>` if `:wrap` is not overridden

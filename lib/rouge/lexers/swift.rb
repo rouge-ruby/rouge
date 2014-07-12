@@ -55,8 +55,7 @@ module Rouge
 
         rule %r{[~!%^&*()+=|\[\]{}:;,.<>\/?-]}, Punctuation
         rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
-        rule /@"(\\.|.)*?"/, Str
-        rule /"(\\.|.)*?["\n]/, Str
+        rule /@?"/, Str, :dq
         rule /'(\\.|.)'/, Str::Char
         rule /(\d+\*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
         rule /\d+e[+-]?[0-9]+/i, Num::Float
@@ -81,6 +80,28 @@ module Rouge
           end
         end
         rule id, Name
+      end
+
+      state :dq do
+        rule /\\[\\0tnr'"]/, Str::Escape
+        rule /\\[(]/, Str::Escape, :interp
+        rule /\\x\h{2}/, Str::Escape
+        rule /\\u\h{4}/, Str::Escape
+        rule /\\U\h{8}/, Str::Escape
+        rule /[^\\"]+/, Str
+        rule /"/, Str, :pop!
+      end
+
+      state :interp do
+        rule /[(]/, Punctuation, :interp_inner
+        rule /[)]/, Str::Escape, :pop!
+        mixin :root
+      end
+
+      state :interp_inner do
+        rule /[(]/, Punctuation, :push
+        rule /[)]/, Punctuation, :pop!
+        mixin :root
       end
 
       state :class do

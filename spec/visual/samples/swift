@@ -1,5 +1,9 @@
 func sayHello(person:String) -> String {
-    return "Hello, \(person). How are you?"
+    return "Hello, \(capitalize(word:person)). \"How're are you doin\'?\""
+}
+
+func capitalize(word:String) -> String {
+    // TODO
 }
 
 sayHello("Toto")
@@ -22,6 +26,8 @@ func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
             ++vowels
         case "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z":
             ++consonants
+        case "\n", "\r", "\t", "\0", "\x0A\u01AB\U0123ABCD":
+            // TODO
         default:
             ++others
         }
@@ -36,6 +42,7 @@ count(sayHello("John"))
 let 😄face = "Happy Face"
 let ქართულადაც = "This is Georgian"
 let こんにちは = "...and Japanese"
+let 𓂀 = "and hieroglyphs"
 
 
 func join(#firstString:String,#secondString:String,joiner:String = " & ") -> String {

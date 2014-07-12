@@ -370,3 +370,11 @@ defp interpret(input) do
     true            -> :statement
   end
 end
+
+use Bitwise
+~~~1
+1 &&& 2
+%{key: 1}
+%Struct{name: "value"}
+~r/^(.+):(\d+)$/
+doubler = &(&1 * 2)

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Lua do
   let(:subject) { Rouge::Lexers::Lua.new }
 

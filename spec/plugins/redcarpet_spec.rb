@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 require 'rouge/plugins/redcarpet'
 describe Rouge::Plugins::Redcarpet do
   # skip if redcarpet isn't loaded

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::OCaml do
   let(:subject) { Rouge::Lexers::OCaml.new }
 

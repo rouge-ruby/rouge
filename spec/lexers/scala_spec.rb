@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Scala do
   let(:subject) { Rouge::Lexers::Scala.new }
 

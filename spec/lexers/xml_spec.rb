@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::XML do
   let(:subject) { Rouge::Lexers::XML.new }
 

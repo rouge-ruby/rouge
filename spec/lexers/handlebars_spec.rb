@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Handlebars do
   let(:subject) { Rouge::Lexers::Handlebars.new }
 

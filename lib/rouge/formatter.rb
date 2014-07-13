@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 module Rouge
   # A Formatter takes a token stream and formats it for human viewing.
   class Formatter

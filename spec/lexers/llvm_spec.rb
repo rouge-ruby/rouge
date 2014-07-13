@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::LLVM do
   let(:subject) { Rouge::Lexers::LLVM.new }
 

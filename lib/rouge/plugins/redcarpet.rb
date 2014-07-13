@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 # this file is not require'd from the root.  To use this plugin, run:
 #
 #    require 'rouge/plugins/redcarpet'

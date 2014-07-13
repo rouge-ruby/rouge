@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Diff do
   let(:subject) { Rouge::Lexers::Diff.new }
 

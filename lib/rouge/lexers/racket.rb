@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*- #
 module Rouge
   module Lexers
     class Racket < RegexLexer

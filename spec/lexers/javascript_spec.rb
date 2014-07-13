@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Javascript do
   let(:subject) { Rouge::Lexers::Javascript.new }
 

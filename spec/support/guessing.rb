@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 module Support
   module Guessing
     def assert_guess(type=nil, info={})

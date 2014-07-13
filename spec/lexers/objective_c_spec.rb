@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::ObjectiveC do
   let(:subject) { Rouge::Lexers::ObjectiveC.new }
 

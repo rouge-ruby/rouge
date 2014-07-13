@@ -1,5 +1,4 @@
-# stdlib
-require 'set'
+# -*- coding: utf-8 -*- #
 
 module Rouge
   module Lexers

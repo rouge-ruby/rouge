@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Moonscript do
   let(:subject) { Rouge::Lexers::Moonscript.new }
 

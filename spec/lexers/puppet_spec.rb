@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Puppet do
   let(:subject) { Rouge::Lexers::Puppet.new }
 

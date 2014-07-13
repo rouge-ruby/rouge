@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::YAML do
   let(:subject) { Rouge::Lexers::YAML.new }
 

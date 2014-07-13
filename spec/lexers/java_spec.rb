@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Java do
   let(:subject) { Rouge::Lexers::Java.new }
 

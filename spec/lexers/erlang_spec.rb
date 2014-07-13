@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Erlang do
   let(:subject) { Rouge::Lexers::Erlang.new }
 

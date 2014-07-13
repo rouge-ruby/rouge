@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 # stdlib
 require 'strscan'
 require 'cgi'
@@ -83,7 +85,7 @@ module Rouge
       def demo(arg=:absent)
         return @demo = arg unless arg == :absent
 
-        @demo = File.read(demo_file)
+        @demo = File.read(demo_file, encoding: 'utf-8')
       end
 
       # @return a list of all lexers.
@@ -204,7 +206,7 @@ module Rouge
         when String
           source
         when ->(s){ s.respond_to? :read }
-          source.read
+          source.read(encoding: 'utf-8')
         else
           raise 'invalid source'
         end

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers do
   spec_dir = Pathname.new(__FILE__).dirname
   samples_dir = spec_dir.join('visual/samples')
@@ -13,7 +15,7 @@ describe Rouge::Lexers do
       end
 
       it 'lexes the sample without throwing' do
-        sample = File.read(samples_dir.join(lexer_class.tag))
+        sample = File.read(samples_dir.join(lexer_class.tag), encoding: 'utf-8')
         subject.lex(sample).to_a
       end
     end

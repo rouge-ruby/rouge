@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Haml do
   let(:subject) { Rouge::Lexers::Haml.new }
   include Support::Lexing

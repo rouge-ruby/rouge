@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Groovy do
   let(:subject) { Rouge::Lexers::Groovy.new }
 

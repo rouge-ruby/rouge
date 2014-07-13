@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 module Rouge
   module Lexers
     load_const :Javascript, 'javascript.rb'
@@ -21,7 +23,7 @@ module Rouge
           push :type_block
         end
       end
-  
+
       state :type_block do
         rule /(id)(\s*)(:)(\s*)(#{id_with_dots})/ do
           groups Name::Label, Text, Punctuation, Text, Keyword::Declaration

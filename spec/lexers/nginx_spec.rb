@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Nginx do
   let(:subject) { Rouge::Lexers::Nginx.new }
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Racket do
   let(:subject) { Rouge::Lexers::Racket.new }
 

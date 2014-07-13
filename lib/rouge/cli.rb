@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 # not required by the main lib.
 # to use this module, require 'rouge/cli'.
 

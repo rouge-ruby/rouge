@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 module Rouge
   # @abstract
   # A TemplateLexer is one that accepts a :parent option, to specify

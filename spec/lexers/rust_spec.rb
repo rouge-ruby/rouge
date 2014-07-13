@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Rust do
   let(:subject) { Rouge::Lexers::Rust.new }
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Formatters::HTML do
   let(:subject) { Rouge::Formatters::HTML.new(options) }
   let(:options) { {} }

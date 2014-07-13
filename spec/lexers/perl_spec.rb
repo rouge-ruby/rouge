@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Perl do
   let(:subject) { Rouge::Lexers::Perl.new }
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Python do
   let(:subject) { Rouge::Lexers::Python.new }
 

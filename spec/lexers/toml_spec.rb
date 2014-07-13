@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::TOML do
   let(:subject) { Rouge::Lexers::TOML.new }
 

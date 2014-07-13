@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::SQL do
   let(:subject) { Rouge::Lexers::SQL.new }
 

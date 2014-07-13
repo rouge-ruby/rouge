@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Theme do
   def squish(str)
     str.strip.gsub(/\s+/, ' ')

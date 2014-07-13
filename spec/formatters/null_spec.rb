@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Formatters::Null do
   let(:subject) { Rouge::Formatters::Null.new }
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 module Rouge
   module Themes
     class ThankfulEyes < CSSTheme

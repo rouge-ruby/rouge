@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 require 'rouge/cli'
 
 describe Rouge::CLI do

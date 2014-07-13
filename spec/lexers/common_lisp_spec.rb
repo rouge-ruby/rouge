@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::CommonLisp do
   let(:subject) { Rouge::Lexers::CommonLisp.new }
 

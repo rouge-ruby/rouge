@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Formatters::Terminal256 do
   let(:subject) { Rouge::Formatters::Terminal256.new }
 

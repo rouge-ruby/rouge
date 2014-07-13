@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Haskell do
   let(:subject) { Rouge::Lexers::Haskell.new }
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Markdown do
   let(:subject) { Rouge::Lexers::Markdown.new }
 

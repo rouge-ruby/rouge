@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Go do
   let(:subject) { Rouge::Lexers::Go.new }
 

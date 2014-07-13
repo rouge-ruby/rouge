@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::TCL do
   let(:subject) { Rouge::Lexers::TCL.new }
 

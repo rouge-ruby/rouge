@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Gherkin do
   let(:subject) { Rouge::Lexers::Gherkin.new }
 

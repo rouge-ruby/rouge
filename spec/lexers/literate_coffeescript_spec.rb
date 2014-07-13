@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::LiterateCoffeescript do
   let(:subject) { Rouge::Lexers::LiterateCoffeescript.new }
 

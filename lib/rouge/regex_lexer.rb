@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 module Rouge
   # @abstract
   # A stateful lexer that uses sets of regular expressions to

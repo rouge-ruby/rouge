@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 module Support
   module Lexing
     def filter_by_token(target_token, text, lexer=nil)

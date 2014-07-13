@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Smalltalk do
   let(:subject) { Rouge::Lexers::Smalltalk.new }
 

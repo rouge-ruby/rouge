@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::VimL do
   let(:subject) { Rouge::Lexers::VimL.new }
 

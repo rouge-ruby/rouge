@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Factor do
   let(:subject) { Rouge::Lexers::Factor.new }
 

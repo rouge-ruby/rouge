@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Sed do
   let(:subject) { Rouge::Lexers::Sed.new }
 

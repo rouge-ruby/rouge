@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Scheme do
   let(:subject) { Rouge::Lexers::Scheme.new }
 

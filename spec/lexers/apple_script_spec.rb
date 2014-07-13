@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::AppleScript do
   let(:subject) { Rouge::Lexers::AppleScript.new }
 

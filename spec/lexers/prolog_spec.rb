@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- #
+
 describe Rouge::Lexers::Prolog do
   let(:subject) { Rouge::Lexers::Prolog.new }
 

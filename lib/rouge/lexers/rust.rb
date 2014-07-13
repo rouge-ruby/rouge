@@ -17,6 +17,7 @@ module Rouge
           as assert break const copy do drop else enum extern fail false
           fn for if impl let log loop match mod move mut priv pub pure
           ref return self static struct true trait type unsafe use while
+          box
         )
       end
 
@@ -30,6 +31,7 @@ module Rouge
           Neg Nil None Num off_t Ok Option Ord Owned pid_t Ptr ptrdiff_t
           Right Send Shl Shr size_t Some ssize_t str Sub Success time_t
           u16 u32 u64 u8 uint uintptr_t
+          Box Vec String Gc Rc Arc
         )
       end
 

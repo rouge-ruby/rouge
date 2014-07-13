@@ -3,6 +3,7 @@
 # stdlib
 require 'strscan'
 require 'cgi'
+require 'set'
 
 module Rouge
   # @abstract

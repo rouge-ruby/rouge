@@ -207,7 +207,7 @@ module Rouge
         when String
           source
         when ->(s){ s.respond_to? :read }
-          source.read(encoding: 'utf-8')
+          source.read
         else
           raise 'invalid source'
         end

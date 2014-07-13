@@ -1,3 +1,10 @@
+## version 1.5.1: 2014-07-13
+
+  * ruby bugfixes for symbol edgecases and one-letter constants
+  * utf-8 all of the things
+  * update all builtins
+  * rust: add `box` keyword and associated builtins
+
 ## version 1.5.0: 2014-07-11
 
   * new lexer: swift (thanks @totocaster!)

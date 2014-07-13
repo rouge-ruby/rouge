@@ -158,7 +158,7 @@ EOE
 
 <<X
 X
-X
+X "foo" # This is a method call, heredoc ends at the prev line
 
 %s(uninter\)pre\ted)            # comment here
 %q(uninter\)pre\ted)            # comment here

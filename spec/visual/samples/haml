@@ -52,7 +52,7 @@
   %foo:bar 7
   %foo.bar 8
   %fooBAr_baz:boom_bar 9
-  %foo13 10
+  %foo13 #{quuz { zot }.map(&:zombo)}
   %foo2u 11
 %div.classes
   %p.foo.bar#baz#boom

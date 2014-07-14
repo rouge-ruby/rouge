@@ -3,9 +3,12 @@ html
   head
     title Slim Examples
 
-  / This is a comment for the body  
+  / This is a comment for the body
   body
     h1 Markup examples
+
+    / Inline nested ruby expressions
+    p Yo #{list.map { |x| x + 1 }.inject(&:+)} there man
 
     /! HTML comment
     #content
@@ -17,34 +20,34 @@ html
       .card *method_which_return_hash! = place.name
       .herp *@hash_instance_variable = place.name
       #derp*{'data-url'=>place_path(place), 'data-id'=>place.id} = place.name
-      
+
       / Dynamic tags
       *ruby_tag Some text for it
       *some_tag_method( CONSTANT, "string", 1234.3 ) Woot!
-      
+
       p
         ' Some text with <bold>bold text</bold>
-        
+
       <p attr="something">
         ' Some other text with #{interp}
-      
-      
+
+
       javascript:
         var foo = 23;
         function bar( lel ) {
           return lel * 4;
         }
-        
+
       / And this is a \
         wrapping comment
-      / And a 
+      / And a
         p non-wrapping one
-        
+
       /[if IE]
         p Get a better browser
-        
+
       a href='http://google.com/' To Google!
-        
+
       css:
         p {
           font-family: #{font_family( "Tahoma" ) && Time.now};
@@ -64,15 +67,14 @@ html
            Thank you! a href="lol"
            a lol
          a lol
-          
-           
+
+
       coffee:
         square = (x) -> x * x
-        
+
       markdown:
         - Hello from #{SomeClass.interpolation_works!}
 
     div id="footer"
       = 3.times { render 'footer' }
       | Copyright © #{year} #{author}
-

@@ -5,9 +5,11 @@
 
   <style type="text/css">
     <%= @theme.render %>
-    <%= @theme.render_base('pre') %>
+    <%= @theme.render_base('body') %>
+    <%= @theme.render_base('a') %>
 
-    pre { font-family: 'Ubuntu Mono', 'Monaco', monospace; }
+    pre, code { font-family: 'Source Code Pro', 'Menlo', 'Ubuntu Mono', 'Monaco', monospace; }
+    a { text-decoration: none }
 
   </style>
 </head>

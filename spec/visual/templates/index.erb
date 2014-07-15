@@ -4,7 +4,10 @@
     -webkit-column-count: 2;
     -moz-column-count: 2;
   }
-  div { display: inline-block; }
+  div {
+    break-inside: avoid-column;
+    -webkit-column-break-inside: avoid;
+    }
 </style>
 
 <h1>Lexers supported by Rouge v<%= Rouge.version %></h1>

@@ -8,8 +8,8 @@ html
     h1 Markup examples
 
     / Inline nested ruby expressions
-    p Yo #{list.map { |x| x + 1 }.inject(&:+)} there man
-
+    p Nested interp #{list.map { |x| x + 1 }.inject(&:+)} parses ok
+    
     /! HTML comment
     #content
       p This example shows you how a basic Slim file looks like.

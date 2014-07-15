@@ -41,9 +41,7 @@ module Rouge
           'coffee' => Coffeescript.new(options),
           'markdown' => Markdown.new(options),
           'scss' => Scss.new(options),
-          'sass' => Sass.new(options),
-
-          # TODO: Markdown, sass etc.
+          'sass' => Sass.new(options)
         }
       end
 
@@ -204,12 +202,18 @@ module Rouge
       end
 
       state :interpolation do
-        #rule /(\#\{)(.*?)(\})/ do |m|
-        rule /(\#{)((?:(?:{[^}]*?})|(?:[^{]))*?)(})/ do |m|
-          token Str::Interpol, m[1]
-          delegate ruby, m[2]
-          token Str::Interpol, m[3]
-        end
+        rule /#[{]/, Str::Interpol, :ruby_interp
+      end
+
+      state :ruby_interp do
+        rule /[}]/, Str::Interpol, :pop!
+        mixin :ruby_interp_inner
+      end
+
+      state :ruby_interp_inner do
+        rule(/[{]/) { delegate ruby; push :ruby_interp_inner }
+        rule(/[}]/) { delegate ruby; pop! }
+        rule(/[^{}]+/) { delegate ruby }
       end
 
       state :indented_block do

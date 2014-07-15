@@ -5,8 +5,10 @@
   }
 </style>
 
+<h1>Lexers supported by Rouge v<%= Rouge.version %></h1>
+
 <% @samples.each do |sample| %>
-  <h2><a href="/<%= sample.tag %>"><%= sample.tag %></a></h2>
-  <%= Rouge.highlight(sample.demo, sample, @formatter) %>
-  <br />
+<h2><a href="/<%= sample.tag %>"><%= sample.tag %></a></h2>
+<%= Rouge.highlight(sample.demo, sample, @formatter) %>
+<br />
 <% end %>

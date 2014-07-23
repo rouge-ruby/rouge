@@ -107,7 +107,7 @@ module Rouge
       state :dq do
         rule /\\[\\0tnr'"]/, Str::Escape
         rule /\\[(]/, Str::Escape, :interp
-        rule /\\u{\h{1,8}}/, Str::Escape
+        rule /\\u\{\h{1,8}\}/, Str::Escape
         rule /[^\\"]+/, Str
         rule /"/, Str, :pop!
       end

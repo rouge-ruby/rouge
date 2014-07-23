@@ -24,7 +24,7 @@ module Rouge
 
       def self.declarations
         @declarations ||= Set.new %w(
-          class deinit enum extension func import init internal internal(set) let private protocol public static struct subscript typealias var
+          class deinit enum extension final func import init internal internal(set) lazy let optional private protocol public required static struct subscript typealias var
         )
       end
 

@@ -90,7 +90,6 @@ func addToInts(a:Int,b:Int) -> Int {
 let addNumbers: (Int,Int)->(Int) = addToInts;
 addNumbers(3,2)
 
-
 func printMathProblem(mathFunction:(Int,Int)->Int,a:Int,b:Int)->String {
     return "Result " + String(mathFunction(a,b))
 }
@@ -163,6 +162,13 @@ func makeIncrementor(firstNumber number:Int) -> () -> Int
 let incrementor = makeIncrementor(firstNumber: 4)
 incrementor()
 
+// @auto_closure
+func simpleAssert(condition: @auto_closure () -> Bool, message: String = "Assertion failed") {
+    if !condition() {
+        println(message)
+    }
+}
+
 //MARK: Classes
 public class Person : NSObject {
     let name: String
@@ -174,6 +180,7 @@ public class Person : NSObject {
     }
     
     lazy var phoneNumbers = [String]()
+    @NSCopying var modificationDate: NSDate = NSDate()
     
     required public init(name: String, age: Int) {
         self.name = name
@@ -184,6 +191,14 @@ public class Person : NSObject {
     internal var isAdmin: Bool { return false }
     
     final func doSomething() {
+        //TODO: Do something
+    }
+}
+
+@objc(MYCustomView) class CustomView {
+    @IBOutlet var button: AnyObject!
+    
+    @IBAction func doSomething(sender: AnyObject) {
         //TODO: Do something
     }
 }

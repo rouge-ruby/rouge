@@ -28,6 +28,12 @@ module Rouge
         )
       end
 
+      def self.at_keywords
+        @at_keywords ||= %w(
+          assignment auto_closure class_protocol IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain
+        )
+      end
+
       def self.types
         @types ||= Set.new %w(
           Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 Int
@@ -72,6 +78,14 @@ module Rouge
 
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
+        end
+
+        rule /@(#{id})/ do |m|
+          if self.class.at_keywords.include? m[1]
+            token Keyword
+          else
+            token Error
+          end
         end
 
         rule id do |m|

@@ -93,6 +93,10 @@ module Rouge
       #   {RegexLexer#token}, and {RegexLexer#delegate}.  The first
       #   argument can be used to access the match groups.
       def rule(re, tok=nil, next_state=nil, &callback)
+        if tok.nil? && callback.nil?
+          raise "please pass `rule` a token to yield or a callback"
+        end
+
         callback ||= case next_state
         when :pop!
           proc do |stream|
@@ -114,11 +118,13 @@ module Rouge
             puts "    pushing #{state.name}" if @debug
             @stack.push(state)
           end
-        else
+        when nil
           proc do |stream|
             puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
           end
+        else
+          raise "invalid next state: #{next_state.inspect}"
         end
 
         rules << Rule.new(re, callback)

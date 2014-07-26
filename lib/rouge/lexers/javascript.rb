@@ -27,21 +27,50 @@ module Rouge
       state :slash_starts_regex do
         mixin :comments_and_whitespace
 
-        rule %r(
-          / # opening slash
-          ( \\. # escape sequences
-          | [^/\\\n] # regular characters
-          | \[ (\\. | [^\]\\\n])* \] # character classes
-          )+
-          / # closing slash
-          (?:[gim]+\b|\B) # flags
-        )x, Str::Regex, :pop!
+        rule %r(/) do
+          token Str::Regex
+          goto :regex
+        end
 
-        # if it's not matched by the above r.e., it's not
-        # a valid expression, so we use :bad_regex to eat until the
-        # end of the line.
-        rule %r(/), Str::Regex, :bad_regex
         rule //, Text, :pop!
+      end
+
+      state :regex do
+        rule %r(/) do
+          token Str::Regex
+          goto :regex_end
+        end
+
+        rule %r([^/]\n), Error, :pop!
+
+        rule /\n/, Error, :pop!
+        rule /\[\^/, Str::Escape, :regex_group
+        rule /\[/, Str::Escape, :regex_group
+        rule /\\./, Str::Escape
+        rule %r{[(][?][:=<!]}, Str::Escape
+        rule /[{][\d,]+[}]/, Str::Escape
+        rule /[()?]/, Str::Escape
+        rule /./, Str::Regex
+      end
+
+      state :regex_end do
+        rule /[gim]+/, Str::Regex, :pop!
+        rule(//) { pop! }
+      end
+
+      state :regex_group do
+        # specially highlight / in a group to indicate that it doesn't
+        # close the regex
+        rule /\//, Str::Escape
+
+        rule %r([^/]\n) do
+          token Error
+          pop! 2
+        end
+
+        rule /\]/, Str::Escape, :pop!
+        rule /\\./, Str::Escape
+        rule /./, Str::Regex
       end
 
       state :bad_regex do

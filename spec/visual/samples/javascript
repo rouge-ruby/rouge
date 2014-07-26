@@ -3,6 +3,7 @@
 var myFloat = 0.123;
 var myOctal = 0x123;
 var myRegex = /asdf/;
+var myComplicatedRegex = /.[.](?=x\h\[[)])[^.{}abc]{foo}{3,}x{2,3}/
 var myObject = { a: 1, b: 2 }
 
 var ternary = 0 ? 1 : {a : 2 ? d : 3 };
@@ -85,6 +86,11 @@ x = (a == b) ?/* this is a comment */ c : d;
 /// a comment //
 a = /regex//2/1; //syntactically correct, returns NaN
 
+// bad regexen - should have an error token at the last char and recover
+// on the next line
+var a = /foo
+var b = /[foo
+var c = /valid-regex/
 
 var template = "{{current}} of beer on the wall";
 var stanza = template.replace(/{{current}}/g, "99 bottles");
@@ -103,11 +109,9 @@ blah(1/2); //comment
 x = 1 / 2 / 3;
 x = 1/1/.1;
 
-// broken
-
-x=/1/;
-x=1/a/g;
-x=a/a/g;
+x=/1/; // regex
+x=1/a/g; // division
+x=a/a/g; // division
 
 // real-world
 

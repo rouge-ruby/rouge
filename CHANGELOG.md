@@ -1,3 +1,10 @@
+## version 1.5.2: 2014-07-26
+
+  * haml: balance braces in interpolation
+  * new lexer: slim (thanks @knutaldrin and @greggroth!)
+  * javascript: inner tokens in regexes are now lexed, as well as improvments to
+    the block / object distinction.
+
 ## version 1.5.1: 2014-07-13
 
   * ruby bugfixes for symbol edgecases and one-letter constants

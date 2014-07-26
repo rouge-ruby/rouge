@@ -1,4 +1,8 @@
-## version 1.5.2: 2014-07-26
+## version 1.6.1: 2014-07-26
+
+  * hotfix release for common lisp, php, objective c, and qml lexers
+
+## version 1.6.0: 2014-07-26
 
   * haml: balance braces in interpolation
   * new lexer: slim (thanks @knutaldrin and @greggroth!)

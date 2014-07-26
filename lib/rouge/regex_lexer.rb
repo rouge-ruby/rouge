@@ -107,6 +107,8 @@ module Rouge
           end
         when :push
           proc do |stream|
+            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            @output_stream.call(tok, stream[0])
             puts "    pushing #{@stack.last.name}" if @debug
             @stack.push(@stack.last)
           end

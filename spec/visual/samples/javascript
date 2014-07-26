@@ -6,19 +6,22 @@ var myRegex = /asdf/;
 var myComplicatedRegex = /.[.](?=x\h\[[)])[^.{}abc]{foo}{3,}x{2,3}/
 var myObject = { a: 1, b: 2 }
 
-var ternary = 0 ? 1 : {a : 2 ? d : 3 };
-var ternary2 = a ? { b : c } + d : e;
+var ternary = 0 ? 1 : {object_key : 2 ? variable : 3 };
+var ternary2 = a ? { object_key : c } + variable : e;
 var ternary3 = a ? {
-  b : c,
-  d: e ? function() {
-    // TODO: if myLabel is on the first line, this is interpreted as
-    // an object...
-    myLabel:
+  key1 : var1,
+  key2: var2 ? function() {
+    label1: // break label, not an object key!
     while(true) {
       break myLabel;
     }
-  } + f: g
+  } + var3: var4
 }
+
+var obj =
+  {
+    key: val
+  }
 
 /*!
  * multiline comment

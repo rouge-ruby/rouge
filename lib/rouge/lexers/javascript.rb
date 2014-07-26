@@ -24,13 +24,15 @@ module Rouge
         rule %r(/\*.*?\*/)m, Comment::Multiline
       end
 
-      state :slash_starts_regex do
+      state :expr_start do
         mixin :comments_and_whitespace
 
         rule %r(/) do
           token Str::Regex
           goto :regex
         end
+
+        rule /[{]/, Punctuation, :object
 
         rule //, Text, :pop!
       end
@@ -115,37 +117,33 @@ module Rouge
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
-        rule /\A\s*#!.*?\n/m, Comment::Preproc
-        rule %r((?<=\n)(?=\s|/|<!--)), Text, :slash_starts_regex
+        rule /\A\s*#!.*?\n/m, Comment::Preproc, :statement
+        rule /\n/, Text, :statement
+        rule %r((?<=\n)(?=\s|/|<!--)), Text, :expr_start
         mixin :comments_and_whitespace
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
                | !== )x,
-          Operator, :slash_starts_regex
-        rule %r([-<>+*%&|\^/!=]=?), Operator, :slash_starts_regex
-        rule /[(\[;,]/, Punctuation, :slash_starts_regex
+          Operator, :expr_start
+        rule %r([-<>+*%&|\^/!=]=?), Operator, :expr_start
+        rule /[(\[,]/, Punctuation, :expr_start
+        rule /;/, Punctuation, :statement
         rule /[)\].]/, Punctuation
 
         rule /[?]/ do
           token Punctuation
           push :ternary
-          push :slash_starts_regex
+          push :expr_start
         end
 
-        rule /[{](?=\s*(#{id}|"[^\n]*?")\s*:)/m, Punctuation, :object
-
-        rule /[{]/ do
-          token Punctuation
-          push :block
-          push :slash_starts_regex
-        end
+        rule /[{}]/, Punctuation, :statement
 
         rule id do |m|
           if self.class.keywords.include? m[0]
             token Keyword
-            push :slash_starts_regex
+            push :expr_start
           elsif self.class.declarations.include? m[0]
             token Keyword::Declaration
-            push :slash_starts_regex
+            push :expr_start
           elsif self.class.reserved.include? m[0]
             token Keyword::Reserved
           elsif self.class.constants.include? m[0]
@@ -165,28 +163,38 @@ module Rouge
       end
 
       # braced parts that aren't object literals
-      state :block do
+      state :statement do
         rule /(#{id})(\s*)(:)/ do
           groups Name::Label, Text, Punctuation
         end
 
-        rule /[}]/, Punctuation, :pop!
-        mixin :root
+        mixin :expr_start
       end
 
       # object literals
       state :object do
-        rule /[}]/, Punctuation, :pop!
+        mixin :comments_and_whitespace
+        rule /[}]/ do
+          token Punctuation
+          goto :statement
+        end
+
         rule /(#{id})(\s*)(:)/ do
           groups Name::Attribute, Text, Punctuation
+          push :expr_start
         end
+
         rule /:/, Punctuation
         mixin :root
       end
 
       # ternary expressions, where <id>: is not a label!
       state :ternary do
-        rule /:/, Punctuation, :pop!
+        rule /:/ do
+          token Punctuation
+          goto :expr_start
+        end
+
         mixin :root
       end
     end

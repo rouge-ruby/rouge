@@ -20,6 +20,7 @@ var ternary3 = a ? {
 
 var obj =
   {
+    // comment
     key: val
   }
 

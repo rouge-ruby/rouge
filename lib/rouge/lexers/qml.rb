@@ -22,6 +22,8 @@ module Rouge
           groups Keyword::Type, Text, Keyword, Text, Name::Label, Text, Punctuation
           push :type_block
         end
+
+        rule /[{]/, Punctuation, :push
       end
 
       state :type_block do
@@ -31,7 +33,7 @@ module Rouge
 
         rule /(#{id_with_dots})(\s*)(:)/ do
           groups Name::Label, Text, Punctuation
-          push :slash_starts_regex
+          push :expr_start
         end
 
         rule /(signal)(\s+)(#{id_with_dots})/ do
@@ -41,7 +43,7 @@ module Rouge
 
         rule /(property)(\s+)(#{id_with_dots})(\s+)(#{id_with_dots})(\s*)(:?)/ do
           groups Keyword::Declaration, Text, Keyword::Type, Text, Name::Label, Text, Punctuation
-          push :slash_starts_regex
+          push :expr_start
         end
 
         rule /[}]/, Punctuation, :pop!

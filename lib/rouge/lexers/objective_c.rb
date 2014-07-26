@@ -46,7 +46,7 @@ module Rouge
 
       prepend :statements do
         rule /@"/, Str, :string
-        rule /@'(\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|\\.|[^\\'\n]')/
+        rule /@'(\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|\\.|[^\\'\n]')/,
           Str::Char
         rule /@(\d+[.]\d*|[.]\d+|\d+)e[+-]?\d+l?/i,
           Num::Float

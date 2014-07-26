@@ -274,7 +274,7 @@ module Rouge
         end
 
         # path
-        rule /#p?"(\\.|[^"])*"/i
+        rule /#p?"(\\.|[^"])*"/i, Str::Symbol
 
         # reference
         rule /#\d+[=#]/, Operator

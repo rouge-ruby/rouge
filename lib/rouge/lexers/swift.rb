@@ -99,7 +99,7 @@ module Rouge
             token Keyword::Declaration
             if %w(private internal).include? m[0]
               push :access_control_setting
-            elsif %w(protocol class extension).include? m[0]
+            elsif %w(protocol class extension struct enum).include? m[0]
               push :type_definition
             end
           elsif self.class.types.include? m[0]

@@ -199,7 +199,7 @@ public class Person : NSObject {
     dynamic func somethingDynamic() { }
 }
 
-@objc(MYCustomView) class CustomView {
+@objc(MYCustomView) class CustomView: NSView {
     @IBOutlet var button: AnyObject!
     
     @IBAction func doSomething(sender: AnyObject) {
@@ -215,4 +215,14 @@ public class Person : NSObject {
 
 extension SomeClass {
     
+}
+
+struct SomeStruct {
+    static var count = 0
+}
+
+enum State {
+    case Stopped, Paused
+    case Running(speed: Double)
+    case Stopping(Double)
 }

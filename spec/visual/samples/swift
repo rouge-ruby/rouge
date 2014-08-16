@@ -1,9 +1,12 @@
+import Foundation
+
 func sayHello(person:String) -> String {
     return "Hello, \(capitalize(word:person)). \"How're are you doin\'?\""
 }
 
-func capitalize(word:String) -> String {
-    // TODO
+func capitalize(#word:String) -> String {
+    //TODO: test this
+    return word.capitalizedString
 }
 
 sayHello("Toto")
@@ -17,8 +20,8 @@ func halfOpenRangeLength(start:Int, end:Int) -> Int {
 halfOpenRangeLength(3, 8)
 
 func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
-    var vowels = 0, consonants = 0, others = 0
-
+    var vowels = 0, consonants = 0, emoji = 0, whitespace = 0, others = 0
+    
     for character in string {
 
         switch String(character).lowercaseString {
@@ -26,8 +29,11 @@ func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
             ++vowels
         case "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z":
             ++consonants
-        case "\n", "\r", "\t", "\0", "\x0A\u01AB\U0123ABCD":
-            // TODO
+        //TODO: Add more emoji
+        case "\u{1F604}":
+            ++emoji
+        case "\n", "\r", "\t", "\0", "\u{A0}", "\u{205F}":
+            ++whitespace
         default:
             ++others
         }
@@ -61,14 +67,14 @@ func alignedRight(inout #string:String, count:Int, pad:Character) -> String {
     return string;
 }
 
-/* This is multiline comment
-/* 
-   This part is nested into parten comment
-*/ 
-    Trailing part of parent comment
+/* This is a multiline comment
+/*
+This part is nested into the parent comment
+*/
+Trailing part of parent comment
 */
 
-let thisIsNotComment = true
+let thisIsNotAComment = true
 
 /* Singleline Comment */
 
@@ -76,7 +82,7 @@ var textToAlign = "Toto"
 alignedRight(string: &textToAlign, 10, "-")
 textToAlign
 
-// Function Types
+//MARK: Function Types
 func addToInts(a:Int,b:Int) -> Int {
     return a + b
 }
@@ -84,12 +90,10 @@ func addToInts(a:Int,b:Int) -> Int {
 let addNumbers: (Int,Int)->(Int) = addToInts;
 addNumbers(3,2)
 
-
 func printMathProblem(mathFunction:(Int,Int)->Int,a:Int,b:Int)->String {
     return "Result " + String(mathFunction(a,b))
 }
 printMathProblem(addNumbers, 5, 10)
-
 
 // Function return types + Nested Functions
 func chooseSteperFunction(backward:Bool) -> (Int) -> Int {
@@ -107,24 +111,24 @@ let currentValue = 5
 chooseSteperFunction(currentValue > 0)(currentValue)
 
 // Closures
-func comperator(s1:String,s2:String)->Bool {
+func comparator(s1:String,s2:String)->Bool {
     return s2 > s1
 }
 let names = ["Chris", "Alex", "Ewa", "Barry", "Daniella"]
-let revised = sort(names, comperator)
+let revised = sorted(names, comparator)
 
-let revised2 = sort(names, {
+let revised2 = sorted(names, {
     (s1:String,s2:String)->Bool in
         return s2 > s1
     })
 
-let revised3 = sort(names, { s1, s2 in s1 > s2 })
+let revised3 = sorted(names, { s1, s2 in s1 > s2 })
 revised3
 
-let revised4 = sort(names) { $0 > $1 } // This is also a trailing closure
+let revised4 = sorted(names) { $0 > $1 } // This is also a trailing closure
 revised4
 
-let revised5 = sort(names, >)
+let revised5 = sorted(names, >)
 
 // Long closures
 let digitNames = [
@@ -157,3 +161,58 @@ func makeIncrementor(firstNumber number:Int) -> () -> Int
 
 let incrementor = makeIncrementor(firstNumber: 4)
 incrementor()
+
+// @autoclosure
+func simpleAssert(condition: @autoclosure () -> Bool, message: String = "Assertion failed") {
+    if !condition() {
+        println(message)
+    }
+}
+
+//MARK: Classes
+public class Person : NSObject {
+    let firstName: String
+    
+    private var lastName: String
+    
+    private(set) var age: Int {
+    didSet {
+        println("Happy Birthday")
+    }
+    }
+    
+    lazy var phoneNumbers = [String]()
+    @NSCopying var modificationDate: NSDate = NSDate()
+    
+    required public init(name: String, age: Int) {
+        self.name = name
+        self.age = age
+        super.init()
+    }
+    
+    internal var isAdmin: Bool { return false }
+    
+    final func doSomething() {
+        //TODO: Do something
+    }
+    
+    dynamic func somethingDynamic() { }
+}
+
+@objc(MYCustomView) class CustomView {
+    @IBOutlet var button: AnyObject!
+    
+    @IBAction func doSomething(sender: AnyObject) {
+        //TODO: Do something
+    }
+}
+
+//MARK: Protocols
+@objc protocol Random {
+    func random() -> Self
+    optional func seed(seed: Int)
+}
+
+extension SomeClass {
+    
+}

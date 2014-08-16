@@ -171,8 +171,10 @@ func simpleAssert(condition: @autoclosure () -> Bool, message: String = "Asserti
 
 //MARK: Classes
 public class Person : NSObject {
-    let name: String
-
+    let firstName: String
+    
+    private var lastName: String
+    
     private(set) var age: Int {
     didSet {
         println("Happy Birthday")

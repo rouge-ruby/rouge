@@ -24,7 +24,7 @@ module Rouge
 
       def self.declarations
         @declarations ||= Set.new %w(
-          class deinit enum extension final func import init internal internal(set) lazy let optional private protocol public required static struct subscript typealias var dynamic
+          class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
         )
       end
 
@@ -70,7 +70,7 @@ module Rouge
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
-        rule /(?!\b(if|while|for)\b)\b#{id}(?=\s*[(])/, Name::Function
+        rule /(?!\b(if|while|for|private|internal|@objc)\b)\b#{id}(?=\s*[(])/, Name::Function
 
         rule /(#?#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation
@@ -81,7 +81,10 @@ module Rouge
         end
 
         rule /@(#{id})/ do |m|
-          if self.class.at_keywords.include? m[1]
+          if m[1] == 'objc'
+            token Keyword::Declaration
+            push :objc_setting
+          elsif self.class.at_keywords.include? m[1]
             token Keyword
           else
             token Error
@@ -91,6 +94,9 @@ module Rouge
         rule id do |m|
           if self.class.keywords.include? m[0]
             token Keyword
+          elsif %w(private internal).include? m[0]
+            token Keyword::Declaration
+            push :access_control_setting
           elsif self.class.declarations.include? m[0]
             token Keyword::Declaration
           elsif self.class.types.include? m[0]
@@ -102,6 +108,26 @@ module Rouge
           end
         end
         rule id, Name
+      end
+      
+      state :access_control_setting do
+        rule /\( *(\w+) *\)/ do |m|
+          if m[1] == 'set'
+            token Keyword::Declaration
+          else
+            token Error
+          end
+        end
+        rule //, Keyword::Declaration, :pop!
+      end
+      
+      state :objc_setting do
+        rule /(\( *)(\w+)( *\))/ do |m|
+          token Keyword::Declaration, m[1]
+          token Name::Class, m[2]
+          token Keyword::Declaration, m[3]
+        end
+        rule //, Keyword::Declaration, :pop!
       end
 
       state :dq do
@@ -134,7 +160,6 @@ module Rouge
         rule /(?=[(])/, Text, :pop!
         rule /(#{id}|[.])+/, Name::Namespace, :pop!
       end
-
     end
   end
 end

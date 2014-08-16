@@ -95,11 +95,13 @@ module Rouge
         rule id do |m|
           if self.class.keywords.include? m[0]
             token Keyword
-          elsif %w(private internal).include? m[0]
-            token Keyword::Declaration
-            push :access_control_setting
           elsif self.class.declarations.include? m[0]
             token Keyword::Declaration
+            if %w(private internal).include? m[0]
+              push :access_control_setting
+            elsif %w(protocol class extension).include? m[0]
+              push :type_definition
+            end
           elsif self.class.types.include? m[0]
             token Keyword::Type
           elsif self.class.constants.include? m[0]
@@ -151,7 +153,7 @@ module Rouge
         mixin :root
       end
 
-      state :class do
+      state :type_definition do
         mixin :whitespace
         rule id, Name::Class, :pop!
       end

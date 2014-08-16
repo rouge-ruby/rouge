@@ -40,6 +40,7 @@ module Rouge
           Double Float
           Bool
           String Character
+          AnyObject Any
         )
       end
 

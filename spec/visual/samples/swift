@@ -162,8 +162,8 @@ func makeIncrementor(firstNumber number:Int) -> () -> Int
 let incrementor = makeIncrementor(firstNumber: 4)
 incrementor()
 
-// @auto_closure
-func simpleAssert(condition: @auto_closure () -> Bool, message: String = "Assertion failed") {
+// @autoclosure
+func simpleAssert(condition: @autoclosure () -> Bool, message: String = "Assertion failed") {
     if !condition() {
         println(message)
     }
@@ -193,6 +193,8 @@ public class Person : NSObject {
     final func doSomething() {
         //TODO: Do something
     }
+    
+    dynamic func somethingDynamic() { }
 }
 
 @objc(MYCustomView) class CustomView {

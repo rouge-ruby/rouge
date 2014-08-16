@@ -24,13 +24,13 @@ module Rouge
 
       def self.declarations
         @declarations ||= Set.new %w(
-          class deinit enum extension final func import init internal internal(set) lazy let optional private protocol public required static struct subscript typealias var
+          class deinit enum extension final func import init internal internal(set) lazy let optional private protocol public required static struct subscript typealias var dynamic
         )
       end
 
       def self.at_keywords
         @at_keywords ||= %w(
-          assignment auto_closure class_protocol IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain
+          autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain
         )
       end
 

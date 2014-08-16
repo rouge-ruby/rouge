@@ -160,6 +160,7 @@ module Rouge
       state :type_definition do
         mixin :whitespace
         rule id, Name::Constant
+        rule /</, Punctuation, :type_param_list
         rule /:/, Punctuation, :supertype_list
         rule(//) { pop! }
       end
@@ -168,6 +169,14 @@ module Rouge
         mixin :whitespace
         rule id, Name::Constant
         rule /,/, Punctuation, :push
+        rule(//) { pop! }
+      end
+      
+      state :type_param_list do
+        mixin :whitespace
+        rule id, Text
+        rule /,/, Punctuation, :type_param_list
+        rule />/, Punctuation, :pop!
         rule(//) { pop! }
       end
 

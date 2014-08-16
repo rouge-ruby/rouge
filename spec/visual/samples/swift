@@ -217,8 +217,8 @@ extension SomeClass {
     
 }
 
-struct SomeStruct: Equatable {
-    static var count = 0
+struct Stack<T, U>: Equatable {
+    var items = [T]()
 }
 
 typealias Speed = Double

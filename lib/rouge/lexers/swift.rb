@@ -71,7 +71,13 @@ module Rouge
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
-        rule /(?!\b(if|while|for|private|internal|@objc)\b)\b#{id}(?=\s*[(])/, Name::Function
+        rule /(?!\b(if|while|for|private|internal|@objc)\b)\b#{id}(?=\s*[(])/ do |m|
+          if m[0] =~ /^[[:upper:]]/
+            token Name::Constant
+          else
+            token Name::Function
+          end
+        end
 
         rule /(#?(?!default)#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation

@@ -73,7 +73,7 @@ module Rouge
 
         rule /(?!\b(if|while|for|private|internal|@objc)\b)\b#{id}(?=\s*[(])/, Name::Function
 
-        rule /(#?#{id})(\s*)(:)/ do
+        rule /(#?(?!default)#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation
         end
 

@@ -121,16 +121,14 @@ module Rouge
             token Error
           end
         end
-        rule //, Keyword::Declaration, :pop!
+        rule(//) { pop! }
       end
       
       state :objc_setting do
         rule /(\( *)(\w+)( *\))/ do |m|
-          token Keyword::Declaration, m[1]
-          token Name::Class, m[2]
-          token Keyword::Declaration, m[3]
+          groups Keyword::Declaration, Name::Class, Keyword::Declaration
         end
-        rule //, Keyword::Declaration, :pop!
+        rule(//) { pop! }
       end
 
       state :dq do
@@ -155,7 +153,7 @@ module Rouge
 
       state :type_definition do
         mixin :whitespace
-        rule id, Name::Class, :pop!
+        rule id, Name::Constant, :pop!
       end
 
       state :namespace do

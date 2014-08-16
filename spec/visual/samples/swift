@@ -169,6 +169,12 @@ func simpleAssert(condition: @autoclosure () -> Bool, message: String = "Asserti
     }
 }
 
+// optional function call
+
+let maybeFunction: (() -> ())? = nil
+maybeFunction?()
+maybeFunction!()
+
 //MARK: Classes
 public class Person : NSObject {
     let firstName: String

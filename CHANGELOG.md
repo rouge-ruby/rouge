@@ -1,3 +1,7 @@
+## version 1.6.2: 2014-08-16
+
+  * swift: updates for beta 5 (thanks @radex!)
+
 ## version 1.6.1: 2014-07-26
 
   * hotfix release for common lisp, php, objective c, and qml lexers

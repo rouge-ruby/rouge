@@ -16,7 +16,7 @@ var ternary3 = a ? {
       break myLabel;
     }
   } + var3: var4
-}
+} : 2
 
 var obj =
   {
@@ -36,6 +36,12 @@ var quotedKeys = {
 
 Blag = {};
 jQuery.noConflict();
+
+if (cond)
+{
+  label1:
+  while (cond) break label1;
+}
 
 Blag.ReadMore = (function($) {
   function getFold(button) {

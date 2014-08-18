@@ -86,17 +86,26 @@ module Rouge
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
         end
-        
-        rule /@availability\([^)]+\)/, Keyword::Declaration
-        
+
+        rule /@availability[(][^)]+[)]/, Keyword::Declaration
+
+        rule /(@objc[(])([^)]+)([)])/ do
+          groups Keyword::Declaration, Name::Class, Keyword::Declaration
+        end
+
         rule /@(#{id})/ do |m|
-          if m[1] == 'objc'
-            token Keyword::Declaration
-            push :objc_setting
-          elsif self.class.at_keywords.include? m[1]
+          if self.class.at_keywords.include? m[1]
             token Keyword
           else
             token Error
+          end
+        end
+
+        rule /(private|internal)(\([ ]*)(\w+)([ ]*\))/ do |m|
+          if m[3] == 'set'
+            token Keyword::Declaration
+          else
+            groups Keyword::Declaration, Keyword::Declaration, Error, Keyword::Declaration
           end
         end
 
@@ -105,9 +114,7 @@ module Rouge
             token Keyword
           elsif self.class.declarations.include? m[0]
             token Keyword::Declaration
-            if %w(private internal).include? m[0]
-              push :access_control_setting
-            elsif %w(protocol class extension struct enum).include? m[0]
+            if %w(protocol class extension struct enum).include? m[0]
               push :type_definition
             end
           elsif self.class.types.include? m[0]
@@ -119,24 +126,6 @@ module Rouge
           end
         end
         rule id, Name
-      end
-      
-      state :access_control_setting do
-        rule /\( *(\w+) *\)/ do |m|
-          if m[1] == 'set'
-            token Keyword::Declaration
-          else
-            token Error
-          end
-        end
-        rule(//) { pop! }
-      end
-      
-      state :objc_setting do
-        rule /(\( *)(\w+)( *\))/ do |m|
-          groups Keyword::Declaration, Name::Class, Keyword::Declaration
-        end
-        rule(//) { pop! }
       end
 
       state :dq do
@@ -166,14 +155,14 @@ module Rouge
         rule /:/, Punctuation, :supertype_list
         rule(//) { pop! }
       end
-      
+
       state :supertype_list do
         mixin :whitespace
         rule id, Name::Constant
         rule /,/, Punctuation, :push
         rule(//) { pop! }
       end
-      
+
       state :type_param_list do
         mixin :whitespace
         rule id, Text

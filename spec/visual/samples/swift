@@ -228,10 +228,10 @@ struct Stack<T, U>: Equatable {
 }
 
 typealias Speed = Double
-typealias Deceleration = Double
 
 enum State: Equatable {
     case Stopped, Paused
-    case Running(speed: Speed)
-    case Stopping(Deceleration)
+    case Running(Speed)
 }
+
+@availability(OSX, introduced=10.10) func localizedCaseInsensitiveContainsString(aString: String) -> Bool

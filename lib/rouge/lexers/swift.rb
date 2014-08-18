@@ -86,7 +86,9 @@ module Rouge
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
         end
-
+        
+        rule /@availability\([^)]+\)/, Keyword::Declaration
+        
         rule /@(#{id})/ do |m|
           if m[1] == 'objc'
             token Keyword::Declaration

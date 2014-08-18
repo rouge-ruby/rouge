@@ -18,7 +18,7 @@ module Rouge
 
           as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-          associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned unowned(safe) unowned(unsafe) weak willSet
+          associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet
         )
       end
 
@@ -71,7 +71,7 @@ module Rouge
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
-        rule /(?!\b(if|while|for|private|internal|@objc)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
+        rule /(?!\b(if|while|for|private|internal|unowned|@objc)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
           if m[0] =~ /^[[:upper:]]/
             token Name::Constant
           else
@@ -106,6 +106,14 @@ module Rouge
             token Keyword::Declaration
           else
             groups Keyword::Declaration, Keyword::Declaration, Error, Keyword::Declaration
+          end
+        end
+
+        rule /(unowned\([ ]*)(\w+)([ ]*\))/ do |m|
+          if m[2] == 'safe' || m[2] == 'unsafe'
+            token Keyword::Declaration
+          else
+            groups Keyword::Declaration, Error, Keyword::Declaration
           end
         end
 

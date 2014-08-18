@@ -33,8 +33,8 @@ module Rouge
           push :tag
         end
 
-        rule %r(<\s*[a-zA-Z0-9:]+), Name::Tag, :tag # opening tags
-        rule %r(<\s*/\s*[a-zA-Z0-9:]+\s*>), Name::Tag # closing tags
+        rule %r(<\s*[a-zA-Z0-9:-]+), Name::Tag, :tag # opening tags
+        rule %r(<\s*/\s*[a-zA-Z0-9:-]+\s*>), Name::Tag # closing tags
       end
 
       state :comment do

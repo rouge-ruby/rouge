@@ -8,6 +8,17 @@ describe Rouge::Lexers::HTML do
     assert_no_errors '<script>x && x < y;</script>'
   end
 
+  describe 'lexing' do
+    include Support::Lexing
+
+    describe 'element names' do
+      it 'allow dashes to support custom elements' do
+        assert_tokens_equal '<custom-element></custom-element>',
+                            ['Name.Tag', '<custom-element></custom-element>']
+      end
+    end
+  end
+
   describe 'guessing' do
     include Support::Guessing
 

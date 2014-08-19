@@ -21,7 +21,7 @@ halfOpenRangeLength(3, 8)
 
 func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
     var vowels = 0, consonants = 0, emoji = 0, whitespace = 0, others = 0
-    
+
     for character in string {
 
         switch String(character).lowercaseString {
@@ -100,11 +100,11 @@ func chooseSteperFunction(backward:Bool) -> (Int) -> Int {
     func stepForward(input:Int)->Int {
         return input + 1
     }
-    
+
     func stepBackward(input:Int)->Int {
         return input + 1
     }
-    
+
     return backward ? stepBackward : stepForward
 }
 let currentValue = 5
@@ -169,39 +169,49 @@ func simpleAssert(condition: @autoclosure () -> Bool, message: String = "Asserti
     }
 }
 
+// optional function call
+
+let maybeFunction: (() -> ())? = nil
+maybeFunction?()
+maybeFunction!()
+
 //MARK: Classes
 public class Person : NSObject {
     let firstName: String
-    
+
     private var lastName: String
-    
+
     private(set) var age: Int {
     didSet {
         println("Happy Birthday")
     }
     }
-    
+
+    internal(set) var doubleAge = 0.0
+    unowned(safe) var safeUnowned = nil
+    unowned(unsafe) var unsafeUnowned = nil
+
     lazy var phoneNumbers = [String]()
     @NSCopying var modificationDate: NSDate = NSDate()
-    
+
     required public init(name: String, age: Int) {
         self.name = name
         self.age = age
         super.init()
     }
-    
+
     internal var isAdmin: Bool { return false }
-    
+
     final func doSomething() {
         //TODO: Do something
     }
-    
+
     dynamic func somethingDynamic() { }
 }
 
-@objc(MYCustomView) class CustomView {
+@objc(MYCustomView) class CustomView: NSView, SomeProtocol , OtherProtocol {
     @IBOutlet var button: AnyObject!
-    
+
     @IBAction func doSomething(sender: AnyObject) {
         //TODO: Do something
     }
@@ -214,5 +224,18 @@ public class Person : NSObject {
 }
 
 extension SomeClass {
-    
+
 }
+
+struct Stack<T, U>: Equatable {
+    var items = [T]()
+}
+
+typealias Speed = Double
+
+enum State: Equatable {
+    case Stopped, Paused
+    case Running(Speed)
+}
+
+@availability(OSX, introduced=10.10) func localizedCaseInsensitiveContainsString(aString: String) -> Bool

@@ -11,34 +11,31 @@ module Rouge
       id_head = /_|(?!\p{Mc})\p{Alpha}|[^\u0000-\uFFFF]/
       id_rest = /[\p{Alnum}_]|[^\u0000-\uFFFF]/
       id = /#{id_head}#{id_rest}*/
-
-      def self.keywords
-        @keywords ||= Set.new %w(
-          break case continue default do else fallthrough if in for return switch where while
-
-          as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
-
-          associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet
-        )
+      
+      def self.regex_from array
+        options = array.join('|')
+        %r{(#{options})(?=\W)}
       end
+      
+      keywords = regex_from %w(
+        break case continue default do else fallthrough if in for return switch where while
 
-      def self.declarations
-        @declarations ||= Set.new %w(
-          class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
-        )
-      end
+        as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-      def self.at_keywords
-        @at_keywords ||= %w(
-          autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain
-        )
-      end
+        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet
+      )
 
-      def self.constants
-        @constants ||= Set.new %w(
-          true false nil
-        )
-      end
+      declarations = regex_from %w(
+        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
+      )
+
+      attributes = %w(
+        autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain
+      )
+
+      constants = regex_from %w(
+        true false nil
+      )
 
       state :whitespace do
         rule /\s+/m, Text
@@ -60,23 +57,7 @@ module Rouge
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
-
-        rule /(?!\b(if|while|for|private|internal|unowned|@objc)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
-          if m[0] =~ /^[[:upper:]]/
-            token Keyword::Type
-          else
-            token Name::Function
-          end
-        end
-
-        rule /(#?(?!default)#{id})(\s*)(:)/ do
-          groups Name::Variable, Text, Punctuation
-        end
-
-        rule /(let|var)\b(\s*)(#{id})/ do
-          groups Keyword, Text, Name::Variable
-        end
-
+                
         rule /@availability[(][^)]+[)]/, Keyword::Declaration
 
         rule /(@objc[(])([^)]+)([)])/ do
@@ -84,7 +65,7 @@ module Rouge
         end
 
         rule /@(#{id})/ do |m|
-          if self.class.at_keywords.include? m[1]
+          if attributes.include? m[1]
             token Keyword
           else
             token Error
@@ -106,20 +87,32 @@ module Rouge
             groups Keyword::Declaration, Error, Keyword::Declaration
           end
         end
+        
+        rule /(let|var)\b(\s*)(#{id})/ do
+          groups Keyword, Text, Name::Variable
+        end
+        
+        rule keywords, Keyword
+        rule declarations, Keyword::Declaration
+        rule constants, Keyword::Constant
+        
+        rule /#{id}(?=(\?|!)?\s*[(])/ do |m|
+          if m[0] =~ /^[[:upper:]]/
+            token Keyword::Type
+          else
+            token Name::Function
+          end
+        end
+
+        rule /(#?#{id})(\s*)(:)/ do
+          groups Name::Variable, Text, Punctuation
+        end
 
         rule id do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
+          if m[0] =~ /^[[:upper:]]/
+            token Keyword::Type
           else
-            if m[0] =~ /^[[:upper:]]/
-              token Keyword::Type
-            else
-              token Name
-            end
+            token Name
           end
         end
       end

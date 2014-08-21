@@ -104,7 +104,7 @@ module Rouge
           end
         end
 
-        rule /(#?#{id})(\s*)(:)/ do
+        rule /(#?(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation
         end
 

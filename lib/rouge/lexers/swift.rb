@@ -34,16 +34,6 @@ module Rouge
         )
       end
 
-      def self.types
-        @types ||= Set.new %w(
-          Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 Int
-          Double Float
-          Bool
-          String Character
-          AnyObject Any
-        )
-      end
-
       def self.constants
         @constants ||= Set.new %w(
           true false nil
@@ -73,7 +63,7 @@ module Rouge
 
         rule /(?!\b(if|while|for|private|internal|unowned|@objc)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
           if m[0] =~ /^[[:upper:]]/
-            token Name::Constant
+            token Keyword::Type
           else
             token Name::Function
           end
@@ -122,18 +112,16 @@ module Rouge
             token Keyword
           elsif self.class.declarations.include? m[0]
             token Keyword::Declaration
-            if %w(protocol class extension struct enum).include? m[0]
-              push :type_definition
-            end
-          elsif self.class.types.include? m[0]
-            token Keyword::Type
           elsif self.class.constants.include? m[0]
             token Keyword::Constant
           else
-            token Name
+            if m[0] =~ /^[[:upper:]]/
+              token Keyword::Type
+            else
+              token Name
+            end
           end
         end
-        rule id, Name
       end
 
       state :dq do
@@ -154,35 +142,6 @@ module Rouge
         rule /[(]/, Punctuation, :push
         rule /[)]/, Punctuation, :pop!
         mixin :root
-      end
-
-      state :type_definition do
-        mixin :whitespace
-        rule id, Name::Constant
-        rule /</, Punctuation, :type_param_list
-        rule /:/, Punctuation, :supertype_list
-        rule(//) { pop! }
-      end
-
-      state :supertype_list do
-        mixin :whitespace
-        rule id, Name::Constant
-        rule /,/, Punctuation, :push
-        rule(//) { pop! }
-      end
-
-      state :type_param_list do
-        mixin :whitespace
-        rule id, Text
-        rule /,/, Punctuation, :type_param_list
-        rule />/, Punctuation, :pop!
-        rule(//) { pop! }
-      end
-
-      state :namespace do
-        mixin :whitespace
-        rule /(?=[(])/, Text, :pop!
-        rule /(#{id}|[.])+/, Name::Namespace, :pop!
       end
     end
   end

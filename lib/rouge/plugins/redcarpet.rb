@@ -7,6 +7,11 @@
 module Rouge
   module Plugins
     module Redcarpet
+      def initialize(extentions = {})
+        @rouge_options = extensions.delete(:rouge_options) || {}
+        super(extensions)
+      end
+
       def block_code(code, language)
         lexer = Lexer.find_fancy(language, code) || Lexers::PlainText
 
@@ -17,9 +22,9 @@ module Rouge
           code.gsub! /^    /, "\t"
         end
 
-        formatter = rouge_formatter(
+        formatter = rouge_formatter({
           :css_class => "highlight #{lexer.tag}"
-        )
+        }.merge(@rouge_options))
 
         formatter.format(lexer.lex(code))
       end

@@ -42,7 +42,7 @@ module Rouge
         rule /@#{id}/, Name::Decorator
         rule /(?:#{keywords.join('|')})\b/, Keyword
         rule /(?:#{declarations.join('|')})\b/, Keyword::Declaration
-        rule /(?:#{types.join('|')})/, Keyword::Type
+        rule /(?:#{types.join('|')})\b/, Keyword::Type
         rule /package\b/, Keyword::Namespace
         rule /(?:true|false|null)\b/, Keyword::Constant
         rule /(?:class|interface)\b/, Keyword::Declaration, :class

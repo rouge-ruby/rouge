@@ -17,16 +17,13 @@ module Rouge
           code.gsub! /^    /, "\t"
         end
 
-        formatter = rouge_formatter(
-          :css_class => "highlight #{lexer.tag}"
-        )
-
+        formatter = rouge_formatter(lexer)
         formatter.format(lexer.lex(code))
       end
 
-    protected
-      def rouge_formatter(opts={})
-        Formatters::HTML.new(opts)
+      # override this method for custom formatting behavior
+      def rouge_formatter(lexer)
+        Formatters::HTML.new(:css_class => "highlight #{lexer.tag}")
       end
     end
   end

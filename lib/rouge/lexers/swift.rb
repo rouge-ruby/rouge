@@ -25,7 +25,7 @@ module Rouge
       )
 
       attributes = Set.new %w(
-        autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain
+        autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain NSApplicationMain
       )
 
       constants = Set.new %w(

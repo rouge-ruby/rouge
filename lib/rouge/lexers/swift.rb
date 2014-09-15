@@ -12,12 +12,7 @@ module Rouge
       id_rest = /[\p{Alnum}_]|[^\u0000-\uFFFF]/
       id = /#{id_head}#{id_rest}*/
       
-      def self.regex_from array
-        options = array.join('|')
-        %r{(#{options})(?=\W)}
-      end
-      
-      keywords = regex_from %w(
+      keywords = Set.new %w(
         break case continue default do else fallthrough if in for return switch where while
 
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
@@ -25,15 +20,15 @@ module Rouge
         associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet
       )
 
-      declarations = regex_from %w(
+      declarations = Set.new %w(
         class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
       )
 
-      attributes = %w(
+      attributes = Set.new %w(
         autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain
       )
 
-      constants = regex_from %w(
+      constants = Set.new %w(
         true false nil
       )
 
@@ -92,11 +87,7 @@ module Rouge
           groups Keyword, Text, Name::Variable
         end
         
-        rule keywords, Keyword
-        rule declarations, Keyword::Declaration
-        rule constants, Keyword::Constant
-        
-        rule /#{id}(?=(\?|!)?\s*[(])/ do |m|
+        rule /(?!\b(if|while|for|private|internal|unowned|switch|case)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
           if m[0] =~ /^[[:upper:]]/
             token Keyword::Type
           else
@@ -104,12 +95,18 @@ module Rouge
           end
         end
 
-        rule /(#?(?![[:upper:]])#{id})(\s*)(:)/ do
+        rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation
         end
 
         rule id do |m|
-          if m[0] =~ /^[[:upper:]]/
+          if keywords.include? m[0]
+            token Keyword
+          elsif declarations.include? m[0]
+            token Keyword::Declaration
+          elsif constants.include? m[0]
+            token Keyword::Constant
+          elsif m[0] =~ /^[[:upper:]]/
             token Keyword::Type
           else
             token Name

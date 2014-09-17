@@ -11,44 +11,26 @@ module Rouge
       id_head = /_|(?!\p{Mc})\p{Alpha}|[^\u0000-\uFFFF]/
       id_rest = /[\p{Alnum}_]|[^\u0000-\uFFFF]/
       id = /#{id_head}#{id_rest}*/
+      
+      keywords = Set.new %w(
+        break case continue default do else fallthrough if in for return switch where while
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          break case continue default do else fallthrough if in for return switch where while
+        as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-          as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
+        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet
+      )
 
-          associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet
-        )
-      end
+      declarations = Set.new %w(
+        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
+      )
 
-      def self.declarations
-        @declarations ||= Set.new %w(
-          class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
-        )
-      end
+      attributes = Set.new %w(
+        autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain NSApplicationMain
+      )
 
-      def self.at_keywords
-        @at_keywords ||= %w(
-          autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain
-        )
-      end
-
-      def self.types
-        @types ||= Set.new %w(
-          Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 Int
-          Double Float
-          Bool
-          String Character
-          AnyObject Any
-        )
-      end
-
-      def self.constants
-        @constants ||= Set.new %w(
-          true false nil
-        )
-      end
+      constants = Set.new %w(
+        true false nil
+      )
 
       state :whitespace do
         rule /\s+/m, Text
@@ -70,23 +52,7 @@ module Rouge
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
-
-        rule /(?!\b(if|while|for|private|internal|unowned|@objc)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
-          if m[0] =~ /^[[:upper:]]/
-            token Name::Constant
-          else
-            token Name::Function
-          end
-        end
-
-        rule /(#?(?!default)#{id})(\s*)(:)/ do
-          groups Name::Variable, Text, Punctuation
-        end
-
-        rule /(let|var)\b(\s*)(#{id})/ do
-          groups Keyword, Text, Name::Variable
-        end
-
+                
         rule /@availability[(][^)]+[)]/, Keyword::Declaration
 
         rule /(@objc[(])([^)]+)([)])/ do
@@ -94,7 +60,7 @@ module Rouge
         end
 
         rule /@(#{id})/ do |m|
-          if self.class.at_keywords.include? m[1]
+          if attributes.include? m[1]
             token Keyword
           else
             token Error
@@ -116,24 +82,36 @@ module Rouge
             groups Keyword::Declaration, Error, Keyword::Declaration
           end
         end
+        
+        rule /(let|var)\b(\s*)(#{id})/ do
+          groups Keyword, Text, Name::Variable
+        end
+        
+        rule /(?!\b(if|while|for|private|internal|unowned|switch|case)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
+          if m[0] =~ /^[[:upper:]]/
+            token Keyword::Type
+          else
+            token Name::Function
+          end
+        end
+
+        rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
+          groups Name::Variable, Text, Punctuation
+        end
 
         rule id do |m|
-          if self.class.keywords.include? m[0]
+          if keywords.include? m[0]
             token Keyword
-          elsif self.class.declarations.include? m[0]
+          elsif declarations.include? m[0]
             token Keyword::Declaration
-            if %w(protocol class extension struct enum).include? m[0]
-              push :type_definition
-            end
-          elsif self.class.types.include? m[0]
-            token Keyword::Type
-          elsif self.class.constants.include? m[0]
+          elsif constants.include? m[0]
             token Keyword::Constant
+          elsif m[0] =~ /^[[:upper:]]/
+            token Keyword::Type
           else
             token Name
           end
         end
-        rule id, Name
       end
 
       state :dq do
@@ -154,35 +132,6 @@ module Rouge
         rule /[(]/, Punctuation, :push
         rule /[)]/, Punctuation, :pop!
         mixin :root
-      end
-
-      state :type_definition do
-        mixin :whitespace
-        rule id, Name::Constant
-        rule /</, Punctuation, :type_param_list
-        rule /:/, Punctuation, :supertype_list
-        rule(//) { pop! }
-      end
-
-      state :supertype_list do
-        mixin :whitespace
-        rule id, Name::Constant
-        rule /,/, Punctuation, :push
-        rule(//) { pop! }
-      end
-
-      state :type_param_list do
-        mixin :whitespace
-        rule id, Text
-        rule /,/, Punctuation, :type_param_list
-        rule />/, Punctuation, :pop!
-        rule(//) { pop! }
-      end
-
-      state :namespace do
-        mixin :whitespace
-        rule /(?=[(])/, Text, :pop!
-        rule /(#{id}|[.])+/, Name::Namespace, :pop!
       end
     end
   end

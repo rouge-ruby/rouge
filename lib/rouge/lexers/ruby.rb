@@ -110,22 +110,21 @@ module Rouge
       )
 
       builtins_g = %w(
-        Array Float Integer Str __id__ __send__ abort ancestors
-        at_exit autoload binding callcc caller catch chomp chop
-        class_eval class_variables clone const_defined\? const_get
-        const_missing const_set constants display dup eval exec exit
-        extend fail fork format freeze getc gets global_variables gsub
-        hash id included_modules inspect instance_eval instance_method
-        instance_methods instance_variable_get instance_variable_set
-        instance_variables lambda load local_variables loop method
-        method_missing methods module_eval name object_id open p
-        print printf private_class_method private_instance_methods
-        private_methods proc protected_instance_methods protected_methods
-        public_class_method public_instance_methods public_methods putc
-        puts raise rand readline readlines require scan select self send
-        set_trace_func singleton_methods sleep split sprintf srand sub
-        syscall system taint test throw to_a to_s trace_var trap untaint
-        untrace_var warn
+        __id__ __send__ abort ancestors at_exit autoload binding callcc
+        caller catch chomp chop class_eval class_variables clone
+        const_defined\? const_get const_missing const_set constants
+        display dup eval exec exit extend fail fork format freeze
+        getc gets global_variables gsub hash id included_modules
+        inspect instance_eval instance_method instance_methods
+        instance_variable_get instance_variable_set instance_variables
+        lambda load local_variables loop method method_missing
+        methods module_eval name object_id open p print printf
+        private_class_method private_instance_methods private_methods proc
+        protected_instance_methods protected_methods public_class_method
+        public_instance_methods public_methods putc puts raise rand
+        readline readlines require scan select self send set_trace_func
+        singleton_methods sleep split sprintf srand sub syscall system
+        taint test throw to_a to_s trace_var trap untaint untrace_var warn
       )
 
       builtins_q = %w(

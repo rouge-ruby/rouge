@@ -1,3 +1,14 @@
+## version 1.7.0: 2014-09-18
+
+  * ruby: give up on trying to highlight capitalized builtin methods
+  * swift: updates for beta 6 (thanks @radex!) (#174, #172)
+  * support ASCII-8BIT encoding found on macs, as it's a subset of UTF-8 (#178)
+  * redcarpet plugin [BREAKING]: change `#rouge_formatter`'s override pattern
+    - it is now a method that takes a lexer and returns a formatter, instead of
+      a hash of generated options. (thanks @vince-styling!)
+  * java: stop erroneously highlighting keywords within words (thanks @koron!) (#177)
+  * html: dash is allowed in tag names (thanks @tjgrathwell!) (#173)
+
 ## version 1.6.2: 2014-08-16
 
   * swift: updates for beta 5 (thanks @radex!)

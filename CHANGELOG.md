@@ -1,3 +1,7 @@
+## version 1.7.1: 2014-09-18
+
+  * ruby: hotfix for the `/=` operator
+
 ## version 1.7.0: 2014-09-18
 
   * ruby: give up on trying to highlight capitalized builtin methods

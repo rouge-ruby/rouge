@@ -341,14 +341,17 @@ module Rouge
       end
 
       state :method_call do
-        rule %r((\s+)(/)(?=\S|\s*/)) do
-          groups Text, Str::Regex
-          goto :slash_regex
+        mixin :whitespace
+
+        rule %r([%/]=) do
+          token Operator
+          goto :expr_start
         end
 
-        rule /(\s*)(%=)/ do
-          groups Text, Operator
-          goto :expr_start
+        rule %r((/)(?=\S|\s*/)) do
+          token Str::Regex
+          groups Text, Str::Regex
+          goto :slash_regex
         end
 
         rule(%r((?=\s*/))) { pop! }

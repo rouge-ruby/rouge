@@ -9,6 +9,11 @@ link_to 'new', new_article_path, class: 'btn'
 # not a symbol
 a ? b:c
 
+a/1 # comment
+a / b # comment
+a /1 \r[egex]\//
+a/ b #comment
+
 ########
 # method calls
 ########

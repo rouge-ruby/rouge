@@ -341,6 +341,15 @@ module Rouge
       end
 
       state :method_call do
+        rule %r(/) do
+          token Operator
+          goto :expr_start
+        end
+
+        rule(//) { goto :method_call_spaced }
+      end
+
+      state :method_call_spaced do
         mixin :whitespace
 
         rule %r([%/]=) do
@@ -350,7 +359,6 @@ module Rouge
 
         rule %r((/)(?=\S|\s*/)) do
           token Str::Regex
-          groups Text, Str::Regex
           goto :slash_regex
         end
 

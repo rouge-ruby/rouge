@@ -1,3 +1,7 @@
+## version 1.7.2: 2014-10-04
+
+  * ruby: hotfix for division with no space
+
 ## version 1.7.1: 2014-09-18
 
   * ruby: hotfix for the `/=` operator

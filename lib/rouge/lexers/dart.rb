@@ -3,7 +3,7 @@
 module Rouge
   module Lexers
     class Dart < RegexLexer
-      desc "The Dart programming language (java.com)"
+      desc "The Dart programming language (dartlang.com)"
 
       tag 'dart'
       filenames '*.dart'

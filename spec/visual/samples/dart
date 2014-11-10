@@ -1,13 +1,15 @@
-library dart_example;
-
-import 'package:http/http.dart' as http;
-import "dart:io" show HttpClient, RedirectInfo;
-
 // comment
 /*
 multiline
 comment
 */
+
+
+library dart_example;
+import 'package:http/http.dart' as http;
+import "dart:io" show HttpClient, RedirectInfo;
+
+
 var str = 'Test';
 String str2 = "Test";
 String strWithNewline = "test\n";
@@ -17,6 +19,9 @@ is
 multiline string
 ''';
 var rawString = r"raw string";
+var stringWithInterpolation = 'Value: $value';
+var expressionInString = 'Value: ${value + 1}';
+
 assert(str == str2);
 final x = 10;
 const y = 500 * x;

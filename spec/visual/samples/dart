@@ -8,7 +8,8 @@ comment
 library dart_example;
 import 'package:http/http.dart' as http;
 import "dart:io" show HttpClient, RedirectInfo;
-
+part 'foo.dart';
+part of bar;
 
 var str = 'Test';
 String str2 = "Test";
@@ -22,17 +23,22 @@ var rawString = r"raw string";
 var stringWithInterpolation = 'Value: $value';
 var expressionInString = 'Value: ${value + 1}';
 
+var symbol = #symbol;
+
 assert(str == str2);
 final x = 10;
 const y = 500 * x;
 var hex = 0xff;
-int z = 1.22e-17; 
+double z = 1.22e-17;
 
 fun(num x) {
   print('The argument is x');
 }
 
 class A {
+  @override
+  void fooMethod {
+  }
 }
 
 

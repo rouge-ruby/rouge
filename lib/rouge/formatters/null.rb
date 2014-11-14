@@ -10,7 +10,9 @@ module Rouge
       end
 
       def stream(tokens, &b)
-        tokens.to_a
+        tokens.each do |tok, val|
+          yield "#{tok} #{val.inspect}\n"
+        end
       end
     end
   end

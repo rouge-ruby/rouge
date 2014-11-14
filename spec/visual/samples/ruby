@@ -2,6 +2,19 @@
 # ruby 1.9 examples
 #######
 
+state :foo do
+  rule %r(/) do
+    token Operator
+    goto :expr_start
+  end
+
+  rule(//) { goto :method_call_spaced }
+end
+
+state :foo do
+  rule %r(/), Thing
+end
+
 %i(this is an array of symbols)
 %I(this is too, but with #{@interpolation})
 hash = { answer: 42 }

@@ -332,7 +332,7 @@ module Rouge
       end
 
       state :string_intp do
-        rule /\#{/, Str::Interpol, :in_interp
+        rule /[#][{]/, Str::Interpol, :in_interp
         rule /#(@@?|\$)[a-z_]\w*/i, Str::Interpol
       end
 

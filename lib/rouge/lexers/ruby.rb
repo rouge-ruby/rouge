@@ -16,7 +16,7 @@ module Rouge
         return 1 if text.shebang? 'ruby'
       end
 
-      state :sigil_strings do
+      state :symbols do
         # symbols
         rule %r(
           :  # initial :
@@ -30,7 +30,9 @@ module Rouge
 
         rule /:'(\\\\|\\'|[^'])*'/, Str::Symbol
         rule /:"/, Str::Symbol, :simple_sym
+      end
 
+      state :sigil_strings do
         # %-sigiled strings
         # %(abc), %[abc], %<abc>, %.abc., %r.abc., etc
         delimiter_map = { '{' => '}', '[' => ']', '(' => ')', '<' => '>' }
@@ -75,6 +77,7 @@ module Rouge
       end
 
       state :strings do
+        mixin :symbols
         rule /\b[a-z_]\w*?:\s+/, Str::Symbol, :expr_start
         rule /'(\\\\|\\'|[^'])*'/, Str::Single
         rule /"/, Str::Double, :simple_string
@@ -361,6 +364,8 @@ module Rouge
           token Str::Regex
           goto :slash_regex
         end
+
+        mixin :sigil_strings
 
         rule(%r((?=\s*/))) { pop! }
 

@@ -1,3 +1,10 @@
+## version 1.7.3: 2014-11-15
+
+  * ruby: hotfix for symbols in method calling position (rubyyyyy.......)
+  * http: add PATCH as a verb
+  * new lexer: Dart (thanks @R1der!)
+  * null formatter now prints token names and values
+
 ## version 1.7.2: 2014-10-04
 
   * ruby: hotfix for division with no space

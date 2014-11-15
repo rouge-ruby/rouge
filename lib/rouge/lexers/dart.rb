@@ -21,6 +21,8 @@ module Rouge
 
       types = %w(bool double Dynamic enum int num Object Set String void)
 
+      imports = %w(import export library part\s*of part source)
+
       id = /[a-zA-Z_]\w*/
 
       state :root do
@@ -41,15 +43,20 @@ module Rouge
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule /"/, Str, :dqs
         rule /'/, Str, :sqs
+        rule /r"[^"]*"/, Str::Other
+        rule /r'[^']*'/, Str::Other
+        rule /##{id}*/i, Str::Symbol
+        rule /@#{id}/, Name::Decorator
         rule /(?:#{keywords.join('|')})\b/, Keyword
         rule /(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule /(?:#{types.join('|')})\b/, Keyword::Type
         rule /(?:true|false|null)\b/, Keyword::Constant
         rule /(?:class|interface)\b/, Keyword::Declaration, :class
-        rule /(?:import|export|library|part|source)\b/, Keyword::Namespace
+        rule /(?:#{imports.join('|')})\b/, Keyword::Namespace, :import
         rule /(\.)(#{id})/ do
           groups Operator, Name::Attribute
         end
+
         rule /#{id}:/, Name::Label
         rule /\$?#{id}/, Name
         rule /[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
@@ -76,13 +83,19 @@ module Rouge
         mixin :string
       end
 
+      state :import do
+        rule /;/, Operator, :pop!
+        rule /(?:show|hide)\b/, Keyword::Declaration
+        mixin :root
+      end
+
       state :string do
         mixin :interpolation
         rule /\\[nrt\"\'\\]/, Str::Escape
       end
 
       state :interpolation do
-        rule /\$[a-z]\w*/i, Str::Interpol
+        rule /\$#{id}/, Str::Interpol
         rule /\$\{[^\}]+\}/, Str::Interpol
       end
     end

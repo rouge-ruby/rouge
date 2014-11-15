@@ -6,7 +6,7 @@ describe Rouge::Formatters::Null do
   it 'renders nothing' do
     result = subject.format([[Token['Text'], 'foo']])
 
-    assert { result == '' }
+    assert { result == %|Rouge::Token::Tokens::Text "foo"\n| }
   end
 
   it 'consumes tokens' do

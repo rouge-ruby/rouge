@@ -11,14 +11,14 @@ If you'd like to help out with this project, assign yourself something from the 
 
 Also, if anyone with design skills feels like helping me make a website for rouge, I'd really appreciate the help.  So far all I've got is the [demo page][pretty colors].
 
-[issues]: https://github.com/jayferd/rouge/issues "Help Out"
+[issues]: https://github.com/jneen/rouge/issues "Help Out"
 [pygments]: http://pygments.org/ "Pygments"
 
 ## Usage
 
 First, take a look at the [pretty colors][].
 
-[pretty colors]: http://rouge.jayferd.us/demo
+[pretty colors]: http://rouge.jneen.us/demo
 
 ``` ruby
 # make some nice lexed html
@@ -106,7 +106,7 @@ Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a dif
 
 ### Installing Ruby
 
-If you're here to implement a lexer for your awesome language, there's a good chance you don't already have a ruby development environment set up.  Follow the [instructions on the wiki](https://github.com/jayferd/rouge/wiki/Setting-up-Ruby) to get up and running.  If you have trouble getting set up, let me know - I'm always happy to help.
+If you're here to implement a lexer for your awesome language, there's a good chance you don't already have a ruby development environment set up.  Follow the [instructions on the wiki](https://github.com/jneen/rouge/wiki/Setting-up-Ruby) to get up and running.  If you have trouble getting set up, let me know - I'm always happy to help.
 
 ### Run the tests
 
@@ -183,7 +183,7 @@ end
 
 ## Tips
 
-I don't get paid to maintain rouge.  [If you've found this software useful, consider dropping a tip in the bucket](http://www.gittip.com/jayferd).
+I don't get paid to maintain rouge.  [If you've found this software useful, consider dropping a tip in the bucket](http://www.gittip.com/jneen).
 
 ## License
 

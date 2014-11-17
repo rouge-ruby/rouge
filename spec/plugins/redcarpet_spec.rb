@@ -26,8 +26,8 @@ foo=1
 ```
     mkd
 
-    assert { result.include?(%<<code class="highlight shell">>) }
-    assert { result.include?(%<<code class="highlight javascript">>) }
+    assert { result.include?(%(<pre class="highlight shell"><code>)) }
+    assert { result.include?(%(<pre class="highlight javascript"><code>)) }
   end
 
   it 'guesses' do
@@ -37,7 +37,7 @@ foo=1
 ```
     mkd
 
-    assert { result.include?(%<<code class="highlight xml">>) }
+    assert { result.include?(%(<pre class="highlight xml"><code>)) }
   end
 
   it 'passes options' do
@@ -48,7 +48,7 @@ foo=1
     mkd
 
     # TODO: test that an option is actually there
-    assert { result.include?(%<<code class="highlight shell">>) }
+    assert { result.include?(%(<pre class="highlight shell"><code>)) }
   end
 
   it 'works when no language is provided' do
@@ -58,6 +58,6 @@ foo=1
 $stdin.each { |l| $stdout.puts l.reverse }
 ```
     mkd
-    assert { result.include?(%(<code class="highlight ruby">)) }
+    assert { result.include?(%(<pre class="highlight ruby"><code>)) }
   end
 end

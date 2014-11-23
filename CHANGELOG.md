@@ -1,3 +1,10 @@
+## version 1.7.4: 2014-11-23
+
+  * clojure: hotfix for namespaced keywords with `::`
+  * background fix: add css class to pre tag instead of code tag (#191)
+  * new name in readme and license
+  * new contributor code of conduct
+
 ## version 1.7.3: 2014-11-15
 
   * ruby: hotfix for symbols in method calling position (rubyyyyy.......)

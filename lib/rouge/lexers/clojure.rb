@@ -81,7 +81,7 @@ module Rouge
 
         rule /"(\\.|[^"])*"/, Str
         rule /'#{keyword}/, Str::Symbol
-        rule /:#{keyword}/, Name::Constant
+        rule /::?#{keyword}/, Name::Constant
         rule /\\(.|[a-z]+)/i, Str::Char
 
 

@@ -6,6 +6,9 @@
     (add-class! :action)
     (listen! :click (fn [e] (js/console.log e)))))
 
+
+[::foo/bar 3]
+
 '#this-is-a-valid-symbol###
 
 ;;; escape_semicolon.clj

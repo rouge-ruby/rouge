@@ -18,7 +18,7 @@ Also, if anyone with design skills feels like helping me make a website for roug
 
 First, take a look at the [pretty colors][].
 
-[pretty colors]: http://rouge.jneen.us/demo
+[pretty colors]: http://rouge.jayferd.us/demo
 
 ``` ruby
 # make some nice lexed html
@@ -33,34 +33,40 @@ Rouge::Themes::Base16.mode(:light).render(scope: '.highlight')
 Rouge::Theme.find('base16.light').render(scope: '.highlight')
 ```
 
-####Full options:
+### Full options
+#### Formatter options
+##### css_class: 'highlight'
+Apply a class to the syntax-highlighted output. Set to false to not apply any css class.
 
-Formatter options:
+##### line_numbers: false
+Generate line numbers.
 
-      css_class: 'highlight'  #  Apply a class to the syntax-highlighted output.
-                              #  Set to false to not apply any css class
-      line_numbers: false     #  Generate line numbers.
-      start_line: 1           #  Index to start line numbers.
-      inline_theme: nil       #  A Rouge::CSSTheme used to highlight the output with inline styles
-                              #  instead of classes. Allows string inputs (separate mode with a dot):
-                              #  %w[colorful github monokai monokai.sublime thankful_eyes base16
-                              #     base16.dark base16.light base16.solarized base16.monokai]
-      wrap: true              #  Wrap the highlighted content in a container.
-                              #  Defaults to <pre><code>, or <div> if line numbers are enabled.
+##### start_line: 1
+Index to start line numbers.
 
-Lexer options:
+##### inline_theme: nil
+A `Rouge::CSSTheme` used to highlight the output with inline styles instead of classes. Allows string inputs (separate mode with a dot):
 
-      debug: false            #  Print a trace of the lex on stdout
-      parent: ''              #  Allows you to specify which language the template is inside
+```
+%w[colorful github monokai monokai.sublime thankful_eyes base16
+   base16.dark base16.light base16.solarized base16.monokai]
+```
 
-CSS theme options:
+##### wrap: true  
+Wrap the highlighted content in a container. Defaults to `<pre><code>`, or `<div>` if line numbers are enabled.
 
-      scope: '.highlight'     #  CSS selector that styles are applied to
-                              #  E.g. Rouge::Themes::Monokai.mode(:sublime).render(scope: 'code')
+#### Lexer options
+##### debug: false
+Print a trace of the lex on stdout
 
-Rouge aims to be simple to extend, and to be a drop-in replacement for pygments, with the same quality of output.
+##### parent: ''
+Allows you to specify which language the template is inside
 
-Also, Rouge ships with a `rougify` command which allows you to easily highlight files in your terminal:
+#### CSS theme options
+##### scope: '.highlight'  
+CSS selector that styles are applied to, e.g. `Rouge::Themes::Monokai.mode(:sublime).render(scope: 'code')`
+
+Rouge aims to be simple to extend, and to be a drop-in replacement for pygments, with the same quality of output. Also, Rouge ships with a `rougify` command which allows you to easily highlight files in your terminal:
 
 ``` bash
 $ rougify foo.rb
@@ -183,7 +189,7 @@ end
 
 ## Tips
 
-I don't get paid to maintain rouge.  [If you've found this software useful, consider dropping a tip in the bucket](http://www.gittip.com/jneen).
+I don't get paid to maintain rouge. If you've found this software useful, consider dropping a tip in the [bucket](http://www.gittip.com/jneen).
 
 ## License
 

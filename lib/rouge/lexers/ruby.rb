@@ -6,7 +6,7 @@ module Rouge
       desc "The Ruby programming language (ruby-lang.org)"
       tag 'ruby'
       aliases 'rb'
-      filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec',
+      filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
                 'Rakefile', 'Guardfile', 'Gemfile', 'Capfile',
                 'Vagrantfile', '*.ru', '*.prawn'
 

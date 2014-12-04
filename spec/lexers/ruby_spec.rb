@@ -62,6 +62,7 @@ describe Rouge::Lexers::Ruby do
       assert_guess :filename => 'foo.ruby'
       assert_guess :filename => 'foo.rbw'
       assert_guess :filename => 'foo.gemspec'
+      assert_guess :filename => 'foo.podspec'
       assert_guess :filename => 'Rakefile'
       assert_guess :filename => 'Guardfile'
       assert_guess :filename => 'Gemfile'

@@ -7,7 +7,7 @@ module Rouge
       tag 'ruby'
       aliases 'rb'
       filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
-                'Rakefile', 'Guardfile', 'Gemfile', 'Capfile',
+                'Rakefile', 'Guardfile', 'Gemfile', 'Capfile', 'Podfile',
                 'Vagrantfile', '*.ru', '*.prawn'
 
       mimetypes 'text/x-ruby', 'application/x-ruby'

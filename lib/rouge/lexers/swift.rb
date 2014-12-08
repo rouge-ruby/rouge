@@ -36,6 +36,7 @@ module Rouge
         rule /\s+/m, Text
         rule %r(\/\/.*?\n), Comment::Single
         rule %r((?<re>\/\*(?:(?>[^\/\*\*\/]+)|\g<re>)*\*\/))m, Comment::Multiline
+        rule /#.*/, Comment::Preproc
       end
 
       state :root do

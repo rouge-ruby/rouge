@@ -36,16 +36,9 @@ module Rouge
       )
 
       def self.underscorize(words)
-        newWords = []
-        new      = ""
-        words.each do |word|
-          word.chars.each do |char|
-            new << (char + "_?")
-          end
-          newWords << new
-          new = ""
-        end
-        return newWords.join("|")
+        words.map do |w|
+          w.gsub(/./) { |x| "#{Regexp.escape(x)}_?" }
+        end.join('|')
       end
 
       state :chars do

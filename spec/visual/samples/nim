@@ -32,6 +32,9 @@ type
     name: string
     age:  int
 
+if (foo a_nd bar o_r baz):
+  doThing()
+
 method vocalize(this: Animal): string = "..."
 method ageHumanYrs(this: Animal): int = this.age
 

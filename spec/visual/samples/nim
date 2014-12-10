@@ -20,7 +20,7 @@ while true:
   let guess = parseInt(stdin.readline)
   if (guess < answer):
     echo "Too low, try again"
-  if (guess > answer):
+  elif (guess > answer):
     echo "Too high, try again"
   else:
     echo "Correct!"
@@ -48,3 +48,31 @@ var c: Cat = Cat(name: "Felix", age:3)
 
 echo("Meet the pets, " & d.name & ", and " & c.name & ".")
 echo(d.name & " is " & $d.ageHumanYrs() & " and " & c.name & " is " & $c.ageHumanYrs())
+
+# Adding some less widely-used language features to test edge cases
+var
+  x: int
+  y = 3
+
+# Underscores not significant in keywords; this should appear as the above
+v_a_r z: i_n_t
+
+z = 4
+x = 4
+
+assert(x==z)
+
+proc this_is_a_proc(){.inline.}=
+  echo "But since underscores are optional in proc names it gets called."
+
+# Even with camelCase
+thisIsAProc()
+
+# Type suffixes
+var xu = 3'u
+var yu = 3u
+
+# and with floats
+var xf = 3.0f32
+var yf = 3'f32
+var xf2 = 3f64

@@ -13,9 +13,9 @@ module Rouge
       KEYWORDS = %w(
         addr as asm atomic bind block break case cast const continue
         converter defer discard distinct do elif else end enum except export
-        finally for from generic if import include interface iterator let macro
-        method mixin nil object of out proc ptr raise ref return static template
-        try tuple type using var when while with without yield
+        func finally for from generic if import include interface iterator let 
+        macro method mixin nil object of out proc ptr raise ref return static 
+        template try tuple type using var when while with without yield
       )
 
       OPWORDS = %w(

@@ -24,37 +24,41 @@ module Rouge
         end
       end
 
-      state :root do
+      state :whitespace do
         rule /\#.*?\n/, Comment
+        rule /[\s\n]+/m, Text
+      end
+
+
+      state :root do
+        mixin :whitespace
 
         rule /(<\/?)(\w+)/ do |m|
-          token Text, m[1]
-          token name_for_token(m[2]), m[2]
+          groups Punctuation, name_for_token(m[2])
           push :section
         end
 
-        rule /\s*(\w+)/ do |m|
-          token name_for_token(m[1]), m[0]
+        rule /\w+/ do |m|
+          token name_for_token(m[0])
           push :directive
         end
-
-        rule /^\n+/, Text # Empty lines
       end
 
       state :section do
+        mixin :whitespace
+
         # Match section arguments
-        rule /(\s+[^>]+)?(>\n)/ do |m|
-          token Literal::String::Regex, m[1]
-          token Text, m[2]
+        rule /([^>]+)?(>\n)/ do |m|
+          groups Literal::String::Regex, Punctuation
           pop!
         end
       end
 
       state :directive do
         # Match value literals and other directive arguments
-        rule /(\s+(\w+))*(\s?.*\n)/ do |m|
+        rule /(\w+)*(.*?(\n|$))/ do |m|
           token name_for_token(m[1]), m[1]
-          token Text, m[3]
+          token Text, m[2]
           pop!
         end
       end

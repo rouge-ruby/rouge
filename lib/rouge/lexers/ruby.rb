@@ -125,7 +125,7 @@ module Rouge
         private_class_method private_instance_methods private_methods proc
         protected_instance_methods protected_methods public_class_method
         public_instance_methods public_methods putc puts raise rand
-        readline readlines require scan select self send set_trace_func
+        readline readlines require require_relative scan select self send set_trace_func
         singleton_methods sleep split sprintf srand sub syscall system
         taint test throw to_a to_s trace_var trap untaint untrace_var warn
       )

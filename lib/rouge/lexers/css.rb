@@ -196,7 +196,7 @@ module Rouge
         mixin :basics
         rule /url\(.*?\)/, Str::Other
         rule /#[0-9a-f]{1,6}/i, Num # colors
-        rule /#{number}(?:em|px|%|pt|pc|in|mm|m|ex|s)?\b/, Num
+        rule /#{number}(?:%|(?:em|px|pt|pc|in|mm|m|ex|s)\b)?/, Num
         rule /[\[\]():\/.,]/, Punctuation
         rule /"(\\\\|\\"|[^"])*"/, Str::Single
         rule /'(\\\\|\\'|[^'])*'/, Str::Double

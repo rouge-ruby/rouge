@@ -168,6 +168,8 @@ module Rouge
           groups Name::Label, Text, Punctuation
         end
 
+        rule /[{}]/, Punctuation
+
         mixin :expr_start
       end
 

@@ -1,0 +1,81 @@
+# Examples taken from http://nimrod-by-example.github.io/, which is public
+# domain : https://github.com/flaviut/nimrod-by-example/blob/master/LICENCE
+import tables, strutils
+
+var wordFrequencies = initCountTable[string]()
+
+for line in stdin.lines():
+  for word in line.split(", "):
+    wordFrequencies.inc(word)
+
+echo("The most frequent word is: '", wordFrequencies.largest,"'")
+
+# Looping:
+import math
+
+randomize()
+let answer = random(10) + 1
+while true:
+  echo "I have a number from one to ten - what is it?"
+  let guess = parseInt(stdin.readline)
+  if (guess < answer):
+    echo "Too low, try again"
+  elif (guess > answer):
+    echo "Too high, try again"
+  else:
+    echo "Correct!"
+    break
+
+# OO Design
+type
+  Animal = ref object of RootObj
+    name: string
+    age:  int
+
+if (foo a_nd bar o_r baz):
+  doThing()
+
+method vocalize(this: Animal): string = "..."
+method ageHumanYrs(this: Animal): int = this.age
+
+type Dog = ref object of Animal
+
+method vocalize(this: Dog): string = "WOOF!"
+method ageHumanYrs(this: Dog): int = this.age*7
+
+type Cat = ref object of Animal
+method vocalize(this: Cat): string = "Meow"
+
+var d: Dog = Dog(name: "Rover", age:2)
+var c: Cat = Cat(name: "Felix", age:3)
+
+echo("Meet the pets, " & d.name & ", and " & c.name & ".")
+echo(d.name & " is " & $d.ageHumanYrs() & " and " & c.name & " is " & $c.ageHumanYrs())
+
+# Adding some less widely-used language features to test edge cases
+var
+  x: int
+  y = 3
+
+# Underscores not significant in keywords; this should appear as the above
+v_a_r z: i_n_t
+
+z = 4
+x = 4
+
+assert(x==z)
+
+proc this_is_a_proc(){.inline.}=
+  echo "But since underscores are optional in proc names it gets called."
+
+# Even with camelCase
+thisIsAProc()
+
+# Type suffixes
+var xu = 3'u
+var yu = 3u
+
+# and with floats
+var xf = 3.0f32
+var yf = 3'f32
+var xf2 = 3f64

@@ -1,3 +1,22 @@
+## version 1.7.5: 2014-12-24
+
+  lexer fixes and tweaks:
+  * javascript: fix function literals in object literals (reported by @taye)
+  * css: fix for percentage values and add more units (thanks @taye)
+  * ruby: highlight `require_relative` as a builtin (thanks @NARKOZ)
+
+  new lexers:
+  * nim (thanks @singularperturbation)
+  * apache (thanks @iiska)
+
+  new filetype associations:
+  * highlight PKGBUILD as shell (thanks @rumpelsepp)
+  * highlight Podspec files as ruby (thanks @NARKOZ)
+
+  other:
+  * lots of doc work in the README (thanks @rumpelsepp)
+
+
 ## version 1.7.4: 2014-11-23
 
   * clojure: hotfix for namespaced keywords with `::`

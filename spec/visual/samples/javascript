@@ -13,10 +13,23 @@ var ternary3 = a ? {
   key2: var2 ? function() {
     label1: // break label, not an object key!
     while(true) {
-      break myLabel;
+      break label1;
     }
-  } + var3: var4
+
+    label2: // also a break label
+    while (true) {
+      break label2;
+    }
+  } + var3: var4, // ternary, not object key
+  key3: 'foo'
 } : 2
+
+var a = {
+  num: 0,
+  func: function() {},
+  str: '',
+  bool: true
+}
 
 var obj =
   {

@@ -32,11 +32,26 @@ module Rouge
         true false nil
       )
 
-      state :whitespace do
-        rule /\s+/m, Text
-        rule %r(\/\/.*?\n), Comment::Single
-        rule %r((?<re>\/\*(?:(?>[^\/\*\*\/]+)|\g<re>)*\*\/))m, Comment::Multiline
+      start { push :bol }
+
+      # beginning of line
+      state :bol do
         rule /#.*/, Comment::Preproc
+
+        mixin :inline_whitespace
+
+        rule(//) { pop! }
+      end
+
+      state :inline_whitespace do
+        rule /\s+/m, Text
+        rule %r((?<re>\/\*(?:(?>[^\/\*\*\/]+)|\g<re>)*\*\/))m, Comment::Multiline
+      end
+
+      state :whitespace do
+        rule /\n+/m, Text, :bol
+        rule %r(\/\/.*?\n), Comment::Single, :bol
+        mixin :inline_whitespace
       end
 
       state :root do

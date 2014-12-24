@@ -24,6 +24,18 @@ ul#nav li.new {
     color: #0f0;
 }
 
+*::before {
+  content: "text";
+}
+
+:first-child::after {
+  display: none;
+}
+
+.class:first-child:focus::after {
+  display: none;
+}
+
 #thing {
   font: normal 400 12px/35px Helvetica, Arial, sans-serif;
 }

@@ -1,3 +1,7 @@
+## version 1.7.7: 2014-12-24
+
+  * fix previous bad release: actually add yaml files to the gem
+
 ## version 1.7.5: 2014-12-24
 
   lexer fixes and tweaks:

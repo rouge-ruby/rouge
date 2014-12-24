@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   desc
   s.homepage = "http://github.com/jneen/rouge"
   s.rubyforge_project = "rouge"
-  s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'bin/rougify', 'lib/rouge/demos/*']
+  s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'lib/**/*.yml', 'bin/rougify', 'lib/rouge/demos/*']
   s.executables = %w(rougify)
   s.license = 'MIT (see LICENSE file)'
 end

@@ -184,7 +184,7 @@ module Rouge
       state :root do
         mixin :basics
         rule /{/, Punctuation, :stanza
-        rule /:#{identifier}/, Name::Decorator
+        rule /:[:]?#{identifier}/, Name::Decorator
         rule /\.#{identifier}/, Name::Class
         rule /##{identifier}/, Name::Function
         rule /@#{identifier}/, Keyword, :at_rule

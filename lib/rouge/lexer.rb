@@ -68,7 +68,7 @@ module Rouge
       # Specify or get this lexer's title. Meant to be human-readable.
       def title(t=nil)
         if t.nil?
-          t = name.demodulize
+          t = tag.capitalize
         end
         @title ||= t
       end

@@ -6,6 +6,7 @@ module Rouge
       tag 'gherkin'
       aliases 'cucumber', 'behat'
 
+      title "Gherkin"
       desc 'A business-readable spec DSL ( github.com/cucumber/cucumber/wiki/Gherkin )'
 
       filenames '*.feature'
@@ -134,4 +135,3 @@ module Rouge
     end
   end
 end
-

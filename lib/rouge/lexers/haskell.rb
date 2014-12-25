@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Haskell < RegexLexer
+      title "Haskell"
       desc "The Haskell programming language (haskell.org)"
 
       tag 'haskell'

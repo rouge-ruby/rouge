@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Dart < RegexLexer
+      title "Dart"
       desc "The Dart programming language (dartlang.com)"
 
       tag 'dart'

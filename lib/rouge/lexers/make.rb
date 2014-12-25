@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Make < RegexLexer
+      title "Make"
       desc "Makefile syntax"
       tag 'make'
       aliases 'makefile', 'mf', 'gnumake', 'bsdmake'

@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Prolog < RegexLexer
+      title "Prolog"
       desc "The Prolog programming language (http://en.wikipedia.org/wiki/Prolog)"
       tag 'prolog'
       aliases 'prolog'

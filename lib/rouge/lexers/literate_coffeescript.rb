@@ -4,6 +4,7 @@ module Rouge
   module Lexers
     class LiterateCoffeescript < RegexLexer
       tag 'literate_coffeescript'
+      title "Literate CoffeeScript"
       desc 'Literate coffeescript'
       aliases 'litcoffee'
       filenames '*.litcoffee'

@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Sed < RegexLexer
+      title "sed"
       desc 'sed, the ultimate stream editor'
 
       tag 'sed'

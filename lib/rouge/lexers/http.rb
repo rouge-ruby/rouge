@@ -4,6 +4,7 @@ module Rouge
   module Lexers
     class HTTP < RegexLexer
       tag 'http'
+      title "HTTP"
       desc 'http requests and responses'
 
       def self.methods

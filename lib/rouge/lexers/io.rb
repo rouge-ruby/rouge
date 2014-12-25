@@ -4,6 +4,7 @@ module Rouge
   module Lexers
     class IO < RegexLexer
       tag 'io'
+      title "Io"
       desc 'The IO programming language (http://iolanguage.com)'
       mimetypes 'text/x-iosrc'
       filenames '*.io'

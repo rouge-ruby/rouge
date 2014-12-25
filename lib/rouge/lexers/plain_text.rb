@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class PlainText < Lexer
+      title "Plain Text"
       desc "A boring lexer that doesn't highlight anything"
 
       tag 'plaintext'

@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class TeX < RegexLexer
+      title "TeX"
       desc "The TeX typesetting system"
       tag 'tex'
       aliases 'TeX', 'LaTeX', 'latex'

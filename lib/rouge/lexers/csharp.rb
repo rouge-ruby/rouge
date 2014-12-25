@@ -8,6 +8,7 @@ module Rouge
       filenames '*.cs'
       mimetypes 'text/x-csharp'
 
+      title "C#"
       desc 'a multi-paradigm language targeting .NET'
 
       # TODO: support more of unicode

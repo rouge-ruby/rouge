@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Scala < RegexLexer
+      title "Scala"
       desc "The Scala programming language (scala-lang.org)"
       tag 'scala'
       aliases 'scala'

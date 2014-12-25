@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Clojure < RegexLexer
+      title "Clojure"
       desc "The Clojure programming language (clojure.org)"
 
       tag 'clojure'

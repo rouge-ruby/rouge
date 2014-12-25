@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Erlang < RegexLexer
+      title "Erlang"
       desc "The Erlang programming language (erlang.org)"
       tag 'erlang'
       aliases 'erl'

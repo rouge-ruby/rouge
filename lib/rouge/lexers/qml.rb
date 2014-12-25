@@ -4,6 +4,7 @@ module Rouge
   module Lexers
     load_const :Javascript, 'javascript.rb'
     class Qml < Javascript
+      title "QML"
       desc 'QML, a UI markup language'
       tag 'qml'
       aliases 'qml'
@@ -69,4 +70,3 @@ module Rouge
     end
   end
 end
-

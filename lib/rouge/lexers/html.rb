@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class HTML < RegexLexer
+      title "HTML"
       desc "HTML, the markup language of the web"
       tag 'html'
       filenames '*.htm', '*.html', '*.xhtml'

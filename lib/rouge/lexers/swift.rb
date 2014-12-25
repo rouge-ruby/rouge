@@ -6,12 +6,13 @@ module Rouge
       tag 'swift'
       filenames '*.swift'
 
+      title "Swift"
       desc 'Multi paradigm, compiled programming language developed by Apple for iOS and OS X development. (developer.apple.com/swift)'
 
       id_head = /_|(?!\p{Mc})\p{Alpha}|[^\u0000-\uFFFF]/
       id_rest = /[\p{Alnum}_]|[^\u0000-\uFFFF]/
       id = /#{id_head}#{id_rest}*/
-      
+
       keywords = Set.new %w(
         break case continue default do else fallthrough if in for return switch where while
 
@@ -52,7 +53,7 @@ module Rouge
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
-                
+
         rule /@availability[(][^)]+[)]/, Keyword::Declaration
 
         rule /(@objc[(])([^)]+)([)])/ do
@@ -82,11 +83,11 @@ module Rouge
             groups Keyword::Declaration, Error, Keyword::Declaration
           end
         end
-        
+
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
         end
-        
+
         rule /(?!\b(if|while|for|private|internal|unowned|switch|case)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
           if m[0] =~ /^[[:upper:]]/
             token Keyword::Type

@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Groovy < RegexLexer
+      title "Groovy"
       desc 'The Groovy programming language (groovy.codehaus.org)'
       tag 'groovy'
       filenames '*.groovy'

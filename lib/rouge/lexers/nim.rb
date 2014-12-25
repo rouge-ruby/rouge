@@ -4,6 +4,7 @@ module Rouge
   module Lexers
     class Nim < RegexLexer
       # This is pretty much a 1-1 port of the pygments NimrodLexer class
+      title "Nim"
       desc "The Nim programming language (http://nim-lang.org/)"
 
       tag 'nim'
@@ -13,8 +14,8 @@ module Rouge
       KEYWORDS = %w(
         addr as asm atomic bind block break case cast const continue
         converter defer discard distinct do elif else end enum except export
-        func finally for from generic if import include interface iterator let 
-        macro method mixin nil object of out proc ptr raise ref return static 
+        func finally for from generic if import include interface iterator let
+        macro method mixin nil object of out proc ptr raise ref return static
         template try tuple type using var when while with without yield
       )
 
@@ -29,7 +30,7 @@ module Rouge
       TYPES = %w(
        int int8 int16 int32 int64 float float32 float64 bool char range array
        seq set string
-      ) 
+      )
 
       NAMESPACE = %w(
         from import include
@@ -133,7 +134,7 @@ module Rouge
         #       since we can't pass array of states like w/ Pygments.
         rule(/[0-9][0-9_]*(?=([eE.]|'?[fF](32|64)))/) do |number|
          push :floatsuffix
-         push :floatnumber 
+         push :floatnumber
          token Num::Float
         end
         rule(/0[xX][a-fA-F0-9][a-fA-F0-9_]*/, Num::Hex,     :intsuffix)

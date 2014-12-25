@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Nginx < RegexLexer
+      title "nginx"
       desc 'configuration files for the nginx web server (nginx.org)'
       tag 'nginx'
       mimetypes 'text/x-nginx-conf'

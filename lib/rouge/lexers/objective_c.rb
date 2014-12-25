@@ -6,6 +6,7 @@ module Rouge
 
     class ObjectiveC < C
       tag 'objective_c'
+      title "Objective-C"
       desc 'an extension of C commonly used to write Apple software'
       aliases 'objc'
       filenames '*.m', '*.h'
@@ -187,4 +188,3 @@ module Rouge
     end
   end
 end
-

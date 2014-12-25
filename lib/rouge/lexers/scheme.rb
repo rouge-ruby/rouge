@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Scheme < RegexLexer
+      title "Scheme"
       desc "The Scheme variant of Lisp"
 
       tag 'scheme'

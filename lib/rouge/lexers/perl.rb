@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Perl < RegexLexer
+      title "Perl"
       desc "The Perl scripting language (perl.org)"
 
       tag 'perl'

@@ -65,6 +65,14 @@ module Rouge
         lexer_class && lexer_class.new(opts)
       end
 
+      # Specify or get this lexer's title. Meant to be human-readable.
+      def title(t=nil)
+        if t.nil?
+          t = name.demodulize
+        end
+        @title ||= t
+      end
+
       # Specify or get this lexer's description.
       def desc(arg=:absent)
         if arg == :absent

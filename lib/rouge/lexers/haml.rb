@@ -7,6 +7,7 @@ module Rouge
     class Haml < RegexLexer
       include Indentation
 
+      title "Haml"
       desc "The Haml templating system for Ruby (haml.info)"
 
       tag 'haml'

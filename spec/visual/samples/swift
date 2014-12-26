@@ -239,3 +239,21 @@ enum State: Equatable {
 }
 
 @availability(OSX, introduced=10.10) func localizedCaseInsensitiveContainsString(aString: String) -> Bool
+
+//MARK: Conditional compilation
+#if os(iOS)
+    sayHello("iOS")
+    #if arch(arm)
+        typealias View = UIView
+    #elseif arch(arm64)
+        typealias View = UIView64
+    #endif
+#elseif os(OSX)
+    /* Uncomment this when the Mac goes 64bit
+    #if arch(i386)
+        typealias View = NSView
+    #elseif arch(x86_64)
+        typealias View = NSView64
+    #endif
+    */
+#endif

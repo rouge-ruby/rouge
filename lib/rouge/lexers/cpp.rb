@@ -5,6 +5,7 @@ module Rouge
     load_const :C, 'c.rb'
 
     class Cpp < C
+      title "C++"
       desc "The C++ programming language"
 
       tag 'cpp'

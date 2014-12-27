@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class VisualBasic < RegexLexer
+      title "Visual Basic"
       desc "Visual Basic"
       tag 'vb'
       aliases 'visualbasic'
@@ -161,4 +162,3 @@ module Rouge
     end
   end
 end
-

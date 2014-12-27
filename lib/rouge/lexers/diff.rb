@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Diff < RegexLexer
+      title "diff"
       desc "Lexes unified diffs or patches"
 
       tag 'diff'

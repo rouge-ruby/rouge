@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class OCaml < RegexLexer
+      title "OCaml"
       desc 'Objective CAML (ocaml.org)'
       tag 'ocaml'
       filenames '*.ml', '*.mli', '*.mll', '*.mly'
@@ -108,4 +109,3 @@ module Rouge
     end
   end
 end
-

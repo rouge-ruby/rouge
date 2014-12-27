@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class CommonLisp < RegexLexer
+      title "Common Lisp"
       desc "The Common Lisp variant of Lisp (common-lisp.net)"
       tag 'common_lisp'
       aliases 'cl', 'common-lisp'

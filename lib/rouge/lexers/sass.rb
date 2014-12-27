@@ -7,6 +7,7 @@ module Rouge
     class Sass < SassCommon
       include Indentation
 
+      title "Sass"
       desc 'The Sass stylesheet language language (sass-lang.com)'
 
       tag 'sass'

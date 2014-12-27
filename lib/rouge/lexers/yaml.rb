@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class YAML < RegexLexer
+      title "YAML"
       desc "Yaml Ain't Markup Language (yaml.org)"
       mimetypes 'text/x-yaml'
       tag 'yaml'

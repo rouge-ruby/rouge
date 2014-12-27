@@ -3,6 +3,7 @@ require 'yaml'
 module Rouge
   module Lexers
     class Apache < RegexLexer
+      title "Apache"
       desc 'configuration files for Apache web server'
       tag 'apache'
       mimetypes 'text/x-httpd-conf', 'text/x-apache-conf'

@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class CSS < RegexLexer
+      title "CSS"
       desc "Cascading Style Sheets, used to style web pages"
 
       tag 'css'

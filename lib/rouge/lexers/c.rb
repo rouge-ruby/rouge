@@ -7,6 +7,7 @@ module Rouge
       filenames '*.c', '*.h', '*.idc'
       mimetypes 'text/x-chdr', 'text/x-csrc'
 
+      title "C"
       desc "The C programming language"
 
       # optional comment or whitespace

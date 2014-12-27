@@ -6,6 +6,7 @@ module Rouge
       tag 'conf'
       aliases 'config', 'configuration'
 
+      title "Config File"
       desc 'A generic lexer for configuration files'
       filenames '*.conf', '*.config'
 

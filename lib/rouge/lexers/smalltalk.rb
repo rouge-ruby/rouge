@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Smalltalk < RegexLexer
+      title "Smalltalk"
       desc 'The Smalltalk programming language'
 
       tag 'smalltalk'

@@ -8,6 +8,7 @@ module Rouge
       filenames '*.coffee', 'Cakefile'
       mimetypes 'text/coffeescript'
 
+      title "CoffeeScript"
       desc 'The Coffeescript programming language (coffeescript.org)'
 
       def self.analyze_text(text)

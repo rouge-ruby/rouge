@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Matlab < RegexLexer
+      title "MATLAB"
       desc "Matlab"
       tag 'matlab'
       aliases 'm'

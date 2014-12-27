@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Lua < RegexLexer
+      title "Lua"
       desc "Lua (http://www.lua.org)"
       tag 'lua'
       filenames '*.lua', '*.wlua'

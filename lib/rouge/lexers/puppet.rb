@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Puppet < RegexLexer
+      title "Puppet"
       desc 'The Puppet configuration management language (puppetlabs.org)'
       tag 'puppet'
       aliases 'pp'

@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Rust < RegexLexer
+      title "Rust"
       desc 'The Rust programming language (rust-lang.org)'
       tag 'rust'
       aliases 'rs'

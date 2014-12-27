@@ -7,6 +7,7 @@ module Rouge
     class Slim < RegexLexer
       include Indentation
 
+      title "Slim"
       desc 'The Slim template language'
 
       tag 'slim'

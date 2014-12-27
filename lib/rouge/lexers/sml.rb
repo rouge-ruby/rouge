@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class SML < RegexLexer
+      title "SML"
       desc 'Standard ML'
       tag 'sml'
       aliases 'ml'
@@ -344,4 +345,3 @@ module Rouge
     end
   end
 end
-

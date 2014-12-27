@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Factor < RegexLexer
+      title "Factor"
       desc "Factor, the practical stack language (factorcode.org)"
       tag 'factor'
       filenames '*.factor'

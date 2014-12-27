@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class XML < RegexLexer
+      title "XML"
       desc %q(<desc for="this-lexer">XML</desc>)
       tag 'xml'
       filenames *%w(*.xml *.xsl *.rss *.xslt *.xsd *.wsdl)

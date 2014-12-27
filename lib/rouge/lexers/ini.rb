@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class INI < RegexLexer
+      title "INI"
       desc 'the INI configuration format'
       tag 'ini'
 

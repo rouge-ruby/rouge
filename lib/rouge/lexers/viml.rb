@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class VimL < RegexLexer
+      title "VimL"
       desc "VimL, the scripting language for the Vim editor (vim.org)"
       tag 'viml'
       aliases 'vim', 'vimscript', 'ex'

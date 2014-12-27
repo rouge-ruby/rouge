@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Java < RegexLexer
+      title "Java"
       desc "The Java programming language (java.com)"
 
       tag 'java'

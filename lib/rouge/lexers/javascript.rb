@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Javascript < RegexLexer
+      title "JavaScript"
       desc "JavaScript, the browser scripting language"
 
       tag 'javascript'

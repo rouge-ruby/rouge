@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class R < RegexLexer
+      title "R"
       desc 'The R statistics language (r-project.org)'
       tag 'r'
       aliases 'r', 'R', 's', 'S'

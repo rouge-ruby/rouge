@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class PHP < TemplateLexer
+      title "PHP"
       desc "The PHP scripting language (php.net)"
       tag 'php'
       aliases 'php', 'php3', 'php4', 'php5'

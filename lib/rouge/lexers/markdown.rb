@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Markdown < RegexLexer
+      title "Markdown"
       desc "Markdown, a light-weight markup language for authors"
 
       tag 'markdown'

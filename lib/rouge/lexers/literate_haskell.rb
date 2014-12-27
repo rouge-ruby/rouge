@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class LiterateHaskell < RegexLexer
+      title "Literate Haskell"
       desc 'Literate haskell'
       tag 'literate_haskell'
       aliases 'lithaskell', 'lhaskell', 'lhs'

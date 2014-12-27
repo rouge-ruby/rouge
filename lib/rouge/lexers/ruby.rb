@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Ruby < RegexLexer
+      title "Ruby"
       desc "The Ruby programming language (ruby-lang.org)"
       tag 'ruby'
       aliases 'rb'

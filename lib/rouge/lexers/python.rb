@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Python < RegexLexer
+      title "Python"
       desc "The Python programming language (python.org)"
       tag 'python'
       aliases 'py'

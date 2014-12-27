@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class SQL < RegexLexer
+      title "SQL"
       desc "Structured Query Language, for relational databases"
       tag 'sql'
       filenames '*.sql'

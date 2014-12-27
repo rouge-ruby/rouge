@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class Shell < RegexLexer
+      title "shell"
       desc "Various shell languages, including sh and bash"
 
       tag 'shell'

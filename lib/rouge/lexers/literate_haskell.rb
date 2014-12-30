@@ -17,7 +17,6 @@ module Rouge
       start { haskell.reset! }
 
       # TODO: support TeX versions as well.
-      # TODO: enforce a blank line before and after code
       state :root do
         rule /\s*?\n(?=>)/, Text, :code
         rule /.*?\n/, Text
@@ -25,7 +24,7 @@ module Rouge
       end
 
       state :code do
-        rule /(>)( .*?\n)/ do |m|
+        rule /(>)( .*?(\n|\z))/ do |m|
           token Name::Label, m[1]
           delegate haskell, m[2]
         end

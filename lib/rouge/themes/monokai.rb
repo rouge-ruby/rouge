@@ -13,6 +13,8 @@ module Rouge
       palette :dark_grey      => '#888888'
       palette :dark_red       => '#aa0000'
       palette :dimgrey        => '#75715e'
+      palette :dimgreen       => '#324932'
+      palette :dimred         => '#493131'
       palette :emperor        => '#555555'
       palette :grey           => '#999999'
       palette :light_grey     => '#aaaaaa'
@@ -30,8 +32,8 @@ module Rouge
       style Comment::Preproc,                 :fg => :dimgrey, :bold => true
       style Comment::Special,                 :fg => :dimgrey, :italic => true, :bold => true
       style Error,                            :fg => :carmine, :bg => :very_dark
-      style Generic::Deleted,
-            Generic::Inserted,                :fg => :black
+      style Generic::Inserted,                :fg => :white, :bg => :dimgreen
+      style Generic::Deleted,                 :fg => :white, :bg => :dimred
       style Generic::Emph,                    :fg => :black, :italic => true
       style Generic::Error,
             Generic::Traceback,               :fg => :dark_red

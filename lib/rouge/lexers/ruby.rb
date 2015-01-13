@@ -109,8 +109,8 @@ module Rouge
 
       keywords_pseudo = %w(
         initialize new loop include extend raise attr_reader attr_writer
-        attr_accessor attr catch throw private module_function public
-        protected true false nil __FILE__ __LINE__
+        attr_accessor alias_method attr catch throw private module_function
+        public protected true false nil __FILE__ __LINE__
       )
 
       builtins_g = %w(

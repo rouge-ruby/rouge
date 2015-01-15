@@ -6,7 +6,7 @@ module Rouge
   module Lexers
     class Liquid < TemplateLexer
       title "Liquid"
-      desc 'Liquid is a templating engine for Ruby'
+      desc 'Liquid is a templating engine for Ruby (liquidmarkup.org)'
       tag 'liquid'
       filenames '*.liquid'
 

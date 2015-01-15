@@ -1,0 +1,56 @@
+{% raw %}
+some {{raw}} liquid syntax
+
+{% raw %}
+{% endraw %}
+
+Just regular text - what happens?
+
+{% comment %}My lovely {{comment}} {% comment %}{% endcomment %}
+
+{% comment %}
+  My lovely {{comment}} that is split
+  accross multiple lines {% comment %}
+{% endcomment %}
+
+{% custom_tag params: true %}
+{% custom_block my="abc" c = false %}
+  Just usual {{liquid}}.
+{% endcustom_block %}
+
+{% another_tag "my string param" %}
+
+{{ variable | upcase }}
+{{ var.field | textilize | markdownify }}
+{{ var.field.property | textilize | markdownify }}
+{{ 'string' | truncate: 100 param='df"g' }}
+
+{% capture name %}
+{{ title | downcase }}
+{% endcapture %}
+
+{% assign life = 'infinite' | upcase %}
+
+{% cycle '1', 2, var %}
+{% cycle 'group1': '1', var, 2 %}
+{% cycle group2: '1', var, 2 %}
+
+{% if a == 'B' %}
+Testing {{ some }} stuff.
+{% elsif a == 'C%}' %}
+{% elsif c %}
+{% else %}
+{% endif %}
+
+{% unless not a %}
+Some {{ output }} right here.
+{% else %}
+{% endunless %}
+
+{% case a %}
+{% when 'B' %}
+Some {{ output }}!
+{% when 'C' %}
+Some other {{ output }}!
+{% else %}
+{% endcase %}

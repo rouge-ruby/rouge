@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*- #
 
-# TODO: {% if %} (L118, 122)
-
 module Rouge
   module Lexers
     class Liquid < RegexLexer
@@ -124,14 +122,7 @@ module Rouge
         mixin :endOfBlock
         mixin :whitespace
 
-        rule /([^\s=!><]+)(\s*)([=!><]=?)(\s*)([^\s]+)(\s*)/ do |m|
-          token Name::Variable, m[1] # TODO: => :generic
-          token Text::Whitespace, m[2]
-          token Operator, m[3]
-          token Text::Whitespace, m[4]
-          token Str, m[5] # TODO: => :generic
-          token Text::Whitespace, m[6]
-        end
+        rule /([=!><]=?)/, Operator
         rule (/\b((!)|(not\b))/) do
           groups nil, Operator, Operator::Word
         end
@@ -276,10 +267,6 @@ module Rouge
         rule (/([^\.]+)(\.)(html|liquid)/) do
           groups Name::Attribute, Punctuation, Name::Attribute
         end
-
-        # file name:
-        # [x] quoted (with / without extension)
-        # [ ] unquoted (.liquid/.html)
 
         mixin :variableTagMarkup
       end

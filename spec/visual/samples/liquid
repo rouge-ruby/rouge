@@ -55,4 +55,5 @@ Some other {{ output }}!
 {% else %}
 {% endcase %}
 
-{% include file.html param = 'value', param2 = object %}
+{% include file.html param = 'value' param2 = object %}
+{% include 'snippet' param = 'value' param2 = object %}

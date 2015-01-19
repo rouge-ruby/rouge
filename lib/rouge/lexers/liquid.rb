@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*- #
 
-# TODO: {% assign %}
-# TODO: {% include %}
 # TODO: {% if %} (L118, 122)
 
 module Rouge
@@ -22,8 +20,8 @@ module Rouge
           groups Punctuation, Text::Whitespace
           push :tagBlock
         end
-        rule /(\{\{)(\s*)/ do |m|
-          groups Punctuation, Text::Whitespace # TODO: => :generic
+        rule /(\{\{)(\s*)/ do
+          groups Punctuation, Text::Whitespace
           push :output
         end
         rule /\{/, Text
@@ -43,7 +41,7 @@ module Rouge
 
         # other builtin blocks
         rule (/(capture)(\s+)([^\s%]+)(\s*)(%\})/) do
-          groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace, Punctuation
+          groups Name::Tag, Text::Whitespace, Name::Attribute, Text::Whitespace, Punctuation
           pop!
         end
         rule (/(comment)(\s*)(%\})/) do
@@ -53,6 +51,14 @@ module Rouge
         rule (/(raw)(\s*)(%\})/) do
           groups Name::Tag, Text::Whitespace, Punctuation
           push :raw
+        end
+        rule (/(assign)(\s*)/) do
+          groups Name::Tag, Text::Whitespace
+          push :assign
+        end
+        rule (/(include)(\s*)/) do
+          groups Name::Tag, Text::Whitespace
+          push :include
         end
 
         # end of block
@@ -65,7 +71,7 @@ module Rouge
           pop!
         end
 
-        # builtin tags (assign and include are handled together with usual tags)
+        # builtin tags
         rule /(cycle)(\s+)(([^\s:]*)(:))?(\s*)/ do |m|
           token Name::Tag, m[1]
           token Text::Whitespace, m[2]
@@ -75,7 +81,7 @@ module Rouge
           elsif m[4] =~ /"[^"]*"/
             token Str::Double, m[4]
           else
-            token Name::Variable, m[4]
+            token Name::Attribute, m[4]
           end
 
           token Punctuation, m[5]
@@ -94,7 +100,6 @@ module Rouge
       state :output do
         mixin :whitespace
         mixin :generic
-        rule /\./, Punctuation
         rule /\}\}/, Punctuation, :pop!
         rule (/\|/), Punctuation, :filters
       end
@@ -111,6 +116,7 @@ module Rouge
       state :filterMarkup do
         rule (/\|/), Punctuation, :pop!
         mixin :endOfTag
+        mixin :endOfBlock
         mixin :defaultParamMarkup
       end
 
@@ -126,7 +132,9 @@ module Rouge
           token Str, m[5] # TODO: => :generic
           token Text::Whitespace, m[6]
         end
-        rule (/\b((!)|(not\b))/) { groups nil, Operator, Operator::Word }
+        rule (/\b((!)|(not\b))/) do
+          groups nil, Operator, Operator::Word
+        end
         rule (/([\w\.\'"]+)(\s+)(contains)(\s+)([\w\.\'"]+)/) do
           groups nil, Text::Whitespace, Operator::Word, Text::Whitespace
         end
@@ -211,8 +219,8 @@ module Rouge
       end
 
       state :variable do
+        rule /\.(?=\w)/, Punctuation
         rule /[a-zA-Z_]\w*/, Name::Variable
-        rule /(?<=\w)\.(?=\w)/, Punctuation
       end
 
       state :string do
@@ -228,8 +236,8 @@ module Rouge
       state :generic do
         mixin :keyword
         mixin :string
-        mixin :number
         mixin :variable
+        mixin :number
       end
 
       state :whitespace do
@@ -251,6 +259,29 @@ module Rouge
           reset_stack
         end
         rule /\{/, Text
+      end
+
+      state :assign do
+        mixin :whitespace
+
+        rule (/(\s*)(=)(\s*)/) { groups Text::Whitespace, Operator, Text::Whitespace }
+        rule (/\|/), Punctuation, :filters
+
+        mixin :generic
+      end
+
+      state :include do
+        mixin :whitespace
+
+        rule (/([^\.]+)(\.)(html|liquid)/) do
+          groups Name::Attribute, Punctuation, Name::Attribute
+        end
+
+        # file name:
+        # [x] quoted (with / without extension)
+        # [ ] unquoted (.liquid/.html)
+
+        mixin :variableTagMarkup
       end
     end
   end

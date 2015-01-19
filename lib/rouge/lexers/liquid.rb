@@ -2,8 +2,7 @@
 
 # TODO: {% assign %}
 # TODO: {% include %}
-# TODO: {% if %} (L114, 118)
-# TODO: {% cycle %} (L71)
+# TODO: {% if %} (L118, 122)
 
 module Rouge
   module Lexers
@@ -12,6 +11,10 @@ module Rouge
       desc 'Liquid is a templating engine for Ruby (liquidmarkup.org)'
       tag 'liquid'
       filenames '*.liquid'
+
+      def test(val)
+        mixin :generic
+      end
 
       state :root do
         rule /[^\{]+/, Text
@@ -66,9 +69,18 @@ module Rouge
         rule /(cycle)(\s+)(([^\s:]*)(:))?(\s*)/ do |m|
           token Name::Tag, m[1]
           token Text::Whitespace, m[2]
-          token Text, m[4] # TODO: => :generic
+
+          if m[4] =~ /'[^']*'/
+            token Str::Single, m[4]
+          elsif m[4] =~ /"[^"]*"/
+            token Str::Double, m[4]
+          else
+            token Name::Variable, m[4]
+          end
+
           token Punctuation, m[5]
           token Text::Whitespace, m[6]
+
           push :variableTagMarkup
         end
 

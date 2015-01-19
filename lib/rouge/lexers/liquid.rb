@@ -4,7 +4,6 @@
 # TODO: {% include %}
 # TODO: {% if %} (L114, 118)
 # TODO: {% cycle %} (L71)
-# TODO: {{ output }} (L24)
 
 module Rouge
   module Lexers
@@ -20,8 +19,8 @@ module Rouge
           groups Punctuation, Text::Whitespace
           push :tagBlock
         end
-        rule /(\{\{)(\s*)([^\s(\}\})]+)/ do |m|
-          groups Punctuation, Text::Whitespace, Name::Variable # TODO: => :generic
+        rule /(\{\{)(\s*)/ do |m|
+          groups Punctuation, Text::Whitespace # TODO: => :generic
           push :output
         end
         rule /\{/, Text
@@ -67,8 +66,7 @@ module Rouge
         rule /(cycle)(\s+)(([^\s:]*)(:))?(\s*)/ do |m|
           token Name::Tag, m[1]
           token Text::Whitespace, m[2]
-          recurse m[4]
-          # token Text, m[4] # TODO: => :generic
+          token Text, m[4] # TODO: => :generic
           token Punctuation, m[5]
           token Text::Whitespace, m[6]
           push :variableTagMarkup
@@ -83,6 +81,8 @@ module Rouge
 
       state :output do
         mixin :whitespace
+        mixin :generic
+        rule /\./, Punctuation
         rule /\}\}/, Punctuation, :pop!
         rule (/\|/), Punctuation, :filters
       end

@@ -87,7 +87,7 @@ module Rouge
 
     def self.class_from_arg(arg)
       case arg
-      when 'version', '--version'
+      when 'version', '--version', '-v'
         Version
       when 'help'
         Help

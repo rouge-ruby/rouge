@@ -54,3 +54,5 @@ Some {{ output }}!
 Some other {{ output }}!
 {% else %}
 {% endcase %}
+
+{% include file.html param = 'value', param2 = object %}

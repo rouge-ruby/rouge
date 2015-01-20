@@ -257,3 +257,5 @@ enum State: Equatable {
     #endif
     */
 #endif
+
+foo() // end-of-file comment

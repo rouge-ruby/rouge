@@ -152,7 +152,7 @@ module Rouge
       end
 
       state :css do
-        rule(/\.-?[_a-zA-Z]+[\w-]*/) { token Name::Class; goto :tag }
+        rule(/\.-?[_a-zA-Z][\w-]*/) { token Name::Class; goto :tag }
         rule(/#[a-zA-Z][\w:-]*/) { token Name::Function; goto :tag }
       end
 

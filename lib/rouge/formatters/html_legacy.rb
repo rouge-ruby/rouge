@@ -24,7 +24,9 @@ module Rouge
       # Content will be wrapped in a tag (`div` if tableized, `pre` if
       # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
-        @formatter = opts[:line_numbers] ? HTMLTable.new(opts) : HTML.new(opts)
+        @formatter = opts[:line_numbers] ? HTMLTable.new(opts)
+                   : opts[:css_class] ? HTMLPygments.new(opts)
+                   : HTML.new(opts)
       end
 
       # @yield the html output.

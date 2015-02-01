@@ -7,7 +7,16 @@ module Rouge
 
       def initialize(opts={})
         @start_line = opts.fetch(:start_line, 1)
+        @line_format = opts.fetch(:line_format, '%i')
+        @table_class = opts.fetch(:table_class, 'rouge-table')
+        @gutter_class = opts.fetch(:gutter_class, 'rouge-gutter')
+        @code_class = opts.fetch(:code_class, 'rouge-code')
         super
+      end
+
+      def style(scope)
+        yield "#{scope} .rouge-table { border-spacing: 0 }"
+        yield "#{scope} .rouge-gutter { text-align: right }"
       end
 
       def stream(tokens, &b)
@@ -28,25 +37,24 @@ module Rouge
         end
 
         # generate a string of newline-separated line numbers for the gutter>
-        numbers = %<<pre class="lineno">#{(@start_line..num_lines+@start_line-1)
-          .to_a.join("\n")}</pre>>
+        formatted_line_numbers = (@start_line..num_lines+@start_line-1).map do |i|
+          sprintf("#{@line_format}", i) << "\n"
+        end.join('')
 
-        yield "<div#@css_class>" if @wrap
-        yield '<table style="border-spacing: 0"><tbody><tr>'
+        numbers = %<<pre class="lineno">#{formatted_line_numbers}</pre>>
+
+        yield %<<table class="#@table_class"><tbody><tr>>
 
         # the "gl" class applies the style for Generic.Lineno
-        yield '<td class="gutter gl" style="text-align: right">'
+        yield %<<td class="#@gutter_class gl">>
         yield numbers
         yield '</td>'
 
-        yield '<td class="code">'
-        yield '<pre>'
+        yield %<<td class="#@code_class"><pre>>
         yield formatted
-        yield '</pre>'
-        yield '</td>'
+        yield '</pre></td>'
 
         yield "</tr></tbody></table>\n"
-        yield "</div>\n" if @wrap
       end
     end
   end

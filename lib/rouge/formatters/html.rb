@@ -9,7 +9,6 @@ module Rouge
     class HTML < Formatter
       tag 'html'
 
-      # @option opts [String] :css_class ('highlight')
       # @option opts [true/false] :line_numbers (false)
       # @option opts [Rouge::CSSTheme] :inline_theme (nil)
       # @option opts [true/false] :wrap (true)
@@ -24,36 +23,31 @@ module Rouge
       # Content will be wrapped in a tag (`div` if tableized, `pre` if
       # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
-        @css_class = opts.fetch(:css_class, 'highlight')
-        @css_class = " class=#{@css_class.inspect}" if @css_class
-
         @inline_theme = opts.fetch(:inline_theme, nil)
         @inline_theme = Theme.find(@inline_theme).new if @inline_theme.is_a? String
-
-        @wrap = opts.fetch(:wrap, true)
       end
 
       # @yield the html output.
       def stream(tokens, &b)
-        yield "<pre#@css_class><code>" if @wrap
-        tokens.each{ |tok, val| span(tok, val, &b) }
-        yield "</code></pre>\n" if @wrap
+        tokens.each { |tok, val| yield span(tok, val) }
       end
 
       def span(tok, val)
-        val = val.gsub(/[&<>]/, TABLE_FOR_ESCAPE_HTML)
-        shortname = tok.shortname or raise "unknown token: #{tok.inspect} for #{val.inspect}"
+        safe_span(tok, val.gsub(/[&<>]/, TABLE_FOR_ESCAPE_HTML))
+      end
 
-        if shortname.empty?
-          yield val
+      def safe_span(tok, safe_val)
+        if tok == Token::Tokens::Text
+          safe_val
+        elsif @inline_theme
+          rules = @inline_theme.style_for(tok).rendered_rules
+
+          "<span style=\"#{rules.to_a.join(';')}\">#{safe_val}</span>"
         else
-          if @inline_theme
-            rules = @inline_theme.style_for(tok).rendered_rules
+          shortname = tok.shortname \
+            or raise "unknown token: #{tok.inspect} for #{safe_val.inspect}"
 
-            yield "<span style=\"#{rules.to_a.join(';')}\">#{val}</span>"
-          else
-            yield "<span class=\"#{shortname}\">#{val}</span>"
-          end
+          "<span class=\"#{shortname}\">#{safe_val}</span>"
         end
       end
 

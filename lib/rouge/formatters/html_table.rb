@@ -2,12 +2,12 @@
 
 module Rouge
   module Formatters
-    class HTMLTable < Formatter
+    class HTMLTable < HTML
       tag 'html_table'
 
       def initialize(opts={})
         @start_line = opts.fetch(:start_line, 1)
-        @html = HTML.new(opts)
+        super
       end
 
       def stream(tokens, &b)
@@ -18,13 +18,13 @@ module Rouge
         tokens.each do |tok, val|
           last_val = val
           num_lines += val.scan(/\n/).size
-          @html.span(tok, val) { |str| formatted << str }
+          span(tok, val) { |str| formatted << str }
         end
 
         # add an extra line for non-newline-terminated strings
         if last_val[-1] != "\n"
           num_lines += 1
-          @html.span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
+          span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
         end
 
         # generate a string of newline-separated line numbers for the gutter>

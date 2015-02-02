@@ -29,12 +29,12 @@ class VisualTestApp < Sinatra::Application
 
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
-    @theme = theme_class.new
+    @theme = theme_class.new(scope: '.codehilite')
 
     formatter_opts = { :line_numbers => params[:line_numbers] }
     formatter_opts[:inline_theme] = @theme if params[:inline]
 
-    @formatter = Rouge::Formatters::HTML.new(formatter_opts)
+    @formatter = Rouge::Formatters::HTMLPygments.new(formatter_opts)
   end
 
   get '/:lexer' do |lexer_name|

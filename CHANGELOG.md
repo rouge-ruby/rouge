@@ -1,3 +1,17 @@
+## version 1.8.0: 2014-02-01
+
+  * css: fix "empty range in char class" bug and improve id/class name matches (#227/#228).
+    Thanks @elstgav!
+  * swift: add `@objc_block` and fix eof comments (#226).  Thanks @radex!
+  * new lexer: liquid (#224).  Thanks @RadLikeWhoa!
+  * cli: add `-v` flag to print version (#225).  Thanks @RadLikeWhoa!
+  * ruby: add `alias_method` as a builtin (#223).  Thanks @kochd!
+  * more conservative guessing for R, eliminate the `.S` extension
+  * new theme: molokai (#220).  Thanks @kochd!
+  * allow literate haskell that doesn't end in eof
+  * add human-readable "title" attribute to lexers (#215).  Thanks @edwardloveall!
+  * swift: add support for preprocessor macros (#201).  Thanks @mipsitan!
+
 ## version 1.7.7: 2014-12-24
 
   * fix previous bad release: actually add yaml files to the gem

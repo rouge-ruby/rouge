@@ -74,7 +74,7 @@ module Rouge
       # XXX IMPORTANT XXX
       # For compatibility, this list must be kept in sync with
       # pygments.token.STANDARD_TYPES
-      # please see https://github.com/jayferd/rouge/wiki/List-of-tokens
+      # please see https://github.com/jneen/rouge/wiki/List-of-tokens
       token :Text, '' do
         token :Whitespace, 'w'
       end

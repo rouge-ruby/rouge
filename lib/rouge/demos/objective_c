@@ -10,3 +10,5 @@
 
 -(id)initWithAge:(int)age;
 @end
+
+NSArray *arrayLiteral = @[@"abc", @1];

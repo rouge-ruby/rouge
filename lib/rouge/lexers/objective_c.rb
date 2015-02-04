@@ -88,7 +88,6 @@ module Rouge
 
       state :message_shared do
         rule /\]/, Punctuation, :pop!
-        rule /;/, Error
 
         mixin :statement
       end

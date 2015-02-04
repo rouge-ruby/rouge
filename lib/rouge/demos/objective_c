@@ -10,3 +10,12 @@
 
 -(id)initWithAge:(int)age;
 @end
+
+@implementation Person
+-(void)doStuff {
+    [self executeBlock:^void(int x, NSString *y) {
+                          [self confirmPayment];
+                       }];
+}
+@end
+

@@ -158,7 +158,7 @@ module Rouge
 
       state :html_attr do
         # Strings, double/single quoted
-        rule %r(\s*(['"])#{dot}*\1), Literal::String, :pop!
+        rule(/\s*(['"])#{dot}*?\1/, Literal::String, :pop!)
 
         # Ruby stuff
         rule(/(#{ruby_chars}+\(.*?\))/) { |m| delegate ruby, m[1]; pop! }

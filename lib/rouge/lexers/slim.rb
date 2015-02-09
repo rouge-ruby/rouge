@@ -20,11 +20,6 @@ module Rouge
       # Since you are allowed to wrap lines with a backslash, include \\\n in characters
       dot = /(\\\n|.)/
 
-      def self.analyze_text(text)
-        return 1 if text.start_with? 'doctype'
-        return 1 if text =~ /(\*)(\{.+?\})/ # Contans a hash splat
-      end
-
       def ruby
         @ruby ||= Ruby.new(options)
       end

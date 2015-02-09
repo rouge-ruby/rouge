@@ -23,4 +23,10 @@ describe Rouge::Lexers::Slim do
     end
   end
 
+  describe 'regression: lexing heredocs' do
+    it 'doesn\'t throw an error' do
+      subject.lex('-<<x').to_a
+    end
+  end
+
 end

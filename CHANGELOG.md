@@ -1,4 +1,4 @@
-## version 1.8.0: 2014-02-01
+## version 1.8.0: 2015-02-01
 
   * css: fix "empty range in char class" bug and improve id/class name matches (#227/#228).
     Thanks @elstgav!

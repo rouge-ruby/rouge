@@ -143,6 +143,9 @@ module Rouge
           delegate ruby, m[2]
         end
 
+        # HTML Entities
+        rule(/&\S*?;/, Name::Entity)
+
         rule /#{dot}+?/, Text
 
         rule /\s*\n/, Text::Whitespace, :pop!
@@ -155,7 +158,7 @@ module Rouge
 
       state :html_attr do
         # Strings, double/single quoted
-        rule %r(\s*(['"])#{dot}*\1), Literal::String, :pop!
+        rule(/\s*(['"])#{dot}*?\1/, Literal::String, :pop!)
 
         # Ruby stuff
         rule(/(#{ruby_chars}+\(.*?\))/) { |m| delegate ruby, m[1]; pop! }
@@ -192,6 +195,9 @@ module Rouge
         rule %r((</?[\w\s\=\'\"]+?/?>)) do |m| # Dirty html
           delegate html, m[1]
         end
+
+        # HTML Entities
+        rule(/&\S*?;/, Name::Entity)
 
         #rule /([^#\n]|#[^{\n]|(\\\\)*\\#\{)+/ do
         rule /#{dot}+?/, Text

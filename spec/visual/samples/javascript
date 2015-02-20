@@ -140,3 +140,12 @@ x=a/a/g; // division
 
 var x = 1/(1+Math.sqrt(sum)); // convert to number between 1-0
 return Math.round((num / den) * 100)/100;
+
+// generator
+function* range(from, to)
+{
+  to++;
+  while (from > to) {
+    yield from++;
+  }
+}

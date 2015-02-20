@@ -56,7 +56,7 @@ module Rouge
           while endforeach global __FILE__ endif list __LINE__ endswitch
           new __sleep endwhile not array __wakeup E_ALL NULL final
           php_user_filter interface implements public private protected
-          abstract clone try catch throw this use namespace
+          abstract clone try catch throw this use namespace yield
         )
       end
 

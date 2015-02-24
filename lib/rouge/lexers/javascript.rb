@@ -219,6 +219,7 @@ module Rouge
 
       state :root do
         mixin :whitespace
+        mixin :comments
         # special case for empty objects
         rule /(\{)(\s*)(\})/m do
           groups Punctuation, Text::Whitespace, Punctuation
@@ -235,12 +236,17 @@ module Rouge
         rule /\s+/m, Text::Whitespace
       end
 
+      state :comments do
+        rule %r(//.*?$), Comment::Single
+      end
+
       state :has_string do
         rule string, Str::Double
       end
 
       state :object_key do
         mixin :whitespace
+        mixin :comments
         rule string, Name::Tag
         rule /:/, Punctuation, :object_val
         rule /}/, Error, :pop!

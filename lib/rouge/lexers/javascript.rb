@@ -272,14 +272,20 @@ module Rouge
 
       prepend :root do
         mixin :comments
+        rule /(\.\.\.)/, Comment::Single
       end
 
       prepend :object_key_initial do
         mixin :comments
+        rule /(\.\.\.)/, Comment::Single
       end
 
       prepend :object_key do
         mixin :comments
+        rule /(\.\.\.)/ do
+          token Comment::Single
+          goto :object_key_initial
+        end
       end
 
       state :comments do

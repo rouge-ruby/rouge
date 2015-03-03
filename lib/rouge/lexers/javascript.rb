@@ -219,12 +219,9 @@ module Rouge
 
       state :root do
         mixin :whitespace
-        # special case for empty objects
-        rule /(\{)(\s*)(\})/m do
-          groups Punctuation, Text::Whitespace, Punctuation
-        end
+        mixin :comments
         rule /(?:true|false|null)\b/, Keyword::Constant
-        rule /{/,  Punctuation, :object_key
+        rule /{/,  Punctuation, :object_key_initial
         rule /\[/, Punctuation, :array
         rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float
         rule /-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, Num::Integer
@@ -235,12 +232,29 @@ module Rouge
         rule /\s+/m, Text::Whitespace
       end
 
+      state :comments do
+        rule %r(//.*?$), Comment::Single
+      end
+
       state :has_string do
         rule string, Str::Double
       end
 
+      # in object_key_initial it's allowed to immediately close the object again
+      state :object_key_initial do
+        mixin :whitespace
+        mixin :comments
+        rule string do
+          token Name::Tag
+          goto :object_key
+        end
+        rule /}/, Punctuation, :pop!
+      end
+
+      # in object_key at least one more name/value pair is required
       state :object_key do
         mixin :whitespace
+        mixin :comments
         rule string, Name::Tag
         rule /:/, Punctuation, :object_val
         rule /}/, Error, :pop!

@@ -265,5 +265,27 @@ module Rouge
         mixin :root
       end
     end
+
+    class JSONDOC < JSON
+      desc "JavaScript Object Notation with extenstions for documentation"
+      tag 'json-doc'
+
+      prepend :root do
+        mixin :comments
+      end
+
+      prepend :object_key_initial do
+        mixin :comments
+      end
+
+      prepend :object_key do
+        mixin :comments
+      end
+
+      state :comments do
+        rule %r(//.*?$), Comment::Single
+      end
+    end
+
   end
 end

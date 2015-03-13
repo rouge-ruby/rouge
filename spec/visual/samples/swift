@@ -163,10 +163,20 @@ let incrementor = makeIncrementor(firstNumber: 4)
 incrementor()
 
 // @autoclosure
-func simpleAssert(condition: @autoclosure () -> Bool, message: String = "Assertion failed") {
+func simpleAssert(@autoclosure condition: () -> Bool, message: String = "Assertion failed") {
     if !condition() {
         println(message)
     }
+}
+
+func lazyAssertion(@autoclosure(escaping) condition: () -> Bool, message: String = "") {
+    lazyAssertions.append(condition)
+}
+
+func autoreleasepool(@noescape code: () -> ()) {
+    pushAutoreleasePool()
+    code()
+    popAutoreleasePool()
 }
 
 // optional function call

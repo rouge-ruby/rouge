@@ -13,6 +13,10 @@ sayHello("Toto")
 
 var pi = 3.1415
 
+var foo = cast as SomeType
+var foo = optionalCast as? SomeType
+var foo = forcedCast as! SomeType
+
 func halfOpenRangeLength(start:Int, end:Int) -> Int {
     return end - start
 }

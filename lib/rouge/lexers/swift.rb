@@ -113,6 +113,8 @@ module Rouge
             token Name::Function
           end
         end
+        
+        rule /as[?!]?/, Keyword
 
         rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation

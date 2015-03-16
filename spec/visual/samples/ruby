@@ -26,6 +26,7 @@ a/1 # comment
 a / b # comment
 a /1 \r[egex]\//
 a/ b #comment
+x.a / 1 # comment
 
 ########
 # method calls

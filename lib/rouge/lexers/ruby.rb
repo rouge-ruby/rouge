@@ -215,7 +215,7 @@ module Rouge
         rule /[A-Z][a-zA-Z0-9_]*/, Name::Constant, :method_call
         rule /(\.|::)(\s*)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/ do
           groups Punctuation, Text, Name::Function
-          push :expr_start
+          push :method_call
         end
 
         rule /[a-zA-Z_]\w*[?!]/, Name, :expr_start

@@ -8,8 +8,14 @@ module Rouge
 
       state :content_common do
         rule /@for\b/, Keyword, :for
-        rule /@(debug|warn|if|while)/, Keyword, :value
+        rule /@(debug|warn|if|each|while|else|return|media)/, Keyword, :value
+
         rule /(@mixin)(\s+)(#{id})/ do
+          groups Keyword, Text, Name::Function
+          push :value
+        end
+
+        rule /(@function)(\s+)(#{id})/ do
           groups Keyword, Text, Name::Function
           push :value
         end

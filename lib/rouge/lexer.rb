@@ -150,7 +150,7 @@ module Rouge
       #   other hints.
       #
       # @see Lexer.analyze_text
-      # @see Lexer.multi_guess
+      # @see Lexer.guesses
       def guess(info={})
         lexers = guesses(info)
 

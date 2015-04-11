@@ -177,7 +177,7 @@ class MyLexer < Rouge::RegexLexer
       end
     end
 
-    rule /(\w+)(:)/
+    rule /(\w+)(:)/ do
       # "groups" yields the matched groups in order
       groups Name::Label, Punctuation
     end

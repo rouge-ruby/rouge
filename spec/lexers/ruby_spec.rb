@@ -72,6 +72,7 @@ describe Rouge::Lexers::Ruby do
       assert_guess :filename => 'Vagrantfile'
       assert_guess :filename => 'config.ru'
       assert_guess :filename => 'foo.pdf.prawn'
+      assert_guess :filename => 'Berksfile'
     end
 
     it 'guesses by mimetype' do

@@ -16,6 +16,10 @@ describe Rouge::Lexers::Cpp do
       assert_guess :filename => 'foo.h++'
       assert_guess :filename => 'foo.hh'
       assert_guess :filename => 'foo.hxx'
+
+      # Arduino stuff
+      assert_guess :filename => 'foo.pde'
+      assert_guess :filename => 'foo.ino'
     end
 
     it 'guesses by mimetype' do

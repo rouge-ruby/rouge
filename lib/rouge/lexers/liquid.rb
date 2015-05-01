@@ -131,9 +131,7 @@ module Rouge
           groups nil, Operator, Operator::Word
         end
 
-        rule /([\w\.\'"]+)(\s+)(contains)(\s+)([\w\.\'"]+)/ do
-          groups nil, Text::Whitespace, Operator::Word, Text::Whitespace
-        end
+        rule /(contains)/, Operator::Word
 
         mixin :generic
         mixin :whitespace
@@ -168,6 +166,7 @@ module Rouge
       # states for unknown markup
       state :param_markup do
         mixin :whitespace
+        mixin :string
 
         rule /([^\s=:]+)(\s*)(=|:)/ do
           groups Name::Attribute, Text::Whitespace, Operator
@@ -177,7 +176,6 @@ module Rouge
           groups Punctuation, Text::Whitespace, nil, Text::Whitespace, Punctuation
         end
 
-        mixin :string
         mixin :number
         mixin :keyword
 
@@ -196,12 +194,12 @@ module Rouge
       end
 
       state :tag_markup do
-        rule (/%\}/) { token Punctuation; reset_stack }
+        mixin :end_of_block
         mixin :default_param_markup
       end
 
       state :variable_tag_markup do
-        rule (/%\}/) { token Punctuation; reset_stack }
+        mixin :end_of_block
         mixin :variable_param_markup
       end
 
@@ -225,7 +223,13 @@ module Rouge
         rule /\d+/, Num::Integer
       end
 
+      state :array_index do
+        rule /\[/, Punctuation
+        rule /\]/, Punctuation
+      end
+
       state :generic do
+        mixin :array_index
         mixin :keyword
         mixin :string
         mixin :variable
@@ -258,6 +262,7 @@ module Rouge
 
       state :assign do
         mixin :whitespace
+        mixin :end_of_block
 
         rule /(\s*)(=)(\s*)/ do
           groups Text::Whitespace, Operator, Text::Whitespace

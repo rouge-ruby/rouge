@@ -187,6 +187,26 @@ class MyLexer < Rouge::RegexLexer
 end
 ```
 
+If you're creating a lexer that's very similar to a different lexer, you can use subclassing (see C/C++/ObjC and also QML/Javascript for examples):
+
+``` ruby
+class MyLexer < OtherLexer
+  # independent states
+  state :my_state do ... end
+
+  # override states
+  state :your_state do ... end
+
+  # prepend rules to states
+  prepand :parent_state do ... end
+
+  # append rules to states
+  append :parent_state do ... end
+end
+```
+
+Please don't submit lexers that are largely copy-pasted from other files.
+
 ## Tips
 
 I don't get paid to maintain rouge. If you've found this software useful, consider dropping a tip in the [bucket](http://www.gittip.com/jneen).

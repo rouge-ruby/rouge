@@ -2,6 +2,8 @@
 
 describe Rouge::Lexers::Powershell do
   let(:subject) { Rouge::Lexers::Powershell.new }
+  
+  # Someone may need to add actual tests here. TODO
 
   describe 'guessing' do
     include Support::Guessing

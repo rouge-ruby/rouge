@@ -1,0 +1,11 @@
+# test lexer for PowerShell
+$bits = Get-Service bits
+
+if ($bits)
+{
+  Write-Output "BITS is running"
+}
+else
+{
+ Write-Output "BITS is not running"
+}

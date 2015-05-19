@@ -1,3 +1,26 @@
+## version 1.9.0: 2015-05-19
+
+  * objc: add array literals (thanks @mehowte)
+  * slim: reset ruby and html lexers, be less eager with guessing, detect html entities (thanks @elstgav)
+  * js: add `yield` as a keyword (thanks @honzabrecka)
+  * elixir: add alias `exs` (thanks @ismaelga)
+  * json: lex object keys as `Name::Tag` (thanks @morganjbruce)
+  * swift: add support for `@noescape` and `@autoclosure(escaping)` (thanks @radex)
+    and make `as?` and `as!` look better
+  * sass/scss: add support for `@each`, `@return`, `@media`, and `@function`
+    (thanks @i-like-robots)
+  * diff: make the whole thing more forgiving and less buggy (thanks @rumpelsepp)
+  * c++: add arduino file mappings and also Berksfile (thanks @Razer6)
+  * liquid: fix #237 which was dropping content (thanks @RadLikeWhoa)
+  * json: add json-api mime type (thanks @brettchalupa)
+
+  * new lexer: glsl (thanks @sriharshachilakapati)
+  * new lexer: json-doc, which is like JSON but supports comments and ellipsis (thanks @textshell)
+
+  * add documentation to the `--formatter` option in `rougify help` (thanks @mjbshaw)
+  * new website! http://rouge.jneen.net/ (thanks @edwardloveall!)
+
+
 ## version 1.8.0: 2015-02-01
 
   * css: fix "empty range in char class" bug and improve id/class name matches (#227/#228).

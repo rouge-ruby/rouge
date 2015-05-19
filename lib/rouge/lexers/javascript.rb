@@ -219,12 +219,8 @@ module Rouge
 
       state :root do
         mixin :whitespace
-        # special case for empty objects
-        rule /(\{)(\s*)(\})/m do
-          groups Punctuation, Text::Whitespace, Punctuation
-        end
         rule /(?:true|false|null)\b/, Keyword::Constant
-        rule /{/,  Punctuation, :object_key
+        rule /{/,  Punctuation, :object_key_initial
         rule /\[/, Punctuation, :array
         rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float
         rule /-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, Num::Integer
@@ -239,6 +235,17 @@ module Rouge
         rule string, Str::Double
       end
 
+      # in object_key_initial it's allowed to immediately close the object again
+      state :object_key_initial do
+        mixin :whitespace
+        rule string do
+          token Name::Tag
+          goto :object_key
+        end
+        rule /}/, Punctuation, :pop!
+      end
+
+      # in object_key at least one more name/value pair is required
       state :object_key do
         mixin :whitespace
         rule string, Name::Tag
@@ -258,5 +265,33 @@ module Rouge
         mixin :root
       end
     end
+
+    class JSONDOC < JSON
+      desc "JavaScript Object Notation with extenstions for documentation"
+      tag 'json-doc'
+
+      prepend :root do
+        mixin :comments
+        rule /(\.\.\.)/, Comment::Single
+      end
+
+      prepend :object_key_initial do
+        mixin :comments
+        rule /(\.\.\.)/, Comment::Single
+      end
+
+      prepend :object_key do
+        mixin :comments
+        rule /(\.\.\.)/ do
+          token Comment::Single
+          goto :object_key_initial
+        end
+      end
+
+      state :comments do
+        rule %r(//.*?$), Comment::Single
+      end
+    end
+
   end
 end

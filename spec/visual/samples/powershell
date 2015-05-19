@@ -26,6 +26,8 @@ Line
 Comment
 #>
 
+Write-output "Hello" # Adding end-of-line comment
+
 process {
 $var1 = $var2
 $var3 = get-host | Select-Object -First 1

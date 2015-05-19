@@ -52,7 +52,7 @@ A `Rouge::CSSTheme` used to highlight the output with inline styles instead of c
    base16.dark base16.light base16.solarized base16.monokai]
 ```
 
-##### wrap: true  
+##### wrap: true
 Wrap the highlighted content in a container. Defaults to `<pre><code>`, or `<div>` if line numbers are enabled.
 
 #### Lexer options
@@ -63,7 +63,7 @@ Print a trace of the lex on stdout
 Allows you to specify which language the template is inside
 
 #### CSS theme options
-##### scope: '.highlight'  
+##### scope: '.highlight'
 CSS selector that styles are applied to, e.g. `Rouge::Themes::Monokai.mode(:sublime).render(scope: 'code')`
 
 Rouge aims to be simple to extend, and to be a drop-in replacement for pygments, with the same quality of output. Also, Rouge ships with a `rougify` command which allows you to easily highlight files in your terminal:

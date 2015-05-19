@@ -58,14 +58,15 @@ Some other {{ output }}!
 {% include file.html param = 'value' param2 = object %}
 {% include 'snippet' param = 'value' param2 = object %}
 
-{% assign page_has_image = false %}  
-{% assign img_tag = '<' | append: 'img' %}  
+{% assign page_has_image = false %}
+{% assign img_tag = '<' | append: 'img' %}
 {% if link.object.content contains img_tag %}
   {% assign src = link.object.content | split: 'src="' %}
   {% assign src = src[1] | split: '"' | first %}
     {% if src %}
       {% assign page_has_image = true %}
-      {% assign image_src = src | replace: '_small', '' | replace: '_compact', '' | replace: '_medium', '' | replace: '_large', '' | replace: '_grande', '' %}
+      {% assign image_src = src | replace: '_small', '' | replace: '_compact', '' | replace: '_medium', '' |
+                                  replace: '_large', '' | replace: '_grande', '' %}
     {% endif %}
 {% endif %}
 

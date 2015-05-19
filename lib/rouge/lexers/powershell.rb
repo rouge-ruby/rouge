@@ -24,7 +24,7 @@ module Rouge
       ).join('|')
 
       state :basic do
-      rule %r(<#[a-z,A-Z,\s,\S]+?#>)m, Comment::Multiline
+      rule %r(<#[a-z,A-Z,\s,\S]*?#>)m, Comment::Multiline
         rule /#.*$/, Comment::Single
 
         rule /\b(#{KEYWORDS})\s*\b/i, Keyword

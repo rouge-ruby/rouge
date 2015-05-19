@@ -13,9 +13,5 @@ describe Rouge::Lexers::Powershell do
       assert_guess :filename => 'foo.psm1'
     end
 
-    it 'guesses by mimetype' do
-      assert_guess :mimetype => 'application/x-powershell'
-    end
-
   end
 end

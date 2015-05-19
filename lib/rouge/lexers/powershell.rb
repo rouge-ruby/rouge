@@ -12,9 +12,9 @@ module Rouge
       filenames '*.ps1', '*.psm1', '*.psd1'
       mimetypes 'text/plain'
 
-	  ATTRIBUTES = %w(
-	  CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI SupportsPaging SupportsShouldProcess PositionalBinding
-	  )
+      ATTRIBUTES = %w(
+      CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI SupportsPaging SupportsShouldProcess PositionalBinding
+      )
 	  
       KEYWORDS = %w(
       Begin Exit Process Break Filter Return Catch Finally Sequence Class For Switch Continue ForEach Throw Data From Trap Define Function Try Do If Until DynamicParam In Using Else InlineScript Var ElseIf Parallel While End Param Workflow 

@@ -1,0 +1,19 @@
+.foo bar baz -zot
+
+/list[1; 2; 3]
+/[1; 2; 3]
+
+@module Foo bar [
+  baz = [ zot : %zot => glorb ]
+]
+
+str = {some string}
+nested = {nes{t{e}d{}}}
+regex = /r'foo
+regex = /r{foo}
+interp = "{foo$(bar)}
+interp_nested = "{foo$(bar (baz (zot ())))} # comment
+
+String/split '/ 'foo/bar
+
+escapes = "{\$(string)\{} # comment

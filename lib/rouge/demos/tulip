@@ -1,0 +1,14 @@
+# ref.tlp
+@module ref
+
+ref value = Instance (spawn [! loop value ])
+
+loop value = receive [
+  .set new-value => loop new-value
+  p, .get => (send p value; loop value)
+]
+
+@module Instance pid [
+  set val = .set val > send pid
+  get! = .get > send-wait pid
+]

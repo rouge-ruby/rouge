@@ -376,7 +376,7 @@ module Rouge
     # @option opts :continue
     #   Continue the lex from the previous state (i.e. don't call #reset!)
     def lex(string, opts={}, &b)
-      return enum_for(:lex, string) unless block_given?
+      return enum_for(:lex, string, opts) unless block_given?
 
       Lexer.assert_utf8!(string)
 

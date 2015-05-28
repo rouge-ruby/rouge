@@ -18,7 +18,7 @@ If you'd like to help out with this project, assign yourself something from the 
 
 First, take a look at the [pretty colors][].
 
-[pretty colors]: http://rouge.jayferd.us/demo
+[pretty colors]: http://rouge.jneen.net/
 
 ``` ruby
 # make some nice lexed html

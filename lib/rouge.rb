@@ -44,6 +44,7 @@ Dir.glob(load_dir.join('rouge/lexers/*.rb')).each { |f| load f }
 
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')
+load load_dir.join('rouge/formatters/html_gitlab.rb')
 load load_dir.join('rouge/formatters/terminal256.rb')
 load load_dir.join('rouge/formatters/null.rb')
 

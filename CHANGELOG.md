@@ -177,7 +177,7 @@
   * Updated PHP builtins
   * CLI now responds to `rougify --version`
 
-[#114]: https://github.com/jayferd/rouge/pull/114
+[#114]: https://github.com/jneen/rouge/pull/114
 
 ## version 1.1.0: 2013-11-04
 
@@ -241,7 +241,7 @@
   * Tokens are now constants, rather than strings.  This only affects
     you if you've written a custom lexer, formatter, or theme.
 
-[perf-0.5]: https://github.com/jayferd/rouge/pull/41#issuecomment-23561787
+[perf-0.5]: https://github.com/jneen/rouge/pull/41#issuecomment-23561787
 
 ## version 0.4.0: 2013-08-14
 

@@ -4,11 +4,11 @@
   excludesfile = ~/.gitignore
   # autocrlf = input
 [user]
-  name = Jay Adkisson
-  email = jjmadkisson@gmail.com
+  name = Jeanine Adkisson
+  email = somebody@somewhere.place
 [github]
-  user = jayferd
-  token = "ee14fce5546288e00fc0d6dc456fb3ec"
+  user = jneen
+  token = "asdfasdfasdf"
 [color]
   branch = auto
   diff = auto

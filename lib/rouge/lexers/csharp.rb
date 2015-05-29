@@ -44,9 +44,9 @@ module Rouge
         mixin :whitespace
 
         rule /^\s*\[.*?\]/, Name::Attribute
-        rule /[$]\s*"/, Str, :splice_string
-        rule /[$]\s*<#/, Str, :splice_recstring
-        rule /<#/, Str, :recstring
+        # rule /[$]\s*"/, Str, :splice_string
+        # rule /[$]\s*<#/, Str, :splice_recstring
+        # rule /<#/, Str, :recstring
 
         rule /(<\[)\s*(#{id}:)?/, Keyword
         rule /\]>/, Keyword

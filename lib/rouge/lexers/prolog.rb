@@ -30,7 +30,7 @@ module Rouge
       end
 
       state :atoms do
-        rule /[[:lower:]]([_[:lower:][:digit:]])*/, Str::Symbol
+        rule /[[:lower:]]([_[:word:][:digit:]])*/, Str::Symbol
         rule /'[^']*'/, Str::Symbol
       end
 

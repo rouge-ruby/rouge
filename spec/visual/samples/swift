@@ -1,4 +1,5 @@
 import Foundation
+@testable import MyModule
 
 func sayHello(person:String) -> String {
     return "Hello, \(capitalize(word:person)). \"How're are you doin\'?\""
@@ -22,6 +23,12 @@ func halfOpenRangeLength(start:Int, end:Int) -> Int {
 }
 
 halfOpenRangeLength(3, 8)
+
+if let var = option {
+    if more && complex, let optional = binding, example = here where option.foo == example.foo {
+        // things
+    }
+}
 
 func count(string:String) -> (vowels:Int, consonants:Int, others:Int) {
     var vowels = 0, consonants = 0, emoji = 0, whitespace = 0, others = 0

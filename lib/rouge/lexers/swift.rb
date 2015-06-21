@@ -25,10 +25,6 @@ module Rouge
         class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
       )
 
-      attributes = Set.new %w(
-        autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain NSApplicationMain objc_block noescape
-      )
-
       constants = Set.new %w(
         true false nil
       )
@@ -70,21 +66,7 @@ module Rouge
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
-        rule /@availability[(][^)]+[)]/, Keyword::Declaration
-
-        rule /(@objc[(])([^)]+)([)])/ do
-          groups Keyword::Declaration, Name::Class, Keyword::Declaration
-        end
-        
-        rule /@autoclosure\(escaping\)/, Keyword::Declaration
-
-        rule /@(#{id})/ do |m|
-          if attributes.include? m[1]
-            token Keyword
-          else
-            token Error
-          end
-        end
+        rule /@#{id}(\([^)]+\))?/, Keyword::Declaration
 
         rule /(private|internal)(\([ ]*)(\w+)([ ]*\))/ do |m|
           if m[3] == 'set'

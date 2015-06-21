@@ -14,11 +14,11 @@ module Rouge
       id = /#{id_head}#{id_rest}*/
 
       keywords = Set.new %w(
-        break case continue default do else fallthrough if in for return switch where while
+        break case continue default do else fallthrough if in for return switch where while try catch throw guard defer repeat
 
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet
+        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet throws rethrows
       )
 
       declarations = Set.new %w(
@@ -97,6 +97,7 @@ module Rouge
         end
         
         rule /as[?!]?/, Keyword
+        rule /try[!]?/, Keyword
 
         rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation

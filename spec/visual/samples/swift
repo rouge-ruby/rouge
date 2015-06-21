@@ -196,6 +196,37 @@ let maybeFunction: (() -> ())? = nil
 maybeFunction?()
 maybeFunction!()
 
+// Swift 2 exceptions
+
+func throwingFunction() throws -> String {
+    throw ErrorType.Error
+}
+
+do {
+    try throwingFunction()
+} catch {
+    println(error)
+}
+
+try! throwingFunction()
+
+func rethrowingFunction(f: T throws -> U) rethrows -> U {}
+
+// other swift 2 stuff
+
+guard let x = optionalValue else {
+   print("Fail")
+   throw NSError(domain: "", code: 0, userInfo: nil)
+}
+
+defer { callback() }
+
+if case let x? = optionalValue {print("Unwrapped: \(x)")}
+
+repeat {
+    // loop…
+} while condition
+
 //MARK: Classes
 public class Person : NSObject {
     let firstName: String
@@ -240,8 +271,16 @@ public class Person : NSObject {
 
 //MARK: Protocols
 @objc protocol Random {
+    typealias T: SomeConstraint
     func random() -> Self
     optional func seed(seed: Int)
+    required func foo()
+}
+
+extension SomeProtocol where T: OtherProtocol {
+    func blah() {
+        // default implementation
+    }
 }
 
 extension SomeClass {

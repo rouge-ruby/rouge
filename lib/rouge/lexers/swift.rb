@@ -83,6 +83,8 @@ module Rouge
             groups Keyword::Declaration, Error, Keyword::Declaration
           end
         end
+        
+        rule /#available\([^)]+\)/, Keyword::Declaration
 
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable

@@ -227,6 +227,13 @@ repeat {
     // loop…
 } while condition
 
+if #available(iOS 8.0, OSX 10.10, *) {
+   // Use Handoff APIs when available.
+   let activity = NSUserActivity(activityType:"com.example.ShoppingList.view")
+} else {
+    // Fall back when Handoff APIs not available.
+}
+
 //MARK: Classes
 public class Person : NSObject {
     let firstName: String

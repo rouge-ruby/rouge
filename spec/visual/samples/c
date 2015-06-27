@@ -32,6 +32,20 @@ static int not_a_comment();
 #macro
 
 
+/* Bug #277: C function prototype syntax highlighting broken if space before semicolon */
+
+void foo() ;
+
+void foo() {
+    /* nothing */
+}
+
+void foo2(void)
+{
+    /* nothing */
+}
+
+
 /* Execute compiled code */
 
 /* XXX TO DO:

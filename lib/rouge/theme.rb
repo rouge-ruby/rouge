@@ -84,7 +84,7 @@ module Rouge
       end
 
       def get_own_style(token)
-        token.token_chain.each do |anc|
+        token.token_chain.reverse_each do |anc|
           return styles[anc] if styles[anc]
         end
 

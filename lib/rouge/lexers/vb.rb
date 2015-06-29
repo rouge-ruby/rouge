@@ -7,7 +7,7 @@ module Rouge
       desc "Visual Basic"
       tag 'vb'
       aliases 'visualbasic'
-      filenames '*.vbs'
+      filenames '*.vbs', '*.vb'
       mimetypes 'text/x-visualbasic', 'application/x-visualbasic'
 
       def self.keywords

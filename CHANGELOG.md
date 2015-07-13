@@ -1,3 +1,14 @@
+## version 1.9.1: 2015-07-13
+
+  * new lexer: powershell (thanks @aaroneg!)
+  * new lexer: tulip
+  * bugfix: pass opts through so lex(continue: true) retains them (thanks @stanhu!)
+  * c#: bugfix: don't error on unknown states in the C# lexer
+  * php: match drupal file extensions (thanks @rumpelsepp!)
+  * prolog: allow camelCase atoms (thanks @mumuki!)
+  * c: bugfix: was dropping text in function declarations (thanks @JonathonReinhart!)
+  * groovy: bugfix: allow comments at eof without newline
+
 ## version 1.9.0: 2015-05-19
 
   * objc: add array literals (thanks @mehowte)

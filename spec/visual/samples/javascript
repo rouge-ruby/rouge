@@ -47,6 +47,12 @@ var quotedKeys = {
   "three": 3,
 };
 
+// interpolation
+var variableInterpolation = `Welcome ${name}`
+var expressionInterpolation = `The area of a circle with radius 5 is ${Math.PI * 5 * 5}`
+var multilineInterpolation = `Welcome ${name}
+                              Today is ${new Date()}`
+
 Blag = {};
 jQuery.noConflict();
 

@@ -17,6 +17,15 @@ describe Rouge::Lexers::Javascript do
 
     end
 
+    it 'lexes interpolated variables' do
+      assert_tokens_equal %(`Value ${variable}`),
+                          ['Literal.String.Backtick', '`Value '],
+                          ['Literal.String.Interpol', '${'],
+                          ['Name.Other', 'variable'],
+                          ['Literal.String.Interpol', '}'],
+                          ['Literal.String.Backtick', '`']
+    end
+
     it 'lexes interpolated expressions' do
       assert_tokens_equal %(`Value: ${10+20}`),
                           ['Literal.String.Backtick', "`Value: "],
@@ -37,6 +46,22 @@ describe Rouge::Lexers::Javascript do
                           ['Literal.Number.Integer', '20'],
                           ['Literal.String.Interpol', '}'],
                           ['Literal.String.Backtick', "\n`"]
+    end
+
+    it 'does not consider $variable as interpolation' do
+      assert_tokens_equal %(`Value: $variable`),
+                          ['Literal.String.Backtick', '`Value: $variable`']
+    end
+
+    it 'does not interpolate single quoted strings' do
+      assert_tokens_equal %('Value: ${variable}'),
+                          ['Literal.String.Single', "'Value: ${variable}'"]
+    end
+
+    it 'does not interpolate double quoted strings' do
+      assert_tokens_equal %("Value: ${variable}"),
+                          ['Literal.String.Double', %("Value: ${variable}")]
+
     end
 
   end

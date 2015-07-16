@@ -28,7 +28,7 @@ describe Rouge::Lexers::Javascript do
                           ['Literal.String.Backtick', "`"]
     end
 
-    it 'lexes multiline strings' do
+    it 'lexes multiline interpolated expressions' do
       assert_tokens_equal %(`Value: \n${10+20}\n`),
                           ['Literal.String.Backtick', "`Value: \n"],
                           ['Literal.String.Interpol', '${'],

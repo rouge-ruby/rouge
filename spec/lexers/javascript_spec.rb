@@ -10,6 +10,35 @@ describe Rouge::Lexers::Javascript do
       assert_has_token 'Error',          "var a = /foo;\n1"
       assert_has_token 'Literal.Number', "var a = /foo;\n1"
     end
+
+    it 'lexes strings with backticks' do
+      assert_tokens_equal %(`Value`),
+                          ['Literal.String.Backtick', "`Value`"]
+
+    end
+
+    it 'lexes interpolated expressions' do
+      assert_tokens_equal %(`Value: ${10+20}`),
+                          ['Literal.String.Backtick', "`Value: "],
+                          ['Literal.String.Interpol', '${'],
+                          ['Literal.Number.Integer', '10'],
+                          ['Operator', '+'],
+                          ['Literal.Number.Integer', '20'],
+                          ['Literal.String.Interpol', '}'],
+                          ['Literal.String.Backtick', "`"]
+    end
+
+    it 'lexes multiline strings' do
+      assert_tokens_equal %(`Value: \n${10+20}\n`),
+                          ['Literal.String.Backtick', "`Value: \n"],
+                          ['Literal.String.Interpol', '${'],
+                          ['Literal.Number.Integer', '10'],
+                          ['Operator', '+'],
+                          ['Literal.Number.Integer', '20'],
+                          ['Literal.String.Interpol', '}'],
+                          ['Literal.String.Backtick', "\n`"]
+    end
+
   end
 
   describe 'guessing' do

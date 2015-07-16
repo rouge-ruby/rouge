@@ -161,6 +161,20 @@ module Rouge
         rule /[0-9]+/, Num::Integer
         rule /"(\\\\|\\"|[^"])*"/, Str::Double
         rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule /`/, Str::Backtick, :backtick_string
+
+      end
+
+      state :backtick_string do
+        rule /`/, Str::Backtick, :pop!
+        rule /[$][{]/, Str::Interpol, :interpolation
+        rule /\$[^{]/, Str::Backtick
+        rule /[^`$]+/, Str::Backtick
+      end
+
+      state :interpolation do
+        rule /(})(?!.+})/, Str::Interpol, :pop!
+        mixin :root
       end
 
       # braced parts that aren't object literals

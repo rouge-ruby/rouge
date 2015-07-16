@@ -173,7 +173,7 @@ module Rouge
       end
 
       state :interpolation do
-        rule /[}]/, Str::Interpol, :pop!
+        rule /(})(?!.+})/, Str::Interpol, :pop!
         mixin :root
       end
 

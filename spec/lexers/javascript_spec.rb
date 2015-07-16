@@ -48,6 +48,22 @@ describe Rouge::Lexers::Javascript do
                           ['Literal.String.Backtick', "\n`"]
     end
 
+    it 'lexes interpolated expressions containing objects' do
+      assert_tokens_equal %(`foo ${{bar: 'baz'}.bar} qux`),
+                         ["Literal.String.Backtick", "`foo "],
+                         ["Literal.String.Interpol", "${"],
+                         ["Punctuation", "{"],
+                         ["Name.Label", "bar"],
+                         ["Punctuation", ":"],
+                         ["Text", " "],
+                         ["Literal.String.Single", "'baz'"],
+                         ["Punctuation", "}."],
+                         ["Name.Other", "bar"],
+                         ["Literal.String.Interpol", "}"],
+                         ["Literal.String.Backtick", " qux`"]
+
+    end
+
     it 'does not consider $variable as interpolation' do
       assert_tokens_equal %(`Value: $variable`),
                           ['Literal.String.Backtick', '`Value: $variable`']

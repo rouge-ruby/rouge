@@ -161,6 +161,7 @@ module Rouge
         rule /[0-9]+/, Num::Integer
         rule /"(\\\\|\\"|[^"])*"/, Str::Double
         rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule /`(\\\\|\\`|[^`])*`/, Str::Backtick
       end
 
       # braced parts that aren't object literals

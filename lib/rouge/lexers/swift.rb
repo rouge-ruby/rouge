@@ -14,19 +14,15 @@ module Rouge
       id = /#{id_head}#{id_rest}*/
 
       keywords = Set.new %w(
-        break case continue default do else fallthrough if in for return switch where while
+        break case continue default do else fallthrough if in for return switch where while try catch throw guard defer repeat
 
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet
+        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet throws rethrows
       )
 
       declarations = Set.new %w(
         class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
-      )
-
-      attributes = Set.new %w(
-        autoclosure IBAction IBDesignable IBInspectable IBOutlet noreturn NSCopying NSManaged objc UIApplicationMain NSApplicationMain objc_block noescape
       )
 
       constants = Set.new %w(
@@ -70,21 +66,7 @@ module Rouge
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
-        rule /@availability[(][^)]+[)]/, Keyword::Declaration
-
-        rule /(@objc[(])([^)]+)([)])/ do
-          groups Keyword::Declaration, Name::Class, Keyword::Declaration
-        end
-        
-        rule /@autoclosure\(escaping\)/, Keyword::Declaration
-
-        rule /@(#{id})/ do |m|
-          if attributes.include? m[1]
-            token Keyword
-          else
-            token Error
-          end
-        end
+        rule /@#{id}(\([^)]+\))?/, Keyword::Declaration
 
         rule /(private|internal)(\([ ]*)(\w+)([ ]*\))/ do |m|
           if m[3] == 'set'
@@ -101,6 +83,8 @@ module Rouge
             groups Keyword::Declaration, Error, Keyword::Declaration
           end
         end
+        
+        rule /#available\([^)]+\)/, Keyword::Declaration
 
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
@@ -115,6 +99,7 @@ module Rouge
         end
         
         rule /as[?!]?/, Keyword
+        rule /try[!]?/, Keyword
 
         rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation

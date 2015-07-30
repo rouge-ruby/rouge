@@ -12,17 +12,13 @@ module Rouge
       def self.analyze_text(text)
         return 1   if text.start_with?('Index: ')
         return 1   if text.start_with?('diff ')
-
-        # TODO: Have a look at pygments here, seems better
-        return 0.9 if text =~ /\A---.*?\n\+\+\+/m
+        return 0.9 if text.start_with?('--- ')
       end
 
       state :root do
         rule(/^ .*\n/, Text)
         rule(/^\+.*\n/, Generic::Inserted)
-        # Do not highlight the delimiter line
-        # before the diffstat in email patches.
-        rule(/^-+ .*\n/, Generic::Deleted)
+        rule(/^-+.*\n/, Generic::Deleted)
         rule(/^!.*\n/, Generic::Strong)
         rule(/^@.*\n/, Generic::Subheading)
         rule(/^([Ii]ndex|diff).*\n/, Generic::Heading)

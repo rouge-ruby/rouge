@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*- #
 
+require_relative './sass/common'
+
 module Rouge
   module Lexers
-    load_const :SassCommon, 'sass/common.rb'
-
     class Scss < SassCommon
       title "SCSS"
       desc "SCSS stylesheets (sass-lang.com)"

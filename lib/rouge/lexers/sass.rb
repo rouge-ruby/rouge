@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*- #
 
+require_relative './sass/common'
+
 module Rouge
   module Lexers
-    load_const :SassCommon, 'sass/common.rb'
-
     class Sass < SassCommon
       include Indentation
 

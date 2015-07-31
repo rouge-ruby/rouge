@@ -17,6 +17,7 @@ module Rouge
 
       state :root do
         rule(/^ .*\n/, Text)
+        rule(/^---\n/, Text)
         rule(/^\+.*\n/, Generic::Inserted)
         rule(/^-+.*\n/, Generic::Deleted)
         rule(/^!.*\n/, Generic::Strong)

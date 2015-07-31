@@ -6,6 +6,7 @@ Bundler.require :development
 
 # stdlib
 require 'pathname'
+require 'tilt/erb'
 
 class VisualTestApp < Sinatra::Application
   BASE = Pathname.new(__FILE__).dirname
@@ -16,6 +17,8 @@ class VisualTestApp < Sinatra::Application
 
   def reload_source!
     Object.send :remove_const, :Rouge
+    # Forces a reload of all rouge-related modules
+    $LOADED_FEATURES.reject!{ |x| x.include?(ROOT.to_s) }
     load ROUGE_LIB
   end
 

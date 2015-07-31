@@ -20,3 +20,6 @@ module Rouge
     start { parent.reset! }
   end
 end
+
+lib_path = File.expand_path(File.dirname(__FILE__))
+Dir.glob(File.join(lib_path, 'lexers/*.rb')) { |f| require_relative f }

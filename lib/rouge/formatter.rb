@@ -48,3 +48,8 @@ module Rouge
     end
   end
 end
+
+
+require_relative 'formatters/html'
+require_relative 'formatters/terminal256'
+require_relative 'formatters/null'

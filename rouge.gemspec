@@ -2,7 +2,7 @@ require './lib/rouge/version'
 
 Gem::Specification.new do |s|
   s.name = "rouge"
-  s.version = Rouge.version
+  s.version = Rouge::VERSION
   s.authors = ["Jeanine Adkisson"]
   s.email = ["jneen@jneen.net"]
   s.summary = "A pure-ruby colorizer based on pygments"

@@ -2,6 +2,15 @@
 
 # stdlib
 require 'pathname'
+require_relative 'rouge/version'
+require_relative 'rouge/util'
+require_relative 'rouge/text_analyzer'
+require_relative 'rouge/token'
+require_relative 'rouge/lexer'
+require_relative 'rouge/regex_lexer'
+require_relative 'rouge/template_lexer'
+require_relative 'rouge/formatter'
+require_relative 'rouge/theme'
 
 # The containing module for Rouge
 module Rouge
@@ -27,31 +36,3 @@ module Rouge
     end
   end
 end
-
-load_dir = Pathname.new(__FILE__).dirname
-load load_dir.join('rouge/version.rb')
-
-load load_dir.join('rouge/util.rb')
-
-load load_dir.join('rouge/text_analyzer.rb')
-load load_dir.join('rouge/token.rb')
-
-load load_dir.join('rouge/lexer.rb')
-load load_dir.join('rouge/regex_lexer.rb')
-load load_dir.join('rouge/template_lexer.rb')
-
-Dir.glob(load_dir.join('rouge/lexers/*.rb')).each { |f| load f }
-
-load load_dir.join('rouge/formatter.rb')
-load load_dir.join('rouge/formatters/html.rb')
-load load_dir.join('rouge/formatters/terminal256.rb')
-load load_dir.join('rouge/formatters/null.rb')
-
-load load_dir.join('rouge/theme.rb')
-load load_dir.join('rouge/themes/thankful_eyes.rb')
-load load_dir.join('rouge/themes/colorful.rb')
-load load_dir.join('rouge/themes/base16.rb')
-load load_dir.join('rouge/themes/github.rb')
-load load_dir.join('rouge/themes/monokai.rb')
-load load_dir.join('rouge/themes/molokai.rb')
-load load_dir.join('rouge/themes/monokai_sublime.rb')

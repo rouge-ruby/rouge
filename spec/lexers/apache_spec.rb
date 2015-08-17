@@ -15,4 +15,16 @@ describe Rouge::Lexers::Apache do
       assert_guess :mimetype => 'text/x-httpd-conf'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'does not drop non directives' do
+      assert_tokens_equal 'foo bar', ['Text', 'foo bar']
+    end
+
+    it 'lexes case insensitively directives' do
+      assert_tokens_equal 'setenv foo bar', ['Name.Class', 'setenv'], ['Text', ' foo bar']
+    end
+  end
 end

@@ -20,61 +20,77 @@ module Rouge
         stopwatch nocheck nowarn noprogress editor endeditor clearinfo
       )
 
-      functions = %w(
-        writeInfo writeInfoLine appendInfo appendInfoLine info$ writeFile
-        writeFileLine appendFile appendFileLine abs round floor ceiling min max
-        imin imax sqrt sin cos tan arcsin arccos arctan arctan2 sinc sincpi exp
-        ln lnBeta lnGamma log10 log2 sinh cosh tanh arcsinh arccosh arctanh
-        sigmoid invSigmoid erf erfc randomUniform randomInteger randomGauss
-        randomPoisson randomBinomial gaussP gaussQ invGaussQ incompleteGammaP
-        incompleteBeta chiSquareP chiSquareQ invChiSquareQ studentP studentQ
-        invStudentQ fisherP fisherQ invFisherQ binomialP binomialQ invBinomialP
-        invBinomialQ hertzToBark barkToHerz hertzToMel melToHertz
-        hertzToSemitones semitonesToHerz erb hertzToErb erbToHertz
-        phonToDifferenceLimens string$ differenceLimensToPhon
-        soundPressureToPhon beta beta2 besselI besselK numberOfColumns number
-        numberOfRows selected$ selected numberOfSelected variableExists index
-        rindex startsWith endsWith index_regex rindex_regex replace_regex$
-        length extractWord$ extractLine$ extractNumber left$ right$ mid$
-        replace$ date$ fixed$ percent$ zero# linear# randomUniform#
-        randomInteger# randomGauss# beginPause endPause do do$ editor demoShow
-        demoWindowTitle demoInput demoWaitForInput demoClicked demoClickedIn
-        demoX demoY demoKeyPressed demoKey$ demoExtraControlKeyPressed
-        demoShiftKeyPressed demoCommandKeyPressed demoOptionKeyPressed
-        environment$ chooseReadFile$ chooseDirectory$ createDirectory
-        fileReadable deleteFile selectObject removeObject plusObject minusObject
-        runScript exitScript beginSendPraat endSendPraat objectsAreIdentical
-        comment natural real positive word sentencetext boolean choice option
-        optionMenu
+      functions_string = %w(
+        backslashTrigraphsToUnicode chooseDirectory chooseReadFile
+        chooseWriteFile demoKey do environment extractLine extractWord fixed
+        info left mid percent readFile replace replace_regex right selected
+        string unicodeToBackslashTrigraphs
+      )
+
+      functions_numeric = %w(
+        abs appendFile appendFileLine appendInfo appendInfoLine arccos arccosh
+        arcsin arcsinh arctan arctan2 arctanh barkToHertz beginPause
+        beginSendPraat besselI besselK beta beta2 binomialP binomialQ boolean
+        ceiling chiSquareP chiSquareQ choice comment cos cosh createDirectory
+        date$ deleteFile demoClicked demoClickedIn demoCommandKeyPressed
+        demoExtraControlKeyPressed demoInput demoKeyPressed
+        demoOptionKeyPressed demoShiftKeyPressed demoShow demoWaitForInput
+        demoWindowTitle demoX demoY differenceLimensToPhon do editor endPause
+        endSendPraat endsWith erb erbToHertz erf erfc exitScript exp
+        extractNumber fileReadable fisherP fisherQ floor gaussP gaussQ
+        hertzToBark hertzToErb hertzToMel hertzToSemitones imax imin
+        incompleteBeta incompleteGammaP index index_regex invBinomialP
+        invBinomialQ invChiSquareQ invFisherQ invGaussQ invSigmoid invStudentQ
+        length ln lnBeta lnGamma log10 log2 max melToHertz min minusObject
+        natural number numberOfColumns numberOfRows numberOfSelected
+        objectsAreIdentical option optionMenu pauseScript
+        phonToDifferenceLimens plusObject positive randomBinomial randomGauss
+        randomInteger randomPoisson randomUniform real readFile removeObject
+        rindex rindex_regex round runScript runSystem runSystem_nocheck
+        selectObject selected semitonesToHertz sentencetext sigmoid sin sinc
+        sincpi sinh soundPressureToPhon sqrt startsWith studentP studentQ tan
+        tanh variableExists word writeFile writeFileLine writeInfo
+        writeInfoLine
+      )
+
+      functions_array = %w(
+        linear randomGauss randomInteger randomUniform zero
       )
 
       objects = %w(
         Activation AffineTransform AmplitudeTier Art Artword Autosegment
-        BarkFilter CCA Categories Cepstrum Cepstrumc ChebyshevSeries
-        ClassificationTable Cochleagram Collection Configuration Confusion
-        ContingencyTable Corpus Correlation Covariance CrossCorrelationTable
-        CrossCorrelationTables DTW Diagonalizer Discriminant Dissimilarity
-        Distance Distributions DurationTier EEG ERP ERPTier Eigen Excitation
-        Excitations ExperimentMFC FFNet FeatureWeights Formant FormantFilter
-        FormantGrid FormantPoint FormantTier GaussianMixture HMM HMM_Observation
-        HMM_ObservationSequence HMM_State HMM_StateSequence Harmonicity ISpline
-        Index Intensity IntensityTier IntervalTier KNN KlattGrid KlattTable LFCC
-        LPC Label LegendreSeries LinearRegression LogisticRegression LongSound
-        Ltas MFCC MSpline ManPages Manipulation Matrix MelFilter MixingMatrix
-        Movie Network OTGrammar OTHistory OTMulti PCA PairDistribution
-        ParamCurve Pattern Permutation Pitch PitchTier PointProcess Polygon
-        Polynomial Procrustes RealPoint RealTier ResultsMFC Roots SPINET SSCP
-        SVD Salience ScalarProduct Similarity SimpleString SortedSetOfString
-        Sound Speaker Spectrogram Spectrum SpectrumTier SpeechSynthesizer
-        SpellingChecker Strings StringsIndex Table TableOfReal TextGrid
-        TextInterval TextPoint TextTier Tier Transition VocalTract Weight
-        WordList
+        BarkFilter BarkSpectrogram CCA Categories Cepstrogram Cepstrum
+        Cepstrumc ChebyshevSeries ClassificationTable Cochleagram Collection
+        ComplexSpectrogram Configuration Confusion ContingencyTable Corpus
+        Correlation Covariance CrossCorrelationTable CrossCorrelationTables DTW
+        DataModeler Diagonalizer Discriminant Dissimilarity Distance
+        Distributions DurationTier EEG ERP ERPTier EditCostsTable
+        EditDistanceTable Eigen Excitation Excitations ExperimentMFC FFNet
+        FeatureWeights FileInMemory FilesInMemory Formant FormantFilter
+        FormantGrid FormantModeler FormantPoint FormantTier GaussianMixture HMM
+        HMM_Observation HMM_ObservationSequence HMM_State HMM_StateSequence
+        Harmonicity ISpline Index Intensity IntensityTier IntervalTier KNN
+        KlattGrid KlattTable LFCC LPC Label LegendreSeries LinearRegression
+        LogisticRegression LongSound Ltas MFCC MSpline ManPages Manipulation
+        Matrix MelFilter MelSpectrogram MixingMatrix Movie Network OTGrammar
+        OTHistory OTMulti PCA PairDistribution ParamCurve Pattern Permutation
+        Photo Pitch PitchModeler PitchTier PointProcess Polygon Polynomial
+        PowerCepstrogram PowerCepstrum Procrustes RealPoint RealTier ResultsMFC
+        Roots SPINET SSCP SVD Salience ScalarProduct Similarity SimpleString
+        SortedSetOfString Sound Speaker Spectrogram Spectrum SpectrumTier
+        SpeechSynthesizer SpellingChecker Strings StringsIndex Table
+        TableOfReal TextGrid TextInterval TextPoint TextTier Tier Transition
+        VocalTract VocalTractTier Weight WordList
       )
 
-      variables = %w(
-        macintosh windows unix praatVersion praatVersion$ pi undefined newline$
-        tab$ shellDirectory$ homeDirectory$ preferencesDirectory$
-        temporaryDirectory$ defaultDirectory$
+      variables_numeric = %w(
+        macintosh windows unix praatVersion pi e undefined
+      )
+
+      variables_string = %w(
+        praatVersion tab shellDirectory homeDirectory
+        preferencesDirectory newline temporaryDirectory
+        defaultDirectory
       )
 
       state :root do
@@ -85,7 +101,9 @@ module Rouge
         rule /\bcall\b/,      Keyword,        :procedure_call
         rule /@/,             Name::Function, :procedure_call
 
-        rule /\b(#{functions.join('|')})(?=\s*[:(])/, Name::Function, :function
+        rule /\b(#{functions_string.join('|')})\$(?=\s*[:(])/, Name::Function, :function
+        rule /\b(#{functions_array.join('|')})#(?=\s*[:(])/,   Name::Function, :function
+        rule /\b(#{functions_numeric.join('|')})(?=\s*[:(])/,  Name::Function, :function
 
         rule /\b(?:#{keywords.join('|')})\b/, Keyword
 
@@ -199,19 +217,38 @@ module Rouge
       end
 
       state :number do
-        rule /[+-]?\d+(\.\d+([eE][+-]?\d+)?)?/,   Literal::Number
+        rule /\b\d+(\.\d*)?([eE][-+]?\d+)?%?/, Literal::Number
       end
 
       state :variable_name do
         mixin :operator
         mixin :number
 
-        rule /\bObject_/, Name::Builtin
-        rule /\b(?:#{variables.join('|')})\b/, Name::Class
+        rule /\b(?:#{variables_string.join('|')})\$/,  Name::Variable::Global
+        rule /\b(?:#{variables_numeric.join('|')})\b/, Name::Variable::Global
+
+        rule /\bObject_\w+/, Name::Builtin, :object_attributes
+        rule /\b(Object_)(')/ do
+          groups Name::Builtin, Literal::String::Interpol
+          push :object_attributes
+          push :string_interpolated
+        end
         rule /\.?[a-z][a-zA-Z0-9_.]*\$?/, Text
         rule /\[/, Text, :comma_list
         rule /'(?=.*')/, Literal::String::Interpol, :string_interpolated
         rule /\]/, Text, :pop!
+      end
+
+      state :object_attributes do
+        rule /\.?(n(col|row)|[xy]min|[xy]max|[nd][xy])\b/, Name::Builtin, :pop!
+        rule /(\.?(?:col|row)\$)(\[)/ do
+          groups Name::Builtin, Text
+          push :variable_name
+        end
+        rule /(\$?)(\[)/ do
+          groups Name::Builtin, Text
+          push :comma_list
+        end
       end
 
       state :string_interpolated do
@@ -277,8 +314,8 @@ module Rouge
       end
 
       state :operator do
-        rule /([+\/*<>=!-]=?|[\%^|]|<>)/, Operator
-        rule /\b(and|or|not)\b/, Operator::Word
+        rule /([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/, Operator
+        rule /\b(and|or|not|div|mod)\b/, Operator::Word
       end
     end
   end

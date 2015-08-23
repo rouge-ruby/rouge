@@ -17,13 +17,35 @@ include /path/to/file
 runScript: "/path/to/file"
 execute /path/to/file
 
-stopwatch
+# Predefined variables
+a  = praatVersion
+a  = e
+a  = pi
+a$ = homeDirectory$ + tab$ + newline$
+a$ = temporaryDirectory$
+a$ = praatVersion$
+a$ = shellDirectory$
+a$ = homeDirectory$
+a$ = preferencesDirectory$
+a$ = defaultDirectory$
+nocheck selectObject: undefined
+
+# if-block with built-in variables
+if windows
+  # We are on Windows
+elsif unix = 1 or !macintosh
+  exitScript: "We are on Linux"
+else macintosh == 1
+  exit We are on Mac
+endif
 
 string$ = "Strings can be 'interpolated'"
-string$ = "But you can't interpolate everything!"
+string$ = "But don't interpolate everything!"
 
-rows  = Object_'table'.nrow
-value = Object_'table'$[25, "f0"]
+rows   = Object_'table'.nrow
+value$ = Object_'table'$[25, "f0"]
+fixed  = Object_10.xmin
+fixed  = Object_foo.xmin
 
 # old-style procedure call
 call oldStyle "quoted" 2 unquoted string
@@ -36,14 +58,6 @@ if praatVersion >= 5364
   @newStyle: "quoted", 2, "quoted string"
 endif
 
-# if-block with built-in variables
-if windows
-  # We are on Windows
-elsif unix = 1 or !macintosh
-  exitScript: "We are on Linux"
-else macintosh == 1
-  exit We are on Mac
-endif
 
 # inline if with inline comment
 var = if macintosh = 1 then 0 else 1 fi ; This is an inline comment
@@ -140,6 +154,38 @@ beginSendPraat: "Praat"
 endSendPraat: "duration"
 appendInfoLine: "The generated sound lasted for ", duration, "seconds"
 
+# Number types
+a =   10%
+a =  -10
+a =  +10
+a =   10.4
+a =  294e12
+a =    2.94e12
+
+# Operators
+a = 2 ^ -6
+a = -(1+1)^6
+a = 4^3 ^ 2
+a = 54 div 5.1
+a = 54.3 mod 5
+a = 3 ** 8 - 7
+a = 3 / (8 + 7)
+a = (7 * (3 + 5)) / ((2 + 3) - 1)
+
+# Logical operators
+assert (a =   b) and c
+assert  a == (b  or  c)
+assert  a <=  b  not c
+assert  a >=  b     !c
+assert  a !=  b  &   c
+assert  a !=  b  &&  c
+assert  a <>  b  ||  c
+assert  a <   b  |   c
+assert  a >   b
+assert "hello" =  "he" + "llo"
+assert "hello" == "hello world" - " world"
+
+stopwatch
 time = stopwatch
 clearinfo
 echo This script took

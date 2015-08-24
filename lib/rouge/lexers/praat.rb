@@ -101,9 +101,7 @@ module Rouge
         rule /\bcall\b/,      Keyword,        :procedure_call
         rule /@/,             Name::Function, :procedure_call
 
-        rule /\b(#{functions_string.join('|')})\$(?=\s*[:(])/, Name::Function, :function
-        rule /\b(#{functions_array.join('|')})#(?=\s*[:(])/,   Name::Function, :function
-        rule /\b(#{functions_numeric.join('|')})(?=\s*[:(])/,  Name::Function, :function
+        mixin :function_call
 
         rule /\b(?:#{keywords.join('|')})\b/, Keyword
 
@@ -132,6 +130,12 @@ module Rouge
         rule /\b[A-Z][^.:\n"]+:/,       Keyword, :comma_list
         rule /\b[A-Z][^\n]+/,           Keyword
         rule /(\.{3}|\)|\(|,|\$)/,      Text
+      end
+
+      state :function_call do
+        rule /\b(#{functions_string.join('|')})\$(?=\s*[:(])/, Name::Function, :function
+        rule /\b(#{functions_array.join('|')})#(?=\s*[:(])/,   Name::Function, :function
+        rule /\b(#{functions_numeric.join('|')})(?=\s*[:(])/,  Name::Function, :function
       end
 
       state :old_arguments do
@@ -208,6 +212,7 @@ module Rouge
         rule /"/,      Literal::String, :string
         rule /\b(if|then|else|fi|endif)\b/, Keyword
 
+        mixin :function_call
         mixin :variable_name
         mixin :operator
         mixin :number

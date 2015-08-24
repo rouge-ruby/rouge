@@ -16,8 +16,8 @@ module Rouge
 
       keywords = %w(
         if then else elsif elif endif fi for from to endfor endproc while
-        endwhile repeat until select plus minus demo assert asserterror
-        stopwatch nocheck nowarn noprogress editor endeditor clearinfo
+        endwhile repeat until select plus minus demo assert stopwatch 
+        nocheck nowarn noprogress editor endeditor clearinfo
       )
 
       functions_string = %w(
@@ -94,7 +94,11 @@ module Rouge
       )
 
       state :root do
-        rule /#.*?$/,         Comment::Single
+        rule /(\s+)(#.*?$)/ do
+          groups Text, Comment::Single
+        end
+
+        rule /^#.*?$/,        Comment::Single
         rule /;[^\n]*/,       Comment::Single
         rule /\s+/,           Text
         rule /\bprocedure\b/, Keyword,        :procedure_definition
@@ -110,7 +114,7 @@ module Rouge
           push :old_form
         end
 
-        rule /(print(?:line|tab)?|echo|exit|pause|send(?:praat|socket)|include|execute|system(?:_nocheck)?)(\s+)/ do
+        rule /(print(?:line|tab)?|echo|exit|asserterror|pause|send(?:praat|socket)|include|execute|system(?:_nocheck)?)(\s+)/ do
           groups Keyword, Text
           push :string_unquoted
         end
@@ -230,6 +234,8 @@ module Rouge
         mixin :operator
         mixin :number
 
+        rule /\b_/, Generic::Error
+
         rule /\b(?:#{variables_string.join('|')})\$/,  Name::Variable::Global
         rule /\b(?:#{variables_numeric.join('|')})\b/, Name::Variable::Global
 
@@ -241,7 +247,7 @@ module Rouge
           push :string_interpolated
         end
 
-        rule /\.?[a-z][a-zA-Z0-9_.]*\$?/, Text
+        rule /\.?[a-z][a-zA-Z0-9_.]*(\$|#)?/, Text
         rule /\[/, Text, :comma_list
         rule /'(?=.*')/, Literal::String::Interpol, :string_interpolated
         rule /\]/, Text, :pop!
@@ -270,7 +276,7 @@ module Rouge
         rule /\s/,         Text
         rule /'(?=.*')/,   Literal::String::Interpol, :string_interpolated
         rule /'/,          Literal::String
-        rule /.+/,         Literal::String
+        rule /[^'\n]+/,    Literal::String
       end
 
       state :string do
@@ -305,7 +311,7 @@ module Rouge
         end
 
         rule /(word)([ \t]+\S+[ \t]*)(\S+)?([ \t]+.*)?/ do
-          groups Keyword, Text, Literal::String, Text
+          groups Keyword, Text, Literal::String, Generic::Error
         end
 
         rule /(boolean)(\s+\S+\s*)(0|1|"?(?:yes|no)"?)/ do

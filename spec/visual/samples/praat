@@ -1,4 +1,5 @@
 form Highlighter test
+  sentence Blank
   sentence My_sentence This should all be a string
   text My_text This should also all be a string
   word My_word Only the first word is a string, the rest is invalid
@@ -30,6 +31,9 @@ a$ = preferencesDirectory$
 a$ = defaultDirectory$
 nocheck selectObject: undefined
 
+# Arrays are not comments
+a# = zero# (5, 6)
+
 # if-block with built-in variables
 if windows
   # We are on Windows
@@ -58,7 +62,6 @@ if praatVersion >= 5364
   @newStyle: "quoted", 2, "quoted string"
 endif
 
-
 # inline if with inline comment
 var = if macintosh = 1 then 0 else 1 fi ; This is an inline comment
 
@@ -66,6 +69,7 @@ var = if macintosh = 1 then 0 else 1 fi ; This is an inline comment
 # and paren-style function calls and variable interpolation
 n = numberOfSelected("Sound")
 for i from newStyle.local to n
+  name = selected$(extractWord$(selected$(), " "))
   sound'i' = selected("Sound", i)
   sound[i] = sound'i'
 endfor
@@ -141,6 +145,7 @@ for i from 1 to n
 endfor
 
 # An old-style sendpraat block
+# All these lines should be a string!
 sendpraat Praat
   ...'newline$' Create Sound as pure tone... "tone" 1 0 0.4 44100 440 0.2 0.01 0.01
   ...'newline$' Play
@@ -204,7 +209,12 @@ procedure newStyle (.str1$, .num, .str2$)
 endproc
 
 # New-style procedure declaration with colon
-procedure newStyle: .str1$, .num, .str2$
+procedure _new_style: .str1$, .num, .str2$
   # Command with "local" variable
-  newStyle.local = Get total duration
+  # Initial underscores in variables not allowed (unless interpolated)
+  _new_style.local = Get total duration
 endproc
+
+asserterror Unknown symbol:'newline$'« _
+assert '_new_style.local'
+

@@ -22,9 +22,9 @@ module Rouge
 
       functions_string = %w(
         backslashTrigraphsToUnicode chooseDirectory chooseReadFile
-        chooseWriteFile demoKey do environment extractLine extractWord fixed
-        info left mid percent readFile replace replace_regex right selected
-        string unicodeToBackslashTrigraphs
+        chooseWriteFile date demoKey do environment extractLine extractWord
+        fixed info left mid percent readFile replace replace_regex right
+        selected string unicodeToBackslashTrigraphs
       )
 
       functions_numeric = %w(
@@ -32,7 +32,7 @@ module Rouge
         arcsin arcsinh arctan arctan2 arctanh barkToHertz beginPause
         beginSendPraat besselI besselK beta beta2 binomialP binomialQ boolean
         ceiling chiSquareP chiSquareQ choice comment cos cosh createDirectory
-        date$ deleteFile demoClicked demoClickedIn demoCommandKeyPressed
+        deleteFile demoClicked demoClickedIn demoCommandKeyPressed
         demoExtraControlKeyPressed demoInput demoKeyPressed
         demoOptionKeyPressed demoShiftKeyPressed demoShow demoWaitForInput
         demoWindowTitle demoX demoY differenceLimensToPhon do editor endPause
@@ -217,6 +217,7 @@ module Rouge
       end
 
       state :number do
+        rule /\n/, Text, :pop!
         rule /\b\d+(\.\d*)?([eE][-+]?\d+)?%?/, Literal::Number
       end
 
@@ -228,11 +229,13 @@ module Rouge
         rule /\b(?:#{variables_numeric.join('|')})\b/, Name::Variable::Global
 
         rule /\bObject_\w+/, Name::Builtin, :object_attributes
+
         rule /\b(Object_)(')/ do
           groups Name::Builtin, Literal::String::Interpol
           push :object_attributes
           push :string_interpolated
         end
+
         rule /\.?[a-z][a-zA-Z0-9_.]*\$?/, Text
         rule /\[/, Text, :comma_list
         rule /'(?=.*')/, Literal::String::Interpol, :string_interpolated
@@ -276,12 +279,14 @@ module Rouge
       state :old_form do
         rule /\s+/, Text
 
-        rule /(optionmenu|choice)(\s+\S+:\s+)([0-9]+)/ do
-          groups Keyword, Text, Literal::Number
+        rule /(optionmenu|choice)(\s+\S+:\s+)/ do
+          groups Keyword, Text
+          push :number
         end
 
-        rule /(option|button)(\s+)([+-]?\d+(?:(?:\.\d*)?(?:[eE][+-]?\d+)?)?\b)/ do
-          groups Keyword, Text, Literal::Number
+        rule /(option|button)(\s+)/ do
+          groups Keyword, Text
+          push :number
         end
 
         rule /(option|button)(\s+)/ do
@@ -302,12 +307,14 @@ module Rouge
           groups Keyword, Text, Name::Variable
         end
 
-        rule /(real|natural|positive|integer)(\s+\S+\s*)([+-]?\d+(?:(?:\.\d*)?(?:[eE][+-]?\d+)?)?\b)/ do
-          groups Keyword, Text, Literal::Number
+        rule /(real|natural|positive|integer)(\s+\S+\s*)([+-]?)/ do
+          groups Keyword, Text, Operator
+          push :number
         end
 
-        rule /(comment)(\s+)(.*)/ do
-          groups Keyword, Text, Literal::String
+        rule /(comment)(\s+)/ do
+          groups Keyword, Text
+          push :string_unquoted
         end
 
         rule /\bendform\b/, Keyword, :pop!

@@ -16,11 +16,11 @@ endfor
 if total_objects
   selectObject: new[1]
   for i from 2 to total_objects
-    plusObject: new[i] = selected()
+    plusObject: new[i]
   endfor
 endif
 
 procedure copy ()
-  .name$ = extractWord$(selected$, " ")
+  .name$ = extractWord$(selected$(), " ")
   Copy: prefix$ + .name$ + suffix$
 endproc

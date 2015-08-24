@@ -208,8 +208,8 @@ module Rouge
           pop! unless state? :root
         end
 
-        rule /\s+/,    Text
-        rule /"/,      Literal::String, :string
+        rule /\s+/, Text
+        rule /"/,   Literal::String, :string
         rule /\b(if|then|else|fi|endif)\b/, Keyword
 
         mixin :function_call
@@ -217,7 +217,7 @@ module Rouge
         mixin :operator
         mixin :number
 
-        rule /,/,      Text, :comma_list
+        rule /,/, Text, :comma_list
         rule /(\)|\]|^)/, Text, :pop!
       end
 
@@ -284,27 +284,27 @@ module Rouge
       state :old_form do
         rule /\s+/, Text
 
-        rule /(optionmenu|choice)(\s+\S+:\s+)/ do
+        rule /(optionmenu|choice)([ \t]+\S+:[ \t]+)/ do
           groups Keyword, Text
           push :number
         end
 
-        rule /(option|button)(\s+)/ do
+        rule /(option|button)([ \t]+)/ do
           groups Keyword, Text
           push :number
         end
 
-        rule /(option|button)(\s+)/ do
+        rule /(option|button)([ \t]+)/ do
           groups Keyword, Text
           push :string_unquoted
         end
 
-        rule /(sentence|text)(\s+\S+)/ do
+        rule /(sentence|text)([ \t]+\S+)/ do
           groups Keyword, Text
           push :string_unquoted
         end
 
-        rule /(word)(\s+\S+\s*)(\S+)?(\s.*)?/ do
+        rule /(word)([ \t]+\S+[ \t]*)(\S+)?([ \t]+.*)?/ do
           groups Keyword, Text, Literal::String, Text
         end
 
@@ -312,7 +312,7 @@ module Rouge
           groups Keyword, Text, Name::Variable
         end
 
-        rule /(real|natural|positive|integer)(\s+\S+\s*)([+-]?)/ do
+        rule /(real|natural|positive|integer)([ \t]+\S+[ \t]*)([+-]?)/ do
           groups Keyword, Text, Operator
           push :number
         end
@@ -327,7 +327,7 @@ module Rouge
 
       state :operator do
         rule /([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/, Operator
-        rule /\b(and|or|not|div|mod)\b/, Operator::Word
+        rule /\b(and|or|not|div|mod)\b/,          Operator::Word
       end
     end
   end

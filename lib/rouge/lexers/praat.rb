@@ -239,9 +239,9 @@ module Rouge
         rule /\b(?:#{variables_string.join('|')})\$/,  Name::Variable::Global
         rule /\b(?:#{variables_numeric.join('|')})\b/, Name::Variable::Global
 
-        rule /\bObject_\w+/, Name::Builtin, :object_attributes
+        rule /\b(Object|#{objects.join('|')})_\w+/, Name::Builtin, :object_attributes
 
-        rule /\b(Object_)(')/ do
+        rule /\b((?:Object|#{objects.join('|')})_)(')/ do
           groups Name::Builtin, Literal::String::Interpol
           push :object_attributes
           push :string_interpolated

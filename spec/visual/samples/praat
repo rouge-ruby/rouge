@@ -47,9 +47,10 @@ string$ = "Strings can be 'interpolated'"
 string$ = "But don't interpolate everything!"
 
 rows   = Object_'table'.nrow
-value$ = Object_'table'$[25, "f0"]
-fixed  = Object_10.xmin
+value$ = Table_'table'$[25, "f0"]
+fixed  = Sound_10.xmin
 fixed  = Object_foo.xmin
+fixed  = Procrustes_foo.nx
 
 # old-style procedure call
 call oldStyle "quoted" 2 unquoted string

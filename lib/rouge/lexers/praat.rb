@@ -206,9 +206,7 @@ module Rouge
 
         rule /\s*(\)|\]|\n)/ do
           token Text
-          while state? :comma_list
-            pop!
-          end
+          pop!
           pop! unless state? :root
         end
 
@@ -221,7 +219,7 @@ module Rouge
         mixin :operator
         mixin :number
 
-        rule /,/, Text, :comma_list
+        rule /,/, Text
       end
 
       state :number do
@@ -235,8 +233,8 @@ module Rouge
 
         rule /\b_/, Generic::Error
 
-        rule /\b(?:#{variables_string.join('|')})\$/,  Name::Variable::Global
-        rule /\b(?:#{variables_numeric.join('|')})\b/, Name::Variable::Global
+        rule /\b(?:#{variables_string.join('|')})\$/,  Name::Builtin
+        rule /\b(?:#{variables_numeric.join('|')})\b/, Name::Builtin
 
         rule /\b(Object|#{objects.join('|')})_\w+/, Name::Builtin, :object_attributes
 

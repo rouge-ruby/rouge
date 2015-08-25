@@ -202,9 +202,9 @@ module Rouge
       end
 
       state :comma_list do
-        rule /\n\s*\.{3}/, Text
+        rule /\s*\n\s*\.{3}/, Text
 
-        rule /\n/ do
+        rule /\s*(\)|\]|\n)/ do
           token Text
           while state? :comma_list
             pop!
@@ -222,7 +222,6 @@ module Rouge
         mixin :number
 
         rule /,/, Text, :comma_list
-        rule /(\)|\]|^)/, Text, :pop!
       end
 
       state :number do

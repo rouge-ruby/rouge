@@ -122,7 +122,8 @@ for i from 1 to n
     ...f0 f1 f2 f3 " +
     ..."duration response"
 
-  removeObject: pitch, table
+  # Function call with trailing space
+  removeObject: pitch, table 
 
   # Picture window commands
   selectObject: sound

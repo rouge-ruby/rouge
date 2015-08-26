@@ -133,7 +133,7 @@ module Rouge
         rule /(\b[A-Z][^.:\n"]+\.{3})/, Keyword, :old_arguments
         rule /\b[A-Z][^.:\n"]+:/,       Keyword, :comma_list
         rule /\b[A-Z][^\n]+/,           Keyword
-        rule /(\.{3}|\)|\(|,|\$)/,      Text
+        rule /(\.{3}|[)(,\$])/,         Punctuation
       end
 
       state :function_call do
@@ -163,25 +163,25 @@ module Rouge
         rule /\s+/, Text
 
         rule /:/ do
-          token Text
+          token Punctuation
           push :comma_list
         end
 
         rule /\s*\(/ do
-          token Text
+          token Punctuation
           pop!
           push :comma_list
         end
 
-        rule /\)/, Text, :pop!
+#         rule /\)/, Punctuation, :pop!
       end
 
       state :procedure_call do
         rule /\s+/, Text
 
         rule /([\w.]+)(:|\s*\()/ do
-          groups Name::Function, Text
-          pop!
+          groups Name::Function, Punctuation
+          push :comma_list
         end
 
         rule /([\w.]+)/, Name::Function, :old_arguments
@@ -202,10 +202,12 @@ module Rouge
       end
 
       state :comma_list do
-        rule /\s*\n\s*\.{3}/, Text
+        rule /(\s*\n\s*)(\.{3})/ do
+          groups Text, Punctuation
+        end
 
         rule /\s*(\)|\]|\n)/ do
-          token Text
+          token Punctuation
           pop!
           pop! unless state? :root
         end
@@ -219,7 +221,7 @@ module Rouge
         mixin :operator
         mixin :number
 
-        rule /,/, Text
+        rule /,/, Punctuation
       end
 
       state :number do
@@ -245,19 +247,19 @@ module Rouge
         end
 
         rule /\.?[a-z][a-zA-Z0-9_.]*(\$|#)?/, Text
-        rule /\[/, Text, :comma_list
+        rule /\[/, Punctuation, :comma_list
         rule /'(?=.*')/, Literal::String::Interpol, :string_interpolated
-        rule /\]/, Text, :pop!
+        rule /\]/, Punctuation, :pop!
       end
 
       state :object_attributes do
         rule /\.?(n(col|row)|[xy]min|[xy]max|[nd][xy])\b/, Name::Builtin, :pop!
         rule /(\.?(?:col|row)\$)(\[)/ do
-          groups Name::Builtin, Text
+          groups Name::Builtin, Punctuation
           push :variable_name
         end
         rule /(\$?)(\[)/ do
-          groups Name::Builtin, Text
+          groups Name::Builtin, Punctuation
           push :comma_list
         end
       end
@@ -268,7 +270,7 @@ module Rouge
       end
 
       state :string_unquoted do
-        rule /\n\s*\.{3}/, Text
+        rule /\n\s*\.{3}/, Punctuation
         rule /\n/,         Text, :pop!
         rule /\s/,         Text
         rule /'(?=.*')/,   Literal::String::Interpol, :string_interpolated
@@ -277,7 +279,7 @@ module Rouge
       end
 
       state :string do
-        rule /\n\s*\.{3}/, Text
+        rule /\n\s*\.{3}/, Punctuation
         rule /"/,          Literal::String,           :pop!
         rule /'(?=.*')/,   Literal::String::Interpol, :string_interpolated
         rule /'/,          Literal::String

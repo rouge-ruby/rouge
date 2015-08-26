@@ -130,10 +130,17 @@ module Rouge
 
         rule /\b(?:#{objects.join('|')})(?=\s+\S+\n)/, Name::Class, :string_unquoted
 
-        rule /(\b[A-Z][^.:\n"]+\.{3})/, Keyword, :old_arguments
-        rule /\b[A-Z][^.:\n"]+:/,       Keyword, :comma_list
-        rule /\b[A-Z][^\n]+/,           Keyword
-        rule /(\.{3}|[)(,\$])/,         Punctuation
+        rule /\b(?=[A-Z])/, Text, :command
+        rule /(\.{3}|[)(,\$])/, Punctuation
+        rule /./, Generic::Error
+      end
+
+      state :command do
+        rule /( ?[\w()-]+ ?)/, Keyword
+        rule /'(?=.*')/,  Literal::String::Interpol, :string_interpolated
+        rule /\.{3}/,     Keyword, :old_arguments
+        rule /:/,         Keyword, :comma_list
+        rule /[\s\n]/,    Text, :pop!
       end
 
       state :function_call do
@@ -149,14 +156,12 @@ module Rouge
           pop! unless state? :root
         end
 
-        mixin :variable_name
+        mixin :function_call
         mixin :operator
         mixin :number
 
-        rule /"/,     Literal::String, :string
-        rule /^/,     Literal::String, :pop!
-        rule /[A-Z]/, Text
-        rule /\s/,    Text
+        rule /"/, Literal::String, :string
+        rule /[^\n]/, Text
       end
 
       state :function do
@@ -172,8 +177,6 @@ module Rouge
           pop!
           push :comma_list
         end
-
-#         rule /\)/, Punctuation, :pop!
       end
 
       state :procedure_call do
@@ -233,8 +236,6 @@ module Rouge
         mixin :operator
         mixin :number
 
-        rule /\b_/, Generic::Error
-
         rule /\b(?:#{variables_string.join('|')})\$/,  Name::Builtin
         rule /\b(?:#{variables_numeric.join('|')})\b/, Name::Builtin
 
@@ -247,9 +248,8 @@ module Rouge
         end
 
         rule /\.?[a-z][a-zA-Z0-9_.]*(\$|#)?/, Text
-        rule /\[/, Punctuation, :comma_list
+        rule /[\[\]]/, Punctuation
         rule /'(?=.*')/, Literal::String::Interpol, :string_interpolated
-        rule /\]/, Punctuation, :pop!
       end
 
       state :object_attributes do
@@ -265,7 +265,7 @@ module Rouge
       end
 
       state :string_interpolated do
-        rule /\.?[_a-z][a-zA-Z0-9_.]*(?:\$|#|:[0-9]+)?/, Literal::String::Interpol
+        rule /\.?[_a-z][a-zA-Z0-9_.]*(?:[\$#]?(?:\[[a-zA-Z0-9,]+\])?|:[0-9]+)?/, Literal::String::Interpol
         rule /'/, Literal::String::Interpol, :pop!
       end
 
@@ -331,6 +331,7 @@ module Rouge
       end
 
       state :operator do
+        # This rule incorrectly matches === or +++++, which are not operators
         rule /([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/, Operator
         rule /\b(and|or|not|div|mod)\b/,          Operator::Word
       end

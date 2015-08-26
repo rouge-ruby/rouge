@@ -33,6 +33,12 @@ nocheck selectObject: undefined
 
 # Arrays are not comments
 a# = zero# (5, 6)
+a [3], 5 = 7
+printline 'a[3,5]', 'a[3]'
+a [1] = 2
+b [a [1]] = 3
+assert b [a [1]] = 3
+printline 'b[2]'
 
 # if-block with built-in variables
 if windows
@@ -45,6 +51,11 @@ endif
 
 string$ = "Strings can be 'interpolated'"
 string$ = "But don't interpolate everything!"
+
+Text... 1 Right 0.2 Half many----hyphens
+Text... 1 Right -0.4 Bottom aحبيبa
+Text... 1 Right -0.6 Bottom 日本
+Draw circle (mm)... 0.5 0.5 i
 
 rows   = Object_'table'.nrow
 value$ = Table_'table'$[25, "f0"]
@@ -214,6 +225,11 @@ endproc
 procedure newStyle (.str1$, .num, .str2$)
   # Command with "local" variable
   .local = Get total duration
+  .local = Get 'some' duration
+  .local = Get 'some[1]' value... hello 10 p[i]
+  .local = Get 'some[1,3]' value: "hello", 10, 'p[i]'
+  .local = Get 'some$' duration
+  .local = Get 'some$[1]' duration
 endproc
 
 # New-style procedure declaration with colon

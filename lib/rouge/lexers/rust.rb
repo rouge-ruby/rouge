@@ -7,8 +7,7 @@ module Rouge
       desc 'The Rust programming language (rust-lang.org)'
       tag 'rust'
       aliases 'rs'
-      # TODO: *.rc conflicts with the rc shell...
-      filenames '*.rs', '*.rc'
+      filenames '*.rs'
       mimetypes 'text/x-rust'
 
       def self.analyze_text(text)

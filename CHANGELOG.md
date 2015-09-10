@@ -12,7 +12,6 @@
   * new lexer: praat (thanks @jjatria)
   * rust: stop recognizing `*.rc` (thanks @maximd)
   * matlab: correctly highlight `'` (thanks @miicha)
-  * common-lis
 
 ## version 1.9.1: 2015-07-13
 

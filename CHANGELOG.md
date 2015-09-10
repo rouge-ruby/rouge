@@ -1,3 +1,7 @@
+## version 1.10.1: 2015-09-10
+
+  * diff: fix deleted lines which were not being highlighted (thanks @DouweM)
+
 ## version 1.10.0: 2015-09-10
   * fix warnings on files being loaded multiple times
   * swift: (thanks @radex)

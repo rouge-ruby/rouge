@@ -2,6 +2,6 @@
 
 module Rouge
   def self.version
-    "1.10.0"
+    "1.10.1"
   end
 end

@@ -1,3 +1,19 @@
+## version 1.10.0: 2015-09-10
+  * fix warnings on files being loaded multiple times
+  * swift: (thanks @radex)
+    - new keywords
+    - support all `@`-prefixed attributes
+    - add support for `try!` and `#available(...)`
+  * bugfix: Properly manage `#style_for` precedence for terminal and inline formatters (thanks @mojavelinux)
+  * visual basic: recognize `*.vb` files (thanks @naotaco)
+  * common-lisp:
+    - add `elisp` as an alias (todo: make a real elisp lexer) (thanks @tejasbubane)
+    - bugfix: fix crash on array and structure literals
+  * new lexer: praat (thanks @jjatria)
+  * rust: stop recognizing `*.rc` (thanks @maximd)
+  * matlab: correctly highlight `'` (thanks @miicha)
+  * common-lis
+
 ## version 1.9.1: 2015-07-13
 
   * new lexer: powershell (thanks @aaroneg!)

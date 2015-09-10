@@ -433,11 +433,9 @@ module Rouge
   end
 
   module Lexers
-    def self.load_const(const_name, relpath)
-      return if const_defined?(const_name)
-
+    def self.require_lexer(relpath)
       root = Pathname.new(__FILE__).dirname.join('lexers')
-      load root.join(relpath)
+      require root.join(relpath)
     end
   end
 end

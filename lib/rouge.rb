@@ -40,7 +40,7 @@ load load_dir.join('rouge/lexer.rb')
 load load_dir.join('rouge/regex_lexer.rb')
 load load_dir.join('rouge/template_lexer.rb')
 
-Dir.glob(load_dir.join('rouge/lexers/*.rb')).each { |f| load f }
+Dir.glob(load_dir.join('rouge/lexers/*.rb')).each { |f| require f }
 
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')

@@ -1202,3 +1202,5 @@ Henry Baker:
 
 (unless (clos::funcallable-instance-p #'clos::class-name)
   (fmakunbound 'clos::class-name))
+
+"CONSP" XXX: (SINGLE-FLOAT-VALUE #.ext::single-float-negative-infinity #S(C::VV :EXT:LOCATION 0 :C::USED-P NIL :C::PERMANENT-P T :C::VALUE #.ext::single-float-negative-infinity))

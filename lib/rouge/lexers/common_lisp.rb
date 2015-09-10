@@ -270,7 +270,7 @@ module Rouge
 
         # arrays and structures
         rule /(#(?:\d+a|s))(\()/i do
-          groups Literal::Other, Punctuation
+          groups Literal::String::Other, Punctuation
           push :root
         end
 

@@ -29,29 +29,29 @@ module Rouge
 end
 
 load_dir = Pathname.new(__FILE__).dirname
-load load_dir.join('rouge/version.rb')
+require load_dir.join('rouge/version.rb')
 
-load load_dir.join('rouge/util.rb')
+require load_dir.join('rouge/util.rb')
 
-load load_dir.join('rouge/text_analyzer.rb')
-load load_dir.join('rouge/token.rb')
+require load_dir.join('rouge/text_analyzer.rb')
+require load_dir.join('rouge/token.rb')
 
-load load_dir.join('rouge/lexer.rb')
-load load_dir.join('rouge/regex_lexer.rb')
-load load_dir.join('rouge/template_lexer.rb')
+require load_dir.join('rouge/lexer.rb')
+require load_dir.join('rouge/regex_lexer.rb')
+require load_dir.join('rouge/template_lexer.rb')
 
-Dir.glob(load_dir.join('rouge/lexers/*.rb')).each { |f| load f }
+Dir.glob(load_dir.join('rouge/lexers/*.rb')).each { |f| require f }
 
-load load_dir.join('rouge/formatter.rb')
-load load_dir.join('rouge/formatters/html.rb')
-load load_dir.join('rouge/formatters/terminal256.rb')
-load load_dir.join('rouge/formatters/null.rb')
+require load_dir.join('rouge/formatter.rb')
+require load_dir.join('rouge/formatters/html.rb')
+require load_dir.join('rouge/formatters/terminal256.rb')
+require load_dir.join('rouge/formatters/null.rb')
 
-load load_dir.join('rouge/theme.rb')
-load load_dir.join('rouge/themes/thankful_eyes.rb')
-load load_dir.join('rouge/themes/colorful.rb')
-load load_dir.join('rouge/themes/base16.rb')
-load load_dir.join('rouge/themes/github.rb')
-load load_dir.join('rouge/themes/monokai.rb')
-load load_dir.join('rouge/themes/molokai.rb')
-load load_dir.join('rouge/themes/monokai_sublime.rb')
+require load_dir.join('rouge/theme.rb')
+require load_dir.join('rouge/themes/thankful_eyes.rb')
+require load_dir.join('rouge/themes/colorful.rb')
+require load_dir.join('rouge/themes/base16.rb')
+require load_dir.join('rouge/themes/github.rb')
+require load_dir.join('rouge/themes/monokai.rb')
+require load_dir.join('rouge/themes/molokai.rb')
+require load_dir.join('rouge/themes/monokai_sublime.rb')

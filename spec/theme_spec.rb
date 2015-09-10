@@ -6,8 +6,8 @@ describe Rouge::Theme do
   end
 
   class MyTheme < Rouge::CSSTheme
-    style Literal::String, :bold => true
-    style Literal::String::Backtick, :italic => true
+    style Literal::String, :fg => '#003366', :bold => true
+    style Literal::String::Backtick, :fg => '#555555', :italic => true
   end
 
   let(:theme) { MyTheme.new }
@@ -35,12 +35,17 @@ describe Rouge::Theme do
   end
 
   it 'fetches a style for a token' do
-    bold = theme.style_for(Token['Literal.String'])
-    assert { bold == { :bold => true } }
+    style = theme.style_for(Rouge::Token['Literal.String'])
+    assert { style == { :fg => '#003366', :bold => true } }
   end
 
   it 'fetches a the closest style for a token' do
-    bold = theme.style_for(Token['Literal.String.Double'])
-    assert { bold == { :bold => true } }
+    style = theme.style_for(Rouge::Token['Literal.String.Backtick'])
+    assert { style == { :fg => '#555555', :italic => true } }
+  end
+
+  it 'fetches style from ancestor token when no style is defined' do
+    style = theme.style_for(Rouge::Token['Literal.String.Char'])
+    assert { style == { :fg => '#003366', :bold => true } }
   end
 end

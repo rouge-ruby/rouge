@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*- #
 
+require_relative './javascript'
+
 module Rouge
   module Lexers
-    load_const :Javascript, 'javascript.rb'
     class Qml < Javascript
       title "QML"
       desc 'QML, a UI markup language'

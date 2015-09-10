@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*- #
+require_relative './shell'
 
 module Rouge
   module Lexers
-    load_const :Shell, 'shell.rb'
-
     class Powershell < Shell
       title 'powershell'
       desc 'powershell'

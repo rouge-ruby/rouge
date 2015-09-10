@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*- #
 
+require_relative './c'
+
 module Rouge
   module Lexers
-    load_const :C, 'c.rb'
-    
     # This file defines the GLSL language lexer to the Rouge
     # syntax highlighter.
     #

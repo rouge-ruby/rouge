@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*- #
 
+require_relative './lua'
+
 module Rouge
   module Lexers
-    load_const :Lua, 'lua.rb'
-
     class Moonscript < RegexLexer
       title "MoonScript"
       desc "Moonscript (http://www.moonscript.org)"

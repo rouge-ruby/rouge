@@ -6,7 +6,7 @@ module Rouge
       title "Common Lisp"
       desc "The Common Lisp variant of Lisp (common-lisp.net)"
       tag 'common_lisp'
-      aliases 'cl', 'common-lisp'
+      aliases 'cl', 'common-lisp', 'elisp', 'emacs-lisp'
 
       filenames '*.cl', '*.lisp', '*.el' # used for Elisp too
       mimetypes 'text/x-common-lisp'

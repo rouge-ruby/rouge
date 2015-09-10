@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    require_lexer 'sass/common'
+    load_lexer 'sass/common.rb'
 
     class Scss < SassCommon
       title "SCSS"

@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    require_lexer 'c'
+    load_lexer 'c.rb'
 
     # This file defines the GLSL language lexer to the Rouge
     # syntax highlighter.

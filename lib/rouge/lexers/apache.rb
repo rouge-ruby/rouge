@@ -18,7 +18,7 @@ module Rouge
       @keywords = ::YAML.load(File.open(Pathname.new(__FILE__).dirname.join('apache/keywords.yml')))
 
       def name_for_token(token, type)
-        if self.class.keywords[type].bsearch { |value| token <=> value }
+        if self.class.sorted_array_include? self.class.keywords[type], token
           MAP[type]
         else
           Text
@@ -46,7 +46,7 @@ module Rouge
 
       state :section do
         # Match section arguments
-        rule /([^>]+)?(>\R?)/ do |m|
+        rule /([^>]+)?(>(?:\r\n?|\n)?)/ do |m|
           groups Literal::String::Regex, Punctuation
           pop!
         end
@@ -56,7 +56,7 @@ module Rouge
 
       state :directive do
         # Match value literals and other directive arguments
-        rule /\R/, Text, :pop!
+        rule /\r\n?|\n/, Text, :pop!
 
         mixin :whitespace
 

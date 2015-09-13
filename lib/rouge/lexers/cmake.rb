@@ -20,7 +20,7 @@ module Rouge
         :variable_reference => Name::Variable,
       }
 
-      BUILTIN_COMMANDS = %w[
+      BUILTIN_COMMANDS = Set.new %w[
         add_compile_options
         add_custom_command
         add_custom_target
@@ -124,7 +124,7 @@ module Rouge
       ]
 
       state :default do
-        rule /\R/ do
+        rule /\r\n?|\n/ do
           token STATES_MAP[state.name.to_sym]
         end
         rule /./ do
@@ -166,10 +166,10 @@ module Rouge
         rule /"/, Str::Double, :quoted_argument
 
         rule /([A-Za-z_][A-Za-z0-9_]*)(#{SPACE}*)(\()/ do |m|
-          groups BUILTIN_COMMANDS.bsearch { |value| m[1] <=> value } ? Name::Builtin : Name::Function, Text, Punctuation
+          groups BUILTIN_COMMANDS.include?(m[1]) ? Name::Builtin : Name::Function, Text, Punctuation
         end
 
-        rule /#.*\R/, Comment::Single
+        rule /#.*\r\n?|\n/, Comment::Single
 
         mixin :default
       end

@@ -9,17 +9,19 @@ module Rouge
       mimetypes 'text/x-httpd-conf', 'text/x-apache-conf'
       filenames '.htaccess', 'httpd.conf'
 
-      MAP = { :directives => Name::Class, :sections => Name::Label, :values => Literal::String::Symbol }
-
       class << self
         attr_reader :keywords
       end
       # Load Apache keywords from separate YML file
-      @keywords = ::YAML.load(File.open(Pathname.new(__FILE__).dirname.join('apache/keywords.yml')))
+      @keywords = ::YAML.load(File.open(Pathname.new(__FILE__).dirname.join('apache/keywords.yml'))).tap do |h|
+        h.each do |k,v|
+          h[k] = Set.new v
+        end
+      end
 
-      def name_for_token(token, type)
-        if self.class.sorted_array_include? self.class.keywords[type], token
-          MAP[type]
+      def name_for_token(token, kwtype, tktype)
+        if self.class.keywords[kwtype].include? token
+          tktype
         else
           Text
         end
@@ -34,12 +36,12 @@ module Rouge
         mixin :whitespace
 
         rule /(<\/?)(\w+)/ do |m|
-          groups Punctuation, name_for_token(m[2].downcase, :sections)
+          groups Punctuation, name_for_token(m[2].downcase, :sections, Name::Label)
           push :section
         end
 
         rule /\w+/ do |m|
-          token name_for_token(m[0].downcase, :directives)
+          token name_for_token(m[0].downcase, :directives, Name::Class)
           push :directive
         end
       end
@@ -61,7 +63,7 @@ module Rouge
         mixin :whitespace
 
         rule /\S+/ do |m|
-          token name_for_token(m[0], :values)
+          token name_for_token(m[0], :values, Literal::String::Symbol)
         end
       end
     end

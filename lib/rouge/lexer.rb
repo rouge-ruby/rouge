@@ -12,16 +12,6 @@ module Rouge
     include Token::Tokens
 
     class << self
-      if Array.respond_to? :bsearch # Ruby >= 2.0
-        define_method :sorted_array_include? do |array, element|
-          array.bsearch { |value| element <=> value }
-        end
-      else # Ruby < 2.0
-        define_method :sorted_array_include? do |array, element|
-          array.include? element
-        end
-      end
-
       # Lexes `stream` with the given options.  The lex is delegated to a
       # new instance.
       #

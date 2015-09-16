@@ -159,7 +159,7 @@ module Rouge
         end
         rule /#{BRACKET_OPEN}/ do |m|
           token Str::Double
-          @bracket_len = m[0].length - 1
+          @bracket_len = m[0].length
           goto :bracket_string
         end
 
@@ -169,7 +169,7 @@ module Rouge
           groups BUILTIN_COMMANDS.include?(m[1]) ? Name::Builtin : Name::Function, Text, Punctuation
         end
 
-        rule /#.*\r\n?|\n/, Comment::Single
+        rule /#.*(?:\r\n?|\n)/, Comment::Single
 
         mixin :default
       end

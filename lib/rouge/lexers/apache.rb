@@ -13,54 +13,57 @@ module Rouge
         attr_reader :keywords
       end
       # Load Apache keywords from separate YML file
-      @keywords = ::YAML.load(File.open(Pathname.new(__FILE__).dirname.join('apache/keywords.yml')))
+      @keywords = ::YAML.load(File.open(Pathname.new(__FILE__).dirname.join('apache/keywords.yml'))).tap do |h|
+        h.each do |k,v|
+          h[k] = Set.new v
+        end
+      end
 
-      def name_for_token(token)
-        if self.class.keywords[:sections].include? token
-          Name::Class
-        elsif self.class.keywords[:directives].include? token
-          Name::Label
-        elsif self.class.keywords[:values].include? token
-          Literal::String::Symbol
+      def name_for_token(token, kwtype, tktype)
+        if self.class.keywords[kwtype].include? token
+          tktype
+        else
+          Text
         end
       end
 
       state :whitespace do
         rule /\#.*?\n/, Comment
-        rule /[\s\n]+/m, Text
+        rule /\s+/m, Text
       end
-
 
       state :root do
         mixin :whitespace
 
         rule /(<\/?)(\w+)/ do |m|
-          groups Punctuation, name_for_token(m[2])
+          groups Punctuation, name_for_token(m[2].downcase, :sections, Name::Label)
           push :section
         end
 
         rule /\w+/ do |m|
-          token name_for_token(m[0])
+          token name_for_token(m[0].downcase, :directives, Name::Class)
           push :directive
         end
       end
 
       state :section do
-        mixin :whitespace
-
         # Match section arguments
-        rule /([^>]+)?(>\n)/ do |m|
+        rule /([^>]+)?(>(?:\r\n?|\n)?)/ do |m|
           groups Literal::String::Regex, Punctuation
           pop!
         end
+
+        mixin :whitespace
       end
 
       state :directive do
         # Match value literals and other directive arguments
-        rule /(\w+)*(.*?(\n|$))/ do |m|
-          token name_for_token(m[1]), m[1]
-          token Text, m[2]
-          pop!
+        rule /\r\n?|\n/, Text, :pop!
+
+        mixin :whitespace
+
+        rule /\S+/ do |m|
+          token name_for_token(m[0], :values, Literal::String::Symbol)
         end
       end
     end

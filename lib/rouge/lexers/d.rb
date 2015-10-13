@@ -29,8 +29,7 @@ module Rouge
         module new nothrow null private protected public  package pure
         scope synchronized template this throw throws typeid typename
         using virtual pragma debug delegate deprecated  typeof virtual
-        pragma debug delegatedeprecated union unittest version
-        __vector __ parameters
+        pragma debug delegate union unittest version __vector __ parameters
         ))
       end
 

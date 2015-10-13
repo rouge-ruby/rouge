@@ -14,17 +14,29 @@ module Rouge
       filenames '*.d', '*.di'
       mimetypes 'text/x-dhdr', 'text/x-dsrc'
 
+      def self.keywords_type
+        @keywords_type ||= super + Set.new(%w(
+          uint byte ubyte short ushort ulong bool cdouble cfloat creal
+        dchar immutable idouble ifloat in inout ireal ref shared __gshared
+        ))
+      end
+
       def self.keywords
         @keywords ||= super + Set.new(%w(
-          asm catch cast delete export import immutable
-          new private protected public package template this throw
-          throws typeid typename using virtual, pragma
+        abstract alias align assert auto body break catch cast
+        delete delegate export final finally foreach foreach_reverse
+        function import interface  invariant is macro mixin lazy
+        module new nothrow null private protected public  package pure
+        scope synchronized template this throw throws typeid typename
+        using virtual pragma debug delegate deprecated  typeof virtual
+        pragma debug delegatedeprecated union unittest version
+        __vector __ parameters
         ))
       end
 
       def self.reserved
         @reserved ||= super + Set.new(%w(
-          __traits
+          __traits __FILE__ __MODULE__ __LINE__ __FUNCTION__ __PRETTY_FUNCTION__
         ))
       end
 

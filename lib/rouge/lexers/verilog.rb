@@ -15,13 +15,14 @@ module Rouge
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
-      def self.keywords @keywords ||= Set.new %w( accept_on alias
-        always always_comb always_ff always_latch and assert assign
-        assume automatic before begin bind bins binsof break case
-        casex casez cell checker class clocking cmos config constraint
-        context continue cover covergroup coverpoint cross deassign
-        default defparam design disable dist do edge else end endcase
-        endchecker endclass endclocking endconfig endfunction
+      def self.keywords
+        @keywords ||= Set.new %w(
+        accept_on alias always always_comb always_ff always_latch and
+        assert assign assume automatic before begin bind bins binsof
+        break case casex casez cell checker class clocking cmos config
+        constraint context continue cover covergroup coverpoint cross
+        deassign default defparam design disable dist do edge else end
+        endcase endchecker endclass endclocking endconfig endfunction
         endgenerate endgroup endinterface endmodule endpackage
         endprimitive endprogram endproperty endspecify endsequence
         endtable endtask enum eventually expect export extends extern
@@ -46,13 +47,16 @@ module Rouge
         uwire var vectored virtual wait wait_order wand weak while
         wildcard with within wor xnor xor ) end
 
-      def self.keywords_type @keywords_type ||= Set.new %w( logic bit
-        reg wire wor wand int longint real shortint float byte char
-        unsigned signed void input output integer signed shortreal
-        realtime ref reg supply0 supply1 strong0 strong1 tri tri0 tri1
-        triand trior trireg strong static string specparam time
-        unsigned wand weak0 weak1 chandle buf bufif0 bufif1 const rand
-        randc event) end
+      def self.keywords_type
+        @keywords_type ||= Set.new %w(
+        logic bit reg wire wor wand int longint real shortint float
+        byte char unsigned signed void input output integer signed
+        shortreal realtime ref reg supply0 supply1 strong0 strong1 tri
+        tri0 tri1 triand trior trireg strong static string specparam
+        time unsigned wand weak0 weak1 chandle buf bufif0 bufif1 const
+        rand randc event
+        )
+      end
 
       def self.reserved
         @reserved ||= Set.new %w(

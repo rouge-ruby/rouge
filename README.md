@@ -209,7 +209,7 @@ Please don't submit lexers that are largely copy-pasted from other files.
 
 ## Tips
 
-I don't get paid to maintain rouge. If you've found this software useful, consider dropping a tip in the [bucket](http://www.gittip.com/jneen).
+I don't get paid to maintain rouge. If you've found this software useful, consider dropping a tip in the [bucket](http://cash.me/$jneen).
 
 ## License
 

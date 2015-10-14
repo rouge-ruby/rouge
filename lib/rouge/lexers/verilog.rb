@@ -116,8 +116,8 @@ module Rouge
         rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
         rule %r((\d+[.]\d*|[.]?\d+)e[+-]?\d+[lu]*)i, Num::Float
         rule %r(\d+e[+-]?\d+[lu]*)i, Num::Float
-        rule /[0-9]*\`h[0-9a-f]+/i, Num::Hex
-        rule /[0-9]*\`b[0-1]+/i, Num::binary
+        rule /[0-9]*`h[0-9a-f]+/i, Num::Hex
+        rule /[0-9]*`b[0-1]+/i, Num::binary
         rule /0[0-7]+/i, Num::Oct
         rule /\d/i, Num::Integer
         rule %r(\*/), Error

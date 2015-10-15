@@ -85,6 +85,16 @@ module Rouge
           push :classname
         end
 
+        rule /(yield)((?:\s|\\\s)+)/ do
+           groups Keyword, Text
+           push :raise
+        end
+
+        rule /(raise)((?:\s|\\\s)+)/ do
+           groups Keyword, Text
+           push :raise
+        end
+
         rule /(from)((?:\s|\\\s)+)/ do
           groups Keyword::Namespace, Text
           push :fromimport
@@ -139,6 +149,19 @@ module Rouge
 
       state :classname do
         rule identifier, Name::Class, :pop!
+      end
+
+      state :raise do
+        rule /from\b/, Keyword
+        rule /raise\b/, Keyword
+        rule /yield\b/, Keyword
+        rule /\n/, Text, :pop!
+        rule /;/, Punctuation, :pop!
+        mixin :root
+      end
+
+      state :yield do
+        mixin :raise
       end
 
       state :import do

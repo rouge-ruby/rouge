@@ -22,7 +22,7 @@ module Rouge
       )
 
       declarations = Set.new %w(
-        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic
+        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect
       )
 
       constants = Set.new %w(

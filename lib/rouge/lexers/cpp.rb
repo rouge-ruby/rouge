@@ -34,7 +34,7 @@ module Rouge
         ))
       end
 
-      id = /[a-zA-Z_][a-zA-Z0-9]*/
+      id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       prepend :root do
         # Offload C++ extensions, http://offload.codeplay.com/

@@ -1,0 +1,24 @@
+var Comment = React.createClass({
+  render: function() {
+    return (
+      <div className="comment">
+        <h2 className="commentAuthor">
+          {this.props.author}
+        </h2>
+        {marked(this.props.children.toString())}
+      </div>
+    );
+  }
+});
+
+var dropdown =
+  <Dropdown>
+    A dropdown list
+    <Menu>
+      <MenuItem>Do Something</MenuItem>
+      <MenuItem>Do Something Fun!</MenuItem>
+      <MenuItem>Do Something Else</MenuItem>
+    </Menu>
+  </Dropdown>;
+
+render(dropdown);

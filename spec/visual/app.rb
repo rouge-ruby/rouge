@@ -56,7 +56,7 @@ class VisualTestApp < Sinatra::Application
 
 
   get '/' do
-    @samples = SAMPLES.entries.reject { |s| s.basename.to_s =~ /^\.|~$/ }
+    @samples = SAMPLES.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
     @samples.map!(&Rouge::Lexer.method(:find))
 
     erb :index

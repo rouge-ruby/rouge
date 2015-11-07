@@ -15,8 +15,8 @@ module Rouge
       ).join('|')
 
       state :root do
-        rule /^(ONBUILD)(\s+)(#{KEYWORDS})\b/imo do |m|
-          groups Keyword, Text::Whitespace, Keyword
+        rule /^(ONBUILD)(\s+)(#{KEYWORDS})(.*)/io do |m|
+          groups Keyword, Text::Whitespace, Keyword, Str
         end
 
         rule /^(#{KEYWORDS})\b(.*)/io do |m|
@@ -25,13 +25,16 @@ module Rouge
 
         rule /#.*?$/, Comment
 
-        rule /RUN/i, Keyword
-
-        rule /(.*\\\n)*.+/ do
-          delegate Shell
-        end
+        rule /^(ONBUILD\s+)?RUN(\s+)/i, Keyword, :run
 
         rule /$\s*/m, Text
+      end
+
+      state :run do
+        rule /(.*\\\n)*.+/ do
+          delegate Shell
+          pop!
+        end
       end
     end
   end

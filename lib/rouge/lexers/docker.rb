@@ -15,11 +15,11 @@ module Rouge
       ).join('|')
 
       state :root do
-        rule /^(ONBUILD)(\s+)(#{KEYWORDS})\b/im do |m|
+        rule /^(ONBUILD)(\s+)(#{KEYWORDS})\b/imo do |m|
           groups Keyword, Text::Whitespace, Keyword
         end
 
-        rule /^(#{KEYWORDS})\b(.*)/i do |m|
+        rule /^(#{KEYWORDS})\b(.*)/io do |m|
           groups Keyword, Str
         end
 

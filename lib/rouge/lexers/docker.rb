@@ -11,7 +11,7 @@ module Rouge
       mimetypes 'text/x-dockerfile-config'
 
       KEYWORDS = %w(
-        FROM MAINTAINER CMD EXPOSE ENV ADD ENTRYPOINT VOLUME WORKDIR
+        FROM MAINTAINER RUN CMD EXPOSE ENV ADD ENTRYPOINT VOLUME WORKDIR
       ).join('|')
 
       state :root do
@@ -24,8 +24,6 @@ module Rouge
         end
 
         rule /#.*?$/, Comment
-
-        rule /RUN/i, Keyword
 
         rule /(.*\\\n)*.+/ do
           delegate Shell

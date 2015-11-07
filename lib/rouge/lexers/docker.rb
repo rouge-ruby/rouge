@@ -10,11 +10,6 @@ module Rouge
       filenames 'Dockerfile', '*.docker'
       mimetypes 'text/x-dockerfile-config'
 
-      def self.analyze_text(text)
-        return 0.8 if text =~ /\AFROM\s+.+/im
-        return 0.6 if text =~ /^MAINTAINER\s+.+/i
-      end
-
       KEYWORDS = %w(
         FROM MAINTAINER CMD EXPOSE ENV ADD ENTRYPOINT VOLUME WORKDIR
       ).join('|')

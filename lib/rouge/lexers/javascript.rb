@@ -206,7 +206,8 @@ module Rouge
       desc "JavaScript Object Notation (json.org)"
       tag 'json'
       filenames '*.json'
-      mimetypes 'application/json', 'application/vnd.api+json'
+      mimetypes 'application/json', 'application/vnd.api+json',
+                'application/hal+json'
 
       # TODO: is this too much of a performance hit?  JSON is quite simple,
       # so I'd think this wouldn't be too bad, but for large documents this

@@ -24,6 +24,7 @@ describe Rouge::Lexers::Javascript do
       assert_guess :mimetype => 'text/javascript'
       assert_guess Rouge::Lexers::JSON, :mimetype => 'application/json'
       assert_guess Rouge::Lexers::JSON, :mimetype => 'application/vnd.api+json'
+      assert_guess Rouge::Lexers::JSON, :mimetype => 'application/hal+json'
     end
 
     it 'guesses by source' do

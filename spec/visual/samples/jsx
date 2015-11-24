@@ -1,11 +1,17 @@
-var Comment = React.createClass({
+var foo = <Foo><Bar a=z><Foo>{x}</Foo></Bar></Foo>;
+var bar = <Bar attr={this.foo}/>;
+var baz = <div>The strongest is {this.props.scores[0]}</div>
+
+var ComplicatedElement = React.createClass({
   render: function() {
     return (
-      <div className="comment">
-        <h2 className="commentAuthor">
-          {this.props.author}
-        </h2>
-        {this.props.children}
+      <div style={this.style} onKeyDown={this.handler}>
+        {this.renderSomething()}
+        <Elt1 className="my-class"
+          style={{display: this.props.ok ? 'block' : 'none'}}
+          role="presentation"
+        />
+        {true && !__GLOBAL__ && <Elt2/>}
       </div>
     );
   }

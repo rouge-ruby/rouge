@@ -1,0 +1,28 @@
+
+#*
+ There is multi-line comment.
+ see this text because the Velocity Templating Engine will ignore it.
+*#
+<h3>List</h3>
+## This is a single line comment.
+#if( $allProducts )
+<p>not found.</p>
+#else
+
+<table>
+  <tbody>
+    #foreach( $product in $allProducts )
+    <tr id="product-$product.Id" data-url="#SURL("$!product.Slug")">
+      <td>$product.Title</td>
+    </tr>
+    #end
+  </tbody>
+</table>
+#end
+#set( $monkey.Say = ["Not", $my, "fault", 10, false, null] ) ## ArrayList
+${mudSlinger}
+${customer.Address}
+${purchase.getTotal(true)}
+$title.set( "Homage to Catalonia" )
+
+

@@ -25,8 +25,15 @@ module Rouge
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
+        rule /[^\S\n]+/, Text
+        rule %r(//.*?$), Comment::Single
+        rule %r(/\*.*?\*/)m, Comment::Multiline
+        # keywords: go before method names to avoid lexing "throw new XYZ"
+        # as a method signature
+        rule /(?:#{keywords.join('|')})\b/, Keyword
+
         rule %r(
-          (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]]*\s+)+?) # return arguments
+          (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
           ([a-zA-Z_][a-zA-Z0-9_]*)                  # method name
           (\s*)(\()                                 # signature start
         )mx do |m|
@@ -37,11 +44,7 @@ module Rouge
           token Operator, m[4]
         end
 
-        rule /\s+/, Text
-        rule %r(//.*?$), Comment::Single
-        rule %r(/\*.*?\*/)m, Comment::Multiline
         rule /@#{id}/, Name::Decorator
-        rule /(?:#{keywords.join('|')})\b/, Keyword
         rule /(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule /(?:#{types.join('|')})\b/, Keyword::Type
         rule /package\b/, Keyword::Namespace
@@ -59,7 +62,7 @@ module Rouge
         rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
         rule /0x[0-9a-f]+/, Num::Hex
         rule /[0-9]+L?/, Num::Integer
-        # rule /\n/, Text
+        rule /\n/, Text
       end
 
       state :class do

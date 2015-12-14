@@ -25,7 +25,7 @@ module Rouge
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
-        rule %r(^
+        rule %r(
           (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]]*\s+)+?) # return arguments
           ([a-zA-Z_][a-zA-Z0-9_]*)                  # method name
           (\s*)(\()                                 # signature start
@@ -34,7 +34,7 @@ module Rouge
           delegate Java, m[1]
           token Name::Function, m[2]
           token Text, m[3]
-          token Punctuation, m[4]
+          token Operator, m[4]
         end
 
         rule /\s+/, Text

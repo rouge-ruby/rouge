@@ -322,6 +322,12 @@ module Rouge
       false
     end
 
+    # Restore internal stream at its state before the last token read.
+    # You can just go back before last token, not further
+    def restart!
+      @current_stream.unscan
+    end
+
     # Yield a token.
     #
     # @param tok

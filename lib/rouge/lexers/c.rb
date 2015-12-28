@@ -19,6 +19,9 @@ module Rouge
           auto break case const continue default do else enum extern
           for goto if register restricted return sizeof static struct
           switch typedef union volatile virtual while
+
+          _Alignas _Alignof _Atomic _Generic _Imaginary
+          _Noreturn _Static_assert _Thread_local
         )
       end
 
@@ -38,6 +41,8 @@ module Rouge
           int_fast64_t uint_fast8_t uint_fast16_t uint_fast32_t
           uint_fast64_t intptr_t uintptr_t intmax_t
           uintmax_t
+
+          char16_t char32_t
         )
       end
 

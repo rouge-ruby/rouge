@@ -101,8 +101,8 @@ module Rouge
 
       state :statements do
         mixin :whitespace
-        rule /L?"/, Str, :string
-        rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
+        rule /(u8|u|U|L)?"/, Str, :string
+        rule %r((u8|u|U|L)?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
         rule %r((\d+[.]\d*|[.]?\d+)e[+-]?\d+[lu]*)i, Num::Float
         rule %r(\d+e[+-]?\d+[lu]*)i, Num::Float
         rule /0x[0-9a-f]+[lu]*/i, Num::Hex

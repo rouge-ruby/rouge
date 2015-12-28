@@ -155,7 +155,7 @@ module Rouge
     # private
       def escape_sequence(token)
         @escape_sequences ||= {}
-        @escape_sequences[token.name] ||=
+        @escape_sequences[token.qualname] ||=
           EscapeSequence.new(get_style(token))
       end
 

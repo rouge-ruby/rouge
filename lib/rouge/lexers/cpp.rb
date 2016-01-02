@@ -62,7 +62,7 @@ module Rouge
         rule /0[0-7]('?[0-7])*[lu]*/i, Num::Oct
         rule /#{dq}[lu]*/i, Num::Integer
         rule /\bnullptr\b/, Name::Builtin
-        rule /(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/, Str
+        rule /(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
       end
 
       state :classname do

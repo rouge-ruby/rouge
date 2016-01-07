@@ -13,15 +13,17 @@ module Rouge
       id = /@?[_a-z]\w*/i
 
       keywords = %w(
-        absolute abstract all and and_then array as asm assembler attribute begin
-        bindable case class const constructor destructor delay div do downto else
-        end except export exports external function far file finalization finally
-        for forward goto if inc implementation import in index inherited initialization
-        inline interface interrupt is label library mod module near not object of only
-        operator or or_else otherwise packed pow private procedure program property
-        protected public published qualified record repeat resident restricted
-        segment set shl shr then to try type unit until uses value var view virtual
-        while with xor write writeln
+        absolute abstract all and and_then array as asm assembler attribute
+        begin bindable case class const constructor delay destructor div do
+        downto else end except exit export exports external far file finalization
+        finally for forward function goto if implementation import in inc index
+        inherited initialization inline interface interrupt is label library
+        message mod module near nil not object of on only operator or or_else
+        otherwise out overload override packed pascal pow private procedure program
+        property protected public published qualified raise read record register
+        repeat resident resourcestring restricted safecall segment set shl shr
+        stdcall stored string then threadvar to try type unit until uses value var
+        view virtual while with write writeln xor
       )
 
       keywords_type = %w(

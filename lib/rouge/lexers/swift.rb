@@ -98,8 +98,8 @@ module Rouge
           end
         end
         
-        rule /as[?!]?/, Keyword
-        rule /try[!]?/, Keyword
+        rule /as[?!]?(?=\s)/, Keyword
+        rule /try[!]?(?=\s)/, Keyword
 
         rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation

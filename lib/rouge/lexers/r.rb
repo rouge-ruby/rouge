@@ -25,13 +25,6 @@ module Rouge
       state :root do
         rule /#.*?\n/, Comment::Single
         rule /\s+/m, Text
-        rule /[.]?[a-zA-Z_][\w.]*/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          else
-            token Name
-          end
-        end
 
         rule /`[^`]+?`/, Name
         rule /'(\\.|.)*?'/m, Str::Single
@@ -41,6 +34,14 @@ module Rouge
         rule /\bNA(_(integer|real|complex|character)_)?\b/,
           Keyword::Constant
         rule /\b[TF]\b/, Keyword::Variable
+
+        rule /[.]?[a-zA-Z_][\w.]*/ do |m|
+          if self.class.keywords.include? m[0]
+            token Keyword
+          else
+            token Name
+          end
+        end
 
         rule /0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
         rule /[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/,

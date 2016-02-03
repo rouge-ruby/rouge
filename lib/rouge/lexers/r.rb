@@ -34,7 +34,7 @@ module Rouge
         rule /\b(NULL|Inf|TRUE|FALSE|NaN)(?!\.)\b/, Keyword::Constant
         rule /\bNA(_(integer|real|complex|character)_)?\b/,
           Keyword::Constant
-        rule /\b[TF]\b/, Keyword::Variable
+        rule /\b[TF]\b/, Name::Constant
 
         rule /%[^%]*?%/, Operator
 

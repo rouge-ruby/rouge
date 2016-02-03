@@ -35,6 +35,8 @@ module Rouge
           Keyword::Constant
         rule /\b[TF]\b/, Keyword::Variable
 
+        rule /%[^%]*?%/, Operator
+
         rule /[.]?[a-zA-Z_][\w.]*/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword

@@ -151,3 +151,12 @@ world!'
 
 ## Backtick strings
 `foo123 +!"bar'baz` <- 2 + 2
+
+## Roxygen
+
+#' A description
+#'
+#' Long description
+#' @param x the object
+#' @return A logical indicating whether \code{x == 0}
+is_zero = function (x) x == 0

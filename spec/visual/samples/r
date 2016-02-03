@@ -10,6 +10,7 @@ abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789._a <- NULL
 . <- NULL
 .. <- NULL
 ... <- NULL
+c(T, F)
 
 ## Invalid names
 0abc <- NULL

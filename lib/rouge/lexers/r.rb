@@ -14,6 +14,11 @@ module Rouge
 
       KEYWORDS = %w(if else for while repeat in next break switch function)
 
+      KEYWORD_CONSTANTS = %w(
+        NULL Inf TRUE FALSE NaN NA
+        NA_integer_ NA_real_ NA_complex_ NA_character_
+      )
+
       BUILTIN_CONSTANTS = %w(LETTERS letters month.abb month.name pi T F)
 
       def self.analyze_text(text)
@@ -29,15 +34,13 @@ module Rouge
         rule /'(\\.|.)*?'/m, Str::Single
         rule /"(\\.|.)*?"/m, Str::Double
 
-        rule /\b(NULL|Inf|TRUE|FALSE|NaN)(?!\.)\b/, Keyword::Constant
-        rule /\bNA(_(integer|real|complex|character)_)?\b/,
-          Keyword::Constant
-
         rule /%[^%]*?%/, Operator
 
         rule /[a-zA-Z.]([a-zA-Z_][\w.]*)?/ do |m|
           if KEYWORDS.include? m[0]
             token Keyword
+          elsif KEYWORD_CONSTANTS.include? m[0]
+            token Keyword::Constant
           elsif BUILTIN_CONSTANTS.include? m[0]
             token Name::Constant
           else

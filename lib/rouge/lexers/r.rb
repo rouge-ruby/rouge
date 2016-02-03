@@ -31,7 +31,7 @@ module Rouge
         rule /'(\\.|.)*?'/m, Str::Single
         rule /"(\\.|.)*?"/m, Str::Double
 
-        rule /\b(NULL|Inf|TRUE|FALSE|NaN)\b/, Keyword::Constant
+        rule /\b(NULL|Inf|TRUE|FALSE|NaN)(?!\.)\b/, Keyword::Constant
         rule /\bNA(_(integer|real|complex|character)_)?\b/,
           Keyword::Constant
         rule /\b[TF]\b/, Keyword::Variable

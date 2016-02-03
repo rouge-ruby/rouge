@@ -23,6 +23,7 @@ module Rouge
       end
 
       state :root do
+        rule /#'.*?\n/, Comment::Doc
         rule /#.*?\n/, Comment::Single
         rule /\s+/m, Text
 

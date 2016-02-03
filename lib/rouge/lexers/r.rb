@@ -49,7 +49,7 @@ module Rouge
         rule /[\[\]{}();,]/, Punctuation
 
         rule %r([-<>?*+^/!=~$@:%&|]), Operator
-        rule /[.][.][.]/, Keyword
+        rule /[.][.][.]/, Name
       end
     end
   end

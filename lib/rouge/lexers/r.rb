@@ -7,7 +7,7 @@ module Rouge
       desc 'The R statistics language (r-project.org)'
       tag 'r'
       aliases 'r', 'R', 's', 'S'
-      filenames '*.R', '.Rhistory', '.Rprofile'
+      filenames '*.R', '*.r', '.Rhistory', '.Rprofile'
       mimetypes 'text/x-r-source', 'text/x-r', 'text/x-R'
 
       mimetypes 'text/x-r', 'application/x-r'

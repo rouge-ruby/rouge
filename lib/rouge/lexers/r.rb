@@ -38,7 +38,7 @@ module Rouge
 
         rule /%[^%]*?%/, Operator
 
-        rule /[a-zA-Z.][\w.]*/ do |m|
+        rule /[a-zA-Z.]([a-zA-Z_][\w.]*)?/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           else

@@ -38,7 +38,7 @@ module Rouge
 
         rule /%[^%]*?%/, Operator
 
-        rule /[.]?[a-zA-Z_][\w.]*/ do |m|
+        rule /[a-zA-Z.][\w.]*/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           else
@@ -53,7 +53,6 @@ module Rouge
         rule /[\[\]{}();,]/, Punctuation
 
         rule %r([-<>?*+^/!=~$@:%&|]), Operator
-        rule /[.][.][.]/, Name
       end
     end
   end

@@ -159,6 +159,14 @@ world!'
 `foo123 +!"bar'baz` <- 2 + 2
 x = ` ` % % 2
 
+## Builtin names
+
+LETTERS
+letters
+month.abb
+month.name
+pi
+
 ## Roxygen
 
 #' A description

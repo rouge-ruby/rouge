@@ -33,7 +33,7 @@ module Rouge
           end
         end
 
-        rule /`.*?`/, Str::Backtick
+        rule /`.*?`/, Name
         rule /'(\\.|.)*?'/m, Str::Single
         rule /"(\\.|.)*?"/m, Str::Double
 

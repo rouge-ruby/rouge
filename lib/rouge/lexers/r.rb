@@ -23,7 +23,7 @@ module Rouge
       state :root do
         rule /#'.*?\n/, Comment::Doc
         rule /#.*?\n/, Comment::Single
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
 
         rule /`[^`]+?`/, Name
         rule /'(\\.|.)*?'/m, Str::Single

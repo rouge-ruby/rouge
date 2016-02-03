@@ -36,21 +36,21 @@ module Rouge
 
         rule /%[^%]*?%/, Operator
 
+        rule /0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
+        rule /[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/,
+          Num
+
         rule /[a-zA-Z.]([a-zA-Z_][\w.]*)?/ do |m|
           if KEYWORDS.include? m[0]
             token Keyword
           elsif KEYWORD_CONSTANTS.include? m[0]
             token Keyword::Constant
           elsif BUILTIN_CONSTANTS.include? m[0]
-            token Name::Constant
+            token Name::Builtin
           else
             token Name
           end
         end
-
-        rule /0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
-        rule /[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/,
-          Num
 
         rule /[\[\]{}();,]/, Punctuation
 

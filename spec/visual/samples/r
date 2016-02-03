@@ -42,6 +42,7 @@ NA_foo_ <- NULL
 1.23e-3
 1.23e3
 1.23e-3
+.25
 ## integer constants
 123L
 1.23L

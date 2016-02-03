@@ -151,6 +151,7 @@ world!'
 
 ## Backtick strings
 `foo123 +!"bar'baz` <- 2 + 2
+x = ` ` % % 2
 
 ## Roxygen
 

@@ -7,6 +7,9 @@
 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789._a <- NULL
 .foo_ <- NULL
 ._foo <- NULL
+. <- NULL
+.. <- NULL
+... <- NULL
 
 ## Invalid names
 0abc <- NULL

@@ -14,7 +14,7 @@ module Rouge
 
       def self.keywords
         @keywords ||= %w(
-          if else for while repeat in next break return switch function
+          if else for while repeat in next break switch function
         )
       end
 

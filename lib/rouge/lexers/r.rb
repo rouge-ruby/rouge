@@ -12,7 +12,7 @@ module Rouge
 
       mimetypes 'text/x-r', 'application/x-r'
 
-      KEYWORDS = %w(if else for while repeat in next break switch function)
+      KEYWORDS = %w(if else for while repeat in next break function)
 
       KEYWORD_CONSTANTS = %w(
         NULL Inf TRUE FALSE NaN NA

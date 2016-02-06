@@ -25,6 +25,7 @@ module Rouge
           Variables Class Instance Global Local Include
           Printing Notation Infix Arguments Hint Rewrite Immediate
           Qed Defined Opaque Transparent Existing
+          Compute Eval Print SearchAbout Search About Check
         )
       end
 
@@ -38,6 +39,7 @@ module Rouge
           f_equal refine instantiate revert simpl
           specialize generalize dependent red induction
           beta iota zeta delta exfalso autorewrite setoid_rewrite
+          compute vm_compute native_compute
         )
       end
 

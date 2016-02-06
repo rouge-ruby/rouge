@@ -18,7 +18,7 @@ module Rouge
 
       def self.coq
         @coq ||= Set.new %w(
-          Definition Theorem Lemma Remark Example Fixpoint
+          Definition Theorem Lemma Remark Example Fixpoint CoFixpoint
           Record Inductive CoInductive Corollary Goal Proof
           Ltac Require Import Export Module Section End Variable
           Context Polymorphic Monomorphic Universe Universes
@@ -31,13 +31,13 @@ module Rouge
       def self.ltac
         @ltac ||= Set.new %w(
           apply eapply auto eauto rewrite setoid_rewrite
-          with in as destruct split inversion injection
+          with in as at destruct split inversion injection
           intro intros unfold fold cbv cbn lazy subst
           clear symmetry transitivity etransitivity erewrite
           edestruct constructor econstructor eexists exists
           f_equal refine instantiate revert simpl
           specialize generalize dependent red induction
-          beta iota zeta delta
+          beta iota zeta delta exfalso autorewrite setoid_rewrite
         )
       end
 
@@ -70,6 +70,10 @@ module Rouge
         elsif self.gallina.include? x
           return Keyword::Reserved
         elsif self.ltac.include? x
+          return Keyword::Pseudo
+        elsif self.terminators.include? x
+          return Name::Exception
+        elsif self.tacticals.include? x
           return Keyword::Pseudo
         else
           return Name::Constant

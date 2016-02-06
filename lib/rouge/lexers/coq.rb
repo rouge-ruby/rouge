@@ -84,17 +84,23 @@ module Rouge
       id = /(?:[a-z][\w']*)|(?:[_a-z][\w']+)/i
       dot_id = /\.((?:[a-z][\w']*)|(?:[_a-z][\w']+))/i
       dot_space = /\.(\s+)/
-      module_type = /Module([\s]+)Type/
-      set_options = /(Set|Unset)([\s]+)(Universe|Printing|Implicit|Strict)([\s]+)(Polymorphism|All|Notations|Arguments|Universes|Implicit)([\s]*)\./
+      module_type = /Module(\s+)Type(\s+)/
+      set_options = /(Set|Unset)(\s+)(Universe|Printing|Implicit|Strict)(\s+)(Polymorphism|All|Notations|Arguments|Universes|Implicit)(\s*)\./m
 
       state :root do
         rule /[(][*](?![)])/, Comment, :comment
         rule /\s+/m, Text::Whitespace
+        rule module_type do |m|
+          token Keyword , 'Module'
+          token Text::Whitespace , m[1]
+          token Keyword , 'Type'
+          token Text::Whitespace , m[2]
+        end
         rule set_options do |m|
           token Keyword , m[1]
           i = 2
           while m[i] != ''
-            token Text , m[i]
+            token Text::Whitespace , m[i]
             token Keyword , m[i+1]
             i += 2
           end

@@ -1,0 +1,20 @@
+pro print_bottles, n
+
+    on_error, 2
+
+    print, n, format="(I0, 1X, 'bottles of beer on the wall,')"
+    print, n, format="(I0, 1X, 'bottles of beer.')"
+    print, 'Take one down, pass it around,'
+    print, n, format="(I0, 1X, 'bottles of beer on the wall.', /)"
+
+end
+
+pro bottles
+
+    compile_opt idl2
+
+    for nbottles = 99, 1, -1 do begin
+        print_bottles, nbottles
+    endfor
+
+end

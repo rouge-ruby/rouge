@@ -19,7 +19,7 @@ module Rouge
         @keywords ||= super + Set.new(%w(
           import export from as
           namespace new static private protected public
-          async await extends implements          
+          super async await extends implements          
         ))
       end
       

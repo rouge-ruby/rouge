@@ -171,5 +171,10 @@ declare module "foo" {
 
 export default class FooClass extends Bar<T> {
     constructor() {
+        super();
     }
+}
+
+async function fooAsync() {
+    let result = await barAsync();
 }

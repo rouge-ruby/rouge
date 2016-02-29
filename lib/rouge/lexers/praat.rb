@@ -16,7 +16,7 @@ module Rouge
 
       keywords = %w(
         if then else elsif elif endif fi for from to endfor endproc while
-        endwhile repeat until select plus minus demo assert stopwatch 
+        endwhile repeat until select plus minus demo assert stopwatch
         nocheck nowarn noprogress editor endeditor clearinfo
       )
 
@@ -132,51 +132,25 @@ module Rouge
 
         rule /\b(?=[A-Z])/, Text, :command
         rule /(\.{3}|[)(,\$])/, Punctuation
-        rule /./, Generic::Error
       end
 
       state :command do
         rule /( ?[\w()-]+ ?)/, Keyword
         rule /'(?=.*')/,  Literal::String::Interpol, :string_interpolated
-        rule /\.{3}/,     Keyword, :old_arguments
-        rule /:/,         Keyword, :comma_list
-        rule /[\s\n]/,    Text, :pop!
-      end
 
-      state :function_call do
-        rule /\b(#{functions_string.join('|')})\$(?=\s*[:(])/, Name::Function, :function
-        rule /\b(#{functions_array.join('|')})#(?=\s*[:(])/,   Name::Function, :function
-        rule /\b(#{functions_numeric.join('|')})(?=\s*[:(])/,  Name::Function, :function
-      end
-
-      state :old_arguments do
-        rule /\n/ do
-          token Text
+        rule /\.{3}/ do
+          token Keyword
           pop!
-          pop! unless state? :root
+          push :old_arguments
         end
-
-        mixin :function_call
-        mixin :operator
-        mixin :number
-
-        rule /"/, Literal::String, :string
-        rule /[^\n]/, Text
-      end
-
-      state :function do
-        rule /\s+/, Text
 
         rule /:/ do
-          token Punctuation
-          push :comma_list
-        end
-
-        rule /\s*\(/ do
-          token Punctuation
+          token Keyword
           pop!
           push :comma_list
         end
+
+        rule /[\s\n]/,    Text, :pop!
       end
 
       state :procedure_call do
@@ -184,10 +158,14 @@ module Rouge
 
         rule /([\w.]+)(:|\s*\()/ do
           groups Name::Function, Punctuation
-          push :comma_list
+          pop!
         end
 
-        rule /([\w.]+)/, Name::Function, :old_arguments
+        rule /([\w.]+)/ do
+          token Name::Function
+          pop!
+          push :old_arguments
+        end
       end
 
       state :procedure_definition do
@@ -204,16 +182,28 @@ module Rouge
         end
       end
 
+      state :function_call do
+        rule /\b(#{functions_string.join('|')})\$(?=\s*[:(])/, Name::Function, :function
+        rule /\b(#{functions_array.join('|')})#(?=\s*[:(])/,   Name::Function, :function
+        rule /\b(#{functions_numeric.join('|')})(?=\s*[:(])/,  Name::Function, :function
+      end
+
+      state :function do
+        rule /\s+/, Text
+
+        rule /(?::|\s*\()/ do
+          token Text
+          pop!
+          push :comma_list
+        end
+      end
+
       state :comma_list do
         rule /(\s*\n\s*)(\.{3})/ do
           groups Text, Punctuation
         end
 
-        rule /\s*(\)|\]|\n)/ do
-          token Punctuation
-          pop!
-          pop! unless state? :root
-        end
+        rule /\s*[\])\n]/, Text, :pop!
 
         rule /\s+/, Text
         rule /"/,   Literal::String, :string
@@ -224,12 +214,39 @@ module Rouge
         mixin :operator
         mixin :number
 
+        rule /[()]/, Text
         rule /,/, Punctuation
+      end
+
+      state :old_arguments do
+        rule /\n/, Text, :pop!
+
+        mixin :variable_name
+        mixin :operator
+        mixin :number
+
+        rule /"/, Literal::String, :string
+        rule /[^\n]/, Text
       end
 
       state :number do
         rule /\n/, Text, :pop!
         rule /\b\d+(\.\d*)?([eE][-+]?\d+)?%?/, Literal::Number
+      end
+
+      state :object_attributes do
+        rule /\.?(n(col|row)|[xy]min|[xy]max|[nd][xy])\b/, Name::Builtin, :pop!
+
+        rule /(\.?(?:col|row)\$)(\[)/ do
+          groups Name::Builtin, Text
+          push :variable_name
+        end
+
+        rule /(\$?)(\[)/ do
+          groups Name::Builtin, Text
+          pop!
+          push :comma_list
+        end
       end
 
       state :variable_name do
@@ -248,20 +265,14 @@ module Rouge
         end
 
         rule /\.?[a-z][a-zA-Z0-9_.]*(\$|#)?/, Text
-        rule /[\[\]]/, Punctuation
+        rule /[\[\]]/, Text, :comma_list
         rule /'(?=.*')/, Literal::String::Interpol, :string_interpolated
       end
 
-      state :object_attributes do
-        rule /\.?(n(col|row)|[xy]min|[xy]max|[nd][xy])\b/, Name::Builtin, :pop!
-        rule /(\.?(?:col|row)\$)(\[)/ do
-          groups Name::Builtin, Punctuation
-          push :variable_name
-        end
-        rule /(\$?)(\[)/ do
-          groups Name::Builtin, Punctuation
-          push :comma_list
-        end
+      state :operator do
+        # This rule incorrectly matches === or +++++, which are not operators
+        rule /([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/, Operator
+        rule /\b(and|or|not|div|mod)\b/,          Operator::Word
       end
 
       state :string_interpolated do
@@ -310,7 +321,7 @@ module Rouge
         end
 
         rule /(word)([ \t]+\S+[ \t]*)(\S+)?([ \t]+.*)?/ do
-          groups Keyword, Text, Literal::String, Generic::Error
+          groups Keyword, Text, Literal::String, Text
         end
 
         rule /(boolean)(\s+\S+\s*)(0|1|"?(?:yes|no)"?)/ do
@@ -328,12 +339,6 @@ module Rouge
         end
 
         rule /\bendform\b/, Keyword, :pop!
-      end
-
-      state :operator do
-        # This rule incorrectly matches === or +++++, which are not operators
-        rule /([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/, Operator
-        rule /\b(and|or|not|div|mod)\b/,          Operator::Word
       end
     end
   end

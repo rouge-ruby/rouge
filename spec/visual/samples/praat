@@ -82,7 +82,7 @@ var = if macintosh = 1 then 0 else 1 fi ; This is an inline comment
 n = numberOfSelected("Sound")
 for i from newStyle.local to n
   name = selected$(extractWord$(selected$(), " "))
-  sound'i' = selected("Sound", i)
+  sound'i' = selected("Sound", i+(a*b))
   sound[i] = sound'i'
 endfor
 
@@ -129,12 +129,12 @@ for i from 1 to n
 
   # New-style multi-line command call with broken strings
   table = Create Table with column names: "table", 0,
-    ..."file subject speaker 
+    ..."file subject speaker
     ...f0 f1 f2 f3 " +
     ..."duration response"
 
   # Function call with trailing space
-  removeObject: pitch, table 
+  removeObject: pitch, table
 
   # Picture window commands
   selectObject: sound
@@ -242,3 +242,5 @@ endproc
 asserterror Unknown symbol:'newline$'« _
 assert '_new_style.local'
 
+@proc: a, selected("string"), b
+# Error

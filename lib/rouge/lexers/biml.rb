@@ -1,6 +1,8 @@
 module Rouge
     module Lexers
-        class BIML < RegexLexer
+        load_lexer 'xml.rb'
+        
+        class BIML < XML
             title "BIML"
             desc "BIML, Business Intelligence Markup Language"
             tag 'biml'
@@ -10,44 +12,15 @@ module Rouge
                 return 1 if text =~ /<\s*Biml\b/
             end
             
-            # TODO: check if we can inherit partsome parts of the xml lexer?
-            state :root do
-                rule /[^<&]+/, Text
-                rule /&\S*?;/, Name::Entity
-                rule /<!\[CDATA\[.*?\]\]\>/, Comment::Preproc
-                rule /<!--/, Comment, :comment
-                rule /<\?.*?\?>/, Comment::Preproc
-                rule /<![^>]*>/, Comment::Preproc
-
+            prepend :root do
                 rule %r(<#@\s*)m, Name::Tag, :directive_tag
                 
-                rule %r(<#=\s*)m, Name::Tag, :directive_as_csharp
-                
-                # directive tags
-                rule %r(<#\s*)m, Name::Tag, :directive_as_csharp
-
-                # open tags
-                rule %r(<\s*[\w:.-]+)m, Name::Tag, :tag
-
-                # self-closing tags
-                rule %r(<\s*/\s*[\w:.-]+\s*>)m, Name::Tag
+                rule %r(<#[=]?\s*)m, Name::Tag, :directive_as_csharp
             end
-
-            state :comment do
-                rule /[^-]+/m, Comment
-                rule /-->/, Comment, :pop!
-                rule /-/, Comment
-            end
-
-            state :tag do
-                rule /\s+/m, Text
-                rule /[\w.:-]+\s*=/m, Name::Attribute, :attr
-                rule %r(/?\s*>), Name::Tag, :pop!
-            end
-
-            state :attr do
-                rule /\s+/m, Text
-                rule /".*?"|'.*?'|[^\s>]+/, Str, :pop!
+            
+            prepend :attr do
+                #TODO: how to deal with embedded <# tags inside a attribute string
+                #rule %r("<#[=]?\s*)m, Name::Tag, :directive_as_csharp
             end
             
             state :directive_as_csharp do

@@ -198,7 +198,7 @@ class MyLexer < OtherLexer
   state :your_state do ... end
 
   # prepend rules to states
-  prepand :parent_state do ... end
+  prepend :parent_state do ... end
 
   # append rules to states
   append :parent_state do ... end

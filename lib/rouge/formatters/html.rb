@@ -103,10 +103,12 @@ module Rouge
         if @highlight_lines
           formatted_lines = formatted.split("\n")
           formatted = formatted_lines.each_with_index.map { |str, i|
-            @highlight_lines.include?(i+1) ? "<span class=\"hll\">#{str}\n</span>" : "#{str}"
+            @highlight_lines.include?(i+1) ? "<span class=\"hll\">#{str}\n</span>" : "#{str}\n"
           }.join("")
 
           numbers = numbers.map { |a| @highlight_lines.include?(a) ? "<span class=\"hll\">#{a}\n</span>" : "#{a}\n" }.join("")
+        else
+          numbers = numbers.join("\n")
         end
 
         # generate a string of newline-separated line numbers for the gutter>

@@ -1,33 +1,7 @@
-import java.lang {
-    Integer
-}
- 
-"This is
- a multiline
- comment."
 shared class CeylonClass<Parameter>()
     given Parameter satisfies Object {
     
-    """Verbatim
-       string"""
     shared String name => "CeylonClass";
-    
-    see(`function run`)
-    void func() {
-        \ImyClass obj;
-        print(\iMY_CONSTANT);
-        
-        for (i in 1..2) {
-        
-        }
-    }
 } 
 
 shared void run() => CeylonClass();
-
-"Hello `world`"
-module com.acme.test "1.0.0" {
-    shared import foo.bar "1.0";
-}
-
-package com.example;

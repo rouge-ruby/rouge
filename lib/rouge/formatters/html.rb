@@ -13,6 +13,8 @@ module Rouge
       # @option opts [true/false] :line_numbers (false)
       # @option opts [Rouge::CSSTheme] :inline_theme (nil)
       # @option opts [true/false] :wrap (true)
+      # @option opts [Array] :highlight_lines (nil)
+      # @option opts [true/false] :anchors (false)
       #
       # Initialize with options.
       #
@@ -31,13 +33,20 @@ module Rouge
         @start_line = opts.fetch(:start_line, 1)
         @inline_theme = opts.fetch(:inline_theme, nil)
         @inline_theme = Theme.find(@inline_theme).new if @inline_theme.is_a? String
+        @anchors = opts.fetch(:anchors, false)
+        @highlight_lines = opts.fetch(:highlight_lines, nil)
+        if @highlight_lines
+          @highlight_lines = @highlight_lines.map { |s| s.to_i }
+        end
 
         @wrap = opts.fetch(:wrap, true)
       end
 
       # @yield the html output.
       def stream(tokens, &b)
-        if @line_numbers
+        if @anchors
+          stream_anchored(tokens, &b)
+        elsif @line_numbers
           stream_tableized(tokens, &b)
         else
           stream_untableized(tokens, &b)
@@ -48,6 +57,27 @@ module Rouge
       def stream_untableized(tokens, &b)
         yield "<pre#@css_class><code>" if @wrap
         tokens.each{ |tok, val| span(tok, val, &b) }
+        yield "</code></pre>\n" if @wrap
+      end
+
+      def stream_anchored(tokens)
+        formatted = ''
+
+        tokens.each do |tok, val|
+          span(tok, val) { |str| formatted << str }
+        end
+
+        formatted_lines = formatted.split("\n")
+        formatted = formatted_lines.each_with_index.map { |str, i|
+          if @highlight_lines && @highlight_lines.include?(i+1)
+            "<a name=\"#{@anchors}-#{i+1}\"></a><span class=\"hll\">#{str}\n</span>"
+          else
+            "<a name=\"#{@anchors}-#{i+1}\"></a>#{str}\n"
+          end
+        }.join("")
+
+        yield "<pre#@css_class><code>" if @wrap
+        yield formatted
         yield "</code></pre>\n" if @wrap
       end
 
@@ -68,9 +98,19 @@ module Rouge
           span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
         end
 
+        numbers = (@start_line..num_lines+@start_line-1).to_a
+
+        if @highlight_lines
+          formatted_lines = formatted.split("\n")
+          formatted = formatted_lines.each_with_index.map { |str, i|
+            @highlight_lines.include?(i+1) ? "<span class=\"hll\">#{str}\n</span>" : "#{str}"
+          }.join("")
+
+          numbers = numbers.map { |a| @highlight_lines.include?(a) ? "<span class=\"hll\">#{a}\n</span>" : "#{a}\n" }.join("")
+        end
+
         # generate a string of newline-separated line numbers for the gutter>
-        numbers = %<<pre class="lineno">#{(@start_line..num_lines+@start_line-1)
-          .to_a.join("\n")}</pre>>
+        numbers = %<<pre class="lineno">#{numbers}</pre>>
 
         yield "<div#@css_class>" if @wrap
         yield '<table style="border-spacing: 0"><tbody><tr>'

@@ -28,6 +28,7 @@ shared void run() => CeylonClass();
 "Hello `world`"
 module com.acme.test "1.0.0" {
     shared import foo.bar "1.0";
+    import "org.hibernate:hibernate-entitymanager" "5.0.4.Final";
 }
 
 package com.example;

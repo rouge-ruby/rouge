@@ -109,6 +109,7 @@ module Rouge
 
       state :import do
         rule %r([a-z][\w.]*), Name::Namespace, :pop!
+        rule %r("(\\\\|\\"|[^"])*"), Literal::String, :pop!
       end
       
       state :comment do

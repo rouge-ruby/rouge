@@ -12,6 +12,7 @@ describe Rouge::Lexers::Smarty do
     end
 
     it 'guesses by mimetype' do
+      assert_guess :mimetype => 'application/x-smarty'
       assert_guess :mimetype => 'text/x-smarty'
     end
   end

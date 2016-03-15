@@ -8,7 +8,17 @@ module Rouge
       tag 'smarty'
       aliases 'smarty'
       filenames '*.tpl', '*.smarty'
-      mimetypes 'application/x-smarty'
+      mimetypes 'application/x-smarty', 'text/x-smarty'
+
+      def self.analyze_text(text)
+        rv = 0.0
+        rv += 0.15 if text =~ /\{if\s+.*?\}.*?\{\/if\}/
+        rv += 0.15 if text =~ /\{include\s+file=.*?\}/
+        rv += 0.15 if text =~ /\{foreach\s+.*?\}.*?\{\/foreach\}/
+        rv += 0.01 if text =~ /\{\$.*?\}/
+        return rv
+      end
+
 
 
       def self.builtins

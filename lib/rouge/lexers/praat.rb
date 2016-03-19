@@ -271,8 +271,8 @@ module Rouge
 
       state :operator do
         # This rule incorrectly matches === or +++++, which are not operators
-        rule /([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/, Operator
-        rule /\b(and|or|not|div|mod)\b/,          Operator::Word
+        rule /([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/,       Operator
+        rule /(?<![\w.])(and|or|not|div|mod)(?![\w.])/, Operator::Word
       end
 
       state :string_interpolated do

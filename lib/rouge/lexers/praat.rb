@@ -307,11 +307,6 @@ module Rouge
 
         rule /(option|button)([ \t]+)/ do
           groups Keyword, Text
-          push :number
-        end
-
-        rule /(option|button)([ \t]+)/ do
-          groups Keyword, Text
           push :string_unquoted
         end
 

@@ -60,7 +60,7 @@ module Rouge
         rule /"(\\\\|\\"|[^"])*"/, Str::Double
         rule /'(\\\\|\\'|[^'])*'/, Str::Single
         rule %r(\$/((?!/\$).)*/\$), Str
-        rule %r(/(\\\\|\\"|[^/])*/), Str
+        rule %r(/(\\\\|\\"|[^"])*/), Str
         rule /'\\.'|'[^\\]'|'\\u[0-9a-f]{4}'/, Str::Char
         rule /(\.)([a-zA-Z_][a-zA-Z0-9_]*)/ do
           groups Operator, Name::Attribute

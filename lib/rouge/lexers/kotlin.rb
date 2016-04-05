@@ -46,7 +46,7 @@ module Rouge
           groups Keyword, Text, Keyword
         end
         rule %r'(class|interface|object)(\s+)' do
-          groups Keyword, Text
+          groups Keyword::Declaration, Text
           push :class
         end
         rule %r'(package|import)(\s+)' do
@@ -54,7 +54,7 @@ module Rouge
           push :package
         end
         rule %r'(val|var)(\s+)' do
-          groups Keyword, Text
+          groups Keyword::Declaration, Text
           push :property
         end
         rule %r'(fun)(\s+)' do

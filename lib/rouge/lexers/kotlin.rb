@@ -34,6 +34,7 @@ module Rouge
         rule %r'/[*].*?[*]/'m, Comment::Multiline
         rule %r'\n', Text
         rule %r'::|!!|\?[:.]', Operator
+        rule %r"(\.\.)", Operator
         rule %r'[~!%^&*()+=|\[\]:;,.<>/?-]', Punctuation
         rule %r'[{}]', Punctuation
         rule %r'@"(""|[^"])*"'m, Str

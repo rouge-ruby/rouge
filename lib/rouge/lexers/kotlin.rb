@@ -12,7 +12,7 @@ module Rouge
 
       keywords = %w(
         abstract annotation as break by catch class companion const 
-        constructor continue crossinline data do dynamic else enum
+        constructor continue crossinline do dynamic else enum
         external false final finally for fun get if import in infix
         inline inner interface internal is lateinit noinline null
         object open operator out override package private protected
@@ -45,7 +45,7 @@ module Rouge
         rule %r'(class)(\s+)(object)' do
           groups Keyword, Text, Keyword
         end
-        rule %r'(class|interface|object)(\s+)' do
+        rule %r'(class|data\s+class|interface|object)(\s+)' do
           groups Keyword::Declaration, Text
           push :class
         end

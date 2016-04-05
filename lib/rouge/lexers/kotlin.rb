@@ -41,7 +41,7 @@ module Rouge
         rule %r'""".*?"""'m, Str
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
-        rule %r"[0-9](\.[0-9]*)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
+        rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
         rule %r'(class)(\s+)(object)' do
           groups Keyword, Text, Keyword
         end

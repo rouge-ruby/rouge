@@ -17,7 +17,8 @@ module Rouge
         inline inner interface internal is lateinit noinline null
         object open operator out override package private protected
         public reified return sealed set super tailrec this throw
-        true try val var vararg when where while
+        true try typealias typeof val var vararg when where while
+        yield
       )
 
       name = '@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}]' +

@@ -19,6 +19,25 @@ form Highlighter test
   natural Nat 4
 endform
 
+beginPause: "Highlighter test"
+  sentence: "Blank", ""
+  sentence: "My sentence", "This should all be a string"
+  text: "My text", "This should also all be a string"
+  word: "My word", "Only the first word is a string, the rest is discarded"
+  boolean: "Binary", 1
+  comment: "This should be a string"
+  optionMenu: "Drop-down", 1
+    option: "Foo"
+    option: "100"
+  choice: "Choice", 1
+    option: "Foo"
+    option: "100"
+  real: "left Range", -123.6
+  positive: "right Range max", 3.3
+  integer: "Int", 4
+  natural: "Nat", 4
+button = endPause("Cancel", "OK", 1, 2)
+
 # Periods do not establish boundaries for keywords
 form.var = 10
 # Or operators

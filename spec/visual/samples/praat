@@ -7,9 +7,11 @@ form Highlighter test
   boolean Text no
   boolean Quoted "yes"
   comment This should be a string
-  optionmenu Choice: 1
+  optionmenu Drop-down: 1
     option Foo
-    option Bar
+    option 100
+  choice Radio: 1
+    option Foo
     option 100
   real left_Range -123.6
   positive right_Range_max 3.3

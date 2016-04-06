@@ -2,47 +2,20 @@ form Highlighter test
   sentence Blank
   sentence My_sentence This should all be a string
   text My_text This should also all be a string
-  word My_word Only the first word is a string, the rest is discarded
+  word My_word Only the first word is a string, the rest is invalid
   boolean Binary 1
   boolean Text no
   boolean Quoted "yes"
   comment This should be a string
-  optionmenu Drop-down: 1
+  optionmenu Choice: 1
     option Foo
-    option 100
-  choice Radio: 1
-    option Foo
+    option Bar
     option 100
   real left_Range -123.6
   positive right_Range_max 3.3
   integer Int 4
   natural Nat 4
 endform
-
-beginPause: "Highlighter test"
-  sentence: "Blank", ""
-  sentence: "My sentence", "This should all be a string"
-  text: "My text", "This should also all be a string"
-  word: "My word", "Only the first word is a string, the rest is discarded"
-  boolean: "Binary", 1
-  comment: "This should be a string"
-  optionMenu: "Drop-down", 1
-    option: "Foo"
-    option: "100"
-  choice: "Choice", 1
-    option: "Foo"
-    option: "100"
-  real: "left Range", -123.6
-  positive: "right Range max", 3.3
-  integer: "Int", 4
-  natural: "Nat", 4
-button = endPause("Cancel", "OK", 1, 2)
-
-# Periods do not establish boundaries for keywords
-form.var = 10
-# Or operators
-not.an.operator$ = "Bad variable name"
-bad.or.not = 1
 
 # External scripts
 include /path/to/file
@@ -51,7 +24,8 @@ execute /path/to/file
 
 # Predefined variables
 a  = praatVersion
-a  = e + pi * ( all+right) / left mod average + (mono - stereo)
+a  = e
+a  = pi
 a$ = homeDirectory$ + tab$ + newline$
 a$ = temporaryDirectory$
 a$ = praatVersion$
@@ -60,9 +34,6 @@ a$ = homeDirectory$
 a$ = preferencesDirectory$
 a$ = defaultDirectory$
 nocheck selectObject: undefined
-# Not predefined variables
-a$ = e$
-a$ = pi$
 
 # Arrays are not comments
 a# = zero# (5, 6)
@@ -84,11 +55,6 @@ endif
 
 string$ = "Strings can be 'interpolated'"
 string$ = "But don't interpolate everything!"
-string$(10)
-
-repeat
-  string$ = string$ - right$(string$)
-until !length(string$)
 
 Text... 1 Right 0.2 Half many----hyphens
 Text... 1 Right -0.4 Bottom aحبيبa
@@ -100,12 +66,6 @@ value$ = Table_'table'$[25, "f0"]
 fixed  = Sound_10.xmin
 fixed  = Object_foo.xmin
 fixed  = Procrustes_foo.nx
-var["vaa"] = 1 ; Hash
-
-# Special two-word keyword
-select all
-# Keyword with a predefined variable
-select  all
 
 # old-style procedure call
 call oldStyle "quoted" 2 unquoted string
@@ -130,15 +90,13 @@ for i from newStyle.local to n
   sound[i] = sound'i'
 endfor
 
-i = 1
-while i < n
-  i += 1
+for i from 1 to n
   # Different styles of object selection
   select sound'i'
   sound = selected()
   sound$ = selected$("Sound")
   select Sound 'sound$'
-  selectObject( sound[i])
+  selectObject(sound[i])
   selectObject: sound
 
   # Pause commands
@@ -169,8 +127,6 @@ while i < n
   # Multi-line command with modifier
   pitch = noprogress To Pitch (ac): 0, 75, 15, "no",
     ...0.03, 0.45, 0.01, 0.35, 0.14, 600
-  # Formulas are strings
-  Formula: "if col = 1 then row * Object_'pitch'.dx + 'first' else self fi"
 
   # do-style command with assignment
   minimum = do("Get minimum...", 0, 0, "Hertz", "Parabolic")
@@ -178,11 +134,11 @@ while i < n
   # New-style multi-line command call with broken strings
   table = Create Table with column names: "table", 0,
     ..."file subject speaker
-    ... f0 f1 f2 f" + string$(3) + " " +
+    ...f0 f1 f2 f3 " +
     ..."duration response"
 
   # Function call with trailing space
-  removeObject: pitch, table 
+  removeObject: pitch, table
 
   # Picture window commands
   selectObject: sound
@@ -203,7 +159,7 @@ while i < n
   demoWaitForInput ( )
   demo Erase all
   demo Text: 50, "centre", 50, "half", "Finished"
-endwhile
+endfor
 
 switch$ = if switch == 1 then "a" else
   ...     if switch == 2 then "b" else
@@ -254,11 +210,6 @@ assert  a !=  b  &&  c
 assert  a <>  b  ||  c
 assert  a <   b  |   c
 assert  a >   b
-
-assert (a)or (b)
-assert (a) or(b)
-assert (a)and(b)
-
 assert "hello" =  "he" + "llo"
 assert "hello" == "hello world" - " world"
 
@@ -296,16 +247,4 @@ asserterror Unknown symbol:'newline$'« _
 assert '_new_style.local'
 
 @proc: a, selected("string"), b
-# Comment
-
-for i to saveSelection.n
-  selectObject: saveSelection.id[i]
-  appendInfoLine: selected$()
-endfor
-
-@ok(if selected$("Sound") = "tone" then 1 else 0 fi,
-  ... "selected sound is tone")
-
-@ok_formula("selected$(""Sound"") = ""tone""", "selected sound is tone")
-
-
+# Error

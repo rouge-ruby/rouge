@@ -257,7 +257,7 @@ module Rouge
         mixin :number
 
         rule /\b(?:#{variables_string.join('|')})\$/,  Name::Builtin
-        rule /\b(?:#{variables_numeric.join('|')})\b/, Name::Builtin
+        rule /\b(?:#{variables_numeric.join('|')})(?!\$)\b/, Name::Builtin
 
         rule /\b(Object|#{objects.join('|')})_\w+/, Name::Builtin, :object_attributes
 

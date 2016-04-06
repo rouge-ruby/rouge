@@ -109,6 +109,7 @@ module Rouge
 
         mixin :function_call
 
+        rule /\b(?:select all)\b/, Keyword
         rule /\b(?:#{keywords.join('|')})\b/, Keyword
 
         rule /(\bform\b)(\s+)([^\n]+)/ do

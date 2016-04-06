@@ -62,25 +62,26 @@ module Rouge
         BarkFilter BarkSpectrogram CCA Categories Cepstrogram Cepstrum
         Cepstrumc ChebyshevSeries ClassificationTable Cochleagram Collection
         ComplexSpectrogram Configuration Confusion ContingencyTable Corpus
-        Correlation Covariance CrossCorrelationTable CrossCorrelationTables DTW
-        DataModeler Diagonalizer Discriminant Dissimilarity Distance
-        Distributions DurationTier EEG ERP ERPTier EditCostsTable
-        EditDistanceTable Eigen Excitation Excitations ExperimentMFC FFNet
-        FeatureWeights FileInMemory FilesInMemory Formant FormantFilter
-        FormantGrid FormantModeler FormantPoint FormantTier GaussianMixture HMM
-        HMM_Observation HMM_ObservationSequence HMM_State HMM_StateSequence
-        Harmonicity ISpline Index Intensity IntensityTier IntervalTier KNN
-        KlattGrid KlattTable LFCC LPC Label LegendreSeries LinearRegression
-        LogisticRegression LongSound Ltas MFCC MSpline ManPages Manipulation
-        Matrix MelFilter MelSpectrogram MixingMatrix Movie Network OTGrammar
-        OTHistory OTMulti PCA PairDistribution ParamCurve Pattern Permutation
-        Photo Pitch PitchModeler PitchTier PointProcess Polygon Polynomial
-        PowerCepstrogram PowerCepstrum Procrustes RealPoint RealTier ResultsMFC
-        Roots SPINET SSCP SVD Salience ScalarProduct Similarity SimpleString
-        SortedSetOfString Sound Speaker Spectrogram Spectrum SpectrumTier
-        SpeechSynthesizer SpellingChecker Strings StringsIndex Table
-        TableOfReal TextGrid TextInterval TextPoint TextTier Tier Transition
-        VocalTract VocalTractTier Weight WordList
+        Correlation Covariance CrossCorrelationTable CrossCorrelationTableList
+        CrossCorrelationTables DTW DataModeler Diagonalizer Discriminant
+        Dissimilarity Distance Distributions DurationTier EEG ERP ERPTier
+        EditCostsTable EditDistanceTable Eigen Excitation Excitations
+        ExperimentMFC FFNet FeatureWeights FileInMemory FilesInMemory Formant
+        FormantFilter FormantGrid FormantModeler FormantPoint FormantTier
+        GaussianMixture HMM HMM_Observation HMM_ObservationSequence HMM_State
+        HMM_StateSequence HMMObservation HMMObservationSequence HMMState
+        HMMStateSequence Harmonicity ISpline Index Intensity IntensityTier
+        IntervalTier KNN KlattGrid KlattTable LFCC LPC Label LegendreSeries
+        LinearRegression LogisticRegression LongSound Ltas MFCC MSpline ManPages
+        Manipulation Matrix MelFilter MelSpectrogram MixingMatrix Movie Network
+        OTGrammar OTHistory OTMulti PCA PairDistribution ParamCurve Pattern
+        Permutation Photo Pitch PitchModeler PitchTier PointProcess Polygon
+        Polynomial PowerCepstrogram PowerCepstrum Procrustes RealPoint RealTier
+        ResultsMFC Roots SPINET SSCP SVD Salience ScalarProduct Similarity
+        SimpleString SortedSetOfString Sound Speaker Spectrogram Spectrum
+        SpectrumTier SpeechSynthesizer SpellingChecker Strings StringsIndex
+        Table TableOfReal TextGrid TextInterval TextPoint TextTier Tier
+        Transition VocalTract VocalTractTier Weight WordList
       )
 
       variables_numeric = %w(

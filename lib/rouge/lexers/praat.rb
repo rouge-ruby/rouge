@@ -85,7 +85,8 @@ module Rouge
       )
 
       variables_numeric = %w(
-        macintosh windows unix praatVersion pi e undefined
+        all average e left macintosh mono pi praatVersion right stereo
+        undefined unix windows
       )
 
       variables_string = %w(

@@ -39,7 +39,7 @@ module Rouge
         endSendPraat endsWith erb erbToHertz erf erfc exitScript exp
         extractNumber fileReadable fisherP fisherQ floor gaussP gaussQ
         hertzToBark hertzToErb hertzToMel hertzToSemitones imax imin
-        incompleteBeta incompleteGammaP index index_regex invBinomialP
+        incompleteBeta incompleteGammaP index index_regex integer invBinomialP
         invBinomialQ invChiSquareQ invFisherQ invGaussQ invSigmoid invStudentQ
         length ln lnBeta lnGamma log10 log2 max melToHertz min minusObject
         natural number numberOfColumns numberOfRows numberOfSelected
@@ -47,10 +47,10 @@ module Rouge
         phonToDifferenceLimens plusObject positive randomBinomial randomGauss
         randomInteger randomPoisson randomUniform real readFile removeObject
         rindex rindex_regex round runScript runSystem runSystem_nocheck
-        selectObject selected semitonesToHertz sentencetext sigmoid sin sinc
-        sincpi sinh soundPressureToPhon sqrt startsWith studentP studentQ tan
-        tanh variableExists word writeFile writeFileLine writeInfo
-        writeInfoLine
+        selectObject selected semitonesToHertz sentence sentencetext sigmoid
+        sin sinc sincpi sinh soundPressureToPhon sqrt startsWith studentP
+        studentQ tan tanh text variableExists word writeFile writeFileLine
+        writeInfo writeInfoLine
       )
 
       functions_array = %w(

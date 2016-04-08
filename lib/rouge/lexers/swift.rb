@@ -18,7 +18,7 @@ module Rouge
 
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet throws rethrows
+        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet throws rethrows associatedtype
       )
 
       declarations = Set.new %w(

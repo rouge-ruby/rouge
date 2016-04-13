@@ -26,7 +26,7 @@ module Rouge
 
       keywords_type = %w(
         bool byte char decimal double float int long object sbyte
-        short string uint ulong ushort
+        short string uint ulong ushort var
       )
 
       cpp_keywords = %w(

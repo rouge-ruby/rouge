@@ -34,7 +34,7 @@ class VisualTestApp < Sinatra::Application
     formatter_opts = { :line_numbers => params[:line_numbers] }
     formatter_opts[:inline_theme] = @theme if params[:inline]
 
-    @formatter = Rouge::Formatters::HTMLPygments.new(formatter_opts)
+    @formatter = Rouge::Formatters::HTMLLegacy.new(formatter_opts)
   end
 
   get '/:lexer' do |lexer_name|

@@ -23,7 +23,7 @@ module Rouge
 
       # override this method for custom formatting behavior
       def rouge_formatter(lexer)
-        Formatters::HTMLPygments.new(:css_class => "highlight #{lexer.tag}")
+        Formatters::HTMLLegacy.new(:css_class => "highlight #{lexer.tag}")
       end
     end
   end

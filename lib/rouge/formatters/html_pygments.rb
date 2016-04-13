@@ -1,14 +1,14 @@
 module Rouge
   module Formatters
-    class HTMLPygments < HTML
-      def initialize(opts)
-        @css_class = opts.fetch(:css_class, 'codehilite')
-        super
+    class HTMLPygments < Formatter
+      def initialize(inner, css_class='codehilite')
+        @inner = inner
+        @css_class = css_class
       end
 
       def stream(tokens, &b)
         yield %<<pre class="#@css_class"><code>>
-        super
+        @inner.stream(tokens, &b)
         yield "</code></pre>"
       end
     end

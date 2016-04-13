@@ -7,7 +7,7 @@ module Rouge
   module Formatters
     # Transforms a token stream into HTML output.
     class HTMLLegacy < Formatter
-      tag 'html'
+      tag 'html_legacy'
 
       # @option opts [String] :css_class ('highlight')
       # @option opts [true/false] :line_numbers (false)
@@ -24,9 +24,15 @@ module Rouge
       # Content will be wrapped in a tag (`div` if tableized, `pre` if
       # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
-        @formatter = opts[:line_numbers] ? HTMLTable.new(opts)
-                   : opts[:css_class] ? HTMLPygments.new(opts)
-                   : HTML.new(opts)
+        @formatter = opts[:inline_theme] ? HTMLInline.new(opts[:inline_theme])
+                   : HTML.new
+
+
+        @formatter = HTMLTable.new(@formatter, opts) if opts[:line_numbers]
+
+        if opts.fetch(:wrap, true)
+          @formatter = HTMLPygments.new(@formatter, opts.fetch(:css_class, 'codehilite'))
+        end
       end
 
       # @yield the html output.

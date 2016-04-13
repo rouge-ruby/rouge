@@ -5,14 +5,10 @@ describe Rouge::Formatters::HTML do
   let(:options) { {} }
   Token = Rouge::Token
 
-  it 'formats a simple token stream' do
-    out = subject.format([[Token['Name'], 'foo']])
-    assert { out == %(<span class="n">foo</span>) }
-  end
-
   describe 'skipping the wrapper' do
     let(:subject) { Rouge::Formatters::HTML.new }
     let(:output) { subject.format([[Token['Name'], 'foo']]) }
+    let(:options) { { :wrap => false } }
 
     it 'skips the wrapper' do
       assert { output == '<span class="n">foo</span>' }

@@ -2,16 +2,16 @@
 
 module Rouge
   module Formatters
-    class HTMLTable < HTML
+    class HTMLTable < Formatter
       tag 'html_table'
 
-      def initialize(opts={})
+      def initialize(inner, opts={})
+        @inner = inner
         @start_line = opts.fetch(:start_line, 1)
         @line_format = opts.fetch(:line_format, '%i')
         @table_class = opts.fetch(:table_class, 'rouge-table')
         @gutter_class = opts.fetch(:gutter_class, 'rouge-gutter')
         @code_class = opts.fetch(:code_class, 'rouge-code')
-        super
       end
 
       def style(scope)
@@ -27,13 +27,13 @@ module Rouge
         tokens.each do |tok, val|
           last_val = val
           num_lines += val.scan(/\n/).size
-          span(tok, val) { |str| formatted << str }
+          formatted << @inner.span(tok, val)
         end
 
         # add an extra line for non-newline-terminated strings
         if last_val[-1] != "\n"
           num_lines += 1
-          span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
+          @inner.span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
         end
 
         # generate a string of newline-separated line numbers for the gutter>

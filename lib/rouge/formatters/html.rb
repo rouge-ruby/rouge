@@ -11,6 +11,7 @@ module Rouge
 
       # @option opts [String] :css_class ('highlight')
       # @option opts [true/false] :line_numbers (false)
+      # @option opts [String] :line_numbers_id ('integer')
       # @option opts [Rouge::CSSTheme] :inline_theme (nil)
       # @option opts [true/false] :wrap (true)
       #
@@ -28,6 +29,7 @@ module Rouge
         @css_class = " class=#{@css_class.inspect}" if @css_class
 
         @line_numbers = opts.fetch(:line_numbers, false)
+        @line_numbers_id = opts.fetch(:line_numbers_id, 'L') if @line_numbers
         @start_line = opts.fetch(:start_line, 1)
         @inline_theme = opts.fetch(:inline_theme, nil)
         @inline_theme = Theme.find(@inline_theme).new if @inline_theme.is_a? String
@@ -61,6 +63,10 @@ module Rouge
           num_lines += val.scan(/\n/).size
           span(tok, val) { |str| formatted << str }
         end
+
+        formatted = formatted.lines.map.with_index(1) do |line, index|
+          "<span id='#{@line_numbers_id}#{index}'>#{line}</span>"
+        end.join
 
         # add an extra line for non-newline-terminated strings
         if last_val[-1] != "\n"

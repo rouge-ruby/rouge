@@ -54,5 +54,9 @@ describe Rouge::Formatters::HTML do
     it 'preserves the number of lines' do
       assert { code_lines == line_numbers }
     end
+
+    it 'sets lines with id' do
+      assert_match /id='L1'/, output_code.lines.first
+    end
   end
 end

@@ -9,12 +9,12 @@ module Rouge
       # @private
       attr_reader :theme
 
+      formatter_option :theme, Theme, Themes::ThankfulEyes
 
       # @option opts :theme
       #   (default is thankful_eyes) the theme to render with.
       def initialize(opts={})
-        @theme = opts[:theme] || 'thankful_eyes'
-        @theme = Theme.find(@theme) if @theme.is_a? String
+        super
       end
 
       def stream(tokens, &b)

@@ -249,7 +249,8 @@ module Rouge
         formatter_class = Formatter.find(opts[:formatter]) \
           or error! "unknown formatter #{opts[:formatter]}"
 
-        @formatter = formatter_class.new(opts[:formatter_opts])
+        @formatter = formatter_class.new
+        @formatter.set_options_from_strings(opts[:formatter_opts])
       end
 
       def run

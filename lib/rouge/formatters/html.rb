@@ -9,8 +9,16 @@ module Rouge
     class HTML < Formatter
       tag 'html'
 
+      formatter_option :css_class, String, 'highlight'
+      formatter_option :line_numbers, Symbol, false
+      formatter_option :line_css_class, String, 'line'
+      formatter_option :start_line, Fixnum, 1
+      formatter_option :inline_theme, CSSTheme, nil
+      formatter_option :wrap, TrueClass, true
+
       # @option opts [String] :css_class ('highlight')
-      # @option opts [true/false] :line_numbers (false)
+      # @option opts [true/false/:table/:csscounters] :line_numbers (false)
+      # @option opts [String] :line_css_class ('line')
       # @option opts [Rouge::CSSTheme] :inline_theme (nil)
       # @option opts [true/false] :wrap (true)
       #
@@ -23,28 +31,62 @@ module Rouge
       #
       # Content will be wrapped in a tag (`div` if tableized, `pre` if
       # not) with the given `:css_class` unless `:wrap` is set to `false`.
+      #
+      # If `:line_numbers` is `true` (for compatibility) or `:table`,
+      # line numbers are output as a table with two cells, one containing
+      # the line numbers, the other the whole code. With `:csscounters`,
+      # each line is wrapped into a `<span>` tag to allow line numbering
+      # to be handled by CSS3 counters like this (SASS):
+      #
+      #   pre {
+      #     padding-left: 2.5em;
+      #     counter-reset: code;
+      #     span.line {
+      #       display: block;
+      #       counter-increment: code;
+      #       white-space: pre;
+      #       &:before {
+      #         content: counter(code);
+      #         float: left;
+      #         margin-left: -2.5em;
+      #         width: 2em;
+      #         text-align: right;
+      #       }
+      #     }
+      #   }
+      #
+      # For later case, the default CSS class for the `span` tag is
+      # `'line'` but can be freely redefined by `:line_css_class` option.
+      # Default (`:line_numbers` to any other value) is to not display
+      # any line number.
       def initialize(opts={})
-        @css_class = opts.fetch(:css_class, 'highlight')
-        @css_class = " class=#{@css_class.inspect}" if @css_class
-
-        @line_numbers = opts.fetch(:line_numbers, false)
-        @start_line = opts.fetch(:start_line, 1)
-        @inline_theme = opts.fetch(:inline_theme, nil)
-        @inline_theme = Theme.find(@inline_theme).new if @inline_theme.is_a? String
-
-        @wrap = opts.fetch(:wrap, true)
+        super
+        @css_class = " class=\"#{@css_class}\"" if @css_class
       end
 
       # @yield the html output.
       def stream(tokens, &b)
-        if @line_numbers
+        case @line_numbers
+        when true, :table
           stream_tableized(tokens, &b)
+        when :csscounters
+          stream_lineized(tokens, &b)
         else
           stream_untableized(tokens, &b)
         end
       end
 
     private
+      def stream_lineized(tokens, &b)
+        formatted = ''
+        yield '<pre>' if @wrap
+        yield "<span class=\"#{@line_css_class}\">"
+        tokens.each{ |tok, val| span(tok, val, &b) }
+        yield formatted
+        yield '</span>'
+        yield '</pre>' if @wrap
+      end
+
       def stream_untableized(tokens, &b)
         yield "<pre#@css_class><code>" if @wrap
         tokens.each{ |tok, val| span(tok, val, &b) }
@@ -101,15 +143,18 @@ module Rouge
         shortname = tok.shortname or raise "unknown token: #{tok.inspect} for #{val.inspect}"
 
         if shortname.empty?
-          yield val
+          yield :csscounters == @line_numbers ? val.gsub("\n", "\n</span><span class=\"#{@line_css_class}\">") : val
         else
           if @inline_theme
-            rules = @inline_theme.style_for(tok).rendered_rules
+            rules = @inline_theme.get_style(tok).rendered_rules.to_a.join ';'
 
-            yield "<span style=\"#{rules.to_a.join(';')}\">#{val}</span>"
+            yield "<span style=\"#{rules}\">"
+            yield :csscounters == @line_numbers ? val.gsub("\n", "\n</span></span><span class=\"#{@line_css_class}\"><span class=\"#{rules}\">") : val
           else
-            yield "<span class=\"#{shortname}\">#{val}</span>"
+            yield "<span class=\"#{shortname}\">"
+            yield :csscounters == @line_numbers ? val.gsub("\n", "\n</span></span><span class=\"#{@line_css_class}\"><span class=\"#{shortname}\">") : val
           end
+          yield '</span>'
         end
       end
     end

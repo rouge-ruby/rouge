@@ -35,16 +35,44 @@ Rouge::Theme.find('base16.light').render(scope: '.highlight')
 
 ### Full options
 #### Formatter options
-##### css_class: 'highlight'
+##### HTML formatter
+###### css_class: 'highlight'
 Apply a class to the syntax-highlighted output. Set to false to not apply any css class.
 
-##### line_numbers: false
+###### line_numbers: false
 Generate line numbers.
 
-##### start_line: 1
-Index to start line numbers.
+Valued to:
+* `false`, lines are not numbered
+* `true` or `:table`, lines are numbered by wrapping the code into the second column of a one row `<table>`. The first column will contain a `pre` tag with line numbers.
+* `:csscounters`, each line is wrapped into a `span` element of class `line_css_class` to be handled by CSS counters as below:
 
-##### inline_theme: nil
+```sass
+pre {
+  padding-left: 2.5em;
+  counter-reset: code;
+  span.line {
+    display: block;
+    counter-increment: code;
+    white-space: pre;
+    &:before {
+      content: counter(code);
+      float: left;
+      margin-left: -2.5em;
+      width: 2em;
+      text-align: right;
+    }
+  }
+}
+```
+
+###### line_css_class: 'line'
+The CSS class name to give to the `span` tag which wraps a line. Only when `line_numbers` = `:csscounters`.
+
+###### start_line: 1
+Index to start line numbers. Only when `line_numbers` = `true` or `:table`.
+
+###### inline_theme: nil
 A `Rouge::CSSTheme` used to highlight the output with inline styles instead of classes. Allows string inputs (separate mode with a dot):
 
 ```
@@ -52,8 +80,12 @@ A `Rouge::CSSTheme` used to highlight the output with inline styles instead of c
    base16.dark base16.light base16.solarized base16.monokai]
 ```
 
-##### wrap: true
+###### wrap: true
 Wrap the highlighted content in a container. Defaults to `<pre><code>`, or `<div>` if line numbers are enabled.
+
+##### Terminal formatter
+###### theme: Themes::ThankfulEyes
+A `Rouge::Theme` used to highlight output.
 
 #### Lexer options
 ##### debug: false

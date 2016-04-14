@@ -18,7 +18,7 @@ module Rouge
         end
 
         formatter = rouge_formatter(lexer)
-        formatter.format(lexer.lex(code))
+        formatter.format(lexer.lex(code.chomp)) # remove the trailing line before ending ``` let by redcarpet
       end
 
       # override this method for custom formatting behavior

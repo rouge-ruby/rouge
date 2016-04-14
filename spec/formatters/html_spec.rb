@@ -24,7 +24,7 @@ describe Rouge::Formatters::HTML do
       style Name, :bold => true
     end
 
-    let(:options) { { :inline_theme => InlineTheme.new, :wrap => false } }
+    let(:options) { { :inline_theme => InlineTheme, :wrap => false } }
 
     let(:output) {
       subject.format([[Token['Name'], 'foo']])
@@ -32,6 +32,15 @@ describe Rouge::Formatters::HTML do
 
     it 'inlines styles given a theme' do
       assert { output == '<span style="font-weight: bold">foo</span>' }
+    end
+  end
+
+  describe 'css counters line numbers' do
+    let(:options) { { :line_numbers => :csscounters, :line_css_class => 'ln', :wrap => false } }
+    let(:output) { subject.format([[Token['Name'], "abc\ndef"]]) }
+
+    it 'generates proper output for line_numbers = :counters' do
+      assert { output == "<span class=\"ln\"><span class=\"n\">abc\n</span></span><span class=\"ln\"><span class=\"n\">def</span></span>" }
     end
   end
 

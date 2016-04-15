@@ -50,18 +50,9 @@ module Rouge
       id = /[a-z_]\w*/i
       hex = /[0-9a-f]/i
       escapes = %r(
-        \\ ([nrt'\\] | x#{hex}{2} | u#{hex}{4} | U#{hex}{8})
+        \\ ([nrt"'\\] | x#{hex}{2} | u#{hex}{4} | U#{hex}{8})
       )x
       size = /8|16|32|64/
-
-      state :start_line do
-        mixin :whitespace
-        rule /\s+/, Text
-        rule /#\[/ do
-          token Comment::Preproc; push :attribute
-        end
-        rule(//) { pop! }
-      end
 
       state :attribute do
         mixin :whitespace
@@ -78,15 +69,19 @@ module Rouge
       end
 
       state :root do
-        rule /\n/, Text, :start_line
+        rule /\n/, Text
         mixin :whitespace
         rule /\b(?:#{Rust.keywords.join('|')})\b/, Keyword
         mixin :has_literals
+        
+        rule /#!*\[/ do
+          token Comment::Preproc; push :attribute
+        end
 
         rule %r([=-]>), Keyword
         rule %r(<->), Keyword
         rule /[()\[\]{}|,:;]/, Punctuation
-        rule /[*!@~&+%^<>=-]/, Operator
+        rule /[*!@~\/&+%^<>=-]/, Operator
 
         rule /([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule /[.]\s*#{id}/, Name::Property

@@ -196,7 +196,7 @@ while i < n
     ..."duration response"
 
   # Function call with trailing space
-  removeObject: pitch, table
+  removeObject: pitch, table 
 
   # Picture window commands
   selectObject: sound

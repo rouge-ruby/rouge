@@ -139,7 +139,7 @@ module Rouge
 
       state :command do
         rule /( ?[\w()-]+ ?)/, Keyword
-        rule /'(?=.*')/,  Literal::String::Interpol, :string_interpolated
+        mixin :string_interpolated
 
         rule /\.{3}/ do
           token Keyword
@@ -259,17 +259,18 @@ module Rouge
         rule /\b(?:#{variables_string.join('|')})\$/,  Name::Builtin
         rule /\b(?:#{variables_numeric.join('|')})(?!\$)\b/, Name::Builtin
 
-        rule /\b(Object|#{objects.join('|')})_\w+/, Name::Builtin, :object_attributes
-
-        rule /\b((?:Object|#{objects.join('|')})_)(')/ do
-          groups Name::Builtin, Literal::String::Interpol
-          push :object_attributes
-          push :string_interpolated
+        rule /\b(Object|#{objects.join('|')})_/ do
+          token Name::Builtin
+          push :object_reference
         end
 
         rule /\.?[a-z][a-zA-Z0-9_.]*(\$|#)?/, Text
         rule /[\[\]]/, Text, :comma_list
-        rule /'(?=.*')/, Literal::String::Interpol, :string_interpolated
+        mixin :string_interpolated
+      end
+
+      state :object_reference do
+        mixin :string_interpolated
       end
 
       state :operator do
@@ -279,15 +280,16 @@ module Rouge
       end
 
       state :string_interpolated do
-        rule /\.?[_a-z][a-zA-Z0-9_.]*(?:[\$#]?(?:\[[a-zA-Z0-9,]+\])?|:[0-9]+)?/, Literal::String::Interpol
-        rule /'/, Literal::String::Interpol, :pop!
+        rule /'[^['"]]+(\[([\d,]+|"[\w\d,]+")\])?'/, Literal::String::Interpol
       end
 
       state :string_unquoted do
         rule /\n\s*\.{3}/, Punctuation
         rule /\n/,         Text, :pop!
         rule /\s/,         Text
-        rule /'(?=.*')/,   Literal::String::Interpol, :string_interpolated
+
+        mixin :string_interpolated
+
         rule /'/,          Literal::String
         rule /[^'\n]+/,    Literal::String
       end
@@ -295,7 +297,9 @@ module Rouge
       state :string do
         rule /\n\s*\.{3}/, Punctuation
         rule /"/,          Literal::String,           :pop!
-        rule /'(?=.*')/,   Literal::String::Interpol, :string_interpolated
+
+        mixin :string_interpolated
+
         rule /'/,          Literal::String
         rule /[^'"\n]+/,   Literal::String
       end

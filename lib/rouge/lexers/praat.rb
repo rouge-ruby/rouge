@@ -275,7 +275,7 @@ module Rouge
       end
 
       state :string_interpolated do
-        rule /'[^['"]]+(\[([\d,]+|"[\w\d,]+")\])?'/, Literal::String::Interpol
+        rule /'[^['"]]+(\[([\w\d,]+|"[\w\d,]+")\])?'/, Literal::String::Interpol
       end
 
       state :string_unquoted do

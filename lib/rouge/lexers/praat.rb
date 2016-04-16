@@ -95,6 +95,10 @@ module Rouge
         defaultDirectory
       )
 
+      object_attributes = %w(
+        ncol nrow xmin ymin xmax ymax nx ny dx dy
+      )
+
       state :root do
         rule /(\s+)(#.*?$)/ do
           groups Text, Comment::Single
@@ -237,21 +241,6 @@ module Rouge
         rule /\b\d+(\.\d*)?([eE][-+]?\d+)?%?/, Literal::Number
       end
 
-      state :object_attributes do
-        rule /\.?(n(col|row)|[xy]min|[xy]max|[nd][xy])\b/, Name::Builtin, :pop!
-
-        rule /(\.?(?:col|row)\$)(\[)/ do
-          groups Name::Builtin, Text
-          push :variable_name
-        end
-
-        rule /(\$?)(\[)/ do
-          groups Name::Builtin, Text
-          pop!
-          push :comma_list
-        end
-      end
-
       state :variable_name do
         mixin :operator
         mixin :number
@@ -271,6 +260,12 @@ module Rouge
 
       state :object_reference do
         mixin :string_interpolated
+        rule /([a-z][a-zA-Z0-9_]*|\d+)/, Name::Builtin
+
+        rule /\.(#{object_attributes.join('|')})\b/, Name::Builtin, :pop!
+
+        rule /\$/, Name::Builtin
+        rule /\[/, Text, :pop!
       end
 
       state :operator do

@@ -82,9 +82,23 @@ else macintosh == 1
   exit We are on Mac
 endif
 
-string$ = "Strings can be 'interpolated'"
+echo unquoted 'var' numeric
+echo unquoted 'var$' string
+echo unquoted 'var["a"]' numeric hash
+echo unquoted 'var$["a"]' string hash
+echo unquoted 'var[1]' numeric indexed variable
+echo unquoted 'var$[1]' string indexed variable
+
+appendInfoLine: "quoted 'var' numeric"
+appendInfoLine: "quoted 'var$' string"
+appendInfoLine: "quoted 'var["a"]' numeric hash"
+appendInfoLine: "quoted 'var$["a"]' string hash"
+appendInfoLine: "quoted 'var[1]' numeric indexed variable"
+appendInfoLine: "quoted 'var$[1]' string indexed variable"
+
 string$ = "But don't interpolate everything!"
-string$(10)
+string$ = "interpolatin' " + "across" + " strings ain't cool either"
+string$(10) ; This is a function
 
 repeat
   string$ = string$ - right$(string$)

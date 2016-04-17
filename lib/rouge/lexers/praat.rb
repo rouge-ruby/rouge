@@ -300,11 +300,11 @@ module Rouge
       end
 
       state :old_form do
-        rule /\s+/, Text
-
         rule /(\s+)(#.*?$)/ do
           groups Text, Comment::Single
         end
+
+        rule /\s+/, Text
 
         rule /(optionmenu|choice)([ \t]+\S+:[ \t]+)/ do
           groups Keyword, Text

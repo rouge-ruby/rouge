@@ -1,4 +1,5 @@
 form Highlighter test
+  # This is a regular comment
   sentence Blank
   sentence My_sentence This should all be a string
   text My_text This should also all be a string

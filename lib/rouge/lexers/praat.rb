@@ -302,6 +302,10 @@ module Rouge
       state :old_form do
         rule /\s+/, Text
 
+        rule /(\s+)(#.*?$)/ do
+          groups Text, Comment::Single
+        end
+
         rule /(optionmenu|choice)([ \t]+\S+:[ \t]+)/ do
           groups Keyword, Text
           push :number

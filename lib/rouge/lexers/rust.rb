@@ -54,15 +54,6 @@ module Rouge
       )x
       size = /8|16|32|64/
 
-      state :start_line do
-        mixin :whitespace
-        rule /\s+/, Text
-        rule /#!*\[/ do
-          token Comment::Preproc; push :attribute
-        end
-        rule(//) { pop! }
-      end
-
       state :attribute do
         mixin :whitespace
         mixin :has_literals
@@ -78,11 +69,15 @@ module Rouge
       end
 
       state :root do
-        rule /\n/, Text, :start_line
+        rule /\n/, Text
         mixin :whitespace
         rule /\b(?:#{Rust.keywords.join('|')})\b/, Keyword
         mixin :has_literals
-
+        
+        rule /#!*\[/ do
+          token Comment::Preproc; push :attribute
+        end
+        
         rule %r([=-]>), Keyword
         rule %r(<->), Keyword
         rule /[()\[\]{}|,:;]/, Punctuation

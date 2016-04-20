@@ -1,0 +1,11 @@
+// Device code
+kernel __attribute__((reqd_work_group_size(128, 1, 1)))
+kernel void process_seed(read_only image3d_t edge_weights, global int *seedmap, const int4 dimensions) {
+	size_t local_id = get_local_id(0);
+	size_t group_id = get_group_id(0);
+	global float *cache = caches + get_group_id(0) * dimensions.w;
+}
+
+// Host code
+cl_float test = 1.1f;
+cl_int4 w = {1.0, 1.0, 1.0, 0.0};

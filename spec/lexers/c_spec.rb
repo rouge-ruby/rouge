@@ -7,7 +7,7 @@ describe Rouge::Lexers::C do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.c'
+      assert_guess :filename => 'foo.c', :source => 'foo'
       assert_guess :filename => 'foo.h', :source => 'foo'
     end
 

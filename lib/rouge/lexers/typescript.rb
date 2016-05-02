@@ -17,15 +17,15 @@ module Rouge
 
       def self.keywords
         @keywords ||= super + Set.new(%w(
-          import export from as
+          import export from as is
           namespace new static private protected public
-          super async await extends implements          
+          super async await extends implements readonly
         ))
       end
       
       def self.declarations
         @declarations ||= super + Set.new(%w(
-          const type constructor 
+          const type constructor abstract
         ))
       end
 

@@ -150,6 +150,8 @@ function* range(from, to)
   }
 }
 
+/* TypeScript examples */
+
 declare namespace Foo {
     interface FooStatic {
         someFunc(): string;
@@ -165,14 +167,16 @@ declare module "foo" {
     export interface IFoo {
         theObject: any;
         aWord: string;
-        aNumber number;
+        aNumber: number;
     }
 }
 
-export default class FooClass extends Bar<T> {
+export default abstract class FooClass extends Bar<T> {
     constructor() {
         super();
     }
+    
+    readonly foo: number = 42;
 }
 
 async function fooAsync() {

@@ -108,9 +108,9 @@ module Rouge
       def self.builtins
         @builtins ||= %w(
           Array Boolean Date Error Function Math netscape
-          Number Object Packages RegExp String sun decodeURI
+          Number Object Packages RegExp String Promise Proxy sun decodeURI
           decodeURIComponent encodeURI encodeURIComponent
-          Error eval isFinite isNaN parseFloat parseInt document this
+          Error eval isFinite isNaN isSafeInteger parseFloat parseInt document this
           window
         )
       end
@@ -127,6 +127,7 @@ module Rouge
           Operator, :expr_start
         rule %r([-<>+*%&|\^/!=]=?), Operator, :expr_start
         rule /[(\[,]/, Punctuation, :expr_start
+        rule %r(`), Punctuation, :expr_start
         rule /;/, Punctuation, :statement
         rule /[)\].]/, Punctuation
 
@@ -206,8 +207,7 @@ module Rouge
       desc "JavaScript Object Notation (json.org)"
       tag 'json'
       filenames '*.json'
-      mimetypes 'application/json', 'application/vnd.api+json',
-                'application/hal+json'
+      mimetypes 'application/json', 'application/vnd.api+json', 'application/hal+json'
 
       # TODO: is this too much of a performance hit?  JSON is quite simple,
       # so I'd think this wouldn't be too bad, but for large documents this

@@ -13,9 +13,8 @@ describe Rouge::Lexers::FSharp do
 
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'application/fsharp-script'
-	  assert_guess :mimetype => 'text/x-fsharp'
-	  assert_guess :mimetype => 'text/x-fsi'
+	    assert_guess :mimetype => 'text/x-fsharp'
+	    assert_guess :mimetype => 'text/x-fsi'
     end
   end
 end
-

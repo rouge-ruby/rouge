@@ -137,3 +137,14 @@ if ([_myDelegate2 respondsToSelector:@selector(doOtherStuff:andText:andType:)])
 {
   NSLog(@" YES VALUE IS %f and text %@ and type %@",myValue2,myText,myType);
 }end
+
+@interface HUDView (SubclassingHooks)
+- (void)updatePageLabelFrameAnimated:(BOOL)animated;
+- (void)updateThumbnailBarFrameAnimated:(BOOL)animated;
+- (void)updateScrubberBarFrameAnimated:(BOOL)animated;
+@end
+
+ViewController *controller = [[ViewController alloc] initWithDocument:document configuration:[Configuration configurationWithBuilder:^(ConfigurationBuilder *builder) {
+    builder.thumbnailBarMode = ThumbnailBarModeScrollable;
+    builder.pageLabelEnabled = NO;
+}]];

@@ -89,6 +89,7 @@ module Rouge
 
       state :message_shared do
         rule /\]/, Punctuation, :pop!
+        rule /\{/, Punctuation, :pop!
         rule /;/, Error
 
         mixin :statement
@@ -111,6 +112,7 @@ module Rouge
       state :message_with_args do
         rule /(#{id})(\s*)(:)/ do
           groups(Name::Function, Text, Punctuation)
+          pop!
         end
 
         mixin :message_shared
@@ -137,6 +139,7 @@ module Rouge
                  Punctuation, Text,
                  Name::Label, Text,
                  Punctuation)
+          pop!
         end
 
         rule id, Name::Class, :pop!

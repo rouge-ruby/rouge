@@ -29,6 +29,19 @@
 
 @end
 
+double (^multiplyTwoValues)(double, double) = ^(double firstValue, double secondValue) {
+    return firstValue * secondValue;
+};
+
+void (^simpleBlock)(void) = ^{
+    NSLog(@"This is a block");
+};
+
+[[SomeClass] inlineBlock:(^NSString *){
+    NSString *var = @"blah";
+    return var;
+}];
+
 NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
     @"quattuor", @"four", @"quinque", @"five", @"sex", @"six", nil];
 

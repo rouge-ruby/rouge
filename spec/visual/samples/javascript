@@ -149,3 +149,7 @@ function* range(from, to)
     yield from++;
   }
 }
+
+// Template Strings - ES2015
+var b = "world";
+console.log(`hello ${b}`);

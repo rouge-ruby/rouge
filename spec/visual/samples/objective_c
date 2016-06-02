@@ -51,6 +51,14 @@ for (key in dictionary) {
     NSLog(@"English: %@, Latin: %@", key, [dictionary valueForKey:key]);
 }
 
+NSDictionary *literalDict = @{
+    @"name" : NSUserName(),
+    @"date" : [NSDate date],
+    @"processInfo" : [NSProcessInfo processInfo]
+};
+
+NSArray *literalArray = @[ @"Hello", NSApp, [NSNumber numberWithInt:42] ];
+
 // MyClass.h
 @import Foundation;
 

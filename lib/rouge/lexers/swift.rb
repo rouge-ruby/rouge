@@ -22,7 +22,7 @@ module Rouge
       )
 
       declarations = Set.new %w(
-        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect
+        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype
       )
 
       constants = Set.new %w(
@@ -85,6 +85,10 @@ module Rouge
         end
         
         rule /#available\([^)]+\)/, Keyword::Declaration
+        
+        rule /(#selector\()([^)]+?(?:[(].*?[)])?)(\))/ do
+          groups Keyword::Declaration, Name::Function, Keyword::Declaration
+        end
 
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
@@ -98,8 +102,8 @@ module Rouge
           end
         end
         
-        rule /as[?!]?/, Keyword
-        rule /try[!]?/, Keyword
+        rule /as[?!]?(?=\s)/, Keyword
+        rule /try[!]?(?=\s)/, Keyword
 
         rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation

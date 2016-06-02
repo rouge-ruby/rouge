@@ -23,7 +23,7 @@ module Rouge
 
     def read
       @read ||= begin
-        file.read
+        File.read(file, encoding: 'utf-8') 
       rescue => e
         $stderr.puts "unable to open #{input}: #{e.message}"
         exit 1

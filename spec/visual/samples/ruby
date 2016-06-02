@@ -153,6 +153,10 @@ A
 and this is the text of b
 B
 
+<<~END
+This is a Ruby 2.3 stripped heredoc
+END
+
 a = <<"EOF"
 This is a multiline #$here document
 terminated by EOF on a line by itself

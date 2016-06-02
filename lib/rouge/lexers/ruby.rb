@@ -228,17 +228,17 @@ module Rouge
       end
 
       state :has_heredocs do
-        rule /(?<!\w)(<<-?)(["`']?)([a-zA-Z_]\w*)(\2)/ do |m|
+        rule /(?<!\w)(<<[-~]?)(["`']?)([a-zA-Z_]\w*)(\2)/ do |m|
           token Operator, m[1]
           token Name::Constant, "#{m[2]}#{m[3]}#{m[4]}"
-          @heredoc_queue << [m[1] == '<<-', m[3]]
+          @heredoc_queue << [['<<-', '<<~'].include?(m[1]), m[3]]
           push :heredoc_queue unless state? :heredoc_queue
         end
 
-        rule /(<<-?)(["'])(\2)/ do |m|
+        rule /(<<[-~]?)(["'])(\2)/ do |m|
           token Operator, m[1]
           token Name::Constant, "#{m[2]}#{m[3]}#{m[4]}"
-          @heredoc_queue << [m[1] == '<<-', '']
+          @heredoc_queue << [['<<-', '<<~'].include?(m[1]), '']
           push :heredoc_queue unless state? :heredoc_queue
         end
       end

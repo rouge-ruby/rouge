@@ -42,13 +42,23 @@ module Rouge
 
       state :inline_whitespace do
         rule /\s+/m, Text
-        rule %r((?<re>\/\*(?:(?>[^\/\*\*\/]+)|\g<re>)*\*\/))m, Comment::Multiline
+        mixin :has_comments
       end
 
       state :whitespace do
         rule /\n+/m, Text, :bol
         rule %r(\/\/.*?$), Comment::Single, :bol
         mixin :inline_whitespace
+      end
+
+      state :has_comments do
+        rule %r(/[*]), Comment::Multiline, :nested_comment
+      end
+
+      state :nested_comment do
+        mixin :has_comments
+        rule %r([*]/), Comment::Multiline, :pop!
+        rule /./m, Comment::Multiline
       end
 
       state :root do

@@ -27,6 +27,12 @@ module Rouge
         ))
       end
 
+      def self.keywords_type
+        @keywords_type ||= super + Set.new(%w(
+          bool nullptr_t
+        ))
+      end
+
       def self.reserved
         @reserved ||= super + Set.new(%w(
           __virtual_inheritance __uuidof __super __single_inheritance

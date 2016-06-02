@@ -37,7 +37,7 @@ module Rouge
           uint_least64_t int_fast8_t int_fast16_t int_fast32_t
           int_fast64_t uint_fast8_t uint_fast16_t uint_fast32_t
           uint_fast64_t intptr_t uintptr_t intmax_t
-          uintmax_t
+          uintmax_t char16_t char32_t
         )
       end
 

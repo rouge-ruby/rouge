@@ -14,19 +14,26 @@ module Rouge
       # TODO: support more of unicode
       id = /@?[_a-z]\w*/i
 
+      #Reserved Identifiers
+      #Contextual Keywords
+      #LINQ Query Expressions
       keywords = %w(
-        abstract alias as base break case catch checked const continue
+        abstract as base break case catch checked const continue
         default delegate do else enum event explicit extern false
-        finally fixed for foreach global goto if implicit in interface
+        finally fixed for foreach goto if implicit in interface
         internal is lock new null operator out override params private
         protected public readonly ref return sealed sizeof stackalloc
         static switch this throw true try typeof unchecked unsafe
-        virtual void while get set new partial yield add remove value
+        virtual void volatile while
+        add alias async await get global partial remove set value where
+        yield
+        ascending by descending equals from group in into join let on
+        orderby select
       )
 
       keywords_type = %w(
-        bool byte char decimal double float int long object sbyte
-        short string uint ulong ushort var
+        bool byte char decimal double dynamic float int long object
+        sbyte short string uint ulong ushort var
       )
 
       cpp_keywords = %w(

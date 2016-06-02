@@ -2,6 +2,29 @@ int quote_delims = 100'000'000
 int float_delims = 100.00'00
 int hex_delims = 0xFF'Fa12
 
+// string literal with encoding-prefix
+char str1[] = u8"UTF-8 string";
+char16_t str2[] = u"UTF-16 string";
+char32_t str3[] = U"UTF-32 string";
+
+// Raw string literal
+char raw_str1[] = R"(foo
+bar
+baz)";
+char raw_str2[] = R"delim(\w+ \d+)delim";
+char16_t raw_str3[] = uR"(\w+ \d+)";
+
+// try-block
+try {
+  throw std::runtime_error("Runtime error!");
+} catch (std::exception& e) {
+  std::cerr << e.what() << std::endl;
+}
+
+constexpr int factorial(int n) {
+  return n > 0 ? n * factorial(n - 1) : 1;
+}
+
 /* foo */ #if 0
  this is commented
 #endif

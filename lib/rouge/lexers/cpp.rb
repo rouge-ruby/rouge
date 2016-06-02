@@ -24,6 +24,15 @@ module Rouge
           friend mutable namespace new operator private protected public
           reinterpret_cast restrict static_cast template this throw
           throws typeid typename using virtual
+
+          alignas alignof constexpr decltype noexcept static_assert
+          thread_local try
+        ))
+      end
+
+      def self.keywords_type
+        @keywords_type ||= super + Set.new(%w(
+          bool
         ))
       end
 
@@ -52,6 +61,8 @@ module Rouge
         rule /0x\h('?\h)*[lu]*/i, Num::Hex
         rule /0[0-7]('?[0-7])*[lu]*/i, Num::Oct
         rule /#{dq}[lu]*/i, Num::Integer
+        rule /\bnullptr\b/, Name::Builtin
+        rule /(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
       end
 
       state :classname do

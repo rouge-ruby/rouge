@@ -7,7 +7,8 @@ describe Rouge::Lexers::IDLang do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.pro'
+      #assert_guess :filename => 'foo.pro'
+      assert_guess :filename => 'foo.idl'
     end
   end
 end

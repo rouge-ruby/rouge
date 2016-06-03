@@ -301,9 +301,8 @@ module Rouge
         rule /->/, Operator
         rule /#{LABEL}/, Name::Variable::Instance, :pop! # instance variable or method name (instance method call)
         rule /#{WHITESPACE}/, Text
-        rule /./ do
+        rule // do
           pop!
-          restart!
         end
       end
 
@@ -313,10 +312,9 @@ module Rouge
           push :in_scripting
           token Name::Variable
         end
-        rule /./ do |m|
+        rule // do |m|
           pop!
           push :in_scripting
-          restart!
         end
       end
 

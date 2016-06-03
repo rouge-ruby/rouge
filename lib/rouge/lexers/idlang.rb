@@ -8,7 +8,7 @@ module Rouge
       desc "Interactive Data Language"
 
       tag 'idlang'
-      filenames '*.pro', '*.idl', '*.PRO', '*.IDL'
+      filenames '*.idl'
 
       def self.analyze_text(text)
         # Does there exist a statement that starts with 'pro' or

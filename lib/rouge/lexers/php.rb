@@ -108,8 +108,6 @@ module Rouge
       end
 
       DEFAULTS = Hash.new(Error).tap do |h|
-#         :in_scripting => Error,
-#         :var_offset => Error,
         h[:nowdoc] = Str::Heredoc
         h[:heredoc] = Str::Heredoc
         h[:backquote] = Str::Backtick

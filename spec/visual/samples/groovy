@@ -9,6 +9,13 @@ class SimpleWorkflowEngine {
     def beforeActivityName = 'beforeActivity'
     def afterActivityName = 'afterActivity'
 
+    String json = """
+            {
+               "formula": "(a+b)/2",
+               "iid": "c-1"
+            }
+    """
+
     SimpleWorkflowEngine(workflow, context = [:]) {
         this.context = context
         parseWorkflow(workflow)

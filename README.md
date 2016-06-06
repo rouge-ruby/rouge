@@ -5,11 +5,9 @@
 
 [rouge]: http://rouge.jneen.net/
 
-[Rouge][] is a pure-ruby syntax highlighter.  It can highlight over 60 languages, and output HTML or ANSI 256-color text.  Its HTML output is compatible with stylesheets designed for [pygments][].
+[Rouge][] is a pure-ruby syntax highlighter.  It can highlight 100 different languages, and output HTML or ANSI 256-color text.  Its HTML output is compatible with stylesheets designed for [pygments][].
 
-If you'd like to help out with this project, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.  In particular, I would appreciate help with the following lexers, from someone who has more experience with the language than I do:
-
-* Delphi
+If you'd like to help out with this project, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.
 
 [issues]: https://github.com/jneen/rouge/issues "Help Out"
 [pygments]: http://pygments.org/ "Pygments"

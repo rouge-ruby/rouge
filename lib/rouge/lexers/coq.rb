@@ -6,8 +6,11 @@ module Rouge
       title "Coq"
       desc 'Coq (coq.inria.fr)'
       tag 'coq'
-      filenames '*.v'
       mimetypes 'text/x-coq'
+
+      def self.analyze_text(text)
+        return 0.9 if text.include? "Require"
+      end
 
       def self.gallina
         @gallina ||= Set.new %w(

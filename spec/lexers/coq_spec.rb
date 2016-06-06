@@ -6,13 +6,8 @@ describe Rouge::Lexers::Coq do
   describe 'guessing' do
     include Support::Guessing
 
-    it 'guesses by filename' do
-      assert_guess :filename => 'foo.v'
-    end
-
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-coq'
     end
   end
 end
-

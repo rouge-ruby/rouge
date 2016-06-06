@@ -58,7 +58,8 @@ module Rouge
       state :nested_comment do
         mixin :has_comments
         rule %r([*]/), Comment::Multiline, :pop!
-        rule /./m, Comment::Multiline
+        rule %r([^*/]+)m, Comment::Multiline
+        rule /./, Comment::Multiline
       end
 
       state :root do

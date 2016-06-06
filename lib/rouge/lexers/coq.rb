@@ -9,7 +9,7 @@ module Rouge
       mimetypes 'text/x-coq'
 
       def self.analyze_text(text)
-        return 0.9 if text.include? "Require"
+        return 0.3 if text.include? "Require"
       end
 
       def self.gallina

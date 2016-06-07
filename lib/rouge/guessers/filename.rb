@@ -18,13 +18,9 @@ module Rouge
           score = lexer.filenames.map do |pattern|
             if File.fnmatch?(pattern, @basename, File::FNM_DOTMATCH)
               # specificity is better the fewer wildcards there are
-              pattern.scan(/[*?\[]/).size
+              -pattern.scan(/[*?\[]/).size
             end
           end.compact.min
-
-
-          # use negative scores so smaller is better
-          score.nil? ? nil : -score
         end
 
         out.any? ? out : lexers

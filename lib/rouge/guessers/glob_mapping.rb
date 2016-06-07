@@ -3,17 +3,19 @@ module Rouge
     # This class allows for custom behavior
     # with glob -> lexer name mappings
     class GlobMapping < Guesser
-      def self.by_pairs(mapping)
+      def self.by_pairs(mapping, filename)
         glob_map = {}
         mapping.each do |(glob, lexer_name)|
           lexer = Lexer.find(lexer_name)
 
-          # ignore unknown lexers and canonicalize
-          # the name
-          glob_map[lexer.name] = glob if lexer
+          # ignore unknown lexers
+          next unless lexer
+
+          glob_map[lexer.name] ||= []
+          glob_map[lexer.name] << glob
         end
 
-        new(glob_map)
+        new(glob_map, filename)
       end
 
       attr_reader :glob_map, :filename

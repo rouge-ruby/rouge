@@ -109,12 +109,12 @@ module Rouge
       # to use.
       def guesses(info={})
         mimetype, filename, source = info.values_at(:mimetype, :filename, :source)
+        custom_globs = info[:custom_globs]
 
-        guessers = info[:guessers] || []
-
-        guessers = []
+        guessers = (info[:guessers] || []).dup
 
         guessers << Guessers::Mimetype.new(mimetype) if mimetype
+        guessers << Guessers::GlobMapping.by_pairs(custom_globs, filename) if custom_globs && filename
         guessers << Guessers::Filename.new(filename) if filename
         guessers << Guessers::Source.new(source) if source
 

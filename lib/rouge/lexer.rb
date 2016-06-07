@@ -116,6 +116,7 @@ module Rouge
         guessers << Guessers::Mimetype.new(mimetype) if mimetype
         guessers << Guessers::GlobMapping.by_pairs(custom_globs, filename) if custom_globs && filename
         guessers << Guessers::Filename.new(filename) if filename
+        guessers << Guessers::Modeline.new(source) if source
         guessers << Guessers::Source.new(source) if source
 
         Guesser.guess(guessers, registry.values.uniq)

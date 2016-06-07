@@ -59,4 +59,10 @@ describe Rouge::Guesser do
       )
     end
   end
+
+  describe 'modeline guessing' do
+    it 'guesses by modeline' do
+      assert_guess(Rouge::Lexers::Ruby, :source => '# vim: syntax=ruby')
+    end
+  end
 end

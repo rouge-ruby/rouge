@@ -14,9 +14,7 @@ module Rouge
       # In this case, nginx will win because the pattern has no wildcards,
       # while `*.conf` has one.
       def filter(lexers)
-        out = []
-        best_seen = nil
-        lexers.each do |lexer|
+        out = collect_best(lexers) do |lexer|
           score = lexer.filenames.map do |pattern|
             if File.fnmatch?(pattern, @basename, File::FNM_DOTMATCH)
               # specificity is better the fewer wildcards there are
@@ -24,14 +22,9 @@ module Rouge
             end
           end.compact.min
 
-          next unless score
 
-          if best_seen.nil? || score < best_seen
-            best_seen = score
-            out = [lexer]
-          elsif score == best_seen
-            out << lexer
-          end
+          # use negative scores so smaller is better
+          score.nil? ? nil : -score
         end
 
         out.any? ? out : lexers

@@ -29,19 +29,10 @@ module Rouge
 
         source_text = TextAnalyzer.new(source_text)
 
-        best_result = threshold
-        best_match = nil
-        lexers.each do |lexer|
-          result = lexer.analyze_text(source_text) || 0
-          return [lexer] if result == 1
-
-          if result > best_result
-            best_match = lexer
-            best_result = result
-          end
+        collect_best(lexers, threshold: threshold) do |lexer|
+          next unless lexer.methods(false).include? :analyze_text
+          lexer.analyze_text(source_text)
         end
-
-        [best_match]
       end
     end
   end

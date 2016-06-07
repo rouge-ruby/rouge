@@ -14,6 +14,26 @@ module Rouge
       lexers.size < original_size ? lexers : []
     end
 
+    def collect_best(lexers, opts={}, &scorer)
+      best = []
+      best_score = opts[:threshold]
+
+      lexers.each do |lexer|
+        score = scorer.call(lexer)
+
+        next if score.nil?
+
+        if best_score.nil? || score > best_score
+          best_score = score
+          best = [lexer]
+        elsif score == best_score
+          best << lexer
+        end
+      end
+
+      best
+    end
+
     def filter(lexers)
       raise 'abstract'
     end

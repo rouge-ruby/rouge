@@ -26,5 +26,37 @@ describe Rouge::Guesser do
         ]
       )
     end
+
+    it 'uses custom guessers' do
+      passed_lexers = nil
+
+      custom = Class.new(Rouge::Guesser) {
+        define_method(:filter) { |lexers|
+          passed_lexers = lexers
+
+          [Rouge::Lexers::Javascript]
+        }
+      }.new
+
+      assert_guess(Rouge::Lexers::Javascript, :guessers => [custom])
+      assert { passed_lexers.size == Rouge::Lexer.all.size }
+    end
+
+    it 'sequentially filters' do
+      custom = Class.new(Rouge::Guesser) {
+        define_method(:filter) { |lexers|
+          passed_lexers = lexers
+
+          [Rouge::Lexers::Javascript, Rouge::Lexers::Prolog]
+        }
+      }.new
+
+      assert_guess(Rouge::Lexers::Prolog,
+        :guessers => [
+          custom,
+          Rouge::Guessers::Filename.new('foo.pl'),
+        ]
+      )
+    end
   end
 end

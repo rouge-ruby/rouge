@@ -4,7 +4,6 @@ module Rouge
       attr_reader :fname
       def initialize(filename)
         @filename = filename
-        @basename = File.basename(filename)
       end
 
       # returns a list of lexers that match the given filename with
@@ -14,14 +13,12 @@ module Rouge
       # In this case, nginx will win because the pattern has no wildcards,
       # while `*.conf` has one.
       def filter(lexers)
-        collect_best(lexers) do |lexer|
-          score = lexer.filenames.map do |pattern|
-            if File.fnmatch?(pattern, @basename, File::FNM_DOTMATCH)
-              # specificity is better the fewer wildcards there are
-              -pattern.scan(/[*?\[]/).size
-            end
-          end.compact.min
+        mapping = {}
+        lexers.each do |lexer|
+          mapping[lexer.name] = lexer.filenames || []
         end
+
+        GlobMapping.new(mapping, @filename).filter(lexers)
       end
     end
   end

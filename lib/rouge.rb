@@ -36,6 +36,11 @@ load load_dir.join('rouge/util.rb')
 load load_dir.join('rouge/text_analyzer.rb')
 load load_dir.join('rouge/token.rb')
 
+load load_dir.join('rouge/guesser.rb')
+load load_dir.join('rouge/guessers/filename.rb')
+load load_dir.join('rouge/guessers/mimetype.rb')
+load load_dir.join('rouge/guessers/source.rb')
+
 load load_dir.join('rouge/lexer.rb')
 load load_dir.join('rouge/regex_lexer.rb')
 load load_dir.join('rouge/template_lexer.rb')

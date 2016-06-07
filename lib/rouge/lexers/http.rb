@@ -7,8 +7,8 @@ module Rouge
       title "HTTP"
       desc 'http requests and responses'
 
-      def self.methods
-        @methods ||= %w(GET POST PUT DELETE HEAD OPTIONS TRACE PATCH)
+      def self.http_methods
+        @http_methods ||= %w(GET POST PUT DELETE HEAD OPTIONS TRACE PATCH)
       end
 
       def content_lexer
@@ -24,7 +24,7 @@ module Rouge
       state :root do
         # request
         rule %r(
-          (#{HTTP.methods.join('|')})([ ]+) # method
+          (#{HTTP.http_methods.join('|')})([ ]+) # method
           ([^ ]+)([ ]+)                     # path
           (HTTPS?)(/)(1[.][01])(\r?\n|$)  # http version
         )ox do

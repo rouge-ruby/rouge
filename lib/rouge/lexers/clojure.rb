@@ -9,7 +9,7 @@ module Rouge
       tag 'clojure'
       aliases 'clj', 'cljs'
 
-      filenames '*.clj', '*.cljs'
+      filenames '*.clj', '*.cljs', '*.cljc'
 
       mimetypes 'text/x-clojure', 'application/x-clojure'
 

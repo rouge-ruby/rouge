@@ -80,6 +80,7 @@ module Rouge
         rule /[?]/, Punctuation, :ternary
         rule /\[/,  Punctuation, :message
         rule /@\[/, Punctuation, :array_literal
+        rule /@\{/, Punctuation, :dictionary_literal
       end
 
       state :ternary do
@@ -89,6 +90,7 @@ module Rouge
 
       state :message_shared do
         rule /\]/, Punctuation, :pop!
+        rule /\{/, Punctuation, :pop!
         rule /;/, Error
 
         mixin :statement
@@ -109,8 +111,10 @@ module Rouge
       end
 
       state :message_with_args do
+        rule /\{/, Punctuation, :function
         rule /(#{id})(\s*)(:)/ do
           groups(Name::Function, Text, Punctuation)
+          pop!
         end
 
         mixin :message_shared
@@ -118,6 +122,12 @@ module Rouge
 
       state :array_literal do
         rule /]/, Punctuation, :pop!
+        rule /,/, Punctuation
+        mixin :statements
+      end
+
+      state :dictionary_literal do
+        rule /}/, Punctuation, :pop!
         rule /,/, Punctuation
         mixin :statements
       end
@@ -137,6 +147,7 @@ module Rouge
                  Punctuation, Text,
                  Name::Label, Text,
                  Punctuation)
+          pop!
         end
 
         rule id, Name::Class, :pop!

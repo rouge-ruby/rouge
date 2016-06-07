@@ -104,9 +104,11 @@ Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a dif
 * Middleman: [middleman-syntax](https://github.com/middleman/middleman-syntax) (@bhollis)
 * Middleman: [middleman-rouge][] (@Linuus)
 * RDoc: [rdoc-rouge][] (@zzak)
+* Rouge::Rails: [render code samples in your rails views][rouge-rails] (@jacobsimeon)
 
 [middleman-rouge]: https://github.com/Linuus/middleman-rouge
 [rdoc-rouge]: https://github.com/zzak/rdoc-rouge
+[rouge-rails]: https://github.com/jacobsimeon/rouge-rails
 
 ## Contributing
 
@@ -198,7 +200,7 @@ class MyLexer < OtherLexer
   state :your_state do ... end
 
   # prepend rules to states
-  prepand :parent_state do ... end
+  prepend :parent_state do ... end
 
   # append rules to states
   append :parent_state do ... end

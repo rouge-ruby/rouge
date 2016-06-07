@@ -18,11 +18,11 @@ module Rouge
 
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet throws rethrows
+        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet throws rethrows associatedtype
       )
 
       declarations = Set.new %w(
-        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect
+        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype
       )
 
       constants = Set.new %w(
@@ -85,6 +85,10 @@ module Rouge
         end
         
         rule /#available\([^)]+\)/, Keyword::Declaration
+        
+        rule /(#selector\()([^)]+?(?:[(].*?[)])?)(\))/ do
+          groups Keyword::Declaration, Name::Function, Keyword::Declaration
+        end
 
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
@@ -98,8 +102,8 @@ module Rouge
           end
         end
         
-        rule /as[?!]?/, Keyword
-        rule /try[!]?/, Keyword
+        rule /as[?!]?(?=\s)/, Keyword
+        rule /try[!]?(?=\s)/, Keyword
 
         rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation

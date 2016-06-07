@@ -1,0 +1,175 @@
+package a.b.c
+{
+  import flash.events.Event;
+  import flash.events.EventDispatcher;
+  
+  /**
+   * @langversion 3.0
+   */
+  
+  public final class Dispatcher extends EventDispatcher implements IEventDispatcher
+  {
+
+    public function Dispatcher() { }
+
+    // one line comment
+    override public function dispatchEvent(event:Event=null):Boolean
+    {
+      if (this.hasEventListener(event.type) || event.bubbles)
+      {
+        return super.dispatchEvent(event);
+      }
+      else
+      {
+        return true;
+      }
+    }
+    
+  }
+}
+
+package com.jx.screenshot
+{
+  import flash.display.BitmapData;
+  import flash.display.DisplayObject;
+  import flash.errors.IllegalOperationError;
+  import flash.geom.Matrix;
+  import flash.geom.Rectangle;
+
+  public class Screenshot
+  {
+    
+    public static const INCLUDE_BOUNDS:Boolean = true;
+    
+    public static var dictionary:Object;
+    public static var save:Save;
+    public static var comparer:Comparer;
+    public static var resizer:Resizer;
+    
+    public function Screenshot()
+    {
+      throw new IllegalOperationError("Can't be instantiated.");
+    }
+    
+    public static function compare(fixtureName:String, component:DisplayObject, includeBounds:Boolean = false):Boolean
+    {
+      checkPreconditions();
+      comparer = comparer || new NativeComparer(save);
+      resizer = resizer || new Resizer();
+      
+      var matrix:Matrix;
+      var newWidth:uint = component.width;
+      var newHeight:uint = component.height;
+      
+      if (includeBounds) {
+        var bounds:Rectangle = component.getBounds(component);
+        
+        matrix = new Matrix();
+        matrix.translate(-1 * bounds.x, -1 * bounds.y);
+        
+        newWidth = bounds.width;
+        newHeight = bounds.height;
+      }
+      
+      var screenshot:BitmapData = new BitmapData(newWidth, newHeight);
+        screenshot.draw(component, matrix);
+      var resizedScreenshot:BitmapData = resizer.resize(screenshot);
+      var originalScreen:BitmapData = dictionary[fixtureName];
+      
+      // for manual comparison
+      save.save(fixtureName + "-actual", resizedScreenshot);
+      
+      return comparer.compare(fixtureName, originalScreen, resizedScreenshot);
+    }
+    
+    private static function checkPreconditions():void
+    {
+      if (!dictionary) {
+        throw new IllegalOperationError('You have to set the dictionary first.');
+      }
+      
+      if (!save) {
+        throw new IllegalOperationError("You have to set the save first.");
+      }
+    }
+    
+  }
+}
+
+final public dynamic class Generator extends Proxy
+{
+  private var enumerable:Function;
+  private var value:*;
+  private var done:Boolean = false;
+  private var error:Error;
+
+  public function Generator(enumerable:Function)
+  {
+    this.enumerable = enumerable;
+  }
+
+  override flash_proxy function nextValue(index:int):*
+  {
+    return new GeneratorResult(value, done);
+  }
+
+  override flash_proxy function nextNameIndex(index:int):int
+  {
+    yield();
+    return int(!done);
+  }
+
+  public function next(sent:* = undefined):GeneratorResult
+  {
+    yield(sent);
+    return new GeneratorResult(value, done);
+  }
+
+  private function yield(sent:* = undefined):void
+  {
+    try {
+      value = enumerable(sent);
+      if (value == undefined) {
+        throw new ReferenceError("yield is not defined");
+      }
+    } catch (error:RangeError) {
+      done = true;
+      value = null;
+    } catch (error:*) {
+      done = true;
+      value = null;
+      this.error = error;
+    }
+      
+    if (this.error) {
+      throw this.error;
+    }
+  }
+}
+
+final public class GeneratorResult
+{
+  private var _value:*;
+  private var _done:Boolean;
+
+  public function GeneratorResult(value:*, done:Boolean)
+  {
+    _value = value;
+    _done = done;
+  }
+
+  public function get value():*
+  {
+    return _value;
+  }
+
+  public function get done():Boolean
+  { 
+    return _done;
+  }
+
+  public function toString():String
+  {
+    return "[value=" + value + "; done=" + done + "]";
+  }
+}

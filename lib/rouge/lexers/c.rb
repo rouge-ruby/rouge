@@ -19,6 +19,9 @@ module Rouge
           auto break case const continue default do else enum extern
           for goto if register restricted return sizeof static struct
           switch typedef union volatile virtual while
+
+          _Alignas _Alignof _Atomic _Generic _Imaginary
+          _Noreturn _Static_assert _Thread_local
         )
       end
 
@@ -38,6 +41,8 @@ module Rouge
           int_fast64_t uint_fast8_t uint_fast16_t uint_fast32_t
           uint_fast64_t intptr_t uintptr_t intmax_t
           uintmax_t
+
+          char16_t char32_t
         )
       end
 
@@ -96,8 +101,8 @@ module Rouge
 
       state :statements do
         mixin :whitespace
-        rule /L?"/, Str, :string
-        rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
+        rule /(u8|u|U|L)?"/, Str, :string
+        rule %r((u8|u|U|L)?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
         rule %r((\d+[.]\d*|[.]?\d+)e[+-]?\d+[lu]*)i, Num::Float
         rule %r(\d+e[+-]?\d+[lu]*)i, Num::Float
         rule /0x[0-9a-f]+[lu]*/i, Num::Hex

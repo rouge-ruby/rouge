@@ -4,7 +4,7 @@ module Rouge
   module Lexers
     class Groovy < RegexLexer
       title "Groovy"
-      desc 'The Groovy programming language (groovy.codehaus.org)'
+      desc 'The Groovy programming language (http://www.groovy-lang.org/)'
       tag 'groovy'
       filenames '*.groovy'
       mimetypes 'text/x-groovy'
@@ -53,7 +53,7 @@ module Rouge
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
         rule /@\w[\w\d.]*/, Name::Decorator
-        rule /(class|interface)\b/,  Keyword::Declaration, :class
+        rule /(class|interface|trait)\b/,  Keyword::Declaration, :class
         rule /package\b/, Keyword::Namespace, :import
         rule /import\b/, Keyword::Namespace, :import
 

@@ -52,18 +52,18 @@ module Rouge
       end
 
       state :package do
-          rule /[a-zA-Z_]\w*/, Name::Namespace, :pop!
-          rule (//) { pop! }
+        rule /[a-zA-Z_]\w*/, Name::Namespace, :pop!
+        rule (//) { pop! }
       end
 
       state :message do
-          rule /[a-zA-Z_]\w*/, Name::Class, :pop!
-          rule (//) { pop! }
+        rule /[a-zA-Z_]\w*/, Name::Class, :pop!
+        rule (//) { pop! }
       end
 
       state :type do
-          rule /[a-zA-Z_]\w*/, Name, :pop!
-          rule (//) { pop! }
+        rule /[a-zA-Z_]\w*/, Name, :pop!
+        rule (//) { pop! }
       end
     end
   end

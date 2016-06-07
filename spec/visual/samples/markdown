@@ -1042,6 +1042,12 @@ extensions:
 
 ``` ruby
 puts @foo
+
+def bar
+  puts <<-EOS
+    :foobar
+  EOS
+end
 ```
 
 ~~~ latex

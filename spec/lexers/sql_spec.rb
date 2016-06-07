@@ -14,4 +14,12 @@ describe Rouge::Lexers::SQL do
       assert_guess :mimetype => 'text/x-sql'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'recognizes one line comment on last line even when not terminated by a new line (#360)' do
+      assert_tokens_equal '-- comment', ['Comment.Single', '-- comment']
+    end
+  end
 end

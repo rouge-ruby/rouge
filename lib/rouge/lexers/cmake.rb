@@ -169,7 +169,7 @@ module Rouge
           groups BUILTIN_COMMANDS.include?(m[1]) ? Name::Builtin : Name::Function, Text, Punctuation
         end
 
-        rule /#.*(?:\r\n?|\n)/, Comment::Single
+        rule /#.*/, Comment::Single
 
         mixin :default
       end

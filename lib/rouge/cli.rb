@@ -13,9 +13,9 @@ module Rouge
     def file
       case input
       when '-'
-        $stdin
+        IO.new($stdin.fileno, 'r:utf-8')
       when String
-        File.new(input,'r:utf-8')
+        File.new(input, 'r:utf-8')
       when ->(i){ i.respond_to? :read }
         input
       end

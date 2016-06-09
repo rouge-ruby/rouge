@@ -62,7 +62,8 @@ describe Rouge::Guesser do
 
   describe 'modeline guessing' do
     it 'guesses by modeline' do
-      assert_guess(Rouge::Lexers::Ruby, :source => '# vim: syntax=ruby')
+      # don't confuse actual editors when opening this file lol
+      assert_guess(Rouge::Lexers::Ruby, :source => '# v' + 'im: syntax=ruby')
     end
   end
 end

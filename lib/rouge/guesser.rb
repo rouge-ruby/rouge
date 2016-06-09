@@ -10,7 +10,7 @@ module Rouge
         else raise "bad guesser: #{g}"
         end
 
-        lexers = new_lexers.any? ? new_lexers : lexers
+        lexers = new_lexers && new_lexers.any? ? new_lexers : lexers
       end
 
       # if we haven't filtered the input at *all*,

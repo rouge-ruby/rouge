@@ -119,7 +119,7 @@ module Rouge
         guessers << Guessers::Modeline.new(source) if source
         guessers << Guessers::Source.new(source) if source
 
-        Guesser.guess(guessers, registry.values.uniq)
+        Guesser.guess(guessers, Lexer.all)
       end
 
       class AmbiguousGuess < StandardError

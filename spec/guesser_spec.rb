@@ -58,6 +58,14 @@ describe Rouge::Guesser do
         ]
       )
     end
+
+    it 'filters with a lambda' do
+      assert_guess(Rouge::Lexers::C,
+        :guessers => [
+          ->(lexers) { [ Rouge::Lexers::C ] }
+        ]
+      )
+    end
   end
 
   describe 'modeline guessing' do

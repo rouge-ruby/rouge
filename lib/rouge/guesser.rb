@@ -4,7 +4,12 @@ module Rouge
       original_size = lexers.size
 
       guessers.each do |g|
-        new_lexers = g.filter(lexers)
+        new_lexers = case g
+        when Guesser then g.filter(lexers)
+        when -> (x) { x.respond_to? :call } then g.call(lexers)
+        else raise "bad guesser: #{g}"
+        end
+
         lexers = new_lexers.any? ? new_lexers : lexers
       end
 

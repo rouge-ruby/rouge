@@ -29,12 +29,17 @@ module Rouge
 
         collect_best(lexers) do |lexer|
           score = (@glob_map[lexer.name] || []).map do |pattern|
-            if File.fnmatch?(pattern, basename, File::FNM_DOTMATCH)
+            if test_pattern(pattern, basename)
               # specificity is better the fewer wildcards there are
               -pattern.scan(/[*?\[]/).size
             end
           end.compact.min
         end
+      end
+
+      private
+      def test_pattern(pattern, path)
+        File.fnmatch?(pattern, path, File::FNM_DOTMATCH | File::FNM_CASEFOLD)
       end
     end
   end

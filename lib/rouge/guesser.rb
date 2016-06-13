@@ -6,7 +6,7 @@ module Rouge
       guessers.each do |g|
         new_lexers = case g
         when Guesser then g.filter(lexers)
-        when -> (x) { x.respond_to? :call } then g.call(lexers)
+        when proc { |x| x.respond_to? :call } then g.call(lexers)
         else raise "bad guesser: #{g}"
         end
 

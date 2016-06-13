@@ -39,7 +39,10 @@ module Rouge
           goto :regex
         end
 
-        rule /[{]/, Punctuation, :object
+        rule /[{]/ do
+          token Punctuation
+          goto :object
+        end
 
         rule //, Text, :pop!
       end
@@ -183,6 +186,12 @@ module Rouge
       # object literals
       state :object do
         mixin :comments_and_whitespace
+
+        rule /[{]/ do
+          token Punctuation
+          push
+        end
+
         rule /[}]/ do
           token Punctuation
           goto :statement

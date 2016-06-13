@@ -13,9 +13,9 @@ module Rouge
     def file
       case input
       when '-'
-        $stdin
+        IO.new($stdin.fileno, 'r:utf-8')
       when String
-        File.new(input)
+        File.new(input, 'r:utf-8')
       when ->(i){ i.respond_to? :read }
         input
       end
@@ -23,7 +23,7 @@ module Rouge
 
     def read
       @read ||= begin
-        File.read(file, encoding: 'utf-8') 
+        file.read
       rescue => e
         $stderr.puts "unable to open #{input}: #{e.message}"
         exit 1

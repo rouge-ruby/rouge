@@ -9,7 +9,7 @@ module Rouge
       mimetypes 'application/x-dsrc', 'text/x-dsrc'
 
       title "D"
-      desc 'The D programming language(dlag.org)'
+      desc 'The D programming language(dlang.org)'
 
       keywords = %w(
         abstract alias align asm assert auto body

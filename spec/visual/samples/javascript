@@ -47,6 +47,34 @@ var quotedKeys = {
   "three": 3,
 };
 
+var doc = {
+  "first": {
+    "key": "value",
+    "func" : function() {
+      label:
+      while (true) break label;
+
+      return foo ? "bar" : { baz: zot }
+
+    }
+
+  },
+  "hello": "world"
+};
+
+// not an object is OK
+var doc = {
+  "first": "value",
+  "hello": "world"
+};
+
+// not quoted is OK
+var doc = {
+  first: {
+    "key": "value"
+  },
+  "hello": "world"
+};
 Blag = {};
 jQuery.noConflict();
 

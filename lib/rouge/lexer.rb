@@ -109,26 +109,17 @@ module Rouge
       # to use.
       def guesses(info={})
         mimetype, filename, source = info.values_at(:mimetype, :filename, :source)
-        lexers = registry.values.uniq
-        total_size = lexers.size
+        custom_globs = info[:custom_globs]
 
-        lexers = filter_by_mimetype(lexers, mimetype) if mimetype
-        return lexers if lexers.size == 1
+        guessers = (info[:guessers] || []).dup
 
-        lexers = filter_by_filename(lexers, filename) if filename
-        return lexers if lexers.size == 1
+        guessers << Guessers::Mimetype.new(mimetype) if mimetype
+        guessers << Guessers::GlobMapping.by_pairs(custom_globs, filename) if custom_globs && filename
+        guessers << Guessers::Filename.new(filename) if filename
+        guessers << Guessers::Modeline.new(source) if source
+        guessers << Guessers::Source.new(source) if source
 
-        if source
-          # If we're filtering against *all* lexers, we only use confident return
-          # values from analyze_text.  But if we've filtered down already, we can trust
-          # the analysis more.
-          source_threshold = lexers.size < total_size ? 0 : 0.5
-          return [best_by_source(lexers, source, source_threshold)].compact
-        elsif lexers.size < total_size
-          return lexers
-        else
-          return []
-        end
+        Guesser.guess(guessers, Lexer.all)
       end
 
       class AmbiguousGuess < StandardError
@@ -175,71 +166,6 @@ module Rouge
       end
 
     private
-      def filter_by_mimetype(lexers, mt)
-        filtered = lexers.select { |lexer| lexer.mimetypes.include? mt }
-        filtered.any? ? filtered : lexers
-      end
-
-      # returns a list of lexers that match the given filename with
-      # equal specificity (i.e. number of wildcards in the pattern).
-      # This helps disambiguate between, e.g. the Nginx lexer, which
-      # matches `nginx.conf`, and the Conf lexer, which matches `*.conf`.
-      # In this case, nginx will win because the pattern has no wildcards,
-      # while `*.conf` has one.
-      def filter_by_filename(lexers, fname)
-        fname = File.basename(fname)
-
-        out = []
-        best_seen = nil
-        lexers.each do |lexer|
-          score = lexer.filenames.map do |pattern|
-            if File.fnmatch?(pattern, fname, File::FNM_DOTMATCH)
-              # specificity is better the fewer wildcards there are
-              pattern.scan(/[*?\[]/).size
-            end
-          end.compact.min
-
-          next unless score
-
-          if best_seen.nil? || score < best_seen
-            best_seen = score
-            out = [lexer]
-          elsif score == best_seen
-            out << lexer
-          end
-        end
-
-        out.any? ? out : lexers
-      end
-
-      def best_by_source(lexers, source, threshold=0)
-        source = case source
-        when String
-          source
-        when ->(s){ s.respond_to? :read }
-          source.read
-        else
-          raise 'invalid source'
-        end
-
-        assert_utf8!(source)
-
-        source = TextAnalyzer.new(source)
-
-        best_result = threshold
-        best_match = nil
-        lexers.each do |lexer|
-          result = lexer.analyze_text(source) || 0
-          return lexer if result == 1
-
-          if result > best_result
-            best_match = lexer
-            best_result = result
-          end
-        end
-
-        best_match
-      end
 
     protected
       # @private

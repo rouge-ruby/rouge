@@ -7,7 +7,6 @@ describe Rouge::Lexers::CommonLisp do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.cl'
       assert_guess :filename => 'foo.lisp'
       assert_guess :filename => 'foo.el'
     end

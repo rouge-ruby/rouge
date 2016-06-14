@@ -63,6 +63,8 @@ module Rouge
       end
     end
 
+    def palette(*a) self.class.palette(*a) end
+
     @styles = {}
     def self.styles
       @styles ||= InheritableHash.new(superclass.styles)
@@ -76,8 +78,6 @@ module Rouge
       def style(*tokens)
         style = tokens.last.is_a?(Hash) ? tokens.pop : {}
 
-        style = Style.new(self, style)
-
         tokens.each do |tok|
           styles[tok] = style
         end
@@ -85,7 +85,7 @@ module Rouge
 
       def get_own_style(token)
         token.token_chain.reverse_each do |anc|
-          return styles[anc] if styles[anc]
+          return Style.new(self, styles[anc]) if styles[anc]
         end
 
         nil
@@ -96,7 +96,7 @@ module Rouge
       end
 
       def base_style
-        styles[Token::Tokens::Text]
+        get_own_style(Token::Tokens::Text)
       end
 
       def name(n=nil)
@@ -150,7 +150,7 @@ module Rouge
       yield "#{@scope} table pre { margin: 0; }"
 
       styles.each do |tok, style|
-        style.render(css_selector(tok), &b)
+        Style.new(self, style).render(css_selector(tok), &b)
       end
     end
 

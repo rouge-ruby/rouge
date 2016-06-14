@@ -2,6 +2,12 @@
 
 module Rouge
   module Lexers
+    # IMPORTANT NOTICE:
+    #
+    # Please do not copy this lexer and open a pull request
+    # for a new language. It will not get merged, you will
+    # be unhappy, and kittens will cry.
+    #
     class Javascript < RegexLexer
       title "JavaScript"
       desc "JavaScript, the browser scripting language"

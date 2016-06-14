@@ -1,3 +1,17 @@
+# ChangeLog
+
+This log summarizes the changes in each released version of rouge. The versioning scheme
+we use is semver, although we will often release new lexers in minor versions, as a
+practical matter.
+
+## version 1.11.1: 2016-06-14
+
+  * new guesser infrastructure, support for emacs and vim modelines (#489)
+  * javascript bugfix for nested objects with quoted keys (#496)
+  * new theme: Gruvbox (thanks @jamietanna!)
+  * praat: lots of improvements (thanks @jjatria)
+  * fix for rougify error when highlighting from stdin (#493)
+
 ## version 1.11.0: 2016-06-06
 
   * groovy:

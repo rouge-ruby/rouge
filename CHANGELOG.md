@@ -4,6 +4,11 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.0.0: 2016-06-14
+
+  * new formatters! see README.md for documentation, use `Rouge::Formatters::HTMLLegacy`
+    for the old behavior.
+
 ## version 1.11.1: 2016-06-14
 
   * new guesser infrastructure, support for emacs and vim modelines (#489)

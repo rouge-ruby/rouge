@@ -21,7 +21,7 @@ First, take a look at the [pretty colors][].
 ``` ruby
 # make some nice lexed html
 source = File.read('/etc/bashrc')
-formatter = Rouge::Formatters::HTML.new(css_class: 'highlight')
+formatter = Rouge::Formatters::HTML.new
 lexer = Rouge::Lexers::Shell.new
 formatter.format(lexer.lex(source))
 
@@ -32,26 +32,37 @@ Rouge::Theme.find('base16.light').render(scope: '.highlight')
 ```
 
 ### Full options
-#### Formatter options
-##### css_class: 'highlight'
-Apply a class to the syntax-highlighted output. Set to false to not apply any css class.
 
-##### line_numbers: false
-Generate line numbers.
+#### Formatters
 
-##### start_line: 1
-Index to start line numbers.
+As of Rouge 2.0, you are encouraged to write your own formatter for custom formatting needs.
+Builtin formatters include:
 
-##### inline_theme: nil
-A `Rouge::CSSTheme` used to highlight the output with inline styles instead of classes. Allows string inputs (separate mode with a dot):
-
-```
-%w[colorful github monokai monokai.sublime thankful_eyes base16
-   base16.dark base16.light base16.solarized base16.monokai]
-```
-
-##### wrap: true
-Wrap the highlighted content in a container. Defaults to `<pre><code>`, or `<div>` if line numbers are enabled.
+* `Rouge::Formatters::HTML.new` - will render your code with standard class names for tokens,
+  with no div-wrapping or other bells or whistles.
+* `Rouge::Formatters::HTMLInline.new(theme)` - will render your code with no class names, but
+  instead inline the styling options into the `style=` attribute. This is good for emails and
+  other systems where CSS support is minimal.
+* `Rouge::Formatters::HTMLLinewise.new(formatter, class_format: 'line-%i')`
+  This formatter will split your code into lines, each contained in its own div. The
+  `class_format` option will be used to add a class name to the div, given the line
+  number.
+* `Rouge::Formatters::HTMLPygments.new(formatter, css_class='codehilite')`
+  wraps the given formatter with div wrappers generally expected by stylesheets designed for
+  Pygments.
+* `Rouge::Formatters::HTMLTable.new(formatter, opts={})` will output an HTML table containing
+  numbered lines. Options are:
+    * `start_line: 1` - the number of the first line
+    * `line_format: '%i'` - a `sprintf` template for the line number itself
+    * `table_class: 'rouge-table'` - a CSS class for the table
+    * `gutter_class: 'rouge-gutter'` - a CSS class for the gutter
+    * `code_class: 'rouge-code'` - a CSS class for the code column
+* `Rouge::Formatters::HTMLLegacy.new(opts={})` is a backwards-compatibility class intended
+  for users of rouge 1.x, with options that were supported then. Options are:
+    * `inline_theme: nil` - use an HTMLInline formatter with the given theme
+    * `line_numbers: false` - use an HTMLTable formatter
+    * `wrap: true` - use an HTMLPygments wrapper
+    * `css_class: 'codehilite'` - a CSS class to use for the pygments wrapper
 
 #### Lexer options
 ##### debug: false

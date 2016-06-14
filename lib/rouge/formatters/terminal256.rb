@@ -4,17 +4,13 @@ module Rouge
   module Formatters
     # A formatter for 256-color terminals
     class Terminal256 < Formatter
-      tag 'terminal256'
-
       # @private
       attr_reader :theme
 
-
-      # @option opts :theme
-      #   (default is thankful_eyes) the theme to render with.
-      def initialize(opts={})
-        @theme = opts[:theme] || 'thankful_eyes'
-        @theme = Theme.find(@theme) if @theme.is_a? String
+      # @argument theme
+      #   the theme to render with.
+      def initialize(theme=nil)
+        @theme = theme || Themes::ThankfulEyes
       end
 
       def stream(tokens, &b)

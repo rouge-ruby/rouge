@@ -191,7 +191,7 @@ module Rouge
       replace_state(name, dsl.prepended(&b))
     end
 
-    def self.append(state, &b)
+    def self.append(name, &b)
       name = name.to_s
       dsl = state_definitions[name] or raise "no such state #{name.inspect}"
       replace_state(name, dsl.appended(&b))

@@ -124,9 +124,11 @@ module Rouge
           # the analysis more.
           source_threshold = lexers.size < total_size ? 0 : 0.5
           return [best_by_source(lexers, source, source_threshold)].compact
+        elsif lexers.size < total_size
+          return lexers
+        else
+          return []
         end
-
-        []
       end
 
       class AmbiguousGuess < StandardError

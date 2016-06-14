@@ -325,4 +325,25 @@ enum State: Equatable {
     */
 #endif
 
+protocol Protocol {
+    associatedtype AssociatedType
+    typealias TypeAlias
+}
+
+// keywords acceptable as argument names now:
+NSURLProtectionSpace(host: "somedomain.com", port: 443, protocol: "https", realm: "Some Domain", authenticationMethod: "Basic")
+
+let fn1 = someView.insertSubview(_:at:)
+let fn2 = someView.insertSubview(_:aboveSubview:)
+
+#if swift(>=2.2)
+  // Only this code will be parsed in Swift 3
+  func foo(x: Int) -> (y: Int) -> () {}
+#else
+  // This code is ignored entirely.
+  func foo(x: Int)(y: Int) {}
+#endif
+
+let sel = foo(#selector(insertSubview(_:aboveSubview:)))
+
 foo() // end-of-file comment

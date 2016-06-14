@@ -7,11 +7,18 @@
 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789._a <- NULL
 .foo_ <- NULL
 ._foo <- NULL
+. <- NULL
+.. <- NULL
+... <- NULL
+c <- NULL
+c(T, F)
 
 ## Invalid names
 0abc <- NULL
 .0abc <- NULL
 abc+cde <- NULL
+_ <- NULL
+_x <- NULL
 
 ## Reserved Words
 NA
@@ -36,6 +43,7 @@ NA_foo_ <- NULL
 1.23e-3
 1.23e3
 1.23e-3
+.25
 ## integer constants
 123L
 1.23L
@@ -151,3 +159,21 @@ world!'
 
 ## Backtick strings
 `foo123 +!"bar'baz` <- 2 + 2
+x = ` ` % % 2
+
+## Builtin names
+
+LETTERS
+letters
+month.abb
+month.name
+pi
+
+## Roxygen
+
+#' A description
+#'
+#' Long description
+#' @param x the object
+#' @return A logical indicating whether \code{x == 0}
+is_zero = function (x) x == 0

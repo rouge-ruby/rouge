@@ -29,6 +29,19 @@
 
 @end
 
+double (^multiplyTwoValues)(double, double) = ^(double firstValue, double secondValue) {
+    return firstValue * secondValue;
+};
+
+void (^simpleBlock)(void) = ^{
+    NSLog(@"This is a block");
+};
+
+[[SomeClass] inlineBlock:(^NSString *){
+    NSString *var = @"blah";
+    return var;
+}];
+
 NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
     @"quattuor", @"four", @"quinque", @"five", @"sex", @"six", nil];
 
@@ -37,6 +50,14 @@ NSString *key;
 for (key in dictionary) {
     NSLog(@"English: %@, Latin: %@", key, [dictionary valueForKey:key]);
 }
+
+NSDictionary *literalDict = @{
+    @"name" : NSUserName(),
+    @"date" : [NSDate date],
+    @"processInfo" : [NSProcessInfo processInfo]
+};
+
+NSArray *literalArray = @[ @"Hello", NSApp, [NSNumber numberWithInt:42] ];
 
 // MyClass.h
 @import Foundation;
@@ -137,3 +158,14 @@ if ([_myDelegate2 respondsToSelector:@selector(doOtherStuff:andText:andType:)])
 {
   NSLog(@" YES VALUE IS %f and text %@ and type %@",myValue2,myText,myType);
 }end
+
+@interface HUDView (SubclassingHooks)
+- (void)updatePageLabelFrameAnimated:(BOOL)animated;
+- (void)updateThumbnailBarFrameAnimated:(BOOL)animated;
+- (void)updateScrubberBarFrameAnimated:(BOOL)animated;
+@end
+
+ViewController *controller = [[ViewController alloc] initWithDocument:document configuration:[Configuration configurationWithBuilder:^(ConfigurationBuilder *builder) {
+    builder.thumbnailBarMode = ThumbnailBarModeScrollable;
+    builder.pageLabelEnabled = NO;
+}]];

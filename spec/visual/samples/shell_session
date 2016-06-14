@@ -1,0 +1,29 @@
+sio4@silver:~$ ls /var
+backups  crash  local  log   metrics  run    tmp
+cache    lib    lock   mail  opt      spool
+<...>
+sio4@silver:~$ sudo su -
+[sudo] password for sio4: 
+root@silver:~# ls /bin/*sh
+<...>
+/bin/bash
+<...>
+root@silver:~# 
+root@silver:~# 
+root@silver:~# exit
+logout
+sio4@silver:~$ 
+$ ls /var
+backups  crash  local  log   metrics  run    tmp
+cache    lib    lock   mail  opt      spool
+<...>
+$ sudo su -
+[sudo] password for sio4: 
+# ls /bin/*sh
+<...>
+/bin/bash
+<...>
+# 
+# exit
+logout
+$ 

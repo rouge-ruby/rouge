@@ -89,7 +89,7 @@ module Rouge
 
       state :root do
         rule /\s+/m, Text
-        rule /--.*?\n/, Comment::Single
+        rule /--.*/, Comment::Single
         rule %r(/\*), Comment::Multiline, :multiline_comments
         rule /\d+/, Num::Integer
         rule /'/, Str::Single, :single_string

@@ -26,5 +26,9 @@ describe Rouge::Lexers::Apache do
     it 'lexes case insensitively directives' do
       assert_tokens_equal 'setenv foo bar', ['Name.Class', 'setenv'], ['Text', ' foo bar']
     end
+
+    it 'recognizes one line comment on last line even when not terminated by a new line (#360)' do
+      assert_tokens_equal '# comment', ['Comment', '# comment']
+    end
   end
 end

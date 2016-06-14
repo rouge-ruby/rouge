@@ -28,7 +28,7 @@ module Rouge
       end
 
       state :whitespace do
-        rule /\#.*?\n/, Comment
+        rule /\#.*/, Comment
         rule /\s+/m, Text
       end
 

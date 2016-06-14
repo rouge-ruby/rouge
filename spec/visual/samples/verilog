@@ -1,0 +1,170 @@
+/**
+ * Verilog Lexer
+ */
+class C #(parameter int N = 1) extends BaseClass;
+  int x;
+  protected int data;
+
+  constraint cq { message.data inside {[0:8]}; }
+
+  task set (int i);
+    x = i;
+  endtask
+
+  function int get;
+    return x;
+  endfunction
+
+endclass
+
+/*
+ Register module
+ */
+class Register #(parameter type T = int);
+  T data;
+endclass
+
+virtual class Register;
+endclass
+
+typedef struct {
+  rand bit [10:0] ID;      // 11-bit identifier
+       bit  [1:0] rsvd;    // "reserved for expansion" bits
+  rand byte       data[];  // data payload
+} message_t;
+
+class CAN_Message;
+  rand message_t message;
+
+  task getbits(ref bit data_o, input int delay=1);
+    bit [17:0] header;
+    bit [14:0] tail;
+    header = {message.ID,message.RTR,message.rsvd,message.DLC};
+    tail = message.CRC;
+    $display("tail=%0b",tail);
+    //step through message and output each bit (from left to right)
+    foreach(header[i]) #delay data_o = header[i];
+    foreach(message.data[i,j]) #delay data_o = message.data[i][j];
+    foreach(tail[i]) #delay data_o = tail[i];
+  endtask
+endclass
+
+enum {Red, Green, Blue} Colour;
+
+covergroup cg_Colour @(posedge Clock);
+  coverpoint Colour;
+endgroup
+
+cg_Colour = new cg_inst;
+
+covergroup cg_Short @(posedge Clock);
+  coverpoint i {
+    bins zero     = { 0 };
+    bins small    = { [1:100] };
+    bins hunds[3] = { 200,300,400,500,600,700,800,900 };
+    bins large    = { [1000:$] };
+    bins others[] = default;
+  };
+endgroup
+
+module Bus(input In1, output Out1);
+  import "DPI" function void slave_write(input int address,
+                                         input int data);
+  export "DPI" function write;  // Note – not a function prototype
+
+  // This SystemVerilog function could be called from C
+  function void write(int address, int data);
+    // Call C function
+    slave_write(address, data); // Arguments passed by copy
+  endfunction
+  ...
+endmodule
+
+// Verilog code for AND-OR-INVERT gate
+module AOI (input A, B, C, D, output F);
+  assign F = ~((A & B) | (C & D));
+  reg f;
+  always @(sel or a or b)
+  reg f, g; // a new reg variable, g
+  always @(sel or a or b)
+  begin
+    if (sel == 1)
+      begin
+        f = a;
+       g = ~a;
+      end
+    else
+      begin
+        f = b;
+        g = a & b;
+      end
+
+    casez(A)
+      4'b1???: Y<=4'b1000;
+      4'b01??: Y<=4'b0100;
+      4'b001?: Y<=4'b0010;
+      4'b0001: Y<=4'b0001;
+      default: Y<=4'b0000;
+    endcase
+
+    for (i = 0; i < 16; i = i +1) begin
+      $display ("Current value of i is %d", i);
+    end
+
+    repeat (16) begin
+      $display ("Current value of i is %d", i);
+      i = i + 1;
+    end
+  end
+
+  parameter ROWBITS = 4;
+  reg [ROWBITS-1:0] temp;
+  always @(posedge sysclk) begin
+    temp <= '0; // fill with 0
+    end
+  end
+
+  parameter ROWBITS = 4;
+  reg [ROWBITS-1:0] temp;
+  always @(posedge sysclk) begin
+    for (integer c=0; c<ROWBITS; c=c+1) begin: test
+      temp[c] <= 1'b0;
+    end
+  end
+
+  genvar index;
+  generate
+  for (index=0; index < 8; index=index+1)
+    begin: gen_code_label
+      BUFR BUFR_inst (
+        .O(clk_o(index)), // Clock buffer ouptput
+        .CE(ce), // Clock enable input
+        .CLR(clear), // Clock buffer reset input
+        .I(clk_i(index)) // Clock buffer input
+      );
+    end
+  endgenerate
+
+  always_latch begin
+  if (enable) begin
+     a_latch = something;
+  end
+    //No else clause so a_latch's value
+    //is not always defined, so it holds its value
+  end
+
+  always @* begin
+  if (enable) begin
+     a_latch = something;
+  end
+    //No else clause so a_latch's value
+    //is not always defined, so it holds its value
+  end
+
+  always_ff @(posedge clk) begin
+    a <= b;
+  end
+
+endmodule
+// end of Verilog code
+//

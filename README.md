@@ -5,11 +5,9 @@
 
 [rouge]: http://rouge.jneen.net/
 
-[Rouge][] is a pure-ruby syntax highlighter.  It can highlight over 60 languages, and output HTML or ANSI 256-color text.  Its HTML output is compatible with stylesheets designed for [pygments][].
+[Rouge][] is a pure-ruby syntax highlighter.  It can highlight 100 different languages, and output HTML or ANSI 256-color text.  Its HTML output is compatible with stylesheets designed for [pygments][].
 
-If you'd like to help out with this project, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.  In particular, I would appreciate help with the following lexers, from someone who has more experience with the language than I do:
-
-* Delphi/Pascal
+If you'd like to help out with this project, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.
 
 [issues]: https://github.com/jneen/rouge/issues "Help Out"
 [pygments]: http://pygments.org/ "Pygments"
@@ -104,9 +102,11 @@ Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a dif
 * Middleman: [middleman-syntax](https://github.com/middleman/middleman-syntax) (@bhollis)
 * Middleman: [middleman-rouge][] (@Linuus)
 * RDoc: [rdoc-rouge][] (@zzak)
+* Rouge::Rails: [render code samples in your rails views][rouge-rails] (@jacobsimeon)
 
 [middleman-rouge]: https://github.com/Linuus/middleman-rouge
 [rdoc-rouge]: https://github.com/zzak/rdoc-rouge
+[rouge-rails]: https://github.com/jacobsimeon/rouge-rails
 
 ## Contributing
 
@@ -198,7 +198,7 @@ class MyLexer < OtherLexer
   state :your_state do ... end
 
   # prepend rules to states
-  prepand :parent_state do ... end
+  prepend :parent_state do ... end
 
   # append rules to states
   append :parent_state do ... end

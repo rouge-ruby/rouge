@@ -1,0 +1,216 @@
+//Most code samples copied or adapted from CFParser
+//Copyright (c) 2016 https://github.com/cfparser/cfparser
+//The CFParser license is BSD (http://www.opensource.org/licenses/bsd-license.html).
+
+//import (didn't even know CF supported this)
+import my.path.SomeComponent;
+
+//component
+component accessors="true" {
+
+  //component properties
+  property type="string" name="firstName";
+  property name="lastName" default="";
+  property string username;
+
+  function init(){
+    return this;
+  }
+
+  //functions with metadata
+  private function setStatus( rc ) my:role="support:admin" {}
+  package function setStatus2( rc ) role="support:admin" {}
+
+  //array return
+  public obj.domain.content.News[] function findAll() {
+    return newsService.findAll();
+  }
+
+  //obj return
+  public obj.domain.content.News function findAll() {
+    return newsService.findAll();
+  }
+  //inline function expressions
+  function bar(){
+    dotrim("hello world", function(result){
+      //...
+    });
+  }
+  remote function dotrim(data, callback){
+    callback(trim(data));
+  }
+
+  /**
+  * Submit an order
+  * @product.hint The product object
+  * @coupon.hint The Coupon code needed
+  * @results.hint The results object
+  */
+  public any function submitOrder( required product, coupon="", boolean results=true ){
+
+    //function variables
+    var foo = function( required string baz, x=true, y=false ){
+
+    //queryexecute
+    var result = QueryExecute("
+        SELECT info_card_id, document_num, revision_nm, title_nm
+        FROM tdc_doc_infocard
+        WHERE info_card_id = :sourceTemplateNum
+        ORDER BY UPPER(document_num) ASC, revision_seq DESC
+    ", { sourceTemplateNum = { value="#sourceTemplateNum#", cfsqltype="cf_sql_varchar" }});
+      return "bar!";
+    };
+
+    return foo;
+  }
+}
+
+//structs
+struABC={0=0};
+struABC.1 = {};
+
+//ternary struct element
+someStruct = {
+  someVariable = someExpression ? someExpression2 : someExpression3
+};
+
+//elvis (cf11)
+securityNumber = securityStruct['Joe'] ?: -1;  // Retrieving from a struct
+colourCode = colourArray[index] ?: "black";   // Retrieving from an array
+employeeName = getEmployeeName(ID) ?: "Joe";  // A function call
+
+//script custom tags (cf11)
+Cf_happybirthday(name="john", birthdate="December 5, 1987");
+
+//script tags (cf11)
+cfhttp(url="www.google.com", method="GET");
+Cfhttp(URL="http://#CGI.SERVER_NAME#.../target.cfm", method="GET")
+  {
+    cfhttpparam(type="url", name='emp_name', value="Awdhesh");
+    cfhttpparam(type="header", name='myheader', value="My custom header");
+  }
+Writeoutput(cfhttp.filecontent);
+
+//multiple assignment
+x = y = 2^2;
+//compound assignment
+a += b;
+
+//object concat
+x = {
+    name: rc.ticket.getShortId()
+    ,action: 'support:tickets/view/id/' & rc.ticket.getShortId()
+};
+
+y = [
+  "test",
+  "something",
+  "else"
+];
+
+xyz = {
+  "testarray": [
+    {
+      "key": "value1",
+      "value" : x.action &= "concatme"
+    },
+    {
+      "key": "value2",
+      "value" : 100
+    },
+    {
+      "key": "value3",
+      "value" : { bar : 1 }
+    }
+  ]
+}
+//syntax issue #459 (inherited from JS lexer, related to objects/properties)
+var doc = {
+  "first": {
+    "key": "value"
+  },
+  "hello": "world"
+};
+
+var options = {
+  vAxes: {
+    0: { title: "Rainfall (mm)" },
+    1: { title: "Flow Rate (L/s" }
+  },
+  series: {
+    0: { targetAxisIndex: 0 },
+    1: { targetAxisIndex: 1 },
+    2: { targetAxisIndex: 0 }
+  }
+}
+
+//struc key plusplus
+xyz.testarray[3].value.bar++;
+
+//railo/lucee script tags
+log text="Event Gateway #variables.id# started" file=this.logfile;
+log
+    text = "text"
+    type = "information"
+    application = "yes"
+    file = "filename"
+    log = "log type";
+log text="Event Gateway #variables.id# error: #ex.message#" file=this.logfile type="error";
+param name="url.age" type="numeric" default="10" max="100" min="18";
+//How about cfhttp ?
+http method="GET" url="http://www.google.com" result="webPage";
+mail from="Mark@getrailo.com" to="gert@getrailo.com" subject="Awesome! Tags in Script!"{
+WriteOutput("Hey Gert!
+Check out the code samples here! You can write tags in CFScript
+Mark
+");
+}
+directory name="dir" directory=dir action="list";
+//Query a database
+query name="getUsers" dataSource="myDatasource"{
+echo("SELECT * FROM tusers WHERE UserID =");
+queryparam cfsqltype="varchar" value="6300EE15-1320-5CC2-F9F48B9DBBA54D9F";
+}
+dump(getUsers);
+
+//comparison operators
+if ( isDefined( "cgi.http_referrer" ) &&
+  ( cgi.HTTP_REFERER.len() and "/"&cgi.HTTP_REFERER&"/" does not contain "/"&cgi.HTTP_HOST&"/") OR
+  x GREATER THAN y OR
+  a LESS than or equal to b ){
+
+  //try/catch
+  try {
+    //various loops
+    for(; counter lte len; counter = counter + 1)
+    {
+      dir = directories[counter];
+      $directoryCopy(dir, path);
+    }
+
+    cfloop(query=SiteRelatedTables)
+    {
+        loopy();
+    }
+
+    loop(query=SiteRelatedTables)
+    {
+        loopy();
+    }
+
+  } catch (any e) {
+    if (directoryExists(path)) {
+      directory action="delete" recurse="true" directory="#path#"{};
+      //mixed hash and quote
+      filename = "#dateformat( Now(), "YY_MM_DD" )#_#TimeFormat( Now(), "HH_mm" )#_Company.xls";
+
+    }
+    rethrow;
+  }
+  //throw variations
+  throw;
+  throw "some amazing error";
+  throw("woohoo");
+  throw(type="wow", message="that escalated quickly");
+
+}

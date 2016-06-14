@@ -73,6 +73,7 @@ $ rougify style monokai.sublime > syntax.css
 
 ### Advantages to pygments.rb
 * No need to [spawn Python processes](https://github.com/tmm1/pygments.rb).
+* We're faster in [almost every measure](https://github.com/jneen/rouge/pull/41#issuecomment-223751572)
 
 ### Advantages to CodeRay
 * The HTML output from Rouge is fully compatible with stylesheets designed for pygments.

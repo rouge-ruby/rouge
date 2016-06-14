@@ -3,13 +3,13 @@
 module Rouge
   module Lexers
     class Velocity < TemplateLexer
-      title "Velocity"
-      desc "Generic `Velocity <http://velocity.apache.org/>`_ template lexer."
+      title 'Velocity'
+      desc 'Generic `Velocity <http://velocity.apache.org/>`_ template lexer.'
       tag 'velocity'
       filenames '*.vm', '*.velocity', '*.fhtml'
       mimetypes 'text/html+velocity'
 
-      IDENTIFIER = '[a-zA-Z_]\w*'
+      IDENTIFIER = IDENTIFIER = /[a-zA-Z_]\w*/
 
       def self.analyze_text(text)
         rv = 0.0

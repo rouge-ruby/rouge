@@ -124,6 +124,25 @@ xyz = {
     }
   ]
 }
+//syntax issue #459 (inherited from JS lexer, related to objects/properties)
+var doc = {
+  "first": {
+    "key": "value"
+  },
+  "hello": "world",
+};
+
+var options = {
+  vAxes: {
+    0: { title: "Rainfall (mm)" },
+    1: { title: "Flow Rate (L/s" }
+  },
+  series: {
+    0: { targetAxisIndex: 0 },
+    1: { targetAxisIndex: 1 },
+    2: { targetAxisIndex: 0 }
+  }
+}
 
 //struc key plusplus
 xyz.testarray[3].value.bar++;

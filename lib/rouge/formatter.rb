@@ -53,7 +53,7 @@ module Rouge
 
   protected
     def token_lines(tokens, &b)
-      return enum_for(:lines, tokens) unless block_given?
+      return enum_for(:token_lines, tokens) unless block_given?
 
       out = []
       tokens.each do |tok, val|

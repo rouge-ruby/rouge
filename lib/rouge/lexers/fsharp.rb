@@ -11,18 +11,24 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          as assert begin class constraint do done downto else end
-          exception external false for fun function functor if in include
-          inherit initializer lazy let match method module mutable new
-          object of open private raise rec sig struct then to true try
-          type value val virtual when while with
+          abstract and as assert base begin class default delegate do
+          done downcast downto elif else end exception extern false
+          finally for fun function global if in inherit inline interface
+          internal lazy let let! match member module mutable namespace
+          new not null of open or override private public rec return
+          return! select static struct then to true try type upcast
+          use use! val void when while with yield yield! sig atomic 
+          break checked component const constraint constructor 
+          continue eager event external fixed functor include method 
+          mixin object parallel process protected pure sealed tailcall 
+          trait virtual volatile
         )
       end
 
       def self.keyopts
         @keyopts ||= Set.new %w(
           != # & && ( ) * \+ , - -. -> . .. : :: := :> ; ;; < <- =
-          > >] >} ? ?? [ [< [> [| ] _ ` { {< | |] } ~
+          > >] >} ? ?? [ [< [> [| ] _ ` { {< | |] } ~ |> <| <>
         )
       end
 

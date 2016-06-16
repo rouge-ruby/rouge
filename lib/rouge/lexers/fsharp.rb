@@ -50,6 +50,7 @@ module Rouge
         rule /#{upper_id}(?=\s*[.])/, Name::Namespace, :dotted
         rule upper_id, Name::Class
         rule /[(][*](?![)])/, Comment, :comment
+        rule %r(//.*?\n), Comment::Single
         rule id do |m|
           match = m[0]
           if self.class.keywords.include? match

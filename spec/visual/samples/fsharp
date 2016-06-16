@@ -25,6 +25,9 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+(*
+    mult-line comment test
+*)
 open System
 open Fake
 open System.IO

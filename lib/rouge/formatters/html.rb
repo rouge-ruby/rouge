@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*- #
 
-# stdlib
-require 'cgi'
-
 module Rouge
   module Formatters
     # Transforms a token stream into HTML output.

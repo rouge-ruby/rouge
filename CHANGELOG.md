@@ -20,6 +20,8 @@ practical matter.
   * new theme: Gruvbox (thanks @jamietanna!)
   * praat: lots of improvements (thanks @jjatria)
   * fix for rougify error when highlighting from stdin (#493)
+  * new lexer: kotlin (thanks @meleyal!)
+  * new lexer: cfscript (thanks @mjclemente!)
 
 ## version 1.11.0: 2016-06-06
 
@@ -35,6 +37,7 @@ practical matter.
   * new lexer: verilog (thanks @Razer6! #317)
   * new lexer: typescript (thanks @Seikho! #400)
   * new lexers: jinja and twig (thanks @robin850! #402)
+  * new lexer: pascal (thanks @alexcu!)
   * css: support attribute selectors (thanks @skoji! #426)
   * new lexer: shell session (thanks @sio4! #481)
   * ruby: add support for <<~ heredocs (thanks @tinci! #362)

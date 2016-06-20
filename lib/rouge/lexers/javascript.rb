@@ -170,10 +170,16 @@ module Rouge
         rule /[0-9]+/, Num::Integer
         rule /"(\\\\|\\"|[^"])*"/, Str::Double
         rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule /:/, Punctuation
       end
 
       # braced parts that aren't object literals
       state :statement do
+        rule /case\b/ do
+          token Keyword
+          goto :expr_start
+        end
+
         rule /(#{id})(\s*)(:)/ do
           groups Name::Label, Text, Punctuation
         end

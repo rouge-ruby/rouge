@@ -6,6 +6,25 @@ var myRegex = /asdf/;
 var myComplicatedRegex = /.[.](?=x\h\[[)])[^.{}abc]{foo}{3,}x{2,3}/
 var myObject = { a: 1, b: 2 }
 
+var test = 123
+
+switch(test) {
+case 123:
+  console.log(123)
+  break
+default:
+  console.log('default')
+  break
+}
+
+switch(1) {
+  case { foo: 1 }.foo:
+    console.log('oh my fucking god')
+    break
+  case { bar: 2 }.bar:
+
+}
+
 var ternary = 0 ? 1 : {object_key : 2 ? variable : 3 };
 var ternary2 = a ? { object_key : c } + variable : e;
 var ternary3 = a ? {

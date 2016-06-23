@@ -1,3 +1,5 @@
+echo $'ansi\tstrings'
+
 ry::setup() {
 cat <<sh
 export PATH="$(ry fullpath "$@")";

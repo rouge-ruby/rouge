@@ -47,7 +47,6 @@ module Rouge
 
         rule /[\[\]{}()=]/, Operator
         rule /&&|\|\|/, Operator
-        # rule /\|\|/, Operator
 
         rule /<<</, Operator # here-string
         rule /<<-?\s*(\'?)\\?(\w+)\1/ do |m|
@@ -70,6 +69,12 @@ module Rouge
         rule /[^"`\\$]+/, Str::Double
       end
 
+      state :ansi_string do
+        rule /\\./, Str::Escape
+        rule /[^\\']+/, Str::Single
+        mixin :single_quotes
+      end
+
       state :single_quotes do
         rule /'/, Str::Single, :pop!
         rule /[^']+/, Str::Single
@@ -79,13 +84,14 @@ module Rouge
         rule /\s+/, Text
         rule /\\./, Str::Escape
         rule /\$?"/, Str::Double, :double_quotes
+        rule /\$'/, Str::Single, :ansi_string
 
         # single quotes are much easier than double quotes - we can
         # literally just scan until the next single quote.
         # POSIX: Enclosing characters in single-quotes ( '' )
         # shall preserve the literal value of each character within the
         # single-quotes. A single-quote cannot occur within single-quotes.
-        rule /$?'/, Str::Single, :single_quotes
+        rule /'/, Str::Single, :single_quotes
 
         rule /\*/, Keyword
 

@@ -56,12 +56,18 @@ module Rouge
         rule /(\.)(#{id})/ do
           groups Operator, Name::Attribute
         end
+
         rule /#{id}:/, Name::Label
         rule /\$?#{id}/, Name
         rule /[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
-        rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
-        rule /0x[0-9a-f]+/, Num::Hex
-        rule /[0-9]+L?/, Num::Integer
+
+        digit = /[0-9]_+[0-9]|[0-9]/
+        oct_digit = /[0-7]_+[0-7]|[0-7]/
+        hex_digit = /[0-9a-f]_+[0-9a-f]|[0-9a-f]/
+        rule /#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
+        rule /0x#{hex_digit}+/, Num::Hex
+        rule /0#{oct_digit}+/, Num::Oct
+        rule /#{digit}*L?/, Num::Integer
         rule /\n/, Text
       end
 

@@ -69,7 +69,7 @@ module Rouge
         rule /0[bB]#{bin_digit}+/, Num::Bin
         rule /0[xX]#{hex_digit}+/, Num::Hex
         rule /0#{oct_digit}+/, Num::Oct
-        rule /#{digit}*L?/, Num::Integer
+        rule /#{digit}+L?/, Num::Integer
         rule /\n/, Text
       end
 

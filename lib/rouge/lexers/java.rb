@@ -67,7 +67,7 @@ module Rouge
         rule /#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
         rule /0x#{hex_digit}+/, Num::Hex
         rule /0#{oct_digit}+/, Num::Oct
-        rule /#{digit}*L?/, Num::Integer
+        rule /#{digit}+L?/, Num::Integer
         rule /\n/, Text
       end
 

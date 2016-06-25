@@ -74,6 +74,14 @@ module Rouge
       new(opts).render(&b)
     end
 
+    def get_own_style(token)
+      self.class.get_own_style(token)
+    end
+
+    def get_style(token)
+      self.class.get_style(token)
+    end
+
     class << self
       def style(*tokens)
         style = tokens.last.is_a?(Hash) ? tokens.pop : {}

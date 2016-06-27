@@ -229,27 +229,13 @@ module Rouge
 
       # template strings
       state :template_string do
-        rule /\${/ do
-          token Punctuation
-          push :template_string_expr
-        end
-
-        rule /`/ do
-          token Str::Double
-          pop!
-        end
-
-        rule /(\\\\|\\[\$`]|[^\$`]|\$[^{])*/ do
-          token Str::Double
-        end
+        rule /\${/, Punctuation, :template_string_expr
+        rule /`/, Str::Double, :pop!
+        rule /(\\\\|\\[\$`]|[^\$`]|\$[^{])*/, Str::Double
       end
 
       state :template_string_expr do
-        rule /}/ do
-          token Punctuation
-          pop!
-        end
-
+        rule /}/, Punctuation, :pop!
         mixin :root
       end
     end

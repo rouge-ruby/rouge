@@ -4,6 +4,18 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.0.2: 2016-06-27
+
+  * liquid: support variables ending in question marks (thanks @brettg!)
+  * new lexer: IDL (thanks @sappjw!)
+  * javascript:
+    - fix bug causing `:` error tokens (#497)
+    - support for ES6 string interpolation with backticks (thanks @iRath96!)
+  * csharp: allow comments at EOF
+  * java: allow underscored numeric literals (thanks @vandiedakaf!)
+  * terminal formatter: theme changes had broken this formatter, this is fixed.
+  * shell: support "ansi strings" - `$'some-string\n'`
+
 ## version 2.0.1: 2016-06-15
 
   * Bugfix for `Formatter#token_lines` without a block

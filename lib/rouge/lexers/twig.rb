@@ -10,6 +10,8 @@ module Rouge
 
       tag "twig"
 
+      filenames '*.twig'
+
       mimetypes 'application/x-twig', 'text/html+twig'
 
       def self.keywords

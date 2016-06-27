@@ -62,10 +62,12 @@ module Rouge
         rule /[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
 
         digit = /[0-9]_+[0-9]|[0-9]/
+        bin_digit = /[01]_+[01]|[01]/
         oct_digit = /[0-7]_+[0-7]|[0-7]/
-        hex_digit = /[0-9a-f]_+[0-9a-f]|[0-9a-f]/
+        hex_digit = /[0-9a-f]_+[0-9a-f]|[0-9a-f]/i
         rule /#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
-        rule /0x#{hex_digit}+/, Num::Hex
+        rule /0b#{bin_digit}+/i, Num::Bin
+        rule /0x#{hex_digit}+/i, Num::Hex
         rule /0#{oct_digit}+/, Num::Oct
         rule /#{digit}+L?/, Num::Integer
         rule /\n/, Text

@@ -139,6 +139,11 @@ module Rouge
         rule /;/, Punctuation, :statement
         rule /[)\].]/, Punctuation
 
+        rule /`/ do
+          token Str::Double
+          push :template_string
+        end
+
         rule /[?]/ do
           token Punctuation
           push :ternary
@@ -217,6 +222,32 @@ module Rouge
         rule /:/ do
           token Punctuation
           goto :expr_start
+        end
+
+        mixin :root
+      end
+
+      # template strings
+      state :template_string do
+        rule /\${/ do
+          token Punctuation
+          push :template_string_expr
+        end
+
+        rule /`/ do
+          token Str::Double
+          pop!
+        end
+
+        rule /(\\\\|\\[\$`]|[^\$`]|\$[^{])*/ do
+          token Str::Double
+        end
+      end
+
+      state :template_string_expr do
+        rule /}/ do
+          token Punctuation
+          pop!
         end
 
         mixin :root

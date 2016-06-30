@@ -147,6 +147,11 @@ a.()
 
 ##################################################################
 # HEREDOCS
+<<-CONTENT.strip_heredoc
+  D
+  E
+CONTENT
+
 foo(<<-A, <<-B)
 this is the text of a
 A

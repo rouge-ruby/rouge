@@ -350,6 +350,8 @@ module Rouge
           goto :expr_start
         end
 
+        rule(/(?=\n)/) { pop! }
+
         rule(//) { goto :method_call_spaced }
       end
 

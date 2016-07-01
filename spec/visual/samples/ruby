@@ -19,8 +19,22 @@ end
 %I(this is too, but with #{@interpolation})
 hash = { answer: 42 }
 link_to 'new', new_article_path, class: 'btn'
-# not a symbol
+
+#####
+# ternaries
+# NB [jneen]: MRI ruby actually has different parsing behavior depending on
+# ~what variables are defined~, which we can't know in a highlighting context.
+# So... we're going to be wrong here, sometimes. Whatever. These cases look
+# okay though, but if they break I don't care a whole lot, because Ruby itself
+# doesn't parse them consistently.
+a ? b::c : :d
 a ? b:c
+method_that_takes_a_char ?b
+cond??b::c : d
+
+# lol
+?????:??
+//?//://
 
 a/1 # comment
 a / b # comment

@@ -202,14 +202,6 @@ module Rouge
         rule /(?<!\.)(?:#{builtins_g.join('|')})\b/,
           Name::Builtin, :method_call
 
-        # char operator.  ?x evaulates to "x", unless there's a digit
-        # beforehand like x>=0?n[x]:""
-        rule %r(
-          [?](\\[MC]-)*     # modifiers
-          (\\([\\abefnrstv\#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})|\S)
-          (?!\w)
-        )x, Str::Char
-
         mixin :has_heredocs
 
         rule /[A-Z][a-zA-Z0-9_]*/, Name::Constant, :method_call
@@ -223,7 +215,8 @@ module Rouge
         rule /\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\.{1,3}/,
           Operator, :expr_start
         rule /[-+\/*%=<>&!^|~]=?/, Operator, :expr_start
-        rule %r<[\[({,?:\\;/]>, Punctuation, :expr_start
+        rule(/[?]/) { token Punctuation; push :ternary; push :expr_start }
+        rule %r<[\[({,:\\;/]>, Punctuation, :expr_start
         rule %r<[\])}]>, Punctuation
       end
 
@@ -313,6 +306,12 @@ module Rouge
         rule(//) { pop! }
       end
 
+      state :ternary do
+        rule(/:(?!:)/) { token Punctuation; goto :expr_start }
+
+        mixin :root
+      end
+
       state :defexpr do
         rule /(\))(\.|::)?/ do
           groups Punctuation, Operator
@@ -383,6 +382,14 @@ module Rouge
           token Str::Regex
           goto :slash_regex
         end
+
+        # char operator.  ?x evaulates to "x", unless there's a digit
+        # beforehand like x>=0?n[x]:""
+        rule %r(
+          [?](\\[MC]-)*     # modifiers
+          (\\([\\abefnrstv\#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})|\S)
+          (?!\w)
+        )x, Str::Char, :pop!
 
         # special case for using a single space.  Ruby demands that
         # these be in a single line, otherwise it would make no sense.

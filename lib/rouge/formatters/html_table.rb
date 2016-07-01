@@ -41,16 +41,16 @@ module Rouge
           sprintf("#{@line_format}", i) << "\n"
         end.join('')
 
-        numbers = %<<pre class="lineno">#{formatted_line_numbers}</pre>>
+        numbers = %(<pre class="lineno">#{formatted_line_numbers}</pre>)
 
-        yield %<<table class="#@table_class"><tbody><tr>>
+        yield %(<table class="#@table_class"><tbody><tr>)
 
         # the "gl" class applies the style for Generic.Lineno
-        yield %<<td class="#@gutter_class gl">>
+        yield %(<td class="#@gutter_class gl">)
         yield numbers
         yield '</td>'
 
-        yield %<<td class="#@code_class"><pre>>
+        yield %(<td class="#@code_class"><pre>)
         yield formatted
         yield '</pre></td>'
 

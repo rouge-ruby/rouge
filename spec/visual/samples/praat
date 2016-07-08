@@ -364,3 +364,9 @@ endfor
   ... "selected sound is tone")
 
 @ok_formula("selected$(""Sound"") = ""tone""", "selected sound is tone")
+
+call try
+  ... 'newline$' # This is really all a string, but it is undetectable
+  ... 'newline$' # without knowing the arguments for the procedure
+  ... 'newline$' assert "hello" =  "he" + "llo"
+  ... 'newline$' assert "hello" == "hello world" - " world"

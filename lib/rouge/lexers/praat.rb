@@ -37,7 +37,7 @@ module Rouge
         demoOptionKeyPressed demoShiftKeyPressed demoShow demoWaitForInput
         demoWindowTitle demoX demoY differenceLimensToPhon do editor endPause
         endSendPraat endsWith erb erbToHertz erf erfc exitScript exp
-        extractNumber fileReadable fisherP fisherQ floor gaussP gaussQ
+        extractNumber fileReadable fisherP fisherQ floor gaussP gaussQ hash
         hertzToBark hertzToErb hertzToMel hertzToSemitones imax imin
         incompleteBeta incompleteGammaP index index_regex integer invBinomialP
         invBinomialQ invChiSquareQ invFisherQ invGaussQ invSigmoid invStudentQ

@@ -146,6 +146,26 @@ select  all
 call oldStyle "quoted" 2 unquoted string
 assert oldStyle.local = 1
 
+# Interpolated procedure names
+procname$ = "newStyle"
+@'procname$':    "quoted", 2, "quoted string"
+call 'procname$' "quoted" "2" unquoted string
+
+# Funky procedure names!
+@@%^&()
+@#.!: "a"
+call # 2
+call # "string" 2 unquoted
+
+procedure @#@#!
+endproc
+
+procedure 'not_expansion$': .var
+endproc
+
+procedure 'not_expansion$' (.var)
+endproc
+
 # New-style procedure call with parens
 @newStyle("quoted", 2, "quoted string")
 if praatVersion >= 5364

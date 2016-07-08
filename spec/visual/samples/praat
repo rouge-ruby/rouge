@@ -176,6 +176,8 @@ endif
 # inline if with inline comment
 var = if macintosh = 1 then 0 else 1 fi ; This is an inline comment
 
+Remove ; Not an inline comment!
+
 # for-loop with explicit from using local variable
 # and paren-style function calls and variable interpolation
 n = numberOfSelected("Sound")

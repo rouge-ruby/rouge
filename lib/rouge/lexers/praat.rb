@@ -104,12 +104,12 @@ module Rouge
           groups Text, Comment::Single
         end
 
-        rule /^#.*?$/,        Comment::Single
-        rule /;[^\n]*/,       Comment::Single
-        rule /\s+/,           Text
-        rule /\bprocedure\b/, Keyword,        :procedure_definition
-        rule /\bcall\b/,      Keyword,        :procedure_call
-        rule /@/,             Name::Function, :procedure_call
+        rule /^#.*?$/,         Comment::Single
+        rule /;[^\n]*/,        Comment::Single
+        rule /\s+/,            Text
+        rule /\bprocedure\s+/, Keyword,        :procedure_definition
+        rule /\bcall\s+/,      Keyword,        :procedure_call
+        rule /@/,              Name::Function, :procedure_call
 
         mixin :function_call
 
@@ -142,7 +142,7 @@ module Rouge
       end
 
       state :command do
-        rule /( ?[\w()-]+ ?)/, Keyword
+        rule /( ?([^\s:\.'])+ ?)/, Keyword
         mixin :string_interpolated
 
         rule /\.{3}/ do
@@ -161,32 +161,26 @@ module Rouge
       end
 
       state :procedure_call do
-        rule /\s+/, Text
+        mixin :string_interpolated
 
-        rule /([\w.]+)(:|\s*\()/ do
-          groups Name::Function, Punctuation
-          pop!
-        end
+        rule /(:|\s*\()/, Punctuation, :pop!
 
-        rule /([\w.]+)/ do
-          token Name::Function
+        rule /'/,            Name::Function
+        rule /[^:\('\n\s]+/, Name::Function
+
+        rule /(?=\s+)/ do
+          token Text
           pop!
           push :old_arguments
         end
       end
 
       state :procedure_definition do
-        rule /\s/, Text
+        rule /(:|\s*\()/, Punctuation, :pop!
 
-        rule /([\w.]+)(\s*?[(:])/ do
-          groups Name::Function, Text
-          pop!
-        end
+        rule /[^:\(\n\s]+/, Name::Function
 
-        rule /([\w.]+)([^\n]*)/ do
-          groups Name::Function, Text
-          pop!
-        end
+        rule /(\s+)/, Text, :pop!
       end
 
       state :function_call do

@@ -107,8 +107,17 @@ module Rouge
         rule /^#.*?$/,         Comment::Single
         rule /;[^\n]*/,        Comment::Single
         rule /\s+/,            Text
-        rule /\bprocedure\s+/, Keyword,        :procedure_definition
-        rule /\bcall\s+/,      Keyword,        :procedure_call
+
+        rule /(\bprocedure)(\s+)/ do
+          groups Keyword, Text
+          push :procedure_definition
+        end
+
+        rule /(\bcall)(\s+)/ do
+          groups Keyword, Text
+          push :procedure_call
+        end
+
         rule /@/,              Name::Function, :procedure_call
 
         mixin :function_call

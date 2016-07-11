@@ -1,7 +1,7 @@
 module Rouge
   module Lexers
     class Tulip < RegexLexer
-      desc 'the tulip programming language (twitter.com/tulip-lang)'
+      desc 'the tulip programming language (twitter.com/tuliplang)'
       tag 'tulip'
       aliases 'tulip'
 

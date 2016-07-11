@@ -146,6 +146,26 @@ select  all
 call oldStyle "quoted" 2 unquoted string
 assert oldStyle.local = 1
 
+# Interpolated procedure names
+procname$ = "newStyle"
+@'procname$':    "quoted", 2, "quoted string"
+call 'procname$' "quoted" "2" unquoted string
+
+# Funky procedure names!
+@@%^&()
+@#.!: "a"
+call # 2
+call # "string" 2 unquoted
+
+procedure @#@#!
+endproc
+
+procedure 'not_expansion$': .var
+endproc
+
+procedure 'not_expansion$' (.var)
+endproc
+
 # New-style procedure call with parens
 @newStyle("quoted", 2, "quoted string")
 if praatVersion >= 5364
@@ -155,6 +175,8 @@ endif
 
 # inline if with inline comment
 var = if macintosh = 1 then 0 else 1 fi ; This is an inline comment
+
+Remove ; Not an inline comment!
 
 # for-loop with explicit from using local variable
 # and paren-style function calls and variable interpolation
@@ -342,3 +364,9 @@ endfor
   ... "selected sound is tone")
 
 @ok_formula("selected$(""Sound"") = ""tone""", "selected sound is tone")
+
+call try
+  ... 'newline$' # This is really all a string, but it is undetectable
+  ... 'newline$' # without knowing the arguments for the procedure
+  ... 'newline$' assert "hello" =  "he" + "llo"
+  ... 'newline$' assert "hello" == "hello world" - " world"

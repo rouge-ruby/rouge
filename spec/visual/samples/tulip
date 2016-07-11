@@ -1,0 +1,30 @@
+@module ref
+
+ref value = Ref (spawn [ ! => loop value ])
+
+loop value = receive [
+  .set new-value => loop new-value
+  p, id, .get => { send p (id, value); loop value }
+]
+
+@object Ref pid [
+  set val = .set val > send pid
+  get! = .get > send-wait pid
+]
+
+@def @module [
+  [ <name:IDENT> = [ <*body> ] ] => \q[<*body>]
+                                  > compile-module
+                                  > $ns/mount-module name
+]
+
+5 > add 3
+
+
+print '{hello world}
+
+print \thing{hello world}
+
+print \with-escapes{here is a curly: \} <- }
+
+print \with-nesting{ some curlies: {} <- }

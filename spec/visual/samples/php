@@ -20,6 +20,8 @@ if ( !file_exists( dirname(__FILE__) . '/wp-config.php') ) {
     );
 }
 
+"thing {$thing->other_thing()}"
+
 /**
  *  Zip class file
  *

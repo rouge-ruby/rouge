@@ -90,7 +90,7 @@ module Rouge
         end
 
         rule /[~!%^&*+=\|:.<>\/?@-]+/, Operator
-        rule /[\[\]{}();,]+/, Punctuation
+        rule /[\[\]{}();,]/, Punctuation
         rule /class\b/, Keyword, :classname
         # anonymous functions
         rule /(function)(\s*)(?=\()/ do

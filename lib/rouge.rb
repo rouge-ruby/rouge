@@ -6,6 +6,11 @@ require 'pathname'
 # The containing module for Rouge
 module Rouge
   class << self
+    def reload!
+      Object.send :remove_const, :Rouge
+      load __FILE__
+    end
+
     # Highlight some text with a given lexer and formatter.
     #
     # @example

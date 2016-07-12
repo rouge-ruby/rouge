@@ -17,8 +17,14 @@ module Rouge
       id = /[a-z][\w-]*/i
       upper_id = /[A-Z][\w-]*/
 
-      state :root do
+      state :comments_and_whitespace do
         rule /\s+/, Text
+        rule /#.*?$/, Comment
+      end
+
+      state :root do
+        mixin :comments_and_whitespace
+
         rule /@#{id}/, Keyword
 
 
@@ -30,6 +36,8 @@ module Rouge
         end
 
         rule /\\#{id}/, Name::Function
+
+        rule /"/, Str, :dq
 
         rule /'{/, Str, :nested_string
 
@@ -43,14 +51,21 @@ module Rouge
         rule /</, Comment::Preproc, :angle_brackets
       end
 
+      state :dq do
+        rule /[^\\"]+/, Str
+        rule /"/, Str, :pop!
+        rule /\\./, Str::Escape
+      end
+
       state :nested_string do
         rule /\\./, Str::Escape
         rule(/{/) { token Str; push :nested_string }
         rule(/}/) { token Str; pop! }
-        rule(/./) { token Str }
+        rule(/[^{}\\]+/) { token Str }
       end
 
       state :angle_brackets do
+        mixin :comments_and_whitespace
         rule />/, Comment::Preproc, :pop!
         rule /[*:]/, Punctuation
         rule /#{upper_id}/, Keyword::Type

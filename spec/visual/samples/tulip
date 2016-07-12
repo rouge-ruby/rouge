@@ -7,6 +7,8 @@ loop value = receive [
   p, id, .get => { send p (id, value); loop value }
 ]
 
+# a comment
+
 @object Ref pid [
   set val = .set val > send pid
   get! = .get > send-wait pid
@@ -20,8 +22,12 @@ loop value = receive [
 
 5 > add 3
 
+< foo : IDENT >
+
 
 print '{hello world}
+
+print "hello double \" quotes"
 
 print \thing{hello world}
 

@@ -4,6 +4,19 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.0.3: 2016-07-14
+
+  * guessing: ambiguous guesses now raise `Rouge::Guesser::Ambiguous` instead of a
+    mysterious class inside a metaclass.
+  * praat: various fixes for unconventional names (thanks @jjatria!)
+  * workaround for rdoc parsing bug that should fix `gem install` with rdoc parsing on.
+  * ruby:
+    - best effort colon handling
+    - fix for heredocs with method calls at the end
+  * tulip: rewrite from the ground up
+  * markdown: fix improper greediness of backticks
+  * tooling: improve the debug output, and properly highlight the legend
+
 ## version 2.0.2: 2016-06-27
 
   * liquid: support variables ending in question marks (thanks @brettg!)

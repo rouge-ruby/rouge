@@ -122,15 +122,6 @@ module Rouge
         Guesser.guess(guessers, Lexer.all)
       end
 
-      class AmbiguousGuess < StandardError
-        attr_reader :alternatives
-        def initialize(alternatives); @alternatives = alternatives; end
-
-        def message
-          "Ambiguous guess: can't decide between #{alternatives.map(&:tag).inspect}"
-        end
-      end
-
       # Guess which lexer to use based on a hash of info.
       #
       # @option info :mimetype
@@ -150,7 +141,7 @@ module Rouge
         return Lexers::PlainText if lexers.empty?
         return lexers[0] if lexers.size == 1
 
-        raise AmbiguousGuess.new(lexers)
+        raise Guesser::Ambiguous.new(lexers)
       end
 
       def guess_by_mimetype(mt)

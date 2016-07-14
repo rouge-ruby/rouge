@@ -1,5 +1,14 @@
 module Rouge
   class Guesser
+    class Ambiguous < StandardError
+      attr_reader :alternatives
+      def initialize(alternatives); @alternatives = alternatives; end
+
+      def message
+        "Ambiguous guess: can't decide between #{alternatives.map(&:tag).inspect}"
+      end
+    end
+
     def self.guess(guessers, lexers)
       original_size = lexers.size
 

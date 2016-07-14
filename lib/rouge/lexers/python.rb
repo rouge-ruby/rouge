@@ -107,14 +107,14 @@ module Rouge
 
         # TODO: not in python 3
         rule /`.*?`/, Str::Backtick
-        rule /(?:r|ur|ru)"""/i, Str, :tdqs
-        rule /(?:r|ur|ru)'''/i, Str, :tsqs
-        rule /(?:r|ur|ru)"/i,   Str, :dqs
-        rule /(?:r|ur|ru)'/i,   Str, :sqs
-        rule /u?"""/i,          Str, :escape_tdqs
-        rule /u?'''/i,          Str, :escape_tsqs
-        rule /u?"/i,            Str, :escape_dqs
-        rule /u?'/i,            Str, :escape_sqs
+        rule /(?:r|ur|ru)"""/i, Str, :raw_tdqs
+        rule /(?:r|ur|ru)'''/i, Str, :raw_tsqs
+        rule /(?:r|ur|ru)"/i,   Str, :raw_dqs
+        rule /(?:r|ur|ru)'/i,   Str, :raw_sqs
+        rule /u?"""/i,          Str, :tdqs
+        rule /u?'''/i,          Str, :tsqs
+        rule /u?"/i,            Str, :dqs
+        rule /u?'/i,            Str, :sqs
 
         rule /@#{dotted_identifier}/i, Name::Decorator
 
@@ -213,21 +213,26 @@ module Rouge
         )x, Str::Escape
       end
 
+      state :raw_escape do
+        rule /\\./, Str
+      end
+
       state :dqs do
         rule /"/, Str, :pop!
-        rule /\\\\|\\"|\\\n/, Str::Escape
+        mixin :escape
         mixin :strings_double
       end
 
       state :sqs do
         rule /'/, Str, :pop!
-        rule /\\\\|\\'|\\\n/, Str::Escape
+        mixin :escape
         mixin :strings_single
       end
 
       state :tdqs do
         rule /"""/, Str, :pop!
         rule /"/, Str
+        mixin :escape
         mixin :strings_double
         mixin :nl
       end
@@ -235,13 +240,14 @@ module Rouge
       state :tsqs do
         rule /'''/, Str, :pop!
         rule /'/, Str
+        mixin :escape
         mixin :strings_single
         mixin :nl
       end
 
       %w(tdqs tsqs dqs sqs).each do |qtype|
-        state :"escape_#{qtype}" do
-          mixin :escape
+        state :"raw_#{qtype}" do
+          mixin :raw_escape
           mixin :"#{qtype}"
         end
       end

@@ -39,6 +39,24 @@ def baz():
 def zap():
     """docstring"""
 
+# escaped characters in string literals
+def baz():
+    '\a\b\f\n\r\t\v\"\''
+    '\N{DEGREE SIGN}'
+    '\uaF09'
+    '\UaaaaAF09'
+    '\xaf\xAF\x09'
+    '\007'
+
+# escaped characters in raw strings
+def baz():
+    r'\a\b\f\n\r\t\v\"\''
+    r'\N{DEGREE SIGN}'
+    r'\uaF09'
+    r'\UaaaaAF09'
+    r'\xaf\xAF\x09'
+    r'\007'
+
 # line continuations
 apple.filter(x, y)
 apple.\

@@ -10,7 +10,7 @@ module Rouge
     # Author: Sri Harsha Chilakapati
     class Glsl < C
       tag 'glsl'
-      filenames '*.glsl', '*.frag', '*.vert', '*.geom', '*.fs', '*.vs', '*.gs', '*.shader'
+      filenames '*.glsl', '*.frag', '*.vert', '*.geom', '*.vs', '*.gs', '*.shader'
       mimetypes 'x-shader/x-vertex', 'x-shader/x-fragment', 'x-shader/x-geometry'
 
       title "GLSL"

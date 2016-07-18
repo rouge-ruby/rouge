@@ -6,7 +6,7 @@ module Rouge
       title "Docker"
       desc "Dockerfile syntax"
       tag 'docker'
-      aliases 'docker', 'dockerfile'
+      aliases 'dockerfile'
       filenames 'Dockerfile', '*.docker'
       mimetypes 'text/x-dockerfile-config'
 
@@ -14,7 +14,11 @@ module Rouge
         FROM MAINTAINER CMD EXPOSE ENV ADD ENTRYPOINT VOLUME WORKDIR
       ).join('|')
 
+      start { @shell = Shell.new(@options) }
+
       state :root do
+        rule /\s+/, Text
+
         rule /^(ONBUILD)(\s+)(#{KEYWORDS})(.*)/io do |m|
           groups Keyword, Text::Whitespace, Keyword, Str
         end
@@ -25,16 +29,21 @@ module Rouge
 
         rule /#.*?$/, Comment
 
-        rule /^(ONBUILD\s+)?RUN(\s+)/i, Keyword, :run
+        rule /^(ONBUILD\s+)?RUN(\s+)/i do
+          token Keyword
+          push :run
+          @shell.reset!
+        end
 
-        rule /$\s*/m, Text
+        rule /\w+/, Text
+        rule /[^\w]+/, Text
+        rule /./, Text
       end
 
       state :run do
-        rule /(.*\\\n)*.+/ do
-          delegate Shell
-          pop!
-        end
+        rule /\n/, Text, :pop!
+        rule /\\./m, Str::Escape
+        rule(/(\\.|[^\n\\])+/) { delegate @shell }
       end
     end
   end

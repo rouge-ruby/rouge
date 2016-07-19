@@ -4,7 +4,11 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
-## version 2.0.4: 2016-07-19
+## version 2.0.5: 2016-07-19
+
+  * bugfix: don't spam stdout from the yaml lexer
+
+## version 2.0.4: 2016-07-19 (yanked)
 
   * new lexer: docker (thanks @KitaitiMakoto!)
   * new lexer: fsharp (thanks @raymens!)

@@ -63,7 +63,7 @@ module Rouge
 
       def set_indent(match, opts={})
         if indent < @next_indent
-          puts "    yaml: indenting #{indent}/#{@next_indent}"
+          puts "    yaml: indenting #{indent}/#{@next_indent}" if @debug
           @indent_stack << @next_indent
         end
 

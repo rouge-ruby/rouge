@@ -4,6 +4,13 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.0.4: 2016-07-19
+
+  * new lexer: docker (thanks @KitaitiMakoto!)
+  * new lexer: fsharp (thanks @raymens!)
+  * python: improve string escapes (thanks @di!)
+  * yaml: highlight keys differently than values
+
 ## version 2.0.3: 2016-07-14
 
   * guessing: ambiguous guesses now raise `Rouge::Guesser::Ambiguous` instead of a

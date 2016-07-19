@@ -18,7 +18,7 @@ module Rouge
         @keywords ||= %w(
           assert break continue del elif else except exec
           finally for global if lambda pass print raise
-          return try while yield as with
+          return try while yield as with from import yield
         )
       end
 
@@ -75,6 +75,17 @@ module Rouge
         rule /(in|is|and|or|not)\b/, Operator::Word
         rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
 
+        rule /(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do
+          groups Keyword::Namespace,
+                 Text,
+                 Name::Namespace,
+                 Text,
+                 Keyword::Namespace
+        end
+        rule /(import)(\s+)(#{dotted_identifier})/ do
+          groups Keyword::Namespace, Text, Name::Namespace
+        end
+
         rule /(def)((?:\s|\\\s)+)/ do
           groups Keyword, Text
           push :funcname
@@ -83,26 +94,6 @@ module Rouge
         rule /(class)((?:\s|\\\s)+)/ do
           groups Keyword, Text
           push :classname
-        end
-
-        rule /(yield)((?:\s|\\\s)+)/ do
-           groups Keyword, Text
-           push :raise
-        end
-
-        rule /(raise)((?:\s|\\\s)+)/ do
-           groups Keyword, Text
-           push :raise
-        end
-
-        rule /(from)((?:\s|\\\s)+)/ do
-          groups Keyword::Namespace, Text
-          push :fromimport
-        end
-
-        rule /(import)((?:\s|\\\s)+)/ do
-          groups Keyword::Namespace, Text
-          push :import
         end
 
         # TODO: not in python 3

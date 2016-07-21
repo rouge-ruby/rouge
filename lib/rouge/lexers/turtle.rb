@@ -15,6 +15,9 @@ module Rouge
       def self.analyze_text(text)
         start = text[0..1000]
         return 0.9 if start =~ %r(@prefix\b)
+        return 0.9 if start =~ %r(@base\b)
+        return 0.6 if start =~ %r(PREFIX\b)i
+        return 0.6 if start =~ %r(BASE\b)i
       end
 
       state :root do

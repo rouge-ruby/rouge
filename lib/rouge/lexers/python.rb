@@ -87,7 +87,7 @@ module Rouge
 
         rule /(yield)((?:\s|\\\s)+)/ do
            groups Keyword, Text
-           push :raise
+           push :yield
         end
 
         rule /(raise)((?:\s|\\\s)+)/ do
@@ -151,10 +151,15 @@ module Rouge
         rule identifier, Name::Class, :pop!
       end
 
+      state :paren do
+        rule /\(/, Punctuation, :paren
+        rule /\)/, Punctuation, :pop!
+        mixin :root
+      end
+
       state :raise do
+        rule /\(/, Punctuation, :paren
         rule /from\b/, Keyword
-        rule /raise\b/, Keyword
-        rule /yield\b/, Keyword
         rule /\n/, Text, :pop!
         rule /;/, Punctuation, :pop!
         mixin :root

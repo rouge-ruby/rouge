@@ -11,6 +11,13 @@ def lex(code, lexer):
                             'not a class')
         raise
 
+def test_multiline_raise_from(some_dict):
+    try:
+        some_dict["thing"]
+    except KeyError as err:
+        raise ValueError("'some_dict' must have a 'thing' key to be used "
+                         "by this function") from err
+
 # quotes in strings
 def foo():
     "it's working"

@@ -37,7 +37,7 @@ module Rouge
         )
       end
 
-      id = /[a-zA-Z][a-zA-Z0-9_]*/
+      id = /[a-zA-Z]+[a-zA-Z0-9_]*/
 
       state :whitespace do
         rule /\s+/, Text
@@ -59,9 +59,6 @@ module Rouge
         # Find Attributes
         rule /'#{id}/i, Name::Attribute
         
-        # Find Lables
-        rule /\s*#{id}\s*:\s*/, Name::Label
-
         # Punctuations
         rule /[(),:;]/, Punctuation
 

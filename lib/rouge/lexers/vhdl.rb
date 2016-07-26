@@ -42,15 +42,15 @@ module Rouge
       state :whitespace do
         rule /\s+/, Text
         rule /\n/, Text
-        # Find Comments (VHDL has no Multiline Comments)
+        # Find Comments (VHDL doesn't support multiline comments)
         rule /--.*$/, Comment::Single
       end
 
       state :statements do
 
         # Find Numbers
-        rule /\d+/i, Num::Integer
-        rule /\d+[.]\d+/i, Num::Float
+        rule /-?\d+/i, Num::Integer
+        rule /-?\d+[.]\d+/i, Num::Float
 
         # Find Strings
         rule /[box]?"[^"]*"/i, Str::Single

@@ -1,12 +1,33 @@
-use core::*;
+#![allow(dead_code)]
+
+#[derive(Debug, Copy, Clone)]
+struct Vector {
+    x: f64,
+    y: f64,
+    z: f64,
+}
+
+fn test_big_number() -> u64 { 
+    2_000_000 
+}
+
+fn test_documentation() {
+    unreachable!()
+}
 
 fn main() {
-    for ["Alice", "Bob", "Carol"].each |&name| {
-        do task::spawn {
-            let v = rand::Rng().shuffle([1, 2, 3]);
-            for v.each |&num| {
-                io::print(fmt!("%s says: '%d'\n", name, num))
-            }
+    let program = "+ + * - /";
+    let mut accumulator = 0;
+
+    for token in program.chars() {
+        match token {
+            '+' => accumulator += 1,
+            '-' => accumulator -= 1,
+            '*' => accumulator *= 2,
+            '/' => accumulator /= 2,
+            _ => { /* ignore everything else */ }
         }
     }
+
+    println!("The program \"{}\" calculates the value {}", program, accumulator);
 }

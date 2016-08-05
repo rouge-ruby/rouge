@@ -1040,6 +1040,8 @@ Markdown provides backslash escapes for the following characters:
 
 inline ``code`` and more inline `code`
 inline `code` and more inline `code`
+inline `code that
+wraps a line` and more `inline code`
 
 extensions:
 

@@ -46,7 +46,7 @@ module Rouge
 
         rule /\n\n((    |\t).*?\n|\n)+/, Str::Backtick
 
-        rule /(`+)#{edot}+?\1/, Str::Backtick
+        rule /(`+)(?:#{edot}|\n)+?\1/, Str::Backtick
 
         # various uses of * are in order of precedence
 

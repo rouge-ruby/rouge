@@ -121,12 +121,12 @@ module Rouge
       state :statement do
         mixin :whitespace
         rule /L?"/, Str, :string
-        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
-        rule /\d+e[+-]?[0-9]+/i, Num::Float
-        rule /[0-9]*'h[0-9a-fA-F]+/, Num::Hex
-        rule /[0-9]*'b?[01xz]+/, Num::Bin
-        rule /[0-9]*'d[0-9]+/, Num::Integer
-        rule /\d+[lu]*/i, Num::Integer
+        rule /([0-9_]+\.[0-9_]*|[0-9_]*\.[0-9_]+)(e[+-]?[0-9_]+)?/i, Num::Float
+        rule /[0-9_]+e[+-]?[0-9_]+/i, Num::Float
+        rule /[0-9]*'h[0-9a-fA-F_?]+/, Num::Hex
+        rule /[0-9]*'b?[01xz_?]+/, Num::Bin
+        rule /[0-9]*'d[0-9_?]+/, Num::Integer
+        rule /[0-9_]+[lu]*/i, Num::Integer
         rule %r([~!%^&*+-=\|?:<>/@{}]), Operator
         rule /[()\[\],.$\#]/, Punctuation
         rule /`(\w+)/, Comment::Preproc

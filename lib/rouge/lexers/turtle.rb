@@ -14,21 +14,21 @@ module Rouge
 
       def self.analyze_text(text)
         start = text[0..1000]
-        return 0.9 if start =~ %r(@prefix\b)
-        return 0.9 if start =~ %r(@base\b)
-        return 0.6 if start =~ %r(PREFIX\b)i
-        return 0.6 if start =~ %r(BASE\b)i
+        return 0.5 if start =~ %r(@prefix\b)
+        return 0.5 if start =~ %r(@base\b)
+        return 0.4 if start =~ %r(PREFIX\b)i
+        return 0.4 if start =~ %r(BASE\b)i
       end
 
       state :root do
-        rule /@base /, Keyword::Declaration
-        rule /@prefix /, Keyword::Declaration
-        rule /true/, Keyword::Constant
-        rule /false/, Keyword::Constant
+        rule /@base\b/, Keyword::Declaration
+        rule /@prefix\b/, Keyword::Declaration
+        rule /true\b/, Keyword::Constant
+        rule /false\b/, Keyword::Constant
         
-        rule /""".*"""/m, Literal::String
+        rule /""".*?"""/m, Literal::String
         rule /"([^"\\]|\\.)*"/, Literal::String
-        rule /'''.*'''/m, Literal::String
+        rule /'''.*?'''/m, Literal::String
         rule /'([^'\\]|\\.)*'/, Literal::String
         
         rule /#.*$/, Comment::Single
@@ -56,12 +56,12 @@ module Rouge
         
         rule /<[^>]*>/, Name::Label
 
-        rule /base /i, Keyword::Declaration
-        rule /prefix /i, Keyword::Declaration
-        rule /GRAPH /, Keyword
-        rule /a /, Keyword
+        rule /base\b/i, Keyword::Declaration
+        rule /prefix\b/i, Keyword::Declaration
+        rule /GRAPH\b/, Keyword
+        rule /a\b/, Keyword
 
-        rule /\s/, Text::Whitespace
+        rule /\s+/, Text::Whitespace
 
         rule /[^:;<>#@"\(\).\[\]\{\} ]+:/, Name::Namespace
         rule /[^:;<>#@"\(\).\[\]\{\} ]+/, Name

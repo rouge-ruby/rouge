@@ -37,20 +37,20 @@ module Rouge
         )
       end
 
-      id = /[a-zA-Z][a-zA-Z0-9_]*/
+      id = /[a-zA-Z]+[a-zA-Z0-9_]*/
 
       state :whitespace do
         rule /\s+/, Text
         rule /\n/, Text
-        # Find Comments (VHDL has no Multiline Comments)
+        # Find Comments (VHDL doesn't support multiline comments)
         rule /--.*$/, Comment::Single
       end
 
       state :statements do
 
         # Find Numbers
-        rule /\d+/i, Num::Integer
-        rule /\d+[.]\d+/i, Num::Float
+        rule /-?\d+/i, Num::Integer
+        rule /-?\d+[.]\d+/i, Num::Float
 
         # Find Strings
         rule /[box]?"[^"]*"/i, Str::Single
@@ -59,9 +59,6 @@ module Rouge
         # Find Attributes
         rule /'#{id}/i, Name::Attribute
         
-        # Find Lables
-        rule /\s*#{id}\s*:\s*/, Name::Label
-
         # Punctuations
         rule /[(),:;]/, Punctuation
 

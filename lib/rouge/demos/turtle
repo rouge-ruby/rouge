@@ -21,5 +21,6 @@ GRAPH <https://trig.testing.graph> {
     dcat:contactPoint [ a foaf:Person ] ;
     test:list ( <http://ex.org> 1 1.1 +1 -1 1.2E+4 "Test" "\"Quote\"" ) ;
     test:datatype "2016-07-20"^^xsd:date ;
+    test:text """next multiline""";
     .
 }

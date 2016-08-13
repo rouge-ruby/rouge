@@ -1,0 +1,74 @@
+-- ABAP Lexer
+
+FUNCTION z_do_nothing.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IV_IMPORT) TYPE  STRING
+*"  EXPORTING
+*"     REFERENCE(ET_EXPORT) TYPE  ICL_STRING_T
+*"----------------------------------------------------------------------
+
+* some declarations
+  CONSTANTS: lc_const TYPE char10 VALUE '0123456789'.
+
+  DATA: lv_dec    TYPE decfloat16,
+        ls_mara   TYPE mara,
+        lt_mara   TYPE TABLE OF mara,
+        lo_object TYPE REF TO cl_any_class.
+
+  DATA spfli_tab TYPE STANDARD TABLE OF spfli
+                         WITH EMPTY KEY
+             WITH NON-UNIQUE SORTED KEY carr_city
+                             COMPONENTS carrid cityfrom.
+
+  FIELD-SYMBOLS: <mara> TYPE mara.
+
+* some basic functions
+  CREATE OBJECT lo_obj
+    EXPORTING
+      iv_int = lv_int.
+
+  lo_obj->do_nothing( ).
+
+  SELECT SINGLE * FROM mara INTO ls_mara WHERE matkl EQ '1324'.
+
+* some new functions from ABAP 7.40
+  DATA(lv_int) = 1000.  " just an initializer
+
+  SELECT * FROM mara INTO TABLE @DATA(lt_mara).
+
+  LOOP AT lt_mara ASSIGNING FIELD-SYMBOL(<wa>)
+    GROUP BY ( carrid = <wa>-matkl count = GROUP SIZE )
+    ASCENDING
+    ASSIGNING FIELD-SYMBOL(<group1>).
+
+    CHECK <wa>-mtart EQ '0001'.
+  ENDLOOP.
+
+  IF line_exists( lt_mara[ matnr = '1324' ] ).
+    ls_mara = lt_mara[ matnr = '1324' ].
+    WRITE: / 'The Material', ls_mara-matnr, '...'.
+  ENDIF.
+
+  SELECT * FROM spfli INTO TABLE @spfli_tab.
+
+  DATA(extract) = FILTER #( spfli_tab USING KEY carr_city
+                              WHERE carrid   = CONV #( to_upper( carrid ) ) AND
+                                    cityfrom = CONV #( to_upper( cityfrom ) ) ).
+
+  DATA(rnd_color) = cl_abap_random_int=>create( seed = CONV #( sy-uzeit ) min = 1 max = 4 ).
+  lt_fields = VALUE #( FOR i = 0 UNTIL i > 15
+                         ( VALUE #( FOR j = 0 UNTIL j > 15
+                             ( rnd_color->get_next( ) ) ) ) ).
+
+  DATA lr_int TYPE RANGE OF i.
+  lr_int = VALUE #( sign = 'I'  option = 'BT' ( low = 1  high = 10 )
+                                              ( low = 21 high = 30 )
+                                              ( low = 41 high = 50 )
+                                option = 'GE' ( low = 61 )  ).
+  IF 7 IN lr_int.
+    " found
+  ENDIF.
+
+ENDFUNCTION.

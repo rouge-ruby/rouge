@@ -107,14 +107,6 @@ module Rouge
           token toktype
 
           push do
-            # rule /\\[##{open}#{close}\\]/, Str::Escape
-            # # nesting rules only with asymmetric delimiters
-            # if open != close
-            #   rule /#{open}/ do
-            #     token toktype
-            #     push
-            #   end
-            # end
             rule /#{close}/, toktype, :pop!
 
             if interp

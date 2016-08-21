@@ -153,7 +153,7 @@ module Rouge
         declaim defclass defconstant defgeneric define-compiler-macro
         define-condition define-method-combination define-modify-macro
         define-setf-expander define-symbol-macro defmacro defmethod
-        defpackage defparameter defsetf defstruct deftype defun defvar
+        defpackage defparameter defsetf defstruct defsystem deftype defun defvar
         destructuring-bind do do* do-all-symbols do-external-symbols
         dolist do-symbols dotimes ecase etypecase formatter
         handler-bind handler-case ignore-errors incf in-package

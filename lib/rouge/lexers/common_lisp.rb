@@ -8,7 +8,7 @@ module Rouge
       tag 'common_lisp'
       aliases 'cl', 'common-lisp', 'elisp', 'emacs-lisp'
 
-      filenames '*.cl', '*.lisp', '*.el' # used for Elisp too
+      filenames '*.cl', '*.lisp', '*.asd', '*.el' # used for Elisp too
       mimetypes 'text/x-common-lisp'
 
       # 638 functions

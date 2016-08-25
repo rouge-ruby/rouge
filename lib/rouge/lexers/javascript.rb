@@ -254,8 +254,6 @@ module Rouge
         return 0.8 if text =~ /\A\s*{/m && text.lexes_cleanly?(self)
       end
 
-      string = /"(\\.|[^\\"])*?"/
-
       state :root do
         rule /\s+/m, Text::Whitespace
         rule /"/, Str::Double, :string

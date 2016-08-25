@@ -254,7 +254,7 @@ module Rouge
         return 0.8 if text =~ /\A\s*{/m && text.lexes_cleanly?(self)
       end
 
-      string = /"(\\.|[^"])*"/
+      string = /"(\\.|[^\\"])*?"/
 
       state :root do
         mixin :whitespace

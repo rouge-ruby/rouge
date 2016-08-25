@@ -31,10 +31,10 @@ module Rouge
         rule /^#(?=[^#]).*?$/, Generic::Heading
         rule /^##*.*?$/, Generic::Subheading
 
-        # TODO: syntax highlight the code block, github style
-        rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?)(\2)/m do |m|
+        rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?\n)(\2)/m do |m|
           sublexer = Lexer.find_fancy(m[3].strip, m[4])
           sublexer ||= PlainText.new(:token => Str::Backtick)
+          sublexer.options(self.options)
           sublexer.reset!
 
           token Text, m[1]

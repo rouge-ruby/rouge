@@ -242,7 +242,7 @@ module Rouge
 
         if opts[:lexer]
           @lexer_class = Lexer.find(opts[:lexer]) \
-            or error! "unkown lexer #{opts[:lexer].inspect}"
+            or error! "unknown lexer #{opts[:lexer].inspect}"
         else
           @lexer_name = opts[:lexer]
           @mimetype = opts[:mimetype]

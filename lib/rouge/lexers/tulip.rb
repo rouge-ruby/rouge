@@ -28,7 +28,7 @@ module Rouge
         rule /@#{id}/, Keyword
 
 
-        rule /[>,!\[\]:{}()=;\/]/, Punctuation
+        rule /[_>,!\[\]:{}()=;\/]/, Punctuation
 
         rule /(\\#{id})([{])/ do
           groups Name::Variable, Str

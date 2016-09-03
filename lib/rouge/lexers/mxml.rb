@@ -41,7 +41,7 @@ module Rouge
       state :attribute do
         rule /\s+/m, Text
         rule /(")({|@{)/m do
-          groupe Str, Punctuation
+          groups Str, Punctuation
           push :actionscript_attribute
         end
         rule /".*?"|'.*?'|[^\s>]+/, Str, :tag

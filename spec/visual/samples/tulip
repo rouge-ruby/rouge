@@ -20,10 +20,24 @@ loop value = receive [
                                   > $ns/mount-module name
 ]
 
+foo = ~(bar)
+start-sprinklers -when: 'later
+prune -harvest
+
+foo = ...
+
+@method map _ %
+
+@check %list [
+  .cons _ _
+  .nil
+]
+
 5 > add 3
 
 < foo : IDENT >
 
+"{interpolation $(thing (with (parentheses)))}
 
 print '{hello world}
 

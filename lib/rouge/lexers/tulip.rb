@@ -28,21 +28,31 @@ module Rouge
         rule /@#{id}/, Keyword
 
 
-        rule /[_>,!\[\]:{}()=;\/]/, Punctuation
-
         rule /(\\#{id})([{])/ do
-          groups Name::Variable, Str
+          groups Name::Function, Str
+          push :nested_string
+        end
+
+        rule /([+]#{id})([{])/ do
+          groups Name::Decorator, Str
           push :nested_string
         end
 
         rule /\\#{id}/, Name::Function
+        rule /[+]#{id}/, Name::Decorator
 
+        rule /"[{]/, Str, :dqi
         rule /"/, Str, :dq
 
         rule /'{/, Str, :nested_string
+        rule /'#{id}/, Str
 
         rule /[.]#{id}/, Name::Tag
         rule /[$]#{id}/, Name::Variable
+        rule /-#{id}:?/, Name::Label
+        rule /%#{id}/, Name::Function
+
+        rule /[?~%._>,!\[\]:{}()=;\/-]/, Punctuation
 
         rule /[0-9]+([.][0-9]+)?/, Num
 
@@ -55,6 +65,25 @@ module Rouge
         rule /[^\\"]+/, Str
         rule /"/, Str, :pop!
         rule /\\./, Str::Escape
+      end
+
+      state :dqi do
+        rule /[$][(]/, Str::Interpol, :interp_root
+        rule /[{]/, Str, :dqi
+        rule /[}]/, Str, :pop!
+        rule /[^{}$]+/, Str
+        rule /./, Str
+      end
+
+      state :interp_root do
+        rule /[)]/, Str::Interpol, :pop!
+        mixin :interp
+      end
+
+      state :interp do
+        rule /[(]/, Punctuation, :interp
+        rule /[)]/, Punctuation, :pop!
+        mixin :root
       end
 
       state :nested_string do

@@ -52,16 +52,16 @@ module Rouge
       re_tok = Str::Regex
 
       state :balanced_regex do
-        rule %r(/(\\\\|\\/|[^/])*/[egimosx]*)m, re_tok, :pop!
-        rule %r(!(\\\\|\\!|[^!])*![egimosx]*)m, re_tok, :pop!
+        rule %r(/(\\[\\/]|[^/])*/[egimosx]*)m, re_tok, :pop!
+        rule %r(!(\\[\\!]|[^!])*![egimosx]*)m, re_tok, :pop!
         rule %r(\\(\\\\|[^\\])*\\[egimosx]*)m, re_tok, :pop!
-        rule %r({(\\\\|\\}|[^}])*}[egimosx]*), re_tok, :pop!
-        rule %r(<(\\\\|\\>|[^>])*>[egimosx]*), re_tok, :pop!
-        rule %r(\[(\\\\|\\\]|[^\]])*\][egimosx]*), re_tok, :pop!
-        rule %r[\((\\\\|\\\)|[^\)])*\)[egimosx]*], re_tok, :pop!
-        rule %r(@(\\\\|\\\@|[^\@])*@[egimosx]*), re_tok, :pop!
-        rule %r(%(\\\\|\\\%|[^\%])*%[egimosx]*), re_tok, :pop!
-        rule %r(\$(\\\\|\\\$|[^\$])*\$[egimosx]*), re_tok, :pop!
+        rule %r({(\\[\\}]|[^}])*}[egimosx]*), re_tok, :pop!
+        rule %r(<(\\[\\>]|[^>])*>[egimosx]*), re_tok, :pop!
+        rule %r(\[(\\[\\\]]|[^\]])*\][egimosx]*), re_tok, :pop!
+        rule %r[\((\\[\\\)]|[^\)])*\)[egimosx]*], re_tok, :pop!
+        rule %r(@(\\[\\@]|[^@])*@[egimosx]*), re_tok, :pop!
+        rule %r(%(\\[\\%]|[^%])*%[egimosx]*), re_tok, :pop!
+        rule %r(\$(\\[\\\$]|[^\$])*\$[egimosx]*), re_tok, :pop!
       end
 
       state :root do

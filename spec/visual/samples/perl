@@ -2,6 +2,35 @@
 
 #### regex_delimiters
 
+sub substitutionOperator
+{
+  s!\\!\\\\!g;
+  s!\\!\\\\!g;
+  s!"!\\"!g;
+  s!\(!\\\(!g;
+  s!\)!\\\)!g;
+}
+
+
+sub substitutionOperator
+{
+  s!\\!\\\\!g;
+  s!\\!\\\\!g;
+  s!"!\\"!g;
+  s!\(!\\\(!g;
+  s!\)!\\\)!g;
+}
+
+
+sub substitutionOperator
+{
+  s!\\!\\\\!g;
+  s!\\!\\\\!g;
+  s!"!\\"!g;
+  s!\(!\\\(!g;
+  s!\)!\\\)!g;
+}
+
 use strict;
 use warnings;
 

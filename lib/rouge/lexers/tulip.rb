@@ -48,9 +48,10 @@ module Rouge
         rule /'#{id}/, Str
 
         rule /[.]#{id}/, Name::Tag
-        rule /[$]#{id}/, Name::Variable
+        rule /[$]#{id}?/, Name::Variable
         rule /-#{id}:?/, Name::Label
         rule /%#{id}/, Name::Function
+        rule /`#{id}/, Operator::Word
 
         rule /[?~%._>,!\[\]:{}()=;\/-]/, Punctuation
 

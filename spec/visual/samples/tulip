@@ -20,9 +20,13 @@ loop value = receive [
                                   > $ns/mount-module name
 ]
 
+partial-cons x = [.cons x $]
+
 foo = ~(bar)
 start-sprinklers -when: 'later
 prune -harvest
+
+one `and two `or three
 
 foo = ...
 

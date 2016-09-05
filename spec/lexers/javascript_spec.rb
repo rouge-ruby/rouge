@@ -18,6 +18,7 @@ describe Rouge::Lexers::Javascript do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.js'
       assert_guess Rouge::Lexers::JSON, :filename => 'foo.json'
+      assert_guess Rouge::Lexers::JSX, :filename => 'foo.jsx'
     end
 
     it 'guesses by mimetype' do
@@ -25,6 +26,7 @@ describe Rouge::Lexers::Javascript do
       assert_guess Rouge::Lexers::JSON, :mimetype => 'application/json'
       assert_guess Rouge::Lexers::JSON, :mimetype => 'application/vnd.api+json'
       assert_guess Rouge::Lexers::JSON, :mimetype => 'application/hal+json'
+      assert_guess Rouge::Lexers::JSX, :mimetype => 'text/jsx'
     end
 
     it 'guesses by source' do

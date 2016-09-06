@@ -13,7 +13,7 @@ module Rouge
       end
 
       prepend :root do
-        rule %r(<#@\s*)m, Name::Tag, :directive_tag
+        rule %r(<#\@\s*)m, Name::Tag, :directive_tag
 
         rule %r(<#[=]?\s*)m, Name::Tag, :directive_as_csharp
       end

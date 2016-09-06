@@ -115,7 +115,11 @@ module Rouge
         )
       end
 
-      id = /[$a-zA-Z_][a-zA-Z0-9_]*/
+      def self.id_regex
+        /[$a-z_][a-z0-9_]*/io
+      end
+
+      id = self.id_regex
 
       state :root do
         rule /\A\s*#!.*?\n/m, Comment::Preproc, :statement

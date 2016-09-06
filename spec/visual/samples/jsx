@@ -1,0 +1,26 @@
+var myDivElement = <div className="foo" />;
+ReactDOM.render(myDivElement, document.getElementById('example'));
+
+
+
+var MyComponent = React.createClass({/*...*/});
+var myElement = <MyComponent someProperty={true} />;
+ReactDOM.render(myElement, document.getElementById('example'));
+
+var myElement = <MyComponent someProperty={{a:true}.a} />;
+var myElement = <MyComponent someProperty={function() {
+  var x = { a: true };
+  return x.a;
+}} />
+
+
+var App = (
+  <Form>
+    <FormRow>
+      <FormLabel />
+      <FormInput />
+    </FormRow>
+  </Form>
+);
+
+var thing = <A b={function() { var c = <D e={true}>&quot;</D>; }()}/>

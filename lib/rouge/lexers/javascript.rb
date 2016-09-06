@@ -173,8 +173,8 @@ module Rouge
         rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
         rule /0x[0-9a-fA-F]+/, Num::Hex
         rule /[0-9]+/, Num::Integer
-        rule /"(\\\\|\\"|[^"])*"/, Str::Double
-        rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule /"(\\[\\"]|[^"])*"/, Str::Double
+        rule /'(\\[\\']|[^'])*'/, Str::Single
         rule /:/, Punctuation
       end
 

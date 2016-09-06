@@ -62,7 +62,7 @@ module Rouge
         rule /.*?(?=}")/m do
           delegate Actionscript
         end
-      end  
+      end
     end
   end
 end

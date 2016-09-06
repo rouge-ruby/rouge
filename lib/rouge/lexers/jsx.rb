@@ -30,10 +30,9 @@ module Rouge
       end
 
       state :jsx_internal do
-        mixin :comments_and_whitespace
-        rule %r((</)(\s*)(#{id})(\s*)(>)) do |m|
-          groups Punctuation, Text, tag_token(m[3]), Text, Punctuation
-          pop!
+        rule %r(</) do
+          token Punctuation
+          goto :jsx_end_tag
         end
 
         rule /{/ do
@@ -52,14 +51,25 @@ module Rouge
         mixin :jsx_tags
       end
 
-      state :jsx_element do
+      state :jsx_tag do
         mixin :comments_and_whitespace
-        rule />/ do token Punctuation; goto :jsx_internal end
-        rule %r(/>), Punctuation, :pop!
-        rule /#{id}=/, Name::Attribute, :jsx_attribute
         rule /#{id}/ do |m|
           token tag_token(m[0])
         end
+
+        rule /[.]/, Punctuation
+      end
+
+      state :jsx_end_tag do
+        mixin :jsx_tag
+        rule />/, Punctuation, :pop!
+      end
+
+      state :jsx_element do
+        rule /#{id}=/, Name::Attribute, :jsx_attribute
+        mixin :jsx_tag
+        rule />/ do token Punctuation; goto :jsx_internal end
+        rule %r(/>), Punctuation, :pop!
       end
 
       state :jsx_attribute do

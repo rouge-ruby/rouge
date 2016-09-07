@@ -4,6 +4,24 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.0.6: 2016-09-07
+
+  * actionscript: emit correct tokens for positive numbers (thanks @JoeRobich!)
+  * json: bottom-up rewrite, massively improve string performance
+  * markdown: don't terminate code blocks unless there's a newline before the terminator
+  * tulip: rewrite lexer with updated features
+  * swift: update for swift 3 (thanks @radex!)
+  * fortran: correctly lex exponent floats (thanks @jschwab!)
+  * bugfix: escape `\@` for ruby 1.9.x
+  * verilog: recognize underscores and question marks (thanks @whitequark!)
+  * common lisp: recognize .asd files for ASDF
+  * new lexer: mxml (thanks @JoeRobich!)
+  * new lexer: 1c (thanks @karnilaev!)
+  * new lexer: turtle/trig (thanks @jakubklimek!)
+  * new lexer: vhdl (thanks @ttobsen!)
+  * new lexer: jsx
+  * new lexer: prometheus (thanks @dblessing!)
+
 ## version 2.0.5: 2016-07-19
 
   * bugfix: don't spam stdout from the yaml lexer

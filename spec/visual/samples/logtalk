@@ -30,9 +30,9 @@ comment
 	extends(parent)).
 
 	:- info([
-		version is 1.32,
+		version is 1.34,
 		author is 'Paulo Moura',
-		date is 2015/08/31,
+		date is 2016/06/18,
 		comment is 'Sample prototype for testing syntax coloring.'
 	]).
 
@@ -133,8 +133,19 @@ comment
 		threaded_ignore(Goal),
 		threaded_exit(Goal),
 		threaded_peek(Goal),
-		threaded_wait(Goal),
+		threaded_wait(Notification),
 		threaded_notify(Notification).
+
+	engines :-
+		threaded_engine(Engine),
+		threaded_engine_create(AnswerTemplate, Goal, Engine),
+		threaded_engine_destroy(Engine),
+		threaded_engine_self(Engine),
+		threaded_engine_next(Engine, Answer),
+		threaded_engine_next_reified(Engine, Answer),
+		threaded_engine_yield(Answer),
+		threaded_engine_post(Engine, Term),
+		threaded_engine_fetch(Term).
 
 	compiling_and_loading :-
 		logtalk_compile(File, Options),

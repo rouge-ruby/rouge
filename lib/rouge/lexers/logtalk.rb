@@ -68,6 +68,10 @@ module Rouge
         rule /threaded(?=[(])/, Keyword
         rule /(threaded_call|threaded_once|threaded_ignore|threaded_exit|threaded_peek)(?=[(])/, Keyword
         rule /(threaded_wait|threaded_notify)(?=[(])/, Keyword
+        # Threaded engines
+        rule /(threaded_engine|threaded_engine_create|threaded_engine_destroy|threaded_engine_self)(?=[(])/, Keyword
+        rule /(threaded_engine_next|threaded_engine_next_reified)(?=[(])/, Keyword
+        rule /(threaded_engine_yield|threaded_engine_post|threaded_engine_fetch)(?=[(])/, Keyword
         # Term unification
         rule /(subsumes_term|unify_with_occurs_check)(?=[(])/, Keyword
         # Term creation and decomposition

@@ -10,6 +10,11 @@ module Rouge
       filenames '*.elm'
       mimetypes 'text/x-elm'
 
+      def initialize(*)
+        super
+        @debug = ENV['ROUGE_DEBUG'] == '1'
+      end
+
       state :root do
         rule /\-\-.*/, Comment::Single
 

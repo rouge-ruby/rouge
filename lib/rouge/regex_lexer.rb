@@ -100,29 +100,29 @@ module Rouge
         callback ||= case next_state
         when :pop!
           proc do |stream|
-            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            warn "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
-            puts "    popping stack: #{1}" if @debug
+            warn "    popping stack: #{1}" if @debug
             @stack.pop or raise 'empty stack!'
           end
         when :push
           proc do |stream|
-            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            warn "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
-            puts "    pushing :#{@stack.last.name}" if @debug
+            warn "    pushing :#{@stack.last.name}" if @debug
             @stack.push(@stack.last)
           end
         when Symbol
           proc do |stream|
-            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            warn "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
             state = @states[next_state] || self.class.get_state(next_state)
-            puts "    pushing :#{state.name}" if @debug
+            warn "    pushing :#{state.name}" if @debug
             @stack.push(state)
           end
         when nil
           proc do |stream|
-            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            warn "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
           end
         else
@@ -260,15 +260,15 @@ module Rouge
 
       until stream.eos?
         if @debug
-          puts "lexer: #{self.class.tag}"
-          puts "stack: #{stack.map(&:name).map(&:to_sym).inspect}"
-          puts "stream: #{stream.peek(20).inspect}"
+          warn "lexer: #{self.class.tag}"
+          warn "stack: #{stack.map(&:name).map(&:to_sym).inspect}"
+          warn "stream: #{stream.peek(20).inspect}"
         end
 
         success = step(state, stream)
 
         if !success
-          puts "    no match, yielding Error" if @debug
+          warn "    no match, yielding Error" if @debug
           b.call(Token::Tokens::Error, stream.getch)
         end
       end
@@ -286,11 +286,11 @@ module Rouge
     def step(state, stream)
       state.rules.each do |rule|
         if rule.is_a?(State)
-          puts "  entering mixin #{rule.name}" if @debug
+          warn "  entering mixin #{rule.name}" if @debug
           return true if step(rule, stream)
-          puts "  exiting  mixin #{rule.name}" if @debug
+          warn "  exiting  mixin #{rule.name}" if @debug
         else
-          puts "  trying #{rule.inspect}" if @debug
+          warn "  trying #{rule.inspect}" if @debug
 
           # XXX HACK XXX
           # StringScanner's implementation of ^ is b0rken.
@@ -300,14 +300,14 @@ module Rouge
           next if rule.beginning_of_line && !stream.beginning_of_line?
 
           if size = stream.skip(rule.re)
-            puts "    got #{stream[0].inspect}" if @debug
+            warn "    got #{stream[0].inspect}" if @debug
 
             instance_exec(stream, &rule.callback)
 
             if size.zero?
               @null_steps += 1
               if @null_steps > MAX_NULL_SCANS
-                puts "    too many scans without consuming the string!" if @debug
+                warn "    too many scans without consuming the string!" if @debug
                 return false
               end
             else
@@ -359,11 +359,11 @@ module Rouge
     # @param [String] text
     #   The text to delegate.  This defaults to the last matched string.
     def delegate(lexer, text=nil)
-      puts "    delegating to #{lexer.inspect}" if @debug
+      warn "    delegating to #{lexer.inspect}" if @debug
       text ||= @current_stream[0]
 
       lexer.lex(text, :continue => true) do |tok, val|
-        puts "    delegated token: #{tok.inspect}, #{val.inspect}" if @debug
+        warn "    delegated token: #{tok.inspect}, #{val.inspect}" if @debug
         yield_token(tok, val)
       end
     end
@@ -385,7 +385,7 @@ module Rouge
         self.state
       end
 
-      puts "    pushing :#{push_state.name}" if @debug
+      warn "    pushing :#{push_state.name}" if @debug
       stack.push(push_state)
     end
 
@@ -394,7 +394,7 @@ module Rouge
     def pop!(times=1)
       raise 'empty stack!' if stack.empty?
 
-      puts "    popping stack: #{times}" if @debug
+      warn "    popping stack: #{times}" if @debug
 
       stack.pop(times)
 
@@ -405,13 +405,13 @@ module Rouge
     def goto(state_name)
       raise 'empty stack!' if stack.empty?
 
-      puts "    going to state :#{state_name} " if @debug
+      warn "    going to state :#{state_name} " if @debug
       stack[-1] = get_state(state_name)
     end
 
     # reset the stack back to `[:root]`.
     def reset_stack
-      puts '    resetting stack' if @debug
+      warn '    resetting stack' if @debug
       stack.clear
       stack.push get_state(:root)
     end
@@ -432,7 +432,7 @@ module Rouge
   private
     def yield_token(tok, val)
       return if val.nil? || val.empty?
-      puts "    yielding #{tok.qualname}, #{val.inspect}" if @debug
+      warn "    yielding #{tok.qualname}, #{val.inspect}" if @debug
       @output_stream.yield(tok, val)
     end
   end

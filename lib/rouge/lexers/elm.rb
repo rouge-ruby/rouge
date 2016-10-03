@@ -3,6 +3,9 @@
 module Rouge
   module Lexers
     class Elm < RegexLexer
+      # For reference: one liner to debug all files in a given dir at once
+      # tail -n+1 ~/code/github.com/evancz/elm-architecture-tutorial/examples/*elm | sed 's/\(==>.\+<==\)/-- \1/' | ROUGE_DEBUG=1 ./bin/rougify --lexer elm 2>/tmp/rouge_debug | less -RS
+
       title "Elm"
       desc "The Elm programming language (elm-lang.org)"
 

@@ -21,7 +21,7 @@ module Rouge
       state :root do
         rule /\-\-.*/, Comment::Single
 
-        rule /".*?"/m, Literal::String::Symbol
+        rule /".*?"/m, Literal::String
         rule /\d/, Literal::Number
         rule /\s/, Text::Whitespace
 
@@ -34,7 +34,8 @@ module Rouge
           /#{Regexp.escape('[')}/,
           /#{Regexp.escape(']')}/,
           /#{Regexp.escape('.')}/,
-          /,/
+          /,/,
+          /'/, # Not sure how single quotes should be handled
         ), Punctuation
 
         rule Regexp.union(
@@ -52,9 +53,9 @@ module Rouge
 
         rule /#{Regexp.quote('..')}/, Keyword::Declaration
 
-        rule /module|exposing|type\'?/, Keyword::Reserved
+        rule /\bmodule\b|\bexposing\b|\btype\b/, Keyword::Reserved
 
-        rule /\sif|else|then|case|of|type|let|in[^\w]/, Name::Builtin # FIXME: this is obviously not the way to go.
+        rule /\bif\b|\belse\b|\bthen\b|\bcase\b|\bof\b|\btype\b|\blet\b|\bin\b/, Name::Builtin
 
         rule /\A\w+ :/, Name::Function
         rule /[A-Z][a-z]+/, Keyword::Type

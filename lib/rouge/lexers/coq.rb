@@ -150,6 +150,10 @@ module Rouge
         rule /"/, Str::Double, :pop!
       end
 
+      state :escape_sequence do
+        rule /\\[\\"'ntbr]/, Str::Escape
+      end
+
       state :continue_id do
         # the stream starts with an id (stored in @name) and continues here
         rule dot_id do |m|

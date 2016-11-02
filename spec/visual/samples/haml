@@ -41,6 +41,9 @@
     = "foo".each_line do |line|
       - nil
 
+.some_class{ class: "other_}class" }
+  = some_method "##{hash.prop}"
+
 -# tag_parsing.haml
 %div.tags
   %foo 1

@@ -45,6 +45,11 @@ module Rouge
         @html ||= HTML.new(options)
       end
 
+      def ruby!(state)
+        ruby.reset!
+        push state
+      end
+
       def filters
         @filters ||= {
           'javascript' => Javascript.new(options),
@@ -104,7 +109,7 @@ module Rouge
         rule /-/ do
           token Punctuation
           reset_stack
-          push :ruby_line
+          ruby! :ruby_line
         end
 
         # filters
@@ -153,7 +158,7 @@ module Rouge
         rule /[&!]?[=!]/ do
           token Punctuation
           reset_stack
-          push :ruby_line
+          ruby! :ruby_line
         end
 
         rule(//) { push :plain }

@@ -136,8 +136,9 @@ module Rouge
 
       state :tag do
         mixin :css
-        rule(/\{#{comma_dot}*?\}/) { delegate ruby }
+        rule(/[{]/) { token Punctuation; ruby! :ruby_tag }
         rule(/\[#{dot}*?\]/) { delegate ruby }
+
         rule /\(/, Punctuation, :html_attributes
         rule /\s*\n/, Text, :pop!
 
@@ -169,6 +170,10 @@ module Rouge
         rule(/,[ \t]*\n/) { delegate ruby }
         rule /[ ]\|[ \t]*\n/, Str::Escape
         rule(/.*?(?=(,$| \|)?[ \t]*$)/) { delegate ruby }
+      end
+
+      state :ruby_tag do
+        mixin :ruby_inner
       end
 
       state :html_attributes do

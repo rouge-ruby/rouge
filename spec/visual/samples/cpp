@@ -48,9 +48,6 @@ constexpr int factorial(int n) {
 /*{"kca",      HB_TAG('K','H','K',' ')},*/     /* Khanty-Kazim */
 /*{"kca",      HB_TAG('K','H','S',' ')},*/     /* Khanty-Shurishkar */
 
-#define foo bar
-#define baz zot
-
 class Base
 {
 public:
@@ -71,6 +68,9 @@ public:
      auto a = 1 + 2;
   }
 };
+
+#define foo bar
+#define baz zot
 
 class Highlighter : public QSyntaxHighlighter
 {

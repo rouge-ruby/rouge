@@ -10,6 +10,8 @@ describe Rouge::Lexers::TeX do
       assert_guess :filename => 'foo.tex'
       assert_guess :filename => 'foo.toc'
       assert_guess :filename => 'foo.aux'
+      assert_guess :filename => 'foo.sty'
+      assert_guess :filename => 'foo.cls'
     end
 
     it 'guesses by mimetype' do
@@ -18,7 +20,9 @@ describe Rouge::Lexers::TeX do
     end
 
     it 'guesses by source' do
-      assert_guess :source => '\\documentclass{article}'
+      assert_guess :source => '\\documentclass'
+      assert_guess :source => '\\ProvidesPackage'
+      assert_guess :source => '\\ProvidesClass'
     end
   end
 end

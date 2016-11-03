@@ -8,7 +8,7 @@ module Rouge
       tag 'tex'
       aliases 'TeX', 'LaTeX', 'latex'
 
-      filenames '*.tex', '*.aux', '*.toc'
+      filenames '*.tex', '*.aux', '*.toc', '*.sty', '*.cls'
       mimetypes 'text/x-tex', 'text/x-latex'
 
       def self.analyze_text(text)
@@ -16,6 +16,8 @@ module Rouge
         return 1 if text =~ /\A\s*\\input/
         return 1 if text =~ /\A\s*\\documentstyle/
         return 1 if text =~ /\A\s*\\relax/
+        return 1 if text =~ /\A\s*\\ProvidesPackage/
+        return 1 if text =~ /\A\s*\\ProvidesClass/
       end
 
       command = /\\([a-z]+|\s+|.)/i

@@ -1,0 +1,31 @@
+FUNCTION z_do_nothing.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IV_IMPORT) TYPE  STRING
+*"  EXPORTING
+*"     REFERENCE(ET_EXPORT) TYPE  ICL_STRING_T
+*"----------------------------------------------------------------------
+
+  CONSTANTS: lc_const TYPE char10 VALUE '0123456789'.
+
+  DATA: lv_int    TYPE i,
+        ls_mara   TYPE mara,
+        lo_obj    TYPE REF TO cl_any_class.
+
+  FIELD-SYMBOLS: <mara> TYPE mara.
+
+  lv_int = 1000.  " just an initializer
+
+  CREATE OBJECT lo_obj
+    EXPORTING
+      iv_int = lv_int.
+
+  lo_obj ?= lo_obj->do_nothing( 'Char' && ` String` ).
+
+  SELECT SINGLE * FROM mara INTO ls_mara WHERE matkl EQ '1324'.
+  LOOP AT lt_mara ASSIGNING <mara>.
+    CHECK <mara>-mtart EQ '0001'.
+  ENDLOOP.
+
+ENDFUNCTION.

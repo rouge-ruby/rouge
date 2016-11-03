@@ -63,8 +63,8 @@ module Rouge
 
         rule /\s+/, Text::Whitespace
 
-        rule /[^:;<>#@"\(\).\[\]\{\} ]+:/, Name::Namespace
-        rule /[^:;<>#@"\(\).\[\]\{\} ]+/, Name
+        rule /[^:;<>#\@"\(\).\[\]\{\} ]+:/, Name::Namespace
+        rule /[^:;<>#\@"\(\).\[\]\{\} ]+/, Name
         
       end
     end

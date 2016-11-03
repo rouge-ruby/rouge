@@ -194,9 +194,6 @@ module Rouge
             token Operator, m[1]
           end
 
-          puts m[1].nil?
-          puts m[1]
-
           if (self.class.new_keywords.include? m[2].upcase) && m[1].nil?
             token Keyword, m[2]
           elsif (self.class.builtins.include? m[2].downcase) && m[1].nil?

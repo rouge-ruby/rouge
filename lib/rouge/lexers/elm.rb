@@ -35,6 +35,7 @@ module Rouge
           /#{Regexp.escape(']')}/,
           /#{Regexp.escape('.')}/,
           /,/,
+          /\\/,
           /'/, # Not sure how single quotes should be handled
         ), Punctuation
 
@@ -47,6 +48,7 @@ module Rouge
           /#{Regexp.escape('+')}/,
           /#{Regexp.escape('-')}/,
           /#{Regexp.escape('*')}/,
+          /#{Regexp.escape('^')}/,
           /:/,
           /=/,
         ), Operator

@@ -1,0 +1,591 @@
+-- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/3-form.elm <==
+import Html exposing (..)
+import Html.App as Html
+import Html.Attributes exposing (..)
+import Html.Events exposing (onInput)
+
+
+main =
+  Html.beginnerProgram
+    { model = model
+    , view = view
+    , update = update
+    }
+
+
+
+-- MODEL
+
+
+type alias Model =
+  { name : String
+  , password : String
+  , passwordAgain : String
+  }
+
+
+model : Model
+model =
+  Model "" "" ""
+
+
+
+-- UPDATE
+
+
+type Msg
+    = Name String
+    | Password String
+    | PasswordAgain String
+
+
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    Name name ->
+      { model | name = name }
+
+    Password password ->
+      { model | password = password }
+
+    PasswordAgain password ->
+      { model | passwordAgain = password }
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+  div []
+    [ input [ type' "text", placeholder "Name", onInput Name ] []
+    , input [ type' "password", placeholder "Password", onInput Password ] []
+    , input [ type' "password", placeholder "Re-enter Password", onInput PasswordAgain ] []
+    , viewValidation model
+    ]
+
+
+viewValidation : Model -> Html msg
+viewValidation model =
+  let
+    (color, message) =
+      if model.password == model.passwordAgain then
+        ("green", "OK")
+      else
+        ("red", "Passwords do not match!")
+  in
+    div [ style [("color", color)] ] [ text message ]
+
+-- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/4-random.elm <==
+import Html exposing (..)
+import Html.App as Html
+import Html.Events exposing (..)
+import Random
+
+
+
+main =
+  Html.program
+    { init = init
+    , view = view
+    , update = update
+    , subscriptions = subscriptions
+    }
+
+
+
+-- MODEL
+
+
+type alias Model =
+  { dieFace : Int
+  }
+
+
+init : (Model, Cmd Msg)
+init =
+  (Model 1, Cmd.none)
+
+
+
+-- UPDATE
+
+
+type Msg
+  = Roll
+  | NewFace Int
+
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
+    Roll ->
+      (model, Random.generate NewFace (Random.int 1 6))
+
+    NewFace newFace ->
+      (Model newFace, Cmd.none)
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Sub.none
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+  div []
+    [ h1 [] [ text (toString model.dieFace) ]
+    , button [ onClick Roll ] [ text "Roll" ]
+    ]
+
+-- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/5-http.elm <==
+import Html exposing (..)
+import Html.App as Html
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import Http
+import Json.Decode as Json
+import Task
+
+
+
+main =
+  Html.program
+    { init = init "cats"
+    , view = view
+    , update = update
+    , subscriptions = subscriptions
+    }
+
+
+
+-- MODEL
+
+
+type alias Model =
+  { topic : String
+  , gifUrl : String
+  }
+
+
+init : String -> (Model, Cmd Msg)
+init topic =
+  ( Model topic "waiting.gif"
+  , getRandomGif topic
+  )
+
+
+
+-- UPDATE
+
+
+type Msg
+  = MorePlease
+  | FetchSucceed String
+  | FetchFail Http.Error
+
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
+    MorePlease ->
+      (model, getRandomGif model.topic)
+
+    FetchSucceed newUrl ->
+      (Model model.topic newUrl, Cmd.none)
+
+    FetchFail _ ->
+      (model, Cmd.none)
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+  div []
+    [ h2 [] [text model.topic]
+    , button [ onClick MorePlease ] [ text "More Please!" ]
+    , br [] []
+    , img [src model.gifUrl] []
+    ]
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Sub.none
+
+
+
+-- HTTP
+
+
+getRandomGif : String -> Cmd Msg
+getRandomGif topic =
+  let
+    url =
+      "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" ++ topic
+  in
+    Task.perform FetchFail FetchSucceed (Http.get decodeGifUrl url)
+
+
+decodeGifUrl : Json.Decoder String
+decodeGifUrl =
+  Json.at ["data", "image_url"] Json.string
+
+-- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/6-clock.elm <==
+import Html exposing (Html)
+import Html.App as Html
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
+import Time exposing (Time, second)
+
+
+
+main =
+  Html.program
+    { init = init
+    , view = view
+    , update = update
+    , subscriptions = subscriptions
+    }
+
+
+
+-- MODEL
+
+
+type alias Model = Time
+
+
+init : (Model, Cmd Msg)
+init =
+  (0, Cmd.none)
+
+
+
+-- UPDATE
+
+
+type Msg
+  = Tick Time
+
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
+    Tick newTime ->
+      (newTime, Cmd.none)
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Time.every second Tick
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+  let
+    angle =
+      turns (Time.inMinutes model)
+
+    handX =
+      toString (50 + 40 * cos angle)
+
+    handY =
+      toString (50 + 40 * sin angle)
+  in
+    svg [ viewBox "0 0 100 100", width "300px" ]
+      [ circle [ cx "50", cy "50", r "45", fill "#0B79CE" ] []
+      , line [ x1 "50", y1 "50", x2 handX, y2 handY, stroke "#023963" ] []
+      ]
+
+-- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/7-websockets.elm <==
+import Html exposing (..)
+import Html.App as Html
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import WebSocket
+
+
+
+main =
+  Html.program
+    { init = init
+    , view = view
+    , update = update
+    , subscriptions = subscriptions
+    }
+
+
+echoServer : String
+echoServer =
+  "ws://echo.websocket.org"
+
+
+
+-- MODEL
+
+
+type alias Model =
+  { input : String
+  , messages : List String
+  }
+
+
+init : (Model, Cmd Msg)
+init =
+  (Model "" [], Cmd.none)
+
+
+
+-- UPDATE
+
+
+type Msg
+  = Input String
+  | Send
+  | NewMessage String
+
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg {input, messages} =
+  case msg of
+    Input newInput ->
+      (Model newInput messages, Cmd.none)
+
+    Send ->
+      (Model "" messages, WebSocket.send echoServer input)
+
+    NewMessage str ->
+      (Model input (str :: messages), Cmd.none)
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  WebSocket.listen echoServer NewMessage
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+  div []
+    [ input [onInput Input] []
+    , button [onClick Send] [text "Send"]
+    , div [] (List.map viewMessage (List.reverse model.messages))
+    ]
+
+
+viewMessage : String -> Html msg
+viewMessage msg =
+  div [] [ text msg ]
+
+-- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/8-checkboxes.elm <==
+import Html exposing (Html, fieldset, input, label, text)
+import Html.App as App
+import Html.Attributes exposing (style, type')
+import Html.Events exposing (onClick)
+
+
+
+main =
+  App.beginnerProgram { model = optOut, update = update, view = view }
+
+
+
+-- MODEL
+
+
+type alias Model =
+  { notifications : Bool
+  , autoplay : Bool
+  , location : Bool
+  }
+
+
+optOut : Model
+optOut =
+  Model True True True
+
+
+
+-- UPDATE
+
+
+type Msg
+  = ToggleNotifications
+  | ToggleAutoplay
+  | ToggleLocation
+
+
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    ToggleNotifications ->
+      { model | notifications = not model.notifications }
+
+    ToggleAutoplay ->
+      { model | autoplay = not model.autoplay }
+
+    ToggleLocation ->
+      { model | location = not model.location }
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+  fieldset []
+    [ checkbox ToggleNotifications "Email Notifications"
+    , checkbox ToggleAutoplay "Video Autoplay"
+    , checkbox ToggleLocation "Use Location"
+    ]
+
+
+checkbox : msg -> String -> Html msg
+checkbox msg name =
+  label
+    [ style [("padding", "20px")]
+    ]
+    [ input [ type' "checkbox", onClick msg ] []
+    , text name
+    ]
+
+-- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/9-radio.elm <==
+import Html exposing (Html, Attribute, div, fieldset, input, label, text)
+import Html.App as App
+import Html.Attributes exposing (name, style, type')
+import Html.Events exposing (onClick)
+import Markdown
+
+
+
+main =
+  App.beginnerProgram { model = chapter1, update = update, view = view }
+
+
+
+-- MODEL
+
+
+type alias Model =
+  { fontSize : FontSize
+  , content : String
+  }
+
+
+type FontSize
+  = Small
+  | Medium
+  | Large
+
+
+chapter1 : Model
+chapter1 =
+  Model Medium intro
+
+
+intro : String
+intro = """
+
+# Anna Karenina
+
+## Chapter 1
+
+Happy families are all alike; every unhappy family is unhappy in its own way.
+
+Everything was in confusion in the Oblonskys’ house. The wife had discovered
+that the husband was carrying on an intrigue with a French girl, who had been
+a governess in their family, and she had announced to her husband that she
+could not go on living in the same house with him...
+
+"""
+
+
+
+-- UPDATE
+
+
+type Msg
+  = SwitchTo FontSize
+
+
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    SwitchTo newFontSize ->
+      { model | fontSize = newFontSize }
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+  div []
+    [ fieldset []
+        [ radio "Small" (SwitchTo Small)
+        , radio "Medium" (SwitchTo Medium)
+        , radio "Large" (SwitchTo Large)
+        ]
+    , Markdown.toHtml [ sizeToStyle model.fontSize ] model.content
+    ]
+
+
+radio : String -> msg -> Html msg
+radio value msg =
+  label
+    [ style [("padding", "20px")]
+    ]
+    [ input [ type' "radio", name "font-size", onClick msg ] []
+    , text value
+    ]
+
+
+sizeToStyle : FontSize -> Attribute msg
+sizeToStyle fontSize =
+  let
+    size =
+      case fontSize of
+        Small ->
+          "0.8em"
+
+        Medium ->
+          "1em"
+
+        Large ->
+          "1.2em"
+  in
+    style [("font-size", size)]

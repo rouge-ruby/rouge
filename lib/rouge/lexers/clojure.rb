@@ -73,7 +73,7 @@ module Rouge
       end
 
       state :root do
-        rule /;.*?\n/, Comment::Single
+        rule /;.*?$/, Comment::Single
         rule /\s+/m, Text::Whitespace
 
         rule /-?\d+\.\d+/, Num::Float

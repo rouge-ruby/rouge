@@ -155,7 +155,7 @@ function* range(from, to)
 declare namespace Foo {
     interface FooStatic {
         someFunc(): string;
-        
+
     }
 }
 
@@ -175,10 +175,18 @@ export default abstract class FooClass extends Bar<T> {
     constructor() {
         super();
     }
-    
+
     readonly foo: number = 42;
 }
 
 async function fooAsync() {
     let result = await barAsync();
 }
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'my-app',
+  template: '<h1>My First Angular App</h1>'
+})
+export class AppComponent { }

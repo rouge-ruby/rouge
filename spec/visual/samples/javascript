@@ -206,3 +206,15 @@ function* range(from, to)
 // nasty string interpolation
 `this\n \` \${2} $` is\n ${"sparta".toUpperCase() + function() { return 4; } + "h"}`;
 `hello ${"${re}" + `curs${1}on`}`;
+
+@(function(thing) { return thing; })
+class Person {
+  @deprecate
+  facepalm() {}
+
+  @deprecate('We stopped facepalming')
+  facepalmHard() {}
+
+  @deprecate('We stopped facepalming', { url: 'http://knowyourmeme.com/memes/facepalm' })
+  facepalmHarder() {}
+}

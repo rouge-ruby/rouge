@@ -160,6 +160,11 @@ module Rouge
           push :expr_start
         end
 
+        rule /(\@)(\w+)?/ do
+          groups Punctuation, Name::Decorator
+          push :expr_start
+        end
+
         rule /[{}]/, Punctuation, :statement
 
         rule id do |m|

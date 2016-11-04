@@ -66,7 +66,7 @@ module Rouge
 
       state :root do
         rule /#.*?$/, Comment::Single
-        rule /^=[a-zA-Z0-9]+\s+.*?\n=cut/ms, Comment::Multiline
+        rule /^=[a-zA-Z0-9]+\s+.*?\n=cut/m, Comment::Multiline
         rule /(?:#{keywords.join('|')})\b/, Keyword
 
         rule /(format)(\s+)([a-zA-Z0-9_]+)(\s*)(=)(\s*\n)/ do

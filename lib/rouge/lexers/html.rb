@@ -85,7 +85,7 @@ module Rouge
 
       state :style_content do
         rule %r(<\s*/\s*style\s*>)m, Name::Tag, :pop!
-        rule %r(.*(?=<\s*/\s*style\s*>))m do
+        rule %r(.*?(?=<\s*/\s*style\s*>))m do
           delegate CSS
         end
       end

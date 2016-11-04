@@ -79,7 +79,7 @@ module Rouge
 
       state :strings do
         mixin :symbols
-        rule /\b[a-z_]\w*?:\s+/, Str::Symbol, :expr_start
+        rule /\b[a-z_]\w*?[?!]?:\s+/, Str::Symbol, :expr_start
         rule /'(\\\\|\\'|[^'])*'/, Str::Single
         rule /"/, Str::Double, :simple_string
         rule /(?<!\.)`/, Str::Backtick, :simple_backtick

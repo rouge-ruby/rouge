@@ -12,12 +12,7 @@ module Rouge
       mimetypes 'text/x-tex', 'text/x-latex'
 
       def self.analyze_text(text)
-        return 1 if text =~ /\A\s*\\documentclass/
-        return 1 if text =~ /\A\s*\\input/
-        return 1 if text =~ /\A\s*\\documentstyle/
-        return 1 if text =~ /\A\s*\\relax/
-        return 1 if text =~ /\A\s*\\ProvidesPackage/
-        return 1 if text =~ /\A\s*\\ProvidesClass/
+        return 1 if text =~ /\A\s*\\(documentclass|input|documentstyle|relax|ProvidesPackage|ProvidesClass)/
       end
 
       command = /\\([a-z]+|\s+|.)/i

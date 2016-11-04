@@ -213,4 +213,14 @@ for (
     print $_, "\n";
 }
 
+=head1 Single Quote Breaker
+
+That's all folks
+
+=cut
+
+sub foo {
+    "after the POD with the single quote, it's all still good"
+}
+
 

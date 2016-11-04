@@ -10,9 +10,9 @@ module Rouge
 
       tag 'typescript'
       aliases 'ts'
-      
+
       filenames '*.ts', '*.d.ts'
-                
+
       mimetypes 'text/typescript'
 
       def self.keywords
@@ -22,7 +22,7 @@ module Rouge
           super async await extends implements readonly
         ))
       end
-      
+
       def self.declarations
         @declarations ||= super + Set.new(%w(
           const type constructor abstract
@@ -32,10 +32,10 @@ module Rouge
       def self.reserved
         @reserved ||= super + Set.new(%w(
           string any number namespace module
-          declare default interface         
+          declare default interface
         ))
       end
-      
+
       def self.builtins
         @builtins ||= super + %w(
           Promise Set Map WeakSet WeakMap Symbol

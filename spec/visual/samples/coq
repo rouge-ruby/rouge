@@ -10,3 +10,4 @@ Section with_T.
     end.
 End with_T.
 
+Definition a_string := "hello\" world".

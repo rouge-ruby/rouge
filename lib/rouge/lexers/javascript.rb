@@ -262,13 +262,6 @@ module Rouge
       mimetypes 'application/json', 'application/vnd.api+json',
                 'application/hal+json'
 
-      # TODO: is this too much of a performance hit?  JSON is quite simple,
-      # so I'd think this wouldn't be too bad, but for large documents this
-      # could mean doing two full lexes.
-      def self.analyze_text(text)
-        return 0.8 if text =~ /\A\s*{/m && text.lexes_cleanly?(self)
-      end
-
       state :root do
         rule /\s+/m, Text::Whitespace
         rule /"/, Str::Double, :string

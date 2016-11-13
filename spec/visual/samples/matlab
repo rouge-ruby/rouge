@@ -25,9 +25,9 @@ disp('a comment symbol, %, in a string');
 function y=myfunc(x)
 y = exp(x);
 
- {%
+%{
 a block comment
- %}
+%}
 
 
 function myfunc(s)

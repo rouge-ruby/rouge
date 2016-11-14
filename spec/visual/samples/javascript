@@ -210,6 +210,13 @@ function* range(from, to)
 `$`;
 `$${1 + 2 + 3}`;
 
+`${
+  'multiline template'
+}`;
+`${
+  1 + 2
+}`;
+
 @(function(thing) { return thing; })
 class Person {
   @deprecate

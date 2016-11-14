@@ -30,7 +30,6 @@ describe Rouge::Lexers::Javascript do
     it 'guesses by source' do
       assert_guess :source => '#!/usr/bin/env node'
       assert_guess :source => '#!/usr/local/bin/jsc'
-      assert_guess Rouge::Lexers::JSON, :source => '{ "foo": "bar" }'
     end
   end
 end

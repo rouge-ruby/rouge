@@ -86,7 +86,7 @@ module Rouge
         rule %r([=-]>), Keyword
         rule %r(<->), Keyword
         rule /[()\[\]{}|,:;]/, Punctuation
-        rule /[*!@~&+%^<>=-]/, Operator
+        rule /[*!@~&+%^<>=-\?]/, Operator
 
         rule /([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule /[.]\s*#{id}/, Name::Property

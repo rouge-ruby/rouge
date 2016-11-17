@@ -16,6 +16,8 @@ fn main() {
     g();
 }
 
+let mut f = File::open("username.txt")?;
+
 debug!("test %?", a.b);
 debug!("test %u", a.c);
 debug!("test %i", a.d);

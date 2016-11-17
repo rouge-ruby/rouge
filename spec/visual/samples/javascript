@@ -204,8 +204,11 @@ function* range(from, to)
 `this is ${"sparta".toUpperCase()}`;
 
 // nasty string interpolation
-`this\n \` \${2} $` is\n ${"sparta".toUpperCase() + function() { return 4; } + "h"}`;
+`this\n \` \${2} $\` is\n ${"sparta".toUpperCase() + function() { return 4; } + "h"}`;
 `hello ${"${re}" + `curs${1}on`}`;
+
+`$`;
+`$${1 + 2 + 3}`;
 
 @(function(thing) { return thing; })
 class Person {

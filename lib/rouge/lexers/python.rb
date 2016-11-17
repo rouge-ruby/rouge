@@ -82,6 +82,7 @@ module Rouge
                  Text,
                  Keyword::Namespace
         end
+
         rule /(import)(\s+)(#{dotted_identifier})/ do
           groups Keyword::Namespace, Text, Name::Namespace
         end
@@ -153,24 +154,6 @@ module Rouge
 
       state :yield do
         mixin :raise
-      end
-
-      state :import do
-        # non-line-terminating whitespace
-        rule /(?:[ \t]|\\\n)+/, Text
-
-        rule /as\b/, Keyword::Namespace
-        rule /,/, Operator
-        rule dotted_identifier, Name::Namespace
-        rule(//) { pop! } # anything else -> go back
-      end
-
-      state :fromimport do
-        # non-line-terminating whitespace
-        rule /(?:[ \t]|\\\n)+/, Text
-
-        rule /import\b/, Keyword::Namespace, :pop!
-        rule dotted_identifier, Name::Namespace
       end
 
       state :strings do

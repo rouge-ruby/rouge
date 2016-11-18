@@ -4,6 +4,29 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.0.7: 2016-11-18
+
+  * haml: fix balanced braces in attribute curlies
+  * clojure:
+    - allow comments at EOF
+    - detect for `build.boot` (thanks @pandeiro)
+  * ruby 1.9.1 compat: escape @ signs (thanks @pille1842)
+  * c++
+    - add `*.tpp` as an extension (thanks @vser1)
+    - add more C++11 keywords
+  * new lexer: ABAP (thanks @mlaggner)
+  * rougify: properly handle SIGPIPE for downstream pipe closing (thanks @maverickwoo)
+  * tex: add `*.sty` and `*.cls` extensions
+  * html: bugfix for multiple style tags - was too greedy
+  * new lexer: vue
+  * perl: fix lexing of POD comments (thanks @kgoess)
+  * coq: better string escape handling
+  * javascript:
+    - add support for ES decorators
+    - fix multiline template strings with curlies (thanks @Kovensky)
+  * json: stop guessing based on curlies
+  * rust: support the `?` operator
+
 ## version 2.0.6: 2016-09-07
 
   * actionscript: emit correct tokens for positive numbers (thanks @JoeRobich!)

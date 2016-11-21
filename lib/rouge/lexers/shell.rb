@@ -118,7 +118,7 @@ module Rouge
       state :math do
         rule /\)\)/, Keyword, :pop!
         rule %r([-+*/%^|&]|\*\*|\|\|), Operator
-        rule /\d+/, Num
+        rule /\d+(#\w+)?/, Num
         mixin :root
       end
 

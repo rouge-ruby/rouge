@@ -138,7 +138,6 @@ module Rouge
 
       state :root do
         rule /\A\s*#!.*?\n/m, Comment::Preproc, :statement
-        rule /\n/, Text, :statement
         rule %r((?<=\n)(?=\s|/|<!--)), Text, :expr_start
         mixin :comments_and_whitespace
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===

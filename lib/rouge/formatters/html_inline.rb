@@ -6,7 +6,15 @@ module Rouge
       tag 'html_inline'
 
       def initialize(theme)
-        @theme = theme
+        if theme.is_a?(Class) && theme < Rouge::Theme
+          @theme = theme.new
+        elsif theme.is_a?(Rouge::Theme)
+          @theme = theme
+        elsif theme.is_a?(String)
+          @theme = Rouge::Theme.find(theme).new
+        else
+          raise ArgumentError, "invalid theme: #{theme.inspect}"
+        end
       end
 
       def safe_span(tok, safe_val)

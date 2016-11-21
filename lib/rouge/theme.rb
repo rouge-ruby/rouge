@@ -111,7 +111,11 @@ module Rouge
         return @name if n.nil?
 
         @name = n.to_s
-        Theme.registry[@name] = self
+        register(@name)
+      end
+
+      def register(name)
+        Theme.registry[name.to_s] = self
       end
 
       def find(n)
@@ -136,12 +140,18 @@ module Rouge
       return self if self.mode == mode
 
       new_name = "#{self.name}.#{mode}"
-      Class.new(self) { name(new_name); mode!(mode) }
+      Class.new(self) { name(new_name); set_mode!(mode) }
+    end
+
+    def set_mode!(mode)
+      @mode = mode
+      send("make_#{mode}!")
     end
 
     def mode!(arg)
-      @mode = arg
-      send("make_#{arg}!")
+      alt_name = "#{self.name}.#{arg}"
+      register(alt_name)
+      set_mode!(arg)
     end
   end
 

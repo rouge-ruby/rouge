@@ -57,9 +57,11 @@ module Rouge
 
       prepend :statements do
         rule /class\b/, Keyword, :classname
-        rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lu]*)?)i, Num::Float
-        rule %r(#{dq}e[+-]?#{dq}[lu]*)i, Num::Float
+        rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lf]?)?)i, Num::Float
+        rule %r(0x(\h[.]\h?|[.]\h)(p[+-]?\d[lf]?))i, Num::Float
+        rule %r(#{dq}e[+-]?#{dq}[lf]?)i, Num::Float
         rule /0x\h('?\h)*[lu]*/i, Num::Hex
+        rule /0b[01]('?[01])*[lu]*/i, Num::Bin
         rule /0[0-7]('?[0-7])*[lu]*/i, Num::Oct
         rule /#{dq}[lu]*/i, Num::Integer
         rule /\bnullptr\b/, Name::Builtin

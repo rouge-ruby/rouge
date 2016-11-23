@@ -150,7 +150,7 @@ module Rouge
         rule /\n\s*/m, Text, :expr_start
         rule /#.*$/, Comment::Single
 
-        rule %r(=begin\b.*?end\b)m, Comment::Multiline
+        rule %r(=begin\b.*?\n=end\b)m, Comment::Multiline
       end
 
       state :inline_whitespace do

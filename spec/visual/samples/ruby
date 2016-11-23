@@ -244,6 +244,11 @@ asfsadf/
 
 foo[:bar] / baz[:zot]
 
+=begin some comments go here
+a comment, that should not
+end
+here
+=end
 
 #from: http://coderay.rubychan.de/rays/show/383
 class Object

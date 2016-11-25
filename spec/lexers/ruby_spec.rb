@@ -53,6 +53,22 @@ describe Rouge::Lexers::Ruby do
       end
     end
 
+    describe 'ranges' do
+      it 'handles .. as range operator' do
+        assert_tokens_equal "1..10",
+          ['Literal.Number.Integer', '1'],
+          ['Operator', '..'],
+          ['Literal.Number.Integer', '10']
+      end
+
+      it 'handles ... as range operator' do
+        assert_tokens_equal "'a'...'z'",
+          ['Literal.String.Single', "'a'"],
+          ['Operator', '...'],
+          ['Literal.String.Single', "'z'"]
+      end
+    end
+
     describe 'numerics' do
       it 'distinguishes Float from Integer' do
         assert_tokens_equal "2.3 + 5",

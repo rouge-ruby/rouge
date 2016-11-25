@@ -44,6 +44,19 @@ x.a / 1 # comment
 Foo::a / 3 + 4
 
 ########
+# The popular . :bow:
+########
+
+# It appears in Floats
+2.3
+
+# It appears in Range
+1..10
+
+# It can even appear thrice in a row!
+10...100
+
+########
 # method calls
 ########
 

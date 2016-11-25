@@ -164,6 +164,7 @@ module Rouge
         rule /0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
+        rule /\d+\.\d+(e[\+\-]?\d+)?/, Num::Float
         rule /[\d]+(?:_\d+)*/, Num::Integer
 
         # names

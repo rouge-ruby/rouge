@@ -52,6 +52,26 @@ describe Rouge::Lexers::Ruby do
         end
       end
     end
+
+    describe 'numerics' do
+      it 'distinguishes Float from Integer' do
+        assert_tokens_equal "2.3 + 5",
+          ['Literal.Number.Float', '2.3'],
+          ['Text', ' '],
+          ['Operator', '+'],
+          ['Text', ' '],
+          ['Literal.Number.Integer', '5']
+      end
+
+      it 'identifies Floats with exponent correctly' do
+        assert_tokens_equal "12.3e4",
+          ['Literal.Number.Float', '12.3e4']
+        assert_tokens_equal "5.67e-9",
+          ['Literal.Number.Float', '5.67e-9']
+        assert_tokens_equal "20.4e+8",
+          ['Literal.Number.Float', '20.4e+8']
+      end
+    end
   end
 
   describe 'guessing' do

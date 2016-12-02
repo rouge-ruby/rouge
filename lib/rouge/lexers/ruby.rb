@@ -164,6 +164,7 @@ module Rouge
         rule /0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
+        rule /\d+\.\d+(e[\+\-]?\d+)?/, Num::Float
         rule /[\d]+(?:_\d+)*/, Num::Integer
 
         # names
@@ -204,6 +205,10 @@ module Rouge
 
         mixin :has_heredocs
 
+        # `..` and `...` for ranges must have higher priority than `.`
+        # Otherwise, they will be parsed as :method_call
+        rule /\.{2,3}/, Operator, :expr_start
+
         rule /[A-Z][a-zA-Z0-9_]*/, Name::Constant, :method_call
         rule /(\.|::)(\s*)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/ do
           groups Punctuation, Text, Name::Function
@@ -212,7 +217,7 @@ module Rouge
 
         rule /[a-zA-Z_]\w*[?!]/, Name, :expr_start
         rule /[a-zA-Z_]\w*/, Name, :method_call
-        rule /\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\.{1,3}/,
+        rule /\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\./,
           Operator, :expr_start
         rule /[-+\/*%=<>&!^|~]=?/, Operator, :expr_start
         rule(/[?]/) { token Punctuation; push :ternary; push :expr_start }

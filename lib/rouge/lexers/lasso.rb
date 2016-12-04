@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*- #
 
+require 'yaml'
+
 module Rouge
   module Lexers
     class Lasso < TemplateLexer
@@ -160,9 +162,7 @@ module Rouge
         end
 
         # other
-        rule %r((,)(\s*)((#{id}=?|[-+*/%])(?=\s*(\(([^()]*\([^()]*\))*[^\)]*\)\s*)?(::[\w.\s]+)?=>))) do
-          groups Punctuation, Text, Name::Function
-        end
+        rule /,/, Punctuation, :commamember
         rule /(and|or|not)\b/i, Operator::Word
         rule /(#{id})(\s*::\s*#{id})?(\s*=(?!=|>))/ do
           groups Name, Name::Label, Operator
@@ -205,6 +205,12 @@ module Rouge
         rule /-?#{id}/, Name::Attribute, :pop!
         rule /\.\.\./, Name::Builtin::Pseudo
         mixin :lasso
+      end
+
+      state :commamember do
+        rule %r((#{id}=?|[-+*/%])(?=\s*(\(([^()]*\([^()]*\))*[^\)]*\)\s*)?(::[\w.\s]+)?=>)), Name::Function, :signature
+        mixin :whitespacecomments
+        rule //, Text, :pop!
       end
 
     end

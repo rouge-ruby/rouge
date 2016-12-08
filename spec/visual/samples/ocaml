@@ -1232,3 +1232,11 @@ let kprintf = ksprintf;;
 let sprintf fmt = ksprintf (fun s -> s) fmt;;
 
 at_exit print_flush;;
+
+
+id ~a:4;;
+id ~a:(4) ;;
+id ~a: (4);;
+
+(fun a ->(a))
+

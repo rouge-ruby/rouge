@@ -34,6 +34,37 @@ module Rouge
         @primitives ||= Set.new %w(unit int float bool string char list array)
       end
 
+      def self.gen_operator(a)
+        res = []
+        while not a.nil?
+
+          elem = :null
+          idx = a.length
+          for x in self.keyopts
+            i = a.index(x)
+            if not i.nil?
+              if i < idx || (i == idx and (x.length > elem.length))
+                elem = x
+                idx = i
+              end
+            end
+          end
+
+          if not elem.nil?
+            if idx > 0
+              res = res + [a[0..idx-1]]
+            end
+            res = res + [a[idx..idx+elem.length-1]]
+            a = a[idx + elem.length..a.length]
+          else
+            res = res + [a]
+            break
+          end
+        end
+
+        return res
+      end
+
       operator = %r([\[\];,{}_()!$%&*+./:<=>?@^|~#-]+)
       id = /[a-z][\w']*/i
       upper_id = /[A-Z][\w']*/
@@ -59,11 +90,12 @@ module Rouge
         end
 
         rule operator do |m|
-          match = m[0]
-          if self.class.keyopts.include? match
-            token Punctuation
-          else
-            token Operator
+          for x in self.class.gen_operator(m[0])
+            if self.class.keyopts.include? x
+               token Punctuation , x
+            else
+               token Operator , x
+            end
           end
         end
 

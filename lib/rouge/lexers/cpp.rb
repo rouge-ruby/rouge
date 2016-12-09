@@ -51,19 +51,34 @@ module Rouge
         rule /(?:__offload|__blockingoffload|__outer)\b/, Keyword::Pseudo
       end
 
-      # digits with optional inner quotes
+      # digits with optional inner quotes (since C++14)
       # see www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3781.pdf
       dq = /\d('?\d)*/
+      hq = /\h('?\h)*/
+      oq = /[0-7]('?[0-7])*/
+      bq = /[0-1]('?[0-1])*/
+
+      fsuffix = /(l|f)?/
+      isuffix = /(ul?l?|ll?u)?/i
 
       prepend :statements do
         rule /class\b/, Keyword, :classname
-        rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lf]?)?)i, Num::Float
-        rule %r(0x(\h[.]\h?|[.]\h)(p[+-]?\d[lf]?))i, Num::Float
-        rule %r(#{dq}e[+-]?#{dq}[lf]?)i, Num::Float
-        rule /0x\h('?\h)*[lu]*/i, Num::Hex
-        rule /0b[01]('?[01])*[lu]*/i, Num::Bin
-        rule /0[0-7]('?[0-7])*[lu]*/i, Num::Oct
-        rule /#{dq}[lu]*/i, Num::Integer
+
+        ## Float literals
+        rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq})?#{fsuffix})i, Num::Float
+        rule %r(#{dq}e[+-]?#{dq}#{fsuffix})i, Num::Float
+        # Hexadecimal floating-point literal (since C++17)
+        rule %r(0x#{hq}p[+-]?#{dq}#{fsuffix})i, Num::Float
+        rule %r(0x(#{hq}[.]#{hq}?|[.]#{hq})(p[+-]?#{dq})#{fsuffix})i, Num::Float
+
+        ## Integer literals
+        rule /0x#{hq}#{isuffix}/i, Num::Hex
+        # Binary literals (since C++14)
+        # see http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3472.pdf
+        rule /0b#{bq}#{isuffix}/i, Num::Bin
+        rule /0#{oq}#{isuffix}/i, Num::Oct
+        rule /#{dq}#{isuffix}/i, Num::Integer
+
         rule /\bnullptr\b/, Name::Builtin
         rule /(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
       end

@@ -34,9 +34,12 @@ module Rouge
         @primitives ||= Set.new %w(unit int float bool string char list array)
       end
 
-      operator = %r([\[\];,{}_()!$%&*+./:<=>?@^|~#-]+)
-      id = /[a-z][\w']*/i
+      # http://caml.inria.fr/pub/docs/manual-ocaml/lex.html#operator-char
+      operator = %r([!$%&*+-./:<=>?@^|~]+)
+      id = /[a-z_][\w']*/i
       upper_id = /[A-Z][\w']*/
+
+      keyopts_re = Regexp.union(self.keyopts.map { |x| Regexp.new(Regexp.escape(x)) })
 
       state :root do
         rule /\s+/m, Text
@@ -58,13 +61,12 @@ module Rouge
           end
         end
 
+        rule keyopts_re do |m|
+          token Punctuation # This is an odd choice...
+        end
+
         rule operator do |m|
-          match = m[0]
-          if self.class.keyopts.include? match
-            token Punctuation
-          else
-            token Operator
-          end
+          token Operator
         end
 
         rule /-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float

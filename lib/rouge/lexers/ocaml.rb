@@ -34,40 +34,12 @@ module Rouge
         @primitives ||= Set.new %w(unit int float bool string char list array)
       end
 
-      def self.gen_operator(a)
-        res = []
-        while not a.nil?
-
-          elem = :null
-          idx = a.length
-          for x in self.keyopts
-            i = a.index(x)
-            if not i.nil?
-              if i < idx || (i == idx and (x.length > elem.length))
-                elem = x
-                idx = i
-              end
-            end
-          end
-
-          if not elem.nil?
-            if idx > 0
-              res = res + [a[0..idx-1]]
-            end
-            res = res + [a[idx..idx+elem.length-1]]
-            a = a[idx + elem.length..a.length]
-          else
-            res = res + [a]
-            break
-          end
-        end
-
-        return res
-      end
-
-      operator = %r([\[\];,{}_()!$%&*+./:<=>?@^|~#-]+)
-      id = /[a-z][\w']*/i
+      # http://caml.inria.fr/pub/docs/manual-ocaml/lex.html#operator-char
+      operator = %r([!$%&*+-./:<=>?@^|~]+)
+      id = /[a-z_][\w']*/i
       upper_id = /[A-Z][\w']*/
+
+      keyopts_re = Regexp.union(self.keyopts.map { |x| Regexp.new(Regexp.escape(x)) })
 
       state :root do
         rule /\s+/m, Text
@@ -89,14 +61,12 @@ module Rouge
           end
         end
 
+        rule keyopts_re do |m|
+          token Punctuation # This is an odd choice...
+        end
+
         rule operator do |m|
-          for x in self.class.gen_operator(m[0])
-            if self.class.keyopts.include? x
-               token Punctuation , x
-            else
-               token Operator , x
-            end
-          end
+          token Operator
         end
 
         rule /-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float

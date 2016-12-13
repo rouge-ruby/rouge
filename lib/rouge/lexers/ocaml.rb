@@ -19,13 +19,6 @@ module Rouge
         )
       end
 
-      def self.keyopts
-        @keyopts ||= Set.new %w(
-          != # & && ( ) * \+ , - -. -> . .. : :: := :> ; ;; < <- =
-          > >] >} ? ?? [ [< [> [| ] _ ` { {< | |] } ~
-        )
-      end
-
       def self.word_operators
         @word_operators ||= Set.new %w(and asr land lor lsl lxor mod or)
       end
@@ -34,7 +27,7 @@ module Rouge
         @primitives ||= Set.new %w(unit int float bool string char list array)
       end
 
-      operator = %r([\[\];,{}_()!$%&*+./:<=>?@^|~#-]+)
+      operator = %r([\[\];,_!$%&*+./:<=>?@^|~#-]+)
       id = /[a-z][\w']*/i
       upper_id = /[A-Z][\w']*/
 
@@ -58,14 +51,8 @@ module Rouge
           end
         end
 
-        rule operator do |m|
-          match = m[0]
-          if self.class.keyopts.include? match
-            token Punctuation
-          else
-            token Operator
-          end
-        end
+        rule /[(){}\[\];]+/, Punctuation
+        rule operator, Operator
 
         rule /-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
         rule /0x\h[\h_]*/i, Num::Hex

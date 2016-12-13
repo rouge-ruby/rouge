@@ -30,8 +30,8 @@ module Rouge
       style Error,
             Generic::Error, :fg => :aluminum1, :bg => :scarletred2
       style Keyword, :fg => :sandy, :bold => true
-      style Operator,
-            Punctuation, :fg => :backlit
+      style Operator, :fg => :backlit, :bold => true
+      style Punctuation, :fg => :backlit
       style Generic::Deleted, :fg => :scarletred2
       style Generic::Inserted, :fg => :go_get_it
       style Generic::Emph, :italic => true

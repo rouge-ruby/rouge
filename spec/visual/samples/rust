@@ -61,6 +61,15 @@ fn main() {
     assert length::<int, &[int]>(z) == vec::len(z);
 }
 
+fn<'a> pointer(&'a u32) {}
+
+fn range() {
+    let a = 1..2;
+    let b = 1..;
+    let c = ..2;
+    let d = ..;
+    let e = 5...6;
+}
 
 #[attr1 = "val"];
 #[attr2 = "val"];

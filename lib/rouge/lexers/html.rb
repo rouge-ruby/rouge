@@ -14,6 +14,11 @@ module Rouge
         return 1 if text =~ /<\s*html\b/
       end
 
+      start do
+        @javascript = Javascript.new(options)
+        @css = CSS.new(options)
+      end
+
       state :root do
         rule /[^<&]+/m, Text
         rule /&\S*?;/, Name::Entity
@@ -24,12 +29,14 @@ module Rouge
 
         rule /<\s*script\s*/m do
           token Name::Tag
+          @javascript.reset!
           push :script_content
           push :tag
         end
 
         rule /<\s*style\s*/m do
           token Name::Tag
+          @css.reset!
           push :style_content
           push :tag
         end
@@ -77,16 +84,26 @@ module Rouge
       end
 
       state :script_content do
+        rule %r([^<]+) do
+          delegate @javascript
+        end
+
         rule %r(<\s*/\s*script\s*>)m, Name::Tag, :pop!
-        rule %r(.*?(?=<\s*/\s*script\s*>))m do
-          delegate Javascript
+
+        rule %r(<) do
+          delegate @javascript
         end
       end
 
       state :style_content do
+        rule /[^<]+/ do
+          delegate @css
+        end
+
         rule %r(<\s*/\s*style\s*>)m, Name::Tag, :pop!
-        rule %r(.*?(?=<\s*/\s*style\s*>))m do
-          delegate CSS
+
+        rule /</ do
+          delegate @css
         end
       end
     end

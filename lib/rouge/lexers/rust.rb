@@ -86,7 +86,7 @@ module Rouge
         rule %r([=-]>), Keyword
         rule %r(<->), Keyword
         rule /[()\[\]{}|,:;]/, Punctuation
-        rule /[*!@~&+%^<>=-\?]/, Operator
+        rule /[*!@~&+%^<>=-\?]|\.{2,3}/, Operator
 
         rule /([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule /[.]\s*#{id}/, Name::Property
@@ -98,6 +98,7 @@ module Rouge
         rule /\bmacro_rules!/, Name::Decorator, :macro_rules
         rule /#{id}!/, Name::Decorator, :macro
 
+        rule /'#{id}/, Name::Variable
         rule /#{id}/ do |m|
           name = m[0]
           if self.class.builtins.include? name

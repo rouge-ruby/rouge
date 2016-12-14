@@ -1,11 +1,11 @@
 fn f() {
-    let a = ~"hello";
+    let a = String::new("hello");
     let b: &str = a;
     io::println(b);
 }
 
 fn g() {
-    let c = ~"world";
+    let c = String::new("world");
     let d: &str;
     d = c;
     io::println(d);
@@ -37,14 +37,6 @@ impl<A> &[A]: iterable<A> {
     }
 }
 
-impl<A> ~[A]: iterable<A> {
-    fn iterate(f: fn(x: &A) -> bool) {
-        for vec::each(self) |e| {
-            if !f(e) { break; }
-        }
-    }
-}
-
 fn length<A, T: iterable<A>>(x: T) -> uint {
     let mut len = 0;
     for x.iterate() |_y| { len += 1 }
@@ -52,7 +44,7 @@ fn length<A, T: iterable<A>>(x: T) -> uint {
 }
 
 fn main() {
-    let x = ~[0,1,2,3];
+    let x = vec![0,1,2,3];
     // Call a method
     for x.iterate() |y| { assert x[*y] == *y; }
     // Call a parameterized function
@@ -69,6 +61,15 @@ fn main() {
     assert length::<int, &[int]>(z) == vec::len(z);
 }
 
+fn<'a> pointer(&'a u32) {}
+
+fn range() {
+    let a = 1..2;
+    let b = 1..;
+    let c = ..2;
+    let d = ..;
+    let e = 5...6;
+}
 
 #[attr1 = "val"];
 #[attr2 = "val"];
@@ -230,7 +231,7 @@ mod test_distinguish_syntax_ext {
     extern mod std;
 
     fn f() {
-        fmt!("test%s", ~"s");
+        fmt!("test%s", String::new("s"));
         #[attr = "val"]
         fn g() { }
     }

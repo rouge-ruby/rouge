@@ -7,6 +7,16 @@
     (listen! :click (fn [e] (js/console.log e)))))
 
 
+:reagent-render
+(fn [args ...]
+ ;; Necessary for Reagent to see that we depend on the dom-node r/atom.
+ ;; Note: we don't actually use any of the args here.  This is because
+ ;; we cannot render D3 at this point.  We have to wait for the update.
+ @dom-node
+ [:div.gauge [:svg]])})))
+
+
+
 [::foo/bar 3]
 
 '#this-is-a-valid-symbol###

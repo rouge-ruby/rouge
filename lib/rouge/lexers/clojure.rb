@@ -86,7 +86,7 @@ module Rouge
         rule /\\(.|[a-z]+)/i, Str::Char
 
 
-        rule /~@|[`\'#^~&]/, Operator
+        rule /~@|[`\'#^~&@]/, Operator
 
         rule /(\()(\s*)(#{identifier})/m do |m|
           token Punctuation, m[1]

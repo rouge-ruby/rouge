@@ -190,3 +190,11 @@ import { Component } from '@angular/core';
   template: '<h1>My First Angular App</h1>'
 })
 export class AppComponent { }
+
+// Mapped types
+declare module "foo" {
+  export type IFooPartial = Partial<IFoo>
+  export interface IFooPartial2 {
+    [K in keyof IFoo]?: IFoo[K]
+  }
+}

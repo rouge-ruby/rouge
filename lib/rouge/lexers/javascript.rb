@@ -97,22 +97,26 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          for in while do break return continue switch case default
+          for in of while do break return continue switch case default
           if else throw try catch finally new delete typeof instanceof
-          void this yield
+          void this yield import export from as async super this
         )
       end
 
       def self.declarations
-        @declarations ||= Set.new %w(var let with function)
+        @declarations ||= Set.new %w(
+          var let const with function class
+          extends constructor get set
+        )
       end
 
       def self.reserved
         @reserved ||= Set.new %w(
-          abstract boolean byte char class const debugger double enum
-          export extends final float goto implements import int interface
+          abstract boolean byte char debugger double enum
+          final float goto implements int interface
           long native package private protected public short static
-          super synchronized throws transient volatile
+          synchronized throws transient volatile
+          eval arguments await
         )
       end
 
@@ -125,8 +129,13 @@ module Rouge
           Array Boolean Date Error Function Math netscape
           Number Object Packages RegExp String sun decodeURI
           decodeURIComponent encodeURI encodeURIComponent
-          Error eval isFinite isNaN parseFloat parseInt document this
-          window
+          Error eval isFinite isNaN parseFloat parseInt
+          document window navigator self global
+          Promise Set Map WeakSet WeakMap Symbol Proxy Reflect
+          Int8Array Uint8Array Uint8ClampedArray
+          Int16Array Uint16Array Uint16ClampedArray
+          Int32Array Uint32Array Uint32ClampedArray
+          Float32Array Float64Array DataView ArrayBuffer
         )
       end
 

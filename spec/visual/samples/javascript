@@ -228,3 +228,26 @@ class Person {
   @deprecate('We stopped facepalming', { url: 'http://knowyourmeme.com/memes/facepalm' })
   facepalmHarder() {}
 }
+
+// ES6 module
+import * as foo from 'foo'
+import { bar as baz } from 'bar'
+export * from 'baz'
+export function hoge() {}
+export class fuga extends baz {
+  constructor () {
+    super()
+  }
+  async doit (stuff) {
+    await stuff()
+    this.dont(stuff)
+  }
+  dont (stuff) {
+    return arguments.length
+  }
+}
+eval('false')
+global.foo = {
+  * [Symbol.iterator] () { return }
+}
+for (const x of global.foo) {}

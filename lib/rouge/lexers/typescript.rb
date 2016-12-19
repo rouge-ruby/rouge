@@ -17,28 +17,27 @@ module Rouge
 
       def self.keywords
         @keywords ||= super + Set.new(%w(
-          import export from as is
-          namespace new static private protected public
-          super async await extends implements readonly
+          is namespace static private protected public
+          implements readonly
         ))
       end
 
       def self.declarations
         @declarations ||= super + Set.new(%w(
-          const type constructor abstract
+          type abstract
         ))
       end
 
       def self.reserved
         @reserved ||= super + Set.new(%w(
-          string any number namespace module
-          declare default interface
+          string any void number namespace module
+          declare default interface keyof
         ))
       end
 
       def self.builtins
         @builtins ||= super + %w(
-          Promise Set Map WeakSet WeakMap Symbol
+          Pick Partial Readonly Record
         )
       end
     end

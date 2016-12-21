@@ -108,12 +108,14 @@ module Rouge
       )
 
       keywords_pseudo = %w(
-        initialize new loop include extend raise attr_reader attr_writer
-        attr_accessor alias_method attr catch throw private module_function
+        loop include extend raise
+        alias_method attr catch throw private module_function
         public protected true false nil __FILE__ __LINE__
       )
 
       builtins_g = %w(
+        attr_reader attr_writer attr_accessor
+
         __id__ __send__ abort ancestors at_exit autoload binding callcc
         caller catch chomp chop class_eval class_variables clone
         const_defined\? const_get const_missing const_set constants

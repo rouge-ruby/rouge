@@ -217,13 +217,13 @@ module Rouge
 
         # operators
         rule %r((->|->>|=>)), Operator
-        rule %r([-\*\+%/~=&\?<>!#@\^]+), Operator
+        rule %r([-\*\+%/~=&\?<>!#\@\^]+), Operator
 
       end
 
       state :operators do
         rule %r((->|->>|=>)), Operator
-        rule %r([-\*\+%/~=&\?<>!#@\^]+), Operator
+        rule %r([-\*\+%/~=&\?<>!#\@\^]+), Operator
       end
 
       state :single_string do

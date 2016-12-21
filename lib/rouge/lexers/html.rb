@@ -41,8 +41,35 @@ module Rouge
           push :tag
         end
 
+        rule /<\//, Name::Tag, :tag_end
+        rule /</, Name::Tag, :tag_start
+
         rule %r(<\s*[a-zA-Z0-9:-]+), Name::Tag, :tag # opening tags
         rule %r(<\s*/\s*[a-zA-Z0-9:-]+\s*>), Name::Tag # closing tags
+      end
+
+      state :tag_end do
+        mixin :tag_end_end
+        rule /[a-zA-Z0-9:-]+/ do
+          token Name::Tag
+          goto :tag_end_end
+        end
+      end
+
+      state :tag_end_end do
+        rule /\s+/, Text
+        rule />/, Name::Tag, :pop!
+      end
+
+      state :tag_start do
+        rule /\s+/, Text
+
+        rule /[a-zA-Z0-9:-]+/ do
+          token Name::Tag
+          goto :tag
+        end
+
+        rule(//) { goto :tag }
       end
 
       state :comment do

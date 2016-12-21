@@ -13,6 +13,12 @@
 </table>
 <% end %>
 
+<% header_tag = 'h1' %>
+
+<<%= header_tag %>>
+  it's a header!
+</<%= header_tag %>>
+
 <p>
   Some text
 </p>

@@ -228,8 +228,13 @@ module Rouge
           groups Keyword, Text, Keyword
         end
 
-        rule /(true|false|null)\b/i, Keyword::Constant
-        rule /(int|float|bool|string|resource|object|mixed|numeric|void)\b/i, Keyword::Type
+        rule /(?:true|false|null)\b/i, Keyword::Constant
+        # PHP 7.0: generalized typehinting
+        # PHP 7.1: null allowed by prefixing type by a '?' + void (which is not nullable) and iterable added
+        # from builtin_types in Zend/zend_compile.c
+        rule /(?:void|\??(?:int|float|bool|string|iterable))\b/i, Keyword::Type
+        # PHP 7.1: self and callable are keywords, handle them here as nullable types
+        rule /\??(?:self|callable)\b/i, Keyword::Type
 
         rule /(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, Num::Float
         rule /\d+e[+-]?\d+/i, Num::Float

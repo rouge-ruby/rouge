@@ -306,7 +306,7 @@ module Rouge
           goto :expr_start
         end
 
-        rule /[A-Z_]\w*/, Name::Class
+        rule /[A-Z_]\w*/, Name::Class, :pop!
 
         rule(//) { pop! }
       end

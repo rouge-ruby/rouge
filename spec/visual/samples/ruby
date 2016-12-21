@@ -2,6 +2,12 @@
 # ruby 1.9 examples
 #######
 
+class Random
+  RANDOM_VAR = 1
+  RANDOM_2 = 2
+  RANDOM_3 = 3
+end
+
 state :foo do
   rule %r(/) do
     token Operator

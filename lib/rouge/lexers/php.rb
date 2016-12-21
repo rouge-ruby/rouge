@@ -143,7 +143,7 @@ module Rouge
       # - at the beginning of the line (no indentation)
       # - followed by a ; then a newline even if it is the last instruction of the PHP block
       state :here_and_now_doc do
-        rule /^(#{LABEL})(;)(?=#{NEWLINE})/ do |m|
+        rule /^(#{LABEL})(;?)(?=#{NEWLINE})/ do |m|
           if m[1] == @label
             groups Name::Constant, Punctuation
             goto :in_scripting

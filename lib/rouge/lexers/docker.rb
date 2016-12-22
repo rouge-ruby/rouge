@@ -11,7 +11,7 @@ module Rouge
       mimetypes 'text/x-dockerfile-config'
 
       KEYWORDS = %w(
-        FROM MAINTAINER CMD EXPOSE ENV ADD ENTRYPOINT VOLUME WORKDIR
+        FROM MAINTAINER CMD LABEL EXPOSE ENV ADD COPY ENTRYPOINT VOLUME USER WORKDIR ARG STOPSIGNAL HEALTHCHECK SHELL
       ).join('|')
 
       start { @shell = Shell.new(@options) }

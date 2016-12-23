@@ -6,10 +6,10 @@ describe Rouge::Formatters::HTMLLinewise do
 
   let(:options) { {} }
   let(:output) { subject.format(input_stream) }
-  Token = Rouge::Token
+  token = Rouge::Token
 
   describe 'a simple token stream' do
-    let(:input_stream) { [[Token['Name'], 'foo']] }
+    let(:input_stream) { [[token['Name'], 'foo']] }
 
     it 'formats' do
       assert { output == %(<div class="line-1"><span class="n">foo</span></div>) }
@@ -17,7 +17,7 @@ describe Rouge::Formatters::HTMLLinewise do
   end
 
   describe 'final newlines' do
-    let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar\n"]] }
+    let(:input_stream) { [[token['Text'], "foo\n"], [token['Name'], "bar\n"]] }
 
     it 'formats' do
       assert { output == %(<div class="line-1">foo</div><div class="line-2"><span class="n">bar</span></div>) }
@@ -25,7 +25,7 @@ describe Rouge::Formatters::HTMLLinewise do
   end
 
   describe 'intermediate newlines' do
-    let(:input_stream) { [[Token['Name'], "foo\nbar"]] }
+    let(:input_stream) { [[token['Name'], "foo\nbar"]] }
 
     it 'formats' do
       assert { output == %(<div class="line-1"><span class="n">foo</span></div><div class="line-2"><span class="n">bar</span></div>) }

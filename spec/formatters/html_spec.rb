@@ -3,11 +3,11 @@
 describe Rouge::Formatters::HTML do
   let(:subject) { Rouge::Formatters::HTMLLegacy.new(options) }
   let(:options) { {} }
-  Token = Rouge::Token
+  token = Rouge::Token
 
   describe 'skipping the wrapper' do
     let(:subject) { Rouge::Formatters::HTML.new }
-    let(:output) { subject.format([[Token['Name'], 'foo']]) }
+    let(:output) { subject.format([[token['Name'], 'foo']]) }
     let(:options) { { :wrap => false } }
 
     it 'skips the wrapper' do
@@ -23,7 +23,7 @@ describe Rouge::Formatters::HTML do
     let(:options) { { :inline_theme => InlineTheme.new, :wrap => false } }
 
     let(:output) {
-      subject.format([[Token['Name'], 'foo']])
+      subject.format([[token['Name'], 'foo']])
     }
 
     it 'inlines styles given a theme' do

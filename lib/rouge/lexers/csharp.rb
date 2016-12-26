@@ -72,7 +72,7 @@ module Rouge
 
         rule /^\s*\[.*?\]/, Name::Attribute
         rule /[$]\s*"/, Str, :splice_string
-        rule /@[$]\s*"/, Str, :splice_literal
+        rule /[$]@\s*"/, Str, :splice_literal
 
         rule /(<\[)\s*(#{id}:)?/, Keyword
         rule /\]>/, Keyword

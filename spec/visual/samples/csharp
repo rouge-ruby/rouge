@@ -357,12 +357,12 @@ namespace Diva.Core {
                         var f = @"literal string with "" a quote in the middle and a backslash \".Length;
                         var g = $"some interpolated string with no interpolations".Length;
                         var h = $"interpolation: two and two make { 2 + 2 }".Length;
-                        var i = @$"interpolation with
+                        var i = $@"interpolation with
                           {a} newline".Length;
-                        var j = @$"interpolation {1}
+                        var j = $@"interpolation {1}
                           with multiple {2}
                           newlines and a backslash\".Length;
-                        var k = @$"interp{1}olation "" and {3} quotes".Length;
+                        var k = $@"interp{1}olation "" and {3} quotes".Length;
                         var l = $"interpolation with nested braces: { (a => { return 3 })(5) }".Length;
                         var m = $"interpolation with nested strings: { @"Ooga\" } and { "booga\"" }".Length;
                 }

@@ -47,19 +47,38 @@ module Rouge
         rule %r(/[*].*?[*]/)m, Comment::Multiline
       end
 
+      state :nest do
+        rule /{/, Punctuation, :nest
+        rule /}/, Punctuation, :pop!
+        mixin :root
+      end
+
+      state :splice_string do
+        rule /\\./, Str
+        rule /{/, Punctuation, :nest
+        rule /"|\n/, Str, :pop!
+        rule /./, Str
+      end
+
+      state :splice_literal do
+        rule /""/, Str
+        rule /{/, Punctuation, :nest
+        rule /"/, Str, :pop!
+        rule /./, Str
+      end
+
       state :root do
         mixin :whitespace
 
         rule /^\s*\[.*?\]/, Name::Attribute
-        # rule /[$]\s*"/, Str, :splice_string
-        # rule /[$]\s*<#/, Str, :splice_recstring
-        # rule /<#/, Str, :recstring
+        rule /[$]\s*"/, Str, :splice_string
+        rule /@[$]\s*"/, Str, :splice_literal
 
         rule /(<\[)\s*(#{id}:)?/, Keyword
         rule /\]>/, Keyword
 
         rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
-        rule /@"(\\.|.)*?"/, Str
+        rule /@"(""|[^"])*"/m, Str
         rule /"(\\.|.)*?["\n]/, Str
         rule /'(\\.|.)'/, Str::Char
         rule /0x[0-9a-f]+[lu]?/i, Num

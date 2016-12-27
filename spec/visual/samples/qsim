@@ -1,0 +1,13 @@
+FOO
+
+BAR
+#Hey there
+
+rutina: MOV R15, 0xFA23
+        ADD R15, 010110
+SUB
+MUL
+DIV
+
+R0
+R15

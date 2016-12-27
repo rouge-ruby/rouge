@@ -1,13 +1,13 @@
-FOO
-
-BAR
-#Hey there
-
 rutina: MOV R15, 0xFA23
-        ADD R15, 010110
-SUB
-MUL
-DIV
-
-R0
-R15
+        ADD R15, 0x0000
+sumArreglo:
+      MOV R3, 0x0000
+      MOV R0, 0xA000  --> inicializamos el indice
+arriba:
+      MOV R1, [R0]
+      CMP R1, 0x0000
+      JE fin
+      ADD R3, R1
+      ADD R0, 0x0001
+      JMP arriba
+fin:  RET

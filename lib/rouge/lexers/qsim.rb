@@ -11,13 +11,10 @@ module Rouge
         0.3
       end
 
-      operators = %w(ADD SUB MUL DIV MOV OR NOT AND CALL RET JMP JE CMP)
+      operators = %w(ADD SUB MUL DIV MOV OR NOT AND RET CMP CALL JMP JE)
 
-      #Reverse helps matching first R15 instead of R1
       registers = (0..15)
-                      .map { |n| "R#{n}" }
-                      .reverse
-
+                      .map { |n| "R#{n}\\b" }
 
       state :root do
 
@@ -25,17 +22,19 @@ module Rouge
           /#{expressions.join('|')}/
         end
 
-
         rule any(operators), Keyword
         rule any(registers), Name::Attribute
 
-        rule /\w+:/, Name::Label
+        # label definition
+        rule /[a-z]+[a-zA-Z0-9]*/, Name::Label
 
+        # Hexa number expressed like 0XFF12, constraint to 16 bits
         rule /\b0x[0-9A-F]{4}\b/, Literal::Number::Hex
-        rule /\b[01]+\b/, Literal::Number
 
-        rule /,/, Punctuation
+        # Commas, square brackets and colons
+        rule /[:,\[\]]/, Punctuation
 
+        rule /--.*$/, Comment::Single
         rule /\s+/, Text::Whitespace
       end
     end

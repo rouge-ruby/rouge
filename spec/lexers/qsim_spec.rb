@@ -15,9 +15,10 @@ describe Rouge::Lexers::QSim do
     it 'operator call' do
       assert_tokens_equal 'MOV R15, R16',
                           ['Keyword', 'MOV'],
-                          ['Text', ' '],
+                          ['Text.Whitespace', ' '],
                           ['Name.Attribute', 'R15'],
-                          ['Text', ' '],
+                          ['Punctuation', ','],
+                          ['Text.Whitespace', ' '],
                           ['Error', 'R16']
     end
   end

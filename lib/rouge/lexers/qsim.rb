@@ -13,8 +13,7 @@ module Rouge
 
       operators = %w(ADD SUB MUL DIV MOV OR NOT AND RET CMP CALL JMP JE)
 
-      registers = (0..15)
-                      .map { |n| "R#{n}\\b" }
+      registers = (0..15).map { |n| "R#{n}\\b" }
 
       state :root do
 

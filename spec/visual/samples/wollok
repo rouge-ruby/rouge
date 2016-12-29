@@ -1,0 +1,66 @@
+import foo.bar
+import quux.*
+
+
+object noCompression {
+
+	method compressedSize(fileSize) {
+		return fileSize
+	}
+}
+
+object reflate {
+
+	method compressedSize(fileSize) {
+		return fileSize * 0.8
+	}
+}
+
+class Content {
+	var name
+
+	constructor(aName) {
+		name = aName
+	}
+
+	method isLight() {
+		return self.size() > 150 * 1024 ** 2
+	}
+
+	method canBeUploadedTo(aRepo) {
+		return aRepo.canUpload(self)
+	}
+
+	method longName() {
+		return name.length()
+	}
+}
+
+class TextFile inherits Content {
+	var lines
+
+	constructor(aName, someLines) = super ( aName ) {
+		lines = someLines
+	}
+
+	method size() {
+		return lines.sum({ line => line.size() }) * 16
+	}
+}
+
+class BinaryFile inherits Content {
+	var bytes
+	var compressionMethod = noCompression
+
+	constructor(aName, someBytes) = super ( aName ) {
+		bytes = someBytes
+	}
+
+	method size() {
+		return compressionMethod.compressedSize(bytes.size())
+	}
+
+	method compressionMethod(aCompressionMethod) {
+		compressionMethod = aCompressionMethod
+	}
+}

@@ -4,7 +4,7 @@ module Rouge
       title 'Wollok'
       desc 'Wollok lang'
       tag 'wollok'
-      filenames *%w(*.wlk *.wtest)
+      filenames *%w(*.wlk *.wtest *.wpgm)
 
       def self.analyze_text(_text)
         0.3
@@ -21,34 +21,27 @@ module Rouge
       state :root do
         mixin :whitespace
 
-        rule /self/, Name::Builtin::Pseudo
+        rule /import/, Keyword::Reserved, :import
 
-        rule /class|object|method|inherits/ do
-          push :entity
-          token Keyword::Declaration
-        end
+        rule /class|object|program/, Keyword::Declaration, :entity_naming
 
-        rule /[a-zA-Z]+/ do |m|
-
-          if keywords.include? m[0]
-            token Keyword::Reserved
-          else
-            token Text
-          end
-        end
-
-        rule /[\[\]{}(),=.*]/, Punctuation
-        rule /<>+-*\//, Operator
-
+        rule /test/, Keyword::Declaration, :test_naming
       end
 
-      state :entity do
+      state :import do
         mixin :whitespace
+        rule /.+/, Text, :pop!
+      end
 
-        rule entityName do
-          pop!
-          token Name::Class
-        end
+      state :entity_naming do
+        mixin :whitespace
+        rule entityName, Keyword::Declaration
+        rule /{/, Text, :entity_definition
+      end
+
+      state :entity_definition do
+        mixin :whitespace
+        rule
       end
 
       state :object do

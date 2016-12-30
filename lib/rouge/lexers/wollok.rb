@@ -40,22 +40,22 @@ module Rouge
 
       state :entity_definition do
         mixin :whitespace
-        rule /var|const\b/, Keyword::Declaration
-        rule /method|constructor/, Keyword::Declaration, :method_naming
-        mixin :definition
+        rule /var|const\b/, Keyword::Reserved
+        rule /method|constructor/, Keyword::Reserved, :method_naming
         rule /}/, Text, :pop!
+        mixin :definition
       end
 
       state :method_naming do
         mixin :whitespace
-        rule entityName, Name::Function, :parameters
+        rule entityName, Text, :parameters
         rule /\(/, Text, :parameters
       end
 
       state :parameters do
         mixin :whitespace
         rule /\(|\)/, Text
-        rule entityName, Name::Variable
+        rule entityName, Keyword::Variable
         rule /,/, Punctuation
 
         rule /{/ do
@@ -64,14 +64,15 @@ module Rouge
         end
       end
 
-
       state :definition do
         mixin :whitespace
         rule /#{keywords.join('|')}/, Keyword::Reserved
         rule entityName, Keyword::Variable
+        rule /[0-9]+\.{0,1}[0-9]*/, Literal::Number::Float
         rule /self/, Name::Builtin::Pseudo
-        rule /./, Punctuation, :message
-        rule /\*\+-\//, Operator
+        #rule /./, Punctuation, :message
+        rule /\*|\+|-|\/|<|>|=|./, Operator
+        rule /(|)/, Text
       end
 
       state :message do

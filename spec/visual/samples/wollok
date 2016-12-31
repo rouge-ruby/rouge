@@ -95,6 +95,20 @@ mixin M2 {}
 
 class C mixed with M1 and M2 {}
 
+//object Set {
+//
+//}
+
+object Set {
+
+    /*
+    method add(element){
+    }
+    */
+
+}
+
+
 package bar {
 
     object foo {

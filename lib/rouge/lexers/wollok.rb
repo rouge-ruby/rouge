@@ -14,16 +14,18 @@ module Rouge
 
       entity_name = /[a-zA-Z][a-zA-Z0-9]*/
 
-      variable_naming = /_{0,1}#{entity_name}/
+      variable_naming = /_?#{entity_name}/
 
       lambda_level = 0
 
-      state :whitespace do
+      state :whitespaces_and_comments do
         rule /\s+/, Text::Whitespace
+        rule /\/\/.*$/, Comment::Single
+        rule /\/\*.*\*\//m, Comment::Multiline
       end
 
       state :root do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule /import/, Keyword::Reserved, :import
         rule /class|object|mixin/, Keyword::Reserved, :entity_naming
         rule /test|program/, Keyword::Reserved, :chunk_naming
@@ -36,12 +38,12 @@ module Rouge
       end
 
       state :import do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule /.+$/, Text, :pop!
       end
 
       state :chunk_naming do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         mixin :literal
         rule /{/ do
           # I need three states in the stack in order
@@ -53,7 +55,7 @@ module Rouge
       end
 
       state :entity_naming do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule /inherits |mixed|with/, Keyword::Reserved
         rule entity_name, Name::Class
         rule /{/, Text, :entity_definition
@@ -61,7 +63,7 @@ module Rouge
       end
 
       state :entity_definition do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule /var|const\b/, Keyword::Reserved, :variable_declaration
         rule /override/, Keyword::Reserved
         rule /method|constructor|super/, Keyword::Reserved, :method_signature
@@ -72,13 +74,13 @@ module Rouge
       end
 
       state :method_signature do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule entity_name, Text, :parameters
         rule /\(/, Text, :parameters
       end
 
       state :parameters do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule /\(|\)/, Text
         rule variable_naming, Keyword::Variable
         rule /,/, Punctuation
@@ -90,7 +92,7 @@ module Rouge
       end
 
       state :definition do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule /#{keywords.join('|')}/, Keyword::Reserved
         rule /\*|\+|-|\/|<|>|=|!|\+\+|--|%|and|or|not/, Operator
         mixin :literal
@@ -115,16 +117,16 @@ module Rouge
       end
 
       state :literal do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule /true|false/, Text
         rule variable_naming, Keyword::Variable
-        rule /[0-9]+\.{0,1}[0-9]*/, Literal::Number
+        rule /[0-9]+\.?[0-9]*/, Literal::Number
         rule /".*"/, Literal::String
         rule /\[|\#{/, Punctuation, :list
       end
 
       state :list do
-        mixin :whitespace
+        mixin :whitespaces_and_comments
         rule /,/, Punctuation
         rule /]|}/, Punctuation, :pop!
         mixin :literal

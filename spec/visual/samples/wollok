@@ -65,24 +65,58 @@ class BinaryFile inherits Content {
 	}
 }
 
-object foo {
-    var bar = "asd"
-    var quux = #{}
-    var ruux = [1,2,"foo", [1]]
+program "aProgram" {
+        pepita.fly(20)
+        const t = new Trainer()
+        t.train(pepita)
+}
+
+test "pepita should spent twice the kilometers flown" {
+        pepita.energy(100)
+        pepita.fly(20)
+        assert.equals(60, pepita.energy())
+}
+
+mixin Walks {
+	var walkedDistance = 0
+
+	method walk(distance) {
+		walkedDistance += distance
+	}
+
+	method walkedDistance() = walkedDistance
+}
+
+class WalkingBird mixed with Walks {}
+
+mixin M1 {}
+
+mixin M2 {}
+
+class C mixed with M1 and M2 {}
+
+package bar {
+
+    object foo {
+
+        var bar = "asd"
+        var quux = #{}
+        var ruux = [1,2,"foo", [1]]
 
 
-    method sayHi() = return "Hi!"
+        method sayHi() = return "Hi!"
 
-    method close() = return true or true and false not true
+        method close() = return true or true and false not true
 
-    method sayBye(_some) {
-        var a = 0
-        a++
-        a--
-        if(1>0) {
-            return 0
-        } else {
-            return 1
+        method sayBye(_some) {
+            var a = 0
+            a++
+            a--
+            if(1>0) {
+                return 0
+            } else {
+                return 1
+            }
         }
     }
 }

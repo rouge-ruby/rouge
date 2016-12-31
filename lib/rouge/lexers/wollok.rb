@@ -25,8 +25,14 @@ module Rouge
       state :root do
         mixin :whitespace
         rule /import/, Keyword::Reserved, :import
-        rule /class|object|program/, Keyword::Reserved, :entity_naming
-        rule /test/, Keyword::Reserved, :test_naming
+        rule /class|object|mixin/, Keyword::Reserved, :entity_naming
+        rule /test|program/, Keyword::Reserved, :chunk_naming
+        rule /(package)(\s+)(#{entity_name})/ do
+          groups Keyword::Reserved, Text::Whitespace, Name::Class
+        end
+        rule /{/, Text, :root
+        rule /}/, Text, :pop!
+
       end
 
       state :import do
@@ -34,9 +40,21 @@ module Rouge
         rule /.+$/, Text, :pop!
       end
 
+      state :chunk_naming do
+        mixin :whitespace
+        mixin :literal
+        rule /{/ do
+          # I need three states in the stack in order
+          # to achieve polymorphism between chunks and entities
+          token Text
+          push
+          push :definition
+        end
+      end
+
       state :entity_naming do
         mixin :whitespace
-        rule /inherits/, Keyword::Reserved
+        rule /inherits |mixed|with/, Keyword::Reserved
         rule entity_name, Name::Class
         rule /{/, Text, :entity_definition
         rule /}/, Text, :pop!
@@ -77,6 +95,7 @@ module Rouge
         rule /\*|\+|-|\/|<|>|=|!|\+\+|--|%|and|or|not/, Operator
         mixin :literal
         rule /self/, Name::Builtin::Pseudo
+        rule /,/, Punctuation
         rule /(\.)(#{entity_name})/ do
           groups Operator, Text
         end

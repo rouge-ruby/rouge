@@ -64,3 +64,22 @@ class BinaryFile inherits Content {
 		compressionMethod = aCompressionMethod
 	}
 }
+
+object foo {
+    var bar = "asd"
+    var quux = #{}
+    var ruux = [1,2,"foo", [1]]
+
+
+    method sayHi() = return "Hi!"
+
+    method sayBye(_some) {
+        if(1>0) {
+            return 0
+        } else {
+            return 1
+        }
+
+    }
+
+}

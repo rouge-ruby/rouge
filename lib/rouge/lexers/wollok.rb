@@ -10,9 +10,11 @@ module Rouge
         0.3
       end
 
-      keywords = %w(new super return)
+      keywords = %w(new super return if else)
 
-      entityName = /[a-zA-Z][a-zA-Z0-9]*/
+      entity_name = /[a-zA-Z][a-zA-Z0-9]*/
+
+      lambda_level = 0
 
       state :whitespace do
         rule /\s+/, Text::Whitespace
@@ -21,18 +23,18 @@ module Rouge
       state :root do
         mixin :whitespace
         rule /import/, Keyword::Reserved, :import
-        rule /class|object|program/, Keyword::Reserved, :entity_naming
+        rule /class|object|program/, Keyword::Declaration, :entity_naming
         rule /test/, Keyword::Reserved, :test_naming
       end
 
       state :import do
         mixin :whitespace
-        rule /.+/, Text, :pop!
+        rule /.+$/, Text, :pop!
       end
 
       state :entity_naming do
         mixin :whitespace
-        rule entityName, Name::Class
+        rule entity_name, Name::Class
         rule /inherits/, Keyword::Reserved
         rule /{/, Text, :entity_definition
         rule /}/, Text, :pop!
@@ -40,47 +42,54 @@ module Rouge
 
       state :entity_definition do
         mixin :whitespace
-        rule /var|const\b/, Keyword::Reserved
-        rule /method|constructor/, Keyword::Reserved, :method_naming
-        rule /}/, Text, :pop!
-        mixin :definition
-      end
-
-      state :method_naming do
-        mixin :whitespace
-        rule entityName, Text, :parameters
-        rule /\(/, Text, :parameters
-      end
-
-      state :parameters do
-        mixin :whitespace
-        rule /\(|\)/, Text
-        rule entityName, Keyword::Variable
-        rule /,/, Punctuation
-
-        rule /{/ do
+        rule /var|const\b/, Keyword::Reserved, :variable_declaration
+        rule /method|constructor|super/, Keyword::Reserved, :method_naming
+        rule /}/ do
           token Text
           pop!(2)
         end
       end
 
+      state :method_naming do
+        mixin :whitespace
+        rule /#{entity_name}|\(/, Text, :parameters
+      end
+
+      state :parameters do
+        mixin :whitespace
+        rule /\(|\)/, Text
+        rule entity_name, Keyword::Variable
+        rule /,/, Punctuation
+        rule /\=/ do
+          token Text
+          pop!(2)
+        end
+        rule /{/, Text, :definition
+      end
+
       state :definition do
         mixin :whitespace
         rule /#{keywords.join('|')}/, Keyword::Reserved
-        rule entityName, Keyword::Variable
-        rule /[0-9]+\.{0,1}[0-9]*/, Literal::Number::Float
         rule /self/, Name::Builtin::Pseudo
-        #rule /./, Punctuation, :message
-        rule /\*|\+|-|\/|<|>|=|./, Operator
-        rule /(|)/, Text
+        rule entity_name, Keyword::Variable
+        rule /.#{entity_name}/, Text
+        rule /[0-9]+\.{0,1}[0-9]*/, Literal::Number::Float
+        rule /\*|\+|-|\/|<|>|=|\.|!/, Operator
+        rule /\(|\)/, Text
+        rule /{/ do
+          token Text
+          lambda_level += 1
+        end
+        rule /}/ do
+          token Text
+          lambda_level -= 1
+          pop!(3) if lambda_level == -1
+        end
       end
 
-      state :message do
-        rule entityName, Text
-      end
-
-      state :lambda do
-
+      state :variable_declaration do
+        rule /$/, Text, :pop!
+        mixin :definition
       end
 
     end

@@ -52,7 +52,8 @@ module Rouge
 
       state :method_naming do
         mixin :whitespace
-        rule /#{entity_name}|\(/, Text, :parameters
+        rule entity_name, Text
+        rule /\(/, Text, :parameters
       end
 
       state :parameters do
@@ -72,7 +73,7 @@ module Rouge
         rule /#{keywords.join('|')}/, Keyword::Reserved
         rule /self/, Name::Builtin::Pseudo
         rule entity_name, Keyword::Variable
-        rule /.#{entity_name}/, Text
+        rule /\.#{entity_name}/, Other
         rule /[0-9]+\.{0,1}[0-9]*/, Literal::Number::Float
         rule /\*|\+|-|\/|<|>|=|\.|!/, Operator
         rule /\(|\)/, Text
@@ -82,8 +83,11 @@ module Rouge
         end
         rule /}/ do
           token Text
-          lambda_level -= 1
-          pop!(3) if lambda_level == -1
+          if lambda_level.zero?
+            pop!(3)
+          else
+            lambda_level -= 1
+          end
         end
       end
 

@@ -73,10 +73,10 @@ module Rouge
       state :definition do
         mixin :whitespace
         rule /#{keywords.join('|')}/, Keyword::Reserved
+        rule /\*|\+|-|\/|<|>|=|\.|!|\+\+|--|%|and|or|not/, Operator
         mixin :literals
         rule /self/, Name::Builtin::Pseudo
         rule /\.#{entity_name}/, Other
-        rule /\*|\+|-|\/|<|>|=|\.|!/, Operator
         rule /\(|\)/, Text
         rule /{/ do
           token Text

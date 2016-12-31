@@ -52,7 +52,7 @@ class BinaryFile inherits Content {
 	var bytes
 	var compressionMethod = noCompression
 
-	constructor(aName, someBytes) = super ( aName ) {
+	constructor(aName, someBytes) = super(aName) {
 		bytes = someBytes
 	}
 
@@ -73,13 +73,16 @@ object foo {
 
     method sayHi() = return "Hi!"
 
+    method close() = return true or true and false not true
+
     method sayBye(_some) {
+        var a = 0
+        a++
+        a--
         if(1>0) {
             return 0
         } else {
             return 1
         }
-
     }
-
 }

@@ -18,10 +18,12 @@ module Rouge
 
       lambda_level = 0
 
+      instance_variables = []
+
       state :whitespaces_and_comments do
-        rule /\s+/, Text::Whitespace
-        rule /\/\/.*$/, Comment::Single
-        rule /\/\*.*\*\//m, Comment::Multiline
+        rule /\s+/m, Text::Whitespace
+        rule %r(//.*$), Comment::Single
+        rule %r(/\*(.|\s)*?\*/)m, Comment::Multiline
       end
 
       state :root do
@@ -44,7 +46,7 @@ module Rouge
 
       state :chunk_naming do
         mixin :whitespaces_and_comments
-        mixin :literal
+        mixin :string
         rule /{/ do
           # I need three states in the stack in order
           # to achieve polymorphism between chunks and entities
@@ -58,13 +60,17 @@ module Rouge
         mixin :whitespaces_and_comments
         rule /inherits |mixed|with/, Keyword::Reserved
         rule entity_name, Name::Class
-        rule /{/, Text, :entity_definition
+        rule /{/ do
+          instance_variables.clear
+          token Text
+          push :entity_definition
+        end
         rule /}/, Text, :pop!
       end
 
       state :entity_definition do
         mixin :whitespaces_and_comments
-        rule /var|const\b/, Keyword::Reserved, :variable_declaration
+        mixin :variable_declaration
         rule /override/, Keyword::Reserved
         rule /method|constructor|super/, Keyword::Reserved, :method_signature
         rule /}/ do
@@ -82,7 +88,7 @@ module Rouge
       state :parameters do
         mixin :whitespaces_and_comments
         rule /\(|\)/, Text
-        rule variable_naming, Keyword::Variable
+        rule variable_naming, Name::Variable
         rule /,/, Punctuation
         rule /(\=)(\s*)(super)/ do
           groups Text, Text::Whitespace, Keyword::Reserved
@@ -93,9 +99,11 @@ module Rouge
 
       state :definition do
         mixin :whitespaces_and_comments
+        mixin :variable_declaration
         rule /#{keywords.join('|')}/, Keyword::Reserved
-        rule /\*|\+|-|\/|<|>|=|!|\+\+|--|%|and|or|not/, Operator
         mixin :literal
+        rule /\=/, Text
+        rule /\*|\+|-|\/|<|>|\=\=|!|\+\+|--|%|and|or|not/, Operator
         rule /self/, Name::Builtin::Pseudo
         rule /,/, Punctuation
         rule /(\.)(#{entity_name})/ do
@@ -119,9 +127,15 @@ module Rouge
       state :literal do
         mixin :whitespaces_and_comments
         rule /true|false/, Text
-        rule variable_naming, Keyword::Variable
+        rule variable_naming do |m|
+          if instance_variables.include? m[0]
+            token Name::Attribute
+          else
+            token Keyword::Variable
+          end
+        end
         rule /[0-9]+\.?[0-9]*/, Literal::Number
-        rule /".*"/, Literal::String
+        mixin :string
         rule /\[|\#{/, Punctuation, :list
       end
 
@@ -132,11 +146,21 @@ module Rouge
         mixin :literal
       end
 
+      state :string do
+        rule /"[^"]*"/m, Literal::String
+      end
+
       state :variable_declaration do
+        rule /var|const\b/, Keyword::Reserved, :variable_definition
+      end
+
+      state :variable_definition do
         rule /$/, Text, :pop!
-        rule /\=/, Text
-        rule variable_naming, Text
-        mixin :literal
+        rule variable_naming do |m|
+          instance_variables << m[0]
+          token Name::Attribute
+        end
+        mixin :definition
       end
 
       state :inline do

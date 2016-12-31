@@ -6,7 +6,6 @@ describe Rouge::Formatters::HTMLLinewise do
 
   let(:options) { {} }
   let(:output) { subject.format(input_stream) }
-  Token = Rouge::Token
 
   describe 'a simple token stream' do
     let(:input_stream) { [[Token['Name'], 'foo']] }

@@ -116,6 +116,7 @@ module Rouge
 
       state :literal do
         mixin :whitespace
+        rule /true|false/, Text
         rule variable_naming, Keyword::Variable
         rule /[0-9]+\.{0,1}[0-9]*/, Literal::Number
         rule /".*"/, Literal::String
@@ -132,6 +133,7 @@ module Rouge
       state :variable_declaration do
         rule /$/, Text, :pop!
         rule /\=/, Text
+        rule variable_naming, Text
         mixin :literal
       end
 

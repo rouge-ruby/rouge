@@ -39,7 +39,7 @@ class Content {
 class TextFile inherits Content {
 	var lines
 
-	constructor(aName, someLines) = super ( aName ) {
+	constructor(aName, someLines) = super(aName) {
 		lines = someLines
 	}
 

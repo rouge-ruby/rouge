@@ -45,16 +45,17 @@ module Rouge
       state :entity_definition do
         mixin :whitespace
         rule /var|const\b/, Keyword::Reserved, :variable_declaration
-        rule /method|constructor|super/, Keyword::Reserved, :method_naming
+        rule /override/, Keyword::Reserved
+        rule /method|constructor|super/, Keyword::Reserved, :method_signature
         rule /}/ do
           token Text
           pop!(2)
         end
       end
 
-      state :method_naming do
+      state :method_signature do
         mixin :whitespace
-        rule /_{0,1}#{entity_name}/, Text
+        rule entity_name, Text, :parameters
         rule /\(/, Text, :parameters
       end
 
@@ -73,10 +74,12 @@ module Rouge
       state :definition do
         mixin :whitespace
         rule /#{keywords.join('|')}/, Keyword::Reserved
-        rule /\*|\+|-|\/|<|>|=|\.|!|\+\+|--|%|and|or|not/, Operator
-        mixin :literals
+        rule /\*|\+|-|\/|<|>|=|!|\+\+|--|%|and|or|not/, Operator
+        mixin :literal
         rule /self/, Name::Builtin::Pseudo
-        rule /\.#{entity_name}/, Other
+        rule /(\.)(#{entity_name})/ do
+          groups Operator, Text
+        end
         rule /\(|\)/, Text
         rule /{/ do
           token Text
@@ -92,10 +95,10 @@ module Rouge
         end
       end
 
-      state :literals do
+      state :literal do
         mixin :whitespace
         rule variable_naming, Keyword::Variable
-        rule /[0-9]+\.{0,1}[0-9]*/, Literal::Number::Float
+        rule /[0-9]+\.{0,1}[0-9]*/, Literal::Number
         rule /".*"/, Literal::String
         rule /\[|\#{/, Punctuation, :list
       end
@@ -104,17 +107,20 @@ module Rouge
         mixin :whitespace
         rule /,/, Punctuation
         rule /]|}/, Punctuation, :pop!
-        mixin :literals
+        mixin :literal
       end
 
       state :variable_declaration do
         rule /$/, Text, :pop!
         rule /\=/, Text
-        mixin :literals
+        mixin :literal
       end
 
       state :inline do
-        rule /$/, Text, :pop!
+        rule /$/ do
+          token Text
+          pop!(3)
+        end
         mixin :definition
       end
     end

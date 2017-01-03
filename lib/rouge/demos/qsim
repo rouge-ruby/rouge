@@ -1,5 +1,5 @@
-routine: MOV R15, 0xFA23
-        ADD R15, 0x0000
+routine: MOV R6, 0xFA23
+        ADD R6, 0x0000
 sumArray:
       MOV R3, 0x0000
       MOV R0, 0xA000  --> Index initialization

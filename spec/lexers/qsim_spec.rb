@@ -13,10 +13,10 @@ describe Rouge::Lexers::QSim do
     include Support::Lexing
 
     it 'operator call' do
-      assert_tokens_equal 'MOV R15, R16',
+      assert_tokens_equal 'MOV R7, R16',
                           ['Keyword', 'MOV'],
                           ['Text.Whitespace', ' '],
-                          ['Name.Attribute', 'R15'],
+                          ['Name.Builtin.Pseudo', 'R7'],
                           ['Punctuation', ','],
                           ['Text.Whitespace', ' '],
                           ['Error', 'R16']
@@ -24,8 +24,7 @@ describe Rouge::Lexers::QSim do
 
     it 'label definition' do
       assert_tokens_equal 'label1: ',
-                          ['Name.Label', 'label1'],
-                          ['Punctuation', ':'],
+                          ['Name.Label', 'label1:'],
                           ['Text.Whitespace', ' ']
     end
 

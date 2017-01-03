@@ -8,7 +8,7 @@ JNE isNotTheSame
 isNotTheSame: MOV R1, R4
 
 start: MOV R7, [0x000A]
-CMP R4, 0x00000
+CMP R4, 0x0000
 JMP start
 
 ADD R0, 0x0002
@@ -59,8 +59,8 @@ OR [[0x0023]], 0x0300
 AND R5, [0x0005]
 OR R6, 0x0005
 
-routine: MOV R15, 0xFA23
-        ADD R15, 0x0000
+routine: MOV R7, 0xFA23
+        ADD R7, 0x0000
 sumArray:
       MOV R3, 0x0000
       MOV R0, 0xA000  --> Index initialization

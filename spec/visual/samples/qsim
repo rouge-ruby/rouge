@@ -1,13 +1,74 @@
-rutina: MOV R15, 0xFA23
+MOV R4, 0x0000
+CMP R4, 0x0000
+JE isTheSame
+isTheSame: MOV R1, R4
+MOV R4, 0x0005
+CMP R4, 0x0000
+JNE isNotTheSame
+isNotTheSame: MOV R1, R4
+
+start: MOV R7, [0x000A]
+CMP R4, 0x00000
+JMP start
+
+ADD R0, 0x0002
+MUL R4, 0x0001
+SUB R5, 0x000A
+MOV R5, 0x0056
+MOV R2, R3
+ADD R1, R7
+
+MOV R0, [0x0002]
+MUL R4, 0x0001
+SUB [0x0003], 0x000A
+ADD R5, 0x0056
+MOV [0x000B], [0x0005]
+ADD R1, R7
+
+ADD R0, [0x0002]
+MUL R4, 0x0001
+SUB [0x0003], 0x000A
+MOV R5, 0x0056
+MOV [0x0005], etiquette
+CALL [0x0005]
+MOV R0, R1
+ADD R5, R0
+etiquette: ADD R0, 0x0002
+RET
+
+MOV R0, 0x0002
+CALL lala
+MOV R1, R0
+lala: MUL R0, 0x0004
+RET
+
+start: MOV R5, 0x0056
+CMP R5, 0x0000
+JE jump
+MOV R0, R1
+jump: ADD R5, R0
+JMP start
+
+MOV R1, [[0x0010]]
+CMP [R2], 0x0000
+MOV [[0x0010]] , R2
+
+NOT R0
+AND [R6], [0x0006]
+OR [[0x0023]], 0x0300
+AND R5, [0x0005]
+OR R6, 0x0005
+
+routine: MOV R15, 0xFA23
         ADD R15, 0x0000
-sumArreglo:
+sumArray:
       MOV R3, 0x0000
-      MOV R0, 0xA000  --> inicializamos el indice
-arriba:
+      MOV R0, 0xA000  --> Index initialization
+up:
       MOV R1, [R0]
       CMP R1, 0x0000
-      JE fin
+      JE end
       ADD R3, R1
       ADD R0, 0x0001
-      JMP arriba
-fin:  RET
+      JMP up
+end:  RET

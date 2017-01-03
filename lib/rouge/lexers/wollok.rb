@@ -13,15 +13,16 @@ module Rouge
       keywords = %w(new super return if else)
 
       entity_name = /[a-zA-Z][a-zA-Z0-9]*/
-
       variable_naming = /_?#{entity_name}/
+      var_declaration = /var|const\b/
 
       lambda_level = 0
-
-      instance_variables = []
+      entities = []
+      variables = []
 
       state :whitespaces_and_comments do
         rule /\s+/m, Text::Whitespace
+        rule /$+/m, Text::Whitespace
         rule %r(//.*$), Comment::Single
         rule %r(/\*(.|\s)*?\*/)m, Comment::Multiline
       end
@@ -33,10 +34,10 @@ module Rouge
         rule /test|program/, Keyword::Reserved, :chunk_naming
         rule /(package)(\s+)(#{entity_name})/ do
           groups Keyword::Reserved, Text::Whitespace, Name::Class
+
         end
         rule /{/, Text, :root
         rule /}/, Text, :pop!
-
       end
 
       state :import do
@@ -58,10 +59,13 @@ module Rouge
 
       state :entity_naming do
         mixin :whitespaces_and_comments
-        rule /inherits |mixed|with/, Keyword::Reserved
-        rule entity_name, Name::Class
+        rule /inherits|mixed|with/, Keyword::Reserved
+        rule entity_name do |m|
+          token Name::Class
+          entities << m[0]
+        end
         rule /{/ do
-          instance_variables.clear
+          variables.clear
           token Text
           push :entity_definition
         end
@@ -70,9 +74,9 @@ module Rouge
 
       state :entity_definition do
         mixin :whitespaces_and_comments
-        mixin :variable_declaration
         rule /override/, Keyword::Reserved
         rule /method|constructor|super/, Keyword::Reserved, :method_signature
+        mixin :variable_declaration
         rule /}/ do
           token Text
           pop!(2)
@@ -88,7 +92,7 @@ module Rouge
       state :parameters do
         mixin :whitespaces_and_comments
         rule /\(|\)/, Text
-        rule variable_naming, Name::Variable
+        rule variable_naming, Keyword::Variable
         rule /,/, Punctuation
         rule /(\=)(\s*)(super)/ do
           groups Text, Text::Whitespace, Keyword::Reserved
@@ -99,11 +103,11 @@ module Rouge
 
       state :definition do
         mixin :whitespaces_and_comments
-        mixin :variable_declaration
         rule /#{keywords.join('|')}/, Keyword::Reserved
+        mixin :variable_declaration
         mixin :literal
+        rule /\*|\+\b|-\b|\/|<|>|\=\=|!|\+\+|--|%|and|or|not|\+=|-=/, Operator
         rule /\=/, Text
-        rule /\*|\+|-|\/|<|>|\=\=|!|\+\+|--|%|and|or|not/, Operator
         rule /self/, Name::Builtin::Pseudo
         rule /,/, Punctuation
         rule /(\.)(#{entity_name})/ do
@@ -128,8 +132,11 @@ module Rouge
         mixin :whitespaces_and_comments
         rule /true|false/, Text
         rule variable_naming do |m|
-          if instance_variables.include? m[0]
+          variable = m[0]
+          if variables.include?(variable)
             token Name::Attribute
+          elsif entities.include?(variable) || ('A'..'Z').include?(variable[0])
+            token Name::Class
           else
             token Keyword::Variable
           end
@@ -151,16 +158,16 @@ module Rouge
       end
 
       state :variable_declaration do
-        rule /var|const\b/, Keyword::Reserved, :variable_definition
-      end
-
-      state :variable_definition do
-        rule /$/, Text, :pop!
-        rule variable_naming do |m|
-          instance_variables << m[0]
-          token Name::Attribute
+        rule /(#{var_declaration})(\s+)(#{variable_naming})(\s+)(=)(\s+)/ do |m|
+          groups Keyword::Reserved, Text::Whitespace,
+                 Name::Attribute, Text::Whitespace, Text, Text::Whitespace
+          variables << m[3]
         end
-        mixin :definition
+        rule /(#{var_declaration})(\s+)(#{variable_naming})/ do |m|
+          groups Keyword::Reserved, Text::Whitespace, Name::Attribute
+          variables << m[3]
+        end
+        mixin :literal
       end
 
       state :inline do

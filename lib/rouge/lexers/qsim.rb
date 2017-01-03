@@ -11,28 +11,21 @@ module Rouge
         0.3
       end
 
-      operators = %w(ADD SUB MUL DIV MOV OR NOT AND RET CMP CALL JMP JE)
+      operators = %w(MUL MOV ADD  SUB AND OR CMP DIV CALL RET
+                     JMP JE JNE JLE JG JL JGE JLEU JGU JCS JNEG JVS)
 
-      registers = (0..15).map { |n| "R#{n}\\b" }
+      registers = (0..7).map { |n| "R#{n}\\b" }
 
       state :root do
-
         def any(expressions)
           /#{expressions.join('|')}/
         end
 
         rule any(operators), Keyword
         rule any(registers), Name::Attribute
-
-        # label definition
         rule /[a-z]+[a-zA-Z0-9]*/, Name::Label
-
-        # Hexa number expressed like 0XFF12, constraint to 16 bits
         rule /\b0x[0-9A-F]{4}\b/, Literal::Number::Hex
-
-        # Commas, square brackets and colons
         rule /[:,\[\]]/, Punctuation
-
         rule /--.*$/, Comment::Single
         rule /\s+/, Text::Whitespace
       end

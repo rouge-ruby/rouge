@@ -111,9 +111,10 @@ package bar {
 
     object foo {
 
+        var numbers = [1, 2,3].map({it => it + 1})
         var bar = "asd"
         var quux = #{}
-        var ruux = [1,2,"foo", [1]]
+        var ruux = [1, 2, "foo", [1]]
 
 
         method sayHi() = return "Hi!"
@@ -129,6 +130,9 @@ package bar {
             } else {
                 return 1
             }
+
+            return 1 === 2
+            return 1 == 2
         }
     }
 }

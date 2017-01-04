@@ -10,13 +10,11 @@ module Rouge
         0.3
       end
 
-      keywords = %w(new super return if else)
+      keywords = %w(new super return if else var const override constructor)
 
       entity_name = /[a-zA-Z][a-zA-Z0-9]*/
       variable_naming = /_?#{entity_name}/
-      var_declaration = /var|const\b/
 
-      lambda_level = 0
       entities = []
 
       state :whitespaces_and_comments do
@@ -28,103 +26,47 @@ module Rouge
 
       state :root do
         mixin :whitespaces_and_comments
-        rule /import/, Keyword::Reserved, :import
-        rule /class|object|mixin/, Keyword::Reserved, :entity_naming
-        rule /test|program/, Keyword::Reserved, :chunk_naming
+        rule /(import)(.+$)/ do
+          groups Keyword::Reserved, Text
+        end
+        rule /(class|object|mixin)/, Keyword::Reserved, :foo
+        rule /test|program/, Keyword::Reserved #, :chunk_naming
         rule /(package)(\s+)(#{entity_name})/ do
           groups Keyword::Reserved, Text::Whitespace, Name::Class
         end
-        rule /{/, Text, :root
-        rule /}/, Text, :pop!
+        rule /{|}/, Text
+        mixin :keywords
+        mixin :objects
+        mixin :symbols
       end
 
-      state :import do
+      state :foo do
         mixin :whitespaces_and_comments
-        rule /.+$/, Text, :pop!
-      end
-
-      state :chunk_naming do
-        mixin :whitespaces_and_comments
-        mixin :string
-        rule /{/ do
-          # I need three states in the stack in order
-          # to achieve polymorphism between chunks and entities
-          token Text
-          push
-          push :definition
+        rule /inherits|mixed|with|and/, Keyword::Reserved
+        rule /#{entity_name}(?=\s*{)/ do |m|
+          token Name::Class
+          entities << m[0]
+          pop!
         end
-      end
-
-      state :entity_naming do
-        mixin :whitespaces_and_comments
-        rule /inherits|mixed|with/, Keyword::Reserved
-        rule entity_name do |m|
+        rule /#{entity_name}/ do |m|
           token Name::Class
           entities << m[0]
         end
-        rule /{/, Text, :entity_definition
-        rule /}/, Text, :pop!
       end
 
-      state :entity_definition do
-        mixin :whitespaces_and_comments
-        rule /override/, Keyword::Reserved
-        rule /method|constructor|super/, Keyword::Reserved, :method_signature
-        mixin :variable_declaration
-        rule /}/ do
-          token Text
-          pop!(2)
+      state :keywords do
+        def any(expressions)
+          /#{expressions.map { |keyword| "#{keyword}\\b" }.join('|')}/
+        end
+
+        rule /self\b/, Name::Builtin::Pseudo
+        rule any(keywords), Keyword::Reserved
+        rule /(method)(\s+)(#{variable_naming})/ do
+          groups Keyword::Reserved, Text::Whitespace, Text
         end
       end
 
-      state :method_signature do
-        mixin :whitespaces_and_comments
-        rule entity_name, Text, :parameters
-        rule /\(/, Text, :parameters
-      end
-
-      state :parameters do
-        mixin :whitespaces_and_comments
-        rule /\(|\)/, Text
-        rule variable_naming, Keyword::Variable
-        rule /,/, Punctuation
-        rule /(\=)(\s*)(super)/ do
-          groups Text, Text::Whitespace, Keyword::Reserved
-        end
-        rule /\=/, Text, :inline
-        rule /{/, Text, :definition
-      end
-
-      state :definition do
-        mixin :whitespaces_and_comments
-        rule /#{keywords.join('|')}/, Keyword::Reserved
-        mixin :variable_declaration
-        mixin :literal
-        rule /\*|\+\b|-\b|\/|<|>|\=\=|!|\+\+|--|%|and|or|not|\+=|-=/, Operator
-        rule /\=/, Text
-        rule /self/, Name::Builtin::Pseudo
-        rule /,/, Punctuation
-        rule /(\.)(#{entity_name})/ do
-          groups Operator, Text
-        end
-        rule /\(|\)/, Text
-        rule /{/ do
-          token Text
-          lambda_level += 1
-        end
-        rule /}/ do
-          token Text
-          if lambda_level.zero?
-            pop!(3)
-          else
-            lambda_level -= 1
-          end
-        end
-      end
-
-      state :literal do
-        mixin :whitespaces_and_comments
-        rule /true|false/, Text
+      state :objects do
         rule variable_naming do |m|
           variable = m[0]
           if entities.include?(variable) || ('A'..'Z').include?(variable[0])
@@ -133,39 +75,29 @@ module Rouge
             token Keyword::Variable
           end
         end
-        rule /[0-9]+\.?[0-9]*/, Literal::Number
-        mixin :string
-        rule /\[|\#{/, Punctuation, :list
+        rule /\.#{entity_name}/, Text
+        mixin :literals
       end
 
-      state :list do
+      state :literals do
         mixin :whitespaces_and_comments
+        rule /[0-9]+\.?[0-9]*/, Literal::Number
+        rule /"[^"]*"/m, Literal::String
+        rule /\[|\#{/, Punctuation, :lists
+      end
+
+      state :lists do
         rule /,/, Punctuation
         rule /]|}/, Punctuation, :pop!
-        mixin :literal
+        mixin :objects
       end
 
-      state :string do
-        rule /"[^"]*"/m, Literal::String
-      end
-
-      state :variable_declaration do
-        rule /(#{var_declaration})(\s+)(#{variable_naming})(\s+)(=)(\s+)/ do |m|
-          groups Keyword::Reserved, Text::Whitespace,
-                 Keyword::Variable, Text::Whitespace, Text, Text::Whitespace
-        end
-        rule /(#{var_declaration})(\s+)(#{variable_naming})/ do |m|
-          groups Keyword::Reserved, Text::Whitespace, Keyword::Variable
-        end
-        mixin :literal
-      end
-
-      state :inline do
-        rule /$/ do
-          token Text
-          pop!(3)
-        end
-        mixin :definition
+      state :symbols do
+        rule /\+\+|--|\+=|-=|\*\*/, Punctuation
+        rule /\+|-|\*|\/|%/, Punctuation
+        rule /<=|=>|===|==|<|>/, Punctuation
+        rule /\(|\)|=/, Text
+        rule /,/, Punctuation
       end
     end
   end

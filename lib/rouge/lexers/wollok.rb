@@ -18,7 +18,6 @@ module Rouge
 
       lambda_level = 0
       entities = []
-      variables = []
 
       state :whitespaces_and_comments do
         rule /\s+/m, Text::Whitespace
@@ -34,7 +33,6 @@ module Rouge
         rule /test|program/, Keyword::Reserved, :chunk_naming
         rule /(package)(\s+)(#{entity_name})/ do
           groups Keyword::Reserved, Text::Whitespace, Name::Class
-
         end
         rule /{/, Text, :root
         rule /}/, Text, :pop!
@@ -64,11 +62,7 @@ module Rouge
           token Name::Class
           entities << m[0]
         end
-        rule /{/ do
-          variables.clear
-          token Text
-          push :entity_definition
-        end
+        rule /{/, Text, :entity_definition
         rule /}/, Text, :pop!
       end
 
@@ -133,9 +127,7 @@ module Rouge
         rule /true|false/, Text
         rule variable_naming do |m|
           variable = m[0]
-          if variables.include?(variable)
-            token Name::Attribute
-          elsif entities.include?(variable) || ('A'..'Z').include?(variable[0])
+          if entities.include?(variable) || ('A'..'Z').include?(variable[0])
             token Name::Class
           else
             token Keyword::Variable
@@ -160,12 +152,10 @@ module Rouge
       state :variable_declaration do
         rule /(#{var_declaration})(\s+)(#{variable_naming})(\s+)(=)(\s+)/ do |m|
           groups Keyword::Reserved, Text::Whitespace,
-                 Name::Attribute, Text::Whitespace, Text, Text::Whitespace
-          variables << m[3]
+                 Keyword::Variable, Text::Whitespace, Text, Text::Whitespace
         end
         rule /(#{var_declaration})(\s+)(#{variable_naming})/ do |m|
-          groups Keyword::Reserved, Text::Whitespace, Name::Attribute
-          variables << m[3]
+          groups Keyword::Reserved, Text::Whitespace, Keyword::Variable
         end
         mixin :literal
       end

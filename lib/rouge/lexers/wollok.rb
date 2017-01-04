@@ -36,8 +36,8 @@ module Rouge
         end
         rule /{|}/, Text
         mixin :keywords
-        mixin :objects
         mixin :symbols
+        mixin :objects
       end
 
       state :foo do
@@ -93,9 +93,10 @@ module Rouge
       end
 
       state :symbols do
-        rule /\+\+|--|\+=|-=|\*\*/, Punctuation
-        rule /\+|-|\*|\/|%/, Punctuation
-        rule /<=|=>|===|==|<|>/, Punctuation
+        rule /\+\+|--|\+=|-=|\*\*|!/, Operator
+        rule /\+|-|\*|\/|%/, Operator
+        rule /<=|=>|===|==|<|>/, Operator
+        rule /and\b|or\b|not\b/, Operator
         rule /\(|\)|=/, Text
         rule /,/, Punctuation
       end

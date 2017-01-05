@@ -1,0 +1,14 @@
+procedure MerryChristmas() {
+  repeat (2) {
+    PutFarEast(3, Verde)
+    Mover(Norte)
+  }
+  
+  foreach largo in [7, 5, 3] {
+    DrawRowEast(largo, Verde)
+    Mover(Norte)
+    Mover(Este)
+  }
+  
+  Poner(Verde)
+}

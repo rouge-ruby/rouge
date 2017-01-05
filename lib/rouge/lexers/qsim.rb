@@ -6,7 +6,6 @@ module Rouge
       tag 'qsim'
       filenames '*.qsim'
 
-      # high priority for filename matches
       def self.analyze_text(*)
         0.3
       end

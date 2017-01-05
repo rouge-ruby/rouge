@@ -11,7 +11,7 @@ module Rouge
       end
 
       state :root do
-        rule /\s\S/, Text
+        rule /\s|\S/, Text
       end
     end
   end

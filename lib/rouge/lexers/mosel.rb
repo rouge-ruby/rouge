@@ -31,13 +31,14 @@ module Rouge
         false forall forward from function 
         if imports in include initialisations initializations integer inter is_binary is_continuous is_free is_integer is_partint is_semcont is_semint is_sos1 is_sos2 
         linctr list 
-        max min mod model mpvar 
-        next not of options or 
+        max min mod model mpvar
+        next not of options or
         package parameters procedure 
         public prod range real record repeat requirements 
-        set string sum then 
-        to true union until uses 
-        version 
+        set setparam strfmt string sum
+        then to true
+        union until uses
+        version
         while with write writeln
       )
       
@@ -164,16 +165,16 @@ module Rouge
         rule /"(\\\\|\\"|[^"])*"/, Str
         rule /(true|false)\b/i, Name::Builtin
         rule /\b(#{keywords.join('|')})\b/i, Keyword
-        
+
         rule /\b(#{mmxprs_keywords.join('|')})\b/i, Keyword::Namespace
         rule /\b(#{mmxpres_constants.join('|')})\b/, Name::Constant
         rule /\b(#{mmxprs_parameters.join('|')})\b/i, Name::Builtin
                   
         rule /\b(#{mmsystem_keywords.join('|')})\b/i, Keyword::Namespace
-        
+
         rule /\b(#{mmjobs_keywords.join('|')})\b/i, Keyword::Namespace
         rule /\b(#{mmjobs_parameters.join('|')})\b/i, Name::Builtin
-          
+
         rule id, Name
       end
     end

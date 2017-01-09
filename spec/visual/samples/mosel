@@ -140,4 +140,22 @@ model "Run portfolio optimization model"
   fclose(F_OUTPUT)
  end-procedure
 
+! Test multiple strings escaping
+
+  writeln("Reading 'KnapsackData.txt' ... ")
+  writeln("Reading \"KnapsackData.txt\" ... ")
+  writeln('Reading "KnapsackData.txt" ... ')
+  writeln("A double-quote string with a escape\nbreakline")
+  writeln('A single-quote string with a escape\nbreakline which should be ignored')
+  writeln("The letter q has octal code 161 can written as \161. But \229 is not a valid octal number")
+! Multiline strings
+  writeln("This is
+    a multi-line
+    string with three lines")
+  writeln("Reading 
+    file 'KnapsackData.txt' ... ")
+  writeln('Reading 
+    file "KnapsackData.txt" ... ')
+
+
 end-model

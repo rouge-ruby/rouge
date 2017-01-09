@@ -22,7 +22,7 @@ module Rouge
       #  General language lements
       ############################################################################################################################
 
-      keywords = %w(
+      core_keywords = %w(
         and array as 
         boolean break 
         case count counter 
@@ -35,22 +35,39 @@ module Rouge
         next not of options or
         package parameters procedure 
         public prod range real record repeat requirements 
-        set setparam strfmt string sum
+        set string sum
         then to true
         union until uses
         version
-        while with write writeln
+        while with
+      )
+      
+      core_functions = %w(
+        abs arctan assert
+        bitflip bitneg bitset bitshift bittest bitval
+        ceil cos create currentdate currenttime cuthead cuttail
+        delcell exists exit exp exportprob
+        fclose fflush finalize findfirst findlast floor fopen fselect fskipline 
+        getact getcoeff getcoeffs getdual getfid getfirst gethead getfname getlast getobjval getparam getrcost getreadcnt getreverse getsize getslack getsol gettail gettype getvars
+        iseof ishidden isodd ln log 
+        makesos1 makesos2 maxlist minlist 
+        publish 
+        random read readln reset reverse round
+        setcoeff sethidden setioerr setname setparam setrandseed settype sin splithead splittail sqrt strfmt substr 
+        timestamp 
+        unpublish 
+        write writeln
       )
       
       ############################################################################################################################
       # mmxprs module elements
       ############################################################################################################################
       
-      mmxprs_keywords = %w(
+      mmxprs_functions = %w(
         addmipsol
         basisstability
         calcsolinfo clearmipdir clearmodcut command copysoltoinit
-        defdelayedrows defsecurevecs delcell
+        defdelayedrows defsecurevecs
         estimatemarginals
         fixglobal
         getbstat getdualray getiis getiissense getiistype getinfcause getinfeas getlb getloadedlinctrs getloadedmpvars getname getprimalray getprobstat getrange getsensrng getsize getsol getub getvars
@@ -67,14 +84,14 @@ module Rouge
       
       mmxpres_constants = %w(XPRS_OPT  XPRS_UNF  XPRS_INF XPRS_UNB XPRS_OTH)
       
-      mmxprs_parameters = %w( XPRS_colorder XPRS_enumduplpol XPRS_enummaxsol XPRS_enumsols XPRS_fullversion XPRS_loadnames XPRS_problem XPRS_probname XPRS_verbose)
+      mmxprs_parameters = %w(XPRS_colorder XPRS_enumduplpol XPRS_enummaxsol XPRS_enumsols XPRS_fullversion XPRS_loadnames XPRS_problem XPRS_probname XPRS_verbose)
       
       
       ############################################################################################################################
       # mmsystem module elements
       ############################################################################################################################
       
-      mmsystem_keywords = %w(
+      mmsystem_functions = %w(
         addmonths
         copytext cuttext
         deltext 
@@ -113,7 +130,7 @@ module Rouge
       # mmjobs  module elements
       ############################################################################################################################
       
-      mmjobs_instance_mgmt_keywords = %w(
+      mmjobs_instance_mgmt_functions = %w(
         clearaliases connect
         disconnect
         findxsrvs
@@ -121,7 +138,7 @@ module Rouge
         sethostalias
       )
       
-      mmjobs_model_mgmt_keywords = %w(
+      mmjobs_model_mgmt_functions = %w(
         compile
         detach
         getannidents getannotations getexitcode getgid getid getnode getrmtid getstatus getuid
@@ -131,7 +148,7 @@ module Rouge
         unload
       )
       
-      mmjobs_synchornization_keywords = %w(
+      mmjobs_synchornization_functions = %w(
         dropnextevent
         getclass getfromgid getfromid getfromuid getnextevent getvalue
         isqueueempty
@@ -141,7 +158,7 @@ module Rouge
         wait waitfor
       )
       
-      mmjobs_keywords = mmjobs_instance_mgmt_keywords + mmjobs_model_mgmt_keywords + mmjobs_synchornization_keywords
+      mmjobs_functions = mmjobs_instance_mgmt_functions + mmjobs_model_mgmt_functions + mmjobs_synchornization_functions
       
       mmjobs_parameters = %w(conntmpl defaultnode fsrvdelay fsrvnbiter fsrvport jobid keepalive nodenumber parentnumber)
 
@@ -156,26 +173,58 @@ module Rouge
 
       end
 
-      state :root do
-        mixin :whitespace
+
+      # From Mosel documentation:
+      # Constant strings of characters must be quoted with single (') or double quote (") and may extend over several lines. Strings enclosed in double quotes may contain C-like escape sequences introduced by the 'backslash'
+      # character (\a \b \f \n \r \t \v \xxx with xxx being the character code as an octal number).
+      # Each sequence is replaced by the corresponding control character (e.g. \n is the `new line' command) or, if no control character exists, by the second character of the sequence itself (e.g. \\ is replaced by '\').
+      # The escape sequences are not interpreted if they are contained in strings that are enclosed in single quotes.
+
+      state :single_quotes do
+        rule /'/, Str::Single, :pop!
+        rule /[^']+/, Str::Single
+      end
+
+      state :double_quotes do
+        rule /"/, Str::Double, :pop!
+        rule /(\\"|\\[0-7]{1,3}\D|\\[abfnrtv]|\\\\)/, Str::Escape
+        rule /[^"]/, Str::Double
+      end
+
+      state :base do
+
+        rule %r{"}, Str::Double, :double_quotes
+        rule %r{'}, Str::Single, :single_quotes
 
         rule %r{((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?}, Num
         rule %r{[~!@#\$%\^&\*\(\)\+`\-={}\[\]:;<>\?,\.\/\|\\]}, Punctuation
-        rule %r{'([^']|'')*'}, Str
-        rule /"(\\\\|\\"|[^"])*"/, Str
+#        rule %r{'([^']|'')*'}, Str
+#        rule /"(\\\\|\\"|[^"])*"/, Str
+        
+
+
         rule /(true|false)\b/i, Name::Builtin
-        rule /\b(#{keywords.join('|')})\b/i, Keyword
+        rule /\b(#{core_keywords.join('|')})\b/i, Keyword
+        rule /\b(#{core_functions.join('|')})\b/, Name::Builtin
+        
+        
 
-        rule /\b(#{mmxprs_keywords.join('|')})\b/i, Keyword::Namespace
+        rule /\b(#{mmxprs_functions.join('|')})\b/, Name::Function
         rule /\b(#{mmxpres_constants.join('|')})\b/, Name::Constant
-        rule /\b(#{mmxprs_parameters.join('|')})\b/i, Name::Builtin
+        rule /\b(#{mmxprs_parameters.join('|')})\b/i, Name::Property
                   
-        rule /\b(#{mmsystem_keywords.join('|')})\b/i, Keyword::Namespace
-
-        rule /\b(#{mmjobs_keywords.join('|')})\b/i, Keyword::Namespace
-        rule /\b(#{mmjobs_parameters.join('|')})\b/i, Name::Builtin
+        rule /\b(#{mmsystem_functions.join('|')})\b/i, Name::Function
+        rule /\b(#{mmsystem_parameters.join('|')})\b/, Name::Property
+          
+        rule /\b(#{mmjobs_functions.join('|')})\b/i, Name::Function
+        rule /\b(#{mmjobs_parameters.join('|')})\b/, Name::Property
 
         rule id, Name
+      end
+
+      state :root do
+        mixin :whitespace
+        mixin :base
       end
     end
   end

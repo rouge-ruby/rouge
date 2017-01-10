@@ -23,13 +23,37 @@ module Rouge
 
         rule comment_between('{-', '-}'), Comment::Multiline
         rule comment_between('\/\*', '\*\/'), Comment::Multiline
-        #TODO is it ''' or """?
+        rule comment_between("'''", "'''"), Comment::Multiline
         rule %r{(-|#|//).*$}, Comment::Single
       end
 
       state :root do
+        def any(words)
+          /#{words.map { |word| word.concat('\\b') }.join('|')}/
+        end
+
         mixin :comments
-        rule /\s|\S/, Text
+        rule /\s+/, Text::Whitespace
+        rule any(reserved), Keyword::Reserved
+        rule any(atoms), Name::Builtin::Pseudo
+        mixin :functions
+        mixin :symbols
+        rule /\d+/, Literal::Number
+      end
+
+      state :functions do
+        rule /([a-zA-Z][a-zA-Z'_]*)(\()/ do
+          groups Name::Function, Text
+        end
+        rule /([a-zA-Z][a-zA-Z'_]*)/, Keyword::Variable
+      end
+
+      state :symbols do
+        rule /<=|<|>=|>|==|=/, Operator
+        rule /:=|\.\.|\+\+|\.|_|->|<-/, Operator
+        rule /\|\||&&|\+|\*|-|\^/, Operator
+        rule /\(|\)|\{|\}/, Text
+        rule /,|;|:|\||\[|\]/, Text
       end
     end
   end

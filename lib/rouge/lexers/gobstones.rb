@@ -23,8 +23,8 @@ module Rouge
 
         rule comment_between('{-', '-}'), Comment::Multiline
         rule comment_between('\/\*', '\*\/'), Comment::Multiline
-        rule comment_between("'''", "'''"), Comment::Multiline
-        rule %r{(-|#|//).*$}, Comment::Single
+        rule comment_between('"""', '"""'), Comment::Multiline
+        rule /((?<!<)-(?!>)|#|\/).*$/, Comment::Single
       end
 
       state :root do
@@ -39,18 +39,20 @@ module Rouge
         mixin :functions
         mixin :symbols
         rule /\d+/, Literal::Number
+        rule /"(.|\s)+?"/, Literal::String
       end
 
       state :functions do
-        rule /([a-zA-Z][a-zA-Z'_]*)(\()/ do
+        rule /([a-zA-Z][a-zA-Z'_0-9]*)(\()/ do
           groups Name::Function, Text
         end
-        rule /([a-zA-Z][a-zA-Z'_]*)/, Keyword::Variable
+        rule /([a-z][a-zA-Z'_0-9]*)/, Text
+        rule /([A-Z][a-zA-Z'_0-9]*)/, Keyword::Type
       end
 
       state :symbols do
-        rule /<=|<|>=|>|==|=/, Operator
         rule /:=|\.\.|\+\+|\.|_|->|<-/, Operator
+        rule /<=|<|>=|>|==|=/, Operator        
         rule /\|\||&&|\+|\*|-|\^/, Operator
         rule /\(|\)|\{|\}/, Text
         rule /,|;|:|\||\[|\]/, Text

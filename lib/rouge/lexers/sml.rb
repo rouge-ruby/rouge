@@ -78,7 +78,7 @@ module Rouge
       end
 
       state :core do
-        rule /[()\[\]{},;_]|[.][.][.]/, Punctuation
+        rule /[()\[\]{},;\+\*]|[.][.][.]/, Punctuation
         rule /#"/, Str::Char, :char
         rule /"/, Str::Double, :string
         rule /~?0x[0-9a-fA-F]+/, Num::Hex

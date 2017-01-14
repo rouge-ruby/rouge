@@ -6,10 +6,14 @@ module Rouge
       title "Groovy"
       desc 'The Groovy programming language (http://www.groovy-lang.org/)'
       tag 'groovy'
-      filenames '*.groovy'
+      filenames '*.groovy', 'Jenkinsfile'
       mimetypes 'text/x-groovy'
 
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
+
+      def self.analyze_text(text)
+        return 1 if text.shebang?(/groovy/)
+      end
 
       def self.keywords
         @keywords ||= Set.new %w(

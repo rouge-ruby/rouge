@@ -1,0 +1,109 @@
+*** settings ***
+
+Resource  plone/app/robotframework/server.robot
+
+Suite Setup  Setup
+Suite Teardown  Teardown
+Test Setup  Test Setup
+Test Teardown  Test Teardown
+Library     Selenium2Library
+
+Library     Selenium2Library
+Library     DatabaseLibrary
+Library     kw_common
+
+
+*** Variables ***
+${HOST}         10.0.1.42
+
+
+*** Test Cases ***
+
+Normal test case with embedded arguments
+    The result of 1 + 1 should be 2
+    The result of 1 + 2 should be 3
+
+Template with embedded arguments
+    [Template]    The result of ${calculation} should be ${expected}
+    1 + 1    2
+    1 + 2    3
+
+Scenario: The BDD Test
+    GiveN I have logged in and I have selected to perform template configuration
+    When I do not select a template operation
+    Then page does not contain a no template operation selected error message
+    ANd I press the next button
+    BuT I should not see a template operation selected error message
+# 	Comments with But, Given THen and wheh are not hilighted!
+
+
+
+
+
+*** Keywords ***
+The result of ${calculation} should be ${expected}
+    ${result} =    Calculate    ${calculation}
+    Should Be Equal    ${result}     ${expected}
+
+
+Differnt types of robotframework data ${var}, @{list} and &{hash}
+    ${var} =    list
+    @{result} =    list
+    &{result} =   hash
+
+Timed Keyword
+    [Documentation]    Set only the timeout value and not the custom message.
+    [Timeout]    1 minute 42 seconds
+    Do Something
+    Do Something Else
+
+Wrapper With Timeout
+    [Arguments]    @{args}
+    [Documentation]    This keyword is a wrapper that adds a timeout to another keyword.
+    [Timeout]    2 minutes    Original Keyword didn't finish in 2 minutes
+    Original Keyword    @{args}
+
+Wrapper With Customizable Timeout
+| [Arguments]    ${timeout}    @{args}
+|     [Documentation]    Same as the above but timeout given as an argument.
+|     [Timeout]    ${timeout}
+|     Original Keyword	@{args} # aaa
+
+
+# More Keywords
+*** Keywords ***
+
+I have logged in and I have selected to perform template configuration
+    Log     Given I have logged in and I have selected to perform template configuration
+
+I do not select a template operation
+    Log     No template operation selected
+
+page does not contain a no template operation selected error message
+    Page Should Not Contain     'ddTemplateOperation' is required.
+
+I press the next button
+    Click Element               xpath=//input[contains(@id,'next')]
+
+I should not see a template operation selected error message
+    Page Should Contain     'ddTemplateOperation' is required.
+
+
+# Comment
+This keyword wtih Tab
+	First Action	plone.app.robotframework.testing.AUTOLOGIN_ROBOT_TESTING
+	Second Action	plone.app.robotframework.testing.AUTOLOGIN_ROBOT_TESTING
+	Third	plone.app.robotframework.testing.AUTOLOGIN_ROBOT_TESTING
+
+Test Setup
+    Import library  Remote  ${PLONE_URL}/RobotRemote
+#    Enable autologin as  Site Administrator
+    Set autologin username  test-user-1
+
+Test Teardown
+    Set Zope layer  plone.app.robotframework.testing.AUTOLOGIN_ROBOT_TESTING
+    ZODB TearDown
+    ZODB Setupaaa
+
+Teardown
+    Teardown Plone Site

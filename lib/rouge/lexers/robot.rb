@@ -12,7 +12,7 @@ module Rouge
       mimetypes 'text/x-robot'
 
       def self.analyze_text(text)
-        return 1 if text =~ /\*\*\*\s+Settings\s+\*\*\*/
+        return 1 if text =~ /\*\*\*\s+Setting(s)?\s+\*\*\*/
       end
 
       SETTINGS = '(Resource)|(Variables)|(Documentation)|(Metadata)|(Suite Setup)|(Suite Teardown)|(Force Tags)|(Default Tags)|(Test Setup)|(Test Teardown)|(Test Template)|(Test Timeout)|(Library)'
@@ -56,7 +56,7 @@ module Rouge
           push :keywords
           token    Name::Tag
         end
-        rule /\*\*\*\s+Settings\s+\*\*\*/i do 
+        rule /\*\*\*\s+Setting(s)?\s+\*\*\*/i do 
           reset_stack 
           push :settings
           token   Name::Tag

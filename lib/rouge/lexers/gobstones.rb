@@ -12,11 +12,13 @@ module Rouge
         0.3
       end
 
-      reserved = %w(program interactive procedure function type is return record
+      reserved = %w(program interactive is return record
                     field variant case if then else switch to repeat while foreach
                     in match)
 
       atoms = %w(False True Verde Rojo Azul Negro Norte Sur Este Oeste)
+
+      types = Set.new
 
       state :comments do
         def comment_between(start, finish)
@@ -38,23 +40,34 @@ module Rouge
         rule /\s+/, Text::Whitespace
         rule any(reserved), Keyword::Reserved
         rule any(atoms), Name::Builtin::Pseudo
+        rule /(type)(\s+)(\w+)/ do |m|
+          types.add(m[3])
+          groups Keyword::Reserved, Text::Whitespace, Keyword::Type
+        end
         mixin :functions
         mixin :symbols
-        rule /\d+/, Literal::Number
-        rule /"(.|\s)+?"/, Literal::String
+        rule /\d+/, Name::Builtin::Pseudo
+        rule /"(.|\s)+?"/, Name::Builtin::Pseudo
       end
 
       state :functions do
-        rule /([a-zA-Z][a-zA-Z'_0-9]*)(\()/ do
-          groups Name::Function, Text
+        rule /(procedure|function)(\s+)(\w+)/ do
+          groups Keyword::Reserved, Text::Whitespace, Text
+        end
+
+        rule /([a-zA-Z][a-zA-Z'_0-9]*)(\()/ do |m|
+          if types.include?(m[1])
+            groups Name::Builtin::Pseudo, Text
+          else
+            groups Name::Function, Text
+          end
         end
         rule /([a-z][a-zA-Z'_0-9]*)/, Text
-        rule /([A-Z][a-zA-Z'_0-9]*)/, Keyword::Type
       end
 
       state :symbols do
         rule /:=|\.\.|\+\+|\.|_|->|<-/, Operator
-        rule /<=|<|>=|>|==|=/, Operator        
+        rule /<=|<|>=|>|==|=/, Operator
         rule /\|\||&&|\+|\*|-|\^/, Operator
         rule /\(|\)|\{|\}/, Text
         rule /,|;|:|\||\[|\]/, Text

@@ -1,3 +1,69 @@
+program {
+   Poner(Rojo)
+   Mover(Norte)
+   Sacar(Azul)
+   funcionLoca(3)
+}
+
+
+function funcionLoca(unNumero) {
+    //comment
+    """also a comment"""
+    --comment
+    return (unNumero * 4)
+}
+
+procedure MoverN(direccion, veces) {
+   repeat (veces) {
+      Mover(direccion)
+   }
+}
+
+procedure MoverSiPuede(direccion) {
+   if (puedeMover(direccion)) {
+      Mover(direccion)
+   }
+}
+
+program {
+  switch (decodificarCelda()) to
+    1 -> { DibujarVentana() }
+    2 -> { RedimensionarVentana() }
+    3 -> { MaximizarVentana() }
+    4 -> { MinimizarVentana() }
+    _ -> { NoHacerNada() }
+}
+
+procedure Zaraza() {
+  foreach cant in [1..5] {
+    DibujarLineaVerticalRoja(cant)
+    Mover(Este)
+  }
+}
+
+procedure Zaraza() {
+  unRango := [1..5]
+  foreach cant in unRango {
+    DibujarLineaVerticalRoja(cant)
+    Mover(Este)
+  }
+}
+
+
+procedure Colgar() {
+   x := False
+   while (True) {
+     x := not x
+   }
+}
+
+procedure Literales() {
+   unNumero := 3
+   unaLista := [2, 3, 4, 6]
+   unaTupla := (4, 5)
+   unaDireccion := Norte //O Sur, Este, Oeste
+}
+
 procedure MerryChristmas() {
   repeat (2) {
     PutFarEast(3, Verde)
@@ -11,67 +77,32 @@ procedure MerryChristmas() {
   }
 }
 
-  -foreach largo in [7, 5, 3] {
-  #  DrawRowEast(largo, Verde)
-    Mover(Norte)
-    Mover(Este)
-  //}
+procedure Operadores() {
+   x := (5 + 5) / 6 * 4
+   y := x > 30
+   z := 4 div 5
+   z := 5 mod 4
+}
 
-  foreach largo in [7{,-5, 3-}] {
-    /*DrawRowEast(largo, Verde)
-    Mover(Norte)*/
-    """Mover(Este)
-    Mover(Este)
-    Mover(Este)"""
-    Mover(Sur) , ; :
-    > >= < <= && || True False Norte
-  }
 
-  function agregarSiHayColor(ls, c ) {
+function agregarSiHayColor(ls, c ) {
     res := ls
     if (hayBolitas(c)) {
        res := ls ++ [c]
     }
     return (res)
-    //O:return(
-  }
+}
 
-  foreach c in [minColor() .. maxColor()] 
 
-  #!assert
-
-# Comentario de línea
-""" Comentario
-    multi-línea """
-
-program
-  {
-    x := True
-
-    if (x) then { Skip }
-           else { Skip }
-
-    switch (x) to
-      _ -> { Skip }
-
-    foreach i in [1,2,3,4,5] { Skip }
-    foreach i in [1..5] { Skip }
-    foreach i in [1,3..5] { Skip }    
-    repeat (3) { Skip }    
-    return(True)
-  }
-
-  "asdasd 123 123"
 
 function testSameColorEnum() {
-    TestSetup()
 
     x:= Verde
     foreach c in [x..Verde] {
         Poner(c)
     }
 
-    foreach c in [Verde..Verde] { Poner(c) } 
+    foreach c in [Verde..Verde] { Poner(c) }
     return(nroTotalBolitas() == 2 && nroBolitas(Verde) == 2)
 }
 
@@ -81,10 +112,6 @@ function rangeCount(min, max) {
     return(count)
 }
 
-function testRangeCount(min, max, count) {
-    rcount := rangeCount(min, max)
-    return(rcount == count)
-}
 
 type Persona is record {
 	field dni
@@ -97,105 +124,24 @@ type Propiedad is record {
 	field direccion1
 }
 
-t.program {
+program {
 	p := Persona(dni <- 200, casado <- True, direccion <- Este)
-	p.dni := 100
-	p.casado := False
-	p.direccion := Oeste
-	prop := Propiedad(dueno <- Persona(dni <- 222,
-									   casado <- False,
-									   direccion <- Oeste),
-					  direccion1 <- Norte)
-	prop.dueno.dni := 223
-    prop.direccion1 := 33
-	prop.dueno := p
-    
-    r := Rec4(rec_3 <- Rec3(rec_2 <- Rec2(rec_1 <- Rec1(id <- 1))))
-    r.rec_3.rec_2.rec_1.id := 2
-    
-    passed := prop.direccion1 == 33 && r.rec_3.rec_2.rec_1.id == 2
-	return(passed)
-}
-
-type Pepe2 is record { field a }
-type Pepe3 is record { field a }
-
-function testNestingWithSameFields() {
-  passed := True
-  p := Pepe(a <- Rosa(a <- 1))
-  p2 := Pepe3(a <- Pepe2(a <- p))
-  passed.Assert(p2.a.a.a.a == 1)
-  return(passed)  
-}
-
-#################################
-# Basic record testing          #
-#################################
-type Persona is record {
-	field nombre
-	field edad
-	field dni
+    //accessors
+	dni(p)
+    casado(p)
 }
 
 function igualPersona(p1, p2) {
 	return(nombre(p1) == nombre(p2) && edad(p1) == edad(p2) && dni(p1) == dni(p2))
 }
 
-function testBasicRecords() {	
+function testBasicRecords() {
 	p1 := Persona(nombre <- 2, edad <- 21, dni <- 3523432)
 	p2 := Persona(nombre <- 2, edad <- 21, dni <- 3523432)
 	return(igualPersona(p1, p2))
 }
 
-function tablerosInversos(tablero1, tablero2) {
-    // Precondición: Ambos tableros son de nxn celdas
-    
-    t1 := tablero1
-    t2 := tablero2
-    
-    t1.IrAlOrigen()
-    t2.IrAlOrigen()
-    passed := True
-    cellT1 := mkCeldaActual(t1)
-    cellT2 := mkCeldaActual(t2)
-    while (puedeMoverT(t1, Este, Norte) && passed) {
-        if (not enDiagonal(coordActual(t1))) {
-            passed.Assert(eqCelda(cellT1, cellT2))        
-        }
-        t1.MoverT(Este, Norte)
-        t2.MoverT(Norte, Este)
-        cellT1 := mkCeldaActual(t1)
-        cellT2 := mkCeldaActual(t2)
-    }    
-    passed.Assert(eqCelda(mkCeldaActual(t1), mkCeldaActual(t2)))
-    
-    passed.Assert(diagonalesIguales(t1, t2))
-    return(passed)
-}
+function envejecer(unaPersona) {
+  return Persona(unaPersona | edad <- edad(unaPersona) + 1)
 
-function test2(tablero) {
-	t := tablero
-	passed := True
-
-	i := 1
-	foreach c in [minColor()..maxColor()] {
-		t.LlenarConBolitas(Verde, 2 * i)
-		i := i + 1
-	}
-
-	foreach c in [Rojo, Azul, Negro] {
-		t.ReemplazarColorEnTablero(c, Verde)
-	}
-
-	foreach c in [Rojo, Azul, Negro] {
-		passed.Assert(contarBolitas(t, c) == 0)
-	}
-
-	cantVerdes := contarBolitas(t, Verde)
-	anchoTablero := medirTablero(t, ancho())
-	altoTablero := medirTablero(t, alto())
-	cantEsperada := anchoTablero * altoTablero  * 20
-
-	passed.Assert(cantVerdes  ==  cantEsperada)
-	return(passed)
 }

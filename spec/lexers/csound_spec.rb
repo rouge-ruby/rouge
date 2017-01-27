@@ -103,10 +103,6 @@ describe Rouge::Lexers::CsoundOrchestra do
         ['Literal.Number.Integer', '123'],
         ['Text', ' '],
         ['Literal.Number.Integer', '0123456789']
-      code = <<-EOF.unindent
-        0xabcdef0123456789
-        0XABCDEF
-      EOF
       assert_tokens_equal '0xabcdef0123456789 0XABCDEF',
         ['Literal.Number.Hex', '0xabcdef0123456789'],
         ['Text', ' '],

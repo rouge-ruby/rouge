@@ -28,8 +28,8 @@ module Rouge
       end
 
       state :define_directive do
+        rule /\n+/m, Text
         mixin :whitespace
-        rule /\n/, Text
         rule /(#{Csound.identifier})(\()/ do
           groups Comment::Preproc, Punctuation
           goto :macro_parameter_name_list
@@ -49,8 +49,8 @@ module Rouge
         end
       end
       state :before_macro_body do
+        rule /\n+/m, Text
         mixin :whitespace
-        rule /\n/, Text
         rule /#/ do
           token Punctuation
           goto :macro_body
@@ -77,7 +77,7 @@ module Rouge
         rule /\$#{Csound.identifier}(?:\.|\b)/, Comment::Preproc
       end
       state :macro_parameter_value_list do
-        rule(/[^'#"{()]+/) { recurse }
+        rule(/(?:[^'#"{()]|{(?!{))+/) { recurse }
         rule /['#]/, Punctuation
         # Csound’s preprocessor can’t handle right parentheses in parameter
         # values <https://github.com/csound/csound/issues/721>. For example,
@@ -169,6 +169,7 @@ module Rouge
 
         rule /\b(?:do|else(?:if)?|end(?:if|until)|fi|i(?:f|then)|kthen|od|then|until|while)\b/, Keyword
         rule /\br(?:ir)?eturn\b/, Keyword::Pseudo
+
         rule /\b[ik]?goto\b/, Keyword, :goto_before_label
         rule /\b(r(?:einit|igoto)|tigoto)(\(|\b)/ do
           groups Keyword::Pseudo, Punctuation
@@ -192,10 +193,11 @@ module Rouge
           push :goto_before_argument
           push :goto_before_argument
         end
+
         rule /\bprintk?s\b/, Name::Builtin, :prints_opcode
         rule /\b(?:readscore|scoreline(?:_i)?)\b/, Name::Builtin, :csound_score_opcode
         rule /\bpyl?run[it]?\b/, Name::Builtin, :python_opcode
-        rule /\blua_(exec|opdef)\b/, Name::Builtin, :lua_opcode
+        rule /\blua_(?:exec|opdef)\b/, Name::Builtin, :lua_opcode
         rule /\bp\d+\b/, Name::Variable::Instance
         rule /\b(#{Csound.identifier})(?:(:)([A-Za-z]))?\b/ do |m|
           name = m[1]
@@ -251,9 +253,10 @@ module Rouge
       end
       state :braced_string do
         rule /}}/, Str, :pop!
-        rule /[^\\}]|}(?!})/, Str
+        rule /[^\\}%]|}(?!})/, Str
         mixin :escape_sequences
         mixin :format_specifiers
+        rule /[\\%]/, Str
       end
       state :escape_sequences do
         # https://github.com/csound/csound/search?q=unquote_string+path%3AEngine+filename%3Acsound_orc_compile.c
@@ -373,6 +376,8 @@ module Rouge
         rule /[mn]/, Keyword, :mark_statement
 
         mixin :numbers
+        rule %r([!+\-*/^%&|<>#~.]), Operator
+        rule /[()\[\]]/, Punctuation
         rule /"/, Str, :quoted_string
         rule /{/, Comment::Preproc, :loop_after_left_brace
       end
@@ -387,7 +392,7 @@ module Rouge
         rule /"/, Str, :pop!
         rule /[^"$]+/, Str
         mixin :macro_uses
-        rule /$/, Str
+        rule /[$]/, Str
       end
 
       state :loop_after_left_brace do
@@ -426,7 +431,7 @@ module Rouge
       state :root do
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule %r((?:;|//).*$), Comment::Single
-        rule %r([^/;<]+|/)m, Text
+        rule %r([^/;<]+|/(?!/))m, Text
 
         rule /<\s*CsInstruments\s*/m do
           token Name::Tag

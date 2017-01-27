@@ -287,7 +287,7 @@ describe Rouge::Lexers::CsoundOrchestra do
       code = <<-EOF.unindent
         #define MACRO(ARG1#ARG2) #macro_body#
         #define/**/
-        MACRO(ARG1'ARG2'ARG3)/**/
+        MACRO(ARG1'ARG2' ARG3)/**/
         #\\#macro
         body\\##
       EOF
@@ -314,6 +314,7 @@ describe Rouge::Lexers::CsoundOrchestra do
         ['Punctuation', "'"],
         ['Comment.Preproc', 'ARG2'],
         ['Punctuation', "'"],
+        ['Text', ' '],
         ['Comment.Preproc', 'ARG3'],
         ['Punctuation', ')'],
         ['Comment.Multiline', '/**/'],

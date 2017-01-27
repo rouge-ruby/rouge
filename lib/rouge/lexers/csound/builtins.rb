@@ -6,28 +6,28 @@ module Rouge
       # Opcodes in Csound 6.08.0 at commit a1159a1 from
       #   csound --list-opcodes3
       # except for
-      #   cggoto   <https://csound.github.io/docs/manual/cggoto.html>
-      #   cigoto   <https://csound.github.io/docs/manual/cigoto.html>
+      #   cggoto   https://csound.github.io/docs/manual/cggoto.html
+      #   cigoto   https://csound.github.io/docs/manual/cigoto.html
       #   cingoto  (undocumented)
-      #   ckgoto   <https://csound.github.io/docs/manual/ckgoto.html>
-      #   cngoto   <https://csound.github.io/docs/manual/cngoto.html>
+      #   ckgoto   https://csound.github.io/docs/manual/ckgoto.html
+      #   cngoto   https://csound.github.io/docs/manual/cngoto.html
       #   cnkgoto  (undocumented)
-      #   endin    <https://csound.github.io/docs/manual/endin.html
-      #   endop    <https://csound.github.io/docs/manual/endop.html
-      #   goto     <https://csound.github.io/docs/manual/goto.html>
-      #   igoto    <https://csound.github.io/docs/manual/igoto.html>
-      #   instr    <https://csound.github.io/docs/manual/instr.html>
-      #   kgoto    <https://csound.github.io/docs/manual/kgoto.html>
-      #   loop_ge  <https://csound.github.io/docs/manual/loop_ge.html>
-      #   loop_gt  <https://csound.github.io/docs/manual/loop_gt.html>
-      #   loop_le  <https://csound.github.io/docs/manual/loop_le.html>
-      #   loop_lt  <https://csound.github.io/docs/manual/loop_lt.html>
-      #   opcode   <https://csound.github.io/docs/manual/opcode.html>
-      #   return   <https://csound.github.io/docs/manual/return.html>
-      #   rireturn <https://csound.github.io/docs/manual/rireturn.html>
-      #   rigoto   <https://csound.github.io/docs/manual/rigoto.html>
-      #   tigoto   <https://csound.github.io/docs/manual/tigoto.html>
-      #   timout   <https://csound.github.io/docs/manual/timout.html>
+      #   endin    https://csound.github.io/docs/manual/endin.html
+      #   endop    https://csound.github.io/docs/manual/endop.html
+      #   goto     https://csound.github.io/docs/manual/goto.html
+      #   igoto    https://csound.github.io/docs/manual/igoto.html
+      #   instr    https://csound.github.io/docs/manual/instr.html
+      #   kgoto    https://csound.github.io/docs/manual/kgoto.html
+      #   loop_ge  https://csound.github.io/docs/manual/loop_ge.html
+      #   loop_gt  https://csound.github.io/docs/manual/loop_gt.html
+      #   loop_le  https://csound.github.io/docs/manual/loop_le.html
+      #   loop_lt  https://csound.github.io/docs/manual/loop_lt.html
+      #   opcode   https://csound.github.io/docs/manual/opcode.html
+      #   return   https://csound.github.io/docs/manual/return.html
+      #   rireturn https://csound.github.io/docs/manual/rireturn.html
+      #   rigoto   https://csound.github.io/docs/manual/rigoto.html
+      #   tigoto   https://csound.github.io/docs/manual/tigoto.html
+      #   timout   https://csound.github.io/docs/manual/timout.html
       # which are treated as keywords.
 
       def self.opcodes

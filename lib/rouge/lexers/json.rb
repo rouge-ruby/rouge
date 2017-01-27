@@ -14,8 +14,8 @@ module Rouge
         rule /"/, Str::Double, :string
         rule /(?:true|false|null)\b/, Keyword::Constant
         rule /[{},:\[\]]/, Punctuation
-        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float
-        rule /-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, Num::Integer
+        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]?\d+)?/i, Num::Float
+        rule /-?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
       end
 
       state :string do

@@ -245,18 +245,18 @@ module Rouge
 
       state :quoted_string do
         rule /"/, Str, :pop!
-        rule /[^\\"$%]/, Str
+        rule /[^\\"$%)]+/, Str
         mixin :macro_uses
         mixin :escape_sequences
         mixin :format_specifiers
-        rule /[\\$%]/, Str
+        rule /[\\$%)]/, Str
       end
       state :braced_string do
         rule /}}/, Str, :pop!
-        rule /[^\\}%]|}(?!})/, Str
+        rule /(?:[^\\%)}]|}(?!}))+/, Str
         mixin :escape_sequences
         mixin :format_specifiers
-        rule /[\\%]/, Str
+        rule /[\\%)]/, Str
       end
       state :escape_sequences do
         # https://github.com/csound/csound/search?q=unquote_string+path%3AEngine+filename%3Acsound_orc_compile.c

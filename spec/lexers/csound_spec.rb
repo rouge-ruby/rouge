@@ -131,14 +131,15 @@ describe Rouge::Lexers::CsoundOrchestra do
     end
 
     it 'lexes escape sequences' do
-      %w(\\\\ \\a \\b \\n \\r \\t \\" \\012 \\345 \\67).each do |code|
-        assert_tokens_equal %Q("#{code}"),
+      %w(\\ a b n r t " 012 345 67).each do |character|
+        escapedCharacter = "\\#{character}"
+        assert_tokens_equal %Q("#{escapedCharacter}"),
           ['Literal.String', '"'],
-          ['Literal.String.Escape', code],
+          ['Literal.String.Escape', escapedCharacter],
           ['Literal.String', '"']
-        assert_tokens_equal "{{#{code}}}",
+        assert_tokens_equal "{{#{escapedCharacter}}}",
           ['Literal.String', '{{'],
-          ['Literal.String.Escape', code],
+          ['Literal.String.Escape', escapedCharacter],
           ['Literal.String', '}}']
       end
     end
@@ -363,10 +364,7 @@ describe Rouge::Lexers::CsoundOrchestra do
     end
 
     it 'lexes function-like macros' do
-      code = <<-EOF.unindent
-        $MACRO.(((x\\))' "x)\\)x\\))"# {{x\\))x)\\)}})
-      EOF
-      assert_tokens_equal code,
+      assert_tokens_equal %q[$MACRO.(((x\\))' "x)\\)x\\))"# {{x\\))x)\\)}})],
         ['Comment.Preproc', '$MACRO.'],
         ['Punctuation', '('],
         ['Comment.Preproc', '(('],
@@ -391,8 +389,7 @@ describe Rouge::Lexers::CsoundOrchestra do
         ['Error', ')'],
         ['Comment.Preproc', '\\)'],
         ['Literal.String', '}}'],
-        ['Punctuation', ')'],
-        ['Text', "\n"]
+        ['Punctuation', ')']
     end
 
     include Support::Guessing

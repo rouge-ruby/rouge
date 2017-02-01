@@ -1,0 +1,21 @@
+#addin SomeAddin
+#tool SomeTool
+
+#load SomeScript
+
+var target = Argument("target", "Default");
+
+Task("Some-Task")
+    .Does(() =>
+{
+    Information("Some task");
+});
+
+Task("Default")
+    .IsDependentOn("Some-Task")
+    .Does(() =>
+{
+    Information("Hello World!");
+});
+
+RunTarget(target);

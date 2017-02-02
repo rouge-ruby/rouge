@@ -69,12 +69,12 @@ module Rouge
           (e[+-][0-9]+)? # exponent
           [fldu]? # type
         )ix, Num
+        rule /\b(?:class|struct|interface)\b/, Keyword, :class
+        rule /\b(?:namespace|using)\b/, Keyword, :namespace
         rule /^#[ \t]*(#{cpp_keywords.join('|')})\b.*?\n/,
           Comment::Preproc
         rule /\b(#{keywords.join('|')})\b/, Keyword
         rule /\b(#{keywords_type.join('|')})\b/, Keyword::Type
-        rule /class|struct/, Keyword, :class
-        rule /namespace|using/, Keyword, :namespace
         rule /#{id}(?=\s*[(])/, Name::Function
         rule id, Name
       end

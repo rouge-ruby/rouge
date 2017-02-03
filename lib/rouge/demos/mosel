@@ -2,49 +2,9 @@
    Mosel Example Problems
 *******************************************************!)
 
-model "A-6 Electricity production"
- uses "mmxprs"
- 
- declarations
-  NT = 7
-  TIME = 1..NT                       ! Time periods
-  TYPES = 1..4                       ! Power generator types  
-
-  LEN, DEM: array(TIME) of integer   ! Length and demand of time periods 
-  PMIN,PMAX: array(TYPES) of integer ! Min. & max output of a generator type
-  CSTART: array(TYPES) of integer    ! Start-up cost of a generator
-
-  start: array(TYPES,TIME) of mpvar  ! No. of gen.s started in a period
-  work: array(TYPES,TIME) of mpvar   ! No. of gen.s working during a period
-  padd: array(TYPES,TIME) of mpvar   ! Production above min. output level
- end-declarations
- 
- initializations from 'a6electr.dat'
-  LEN DEM PMIN PMAX CSTART CMIN CADD AVAIL
- end-initializations 
- 
-! Objective function: total daily cost 
+! Objective function: total daily cost
  Cost:= sum(p in TYPES, t in TIME) (CSTART(p)*start(p,t) +
-          LEN(t)*(CMIN(p)*work(p,t) + CADD(p)*padd(p,t))) 
-                                   
-! Number of generators started per period and per type
- forall(p in TYPES, t in TIME) 
-  start(p,t) >= work(p,t) - if(t>1, work(p,t-1), work(p,NT))
+          LEN(t)*(CMIN(p)*work(p,t) + CADD(p)*padd(p,t)))
 
 ! Limit on power production above minimum level
  forall(p in TYPES, t in TIME) padd(p,t) <= (PMAX(p)-PMIN(p))*work(p,t)
-
-
-! Limit number of available generators; numbers of generators are integer
- forall(p in TYPES, t in TIME) do
-  work(p,t) <= AVAIL(p)
-  work(p,t) is_integer
- end-do
-
-! Solve the problem  
- minimize(Cost)
-
-! Solution printing
- writeln("Daily cost: ", getobjval)
-
-end-model

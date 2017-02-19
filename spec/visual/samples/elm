@@ -1,4 +1,61 @@
--- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/3-form.elm <==
+-- Source: http://elm-lang.org/docs/syntax
+
+-- Comments ---------------------------------------------------------
+
+1 + 1 -- a single line comment
+
+-- FIXME
+{- a multiline comment
+   {- can be nested -}
+-}
+
+-- Handy trick: uncommenting -----------------------------------------
+
+{--}
+1 + 1
+--}
+
+-- Literals ----------------------------------------------------------
+
+-- Boolean
+True  : Bool
+False : Bool
+
+42    : number  -- Int or Float depending on usage
+3.14  : Float
+
+'a'   : Char
+"abc" : String
+
+-- multi-line String
+"""
+This is useful for holding JSON or other
+content that has "quotation marks".
+"""
+
+-- Typical manipulation of literals:
+True && not (True || False)
+(2 + 4) * (4^2 - 9)
+"abc" ++ "def"
+
+-- Lists -------------------------------------------------------------
+
+[1,2,3,4]
+1 :: [2,3,4]
+1 :: 2 :: 3 :: 4 :: []
+
+
+
+
+-- Anonymous functions -----------------------------------------------
+
+square =
+  \n -> n^2
+
+squares =
+  List.map (\n -> n^2) (List.range 1 100)
+
+-- github.com/evancz/elm-architecture-tutorial/examples/3-form.elm
 import Html exposing (..)
 import Html.App as Html
 import Html.Attributes exposing (..)
@@ -77,7 +134,7 @@ viewValidation model =
   in
     div [ style [("color", color)] ] [ text message ]
 
--- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/4-random.elm <==
+-- github.com/evancz/elm-architecture-tutorial/examples/4-random.elm
 import Html exposing (..)
 import Html.App as Html
 import Html.Events exposing (..)
@@ -147,7 +204,7 @@ view model =
     , button [ onClick Roll ] [ text "Roll" ]
     ]
 
--- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/5-http.elm <==
+-- github.com/evancz/elm-architecture-tutorial/examples/5-http.elm
 import Html exposing (..)
 import Html.App as Html
 import Html.Attributes exposing (..)
@@ -247,7 +304,7 @@ decodeGifUrl : Json.Decoder String
 decodeGifUrl =
   Json.at ["data", "image_url"] Json.string
 
--- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/6-clock.elm <==
+-- github.com/evancz/elm-architecture-tutorial/examples/6-clock.elm
 import Html exposing (Html)
 import Html.App as Html
 import Svg exposing (..)
@@ -322,7 +379,7 @@ view model =
       , line [ x1 "50", y1 "50", x2 handX, y2 handY, stroke "#023963" ] []
       ]
 
--- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/7-websockets.elm <==
+-- github.com/evancz/elm-architecture-tutorial/examples/7-websockets.elm
 import Html exposing (..)
 import Html.App as Html
 import Html.Attributes exposing (..)
@@ -409,7 +466,7 @@ viewMessage : String -> Html msg
 viewMessage msg =
   div [] [ text msg ]
 
--- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/8-checkboxes.elm <==
+-- github.com/evancz/elm-architecture-tutorial/examples/8-checkboxes.elm
 import Html exposing (Html, fieldset, input, label, text)
 import Html.App as App
 import Html.Attributes exposing (style, type')
@@ -482,7 +539,7 @@ checkbox msg name =
     , text name
     ]
 
--- ==> ~/code/github.com/evancz/elm-architecture-tutorial/examples/9-radio.elm <==
+-- github.com/evancz/elm-architecture-tutorial/examples/9-radio.elm
 import Html exposing (Html, Attribute, div, fieldset, input, label, text)
 import Html.App as App
 import Html.Attributes exposing (name, style, type')

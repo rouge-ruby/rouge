@@ -9,7 +9,7 @@ module Rouge
       tag 'actionscript'
       aliases 'as', 'as3'
       filenames '*.as'
-      mimetypes 'application/x-actionscript'
+      mimetypes 'application/x-actionscript', 'text/x-actionscript'
 
       state :comments_and_whitespace do
         rule /\s+/, Text
@@ -112,9 +112,7 @@ module Rouge
         rule /\n/, Text, :statement
         rule %r((?<=\n)(?=\s|/|<!--)), Text, :expr_start
         mixin :comments_and_whitespace
-        rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
-               | !== )x,
-          Operator, :expr_start
+        rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | === | !== )x, Operator, :expr_start
         rule %r([-<>+*%&|\^/!=]=?), Operator, :expr_start
         rule /[(\[,]/, Punctuation, :expr_start
         rule /;/, Punctuation, :statement

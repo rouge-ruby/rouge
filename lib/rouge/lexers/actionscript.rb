@@ -115,10 +115,11 @@ module Rouge
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
                | !== )x,
           Operator, :expr_start
-        rule %r([:-<>+*%&|\^/!=]=?), Operator, :expr_start
+        rule %r([-<>+*%&|\^/!=]=?), Operator, :expr_start
         rule /[(\[,]/, Punctuation, :expr_start
         rule /;/, Punctuation, :statement
         rule /[)\].]/, Punctuation
+        rule /:/, Punctuation
 
         rule /[?]/ do
           token Punctuation

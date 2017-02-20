@@ -4,7 +4,7 @@ module Rouge
   module Lexers
     class Actionscript < RegexLexer
       title "ActionScript"
-      desc "ActionScript"
+      desc "ActionScript 3 (https://www.adobe.com/go/as3lr)"
 
       tag 'actionscript'
       aliases 'as', 'as3'

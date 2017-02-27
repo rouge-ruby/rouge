@@ -39,30 +39,30 @@ module Rouge
         mixin :comments
         rule /\s+/, Text::Whitespace
         rule any(reserved), Keyword::Reserved
-        rule any(atoms), Name::Builtin::Pseudo
+        rule any(atoms), Literal
         rule /(type)(\s+)(\w+)/ do |m|
           types.add(m[3])
           groups Keyword::Reserved, Text::Whitespace, Keyword::Type
         end
         mixin :functions
         mixin :symbols
-        rule /\d+/, Name::Builtin::Pseudo
-        rule /"(.|\s)+?"/, Name::Builtin::Pseudo
+        rule /\d+/, Literal::Number
+        rule /"(.|\s)+?"/, Literal::String
       end
 
       state :functions do
         rule /(procedure|function)(\s+)(\w+)/ do
-          groups Keyword::Reserved, Text::Whitespace, Text
+          groups Keyword::Reserved, Text::Whitespace, Name::Function
         end
 
         rule /([a-zA-Z][a-zA-Z'_0-9]*)(\()/ do |m|
           if types.include?(m[1])
-            groups Name::Builtin::Pseudo, Text
+            groups Keyword::Type, Text
           else
             groups Name::Function, Text
           end
         end
-        rule /([a-z][a-zA-Z'_0-9]*)/, Text
+        rule /([a-z][a-zA-Z'_0-9]*)/, Name::Variable
       end
 
       state :symbols do

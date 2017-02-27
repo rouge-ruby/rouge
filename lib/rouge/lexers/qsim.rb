@@ -22,8 +22,8 @@ module Rouge
           /#{expressions.join('|')}/
         end
 
-        rule any(operators), Keyword
-        rule any(registers), Name::Builtin::Pseudo
+        rule any(operators), Operator
+        rule any(registers), Name::Variable
         rule /[a-z]+[a-zA-Z0-9]*:?/, Name::Label
         rule /\b0x[0-9A-F]{4}\b/, Literal::Number::Hex
         rule /[:,\[\]]/, Punctuation

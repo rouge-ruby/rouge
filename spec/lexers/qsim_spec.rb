@@ -16,9 +16,9 @@ describe Rouge::Lexers::QSim do
 
     it 'operator call' do
       assert_tokens_equal 'MOV R7, R16',
-                          ['Keyword', 'MOV'],
+                          ['Operator', 'MOV'],
                           ['Text.Whitespace', ' '],
-                          ['Name.Builtin.Pseudo', 'R7'],
+                          ['Name.Variable', 'R7'],
                           ['Punctuation', ','],
                           ['Text.Whitespace', ' '],
                           ['Error', 'R16']
@@ -32,14 +32,14 @@ describe Rouge::Lexers::QSim do
 
     it 'comments' do
       assert_tokens_equal 'MOV --Hey! ',
-                          ['Keyword', 'MOV'],
+                          ['Operator', 'MOV'],
                           ['Text.Whitespace', ' '],
                           ['Comment.Single', '--Hey! ']
     end
 
     it 'correct and wrong hexadecimal numbers' do
       assert_tokens_equal 'MOV 0x11FF 0X111G',
-                          ['Keyword', 'MOV'],
+                          ['Operator', 'MOV'],
                           ['Text.Whitespace', ' '],
                           ['Literal.Number.Hex', '0x11FF'],
                           ['Text.Whitespace', ' '],

@@ -1,0 +1,88 @@
+var myDivElement = <div className="foo" />;
+ReactDOM.render(myDivElement, document.getElementById('example'));
+
+
+
+var MyComponent = React.createClass({/*...*/});
+var myElement = <MyComponent someProperty={true} />;
+ReactDOM.render(myElement, document.getElementById('example'));
+
+var myElement = <MyComponent someProperty={{a:true}.a} />;
+var myElement = <MyComponent someProperty={function() {
+  var x = { a: true };
+  return x.a;
+}} />
+
+thing.otherThing<MyComponent.property // comment - this is comparison
+var myElement = <MyComponent thing={thing.otherThing>2}>
+  hello, world!
+</MyComponent>
+
+var content = <Container>{window.isLoggedIn ? <Nav /> : <Login />}</Container>;
+
+// These two are equivalent in JSX for disabling a button
+<input type="button" disabled />;
+<input type="button" disabled={true} />;
+
+// And these two are equivalent in JSX for not disabling a button
+<input type="button" />;
+<input type="button" disabled={false} />;
+
+var App = (
+  <Form>
+    <Form.Row>
+      <Form.Label />
+      <Form.Input />
+    </Form.Row>
+  </Form>
+);
+
+var content = (
+  <Nav>
+    {/* child comment, put {} around */}
+    a slash-star that isn't a comment because this is html: /*
+    <Person
+      /* multi
+         line
+         comment */
+      name={window.isLoggedIn ? window.name : ''} // end of line comment
+    />
+  </Nav>
+);
+
+var App = (
+  <Form>
+    <FormRow>
+      <FormLabel />
+      <FormInput />
+    </FormRow>
+  </Form>
+);
+
+var thing = <A b={function() { var c = <D e={true}>&quot;</D>; }()}/>
+
+class LikeButton extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      liked: false
+    };
+    this.handleClick = this.handleClick.bind(this);
+  }
+  handleClick() {
+    this.setState({liked: !this.state.liked});
+  }
+  render() {
+    const text = this.state.liked ? 'liked' : 'haven\'t liked';
+    return (
+      <div onClick={this.handleClick}>
+        You {text} this. Click to toggle.
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <LikeButton />,
+  document.getElementById('example')
+);

@@ -155,4 +155,4 @@ module Rouge
       end
     end
   end
-end
+end unless defined?(Rouge::Lexers::Shell)

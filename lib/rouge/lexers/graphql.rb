@@ -219,8 +219,8 @@ module Rouge
       end
 
       state :value do
-        pop_unless_list = -> (t) {
-          -> (m) {
+        pop_unless_list = ->(t) {
+          ->(m) {
             token t
             pop! unless state?(:list)
           }

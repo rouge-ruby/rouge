@@ -91,6 +91,11 @@ module Rouge
         rule /\bcase\b/, Keyword, :case
         rule /\b(#{BUILTINS})\s*\b(?!\.)/i, Name::Builtin
       end
+
+      prepend :interp do
+        rule /`./, Str::Escape
+        rule /`$/, Str::Escape # line continuation
+      end
     end
   end
 end

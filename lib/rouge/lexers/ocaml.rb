@@ -28,7 +28,7 @@ module Rouge
       end
 
       operator = %r([;,_!$%&*+./:<=>?@^|~#-]+)
-      id = /[a-z][\w']*/i
+      id = /[a-z_][\w']*/i
       upper_id = /[A-Z][\w']*/
 
       state :root do

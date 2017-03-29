@@ -29,6 +29,9 @@ M.N.[0];;
 (* polymorphic variant starting with a lowercase char *)
 `max;;
 
+(* identifiers can start with an underscore *)
+let x = M._x;;
+
 
 (***********************************************************************)
 (*                                                                     *)

@@ -93,6 +93,7 @@ module Rouge
         rule /#{upper_id}(?=\s*[.])/, Name::Namespace
         rule upper_id, Name::Class, :pop!
         rule id, Name, :pop!
+        rule /[({\[]/, Punctuation, :pop!
       end
     end
   end

@@ -27,7 +27,7 @@ module Rouge
         rule /<!--/, Comment, :comment
         rule /<\?.*?\?>/m, Comment::Preproc # php? really?
 
-        rule /<\s*script\s*/m do
+        rule /<\s*script\s*(?!\s*\D*type=\"text\/(x-tpl|template)\")/m do
           token Name::Tag
           @javascript.reset!
           push :script_content

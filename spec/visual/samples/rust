@@ -377,3 +377,8 @@ enum HTMLFragment {
     tag(~str, ~[HTMLFragment]),
     text(~str),
 }
+
+// Some hidden lines by starting with hash
+# extern crate core;
+# use core::str;
+# let x = 5;

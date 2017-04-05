@@ -58,17 +58,18 @@ module Rouge
         mixin :whitespace
         rule /\s+/, Text
         rule /#\[/ do
-          token Comment::Preproc; push :attribute
+          token Name::Decorator; push :attribute
         end
         rule(//) { pop! }
+        rule /#\s[^\n]*/, Comment::Preproc
       end
 
       state :attribute do
         mixin :whitespace
         mixin :has_literals
-        rule /[(,)=]/, Comment::Preproc
-        rule /\]/, Comment::Preproc, :pop!
-        rule id, Comment::Preproc
+        rule /[(,)=]/, Name::Decorator
+        rule /\]/, Name::Decorator, :pop!
+        rule id, Name::Decorator
       end
 
       state :whitespace do

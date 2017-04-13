@@ -37,6 +37,12 @@ module Rouge
       end
 
       state :root do
+        # q allows a file to start with a shebang
+        rule %r(#!(.*?)$), Comment::Preproc
+        rule //, Text, :base
+      end
+
+      state :base do
         rule /\n+/m, Text
         rule /#{identifier}/ do |m|
           if self.class.keywords.include? m[0]

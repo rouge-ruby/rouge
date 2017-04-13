@@ -1,11 +1,11 @@
 module Rouge
   module Lexers
     class Q < RegexLexer
-      desc 'q'
+      title 'Q'
+      desc 'The Q programming language (kx.com)'
       tag 'q'
       aliases 'q'
-      filenames '*.???'
-
+      filenames '*.q'
       mimetypes 'text/x-q', 'application/x-q'
 
       def self.analyze_text(text)
@@ -13,6 +13,7 @@ module Rouge
       end
 
       state :root do
+        rule(/.*\n/, Text)
       end
     end
   end

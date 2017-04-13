@@ -31,11 +31,13 @@ module Rouge
         rule(/[^\S\n]+/, Text)
         rule(%r{\/.*$}, Comment)
 
+        rule(/0[nNwW][hijefcpmdznuvt]?/, Keyword::Constant)
+
         rule(/[0-9]+(\.[0-9]+)?[fe]/, Num::Float)
         rule(/[01]+b?/, Num)
         rule(/[0-9]+[hij]?/, Num::Integer)
 
-        rule(/(?:<=|>=|<>|::)|[?:$%&@._#*^\-+~,!><=]:?/, Operator)
+        rule(/(?:<=|>=|<>|::)|[?:$%&|@._#*^\-+~,!><=]:?/, Operator)
 
         rule(/\\.*\n/, Text)
 

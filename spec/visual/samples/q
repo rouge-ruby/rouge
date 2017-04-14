@@ -47,3 +47,6 @@ iasc|idesc|inv|keys|load|log|lsq|ltime|ltrim|maxs|md5|meta|mins|next|parse|plist
 10 10.1 10e10 10e-10 .1 .1e+10
 10e 10.1e 10e10e 10e-10e .1e .1e+10e
 10f 10.1f 10e10f 10e-10f .1f .1e+10f
+
+`sym`a_b
+`:path`:/a/b/c

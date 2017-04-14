@@ -80,11 +80,12 @@ module Rouge
         rule(/\d{4}\.[01]\d\.[0-3]\d[dpnzm]?\b/, Literal::Date)
         ## special values
         rule(/0[nNwW][hijefcpmdznuvt]?/, Keyword::Constant)
-
+        ## numbers
         rule(/(?:\d+(?:\.\d*)?|\.\d+)(?:e[+\-]?\d+|\d+\.\d*|\.\d+)?[ef]?/, Num::Float)
         rule(/[01]+b?/, Num)
         rule(/[0-9]+[hij]?/, Num::Integer)
-
+        ## symbols and paths
+        rule(%r{(`:[:a-z0-9._\/]*|`(?:[a-z0-9.][:a-z0-9._]*)?)}i, Str::Symbol)
         rule(%r{(?:<=|>=|<>|::)|[?:$%&|@._#*^\-+~,!><=\\\/]:?}, Operator)
 
         rule /[{}\[\]();]/, Punctuation

@@ -58,6 +58,8 @@ module Rouge
             token Operator::Word
           elsif self.class.builtins.include? m[0]
             token Name::Builtin
+          elsif /^\.[zQqho]\./.match? m[0]
+            token Name::Constant
           else
             token Name
           end

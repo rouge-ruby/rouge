@@ -62,3 +62,10 @@ iasc|idesc|inv|keys|load|log|lsq|ltime|ltrim|maxs|md5|meta|mins|next|parse|plist
 
 `sym`a_b
 `:path`:/a/b/c
+
+\
+til eof comment
+/
+no effect
+\
+no effect

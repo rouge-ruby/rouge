@@ -68,9 +68,11 @@ module Rouge
         # White space and comments
         rule(%r{[ \t\r]\/.*$}, Comment::Single)
         rule(/[ \t\r]+/, Text::Whitespace)
-        rule(%r{^/$.*^\\$}m, Comment::Multiline)
+        rule(%r{^/$.*?^\\$}m, Comment::Multiline)
         rule(%r{^\/[^\n]*$(\n[^\S\n]+.*$)*}, Comment::Multiline)
-
+        # til EOF comment
+        rule(/^\\$/, Comment, :bottom)
+        rule(/^\\\\\s+/, Keyword, :bottom)
 
         # Literals
         ## strings
@@ -98,6 +100,7 @@ module Rouge
 
         rule /[{}\[\]();]/, Punctuation
 
+        # commands
         rule(/\\.*\n/, Text)
 
       end
@@ -107,6 +110,10 @@ module Rouge
         rule /\\([\\nr]|[01][0-7]{2})/, Str::Escape
         rule /[^\\"\n]+/, Str
         rule /\\/, Str # stray backslash
+      end
+
+      state :bottom do
+        rule /.*\z/m, Comment::Multiline
       end
     end
   end

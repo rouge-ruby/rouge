@@ -73,6 +73,8 @@ module Rouge
 
 
         # Literals
+        ## strings
+        rule(/"/, Str, :string)
         ## timespan/stamp constants
         rule(/(?:\d+D|\d{4}\.[01]\d\.[0123]\d[DT])(?:[012]\d:[0-5]\d(?::[0-5]\d(?:\.\d+)?)?|([012]\d)?)[zpn]?\b/,
              Literal::Date)
@@ -98,6 +100,13 @@ module Rouge
 
         rule(/\\.*\n/, Text)
 
+      end
+
+      state :string do
+        rule(/"/, Str, :pop!)
+        rule /\\([\\nr]|[01][0-7]{2})/, Str::Escape
+        rule /[^\\"\n]+/, Str
+        rule /\\/, Str # stray backslash
       end
     end
   end

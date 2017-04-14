@@ -28,6 +28,12 @@ iasc|idesc|inv|keys|load|log|lsq|ltime|ltrim|maxs|md5|meta|mins|next|parse|plist
 
 0nh 0Nc 0wt 0Wu
 
+/ Operators
+(!;@;#;$;%;^;&;*)
+(!:;@:;#:;$:;%:;^:;&:;*:)
+(0:;1:;2:)
+(';/;\;':;;/:;\:)
+
 
 10D 10D10 10D10:10 10D10:10:10 10D10:10:10.11
 10Dz 10D10p 10D10:10n 10D10:10:10z 10D10:10:10.11p

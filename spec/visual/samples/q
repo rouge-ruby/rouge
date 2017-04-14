@@ -1,5 +1,14 @@
+#! /usr/bin/env q
+
+  Demo for the Q programming language (kx.com)
+
+x:til 10
+
 /
-  Demo for the Q programming language
+
+Multi-line
+comment
+
 \
 
 / Line comments that start at the left margin
@@ -10,8 +19,6 @@ f:{ / but this comment will not continue
 / Over and scan
 f/1 2 3
 f\1 2 3
-
-x:til 10
 
 do|if|while|select|update|delete|exec|from|by
 

@@ -38,7 +38,14 @@ module Rouge
 
       state :root do
         # q allows a file to start with a shebang
-        rule %r(#!(.*?)$), Comment::Preproc
+        rule /#!(.*?)$/, Comment::Preproc, :top
+        rule //, Text, :top
+      end
+
+      state :top do
+        # indented lines at the top of the file are ignored by q
+        rule /^[ \t\r]+.*$/, Comment::Special
+        rule /\n+/, Text
         rule //, Text, :base
       end
 

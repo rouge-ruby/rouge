@@ -4,7 +4,7 @@ module Rouge
       title 'Q'
       desc 'The Q programming language (kx.com)'
       tag 'q'
-      aliases 'q'
+      aliases 'kdb+'
       filenames '*.q'
       mimetypes 'text/x-q', 'application/x-q'
 

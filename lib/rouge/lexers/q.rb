@@ -51,6 +51,9 @@ module Rouge
 
       state :base do
         rule /\n+/m, Text
+        rule(/^.\)/, Keyword::Declaration)
+
+        # Identifiers, word operators, etc.
         rule /#{identifier}/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword

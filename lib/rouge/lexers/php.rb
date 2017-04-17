@@ -45,6 +45,12 @@ module Rouge
         !!@start_inline
       end
 
+      # source: http://php.net/manual/en/language.variables.basics.php
+      # the given regex is invalid utf8, so... we're using the unicode
+      # "Letter" property instead.
+      id = /[\p{L}_][\p{L}\p{N}_]*/
+      nsid = /#{id}(?:\\#{id})*/
+
       start do
         push :php if start_inline?
       end
@@ -77,7 +83,7 @@ module Rouge
       state :php do
         rule /\?>/, Comment::Preproc, :pop!
         # heredocs
-        rule /<<<('?)([a-z_]\w*)\1\n.*?\n\2;?\n/im, Str::Heredoc
+        rule /<<<('?)(#{id})\1\n.*?\n\2;?\n/im, Str::Heredoc
         rule /\s+/, Text
         rule /#.*?\n/, Comment::Single
         rule %r(//.*?\n), Comment::Single
@@ -85,7 +91,7 @@ module Rouge
         rule %r(/\*\*/), Comment::Multiline
         rule %r(/\*\*.*?\*/)m, Str::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule /(->|::)(\s*)([a-zA-Z_][a-zA-Z0-9_]*)/ do
+        rule /(->|::)(\s*)(#{id})/ do
           groups Operator, Text, Name::Attribute
         end
 
@@ -103,16 +109,16 @@ module Rouge
           push :funcname
         end
 
-        rule /(const)(\s+)([a-zA-Z_]\w*)/i do
+        rule /(const)(\s+)(#{id})/i do
           groups Keyword, Text, Name::Constant
         end
 
         rule /(true|false|null)\b/, Keyword::Constant
-        rule /\$\{\$+[a-z_]\w*\}/i, Name::Variable
-        rule /\$+[a-z_]\w*/i, Name::Variable
+        rule /\$\{\$+#{id}\}/i, Name::Variable
+        rule /\$+#{id}/i, Name::Variable
 
         # may be intercepted for builtin highlighting
-        rule /[\\a-z_][\\\w]*/i do |m|
+        rule /\\?#{nsid}/i do |m|
           name = m[0]
 
           if self.class.keywords.include? name
@@ -136,11 +142,11 @@ module Rouge
 
       state :classname do
         rule /\s+/, Text
-        rule /[a-z_][\\\w]*/i, Name::Class, :pop!
+        rule /#{nsid}/, Name::Class, :pop!
       end
 
       state :funcname do
-        rule /[a-z_]\w*/i, Name::Function, :pop!
+        rule /#{id}/, Name::Function, :pop!
       end
 
       state :string do
@@ -148,7 +154,7 @@ module Rouge
         rule /[^\\{$"]+/, Str::Double
         rule /\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
           Str::Escape
-        rule /\$[a-zA-Z_][a-zA-Z0-9_]*(\[\S+\]|->[a-zA-Z_][a-zA-Z0-9_]*)?/, Name::Variable
+        rule /\$#{id}(\[\S+\]|->#{id})?/, Name::Variable
 
         rule /\{\$\{/, Str::Interpol, :interp_double
         rule /\{(?=\$)/, Str::Interpol, :interp_single

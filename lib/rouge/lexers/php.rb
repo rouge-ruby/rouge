@@ -52,7 +52,13 @@ module Rouge
       nsid = /#{id}(?:\\#{id})*/
 
       start do
-        push :php if start_inline?
+        case @start_inline
+        when true, 1, '1'
+          push :template
+          push :php
+        when false, 0, '0'
+          push :template
+        end
       end
 
       def self.keywords
@@ -76,6 +82,14 @@ module Rouge
       end
 
       state :root do
+        # some extremely rough heuristics to decide whether to start inline or not
+        rule(/\s*(?=<)/m) { delegate parent; push :template }
+        rule(/[^$]+(?=<\?(php|=))/) { delegate parent; push :template }
+
+        rule(//) { push :template; push :php }
+      end
+
+      state :template do
         rule /<\?(php|=)?/, Comment::Preproc, :php
         rule(/.*?(?=<\?)|.*/m) { delegate parent }
       end

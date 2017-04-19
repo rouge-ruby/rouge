@@ -10,221 +10,237 @@ module Rouge
       title "IgorPro"
       desc "WaveMetrics Igor Pro"
 
-      keywords = %w(
-      Structure EndStructure
-      threadsafe static
-      Macro Proc Window Menu Function End
-      if else elseif endif switch strswitch endswitch
-      break return continue
-      for endfor do while
-      case default
-      AbortOnRTE
-      )
+      def self.keywords
+        @keywords ||= Set.new %w(
+          structure endstructure
+          threadsafe static
+          macro proc window menu function end
+          if else elseif endif switch strswitch endswitch
+          break return continue
+          for endfor do while
+          case default
+          abortonrte
+        )
+      end
 
-      preprocessor = %w(
-      pragma include
-      define ifdef ifndef undef
-      if elif else endif
-      )
+      def self.preprocessor
+        @preprocessor ||= Set.new %w(
+          pragma include
+          define ifdef ifndef undef
+          if elif else endif
+        )
+      end
 
-      igorDeclarations = %w(
-      Variable String WAVE StrConstant Constant
-      NVAR SVAR DFREF FUNCREF STRUCT
-      char uchar int16 uint16 int32 uint32 int64 uint64 float double
-      )
+      def self.igorDeclarations
+        @igorDeclarations ||= Set.new %w(
+          variable string wave strconstant constant
+          nvar svar dfref funcref struct
+          char uchar int16 uint16 int32 uint32 int64 uint64 float double
+        )
+      end
 
-      igorConstants = %w(
-      NaN Inf
-      )
+      def self.igorConstants
+        @igorConstants ||= Set.new %w(
+          nan inf
+        )
+      end
 
-      igorFunction = %w(
-      AxonTelegraphSetTimeoutMs AxonTelegraphGetTimeoutMs
-      AxonTelegraphGetDataNum AxonTelegraphAGetDataNum
-      AxonTelegraphGetDataString AxonTelegraphAGetDataString
-      AxonTelegraphGetDataStruct AxonTelegraphAGetDataStruct HDF5DatasetInfo
-      HDF5AttributeInfo HDF5TypeInfo HDF5LibraryInfo
-      MPFXGaussPeak MPFXLorenzianPeak MPFXVoigtPeak MPFXEMGPeak MPFXExpConvExpPeak
-      abs acos acosh AiryA AiryAD AiryB AiryBD
-      alog area areaXY asin asinh atan atan2 atanh AxisValFromPixel Besseli
-      Besselj Besselk Bessely beta betai BinarySearch BinarySearchInterp
-      binomial binomialln binomialNoise cabs CaptureHistoryStart ceil cequal
-      char2num chebyshev chebyshevU CheckName cmplx cmpstr conj ContourZ cos
-      cosh cosIntegral cot coth CountObjects CountObjectsDFR cpowi
-      CreationDate csc csch DataFolderExists DataFolderRefsEqual
-      DataFolderRefStatus date2secs datetime DateToJulian Dawson defined
-      deltax digamma dilogarithm DimDelta DimOffset DimSize ei enoise
-      equalWaves erf erfc erfcw exists exp expInt expIntegralE1 expNoise
-      factorial fakedata faverage faverageXY FindDimLabel FindListItem floor
-      FontSizeHeight FontSizeStringWidth FresnelCos FresnelSin gamma
-      gammaEuler gammaInc gammaNoise gammln gammp gammq Gauss Gauss1D Gauss2D
-      gcd GetBrowserLine GetDefaultFontSize GetDefaultFontStyle GetKeyState
-      GetRTError GetRTLocation GizmoInfo GizmoScale gnoise GrepString hcsr
-      hermite hermiteGauss HyperG0F1 HyperG1F1 HyperG2F1 HyperGNoise HyperGPFQ
-      IgorVersion imag IndexToScale Integrate1D interp Interp2D Interp3D
-      inverseERF inverseERFC ItemsInList JacobiCn JacobiSn Laguerre LaguerreA
-      LaguerreGauss LambertW leftx LegendreA limit ln log logNormalNoise
-      lorentzianNoise magsqr MandelbrotPoint MarcumQ MatrixCondition MatrixDet
-      MatrixDot MatrixRank MatrixTrace max mean median min mod ModDate
-      norm NumberByKey numpnts numtype NumVarOrDefault NVAR_Exists p2rect
-      PanelResolution ParamIsDefault pcsr Pi PixelFromAxisVal pnt2x
-      poissonNoise poly poly2D PolygonArea qcsr r2polar real rightx round
-      sawtooth scaleToIndex ScreenResolution sec sech SelectNumber
-      SetEnvironmentVariable sign sin sinc sinh sinIntegral SphericalBessJ
-      SphericalBessJD SphericalBessY SphericalBessYD SphericalHarmonics sqrt
-      StartMSTimer StatsBetaCDF StatsBetaPDF StatsBinomialCDF StatsBinomialPDF
-      StatsCauchyCDF StatsCauchyPDF StatsChiCDF StatsChiPDF StatsCMSSDCDF
-      StatsCorrelation StatsDExpCDF StatsDExpPDF StatsErlangCDF StatsErlangPDF
-      StatsErrorPDF StatsEValueCDF StatsEValuePDF StatsExpCDF StatsExpPDF
-      StatsFCDF StatsFPDF StatsFriedmanCDF StatsGammaCDF StatsGammaPDF
-      StatsGeometricCDF StatsGeometricPDF StatsGEVCDF StatsGEVPDF
-      StatsHyperGCDF StatsHyperGPDF StatsInvBetaCDF StatsInvBinomialCDF
-      StatsInvCauchyCDF StatsInvChiCDF StatsInvCMSSDCDF StatsInvDExpCDF
-      StatsInvEValueCDF StatsInvExpCDF StatsInvFCDF StatsInvFriedmanCDF
-      StatsInvGammaCDF StatsInvGeometricCDF StatsInvKuiperCDF
-      StatsInvLogisticCDF StatsInvLogNormalCDF StatsInvMaxwellCDF
-      StatsInvMooreCDF StatsInvNBinomialCDF StatsInvNCChiCDF StatsInvNCFCDF
-      StatsInvNormalCDF StatsInvParetoCDF StatsInvPoissonCDF StatsInvPowerCDF
-      StatsInvQCDF StatsInvQpCDF StatsInvRayleighCDF StatsInvRectangularCDF
-      StatsInvSpearmanCDF StatsInvStudentCDF StatsInvTopDownCDF
-      StatsInvTriangularCDF StatsInvUsquaredCDF StatsInvVonMisesCDF
-      StatsInvWeibullCDF StatsKuiperCDF StatsLogisticCDF StatsLogisticPDF
-      StatsLogNormalCDF StatsLogNormalPDF StatsMaxwellCDF StatsMaxwellPDF
-      StatsMedian StatsMooreCDF StatsNBinomialCDF StatsNBinomialPDF
-      StatsNCChiCDF StatsNCChiPDF StatsNCFCDF StatsNCFPDF StatsNCTCDF
-      StatsNCTPDF StatsNormalCDF StatsNormalPDF StatsParetoCDF StatsParetoPDF
-      StatsPermute StatsPoissonCDF StatsPoissonPDF StatsPowerCDF
-      StatsPowerNoise StatsPowerPDF StatsQCDF StatsQpCDF StatsRayleighCDF
-      StatsRayleighPDF StatsRectangularCDF StatsRectangularPDF StatsRunsCDF
-      StatsSpearmanRhoCDF StatsStudentCDF StatsStudentPDF StatsTopDownCDF
-      StatsTriangularCDF StatsTriangularPDF StatsTrimmedMean StatsUSquaredCDF
-      StatsVonMisesCDF StatsVonMisesNoise StatsVonMisesPDF StatsWaldCDF
-      StatsWaldPDF StatsWeibullCDF StatsWeibullPDF StopMSTimer str2num
-      stringCRC stringmatch strlen strsearch StudentA StudentT sum SVAR_Exists
-      TagVal tan tanh TextEncodingCode ThreadGroupCreate ThreadGroupRelease
-      ThreadGroupWait ThreadProcessorCount ThreadReturnValue ticks trunc
-      UnsetEnvironmentVariable Variance vcsr VoigtFunc WaveCRC WaveDims
-      WaveExists WaveMax WaveMin WaveRefsEqual WaveTextEncoding WaveType
-      WhichListItem WinType wnoise x2pnt xcsr zcsr ZernikeR zeta AddListItem
-      AnnotationInfo AnnotationList AxisInfo AxisList Base64_Decode
-      Base64_Encode CaptureHistory ChildWindowList CleanupName ContourInfo
-      ContourNameList ControlNameList ConvertTextEncoding CsrInfo CsrWave
-      CsrXWave CTabList DataFolderDir date FetchURL FontList FuncRefInfo
-      FunctionInfo FunctionList FunctionPath GetBrowserSelection GetDataFolder
-      GetDefaultFont GetDimLabel GetEnvironmentVariable GetErrMessage
-      GetFormula GetIndependentModuleName GetIndexedObjName
-      GetIndexedObjNameDFR GetRTErrMessage GetRTLocInfo GetRTStackInfo
-      GetScrapText GetUserData GetWavesDataFolder GrepList GuideInfo
-      GuideNameList Hash IgorInfo ImageInfo ImageNameList
-      IndependentModuleList IndexedDir IndexedFile JulianToDate LayoutInfo
-      ListMatch LowerStr MacroList NameOfWave NormalizeUnicode note num2char
-      num2istr num2str OperationList PadString ParseFilePath PathList PICTInfo
-      PICTList PossiblyQuoteName ProcedureText RemoveByKey RemoveEnding
-      RemoveFromList RemoveListItem ReplaceNumberByKey ReplaceString
-      ReplaceStringByKey Secs2Date Secs2Time SelectString SortList
-      SpecialCharacterInfo SpecialCharacterList SpecialDirPath StringByKey
-      StringFromList StringList StrVarOrDefault TableInfo TextEncodingName
-      TextFile ThreadGroupGetDF time TraceFromPixel TraceInfo TraceNameList
-      TrimString UniqueName UnPadString UpperStr URLDecode URLEncode
-      VariableList WaveInfo WaveList WaveName WaveRefWaveToList WaveUnits
-      WinList WinName WinRecreation WMFindWholeWord XWaveName
-      ContourNameToWaveRef CsrWaveRef CsrXWaveRef ImageNameToWaveRef
-      ListToTextWave ListToWaveRefWave NewFreeWave TagWaveRef
-      TraceNameToWaveRef WaveRefIndexed WaveRefIndexedDFR XWaveRefFromTrace
-      GetDataFolderDFR GetWavesDataFolderDFR NewFreeDataFolder
-      )
+      def self.igorFunction
+        @igorFunction ||= Set.new %w(
+          axontelegraphsettimeoutms axontelegraphgettimeoutms
+          axontelegraphgetdatanum axontelegraphagetdatanum
+          axontelegraphgetdatastring axontelegraphagetdatastring
+          axontelegraphgetdatastruct axontelegraphagetdatastruct hdf5datasetinfo
+          hdf5attributeinfo hdf5typeinfo hdf5libraryinfo
+          mpfxgausspeak mpfxlorenzianpeak mpfxvoigtpeak mpfxemgpeak mpfxexpconvexppeak
+          abs acos acosh airya airyad airyb airybd
+          alog area areaxy asin asinh atan atan2 atanh axisvalfrompixel besseli
+          besselj besselk bessely beta betai binarysearch binarysearchinterp
+          binomial binomialln binomialnoise cabs capturehistorystart ceil cequal
+          char2num chebyshev chebyshevu checkname cmplx cmpstr conj contourz cos
+          cosh cosintegral cot coth countobjects countobjectsdfr cpowi
+          creationdate csc csch datafolderexists datafolderrefsequal
+          datafolderrefstatus date2secs datetime datetojulian dawson defined
+          deltax digamma dilogarithm dimdelta dimoffset dimsize ei enoise
+          equalwaves erf erfc erfcw exists exp expint expintegrale1 expnoise
+          factorial fakedata faverage faveragexy finddimlabel findlistitem floor
+          fontsizeheight fontsizestringwidth fresnelcos fresnelsin gamma
+          gammaeuler gammainc gammanoise gammln gammp gammq gauss gauss1d gauss2d
+          gcd getbrowserline getdefaultfontsize getdefaultfontstyle getkeystate
+          getrterror getrtlocation gizmoinfo gizmoscale gnoise grepstring hcsr
+          hermite hermitegauss hyperg0f1 hyperg1f1 hyperg2f1 hypergnoise hypergpfq
+          igorversion imag indextoscale integrate1d interp interp2d interp3d
+          inverseerf inverseerfc itemsinlist jacobicn jacobisn laguerre laguerrea
+          laguerregauss lambertw leftx legendrea limit ln log lognormalnoise
+          lorentziannoise magsqr mandelbrotpoint marcumq matrixcondition matrixdet
+          matrixdot matrixrank matrixtrace max mean median min mod moddate
+          norm numberbykey numpnts numtype numvarordefault nvar_exists p2rect
+          panelresolution paramisdefault pcsr pi pixelfromaxisval pnt2x
+          poissonnoise poly poly2d polygonarea qcsr r2polar real rightx round
+          sawtooth scaletoindex screenresolution sec sech selectnumber
+          setenvironmentvariable sign sin sinc sinh sinintegral sphericalbessj
+          sphericalbessjd sphericalbessy sphericalbessyd sphericalharmonics sqrt
+          startmstimer statsbetacdf statsbetapdf statsbinomialcdf statsbinomialpdf
+          statscauchycdf statscauchypdf statschicdf statschipdf statscmssdcdf
+          statscorrelation statsdexpcdf statsdexppdf statserlangcdf statserlangpdf
+          statserrorpdf statsevaluecdf statsevaluepdf statsexpcdf statsexppdf
+          statsfcdf statsfpdf statsfriedmancdf statsgammacdf statsgammapdf
+          statsgeometriccdf statsgeometricpdf statsgevcdf statsgevpdf
+          statshypergcdf statshypergpdf statsinvbetacdf statsinvbinomialcdf
+          statsinvcauchycdf statsinvchicdf statsinvcmssdcdf statsinvdexpcdf
+          statsinvevaluecdf statsinvexpcdf statsinvfcdf statsinvfriedmancdf
+          statsinvgammacdf statsinvgeometriccdf statsinvkuipercdf
+          statsinvlogisticcdf statsinvlognormalcdf statsinvmaxwellcdf
+          statsinvmoorecdf statsinvnbinomialcdf statsinvncchicdf statsinvncfcdf
+          statsinvnormalcdf statsinvparetocdf statsinvpoissoncdf statsinvpowercdf
+          statsinvqcdf statsinvqpcdf statsinvrayleighcdf statsinvrectangularcdf
+          statsinvspearmancdf statsinvstudentcdf statsinvtopdowncdf
+          statsinvtriangularcdf statsinvusquaredcdf statsinvvonmisescdf
+          statsinvweibullcdf statskuipercdf statslogisticcdf statslogisticpdf
+          statslognormalcdf statslognormalpdf statsmaxwellcdf statsmaxwellpdf
+          statsmedian statsmoorecdf statsnbinomialcdf statsnbinomialpdf
+          statsncchicdf statsncchipdf statsncfcdf statsncfpdf statsnctcdf
+          statsnctpdf statsnormalcdf statsnormalpdf statsparetocdf statsparetopdf
+          statspermute statspoissoncdf statspoissonpdf statspowercdf
+          statspowernoise statspowerpdf statsqcdf statsqpcdf statsrayleighcdf
+          statsrayleighpdf statsrectangularcdf statsrectangularpdf statsrunscdf
+          statsspearmanrhocdf statsstudentcdf statsstudentpdf statstopdowncdf
+          statstriangularcdf statstriangularpdf statstrimmedmean statsusquaredcdf
+          statsvonmisescdf statsvonmisesnoise statsvonmisespdf statswaldcdf
+          statswaldpdf statsweibullcdf statsweibullpdf stopmstimer str2num
+          stringcrc stringmatch strlen strsearch studenta studentt sum svar_exists
+          tagval tan tanh textencodingcode threadgroupcreate threadgrouprelease
+          threadgroupwait threadprocessorcount threadreturnvalue ticks trunc
+          unsetenvironmentvariable variance vcsr voigtfunc wavecrc wavedims
+          waveexists wavemax wavemin waverefsequal wavetextencoding wavetype
+          whichlistitem wintype wnoise x2pnt xcsr zcsr zerniker zeta addlistitem
+          annotationinfo annotationlist axisinfo axislist base64_decode
+          base64_encode capturehistory childwindowlist cleanupname contourinfo
+          contournamelist controlnamelist converttextencoding csrinfo csrwave
+          csrxwave ctablist datafolderdir date fetchurl fontlist funcrefinfo
+          functioninfo functionlist functionpath getbrowserselection getdatafolder
+          getdefaultfont getdimlabel getenvironmentvariable geterrmessage
+          getformula getindependentmodulename getindexedobjname
+          getindexedobjnamedfr getrterrmessage getrtlocinfo getrtstackinfo
+          getscraptext getuserdata getwavesdatafolder greplist guideinfo
+          guidenamelist hash igorinfo imageinfo imagenamelist
+          independentmodulelist indexeddir indexedfile juliantodate layoutinfo
+          listmatch lowerstr macrolist nameofwave normalizeunicode note num2char
+          num2istr num2str operationlist padstring parsefilepath pathlist pictinfo
+          pictlist possiblyquotename proceduretext removebykey removeending
+          removefromlist removelistitem replacenumberbykey replacestring
+          replacestringbykey secs2date secs2time selectstring sortlist
+          specialcharacterinfo specialcharacterlist specialdirpath stringbykey
+          stringfromlist stringlist strvarordefault tableinfo textencodingname
+          textfile threadgroupgetdf time tracefrompixel traceinfo tracenamelist
+          trimstring uniquename unpadstring upperstr urldecode urlencode
+          variablelist waveinfo wavelist wavename waverefwavetolist waveunits
+          winlist winname winrecreation wmfindwholeword xwavename
+          contournametowaveref csrwaveref csrxwaveref imagenametowaveref
+          listtotextwave listtowaverefwave newfreewave tagwaveref
+          tracenametowaveref waverefindexed waverefindexeddfr xwavereffromtrace
+          getdatafolderdfr getwavesdatafolderdfr newfreedatafolder
+        )
+      end
 
-      igorOperation = %w(
-      Abort AddFIFOData AddFIFOVectData AddMovieAudio AddMovieFrame AdoptFiles
-      APMath Append AppendImage AppendLayoutObject AppendMatrixContour
-      AppendText AppendToGizmo AppendToGraph AppendToLayout AppendToTable
-      AppendXYZContour AutoPositionWindow BackgroundInfo Beep BoundingBall
-      BrowseURL BuildMenu Button cd Chart CheckBox CheckDisplayed ChooseColor
-      Close CloseHelp CloseMovie CloseProc ColorScale ColorTab2Wave
-      Concatenate ControlBar ControlInfo ControlUpdate
-      ConvertGlobalStringTextEncoding ConvexHull Convolve CopyFile CopyFolder
-      CopyScales Correlate CreateAliasShortcut CreateBrowser Cross
-      CtrlBackground CtrlFIFO CtrlNamedBackground Cursor CurveFit
-      CustomControl CWT Debugger DebuggerOptions DefaultFont
-      DefaultGuiControls DefaultGuiFont DefaultTextEncoding DefineGuide
-      DelayUpdate DeleteAnnotations DeleteFile DeleteFolder DeletePoints
-      Differentiate dir Display DisplayHelpTopic DisplayProcedure DoAlert
-      DoIgorMenu DoUpdate DoWindow DoXOPIdle DPSS DrawAction DrawArc
-      DrawBezier DrawLine DrawOval DrawPICT DrawPoly DrawRect DrawRRect
-      DrawText DrawUserShape DSPDetrend DSPPeriodogram Duplicate
-      DuplicateDataFolder DWT EdgeStats Edit ErrorBars Execute
-      ExecuteScriptText ExperimentModified ExportGizmo Extract
-      FastGaussTransform FastOp FBinRead FBinWrite FFT FGetPos FIFO2Wave
-      FIFOStatus FilterFIR FilterIIR FindContour FindDuplicates FindLevel
-      FindLevels FindPeak FindPointsInPoly FindRoots FindSequence FindValue
-      FPClustering fprintf FReadLine FSetPos FStatus FTPCreateDirectory
-      FTPDelete FTPDownload FTPUpload FuncFit FuncFitMD GBLoadWave GetAxis
-      GetCamera GetFileFolderInfo GetGizmo GetLastUserMenuInfo GetMarquee
-      GetMouse GetSelection GetWindow GraphNormal GraphWaveDraw GraphWaveEdit
-      Grep GroupBox Hanning HideIgorMenus HideInfo HideProcedures HideTools
-      HilbertTransform Histogram ICA IFFT ImageAnalyzeParticles ImageBlend
-      ImageBoundaryToMask ImageEdgeDetection ImageFileInfo ImageFilter
-      ImageFocus ImageFromXYZ ImageGenerateROIMask ImageGLCM
-      ImageHistModification ImageHistogram ImageInterpolate ImageLineProfile
-      ImageLoad ImageMorphology ImageRegistration ImageRemoveBackground
-      ImageRestore ImageRotate ImageSave ImageSeedFill ImageSkeleton3d
-      ImageSnake ImageStats ImageThreshold ImageTransform ImageUnwrapPhase
-      ImageWindow IndexSort InsertPoints Integrate Integrate2D IntegrateODE
-      Interp3DPath Interpolate2 Interpolate3D JCAMPLoadWave JointHistogram
-      KillBackground KillControl KillDataFolder KillFIFO KillFreeAxis KillPath
-      KillPICTs KillStrings KillVariables KillWaves KillWindow KMeans Label
-      Layout LayoutPageAction LayoutSlideShow Legend
-      LinearFeedbackShiftRegister ListBox LoadData LoadPackagePreferences
-      LoadPICT LoadWave Loess LombPeriodogram Make MakeIndex MarkPerfTestTime
-      MatrixConvolve MatrixCorr MatrixEigenV MatrixFilter MatrixGaussJ
-      MatrixGLM MatrixInverse MatrixLinearSolve MatrixLinearSolveTD MatrixLLS
-      MatrixLUBkSub MatrixLUD MatrixLUDTD MatrixMultiply MatrixOP MatrixSchur
-      MatrixSolve MatrixSVBkSub MatrixSVD MatrixTranspose MeasureStyledText
-      MLLoadWave Modify ModifyBrowser ModifyCamera ModifyContour ModifyControl
-      ModifyControlList ModifyFreeAxis ModifyGizmo ModifyGraph ModifyImage
-      ModifyLayout ModifyPanel ModifyTable ModifyWaterfall MoveDataFolder
-      MoveFile MoveFolder MoveString MoveSubwindow MoveVariable MoveWave
-      MoveWindow MultiTaperPSD MultiThreadingControl NeuralNetworkRun
-      NeuralNetworkTrain NewCamera NewDataFolder NewFIFO NewFIFOChan
-      NewFreeAxis NewGizmo NewImage NewLayout NewMovie NewNotebook NewPanel
-      NewPath NewWaterfall Note Notebook NotebookAction Open OpenHelp
-      OpenNotebook Optimize ParseOperationTemplate PathInfo PauseForUser
-      PauseUpdate PCA PlayMovie PlayMovieAction PlaySound PopupContextualMenu
-      PopupMenu Preferences PrimeFactors Print printf PrintGraphs PrintLayout
-      PrintNotebook PrintSettings PrintTable Project PulseStats PutScrapText
-      pwd Quit RatioFromNumber Redimension Remove RemoveContour
-      RemoveFromGizmo RemoveFromGraph RemoveFromLayout RemoveFromTable
-      RemoveImage RemoveLayoutObjects RemovePath Rename RenameDataFolder
-      RenamePath RenamePICT RenameWindow ReorderImages ReorderTraces
-      ReplaceText ReplaceWave Resample ResumeUpdate Reverse Rotate Save
-      SaveData SaveExperiment SaveGraphCopy SaveNotebook
-      SavePackagePreferences SavePICT SaveTableCopy SetActiveSubwindow SetAxis
-      SetBackground SetDashPattern SetDataFolder SetDimLabel SetDrawEnv
-      SetDrawLayer SetFileFolderInfo SetFormula SetIgorHook SetIgorMenuMode
-      SetIgorOption SetMarquee SetProcessSleep SetRandomSeed SetScale
-      SetVariable SetWaveLock SetWaveTextEncoding SetWindow ShowIgorMenus
-      ShowInfo ShowTools Silent Sleep Slider Smooth SmoothCustom Sort
-      SortColumns SoundInRecord SoundInSet SoundInStartChart SoundInStatus
-      SoundInStopChart SoundLoadWave SoundSaveWave SphericalInterpolate
-      SphericalTriangulate SplitString SplitWave sprintf sscanf Stack
-      StackWindows StatsAngularDistanceTest StatsANOVA1Test StatsANOVA2NRTest
-      StatsANOVA2RMTest StatsANOVA2Test StatsChiTest
-      StatsCircularCorrelationTest StatsCircularMeans StatsCircularMoments
-      StatsCircularTwoSampleTest StatsCochranTest StatsContingencyTable
-      StatsDIPTest StatsDunnettTest StatsFriedmanTest StatsFTest
-      StatsHodgesAjneTest StatsJBTest StatsKDE StatsKendallTauTest StatsKSTest
-      StatsKWTest StatsLinearCorrelationTest StatsLinearRegression
-      StatsMultiCorrelationTest StatsNPMCTest StatsNPNominalSRTest
-      StatsQuantiles StatsRankCorrelationTest StatsResample StatsSample
-      StatsScheffeTest StatsShapiroWilkTest StatsSignTest StatsSRTest
-      StatsTTest StatsTukeyTest StatsVariancesTest StatsWatsonUSquaredTest
-      StatsWatsonWilliamsTest StatsWheelerWatsonTest StatsWilcoxonRankTest
-      StatsWRCorrelationTest StructGet StructPut SumDimension SumSeries
-      TabControl Tag TextBox ThreadGroupPutDF ThreadStart Tile TileWindows
-      TitleBox ToCommandLine ToolsGrid Triangulate3d Unwrap URLRequest
-      ValDisplay WaveClear WaveMeanStdv WaveStats WaveTransform wfprintf
-      )
+      def self.igorOperation
+        @igorOperation ||= Set.new %w(
+          abort addfifodata addfifovectdata addmovieaudio addmovieframe adoptfiles
+          apmath append appendimage appendlayoutobject appendmatrixcontour
+          appendtext appendtogizmo appendtograph appendtolayout appendtotable
+          appendxyzcontour autopositionwindow backgroundinfo beep boundingball
+          browseurl buildmenu button cd chart checkbox checkdisplayed choosecolor
+          close closehelp closemovie closeproc colorscale colortab2wave
+          concatenate controlbar controlinfo controlupdate
+          convertglobalstringtextencoding convexhull convolve copyfile copyfolder
+          copyscales correlate createaliasshortcut createbrowser cross
+          ctrlbackground ctrlfifo ctrlnamedbackground cursor curvefit
+          customcontrol cwt debugger debuggeroptions defaultfont
+          defaultguicontrols defaultguifont defaulttextencoding defineguide
+          delayupdate deleteannotations deletefile deletefolder deletepoints
+          differentiate dir display displayhelptopic displayprocedure doalert
+          doigormenu doupdate dowindow doxopidle dpss drawaction drawarc
+          drawbezier drawline drawoval drawpict drawpoly drawrect drawrrect
+          drawtext drawusershape dspdetrend dspperiodogram duplicate
+          duplicatedatafolder dwt edgestats edit errorbars execute
+          executescripttext experimentmodified exportgizmo extract
+          fastgausstransform fastop fbinread fbinwrite fft fgetpos fifo2wave
+          fifostatus filterfir filteriir findcontour findduplicates findlevel
+          findlevels findpeak findpointsinpoly findroots findsequence findvalue
+          fpclustering fprintf freadline fsetpos fstatus ftpcreatedirectory
+          ftpdelete ftpdownload ftpupload funcfit funcfitmd gbloadwave getaxis
+          getcamera getfilefolderinfo getgizmo getlastusermenuinfo getmarquee
+          getmouse getselection getwindow graphnormal graphwavedraw graphwaveedit
+          grep groupbox hanning hideigormenus hideinfo hideprocedures hidetools
+          hilberttransform histogram ica ifft imageanalyzeparticles imageblend
+          imageboundarytomask imageedgedetection imagefileinfo imagefilter
+          imagefocus imagefromxyz imagegenerateroimask imageglcm
+          imagehistmodification imagehistogram imageinterpolate imagelineprofile
+          imageload imagemorphology imageregistration imageremovebackground
+          imagerestore imagerotate imagesave imageseedfill imageskeleton3d
+          imagesnake imagestats imagethreshold imagetransform imageunwrapphase
+          imagewindow indexsort insertpoints integrate integrate2d integrateode
+          interp3dpath interpolate2 interpolate3d jcamploadwave jointhistogram
+          killbackground killcontrol killdatafolder killfifo killfreeaxis killpath
+          killpicts killstrings killvariables killwaves killwindow kmeans label
+          layout layoutpageaction layoutslideshow legend
+          linearfeedbackshiftregister listbox loaddata loadpackagepreferences
+          loadpict loadwave loess lombperiodogram make makeindex markperftesttime
+          matrixconvolve matrixcorr matrixeigenv matrixfilter matrixgaussj
+          matrixglm matrixinverse matrixlinearsolve matrixlinearsolvetd matrixlls
+          matrixlubksub matrixlud matrixludtd matrixmultiply matrixop matrixschur
+          matrixsolve matrixsvbksub matrixsvd matrixtranspose measurestyledtext
+          mlloadwave modify modifybrowser modifycamera modifycontour modifycontrol
+          modifycontrollist modifyfreeaxis modifygizmo modifygraph modifyimage
+          modifylayout modifypanel modifytable modifywaterfall movedatafolder
+          movefile movefolder movestring movesubwindow movevariable movewave
+          movewindow multitaperpsd multithreadingcontrol neuralnetworkrun
+          neuralnetworktrain newcamera newdatafolder newfifo newfifochan
+          newfreeaxis newgizmo newimage newlayout newmovie newnotebook newpanel
+          newpath newwaterfall note notebook notebookaction open openhelp
+          opennotebook optimize parseoperationtemplate pathinfo pauseforuser
+          pauseupdate pca playmovie playmovieaction playsound popupcontextualmenu
+          popupmenu preferences primefactors print printf printgraphs printlayout
+          printnotebook printsettings printtable project pulsestats putscraptext
+          pwd quit ratiofromnumber redimension remove removecontour
+          removefromgizmo removefromgraph removefromlayout removefromtable
+          removeimage removelayoutobjects removepath rename renamedatafolder
+          renamepath renamepict renamewindow reorderimages reordertraces
+          replacetext replacewave resample resumeupdate reverse rotate save
+          savedata saveexperiment savegraphcopy savenotebook
+          savepackagepreferences savepict savetablecopy setactivesubwindow setaxis
+          setbackground setdashpattern setdatafolder setdimlabel setdrawenv
+          setdrawlayer setfilefolderinfo setformula setigorhook setigormenumode
+          setigoroption setmarquee setprocesssleep setrandomseed setscale
+          setvariable setwavelock setwavetextencoding setwindow showigormenus
+          showinfo showtools silent sleep slider smooth smoothcustom sort
+          sortcolumns soundinrecord soundinset soundinstartchart soundinstatus
+          soundinstopchart soundloadwave soundsavewave sphericalinterpolate
+          sphericaltriangulate splitstring splitwave sprintf sscanf stack
+          stackwindows statsangulardistancetest statsanova1test statsanova2nrtest
+          statsanova2rmtest statsanova2test statschitest
+          statscircularcorrelationtest statscircularmeans statscircularmoments
+          statscirculartwosampletest statscochrantest statscontingencytable
+          statsdiptest statsdunnetttest statsfriedmantest statsftest
+          statshodgesajnetest statsjbtest statskde statskendalltautest statskstest
+          statskwtest statslinearcorrelationtest statslinearregression
+          statsmulticorrelationtest statsnpmctest statsnpnominalsrtest
+          statsquantiles statsrankcorrelationtest statsresample statssample
+          statsscheffetest statsshapirowilktest statssigntest statssrtest
+          statsttest statstukeytest statsvariancestest statswatsonusquaredtest
+          statswatsonwilliamstest statswheelerwatsontest statswilcoxonranktest
+          statswrcorrelationtest structget structput sumdimension sumseries
+          tabcontrol tag textbox threadgroupputdf threadstart tile tilewindows
+          titlebox tocommandline toolsgrid triangulate3d unwrap urlrequest
+          valdisplay waveclear wavemeanstdv wavestats wavetransform wfprintf
+        )
+      end
 
-      object_name = /[a-zA-Z_][a-zA-Z0-9_]*/
+      def self.object_name
+        /[a-z][a-z0-9_]*\b/i
+      end
+
+      object = self.object_name
       whitespace  = /[\s\r]+/
       noLineBreak = /[ \t]+/
       operator = %r([\#$~!%^&*+=\|?:<>/-])
@@ -235,68 +251,48 @@ module Rouge
 
       state :root do
         mixin :comments
+
+        rule /\b#{object}/ do |m|
+          if m[0].downcase.match /function/
+            token Keyword::Declaration
+            push :parse_function
+          elsif self.class.igorDeclarations.include? m[0].downcase
+            token Keyword::Declaration
+            push :parse_variables
+          elsif self.class.keywords.include? m[0].downcase
+            token Keyword
+          elsif self.class.igorConstants.include? m[0].downcase
+            token Keyword::Constant
+          elsif self.class.igorFunction.include? m[0].downcase
+            token Name::Builtin
+          elsif self.class.igorOperation.include? m[0].downcase
+            token Keyword::Reserved
+            push :operationFlags
+          elsif m[0].downcase.match /(v|s|w)_[a-z]+[a-z0-9]*/
+            token Name::Builtin
+          else
+            token Name
+          end
+        end
+
         mixin :preprocessor
-        mixin :function
-        mixin :variables
-        rule /\b(#{keywords.join('|')})\b/i, Keyword
-        rule /\b(#{igorConstants.join('|')})\b/i, Keyword::Constant
-        rule /\b(V|S|W)_[A-Z]+[A-Z0-9]*/i, Name::Builtin
-
-        mixin :igorFunction
-        mixin :igorOperation
-
         mixin :waveFlag
+
         mixin :characters
         mixin :numbers
-        rule /#{object_name}/, Name
       end
 
       state :preprocessor do
-        rule /^#(#{preprocessor.join('|')})\b/i, Comment::Preproc
-      end
-
-      state :variables do
-        rule %r(^([[:space:]]*)
-          (static\s)*
-          ([[:space:]]*)
-          (#{igorDeclarations.join('|')})\b
-          )ix do
-          groups Text, Keyword, Text, Keyword::Declaration
-          push :parse_variables
+        rule %r((\#)(#{object})) do |m|
+          if self.class.preprocessor.include? m[2].downcase
+            token Comment::Preproc
+          else
+            token Punctuation, m[1] #i.e. ModuleFunctions
+            token Name, m[2]
+          end
         end
       end
 
-      state :function do
-        rule %r(^([[:space:]]*)
-          ((?:static|threadsafe)\s)?
-          ([[:space:]]*)
-          (\bFunction\b)
-          )ix do
-          groups Text, Keyword, Text, Keyword::Declaration
-          push :parse_function
-        end
-      end
-
-      state :igorFunction do
-        rule %r(
-          (#{whitespace}|#{operator}|#{punctuation})
-          (#{igorFunction.join('|')})\b
-          )ix do |m|
-          recurse m[1]
-          token Name::Builtin, m[2]
-        end
-      end
-
-      state :igorOperation do
-        rule %r(^([[:space:]]*)
-          (#{igorOperation.join('|')})\b
-          )ix do
-          groups Text, Keyword::Reserved
-          push :operationFlags
-        end
-      end
-
-      # @todo the assignment should be done via recursion in the appropriate boundaries
       state :assignment do
         mixin :whitespace
         rule /\"[^"]*\"/, Literal::String, :pop!
@@ -311,7 +307,7 @@ module Rouge
         mixin :whitespace
         rule /[=]/, Punctuation, :assignment
         rule %r([/][a-z]+)i, Keyword::Pseudo, :parse_variables
-        rule /#{object_name}/, Name::Variable
+        rule object, Name::Variable
         rule /[\[\]]/, Punctuation # optional variables in functions
         rule /[,]/, Punctuation, :parse_variables
         rule /\)/, Punctuation, :pop! # end of function
@@ -321,7 +317,7 @@ module Rouge
       state :parse_function do
         rule %r([/][a-z]+)i, Keyword::Pseudo # only one flag
         mixin :whitespace
-        rule /#{object_name}/, Name::Function
+        rule object, Name::Function
         rule /[\(]/, Punctuation, :parse_variables
         rule(//) { pop! }
       end
@@ -338,7 +334,7 @@ module Rouge
         rule %r(
           (/(?:wave|X|Y))
           (\s*)(=)(\s*)
-          (#{object_name})
+          (#{object})
           )ix do |m|
           token Keyword::Pseudo, m[1]
           token Text, m[2]

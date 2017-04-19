@@ -310,7 +310,8 @@ module Rouge
 
       state :assignment do
         mixin :whitespace
-        rule /\"[^"]*\"/, Literal::String, :pop!
+        rule /\"/, Punctuation, :string1
+        mixin :string2
         rule /#{number_float}/, Literal::Number::Float, :pop!
         rule /#{number_int}/, Literal::Number::Integer, :pop!
         rule /[\(\[][^\)\]]+[\)\]]/, Generic, :pop!
@@ -363,7 +364,8 @@ module Rouge
         rule /\s/, Text
         rule /#{operator}/, Operator
         rule /#{punctuation}/, Punctuation
-        rule /\"[^"]*\"/, Literal::String
+        rule /\"/, Punctuation, :string1
+        mixin :string2
       end
 
       state :numbers do
@@ -374,6 +376,19 @@ module Rouge
 
       state :whitespace do
         rule /#{noLineBreak}/, Text
+      end
+
+      state :string1 do
+        rule /%\w\b/, Literal::String::Other
+        rule /\\\\/, Literal::String::Escape
+        rule /\\\"/, Literal::String::Escape
+        rule /\\/, Literal::String::Escape
+        rule /[^"]/, Literal::String
+        rule /\"/, Punctuation, :pop!
+      end
+
+      state :string2 do
+        rule /\'[^']*\'/, Literal::String::Single
       end
 
       state :comments do

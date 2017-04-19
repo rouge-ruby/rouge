@@ -342,6 +342,9 @@ module Rouge
         rule /#{noLineBreak}/, Text
         rule /[=]/, Punctuation, :assignment
         rule %r([/][a-z]+)i, Keyword::Pseudo, :operationFlags
+        rule /(as)(\s*)(#{object})/i do
+          groups Keyword::Type, Text, Name::Label
+        end
         rule(//) { pop! }
       end
 

@@ -314,7 +314,7 @@ module Rouge
         mixin :string2
         rule /#{number_float}/, Literal::Number::Float, :pop!
         rule /#{number_int}/, Literal::Number::Integer, :pop!
-        rule /[\(\[][^\)\]]+[\)\]]/, Generic, :pop!
+        rule /[\(\[\{][^\)\]\}]+[\)\]\}]/, Generic, :pop!
         rule /[^\s\/\(]+/, Generic, :pop!
         rule(//) { pop! }
       end

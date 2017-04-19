@@ -236,6 +236,16 @@ module Rouge
         )
       end
 
+      def self.hdf5Operation
+        @hdf5Operation ||= Set.new %w(
+          hdf5createfile hdf5openfile hdf5closefile hdf5creategroup hdf5opengroup
+          hdf5listgroup hdf5closegroup hdf5listattributes hdf5attributeinfo hdf5datasetinfo
+          hdf5loaddata hdf5loadimage hdf5loadgroup hdf5savedata hdf5saveimage hdf5savegroup
+          hdf5typeinfo hdf5createlink hdf5unlinkobject hdf5libraryinfo
+          hdf5dumpstate hdf5dump hdf5dumperrors
+        )
+      end
+
       def self.object_name
         /[a-z][a-z0-9_]*\b/i
       end
@@ -268,6 +278,9 @@ module Rouge
           elsif self.class.igorOperation.include? m[0].downcase
             token Keyword::Reserved
             push :operationFlags
+          elsif self.class.hdf5Operation.include? m[0].downcase
+            token Keyword::Reserved
+            push :operationFlags
           elsif m[0].downcase.match /(v|s|w)_[a-z]+[a-z0-9]*/
             token Name::Builtin
           else
@@ -290,6 +303,8 @@ module Rouge
             token Punctuation, m[1] #i.e. ModuleFunctions
             token Name, m[2]
           end
+
+
         end
       end
 

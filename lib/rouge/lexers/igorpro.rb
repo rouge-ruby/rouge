@@ -260,7 +260,7 @@ module Rouge
       number_int  = /[\d]+(?:_\d+)*/
 
       state :root do
-        mixin :comments
+        rule %r(//), Comment, :comments
 
         rule /\b#{object}/ do |m|
           if m[0].downcase.match /function/
@@ -377,13 +377,12 @@ module Rouge
       end
 
       state :comments do
-        rule %r(
-          (//[^@\n]*)
-          (@\w*\b)?   # doxygen parameters
-          (.*)
-          )x do
-          groups Comment, Comment::Special, Comment
+        rule %r{([/]\s*)([@]\w+\b)}i do
+          # doxygen comments
+          groups Comment, Comment::Special
         end
+        rule /[^\r\n]/, Comment
+        rule(//) { pop! }
       end
     end
   end

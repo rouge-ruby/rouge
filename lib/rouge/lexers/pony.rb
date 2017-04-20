@@ -6,7 +6,7 @@ module Rouge
       tag 'pony'
       filenames '*.pony'
 
-      keywords = %w(
+      keywords = Set.new %w(
         actor addressof and as
         be break
         class compiler_intrinsic consume continue
@@ -27,11 +27,11 @@ module Rouge
         where while with
       )
 
-      capabilities = %w(
+      capabilities = Set.new %w(
         box iso ref tag trn val
       )
 
-      types = %w(
+      types = Set.new %w(
         Number Signed Unsigned Float
         I8 I16 I32 I64 I128 U8 U32 U64 U128 F32 F64
         EventID Align IntFormat NumberPrefix FloatFormat

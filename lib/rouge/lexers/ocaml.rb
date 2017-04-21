@@ -35,7 +35,7 @@ module Rouge
         rule /\s+/m, Text
         rule /false|true|[(][)]|\[\]/, Name::Builtin::Pseudo
         rule /#{upper_id}(?=\s*[.])/, Name::Namespace, :dotted
-        rule /`#{upper_id}/, Name::Tag
+        rule /`#{id}/, Name::Tag
         rule upper_id, Name::Class
         rule /[(][*](?![)])/, Comment, :comment
         rule id do |m|

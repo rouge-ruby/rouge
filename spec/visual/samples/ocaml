@@ -26,6 +26,9 @@ M.N.(f x);;
 M.N.{f = 0};;
 M.N.[0];;
 
+(* polymorphic variant starting with a lowercase char *)
+`max;;
+
 
 (***********************************************************************)
 (*                                                                     *)

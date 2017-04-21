@@ -1,5 +1,4 @@
 object pepita {
-
     var energy = 100
 
     method energy() = energy
@@ -9,5 +8,4 @@ object pepita {
     }
 
     method sayHi() = "Coo!"
-
 }

@@ -7,9 +7,9 @@ module Rouge
       end
 
       def stream(tokens, &b)
-        yield %(<pre class="#{@css_class}"><code>)
+        yield %(<div class="highlight"><pre class="#{@css_class}"><code>)
         @inner.stream(tokens, &b)
-        yield "</code></pre>"
+        yield "</code></pre></div>"
       end
     end
   end

@@ -25,6 +25,8 @@ module Rouge
       style Text, :fg => :unicorn, :bg => :krasna
       style Generic::Lineno, :fg => :eggshell_cloud, :bg => :slate_blue
 
+      style Generic::Prompt, :fg => :aluminum1, :italic => true
+
       style Comment, :fg => :cool_as_ice, :italic => true
       style Comment::Preproc, :fg => :go_get_it, :bold => true, :italic => true
       style Error,
@@ -61,7 +63,8 @@ module Rouge
             Literal::String::Interpol, :fg => :backlit, :bold => true
       style Name::Builtin, :bold => true
       style Name::Entity, :fg => '#999999', :bold => true
-      style Text::Whitespace, :fg => '#BBBBBB'
+      style Text::Whitespace,
+            Generic::Output, :fg => '#BBBBBB'
       style Name::Function,
             Name::Property,
             Name::Attribute, :fg => :chilly

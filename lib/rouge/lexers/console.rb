@@ -34,7 +34,7 @@ module Rouge
             /^.*?/
           end
 
-          /^#{prefix}(?:#{end_chars.join('|')})/.tap { |x| p :prompt_regex => x }
+          /^#{prefix}(?:#{end_chars.join('|')})/
         end
       end
 

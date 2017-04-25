@@ -233,6 +233,7 @@ module Rouge
       @stack = nil
       @current_stream = nil
 
+      puts "start blocks" if @debug && self.class.start_procs.any?
       self.class.start_procs.each do |pr|
         instance_eval(&pr)
       end

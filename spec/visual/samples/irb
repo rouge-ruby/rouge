@@ -1,0 +1,24 @@
+irb(main):001:0> puts <<XYZ
+irb(main):002:0" a
+irb(main):003:0" b
+irb(main):004:0" XYZ
+a
+b
+=> nil
+irb(main):005:0> 
+
+
+
+[1] pry(main)> o = Object.new
+=> #<Object:0x0056182cb182b8>
+[2] pry(main)> o.instance_variable_set(:@foo, Object.new); o
+=> #<Object:0x0056182cb182b8 @foo=#<Object:0x0056182cb63100>>
+[3] pry(main)> o.instance_variable_get(:@foo).instance_variable_set(:@bar, 3)
+=> 3
+[4] pry(main)> o
+=> #<Object:0x0056182cb182b8 @foo=#<Object:0x0056182cb63100 @bar=3>>
+[5] pry(main)> 
+
+irb(main):001:0> puts "Hello, world!"; 3
+Hello, world!
+=> 3

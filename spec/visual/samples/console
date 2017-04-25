@@ -1,7 +1,8 @@
+
 sio4@silver:~$ ls /var
 backups  crash  local  log   metrics  run    tmp
 cache    lib    lock   mail  opt      spool
-<...>
+# ...
 sio4@silver:~$ sudo su -
 [sudo] password for sio4: 
 root@silver:~# ls /bin/*sh

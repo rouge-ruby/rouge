@@ -14,6 +14,8 @@ class VisualTestApp < Sinatra::Application
 
   ROUGE_LIB = ROOT.join('lib/rouge.rb')
 
+  DEMOS = ROOT.join('lib/rouge/demos')
+
   def reload_source!
     Object.send :remove_const, :Rouge
     load ROUGE_LIB
@@ -56,7 +58,7 @@ class VisualTestApp < Sinatra::Application
 
 
   get '/' do
-    @samples = SAMPLES.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
+    @samples = DEMOS.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
     @samples.map!(&Rouge::Lexer.method(:find))
 
     erb :index

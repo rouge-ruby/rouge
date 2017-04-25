@@ -152,4 +152,20 @@ contains
 
     end subroutine print_bottles
 
+    subroutine share_bottles(n, m)
+      use, intrinsic :: ieee_arithmetic
+      implicit none
+      integer, intent(in) :: n, m
+
+      double precision :: double
+      doubleprecision  :: another_double
+
+      if (m == 0) then
+        double = ieee_value(double, IEEE_QUIET_NAN)
+      else
+        double = real(n, kind(double)) / real(m, kind(another_double))
+        print '(A,F0.2,A)', 'Everyone gets ', double, ' bottles!'
+      endif
+    end subroutine share_bottles
+
 end program bottles

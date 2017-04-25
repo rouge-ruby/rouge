@@ -3,6 +3,15 @@
 describe Rouge::Lexers::Fortran do
   let(:subject) { Rouge::Lexers::Fortran.new }
 
+  include Support::Lexing
+
+  it 'highlights "double precision" and "double" correctly' do
+    tokens = subject.lex('double precision :: double').to_a
+    assert { tokens.size == 5 }
+    assert { tokens.first[0] == Token['Keyword.Type'] }
+    assert { tokens.last[0] == Token['Name'] }
+  end
+
   describe 'guessing' do
     include Support::Guessing
 

@@ -29,9 +29,19 @@ module Rouge
         push :stdout
       end
 
-      state :stdout do
+      state :has_irb_output do
         rule %r(=>), Punctuation, :pop!
         rule /.+?(\n|$)/, Generic::Output
+      end
+
+      state :irb_error do
+        rule /.+?(\n|$)/, Generic::Error
+        mixin :has_irb_output
+      end
+
+      state :stdout do
+        rule /\w+?(Error|Exception):.+?(\n|$)/, Generic::Error, :irb_error
+        mixin :has_irb_output
       end
 
       prepend :root do

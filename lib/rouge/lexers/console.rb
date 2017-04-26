@@ -4,99 +4,126 @@ module Rouge
   module Lexers
     class ConsoleLexer < Lexer
       tag 'console'
-      aliases 'terminal', 'shell_session'
+      aliases 'terminal', 'shell_session', 'shell-session'
       filenames '*.cap'
 
       def initialize(options={})
         @prompt = options.delete(:prompt)
         @lang = options.delete(:parent)
         @output = options.delete(:output)
-        @root = options.delete(:root)
+        @comments = options.delete(:comments)
 
         super(options)
       end
 
       def prompt_regex
         @prompt_regex ||= begin
-          end_chars = case @prompt
-          when Array
-            @prompt
-          when String
-            @prompt = @prompt.split(',')
-          else
-            %w($ # >)
-          end.map { |c| Regexp.escape(c) }
+          /^#{prompt_prefix_regex}(?:#{end_chars.map(&Regexp.method(:escape)).join('|')})/
+        end
+      end
 
-          prefix = case @root
-          when 0, '0', false, nil
-            /^.+?/
-          else
-            /^.*?/
-          end
+      def end_chars
+        @end_chars ||= case @prompt
+        when Array
+          @prompt
+        when String
+          out = @prompt.split(',')
+          out.empty? ? %w($ # >) : out
+        else
+          %w($ # >)
+        end.reject { |c| c.empty? }
+      end
 
-          /^#{prefix}(?:#{end_chars.join('|')})/
+      # whether to allow comments. if manually specifying a prompt that isn't
+      # simply "#", we flag this to on
+      def allow_comments?
+        return true if @prompt && !@prompt.empty? && !end_chars.include?('#')
+
+        case @comments
+        when false, nil, 0, '0'
+          false
+        else
+          true
+        end
+      end
+
+      def prompt_prefix_regex
+        if allow_comments?
+          /^[^<]+?/
+        else
+          /^[^<]*?/
         end
       end
 
       def lang_lexer
-        case @lang
+        @lang_lexer ||= case @lang
         when Lexer
           @lang
         when nil
-          @lang = Shell.new(@options)
+          Shell.new(options)
         when Class
-          @lang.new(@options)
+          @lang.new(options)
         when String
-          @lang = Lexer.find(@lang).new(@options)
+          Lexer.find(@lang).new(options)
         end
       end
 
       def output_lexer
-        case @output
+        @output_lexer ||= case @output
         when nil
-          @output = PlainText.new(token: Generic::Output)
-        when Lexer, Class
+          PlainText.new(token: Generic::Output)
+        when Lexer
           @output
+        when Class
+          @output.new(options)
         when String
-          @output = Lexer.find(@output).new(@options)
+          Lexer.find(@output).new(options)
         end
       end
 
-      def stream_tokens(input, &b)
+      def line_regex
+        /(\\.|[^\\])*?(\n|$)/m
+      end
+
+      def comment_regex
+        /\A(?:#.*|[<][.]+[>]|[.]+)\z/
+      end
+
+      def stream_tokens(input, &output)
         input = StringScanner.new(input)
         lang_lexer.reset!
         output_lexer.reset!
 
-        while !input.eos? and input.scan /(\\.|[^\\])*?(\n|$)/
-          if prompt_regex =~ input[0]
-            puts "console: matched prompt #{input[0].inspect}" if @debug
-            output_lexer.reset!
+        process_line(input, &output) while !input.eos?
+      end
 
-            yield Generic::Prompt, $&
+      def process_line(input, &output)
+        input.scan(line_regex)
 
-            # make sure to take care of initial whitespace
-            # before we pass to the lang lexer so it can determine where
-            # the "real" beginning of the line is
-            $' =~ /\A\s*/
-            yield Text, $&
+        if prompt_regex =~ input[0]
+          puts "console: matched prompt #{input[0].inspect}" if @debug
+          output_lexer.reset!
 
-            lang_lexer.lex $', continue: true do |tok, val|
-              yield tok, val
-            end
-          elsif input[0].start_with?('#') || /\A(?:[<][.]+[>]|[.]+)\z/ =~ input[0].chomp
-            puts "console: matched comment #{input[0].inspect}" if @debug
-            output_lexer.reset!
-            lang_lexer.reset!
+          yield Generic::Prompt, $&
 
-            yield Comment, input[0]
-          else
-            puts "console: matched output #{input[0].inspect}" if @debug
-            lang_lexer.reset!
+          # make sure to take care of initial whitespace
+          # before we pass to the lang lexer so it can determine where
+          # the "real" beginning of the line is
+          $' =~ /\A\s*/
+          yield Text, $& unless $&.empty?
 
-            output_lexer.lex(input[0], continue: true) do |tok, val|
-              yield tok, val
-            end
-          end
+          lang_lexer.lex($', continue: true, &output)
+        elsif comment_regex =~ input[0].strip
+          puts "console: matched comment #{input[0].inspect}" if @debug
+          output_lexer.reset!
+          lang_lexer.reset!
+
+          yield Comment, input[0]
+        else
+          puts "console: matched output #{input[0].inspect}" if @debug
+          lang_lexer.reset!
+
+          output_lexer.lex(input[0], continue: true, &output)
         end
       end
     end

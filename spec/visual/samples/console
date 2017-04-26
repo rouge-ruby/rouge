@@ -33,3 +33,8 @@ $
        --armor \
        --export-secret-key $KEYID
 
+; cat <<HELLO
+> HELLO0
+> HELLO
+HELLO0
+;

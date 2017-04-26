@@ -30,7 +30,7 @@ module Rouge
           out = @prompt.split(',')
           out.empty? ? %w($ # >) : out
         else
-          %w($ # >)
+          %w($ # > ;)
         end.reject { |c| c.empty? }
       end
 

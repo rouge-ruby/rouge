@@ -5,6 +5,7 @@ module Rouge
     class IgorPro < CSSTheme
       name 'igorpro'
 
+      style Text,                             :fg => '#444444'
       style Comment::Preproc,                 :fg => '#CC00A3'
       style Comment::Special,                 :fg => '#CC00A3'
       style Comment,                          :fg => '#FF0000'

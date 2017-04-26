@@ -42,7 +42,7 @@ module Rouge
         attr_reader :keywords
       end
       # Load Lasso keywords from separate YML file
-      @keywords = ::YAML.load(File.open(Pathname.new(__FILE__).dirname.join('lasso/keywords.yml'))).tap do |h|
+      @keywords = ::YAML.load_file(Pathname.new(__FILE__).dirname.join('lasso/keywords.yml')).tap do |h|
         h.each do |k,v|
           h[k] = Set.new v
         end

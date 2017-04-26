@@ -28,3 +28,8 @@ $ sudo su -
 # exit
 logout
 $ 
+
+~$ gpg2 --output private.key.asc \
+       --armor \
+       --export-secret-key $KEYID
+

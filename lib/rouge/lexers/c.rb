@@ -69,6 +69,15 @@ module Rouge
       state :expr_bol do
         mixin :inline_whitespace
 
+        # OpenMP
+        rule /(^\s*)(#pragma\s+omp)([ \t]*)([^\\\r\n]+)(\\?)$/i do |m|
+          token Text::Whitespace, m[1]
+          token Keyword::Reserved, m[2]
+          token Text::Whitespace, m[3]
+          delegate OpenMP, m[4]
+          token Punctuation, m[5]
+        end
+
         rule /#if\s0/, Comment, :if_0
         rule /#/, Comment::Preproc, :macro
 
@@ -123,6 +132,8 @@ module Rouge
           elsif self.class.reserved.include? name
             token Keyword::Reserved
           elsif self.class.builtins.include? name
+            token Name::Builtin
+          elsif OpenMP::runtimeroutines.include? name
             token Name::Builtin
           else
             token Name

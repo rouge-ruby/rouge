@@ -2649,3 +2649,40 @@ fast_yield:
 	return retval;
 }
 
+int main_omp()
+{
+  int i, j;
+  int *ptr_i, *ptr_j;
+
+  i = 1;
+  j = 2;
+
+  ptr_i = &i;
+  ptr_j = &j;
+
+  #pragma omp parallel private(i) firstprivate(j)
+  {
+    i = 3;
+    j = j + 2;
+    assert (*ptr_i == 1 && *ptr_j == 2);
+  }
+
+  assert(i == 1 && j == 2);
+
+  return 0;
+}
+
+void init_matrix(Matrix *mat, int n)
+{
+  mat->A = (double *)malloc(n*sizeof(double));
+  mat->N = n;
+  #pragma omp target enter data map(alloc:mat->A[:n])
+}
+
+void free_matrix(Matrix *mat)
+{
+  #pragma omp target exit data map(delete:mat->A[:mat->N])
+  mat->N = 0;
+  free(mat->A);
+  mat->A = NULL;
+}

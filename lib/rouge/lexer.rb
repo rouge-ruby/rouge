@@ -11,6 +11,8 @@ module Rouge
   class Lexer
     include Token::Tokens
 
+    @option_docs = {}
+
     class << self
       # Lexes `stream` with the given options.  The lex is delegated to a
       # new instance.
@@ -80,6 +82,14 @@ module Rouge
         else
           @desc = arg
         end
+      end
+
+      def option_docs
+        @option_docs ||= InheritableHash.new(superclass.option_docs)
+      end
+
+      def option(name, desc)
+        option_docs[name.to_s] = desc
       end
 
       # Specify or get the path name containing a small demo for

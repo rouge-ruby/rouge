@@ -6,10 +6,16 @@ module Rouge
       tag 'console'
       aliases 'terminal', 'shell_session', 'shell-session'
       filenames '*.cap'
+      desc 'A generic lexer for shell sessions. Accepts ?lang and ?output lexer options, a ?prompt option, and ?comments to enable # comments.'
+
+      option :lang, 'the shell language to lex (default: shell)'
+      option :output, 'the output language (default: plaintext?token=Generic.Output)'
+      option :prompt, 'comma-separated list of strings that indicate the end of a prompt. (default: $,#,>,;)'
+      option :comments, 'enable hash-comments at the start of a line - otherwise interpreted as a prompt. (default: false, implied by ?prompt not containing `#`)'
 
       def initialize(options={})
         @prompt = options.delete(:prompt)
-        @lang = options.delete(:parent)
+        @lang = options.delete(:lang)
         @output = options.delete(:output)
         @comments = options.delete(:comments)
 

@@ -15,6 +15,10 @@ module Rouge
 
       default_options :parent => 'html'
 
+      option :start_inline, 'Whether to start with inline php or require <?php ... ?>. (default: best guess)'
+      option :funcnamehighlighting, 'Whether to highlight builtin functions (default: true)'
+      option :disabledmodules, 'Disable certain modules from being highlighted as builtins (default: empty)'
+
       def initialize(opts={})
         # if truthy, the lexer starts highlighting with php code
         # (no <?php required)

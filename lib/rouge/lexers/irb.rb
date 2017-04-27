@@ -8,6 +8,11 @@ module Rouge
       tag 'irb'
       aliases 'pry'
 
+      desc 'Shell sessions in IRB or Pry'
+
+      # unlike the superclass, we do not accept any options
+      @option_docs = {}
+
       def output_lexer
         @output_lexer ||= IRBOutputLexer.new(@options)
       end
@@ -18,6 +23,10 @@ module Rouge
 
       def prompt_regex
         /^.*?(irb|pry).*?[>"*]/
+      end
+
+      def allow_comments?
+        true
       end
     end
 

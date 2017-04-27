@@ -17,6 +17,8 @@ module Rouge
       end
     end
 
+    option :parent, "the parent language (default: html)"
+
     start { parent.reset! }
   end
 end

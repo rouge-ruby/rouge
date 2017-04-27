@@ -1,0 +1,2 @@
+{ this => is stdout text }
+=> #<Object:0x0056182cb182b8 @foo=#<Object:0x0056182cb63100 @bar=3>>

@@ -10,6 +10,9 @@ module Rouge
 
       mimetypes 'text/x-lua', 'application/x-lua'
 
+      option :function_highlighting, 'Whether to highlight builtin functions (default: true)'
+      option :disabled_modules, 'builtin modules to disable'
+
       def initialize(opts={})
         @function_highlighting = opts.delete(:function_highlighting) { true }
         @disabled_modules = opts.delete(:disabled_modules) { [] }

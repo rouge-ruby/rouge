@@ -13,13 +13,12 @@ module Rouge
       option :prompt, 'comma-separated list of strings that indicate the end of a prompt. (default: $,#,>,;)'
       option :comments, 'enable hash-comments at the start of a line - otherwise interpreted as a prompt. (default: false, implied by ?prompt not containing `#`)'
 
-      def initialize(options={})
-        @prompt = options.delete(:prompt)
-        @lang = options.delete(:lang)
-        @output = options.delete(:output)
-        @comments = options.delete(:comments)
-
-        super(options)
+      def initialize(*)
+        super
+        @prompt = list_option(:prompt) { nil }
+        @lang = lexer_option(:lang) { 'shell' }
+        @output = lexer_option(:output) { PlainText.new(token: Generic::Output) }
+        @comments = bool_option(:comments) { false }
       end
 
       def prompt_regex

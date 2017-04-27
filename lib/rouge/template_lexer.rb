@@ -10,11 +10,7 @@ module Rouge
     # the parent lexer - the one being templated.
     def parent
       return @parent if instance_variable_defined? :@parent
-      @parent = option(:parent) || 'html'
-      if @parent.is_a? ::String
-        lexer_class = Lexer.find(@parent)
-        @parent = lexer_class.new(self.options)
-      end
+      @parent = lexer_option(:parent) { 'html' }
     end
 
     option :parent, "the parent language (default: html)"

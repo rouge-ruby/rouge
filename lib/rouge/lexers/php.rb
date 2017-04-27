@@ -13,20 +13,18 @@ module Rouge
                 '*.module', '*.inc', '*.profile', '*.install', '*.test'
       mimetypes 'text/x-php'
 
-      default_options :parent => 'html'
-
       option :start_inline, 'Whether to start with inline php or require <?php ... ?>. (default: best guess)'
       option :funcnamehighlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabledmodules, 'Disable certain modules from being highlighted as builtins (default: empty)'
 
-      def initialize(opts={})
+      def initialize(*)
+        super
+
         # if truthy, the lexer starts highlighting with php code
         # (no <?php required)
-        @start_inline = opts.delete(:start_inline)
-        @funcnamehighlighting = opts.delete(:funcnamehighlighting) { true }
-        @disabledmodules = opts.delete(:disabledmodules) { [] }
-
-        super(opts)
+        @start_inline = bool_option(:start_inline)
+        @funcnamehighlighting = bool_option(:funcnamehighlighting) { true }
+        @disabledmodules = list_option(:disabledmodules)
       end
 
       def self.builtins

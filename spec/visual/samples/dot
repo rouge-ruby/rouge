@@ -1,0 +1,18 @@
+/*
+ * hacked from Wikipedia
+ */
+
+digraph graphname {
+ // This attribute applies to the graph itself
+ size="1,1";
+ // The label attribute can be used to change the label of a node
+ a [label="Foo"];
+ // Here, the node shape is changed.
+ b [shape=box];
+ // These edges both have different line properties
+ a -> b -> c [color=blue];
+ b -> d [style=dotted];
+ // [style=invis] hides a node.
+
+ testing [some=<pretty <i>nasty<font style="red">HTML</font></i>>];
+}

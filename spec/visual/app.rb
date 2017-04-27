@@ -29,6 +29,8 @@ class VisualTestApp < Sinatra::Application
   before do
     reload_source!
 
+    Rouge::Lexer.enable_debug!
+
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
     @theme = theme_class.new(scope: '.codehilite')

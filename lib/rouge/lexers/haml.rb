@@ -20,7 +20,7 @@ module Rouge
         return 0.1 if text.start_with? '!!!'
       end
 
-      option 'filters[name]', 'Mapping of lexers to use for haml :filters'
+      option 'filters[filter_name]', 'Mapping of lexers to use for haml :filters'
       attr_reader :filters
       # @option opts :filters
       #   A hash of filter name to lexer of how various filters should be

@@ -22,7 +22,7 @@ module Rouge
 
         # if truthy, the lexer starts highlighting with php code
         # (no <?php required)
-        @start_inline = bool_option(:start_inline)
+        @start_inline = bool_option(:start_inline) { :guess }
         @funcnamehighlighting = bool_option(:funcnamehighlighting) { true }
         @disabledmodules = list_option(:disabledmodules)
       end
@@ -43,10 +43,6 @@ module Rouge
         end
       end
 
-      def start_inline?
-        !!@start_inline
-      end
-
       # source: http://php.net/manual/en/language.variables.basics.php
       # the given regex is invalid utf8, so... we're using the unicode
       # "Letter" property instead.
@@ -55,11 +51,13 @@ module Rouge
 
       start do
         case @start_inline
-        when true, 1, '1'
+        when true
           push :template
           push :php
-        when false, 0, '0'
+        when false
           push :template
+        when :guess
+          # pass
         end
       end
 

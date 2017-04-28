@@ -291,7 +291,7 @@ module Rouge
     def as_list(val)
       case val
       when Array
-        val
+        val.flat_map { |v| as_list(v) }
       when String
         val.split(',')
       else
@@ -307,7 +307,8 @@ module Rouge
       when Lexer
         val
       when String
-        Lexer.find(val).new(@options)
+        lexer_class = Lexer.find(val)
+        lexer_class && lexer_class.new(@options)
       end
     end
 
@@ -322,7 +323,7 @@ module Rouge
     end
 
     def bool_option(name, &default)
-      as_bool(@options.delete(name.to_s, &default))
+      @options.key?(name.to_s) ? as_bool(@options[name.to_s]) : default.call
     end
 
     def string_option(name, &default)

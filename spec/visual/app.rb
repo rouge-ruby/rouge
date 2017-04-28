@@ -21,6 +21,10 @@ class VisualTestApp < Sinatra::Application
     load ROUGE_LIB
   end
 
+  def query_string
+    env['rack.request.query_string']
+  end
+
   configure do
     set :root, BASE
     set :views, BASE.join('templates')
@@ -42,17 +46,11 @@ class VisualTestApp < Sinatra::Application
   end
 
   get '/:lexer' do |lexer_name|
-    lexer_class = Rouge::Lexer.find(lexer_name)
-    halt 404 unless lexer_class
-    @sample = File.read(SAMPLES.join(lexer_class.tag), encoding: 'utf-8')
+    @lexer = Rouge::Lexer.find_fancy("#{lexer_name}?#{query_string}")
+    halt 404 unless @lexer
+    @sample = File.read(SAMPLES.join(@lexer.class.tag), encoding: 'utf-8')
 
-    lexer_options = {}
-    params.each do |k, v|
-      lexer_options[k.to_sym] = v
-    end
-
-    @title = "#{lexer_class.tag} | Visual Test"
-    @lexer = lexer_class.new(lexer_options)
+    @title = "#{@lexer.class.tag} | Visual Test"
     @highlighted = Rouge.highlight(@sample, @lexer, @formatter)
 
     erb :lexer

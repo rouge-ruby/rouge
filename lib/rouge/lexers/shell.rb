@@ -42,13 +42,11 @@ module Rouge
         rule /\b(#{BUILTINS})\s*\b(?!\.)/, Name::Builtin
         rule /[.](?=\s)/, Name::Builtin
 
-        rule /^\S*[\$%>#] +/, Generic::Prompt
-
         rule /(\b\w+)(=)/ do |m|
           groups Name::Variable, Operator
         end
 
-        rule /[\[\]{}()!=]/, Operator
+        rule /[\[\]{}()!=>]/, Operator
         rule /&&|\|\|/, Operator
 
         # here-string

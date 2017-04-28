@@ -38,3 +38,6 @@ $
 > HELLO
 HELLO0
 ;
+
+$ foo ; bar
+$ foo --thing > bar.txt

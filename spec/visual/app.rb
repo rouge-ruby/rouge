@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'bundler'
-Bundler.require :development
+Bundler.require
 
 # stdlib
 require 'pathname'

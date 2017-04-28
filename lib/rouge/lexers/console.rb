@@ -18,7 +18,7 @@ module Rouge
         @prompt = list_option(:prompt) { nil }
         @lang = lexer_option(:lang) { 'shell' }
         @output = lexer_option(:output) { PlainText.new(token: Generic::Output) }
-        @comments = bool_option(:comments) { false }
+        @comments = bool_option(:comments) { :guess }
       end
 
       def prompt_regex
@@ -28,35 +28,29 @@ module Rouge
       end
 
       def end_chars
-        @end_chars ||= case @prompt
-        when Array
-          @prompt
-        when String
-          out = @prompt.split(',')
-          out.empty? ? %w($ # >) : out
+        @end_chars ||= if @prompt.any?
+          @prompt.reject { |c| c.empty? }
         else
           %w($ # > ;)
-        end.reject { |c| c.empty? }
+        end
       end
 
       # whether to allow comments. if manually specifying a prompt that isn't
       # simply "#", we flag this to on
       def allow_comments?
-        return true if @prompt && !@prompt.empty? && !end_chars.include?('#')
-
         case @comments
-        when false, nil, 0, '0'
-          false
+        when :guess
+          @prompt && !@prompt.empty? && !end_chars.include?('#')
         else
-          true
+          @comments
         end
       end
 
       def prompt_prefix_regex
         if allow_comments?
-          /^[^<]+?/
+          /^[^<#]*?/
         else
-          /^[^<]*?/
+          /^.*?/
         end
       end
 
@@ -91,7 +85,7 @@ module Rouge
       end
 
       def comment_regex
-        /\A(?:#.*|[<][.]+[>]|[.]+)\z/
+        /\A\s*?#/
       end
 
       def stream_tokens(input, &output)
@@ -105,7 +99,13 @@ module Rouge
       def process_line(input, &output)
         input.scan(line_regex)
 
-        if prompt_regex =~ input[0]
+        if input[0] =~ /\A\s*(?:<[.]+>|[.]+)\s*\z/
+          puts "console: matched snip #{input[0].inspect}" if @debug
+          output_lexer.reset!
+          lang_lexer.reset!
+
+          yield Comment, input[0]
+        elsif prompt_regex =~ input[0]
           puts "console: matched prompt #{input[0].inspect}" if @debug
           output_lexer.reset!
 

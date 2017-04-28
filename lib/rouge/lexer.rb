@@ -323,7 +323,11 @@ module Rouge
     end
 
     def bool_option(name, &default)
-      @options.key?(name.to_s) ? as_bool(@options[name.to_s]) : default.call
+      if @options.key?(name.to_s)
+        as_bool(@options[name.to_s])
+      else
+        default ? default.call : false
+      end
     end
 
     def string_option(name, &default)

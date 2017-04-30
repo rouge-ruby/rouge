@@ -111,7 +111,7 @@ module Rouge
         rule /\*/, Keyword
 
         rule /;/, Text
-        rule /[^=\*\s{}()$"'`\\<]+/, Text
+        rule /[^=\*\s{}()$"'`<]+/, Text
         rule /\d+(?= |\Z)/, Num
         rule /</, Text
         mixin :interp

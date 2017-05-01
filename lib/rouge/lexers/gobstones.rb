@@ -22,7 +22,7 @@ module Rouge
 
       state :comments do
         def comment_between(start, finish)
-          /#{start}(.|\s)*?#{finish}/m
+          /#{start}.*?#{finish}/m
         end
 
         rule comment_between('{-', '-}'), Comment::Multiline
@@ -47,7 +47,7 @@ module Rouge
         mixin :functions
         mixin :symbols
         rule /\d+/, Literal::Number
-        rule /"(.|\s)+?"/, Literal::String
+        rule /".+?"/, Literal::String
       end
 
       state :functions do

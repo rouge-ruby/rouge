@@ -55,8 +55,9 @@ package
         private function variousTypes(defaultValue:String = ''):void
         {
             var nil:Object = null;
-            var b1:Boolean = true;
-            var b2:Boolean = false;
+            var b1:Boolean = false;
+            var b2:Boolean = B instanceof C;
+            var b3:Boolean = A typeof I;
             var n1:Number = 0.123;
             var n2:Number = 12345;
             var n3:Number = 0xfed;

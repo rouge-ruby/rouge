@@ -33,16 +33,14 @@ describe Rouge::Lexers::LoomScript do
       end
 
       it 'identifies declarations' do
-        code = <<~EOF
-        delegate ToCompute(s:String, o:Object):Number;
+        tokens = subject.lex(
+        %q(delegate ToCompute(s:String, o:Object):Number;
         public enum Enumeration {}
         struct P {
             public var x:Number = 0;
             public var y:Number = 0;
             public static operator function =(a:P, b:P):P {}
-        }
-        EOF
-        tokens = subject.lex(code).to_a
+        })).to_a
         assert_token_type_at(tokens, [18, 24, 32, 45, 60, 62], 'Keyword.Declaration')
       end
 

@@ -70,11 +70,9 @@ describe Rouge::Lexers::Actionscript do
       end
 
       it 'identifies declarations' do
-        code = <<~EOF
-        public interface I {}
-        public class C {}
-        EOF
-        tokens = subject.lex(code).to_a
+        tokens = subject.lex(
+        %q(public interface I {}
+        public class C {})).to_a
         assert_token_type_at(tokens, [2, 10], 'Keyword.Declaration')
       end
 
@@ -121,15 +119,13 @@ describe Rouge::Lexers::Actionscript do
       end
 
       it 'identifies labels' do
-        code = <<~EOF
-        switch (Math.floor(Math.random()) * 3 + 1)
+        tokens = subject.lex(
+        %q(switch (Math.floor(Math.random()) * 3 + 1)
         {
             case 1 : trace('rock'); break;
             case 2 : trace('paper'); break;
             default: trace('scissors'); break;
-        }
-        EOF
-        tokens = subject.lex(code).to_a
+        })).to_a
         assert_token_type_at(tokens, [51], 'Name.Label')
 
         # code = <<~EOF

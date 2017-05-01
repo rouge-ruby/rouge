@@ -75,34 +75,52 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          for in while do break return continue switch case default
-          if else throw try catch finally new delete typeof is
-          this with
-        )
-      end
+          break case continue default do else for each in if label
+          return super switch throw try catch finally while with
 
-      def self.declarations
-        @declarations ||= Set.new %w(var with function)
-      end
-
-      def self.reserved
-        @reserved ||= Set.new %w(
-          dynamic final internal native public protected private class const
-          override static package interface extends implements namespace
-          set get import include super flash_proxy object_proxy trace
+          delete is new typeof
         )
       end
 
       def self.constants
-        @constants ||= Set.new %w(true false null NaN Infinity undefined)
+        @constants ||= Set.new %w(
+          false Infinity NaN null this true undefined
+        )
+      end
+
+      def self.declarations
+        @declarations ||= Set.new %w(
+          class const extends function get implements
+          interface namespace package set var
+        )
+      end
+
+      def self.reserved
+        @reserved ||= Set.new %w(
+          import include flash_proxy object_proxy
+        )
+      end
+
+      def self.types
+        @types ||= Set.new %w(
+          ArgumentError Array Boolean Class Date DefinitionError Error
+          EvalError Function int JSON Math Namespace Number Null Object QName
+          RangeError ReferenceError RegExp SecurityError String SyntaxError
+          TypeError uint void URIError Vector VerifyError XML XMLList
+        )
+      end
+
+      def self.attributes
+        @attributes ||= Set.new %w(
+          dynamic final internal native override
+          private protected public static
+        )
       end
 
       def self.builtins
-        @builtins ||= %w(
-          void Function Math Class
-          Object RegExp decodeURI
-          decodeURIComponent encodeURI encodeURIComponent
-          eval isFinite isNaN parseFloat parseInt this
+        @builtins ||= Set.new %w(
+          arguments decodeURI decodeURIComponent encodeURI encodeURIComponent
+          escape isFinite isNaN isXMLName parseFloat parseInt trace unescape
         )
       end
 
@@ -135,12 +153,16 @@ module Rouge
           elsif self.class.declarations.include? m[0]
             token Keyword::Declaration
             push :expr_start
+          elsif self.class.attributes.include? m[0]
+            token Name::Attribute
           elsif self.class.reserved.include? m[0]
             token Keyword::Reserved
           elsif self.class.constants.include? m[0]
             token Keyword::Constant
           elsif self.class.builtins.include? m[0]
             token Name::Builtin
+          elsif self.class.types.include? m[0]
+            token Keyword::Type
           else
             token Name::Other
           end

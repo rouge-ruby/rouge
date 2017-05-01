@@ -18,46 +18,39 @@ module Rouge
       def self.keywords
         @keywords ||= Set.new %w(
           break case continue default delete do each else
-          for if in return switch while with yield
+          for each in if return super switch while with yield
 
           as is instanceof new typeof
         )
       end
 
+      def self.constants
+        @constants ||= Set.new %w(
+          false Infinity NaN null this true undefined
+        )
+      end
+
       def self.declarations
         @declarations ||= Set.new %w(
-          class delegate enum function interface
-          namespace operator package struct var
+          class const delegate enum extends function get implements
+          interface namespace operator package set struct var
         )
       end
 
       def self.reserved
         @reserved ||= Set.new %w(
-          abstract const dynamic extends final get
-          implements import include internal native
-          override private protected public
-          set static super this
+          import include
 
           debugger export goto syncronized transient volatile
         )
       end
 
-      def self.constants
-        @constants ||= Set.new %w(
-          false NaN null true undefined void
-        )
-      end
+      def self.types
+        base_types = %w(
+          int uint void
 
-      def self.builtins
-        # builtin functions
-        @builtins ||= %w(
-          isNaN parseFloat parseInt trace
-        )
-
-        # builtin types
-        @builtins ||= %w(
           Assembly Boolean ByteArray Coroutine Date Dictionary File Function
-          GUID Null Number Object Path Process Socket String Type Vector Void
+          GUID Null Number Object Path Process Socket String Type Vector
 
           AbstractClassError ArgumentError Error
           IllegalOperationError RangeError TypeError
@@ -66,12 +59,26 @@ module Rouge
           XMLElement XMLError XMLNode XMLPrinter XMLText
         )
 
-        # builtin utilities
-        @builtins ||= %w(
+        utils = %w(
           Base64 CommandLine Console Debug GC IO JSON Math Metrics
           NativeDelegate ObjectInspector Platform Profiler Random Telemetry VM
 
           BaseApplication ConsoleApplication
+        )
+
+        @types ||= Set.new (base_types + utils)
+      end
+
+      def self.attributes
+        @attributes ||= Set.new %w(
+          abstract dynamic final internal native
+          override private protected public static
+        )
+      end
+
+      def self.builtins
+        @builtins ||= Set.new %w(
+          isNaN parseFloat parseInt trace
         )
       end
 

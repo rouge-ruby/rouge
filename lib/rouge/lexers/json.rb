@@ -3,6 +3,7 @@
 module Rouge
   module Lexers
     class JSON < RegexLexer
+      title 'JSON'
       desc "JavaScript Object Notation (json.org)"
       tag 'json'
       filenames '*.json'

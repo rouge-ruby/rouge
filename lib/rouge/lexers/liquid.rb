@@ -210,7 +210,7 @@ module Rouge
 
       state :variable do
         rule /\.(?=\w)/, Punctuation
-        rule /[a-zA-Z_]\w*/, Name::Variable
+        rule /[a-zA-Z_]\w*\??/, Name::Variable
       end
 
       state :string do

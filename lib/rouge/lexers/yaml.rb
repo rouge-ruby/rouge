@@ -63,6 +63,7 @@ module Rouge
 
       def set_indent(match, opts={})
         if indent < @next_indent
+          puts "    yaml: indenting #{indent}/#{@next_indent}" if @debug
           @indent_stack << @next_indent
         end
 
@@ -122,7 +123,10 @@ module Rouge
         end
 
         # block collection indicators
-        rule(/[?:-](?=[ ]|$)/) { |m| token Punctuation::Indicator; set_indent m[0] }
+        rule(/[?:-](?=[ ]|$)/) do |m|
+          set_indent m[0]
+          token Punctuation::Indicator
+        end
 
         # the beginning of a block line
         rule(/[ ]*/) { |m| token Text; continue_indent(m[0]); pop! }
@@ -166,8 +170,8 @@ module Rouge
 
       state :block_nodes do
         # implicit key
-        rule /:(?=\s|$)/ do |m|
-          token Punctuation::Indicator
+        rule /((?:\w[\w -]*)?)(:)(?=\s|$)/ do |m|
+          groups Name::Attribute, Punctuation::Indicator
           set_indent m[0], :implicit => true
         end
 
@@ -233,7 +237,9 @@ module Rouge
           @block_scalar_indent ||= indent_size
 
           if indent_size < dedent_level
-            pop! 2
+            save_indent m[0]
+            pop!
+            push :indentation
           end
         end
 

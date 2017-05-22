@@ -25,6 +25,10 @@ module Rouge
       new(opts).format(tokens, &b)
     end
 
+    def initialize(opts={})
+      # pass
+    end
+
     # Format a token stream.
     def format(tokens, &b)
       return stream(tokens, &b) if block_given?
@@ -46,5 +50,26 @@ module Rouge
     def stream(tokens, &b)
       raise 'abstract'
     end
+
+  protected
+    def token_lines(tokens, &b)
+      return enum_for(:token_lines, tokens) unless block_given?
+
+      out = []
+      tokens.each do |tok, val|
+        val.scan /\n|[^\n]+/ do |s|
+          if s == "\n"
+            yield out
+            out = []
+          else
+            out << [tok, s]
+          end
+        end
+      end
+
+      # for inputs not ending in a newline
+      yield out if out.any?
+    end
+
   end
 end

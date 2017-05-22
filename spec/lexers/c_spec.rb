@@ -8,6 +8,7 @@ describe Rouge::Lexers::C do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.c'
+      assert_guess :filename => 'FOO.C'
       assert_guess :filename => 'foo.h', :source => 'foo'
     end
 

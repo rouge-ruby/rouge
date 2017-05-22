@@ -1,3 +1,17 @@
+String json = """
+  {
+    "formula": "(a+b)/2",
+    "iid": "c-1"
+  }
+"""
+
+String json = '''
+  {
+    "formula": "(a+b)/2",
+    "iid": "c-1"
+  }
+'''
+
 // This source code comes from http://www.odelia-technologies.com/node/200
 
 package com.odelia.groovy.simpleworkflow

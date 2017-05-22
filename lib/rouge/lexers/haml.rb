@@ -20,43 +20,43 @@ module Rouge
         return 0.1 if text.start_with? '!!!'
       end
 
+      option 'filters[filter_name]', 'Mapping of lexers to use for haml :filters'
+      attr_reader :filters
       # @option opts :filters
       #   A hash of filter name to lexer of how various filters should be
       #   highlighted.  By default, :javascript, :css, :ruby, and :erb
       #   are supported.
       def initialize(opts={})
-        (opts.delete(:filters) || {}).each do |name, lexer|
-          unless lexer.respond_to? :lex
-            lexer = Lexer.find(lexer) or raise "unknown lexer: #{lexer}"
-            lexer = lexer.new(options)
-          end
+        super
 
-          self.filters[name.to_s] = lexer
-        end
-
-        super(opts)
-      end
-
-      def ruby
-        @ruby ||= Ruby.new(options)
-      end
-
-      def html
-        @html ||= HTML.new(options)
-      end
-
-      def filters
-        @filters ||= {
+        default_filters = {
           'javascript' => Javascript.new(options),
           'css' => CSS.new(options),
           'ruby' => ruby,
           'erb' => ERB.new(options),
           'markdown' => Markdown.new(options),
+          'sass' => Sass.new(options),
           # TODO
-          # 'sass' => Sass.new(options),
           # 'textile' => Textile.new(options),
           # 'maruku' => Maruku.new(options),
         }
+
+        @filters = hash_option(:filters, default_filters) do |v|
+          as_lexer(v) || PlainText.new(@options)
+        end
+      end
+
+      def ruby
+        @ruby ||= Ruby.new(@options)
+      end
+
+      def html
+        @html ||= HTML.new(@options)
+      end
+
+      def ruby!(state)
+        ruby.reset!
+        push state
       end
 
       start { ruby.reset!; html.reset! }
@@ -104,7 +104,7 @@ module Rouge
         rule /-/ do
           token Punctuation
           reset_stack
-          push :ruby_line
+          ruby! :ruby_line
         end
 
         # filters
@@ -131,8 +131,9 @@ module Rouge
 
       state :tag do
         mixin :css
-        rule(/\{#{comma_dot}*?\}/) { delegate ruby }
+        rule(/[{]/) { token Punctuation; ruby! :ruby_tag }
         rule(/\[#{dot}*?\]/) { delegate ruby }
+
         rule /\(/, Punctuation, :html_attributes
         rule /\s*\n/, Text, :pop!
 
@@ -153,7 +154,7 @@ module Rouge
         rule /[&!]?[=!]/ do
           token Punctuation
           reset_stack
-          push :ruby_line
+          ruby! :ruby_line
         end
 
         rule(//) { push :plain }
@@ -164,6 +165,10 @@ module Rouge
         rule(/,[ \t]*\n/) { delegate ruby }
         rule /[ ]\|[ \t]*\n/, Str::Escape
         rule(/.*?(?=(,$| \|)?[ \t]*$)/) { delegate ruby }
+      end
+
+      state :ruby_tag do
+        mixin :ruby_inner
       end
 
       state :html_attributes do

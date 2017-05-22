@@ -16,7 +16,7 @@ module Rouge
 
       name = /[A-Z][_A-Z0-9]*/i
       kind_param = /(\d+|#{name})/
-      exponent = /[ED][+-]\d+/
+      exponent = /[ED][+-]?\d+/i
 
       def self.keywords
         # Fortran allows to omit whitespace between certain keywords...

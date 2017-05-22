@@ -29,6 +29,8 @@ module Rouge
         local logout popd printf pushd pwd read readonly set shift
         shopt source suspend test time times trap true type typeset
         ulimit umask unalias unset wait
+
+        ls tar cat grep sudo
       ).join('|')
 
       state :basic do
@@ -38,29 +40,45 @@ module Rouge
         rule /\bcase\b/, Keyword, :case
 
         rule /\b(#{BUILTINS})\s*\b(?!\.)/, Name::Builtin
-
-        rule /^\S*[\$%>#] +/, Generic::Prompt
+        rule /[.](?=\s)/, Name::Builtin
 
         rule /(\b\w+)(=)/ do |m|
           groups Name::Variable, Operator
         end
 
-        rule /[\[\]{}()=]/, Operator
+        rule /[\[\]{}()!=>]/, Operator
         rule /&&|\|\|/, Operator
-        # rule /\|\|/, Operator
 
-        rule /<<</, Operator # here-string
-        rule /<<-?\s*(\'?)\\?(\w+)\1/ do |m|
-          lsh = Str::Heredoc
-          token lsh
-          heredocstr = Regexp.escape(m[2])
+        # here-string
+        rule /<<</, Operator
 
-          push do
-            rule /\s*#{heredocstr}\s*\n/, lsh, :pop!
-            rule /.*?\n/, lsh
-          end
+        rule /(<<-?)(\s*)(\'?)(\\?)(\w+)(\3)/ do |m|
+          groups Operator, Text, Str::Heredoc, Str::Heredoc, Name::Constant, Str::Heredoc
+          @heredocstr = Regexp.escape(m[5])
+          push :heredoc
         end
       end
+
+      state :heredoc do
+        rule /\n/, Str::Heredoc, :heredoc_nl
+        rule /[^$\n]+/, Str::Heredoc
+        mixin :interp
+        rule /[$]/, Str::Heredoc
+      end
+
+      state :heredoc_nl do
+        rule /\s*(\w+)\s*\n/ do |m|
+          if m[1] == @heredocstr
+            token Name::Constant
+            pop! 2
+          else
+            token Str::Heredoc
+          end
+        end
+
+        rule(//) { pop! }
+      end
+
 
       state :double_quotes do
         # NB: "abc$" is literally the string abc$.
@@ -68,6 +86,12 @@ module Rouge
         rule /(?:\$#?)?"/, Str::Double, :pop!
         mixin :interp
         rule /[^"`\\$]+/, Str::Double
+      end
+
+      state :ansi_string do
+        rule /\\./, Str::Escape
+        rule /[^\\']+/, Str::Single
+        mixin :single_quotes
       end
 
       state :single_quotes do
@@ -79,18 +103,21 @@ module Rouge
         rule /\s+/, Text
         rule /\\./, Str::Escape
         rule /\$?"/, Str::Double, :double_quotes
+        rule /\$'/, Str::Single, :ansi_string
 
         # single quotes are much easier than double quotes - we can
         # literally just scan until the next single quote.
         # POSIX: Enclosing characters in single-quotes ( '' )
         # shall preserve the literal value of each character within the
         # single-quotes. A single-quote cannot occur within single-quotes.
-        rule /$?'/, Str::Single, :single_quotes
+        rule /'/, Str::Single, :single_quotes
 
         rule /\*/, Keyword
 
-        rule /;/, Text
-        rule /[^=\*\s{}()$"'`\\<]+/, Text
+        rule /;/, Punctuation
+
+        rule /--?[\w-]+/, Name::Tag
+        rule /[^=\*\s{}()$"'`;\\<]+/, Text
         rule /\d+(?= |\Z)/, Num
         rule /</, Text
         mixin :interp
@@ -111,8 +138,8 @@ module Rouge
 
       state :math do
         rule /\)\)/, Keyword, :pop!
-        rule %r([-+*/%^|&]|\*\*|\|\|), Operator
-        rule /\d+/, Num
+        rule %r([-+*/%^|&!]|\*\*|\|\|), Operator
+        rule /\d+(#\w+)?/, Num
         mixin :root
       end
 
@@ -141,6 +168,7 @@ module Rouge
         rule /\${#?/, Keyword, :curly
         rule /`/, Str::Backtick, :backticks
         rule /\$#?(\w+|.)/, Name::Variable
+        rule /\$[*@]/, Name::Variable
       end
 
       state :root do

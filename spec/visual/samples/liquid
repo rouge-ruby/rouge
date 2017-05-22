@@ -24,6 +24,7 @@ Just regular text - what happens?
 {{ var.field | textilize | markdownify }}
 {{ var.field.property | textilize | markdownify }}
 {{ 'string' | truncate: 100 param='df"g' }}
+{{ variable.nil? }}
 
 {% capture name %}
 {{ title | downcase }}

@@ -10,6 +10,7 @@ describe Rouge::Lexers::CommonLisp do
       assert_guess :filename => 'foo.cl'
       assert_guess :filename => 'foo.lisp'
       assert_guess :filename => 'foo.el'
+      assert_guess :filename => 'foo.asd'
     end
 
     it 'guesses by mimetype' do

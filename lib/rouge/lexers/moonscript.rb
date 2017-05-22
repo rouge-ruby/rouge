@@ -12,10 +12,14 @@ module Rouge
       filenames '*.moon'
       mimetypes 'text/x-moonscript', 'application/x-moonscript'
 
-      def initialize(opts={})
-        @function_highlighting = opts.delete(:function_highlighting) { true }
-        @disabled_modules = opts.delete(:disabled_modules) { [] }
-        super(opts)
+      option :function_highlighting, 'Whether to highlight builtin functions (default: true)'
+      option :disabled_modules, 'builtin modules to disable'
+
+      def initialize(*)
+        super
+
+        @function_highlighting = bool_option(:function_highlighting) { true }
+        @disabled_modules = list_option(:disabled_modules)
       end
 
       def self.analyze_text(text)

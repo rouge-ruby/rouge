@@ -10,7 +10,7 @@ module Rouge
       tag 'powershell'
       aliases 'posh'
       filenames '*.ps1', '*.psm1', '*.psd1'
-      mimetypes 'text/plain'
+      mimetypes 'text/x-powershell'
 
       ATTRIBUTES = %w(
         CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI SupportsPaging

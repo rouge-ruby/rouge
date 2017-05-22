@@ -822,8 +822,8 @@
 ;; We need this function only for MAKE-ARRAY, UPGRADED-ARRAY-ELEMENT-TYPE and
 ;; OPEN and can therefore w.l.o.g. replace
 ;;   type  with  `(OR ,type (MEMBER 0))
-#| ;; The original implementation calls canonicalize-type and then applies
-   ;; a particular SUBTYPE variant:
+;; The original implementation calls canonicalize-type and then applies
+;; a particular SUBTYPE variant:
  (defun subtype-integer (type)
   (macrolet ((yes () '(return-from subtype-integer (values low high)))
              (no () '(return-from subtype-integer nil))
@@ -887,7 +887,7 @@
             (when (numberp high) (decf high)))
           (yes))
         (unknown)))))
-|# ;; This implementation inlines the (tail-recursive) canonicalize-type
+   ;; This implementation inlines the (tail-recursive) canonicalize-type
    ;; function. Its advantage is that it doesn't cons as much.
    ;; (For example, (subtype-integer '(UNSIGNED-BYTE 8)) doesn't cons.)
 (defun subtype-integer (type)
@@ -1024,8 +1024,6 @@
           ((encodingp type) (no))
           (t (typespec-error 'subtypep type)))))
 
-#| TODO: Fix subtype-integer such that this works.
-Henry Baker:
  (defun type-null (x)
   (values (and (eq 'bit (upgraded-array-element-type `(or bit ,x)))
                (not (typep 0 x))
@@ -1034,7 +1032,6 @@ Henry Baker:
  (type-null '(and symbol number))
  (type-null '(and integer symbol))
  (type-null '(and integer character))
-|#
 
 ;; Determines a sequence kind (an atom, as defined in defseq.lisp: one of
 ;;   LIST - stands for LIST
@@ -1204,3 +1201,25 @@ Henry Baker:
   (fmakunbound 'clos::class-name))
 
 "CONSP" XXX: (SINGLE-FLOAT-VALUE #.ext::single-float-negative-infinity #S(C::VV :EXT:LOCATION 0 :C::USED-P NIL :C::PERMANENT-P T :C::VALUE #.ext::single-float-negative-infinity))
+
+;; ============================================================================
+
+;;; ASDF examples
+(defsystem "foo"
+  :version (:read-file-form "variables" :at (3 2))
+  :components
+  ((:file "package")
+   (:file "variables" :depends-on ("package"))
+   (:module "mod"
+     :depends-on ("package")
+     :serial t
+     :components ((:file "utils")
+                  (:file "reader")
+                  (:file "cooker")
+                  (:static-file "data.raw"))
+     :output-files (compile-op (o c) (list "data.cooked"))
+     :perform (compile-op :after (o c)
+        (cook-data
+         :in (component-pathname (find-component c "data.raw"))
+         :out (first (output-files o c)))))
+   (:file "foo" :depends-on ("mod"))))

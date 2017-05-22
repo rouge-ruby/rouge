@@ -191,6 +191,8 @@ module Rouge
         rule /@#{identifier}/, Keyword, :at_rule
         rule identifier, Name::Tag
         rule %r([~^*!%&\[\]()<>|+=@:;,./?-]), Operator
+        rule /"(\\\\|\\"|[^"])*"/, Str::Single
+        rule /'(\\\\|\\'|[^'])*'/, Str::Double
       end
 
       state :value do

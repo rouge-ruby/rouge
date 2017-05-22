@@ -20,6 +20,13 @@ if ( !file_exists( dirname(__FILE__) . '/wp-config.php') ) {
     );
 }
 
+// unicode variable names
+$Δ = 1;
+++$_Δ;
+echo $ΔΔ;
+
+"thing {$thing->other_thing()}"
+
 /**
  *  Zip class file
  *

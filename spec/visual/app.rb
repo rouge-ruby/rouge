@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'bundler'
-Bundler.require :development
+Bundler.require
 
 # stdlib
 require 'pathname'
@@ -14,9 +14,15 @@ class VisualTestApp < Sinatra::Application
 
   ROUGE_LIB = ROOT.join('lib/rouge.rb')
 
+  DEMOS = ROOT.join('lib/rouge/demos')
+
   def reload_source!
     Object.send :remove_const, :Rouge
     load ROUGE_LIB
+  end
+
+  def query_string
+    env['rack.request.query_string']
   end
 
   configure do
@@ -27,28 +33,24 @@ class VisualTestApp < Sinatra::Application
   before do
     reload_source!
 
+    Rouge::Lexer.enable_debug!
+
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
-    @theme = theme_class.new
+    @theme = theme_class.new(scope: '.codehilite')
 
     formatter_opts = { :line_numbers => params[:line_numbers] }
     formatter_opts[:inline_theme] = @theme if params[:inline]
 
-    @formatter = Rouge::Formatters::HTML.new(formatter_opts)
+    @formatter = Rouge::Formatters::HTMLLegacy.new(formatter_opts)
   end
 
   get '/:lexer' do |lexer_name|
-    lexer_class = Rouge::Lexer.find(lexer_name)
-    halt 404 unless lexer_class
-    @sample = File.read(SAMPLES.join(lexer_class.tag), encoding: 'utf-8')
+    @lexer = Rouge::Lexer.find_fancy("#{lexer_name}?#{query_string}")
+    halt 404 unless @lexer
+    @sample = File.read(SAMPLES.join(@lexer.class.tag), encoding: 'utf-8')
 
-    lexer_options = {}
-    params.each do |k, v|
-      lexer_options[k.to_sym] = v
-    end
-
-    @title = "#{lexer_class.tag} | Visual Test"
-    @lexer = lexer_class.new(lexer_options)
+    @title = "#{@lexer.class.tag} | Visual Test"
     @highlighted = Rouge.highlight(@sample, @lexer, @formatter)
 
     erb :lexer
@@ -56,7 +58,7 @@ class VisualTestApp < Sinatra::Application
 
 
   get '/' do
-    @samples = SAMPLES.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
+    @samples = DEMOS.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
     @samples.map!(&Rouge::Lexer.method(:find))
 
     erb :index

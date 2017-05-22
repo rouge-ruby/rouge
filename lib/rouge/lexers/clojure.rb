@@ -9,7 +9,7 @@ module Rouge
       tag 'clojure'
       aliases 'clj', 'cljs'
 
-      filenames '*.clj', '*.cljs'
+      filenames '*.clj', '*.cljs', '*.cljc', 'build.boot'
 
       mimetypes 'text/x-clojure', 'application/x-clojure'
 
@@ -73,7 +73,7 @@ module Rouge
       end
 
       state :root do
-        rule /;.*?\n/, Comment::Single
+        rule /;.*?$/, Comment::Single
         rule /\s+/m, Text::Whitespace
 
         rule /-?\d+\.\d+/, Num::Float
@@ -86,7 +86,7 @@ module Rouge
         rule /\\(.|[a-z]+)/i, Str::Char
 
 
-        rule /~@|[`\'#^~&]/, Operator
+        rule /~@|[`\'#^~&@]/, Operator
 
         rule /(\()(\s*)(#{identifier})/m do |m|
           token Punctuation, m[1]

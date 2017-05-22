@@ -67,3 +67,7 @@ ul#nav li.new {
   unrecognized-prop: 1;
   -moz-prefixed-prop: 2;
 }
+
+a[target="_blank"] { 
+    background-color: yellow;
+}

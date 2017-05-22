@@ -12,3 +12,30 @@
   </tbody>
 </table>
 <% end %>
+
+<% header_tag = 'h1' %>
+
+<<%= header_tag %>>
+  it's a header!
+</<%= header_tag %>>
+
+<p>
+  Some text
+</p>
+<script>
+  var foo = 1;
+  var bar = <%= bar %>;
+  var baz = {
+    a: 1,
+    b: 2
+  };
+</script>
+<style>
+.foo {
+  line-height: <%= @line_height %>
+}
+</style>
+<p>
+  Some another text
+</p>
+thumbsup 0

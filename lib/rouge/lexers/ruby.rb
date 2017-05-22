@@ -79,7 +79,7 @@ module Rouge
 
       state :strings do
         mixin :symbols
-        rule /\b[a-z_]\w*?:\s+/, Str::Symbol, :expr_start
+        rule /\b[a-z_]\w*?[?!]?:\s+/, Str::Symbol, :expr_start
         rule /'(\\\\|\\'|[^'])*'/, Str::Single
         rule /"/, Str::Double, :simple_string
         rule /(?<!\.)`/, Str::Backtick, :simple_backtick
@@ -108,12 +108,14 @@ module Rouge
       )
 
       keywords_pseudo = %w(
-        initialize new loop include extend raise attr_reader attr_writer
-        attr_accessor alias_method attr catch throw private module_function
+        loop include extend raise
+        alias_method attr catch throw private module_function
         public protected true false nil __FILE__ __LINE__
       )
 
       builtins_g = %w(
+        attr_reader attr_writer attr_accessor
+
         __id__ __send__ abort ancestors at_exit autoload binding callcc
         caller catch chomp chop class_eval class_variables clone
         const_defined\? const_get const_missing const_set constants
@@ -150,7 +152,7 @@ module Rouge
         rule /\n\s*/m, Text, :expr_start
         rule /#.*$/, Comment::Single
 
-        rule %r(=begin\b.*?end\b)m, Comment::Multiline
+        rule %r(=begin\b.*?\n=end\b)m, Comment::Multiline
       end
 
       state :inline_whitespace do
@@ -164,6 +166,7 @@ module Rouge
         rule /0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
+        rule /\d+\.\d+(e[\+\-]?\d+)?/, Num::Float
         rule /[\d]+(?:_\d+)*/, Num::Integer
 
         # names
@@ -202,15 +205,11 @@ module Rouge
         rule /(?<!\.)(?:#{builtins_g.join('|')})\b/,
           Name::Builtin, :method_call
 
-        # char operator.  ?x evaulates to "x", unless there's a digit
-        # beforehand like x>=0?n[x]:""
-        rule %r(
-          [?](\\[MC]-)*     # modifiers
-          (\\([\\abefnrstv\#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})|\S)
-          (?!\w)
-        )x, Str::Char
-
         mixin :has_heredocs
+
+        # `..` and `...` for ranges must have higher priority than `.`
+        # Otherwise, they will be parsed as :method_call
+        rule /\.{2,3}/, Operator, :expr_start
 
         rule /[A-Z][a-zA-Z0-9_]*/, Name::Constant, :method_call
         rule /(\.|::)(\s*)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/ do
@@ -220,25 +219,26 @@ module Rouge
 
         rule /[a-zA-Z_]\w*[?!]/, Name, :expr_start
         rule /[a-zA-Z_]\w*/, Name, :method_call
-        rule /\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\.{1,3}/,
+        rule /\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\./,
           Operator, :expr_start
         rule /[-+\/*%=<>&!^|~]=?/, Operator, :expr_start
-        rule %r<[\[({,?:\\;/]>, Punctuation, :expr_start
+        rule(/[?]/) { token Punctuation; push :ternary; push :expr_start }
+        rule %r<[\[({,:\\;/]>, Punctuation, :expr_start
         rule %r<[\])}]>, Punctuation
       end
 
       state :has_heredocs do
-        rule /(?<!\w)(<<-?)(["`']?)([a-zA-Z_]\w*)(\2)/ do |m|
+        rule /(?<!\w)(<<[-~]?)(["`']?)([a-zA-Z_]\w*)(\2)/ do |m|
           token Operator, m[1]
           token Name::Constant, "#{m[2]}#{m[3]}#{m[4]}"
-          @heredoc_queue << [m[1] == '<<-', m[3]]
+          @heredoc_queue << [['<<-', '<<~'].include?(m[1]), m[3]]
           push :heredoc_queue unless state? :heredoc_queue
         end
 
-        rule /(<<-?)(["'])(\2)/ do |m|
+        rule /(<<[-~]?)(["'])(\2)/ do |m|
           token Operator, m[1]
           token Name::Constant, "#{m[2]}#{m[3]}#{m[4]}"
-          @heredoc_queue << [m[1] == '<<-', '']
+          @heredoc_queue << [['<<-', '<<~'].include?(m[1]), '']
           push :heredoc_queue unless state? :heredoc_queue
         end
       end
@@ -254,25 +254,31 @@ module Rouge
       state :resolve_heredocs do
         mixin :string_intp_escaped
 
-        rule /(\n)([^#\\\n]*)$/ do |m|
+        rule /\n/, Str::Heredoc, :test_heredoc
+        rule /[#\\\n]/, Str::Heredoc
+        rule /[^#\\\n]+/, Str::Heredoc
+      end
+
+      state :test_heredoc do
+        rule /[^#\\\n]*$/ do |m|
           tolerant, heredoc_name = @heredoc_queue.first
-          check = tolerant ? m[2].strip : m[2].rstrip
+          check = tolerant ? m[0].strip : m[0].rstrip
 
           # check if we found the end of the heredoc
-          line_tok = if check == heredoc_name
+          puts "    end heredoc check #{check.inspect} = #{heredoc_name.inspect}" if @debug
+          if check == heredoc_name
             @heredoc_queue.shift
             # if there's no more, we're done looking.
             pop! if @heredoc_queue.empty?
-            Name::Constant
+            token Name::Constant
           else
-            Str::Heredoc
+            token Str::Heredoc
           end
 
-          groups(Str::Heredoc, line_tok)
+          pop!
         end
 
-        rule /[#\\\n]/, Str::Heredoc
-        rule /[^#\\\n]+/, Str::Heredoc
+        rule(//) { pop! }
       end
 
       state :funcname do
@@ -308,9 +314,15 @@ module Rouge
           goto :expr_start
         end
 
-        rule /[A-Z_]\w*/, Name::Class
+        rule /[A-Z_]\w*/, Name::Class, :pop!
 
         rule(//) { pop! }
+      end
+
+      state :ternary do
+        rule(/:(?!:)/) { token Punctuation; goto :expr_start }
+
+        mixin :root
       end
 
       state :defexpr do
@@ -350,6 +362,8 @@ module Rouge
           goto :expr_start
         end
 
+        rule(/(?=\n)/) { pop! }
+
         rule(//) { goto :method_call_spaced }
       end
 
@@ -381,6 +395,14 @@ module Rouge
           token Str::Regex
           goto :slash_regex
         end
+
+        # char operator.  ?x evaulates to "x", unless there's a digit
+        # beforehand like x>=0?n[x]:""
+        rule %r(
+          [?](\\[MC]-)*     # modifiers
+          (\\([\\abefnrstv\#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})|\S)
+          (?!\w)
+        )x, Str::Char, :pop!
 
         # special case for using a single space.  Ruby demands that
         # these be in a single line, otherwise it would make no sense.

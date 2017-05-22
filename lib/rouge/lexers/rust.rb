@@ -29,10 +29,10 @@ module Rouge
           c_int clock_t c_long c_longlong Cons Const Copy c_schar c_short
           c_uchar c_uint c_ulong c_ulonglong c_ushort c_void dev_t DIR
           dirent Div Either Eq Err f32 f64 Failure FILE float fpos_t
-          i16 i32 i64 i8 Index ino_t int intptr_t Left mode_t Modulo Mul
+          i16 i32 i64 i8 isize Index ino_t int intptr_t Left mode_t Modulo Mul
           Neg Nil None Num off_t Ok Option Ord Owned pid_t Ptr ptrdiff_t
           Right Send Shl Shr size_t Some ssize_t str Sub Success time_t
-          u16 u32 u64 u8 uint uintptr_t
+          u16 u32 u64 u8 usize uint uintptr_t
           Box Vec String Gc Rc Arc
         )
       end
@@ -58,17 +58,18 @@ module Rouge
         mixin :whitespace
         rule /\s+/, Text
         rule /#\[/ do
-          token Comment::Preproc; push :attribute
+          token Name::Decorator; push :attribute
         end
         rule(//) { pop! }
+        rule /#\s[^\n]*/, Comment::Preproc
       end
 
       state :attribute do
         mixin :whitespace
         mixin :has_literals
-        rule /[(,)=]/, Comment::Preproc
-        rule /\]/, Comment::Preproc, :pop!
-        rule id, Comment::Preproc
+        rule /[(,)=]/, Name::Decorator
+        rule /\]/, Name::Decorator, :pop!
+        rule id, Name::Decorator
       end
 
       state :whitespace do
@@ -86,7 +87,7 @@ module Rouge
         rule %r([=-]>), Keyword
         rule %r(<->), Keyword
         rule /[()\[\]{}|,:;]/, Punctuation
-        rule /[*!@~&+%^<>=-]/, Operator
+        rule /[*!@~&+%^<>=-\?]|\.{2,3}/, Operator
 
         rule /([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule /[.]\s*#{id}/, Name::Property
@@ -98,6 +99,7 @@ module Rouge
         rule /\bmacro_rules!/, Name::Decorator, :macro_rules
         rule /#{id}!/, Name::Decorator, :macro
 
+        rule /'#{id}/, Name::Variable
         rule /#{id}/ do |m|
           name = m[0]
           if self.class.builtins.include? name

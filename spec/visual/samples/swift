@@ -325,4 +325,68 @@ enum State: Equatable {
     */
 #endif
 
+protocol Protocol {
+    associatedtype AssociatedType
+    typealias TypeAlias
+}
+
+// keywords acceptable as argument names now:
+NSURLProtectionSpace(host: "somedomain.com", port: 443, protocol: "https", realm: "Some Domain", authenticationMethod: "Basic")
+
+let fn1 = someView.insertSubview(_:at:)
+let fn2 = someView.insertSubview(_:aboveSubview:)
+
+#if swift(>=2.2) || os(macOS)
+  func foo(x: Int) -> (y: Int) -> () {}
+#else
+  func foo(x: Int)(y: Int) {}
+#endif
+
+let sel = foo(#selector(insertSubview(_:aboveSubview:)))
+
+open class SubclassableParentClass {
+    public var size : Int
+    public func foo() {}
+    open func bar() {}
+    public final func baz() {}
+    private func a() {}
+    fileprivate func b() {}
+}
+
+public final class FinalClass { }
+
+if case let x = a, case let y = b {
+    func firstFunc(x: A & B) {
+        let a : A & B & C = Foo()
+    }
+}
+
+func anyCommonElements<T : SequenceType, U : SequenceType>(lhs: T, _ rhs: U) -> Bool where
+    T.Generator.Element: Equatable,
+    T.Generator.Element == U.Generator.Element
+{
+    let firstNameGetter = #selector(getter: Person.firstName)
+    let firstNameSetter = #selector(setter: Person.firstName)
+    chris.valueForKeyPath(#keyPath(Person.bestFriend.lastName)) // => Groff
+    
+    let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+    particleSystem.imageSequenceAnimationMode = SCNParticleImageSequenceAnimationMode.repeat
+}
+
+typealias StringDictionary<T> = Dictionary<String, T>
+
+@available(*, unavailable, renamed: "MyRenamedProtocol")
+@discardableResult func f() -> T {}
+
+#sourceLocation(file: "foo", line: 42)
+
+func foo(_ file: StaticString = #file, line: UInt = #line) { }
+
+precedencegroup ComparisonPrecedence {
+  associativity: left
+  higherThan: LogicalConjunctionPrecedence
+  lowerThan: Additive
+}
+infix operator <> : ComparisonPrecedence
+
 foo() // end-of-file comment

@@ -2,6 +2,35 @@
 
 #### regex_delimiters
 
+sub substitutionOperator
+{
+  s!\\!\\\\!g;
+  s!\\!\\\\!g;
+  s!"!\\"!g;
+  s!\(!\\\(!g;
+  s!\)!\\\)!g;
+}
+
+
+sub substitutionOperator
+{
+  s!\\!\\\\!g;
+  s!\\!\\\\!g;
+  s!"!\\"!g;
+  s!\(!\\\(!g;
+  s!\)!\\\)!g;
+}
+
+
+sub substitutionOperator
+{
+  s!\\!\\\\!g;
+  s!\\!\\\\!g;
+  s!"!\\"!g;
+  s!\(!\\\(!g;
+  s!\)!\\\)!g;
+}
+
 use strict;
 use warnings;
 
@@ -182,6 +211,16 @@ for (
     abs $n,
 ) {
     print $_, "\n";
+}
+
+=head1 Single Quote Breaker
+
+That's all folks
+
+=cut
+
+sub foo {
+    "after the POD with the single quote, it's all still good"
 }
 
 

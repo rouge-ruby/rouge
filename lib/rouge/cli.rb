@@ -13,9 +13,9 @@ module Rouge
     def file
       case input
       when '-'
-        $stdin
+        IO.new($stdin.fileno, 'r:utf-8')
       when String
-        File.new(input)
+        File.new(input, 'r:utf-8')
       when ->(i){ i.respond_to? :read }
         input
       end
@@ -181,6 +181,8 @@ module Rouge
       def self.parse(argv)
         opts = {
           :formatter => 'terminal256',
+          :theme => 'thankful_eyes',
+          :css_class => 'codehilite',
           :input_file => '-',
           :lexer_opts => {},
           :formatter_opts => {},
@@ -195,12 +197,14 @@ module Rouge
             opts[:mimetype] = argv.shift
           when '--lexer', '-l'
             opts[:lexer] = argv.shift
-          when '--formatter', '-f'
+          when '--formatter-preset', '-f'
             opts[:formatter] = argv.shift
+          when '--theme', '-t'
+            opts[:theme] = argv.shift
+          when '--css-class', '-c'
+            opts[:css_class] = argv.shift
           when '--lexer-opts', '-L'
             opts[:lexer_opts] = parse_cgi(argv.shift)
-          when '--formatter-opts', '-F'
-            opts[:formatter_opts] = parse_cgi(argv.shift)
           when /^--/
             error! "unknown option #{arg.inspect}"
           else
@@ -234,11 +238,13 @@ module Rouge
       attr_reader :input_file, :lexer_name, :mimetype, :formatter
 
       def initialize(opts={})
+        Rouge::Lexer.enable_debug!
+
         @input_file = opts[:input_file]
 
         if opts[:lexer]
           @lexer_class = Lexer.find(opts[:lexer]) \
-            or error! "unkown lexer #{opts[:lexer].inspect}"
+            or error! "unknown lexer #{opts[:lexer].inspect}"
         else
           @lexer_name = opts[:lexer]
           @mimetype = opts[:mimetype]
@@ -246,10 +252,17 @@ module Rouge
 
         @lexer_opts = opts[:lexer_opts]
 
-        formatter_class = Formatter.find(opts[:formatter]) \
-          or error! "unknown formatter #{opts[:formatter]}"
+        theme = Theme.find(opts[:theme]).new or error! "unknown theme #{opts[:theme]}"
 
-        @formatter = formatter_class.new(opts[:formatter_opts])
+        @formatter = case opts[:formatter]
+        when 'terminal256' then Formatters::Terminal256.new(theme)
+        when 'html' then Formatters::HTML.new
+        when 'html-pygments' then Formatters::HTMLPygments.new(Formatters::HTML.new, opts[:css_class])
+        when 'html-inline' then Formatters::HTMLInline.new(theme)
+        when 'html-table' then Formatters::HTMLTable.new(Formatters::HTML.new)
+        else
+          error! "unknown formatter preset #{opts[:formatter]}"
+        end
       end
 
       def run
@@ -338,6 +351,11 @@ module Rouge
             desc << " [aliases: #{lexer.aliases.join(',')}]"
           end
           puts "%s: %s" % [lexer.tag, desc]
+
+          lexer.option_docs.keys.sort.each do |option|
+            puts "  ?#{option}= #{lexer.option_docs[option]}"
+          end
+
           puts
         end
       end

@@ -18,11 +18,11 @@ module Rouge
 
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-        associativity didSet get infix inout left mutating none nonmutating operator override postfix precedence prefix right set unowned weak willSet throws rethrows
+        associativity didSet get infix inout mutating none nonmutating operator override postfix precedence prefix set unowned weak willSet throws rethrows precedencegroup
       )
 
       declarations = Set.new %w(
-        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect
+        class deinit enum extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype open fileprivate
       )
 
       constants = Set.new %w(
@@ -42,13 +42,24 @@ module Rouge
 
       state :inline_whitespace do
         rule /\s+/m, Text
-        rule %r((?<re>\/\*(?:(?>[^\/\*\*\/]+)|\g<re>)*\*\/))m, Comment::Multiline
+        mixin :has_comments
       end
 
       state :whitespace do
         rule /\n+/m, Text, :bol
         rule %r(\/\/.*?$), Comment::Single, :bol
         mixin :inline_whitespace
+      end
+
+      state :has_comments do
+        rule %r(/[*]), Comment::Multiline, :nested_comment
+      end
+
+      state :nested_comment do
+        mixin :has_comments
+        rule %r([*]/), Comment::Multiline, :pop!
+        rule %r([^*/]+)m, Comment::Multiline
+        rule /./, Comment::Multiline
       end
 
       state :root do
@@ -85,6 +96,12 @@ module Rouge
         end
         
         rule /#available\([^)]+\)/, Keyword::Declaration
+        
+        rule /(#(?:selector|keyPath)\()([^)]+?(?:[(].*?[)])?)(\))/ do
+          groups Keyword::Declaration, Name::Function, Keyword::Declaration
+        end
+        
+        rule /#(line|file|column|function|dsohandle)/, Keyword::Declaration
 
         rule /(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
@@ -98,8 +115,8 @@ module Rouge
           end
         end
         
-        rule /as[?!]?/, Keyword
-        rule /try[!]?/, Keyword
+        rule /as[?!]?(?=\s)/, Keyword
+        rule /try[!]?(?=\s)/, Keyword
 
         rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation

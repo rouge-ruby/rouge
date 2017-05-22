@@ -25,8 +25,15 @@ module Rouge
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
-        rule %r(^
-          (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]]*\s+)+?) # return arguments
+        rule /[^\S\n]+/, Text
+        rule %r(//.*?$), Comment::Single
+        rule %r(/\*.*?\*/)m, Comment::Multiline
+        # keywords: go before method names to avoid lexing "throw new XYZ"
+        # as a method signature
+        rule /(?:#{keywords.join('|')})\b/, Keyword
+
+        rule %r(
+          (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
           ([a-zA-Z_][a-zA-Z0-9_]*)                  # method name
           (\s*)(\()                                 # signature start
         )mx do |m|
@@ -34,14 +41,10 @@ module Rouge
           delegate Java, m[1]
           token Name::Function, m[2]
           token Text, m[3]
-          token Punctuation, m[4]
+          token Operator, m[4]
         end
 
-        rule /\s+/, Text
-        rule %r(//.*?$), Comment::Single
-        rule %r(/\*.*?\*/)m, Comment::Multiline
         rule /@#{id}/, Name::Decorator
-        rule /(?:#{keywords.join('|')})\b/, Keyword
         rule /(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule /(?:#{types.join('|')})\b/, Keyword::Type
         rule /package\b/, Keyword::Namespace
@@ -53,13 +56,21 @@ module Rouge
         rule /(\.)(#{id})/ do
           groups Operator, Name::Attribute
         end
+
         rule /#{id}:/, Name::Label
         rule /\$?#{id}/, Name
         rule /[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
-        rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
-        rule /0x[0-9a-f]+/, Num::Hex
-        rule /[0-9]+L?/, Num::Integer
-        # rule /\n/, Text
+
+        digit = /[0-9]_+[0-9]|[0-9]/
+        bin_digit = /[01]_+[01]|[01]/
+        oct_digit = /[0-7]_+[0-7]|[0-7]/
+        hex_digit = /[0-9a-f]_+[0-9a-f]|[0-9a-f]/i
+        rule /#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
+        rule /0b#{bin_digit}+/i, Num::Bin
+        rule /0x#{hex_digit}+/i, Num::Hex
+        rule /0#{oct_digit}+/, Num::Oct
+        rule /#{digit}+L?/, Num::Integer
+        rule /\n/, Text
       end
 
       state :class do

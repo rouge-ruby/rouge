@@ -6,6 +6,11 @@ require 'pathname'
 # The containing module for Rouge
 module Rouge
   class << self
+    def reload!
+      Object.send :remove_const, :Rouge
+      load __FILE__
+    end
+
     # Highlight some text with a given lexer and formatter.
     #
     # @example
@@ -36,6 +41,13 @@ load load_dir.join('rouge/util.rb')
 load load_dir.join('rouge/text_analyzer.rb')
 load load_dir.join('rouge/token.rb')
 
+load load_dir.join('rouge/guesser.rb')
+load load_dir.join('rouge/guessers/glob_mapping.rb')
+load load_dir.join('rouge/guessers/modeline.rb')
+load load_dir.join('rouge/guessers/filename.rb')
+load load_dir.join('rouge/guessers/mimetype.rb')
+load load_dir.join('rouge/guessers/source.rb')
+
 load load_dir.join('rouge/lexer.rb')
 load load_dir.join('rouge/regex_lexer.rb')
 load load_dir.join('rouge/template_lexer.rb')
@@ -47,6 +59,11 @@ end
 
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')
+load load_dir.join('rouge/formatters/html_table.rb')
+load load_dir.join('rouge/formatters/html_pygments.rb')
+load load_dir.join('rouge/formatters/html_legacy.rb')
+load load_dir.join('rouge/formatters/html_linewise.rb')
+load load_dir.join('rouge/formatters/html_inline.rb')
 load load_dir.join('rouge/formatters/terminal256.rb')
 load load_dir.join('rouge/formatters/null.rb')
 
@@ -55,6 +72,9 @@ load load_dir.join('rouge/themes/thankful_eyes.rb')
 load load_dir.join('rouge/themes/colorful.rb')
 load load_dir.join('rouge/themes/base16.rb')
 load load_dir.join('rouge/themes/github.rb')
+load load_dir.join('rouge/themes/igor_pro.rb')
 load load_dir.join('rouge/themes/monokai.rb')
 load load_dir.join('rouge/themes/molokai.rb')
 load load_dir.join('rouge/themes/monokai_sublime.rb')
+load load_dir.join('rouge/themes/gruvbox.rb')
+load load_dir.join('rouge/themes/tulip.rb')

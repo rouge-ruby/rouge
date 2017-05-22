@@ -1,3 +1,167 @@
+# ChangeLog
+
+This log summarizes the changes in each released version of rouge. The versioning scheme
+we use is semver, although we will often release new lexers in minor versions, as a
+practical matter.
+
+## version 2.0.7: 2016-11-18
+
+  * haml: fix balanced braces in attribute curlies
+  * clojure:
+    - allow comments at EOF
+    - detect for `build.boot` (thanks @pandeiro)
+  * ruby 1.9.1 compat: escape @ signs (thanks @pille1842)
+  * c++
+    - add `*.tpp` as an extension (thanks @vser1)
+    - add more C++11 keywords
+  * new lexer: ABAP (thanks @mlaggner)
+  * rougify: properly handle SIGPIPE for downstream pipe closing (thanks @maverickwoo)
+  * tex: add `*.sty` and `*.cls` extensions
+  * html: bugfix for multiple style tags - was too greedy
+  * new lexer: vue
+  * perl: fix lexing of POD comments (thanks @kgoess)
+  * coq: better string escape handling
+  * javascript:
+    - add support for ES decorators
+    - fix multiline template strings with curlies (thanks @Kovensky)
+  * json: stop guessing based on curlies
+  * rust: support the `?` operator
+
+## version 2.0.6: 2016-09-07
+
+  * actionscript: emit correct tokens for positive numbers (thanks @JoeRobich!)
+  * json: bottom-up rewrite, massively improve string performance
+  * markdown: don't terminate code blocks unless there's a newline before the terminator
+  * tulip: rewrite lexer with updated features
+  * swift: update for swift 3 (thanks @radex!)
+  * fortran: correctly lex exponent floats (thanks @jschwab!)
+  * bugfix: escape `\@` for ruby 1.9.x
+  * verilog: recognize underscores and question marks (thanks @whitequark!)
+  * common lisp: recognize .asd files for ASDF
+  * new lexer: mxml (thanks @JoeRobich!)
+  * new lexer: 1c (thanks @karnilaev!)
+  * new lexer: turtle/trig (thanks @jakubklimek!)
+  * new lexer: vhdl (thanks @ttobsen!)
+  * new lexer: jsx
+  * new lexer: prometheus (thanks @dblessing!)
+
+## version 2.0.5: 2016-07-19
+
+  * bugfix: don't spam stdout from the yaml lexer
+
+## version 2.0.4: 2016-07-19 (yanked)
+
+  * new lexer: docker (thanks @KitaitiMakoto!)
+  * new lexer: fsharp (thanks @raymens!)
+  * python: improve string escapes (thanks @di!)
+  * yaml: highlight keys differently than values
+
+## version 2.0.3: 2016-07-14
+
+  * guessing: ambiguous guesses now raise `Rouge::Guesser::Ambiguous` instead of a
+    mysterious class inside a metaclass.
+  * praat: various fixes for unconventional names (thanks @jjatria!)
+  * workaround for rdoc parsing bug that should fix `gem install` with rdoc parsing on.
+  * ruby:
+    - best effort colon handling
+    - fix for heredocs with method calls at the end
+  * tulip: rewrite from the ground up
+  * markdown: fix improper greediness of backticks
+  * tooling: improve the debug output, and properly highlight the legend
+
+## version 2.0.2: 2016-06-27
+
+  * liquid: support variables ending in question marks (thanks @brettg!)
+  * new lexer: IDL (thanks @sappjw!)
+  * javascript:
+    - fix bug causing `:` error tokens (#497)
+    - support for ES6 string interpolation with backticks (thanks @iRath96!)
+  * csharp: allow comments at EOF
+  * java: allow underscored numeric literals (thanks @vandiedakaf!)
+  * terminal formatter: theme changes had broken this formatter, this is fixed.
+  * shell: support "ansi strings" - `$'some-string\n'`
+
+## version 2.0.1: 2016-06-15
+
+  * Bugfix for `Formatter#token_lines` without a block
+
+## version 2.0.0: 2016-06-14
+
+  * new formatters! see README.md for documentation, use `Rouge::Formatters::HTMLLegacy`
+    for the old behavior.
+
+## version 1.11.1: 2016-06-14
+
+  * new guesser infrastructure, support for emacs and vim modelines (#489)
+  * javascript bugfix for nested objects with quoted keys (#496)
+  * new theme: Gruvbox (thanks @jamietanna!)
+  * praat: lots of improvements (thanks @jjatria)
+  * fix for rougify error when highlighting from stdin (#493)
+  * new lexer: kotlin (thanks @meleyal!)
+  * new lexer: cfscript (thanks @mjclemente!)
+
+## version 1.11.0: 2016-06-06
+
+  * groovy:
+    - remove pathological regexes and add basic support for triple-quoted strings (#485)
+    - add the "trait" keyword and fix project url (thanks @glaforge! #378)
+  * new lexer: coq (thanks @gmalecha! #389)
+  * gemspec license now more accurate (thanks @connorshea! #484)
+  * swift:
+    - properly support nested comments (thanks @dblessing! #479)
+    - support swift 2.2 features (thanks @radex #376 and @wokalski #442)
+    - add indirect declaration (thanks @nRewik! #326)
+  * new lexer: verilog (thanks @Razer6! #317)
+  * new lexer: typescript (thanks @Seikho! #400)
+  * new lexers: jinja and twig (thanks @robin850! #402)
+  * new lexer: pascal (thanks @alexcu!)
+  * css: support attribute selectors (thanks @skoji! #426)
+  * new lexer: shell session (thanks @sio4! #481)
+  * ruby: add support for <<~ heredocs (thanks @tinci! #362)
+  * recognize comments at EOF in SQL, Apache, and CMake (thanks @julp! #360)
+  * new lexer: phtml (thanks @Igloczek #366)
+  * recognize comments at EOF in CoffeeScript (thanks @rdavila! #370)
+  * c/c++:
+    - support c11/c++11 features (thanks @Tosainu! #371)
+    - Allow underscores in identifiers (thanks @coverify! #333)
+  * rust: add more builtin types (thanks @RalfJung! #372)
+  * ini: allow hyphen keys (thanks @KrzysiekJ! #380)
+  * r: massively improve lexing quality (thanks @klmr! #383)
+  * c#:
+    - add missing keywords (thanks @BenVlodgi #384 and @SLaks #447)
+  * diff: do not require newlines at the ends (thanks @AaronLasseigne! #387)
+  * new lexer: ceylon (thanks @bjansen! #414)
+  * new lexer: biml (thanks @japj! #415)
+  * new lexer: TAP - the test anything protocol (thanks @mblayman! #409)
+  * rougify bugfix: treat input as utf8 (thanks @japj! #417)
+  * new lexer: jsonnet (thanks @davidzchen! #420)
+  * clojure: associate `*.cljc` for cross-platform clojure (thanks @alesguzik! #423)
+  * new lexer: D (thanks @nikibobi! #435)
+  * new lexer: smarty (thanks @tringenbach! #427)
+  * apache:
+    - add directives for v2.4 (thanks @stanhu!)
+    - various improvements (thanks @julp! #301)
+      - faster keyword lookups
+      - fix nil error on unknown directive (cf #246, #300)
+      - properly manage case-insensitive names (cf #246)
+      - properly handle windows CRLF
+  * objective-c:
+    - support literal dictionaries and block arguments (thanks @BenV! #443 and #444)
+    - Fix error tokens when defining interfaces (thanks @meleyal! #477)
+  * new lexer: NASM (thanks @sraboy! #457)
+  * new lexer: gradle (thanks @nerro! #468)
+  * new lexer: API Blueprint (thanks @kylef! #261)
+  * new lexer: ActionScript (thanks @honzabrecka! #241)
+  * terminal256 formatter: stop confusing token names (thanks @julp! #367)
+  * new lexer: julia (thanks @mpeteuil! #331)
+  * new lexer: cmake (thanks @julp! #302)
+  * new lexer: eiffel (thanks @Conaclos! #323)
+  * new lexer: protobuf (thanks @fqqb! #327)
+  * new lexer: fortran (thanks @CruzR! #328)
+  * php: associate `*.phpt` files (thanks @Razer6!)
+  * python: support `raise from` and `yield from` (thanks @mordervomubel! #324)
+  * new VimL example (thanks @tpope! #315)
+
 ## version 1.10.1: 2015-09-10
 
   * diff: fix deleted lines which were not being highlighted (thanks @DouweM)

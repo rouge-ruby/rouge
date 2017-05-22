@@ -1,3 +1,11 @@
+interface IFoo {
+  // stuff
+}
+
+class Foo {
+  // stuff
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // MIT X11 license, Copyright (c) 2005-2006 by:                               //
@@ -346,6 +354,26 @@ namespace Diva.Core {
                         return idToObject [container.RefId];
                 }
                 
+                void FunWithStrings ()
+                {
+                        var a = "some string\nwith a newl\"ine".Length;
+                        var b = @"some literal string".Length;
+                        var c = @"some literal string
+                          with a newline".Length;
+                        var d = @"literal string with \backslashes".Length;
+                        var e = @"literal string ending with a backslash\".Length.Length;
+                        var f = @"literal string with "" a quote in the middle and a backslash \".Length;
+                        var g = $"some interpolated string with no interpolations".Length;
+                        var h = $"interpolation: two and two make { 2 + 2 }".Length;
+                        var i = $@"interpolation with
+                          {a} newline".Length;
+                        var j = $@"interpolation {1}
+                          with multiple {2}
+                          newlines and a backslash\".Length;
+                        var k = $@"interp{1}olation "" and {3} quotes".Length;
+                        var l = $"interpolation with nested braces: { (a => { return 3 })(5) }".Length;
+                        var m = $"interpolation with nested strings: { @"Ooga\" } and { "booga\"" }".Length;
+                }
         }
         
 }

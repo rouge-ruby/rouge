@@ -1,3 +1,58 @@
+# keywords with no following whitespace
+(cond)
+(do)
+(end)
+
+# bitwise operators
+~~~1
+2 &&& 3
+
+# structs
+%Struct{  }
+
+# maps
+%{key: 1}
+
+# regexes
+~r()gif
+~r[]gfi
+~r<>fgi
+~r''fig
+~r""igf
+~r||i
+~r//g
+
+~r()
+~r[]
+~r<>
+~r''
+~r""
+~r||
+~r//variable
+
+# avoids greedy errors
+string |> String.split(~r/[ -]/) |> Enum.map(&abbreviate_word/1) |> Enum.join()
+
+# sigils
+~c()
+~c[]
+~c<>
+~c''
+~c""
+~c||
+~c//
+
+~S(inter #{pol <> "ati#{o}"} n)
+~S[inter #{pol <> "ati#{o}"} n]
+~S<inter #{pol <> "ati#{o}"} n>
+~S'inter #{pol <> "ati#{o}"} n'
+~S"inter #{pol <> "ati#{o}"} n"
+~S|inter #{pol <> "ati#{o}"} n|
+~S/inter #{pol <> "ati#{o}"} n/
+
+# first is Operator, second is &1 variable
+&(&1)
+
 # We cannot use to_char_list because it depends on inspect,
 # which depends on protocol, which depends on this module.
 import Elixir::Builtin, except: [to_char_list: 1]

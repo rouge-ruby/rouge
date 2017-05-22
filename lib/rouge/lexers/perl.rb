@@ -52,21 +52,21 @@ module Rouge
       re_tok = Str::Regex
 
       state :balanced_regex do
-        rule %r(/(\\\\|\\/|[^/])*/[egimosx]*)m, re_tok, :pop!
-        rule %r(!(\\\\|\\!|[^!])*![egimosx]*)m, re_tok, :pop!
+        rule %r(/(\\[\\/]|[^/])*/[egimosx]*)m, re_tok, :pop!
+        rule %r(!(\\[\\!]|[^!])*![egimosx]*)m, re_tok, :pop!
         rule %r(\\(\\\\|[^\\])*\\[egimosx]*)m, re_tok, :pop!
-        rule %r({(\\\\|\\}|[^}])*}[egimosx]*), re_tok, :pop!
-        rule %r(<(\\\\|\\>|[^>])*>[egimosx]*), re_tok, :pop!
-        rule %r(\[(\\\\|\\\]|[^\]])*\][egimosx]*), re_tok, :pop!
-        rule %r[\((\\\\|\\\)|[^\)])*\)[egimosx]*], re_tok, :pop!
-        rule %r(@(\\\\|\\\@|[^\@])*@[egimosx]*), re_tok, :pop!
-        rule %r(%(\\\\|\\\%|[^\%])*%[egimosx]*), re_tok, :pop!
-        rule %r(\$(\\\\|\\\$|[^\$])*\$[egimosx]*), re_tok, :pop!
+        rule %r({(\\[\\}]|[^}])*}[egimosx]*), re_tok, :pop!
+        rule %r(<(\\[\\>]|[^>])*>[egimosx]*), re_tok, :pop!
+        rule %r(\[(\\[\\\]]|[^\]])*\][egimosx]*), re_tok, :pop!
+        rule %r[\((\\[\\\)]|[^\)])*\)[egimosx]*], re_tok, :pop!
+        rule %r(@(\\[\\@]|[^@])*@[egimosx]*), re_tok, :pop!
+        rule %r(%(\\[\\%]|[^%])*%[egimosx]*), re_tok, :pop!
+        rule %r(\$(\\[\\\$]|[^\$])*\$[egimosx]*), re_tok, :pop!
       end
 
       state :root do
         rule /#.*?$/, Comment::Single
-        rule /^=[a-zA-Z0-9]+\s+.*?\n=cut/, Comment::Multiline
+        rule /^=[a-zA-Z0-9]+\s+.*?\n=cut/m, Comment::Multiline
         rule /(?:#{keywords.join('|')})\b/, Keyword
 
         rule /(format)(\s+)([a-zA-Z0-9_]+)(\s*)(=)(\s*\n)/ do

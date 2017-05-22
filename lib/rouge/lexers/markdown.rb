@@ -31,10 +31,9 @@ module Rouge
         rule /^#(?=[^#]).*?$/, Generic::Heading
         rule /^##*.*?$/, Generic::Subheading
 
-        # TODO: syntax highlight the code block, github style
-        rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?)(\2)/m do |m|
-          sublexer = Lexer.find_fancy(m[3].strip, m[4])
-          sublexer ||= PlainText.new(:token => Str::Backtick)
+        rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?\n)(\2)/m do |m|
+          sublexer = Lexer.find_fancy(m[3].strip, m[4], @options)
+          sublexer ||= PlainText.new(@options.merge(:token => Str::Backtick))
           sublexer.reset!
 
           token Text, m[1]
@@ -46,7 +45,7 @@ module Rouge
 
         rule /\n\n((    |\t).*?\n|\n)+/, Str::Backtick
 
-        rule /(`+)#{edot}*\1/, Str::Backtick
+        rule /(`+)(?:#{edot}|\n)+?\1/, Str::Backtick
 
         # various uses of * are in order of precedence
 

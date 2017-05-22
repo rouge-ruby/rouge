@@ -6,7 +6,7 @@ module Rouge
       title "XML"
       desc %q(<desc for="this-lexer">XML</desc>)
       tag 'xml'
-      filenames *%w(*.xml *.xsl *.rss *.xslt *.xsd *.wsdl)
+      filenames *%w(*.xml *.xsl *.rss *.xslt *.xsd *.wsdl *.svg)
       mimetypes *%w(
         text/xml
         application/xml
@@ -52,7 +52,7 @@ module Rouge
 
       state :attr do
         rule /\s+/m, Text
-        rule /".*?"|'.*?'|[^\s>]+/, Str, :pop!
+        rule /".*?"|'.*?'|[^\s>]+/m, Str, :pop!
       end
     end
   end

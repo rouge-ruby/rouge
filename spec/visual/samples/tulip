@@ -1,19 +1,54 @@
-.foo bar baz -zot
+@module ref
 
-/list[1; 2; 3]
-/[1; 2; 3]
+ref value = Ref (spawn [ ! => loop value ])
 
-@module Foo bar [
-  baz = [ zot : %zot => glorb ]
+loop value = receive [
+  .set new-value => loop new-value
+  p, id, .get => { send p (id, value); loop value }
 ]
 
-str = {some string}
-nested = {nes{t{e}d{}}}
-regex = /r'foo
-regex = /r{foo}
-interp = "{foo$(bar)}
-interp_nested = "{foo$(bar (baz (zot ())))} # comment
+# a comment
 
-String/split '/ 'foo/bar
+@object Ref pid [
+  set val = .set val > send pid
+  get! = .get > send-wait pid
+]
 
-escapes = "{\$(string)\{} # comment
+@def @module [
+  [ <name:IDENT> = [ <*body> ] ] => \q[<*body>]
+                                  > compile-module
+                                  > $ns/mount-module name
+]
+
+partial-cons x = [.cons x $]
+
+foo = ~(bar)
+start-sprinklers -when: 'later
+prune -harvest
+
+one `and two `or three
+
+foo = ...
+
+@method map _ %
+
+@check %list [
+  .cons _ _
+  .nil
+]
+
+5 > add 3
+
+< foo : IDENT >
+
+"{interpolation $(thing (with (parentheses)))}
+
+print '{hello world}
+
+print "hello double \" quotes"
+
+print \thing{hello world}
+
+print \with-escapes{here is a curly: \} <- }
+
+print \with-nesting{ some curlies: {} <- }

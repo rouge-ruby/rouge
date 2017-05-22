@@ -11,7 +11,7 @@ module Rouge
       mimetypes 'text/x-kotlin'
 
       keywords = %w(
-        abstract annotation as break by catch class companion const 
+        abstract annotation as break by catch class companion const
         constructor continue crossinline do dynamic else enum
         external false final finally for fun get if import in infix
         inline inner interface internal is lateinit noinline null
@@ -21,10 +21,9 @@ module Rouge
         yield
       )
 
-      name = '@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}]' +
-             '[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
+      name = %r'@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
 
-      id = "(#{name}|`#{name}`)"
+      id = %r'(#{name}|`#{name}`)'
 
       state :root do
         rule %r'^\s*\[.*?\]', Name::Attribute
@@ -62,7 +61,7 @@ module Rouge
           push :function
         end
         rule /(?:#{keywords.join('|')})\b/, Keyword
-        rule /#{id}/, Name
+        rule id, Name
       end
 
       state :package do
@@ -70,15 +69,15 @@ module Rouge
       end
 
       state :class do
-        rule /#{id}/, Name::Class, :pop!
+        rule id, Name::Class, :pop!
       end
 
       state :property do
-        rule /#{id}/, Name::Property, :pop!
+        rule id, Name::Property, :pop!
       end
 
       state :function do
-        rule /#{id}/, Name::Function, :pop!
+        rule id, Name::Function, :pop!
       end
     end
   end

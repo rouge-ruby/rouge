@@ -109,7 +109,7 @@ module Rouge
           proc do |stream|
             puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
-            puts "    pushing #{@stack.last.name}" if @debug
+            puts "    pushing :#{@stack.last.name}" if @debug
             @stack.push(@stack.last)
           end
         when Symbol
@@ -117,7 +117,7 @@ module Rouge
             puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
             state = @states[next_state] || self.class.get_state(next_state)
-            puts "    pushing #{state.name}" if @debug
+            puts "    pushing :#{state.name}" if @debug
             @stack.push(state)
           end
         when nil
@@ -191,7 +191,7 @@ module Rouge
       replace_state(name, dsl.prepended(&b))
     end
 
-    def self.append(state, &b)
+    def self.append(name, &b)
       name = name.to_s
       dsl = state_definitions[name] or raise "no such state #{name.inspect}"
       replace_state(name, dsl.appended(&b))
@@ -233,6 +233,7 @@ module Rouge
       @stack = nil
       @current_stream = nil
 
+      puts "start blocks" if @debug && self.class.start_procs.any?
       self.class.start_procs.each do |pr|
         instance_eval(&pr)
       end
@@ -261,7 +262,7 @@ module Rouge
       until stream.eos?
         if @debug
           puts "lexer: #{self.class.tag}"
-          puts "stack: #{stack.map(&:name).inspect}"
+          puts "stack: #{stack.map(&:name).map(&:to_sym).inspect}"
           puts "stream: #{stream.peek(20).inspect}"
         end
 
@@ -385,7 +386,7 @@ module Rouge
         self.state
       end
 
-      puts "    pushing #{push_state.name}" if @debug
+      puts "    pushing :#{push_state.name}" if @debug
       stack.push(push_state)
     end
 
@@ -405,7 +406,7 @@ module Rouge
     def goto(state_name)
       raise 'empty stack!' if stack.empty?
 
-      puts "    going to state #{state_name} " if @debug
+      puts "    going to state :#{state_name} " if @debug
       stack[-1] = get_state(state_name)
     end
 

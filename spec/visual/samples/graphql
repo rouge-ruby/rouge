@@ -1,0 +1,85 @@
+# Most code copied from https://github.com/rmosolgo/language-graphql/blob/master/spec/fixtures/example.graphql
+fragment on AnalysisImage @relay(plural: true) {
+  extension
+  href
+}
+
+interface Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+}
+
+schema {
+   widget: Widget
+}
+
+type Starship  implements Character {
+  id: ID!
+  name: String!
+  length(unit: LengthUnit = METER): Float
+}
+
+input Starship {
+  id: ID!
+  name: String!
+  length(unit: LengthUnit = METER): Float
+}
+
+enum Episode {
+  NEWHOPE
+  EMPIRE
+  JEDI
+}
+
+union SearchResult = Human # maybe spans
+    | Droid # more
+    | Starship #than one line
+
+mutation {}
+
+fragment FragmentName on Type @directives() {
+}
+
+query
+    queryName(
+      $float: f = 123.011e-1, $float:  f = 123.00, $float: f = 123e+20
+      $boolean: b ! = true, $boolean: b = false
+      $String: s = "Some string \" \\ \/ \b \f \r \r and the rest"
+      $enum: e = aaaa, $enum: e = AAAA_AA
+      $list :  [ String!, Boolean!, ID, Int, Float ] ! = ["aaa", 1 , aFlag]
+      $object: o = {
+        lon: 12.43, lat: -53.211
+      }
+    )
+    @directives (
+      number: 1
+      float: 123.011e-1, float:123.00, float: 123e+20
+      boolean: true, boolean: false
+      String: "Some string \" \\ \/ \b \f \r \r and the rest",
+      enum: aaaa, enum: AAAA_AA,
+      list : ["aaa", 1 , aFlag],
+      object: {
+        lon: 12.43, lat: -53.211
+      }
+    )
+  {
+    me {
+      idAlias: id(id: 1) @directive() # fields
+      name,
+      small: profilePic( size: $devicePicSize ) # field alias
+      ...Ignored
+      ...A @directives(if: true), # fragment spread
+      ... on Type  @directives() { # inline fragment
+        ...{ # inline fragment
+        }
+      }
+    }
+  }
+
+{
+  true: null(flag: false)
+  type: interface { }
+  query: String(Int: 1) { }
+}

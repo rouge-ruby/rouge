@@ -1,4 +1,4 @@
-(* method callse *)
+(* method calls *)
 let s = object
   val mutable v = [0; 2]
 
@@ -15,6 +15,11 @@ end ;;
 
 s#pop ;;
 s#push 4 ;;
+
+let ok = `Ok;;
+
+(fun a -> (a) )
+(fun a ->(a) )
 
 
 (***********************************************************************)

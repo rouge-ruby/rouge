@@ -18,7 +18,7 @@ module Rouge
         @keywords ||= %w(
           assert break continue del elif else except exec
           finally for global if lambda pass print raise
-          return try while yield as with
+          return try while yield as with from import yield
         )
       end
 
@@ -75,6 +75,18 @@ module Rouge
         rule /(in|is|and|or|not)\b/, Operator::Word
         rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
 
+        rule /(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do
+          groups Keyword::Namespace,
+                 Text,
+                 Name::Namespace,
+                 Text,
+                 Keyword::Namespace
+        end
+
+        rule /(import)(\s+)(#{dotted_identifier})/ do
+          groups Keyword::Namespace, Text, Name::Namespace
+        end
+
         rule /(def)((?:\s|\\\s)+)/ do
           groups Keyword, Text
           push :funcname
@@ -85,36 +97,16 @@ module Rouge
           push :classname
         end
 
-        rule /(yield)((?:\s|\\\s)+)/ do
-           groups Keyword, Text
-           push :raise
-        end
-
-        rule /(raise)((?:\s|\\\s)+)/ do
-           groups Keyword, Text
-           push :raise
-        end
-
-        rule /(from)((?:\s|\\\s)+)/ do
-          groups Keyword::Namespace, Text
-          push :fromimport
-        end
-
-        rule /(import)((?:\s|\\\s)+)/ do
-          groups Keyword::Namespace, Text
-          push :import
-        end
-
         # TODO: not in python 3
         rule /`.*?`/, Str::Backtick
-        rule /(?:r|ur|ru)"""/i, Str, :tdqs
-        rule /(?:r|ur|ru)'''/i, Str, :tsqs
-        rule /(?:r|ur|ru)"/i,   Str, :dqs
-        rule /(?:r|ur|ru)'/i,   Str, :sqs
-        rule /u?"""/i,          Str, :escape_tdqs
-        rule /u?'''/i,          Str, :escape_tsqs
-        rule /u?"/i,            Str, :escape_dqs
-        rule /u?'/i,            Str, :escape_sqs
+        rule /(?:r|ur|ru)"""/i, Str, :raw_tdqs
+        rule /(?:r|ur|ru)'''/i, Str, :raw_tsqs
+        rule /(?:r|ur|ru)"/i,   Str, :raw_dqs
+        rule /(?:r|ur|ru)'/i,   Str, :raw_sqs
+        rule /u?"""/i,          Str, :tdqs
+        rule /u?'''/i,          Str, :tsqs
+        rule /u?"/i,            Str, :dqs
+        rule /u?'/i,            Str, :sqs
 
         rule /@#{dotted_identifier}/i, Name::Decorator
 
@@ -164,24 +156,6 @@ module Rouge
         mixin :raise
       end
 
-      state :import do
-        # non-line-terminating whitespace
-        rule /(?:[ \t]|\\\n)+/, Text
-
-        rule /as\b/, Keyword::Namespace
-        rule /,/, Operator
-        rule dotted_identifier, Name::Namespace
-        rule(//) { pop! } # anything else -> go back
-      end
-
-      state :fromimport do
-        # non-line-terminating whitespace
-        rule /(?:[ \t]|\\\n)+/, Text
-
-        rule /import\b/, Keyword::Namespace, :pop!
-        rule dotted_identifier, Name::Namespace
-      end
-
       state :strings do
         rule /%(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
       end
@@ -204,7 +178,7 @@ module Rouge
         rule %r(\\
           ( [\\abfnrtv"']
           | \n
-          | N{.*?}
+          | N{[a-zA-z][a-zA-Z ]+[a-zA-Z]}
           | u[a-fA-F0-9]{4}
           | U[a-fA-F0-9]{8}
           | x[a-fA-F0-9]{2}
@@ -213,21 +187,26 @@ module Rouge
         )x, Str::Escape
       end
 
+      state :raw_escape do
+        rule /\\./, Str
+      end
+
       state :dqs do
         rule /"/, Str, :pop!
-        rule /\\\\|\\"|\\\n/, Str::Escape
+        mixin :escape
         mixin :strings_double
       end
 
       state :sqs do
         rule /'/, Str, :pop!
-        rule /\\\\|\\'|\\\n/, Str::Escape
+        mixin :escape
         mixin :strings_single
       end
 
       state :tdqs do
         rule /"""/, Str, :pop!
         rule /"/, Str
+        mixin :escape
         mixin :strings_double
         mixin :nl
       end
@@ -235,13 +214,14 @@ module Rouge
       state :tsqs do
         rule /'''/, Str, :pop!
         rule /'/, Str
+        mixin :escape
         mixin :strings_single
         mixin :nl
       end
 
       %w(tdqs tsqs dqs sqs).each do |qtype|
-        state :"escape_#{qtype}" do
-          mixin :escape
+        state :"raw_#{qtype}" do
+          mixin :raw_escape
           mixin :"#{qtype}"
         end
       end

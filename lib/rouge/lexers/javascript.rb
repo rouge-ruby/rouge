@@ -2,6 +2,12 @@
 
 module Rouge
   module Lexers
+    # IMPORTANT NOTICE:
+    #
+    # Please do not copy this lexer and open a pull request
+    # for a new language. It will not get merged, you will
+    # be unhappy, and kittens will cry.
+    #
     class Javascript < RegexLexer
       title "JavaScript"
       desc "JavaScript, the browser scripting language"
@@ -39,7 +45,10 @@ module Rouge
           goto :regex
         end
 
-        rule /[{]/, Punctuation, :object
+        rule /[{]/ do
+          token Punctuation
+          goto :object
+        end
 
         rule //, Text, :pop!
       end
@@ -88,22 +97,26 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          for in while do break return continue switch case default
+          for in of while do break return continue switch case default
           if else throw try catch finally new delete typeof instanceof
-          void this yield
+          void this yield import export from as async super this
         )
       end
 
       def self.declarations
-        @declarations ||= Set.new %w(var let with function)
+        @declarations ||= Set.new %w(
+          var let const with function class
+          extends constructor get set
+        )
       end
 
       def self.reserved
         @reserved ||= Set.new %w(
-          abstract boolean byte char class const debugger double enum
-          export extends final float goto implements import int interface
+          abstract boolean byte char debugger double enum
+          final float goto implements int interface
           long native package private protected public short static
-          super synchronized throws transient volatile
+          synchronized throws transient volatile
+          eval arguments await
         )
       end
 
@@ -116,8 +129,13 @@ module Rouge
           Array Boolean Date Error Function Math netscape
           Number Object Packages RegExp String sun decodeURI
           decodeURIComponent encodeURI encodeURIComponent
-          Error eval isFinite isNaN parseFloat parseInt document this
-          window
+          Error eval isFinite isNaN parseFloat parseInt
+          document window navigator self global
+          Promise Set Map WeakSet WeakMap Symbol Proxy Reflect
+          Int8Array Uint8Array Uint8ClampedArray
+          Int16Array Uint16Array Uint16ClampedArray
+          Int32Array Uint32Array Uint32ClampedArray
+          Float32Array Float64Array DataView ArrayBuffer
         )
       end
 
@@ -129,7 +147,6 @@ module Rouge
 
       state :root do
         rule /\A\s*#!.*?\n/m, Comment::Preproc, :statement
-        rule /\n/, Text, :statement
         rule %r((?<=\n)(?=\s|/|<!--)), Text, :expr_start
         mixin :comments_and_whitespace
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
@@ -140,9 +157,19 @@ module Rouge
         rule /;/, Punctuation, :statement
         rule /[)\].]/, Punctuation
 
+        rule /`/ do
+          token Str::Double
+          push :template_string
+        end
+
         rule /[?]/ do
           token Punctuation
           push :ternary
+          push :expr_start
+        end
+
+        rule /(\@)(\w+)?/ do
+          groups Punctuation, Name::Decorator
           push :expr_start
         end
 
@@ -169,12 +196,18 @@ module Rouge
         rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
         rule /0x[0-9a-fA-F]+/, Num::Hex
         rule /[0-9]+/, Num::Integer
-        rule /"(\\\\|\\"|[^"])*"/, Str::Double
-        rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule /"(\\[\\"]|[^"])*"/, Str::Double
+        rule /'(\\[\\']|[^'])*'/, Str::Single
+        rule /:/, Punctuation
       end
 
       # braced parts that aren't object literals
       state :statement do
+        rule /case\b/ do
+          token Keyword
+          goto :expr_start
+        end
+
         rule /(#{id})(\s*)(:)/ do
           groups Name::Label, Text, Punctuation
         end
@@ -187,6 +220,12 @@ module Rouge
       # object literals
       state :object do
         mixin :comments_and_whitespace
+
+        rule /[{]/ do
+          token Punctuation
+          push
+        end
+
         rule /[}]/ do
           token Punctuation
           goto :statement
@@ -210,99 +249,18 @@ module Rouge
 
         mixin :root
       end
-    end
 
-    class JSON < RegexLexer
-      desc "JavaScript Object Notation (json.org)"
-      tag 'json'
-      filenames '*.json'
-      mimetypes 'application/json', 'application/vnd.api+json',
-                'application/hal+json'
-
-      # TODO: is this too much of a performance hit?  JSON is quite simple,
-      # so I'd think this wouldn't be too bad, but for large documents this
-      # could mean doing two full lexes.
-      def self.analyze_text(text)
-        return 0.8 if text =~ /\A\s*{/m && text.lexes_cleanly?(self)
+      # template strings
+      state :template_string do
+        rule /\${/, Punctuation, :template_string_expr
+        rule /`/, Str::Double, :pop!
+        rule /(\\\\|\\[\$`]|[^\$`]|\$(?!{))*/, Str::Double
       end
 
-      string = /"(\\.|[^"])*"/
-
-      state :root do
-        mixin :whitespace
-        rule /(?:true|false|null)\b/, Keyword::Constant
-        rule /{/,  Punctuation, :object_key_initial
-        rule /\[/, Punctuation, :array
-        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float
-        rule /-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, Num::Integer
-        mixin :has_string
-      end
-
-      state :whitespace do
-        rule /\s+/m, Text::Whitespace
-      end
-
-      state :has_string do
-        rule string, Str::Double
-      end
-
-      # in object_key_initial it's allowed to immediately close the object again
-      state :object_key_initial do
-        mixin :whitespace
-        rule string do
-          token Name::Tag
-          goto :object_key
-        end
+      state :template_string_expr do
         rule /}/, Punctuation, :pop!
-      end
-
-      # in object_key at least one more name/value pair is required
-      state :object_key do
-        mixin :whitespace
-        rule string, Name::Tag
-        rule /:/, Punctuation, :object_val
-        rule /}/, Error, :pop!
-      end
-
-      state :object_val do
-        rule /,/, Punctuation, :pop!
-        rule(/}/) { token Punctuation; pop!(2) }
-        mixin :root
-      end
-
-      state :array do
-        rule /\]/, Punctuation, :pop!
-        rule /,/, Punctuation
         mixin :root
       end
     end
-
-    class JSONDOC < JSON
-      desc "JavaScript Object Notation with extenstions for documentation"
-      tag 'json-doc'
-
-      prepend :root do
-        mixin :comments
-        rule /(\.\.\.)/, Comment::Single
-      end
-
-      prepend :object_key_initial do
-        mixin :comments
-        rule /(\.\.\.)/, Comment::Single
-      end
-
-      prepend :object_key do
-        mixin :comments
-        rule /(\.\.\.)/ do
-          token Comment::Single
-          goto :object_key_initial
-        end
-      end
-
-      state :comments do
-        rule %r(//.*?$), Comment::Single
-      end
-    end
-
   end
 end

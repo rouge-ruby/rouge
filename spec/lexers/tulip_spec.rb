@@ -8,6 +8,11 @@ describe Rouge::Lexers::Tulip do
       assert_guess :filename => 'foo.tlp'
     end
 
+    it 'guesses by mimetype' do
+      assert_guess :mimetype => 'text/x-tulip'
+      assert_guess :mimetype => 'application/x-tulip'
+    end
+
     it 'guesses by source' do
       assert_guess :source => '#!/usr/bin/env tulip'
     end

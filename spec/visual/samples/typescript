@@ -1,0 +1,200 @@
+// vim: ft=typescript
+
+var myFloat = 0.123;
+var myOctal = 0x123;
+var myRegex = /asdf/;
+var myComplicatedRegex = /.[.](?=x\h\[[)])[^.{}abc]{foo}{3,}x{2,3}/
+var myObject = { a: 1, b: 2 }
+
+var ternary = 0 ? 1 : {object_key : 2 ? variable : 3 };
+var ternary2 = a ? { object_key : c } + variable : e;
+var ternary3 = a ? {
+  key1 : var1,
+  key2: var2 ? function() {
+    label1: // break label, not an object key!
+    while(true) {
+      break label1;
+    }
+
+    label2: // also a break label
+    while (true) {
+      break label2;
+    }
+  } + var3: var4, // ternary, not object key
+  key3: 'foo'
+} : 2
+
+var a = {
+  num: 0,
+  func: function() {},
+  str: '',
+  bool: true
+}
+
+var obj =
+  {
+    // comment
+    key: val
+  }
+
+/*!
+ * multiline comment
+ */
+
+var quotedKeys = {
+  "one": 1,
+  "two": 2,
+  "three": 3,
+};
+
+Blag = {};
+jQuery.noConflict();
+
+if (cond)
+{
+  label1:
+  while (cond) break label1;
+}
+
+Blag.ReadMore = (function($) {
+  function getFold(button) {
+    return $(button).siblings('.fold');
+  }
+
+  function expand(e) {
+    e.preventDefault();
+
+    var self = $(this);
+
+    getFold(self).show();
+    self.html('&laquo; less');
+  }
+
+  function contract(e) {
+    e.preventDefault();
+
+    var self = $(this);
+
+    getFold(self).hide();
+    self.html('more &raquo;')
+  }
+
+  function init() {
+    $('a.read-more').toggle(expand, contract);
+  }
+
+  $(document).ready(init);
+})(jQuery);
+
+// evil regexes, from pygments
+
+/regexp/.test(foo) || x = [/regexp/,/regexp/, /regexp/, // comment
+// comment
+/regexp/];
+if (/regexp/.test(string))
+{/regexp/.test(string);};
+x =/regexp/;
+x = /regexp/;
+if (0</regexp/.exec(string) || 1>/regexp/.exec(string))
+x = { u:/regexp/, v: /regexp/ };
+foo();/regexp/.test(string); /regexp/.test(string);
+if (!/regexp/) foobar();
+x = u %/regexp/.exec(string) */regexp/.exec(string) / /regexp/.exec(string);
+x = u?/regexp/.exec(string) : v +/regexp/.exec(string) -/regexp/.exec(string);
+a = u^/regexp/.exec(string) &/regexp/.exec(string) |/regexp/.exec(string) +~/regexp/.exec(string);
+x = /regexp/ /* a comment */ ;
+x = /[reg/exp]/;
+x = 4/2/i;
+x = (a == b) ?/* this is a comment */ c : d;
+/// a comment //
+a = /regex//2/1; //syntactically correct, returns NaN
+
+// bad regexen - should have an error token at the last char and recover
+// on the next line
+var a = /foo
+var b = /[foo
+var c = /valid-regex/
+
+var template = "{{current}} of beer on the wall";
+var stanza = template.replace(/{{current}}/g, "99 bottles");
+
+/* original examples */
+
+// regex
+
+blah(/abc/);
+x = /abc/;
+x = /abc/.match;
+
+// math
+
+blah(1/2); //comment
+x = 1 / 2 / 3;
+x = 1/1/.1;
+
+x=/1/; // regex
+x=1/a/g; // division
+x=a/a/g; // division
+
+// real-world
+
+var x = 1/(1+Math.sqrt(sum)); // convert to number between 1-0
+return Math.round((num / den) * 100)/100;
+
+// generator
+function* range(from, to)
+{
+  to++;
+  while (from > to) {
+    yield from++;
+  }
+}
+
+/* TypeScript examples */
+
+declare namespace Foo {
+    interface FooStatic {
+        someFunc(): string;
+
+    }
+}
+
+declare var foo: Foo;
+export = foo;
+export { foo as default }
+
+declare module "foo" {
+    export interface IFoo {
+        theObject: any;
+        aWord: string;
+        aNumber: number;
+    }
+}
+
+export default abstract class FooClass extends Bar<T> {
+    constructor() {
+        super();
+    }
+
+    readonly foo: number = 42;
+}
+
+async function fooAsync() {
+    let result = await barAsync();
+}
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'my-app',
+  template: '<h1>My First Angular App</h1>'
+})
+export class AppComponent { }
+
+// Mapped types
+declare module "foo" {
+  export type IFooPartial = Partial<IFoo>
+  export interface IFooPartial2 {
+    [K in keyof IFoo]?: IFoo[K]
+  }
+}

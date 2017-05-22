@@ -11,6 +11,8 @@ module Rouge
   class Lexer
     include Token::Tokens
 
+    @option_docs = {}
+
     class << self
       # Lexes `stream` with the given options.  The lex is delegated to a
       # new instance.
@@ -18,12 +20,6 @@ module Rouge
       # @see #lex
       def lex(stream, opts={}, &b)
         new(opts).lex(stream, &b)
-      end
-
-      def default_options(o={})
-        @default_options ||= {}
-        @default_options.merge!(o)
-        @default_options
       end
 
       # Given a string, return the correct lexer class.
@@ -45,19 +41,25 @@ module Rouge
       # This is used in the Redcarpet plugin as well as Rouge's own
       # markdown lexer for highlighting internal code blocks.
       #
-      def find_fancy(str, code=nil)
+      def find_fancy(str, code=nil, additional_options={})
         name, opts = str ? str.split('?', 2) : [nil, '']
 
         # parse the options hash from a cgi-style string
         opts = CGI.parse(opts || '').map do |k, vals|
-          [ k.to_sym, vals.empty? ? true : vals[0] ]
+          val = case vals.size
+          when 0 then true
+          when 1 then vals[0]
+          else vals
+          end
+
+          [ k.to_s, val ]
         end
 
-        opts = Hash[opts]
+        opts = additional_options.merge(Hash[opts])
 
         lexer_class = case name
         when 'guess', nil
-          self.guess(:source => code, :mimetype => opts[:mimetype])
+          self.guess(:source => code, :mimetype => opts['mimetype'])
         when String
           self.find(name)
         end
@@ -80,6 +82,14 @@ module Rouge
         else
           @desc = arg
         end
+      end
+
+      def option_docs
+        @option_docs ||= InheritableHash.new(superclass.option_docs)
+      end
+
+      def option(name, desc)
+        option_docs[name.to_s] = desc
       end
 
       # Specify or get the path name containing a small demo for
@@ -109,33 +119,17 @@ module Rouge
       # to use.
       def guesses(info={})
         mimetype, filename, source = info.values_at(:mimetype, :filename, :source)
-        lexers = registry.values.uniq
-        total_size = lexers.size
+        custom_globs = info[:custom_globs]
 
-        lexers = filter_by_mimetype(lexers, mimetype) if mimetype
-        return lexers if lexers.size == 1
+        guessers = (info[:guessers] || []).dup
 
-        lexers = filter_by_filename(lexers, filename) if filename
-        return lexers if lexers.size == 1
+        guessers << Guessers::Mimetype.new(mimetype) if mimetype
+        guessers << Guessers::GlobMapping.by_pairs(custom_globs, filename) if custom_globs && filename
+        guessers << Guessers::Filename.new(filename) if filename
+        guessers << Guessers::Modeline.new(source) if source
+        guessers << Guessers::Source.new(source) if source
 
-        if source
-          # If we're filtering against *all* lexers, we only use confident return
-          # values from analyze_text.  But if we've filtered down already, we can trust
-          # the analysis more.
-          source_threshold = lexers.size < total_size ? 0 : 0.5
-          return [best_by_source(lexers, source, source_threshold)].compact
-        end
-
-        []
-      end
-
-      class AmbiguousGuess < StandardError
-        attr_reader :alternatives
-        def initialize(alternatives); @alternatives = alternatives; end
-
-        def message
-          "Ambiguous guess: can't decide between #{alternatives.map(&:tag).inspect}"
-        end
+        Guesser.guess(guessers, Lexer.all)
       end
 
       # Guess which lexer to use based on a hash of info.
@@ -157,7 +151,7 @@ module Rouge
         return Lexers::PlainText if lexers.empty?
         return lexers[0] if lexers.size == 1
 
-        raise AmbiguousGuess.new(lexers)
+        raise Guesser::Ambiguous.new(lexers)
       end
 
       def guess_by_mimetype(mt)
@@ -172,71 +166,16 @@ module Rouge
         guess :source => source
       end
 
-    private
-      def filter_by_mimetype(lexers, mt)
-        filtered = lexers.select { |lexer| lexer.mimetypes.include? mt }
-        filtered.any? ? filtered : lexers
+      def enable_debug!
+        @debug_enabled = true
       end
 
-      # returns a list of lexers that match the given filename with
-      # equal specificity (i.e. number of wildcards in the pattern).
-      # This helps disambiguate between, e.g. the Nginx lexer, which
-      # matches `nginx.conf`, and the Conf lexer, which matches `*.conf`.
-      # In this case, nginx will win because the pattern has no wildcards,
-      # while `*.conf` has one.
-      def filter_by_filename(lexers, fname)
-        fname = File.basename(fname)
-
-        out = []
-        best_seen = nil
-        lexers.each do |lexer|
-          score = lexer.filenames.map do |pattern|
-            if File.fnmatch?(pattern, fname, File::FNM_DOTMATCH)
-              # specificity is better the fewer wildcards there are
-              pattern.scan(/[*?\[]/).size
-            end
-          end.compact.min
-
-          next unless score
-
-          if best_seen.nil? || score < best_seen
-            best_seen = score
-            out = [lexer]
-          elsif score == best_seen
-            out << lexer
-          end
-        end
-
-        out.any? ? out : lexers
+      def disable_debug!
+        @debug_enabled = false
       end
 
-      def best_by_source(lexers, source, threshold=0)
-        source = case source
-        when String
-          source
-        when ->(s){ s.respond_to? :read }
-          source.read
-        else
-          raise 'invalid source'
-        end
-
-        assert_utf8!(source)
-
-        source = TextAnalyzer.new(source)
-
-        best_result = threshold
-        best_match = nil
-        lexers.each do |lexer|
-          result = lexer.analyze_text(source) || 0
-          return lexer if result == 1
-
-          if result > best_result
-            best_match = lexer
-            best_result = result
-          end
-        end
-
-        best_match
+      def debug_enabled?
+        !!@debug_enabled
       end
 
     protected
@@ -315,6 +254,7 @@ module Rouge
 
     # -*- instance methods -*- #
 
+    attr_reader :options
     # Create a new lexer with the given options.  Individual lexers may
     # specify extra options.  The only current globally accepted option
     # is `:debug`.
@@ -325,42 +265,103 @@ module Rouge
     #   state stack at the beginning of each step, along with each regex
     #   tried and each stream consumed.  Try it, it's pretty useful.
     def initialize(opts={})
-      options(opts)
+      @options = {}
+      opts.each { |k, v| @options[k.to_s] = v }
 
-      @debug = option(:debug)
+      @debug = Lexer.debug_enabled? && bool_option(:debug)
     end
 
-    # get and/or specify the options for this lexer.
-    def options(o={})
-      (@options ||= {}).merge!(o)
-
-      self.class.default_options.merge(@options)
-    end
-
-    # get or specify one option for this lexer
-    def option(k, v=:absent)
-      if v == :absent
-        options[k]
+    def as_bool(val)
+      case val
+      when nil, false, 0, '0', 'off'
+        false
+      when Array
+        val.empty? ? true : as_bool(val.last)
       else
-        options({ k => v })
+        true
       end
     end
 
-    # @deprecated
-    # Instead of `debug { "foo" }`, simply `puts "foo" if @debug`.
-    #
-    # Leave a debug message if the `:debug` option is set.  The message
-    # is given as a block because some debug messages contain calculated
-    # information that is unnecessary for lexing in the real world.
-    #
-    # Calls to this method should be guarded with "if @debug" for best
-    # performance when debugging is turned off.
-    #
-    # @example
-    #   debug { "hello, world!" } if @debug
-    def debug
-      warn "Lexer#debug is deprecated.  Simply puts if @debug instead."
-      puts yield if @debug
+    def as_string(val)
+      return as_string(val.last) if val.is_a?(Array)
+
+      val ? val.to_s : nil
+    end
+
+    def as_list(val)
+      case val
+      when Array
+        val.flat_map { |v| as_list(v) }
+      when String
+        val.split(',')
+      else
+        []
+      end
+    end
+
+    def as_lexer(val)
+      return as_lexer(val.last) if val.is_a?(Array)
+      return val.new(@options) if val.is_a?(Class) && val < Lexer
+
+      case val
+      when Lexer
+        val
+      when String
+        lexer_class = Lexer.find(val)
+        lexer_class && lexer_class.new(@options)
+      end
+    end
+
+    def as_token(val)
+      return as_token(val.last) if val.is_a?(Array)
+      case val
+      when Token
+        val
+      else
+        Token[val]
+      end
+    end
+
+    def bool_option(name, &default)
+      if @options.key?(name.to_s)
+        as_bool(@options[name.to_s])
+      else
+        default ? default.call : false
+      end
+    end
+
+    def string_option(name, &default)
+      as_string(@options.delete(name.to_s, &default))
+    end
+
+    def lexer_option(name, &default)
+      as_lexer(@options.delete(name.to_s, &default))
+    end
+
+    def list_option(name, &default)
+      as_list(@options.delete(name.to_s, &default))
+    end
+
+    def token_option(name, &default)
+      as_token(@options.delete(name.to_s, &default))
+    end
+
+    def hash_option(name, defaults, &val_cast)
+      name = name.to_s
+      out = defaults.dup
+
+      base = @options.delete(name.to_s)
+      base = {} unless base.is_a?(Hash)
+      base.each { |k, v| out[k.to_s] = val_cast ? val_cast.call(v) : v }
+
+      @options.keys.each do |key|
+        next unless key =~ /(\w+)\[(\w+)\]/ and $1 == name
+        value = @options.delete(key)
+
+        out[$2] = val_cast ? val_cast.call(value) : value
+      end
+
+      out
     end
 
     # @abstract

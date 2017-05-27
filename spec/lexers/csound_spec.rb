@@ -76,7 +76,7 @@ describe Rouge::Lexers::CsoundOrchestra do
 
     it 'lexes user-defined opcodes' do
       code = <<-EOF.unindent
-        opcode/**/aUDO,/**/0,/**/aik//
+        opcode/**/aUDO,/**/i[],/**/aik//
           aUDO
         endop
       EOF
@@ -86,7 +86,7 @@ describe Rouge::Lexers::CsoundOrchestra do
         ['Name.Function', 'aUDO'],
         ['Punctuation', ','],
         ['Comment.Multiline', '/**/'],
-        ['Keyword.Type', '0'],
+        ['Keyword.Type', 'i[]'],
         ['Punctuation', ','],
         ['Comment.Multiline', '/**/'],
         ['Keyword.Type', 'aik'],

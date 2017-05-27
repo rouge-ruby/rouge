@@ -238,7 +238,10 @@ module Rouge
       end
       state :opcode_type_signatures do
         mixin :whitespace_and_macro_uses
-        rule /\b(?:0|[afijkKoOpPStV\[\]]+)\b/, Keyword::Type
+
+        # https://github.com/csound/csound/search?q=XIDENT+path%3AEngine+filename%3Acsound_orc.lex
+        rule /0|[afijkKoOpPStV\[\]]+/, Keyword::Type
+
         rule /,/, Punctuation
         rule /\n/, Text, :pop!
       end

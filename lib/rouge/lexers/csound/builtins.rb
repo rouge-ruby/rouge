@@ -3,7 +3,7 @@
 module Rouge
   module Lexers
     class CsoundOrchestra
-      # Opcodes in Csound 6.08.0 at commit a1159a1 from
+      # Opcodes in Csound 6.09.0 at commit 73a8df5 from
       #   csound --list-opcodes3
       # except for
       #   cggoto   https://csound.github.io/docs/manual/cggoto.html
@@ -121,8 +121,53 @@ module Rouge
           OSCinit
           OSCinitM
           OSClisten
+          OSCraw
           OSCsend
+          OSCsendA
+          OSCsend_lo
+          JackoAudioIn
+          JackoAudioInConnect
+          JackoAudioOut
+          JackoAudioOutConnect
+          JackoFreewheel
+          JackoInfo
+          JackoInit
+          JackoMidiInConnect
+          JackoMidiOut
+          JackoMidiOutConnect
+          JackoNoteOut
+          JackoOn
+          JackoTransport
+          K35_hpf
+          K35_lpf
           S
+          STKBandedWG
+          STKBeeThree
+          STKBlowBotl
+          STKBlowHole
+          STKBowed
+          STKBrass
+          STKClarinet
+          STKDrummer
+          STKFlute
+          STKFMVoices
+          STKHevyMetl
+          STKMandolin
+          STKModalBar
+          STKMoog
+          STKPercFlut
+          STKPlucked
+          STKResonate
+          STKRhodey
+          STKSaxofony
+          STKShakers
+          STKSimple
+          STKSitar
+          STKStifKarp
+          STKTubeBell
+          STKVoicForm
+          STKWhistle
+          STKWurley
           a
           abs
           active
@@ -156,6 +201,7 @@ module Rouge
           biquad
           biquada
           birnd
+          bpf
           bqrez
           buchla
           butbp
@@ -172,6 +218,7 @@ module Rouge
           cabasa
           cauchy
           cauchyi
+          cbrt
           ceil
           cell
           cent
@@ -200,6 +247,7 @@ module Rouge
           clip
           clockoff
           clockon
+          cmp
           cmplxprod
           comb
           combinv
@@ -230,6 +278,7 @@ module Rouge
           cpstun
           cpstuni
           cpsxpch
+          cpumeter
           cpuprc
           cross2
           crossfm
@@ -269,6 +318,7 @@ module Rouge
           deltapxw
           denorm
           diff
+          diode_ladder
           directory
           diskgrain
           diskin
@@ -279,8 +329,14 @@ module Rouge
           distort1
           divz
           doppler
+          dot
           downsamp
           dripwater
+          dssiactivate
+          dssiaudio
+          dssictls
+          dssiinit
+          dssilist
           dumpk
           dumpk2
           dumpk3
@@ -344,6 +400,7 @@ module Rouge
           fluidOut
           fluidProgramSelect
           fluidSetInterpMethod
+          fmanal
           fmb3
           fmbell
           fmmetal
@@ -382,6 +439,7 @@ module Rouge
           ftloadk
           ftlptim
           ftmorf
+          ftom
           ftresize
           ftresizei
           ftsamplebank
@@ -417,6 +475,7 @@ module Rouge
           hdf5read
           hdf5write
           hilbert
+          hilbert2
           hrtfearly
           hrtfmove
           hrtfmove2
@@ -460,21 +519,216 @@ module Rouge
           invalue
           inx
           inz
+          jacktransport
           jitter
           jitter2
+          joystick
           jspline
           k
+          la_i_add_mc
+          la_i_add_mr
+          la_i_add_vc
+          la_i_add_vr
+          la_i_assign_mc
+          la_i_assign_mr
+          la_i_assign_t
+          la_i_assign_vc
+          la_i_assign_vr
+          la_i_conjugate_mc
+          la_i_conjugate_mr
+          la_i_conjugate_vc
+          la_i_conjugate_vr
+          la_i_distance_vc
+          la_i_distance_vr
+          la_i_divide_mc
+          la_i_divide_mr
+          la_i_divide_vc
+          la_i_divide_vr
+          la_i_dot_mc
+          la_i_dot_mc_vc
+          la_i_dot_mr
+          la_i_dot_mr_vr
+          la_i_dot_vc
+          la_i_dot_vr
+          la_i_get_mc
+          la_i_get_mr
+          la_i_get_vc
+          la_i_get_vr
+          la_i_invert_mc
+          la_i_invert_mr
+          la_i_lower_solve_mc
+          la_i_lower_solve_mr
+          la_i_lu_det_mc
+          la_i_lu_det_mr
+          la_i_lu_factor_mc
+          la_i_lu_factor_mr
+          la_i_lu_solve_mc
+          la_i_lu_solve_mr
+          la_i_mc_create
+          la_i_mc_set
+          la_i_mr_create
+          la_i_mr_set
+          la_i_multiply_mc
+          la_i_multiply_mr
+          la_i_multiply_vc
+          la_i_multiply_vr
+          la_i_norm_euclid_mc
+          la_i_norm_euclid_mr
+          la_i_norm_euclid_vc
+          la_i_norm_euclid_vr
+          la_i_norm_inf_mc
+          la_i_norm_inf_mr
+          la_i_norm_inf_vc
+          la_i_norm_inf_vr
+          la_i_norm_max_mc
+          la_i_norm_max_mr
+          la_i_norm1_mc
+          la_i_norm1_mr
+          la_i_norm1_vc
+          la_i_norm1_vr
+          la_i_print_mc
+          la_i_print_mr
+          la_i_print_vc
+          la_i_print_vr
+          la_i_qr_eigen_mc
+          la_i_qr_eigen_mr
+          la_i_qr_factor_mc
+          la_i_qr_factor_mr
+          la_i_qr_sym_eigen_mc
+          la_i_qr_sym_eigen_mr
+          la_i_random_mc
+          la_i_random_mr
+          la_i_random_vc
+          la_i_random_vr
+          la_i_size_mc
+          la_i_size_mr
+          la_i_size_vc
+          la_i_size_vr
+          la_i_subtract_mc
+          la_i_subtract_mr
+          la_i_subtract_vc
+          la_i_subtract_vr
+          la_i_t_assign
+          la_i_trace_mc
+          la_i_trace_mr
+          la_i_transpose_mc
+          la_i_transpose_mr
+          la_i_upper_solve_mc
+          la_i_upper_solve_mr
+          la_i_vc_create
+          la_i_vc_set
+          la_i_vr_create
+          la_i_vr_set
+          la_k_a_assign
+          la_k_add_mc
+          la_k_add_mr
+          la_k_add_vc
+          la_k_add_vr
+          la_k_assign_a
+          la_k_assign_f
+          la_k_assign_mc
+          la_k_assign_mr
+          la_k_assign_t
+          la_k_assign_vc
+          la_k_assign_vr
+          la_k_conjugate_mc
+          la_k_conjugate_mr
+          la_k_conjugate_vc
+          la_k_conjugate_vr
+          la_k_current_f
+          la_k_current_vr
+          la_k_distance_vc
+          la_k_distance_vr
+          la_k_divide_mc
+          la_k_divide_mr
+          la_k_divide_vc
+          la_k_divide_vr
+          la_k_dot_mc
+          la_k_dot_mc_vc
+          la_k_dot_mr
+          la_k_dot_mr_vr
+          la_k_dot_vc
+          la_k_dot_vr
+          la_k_f_assign
+          la_k_get_mc
+          la_k_get_mr
+          la_k_get_vc
+          la_k_get_vr
+          la_k_invert_mc
+          la_k_invert_mr
+          la_k_lower_solve_mc
+          la_k_lower_solve_mr
+          la_k_lu_det_mc
+          la_k_lu_det_mr
+          la_k_lu_factor_mc
+          la_k_lu_factor_mr
+          la_k_lu_solve_mc
+          la_k_lu_solve_mr
+          la_k_mc_set
+          la_k_mr_set
+          la_k_multiply_mc
+          la_k_multiply_mr
+          la_k_multiply_vc
+          la_k_multiply_vr
+          la_k_norm_euclid_mc
+          la_k_norm_euclid_mr
+          la_k_norm_euclid_vc
+          la_k_norm_euclid_vr
+          la_k_norm_inf_mc
+          la_k_norm_inf_mr
+          la_k_norm_inf_vc
+          la_k_norm_inf_vr
+          la_k_norm_max_mc
+          la_k_norm_max_mr
+          la_k_norm1_mc
+          la_k_norm1_mr
+          la_k_norm1_vc
+          la_k_norm1_vr
+          la_k_qr_eigen_mc
+          la_k_qr_eigen_mr
+          la_k_qr_factor_mc
+          la_k_qr_factor_mr
+          la_k_qr_sym_eigen_mc
+          la_k_qr_sym_eigen_mr
+          la_k_random_mc
+          la_k_random_mr
+          la_k_random_vc
+          la_k_random_vr
+          la_k_subtract_mc
+          la_k_subtract_mr
+          la_k_subtract_vc
+          la_k_subtract_vr
+          la_k_t_assign
+          la_k_trace_mc
+          la_k_trace_mr
+          la_k_upper_solve_mc
+          la_k_upper_solve_mr
+          la_k_vc_set
+          la_k_vr_set
           lenarray
           lfo
           limit
+          limit1
           line
           linen
           linenr
           lineto
+          link_beat_force
+          link_beat_get
+          link_beat_request
+          link_create
+          link_enable
+          link_is_enabled
+          link_metro
+          link_peers
+          link_tempo_get
+          link_tempo_set
+          linlin
           linrand
           linseg
           linsegb
           linsegr
+          liveconv
           locsend
           locsig
           log
@@ -509,7 +763,12 @@ module Rouge
           lpsholdp
           lpslot
           lua_exec
+          lua_iaopcall
+          lua_iaopcall_off
           lua_ikopcall
+          lua_ikopcall_off
+          lua_iopcall
+          lua_iopcall_off
           lua_opdef
           mac
           maca
@@ -535,6 +794,7 @@ module Rouge
           metro
           mfb
           midglobal
+          midiarp
           midic14
           midic21
           midic7
@@ -580,9 +840,16 @@ module Rouge
           mp3len
           mp3nchnls
           mp3scal
+          mp3scal_check
+          mp3scal_load
+          mp3scal_load2
+          mp3scal_play
+          mp3scal_play2
           mp3sr
           mpulse
           mrtmsg
+          mtof
+          mton
           multitap
           mute
           mvchpf
@@ -607,6 +874,7 @@ module Rouge
           nsamp
           nstance
           nstrnum
+          ntom
           ntrpol
           nxtpow2
           octave
@@ -664,6 +932,8 @@ module Rouge
           outx
           outz
           p
+          p5gconnect
+          p5gdata
           pan
           pan2
           pareq
@@ -681,6 +951,7 @@ module Rouge
           pchmidib
           pchmidinn
           pchoct
+          pchtom
           pconvolve
           pcount
           pdclip
@@ -786,6 +1057,7 @@ module Rouge
           pvspitch
           pvstanal
           pvstencil
+          pvstrace
           pvsvoc
           pvswarp
           pvsynth
@@ -924,6 +1196,10 @@ module Rouge
           s32b14
           samphold
           sandpaper
+          sc_lag
+          sc_lagud
+          sc_phasor
+          sc_trig
           scale
           scalearray
           scanhammer
@@ -938,6 +1214,7 @@ module Rouge
           scoreline_i
           seed
           sekere
+          select
           semitone
           sense
           sensekey
@@ -1003,7 +1280,10 @@ module Rouge
           sockrecv
           sockrecvs
           socksend
+          socksend_k
           socksends
+          sorta
+          sortd
           soundin
           space
           spat3d
@@ -1050,6 +1330,7 @@ module Rouge
           subinstr
           subinstrinit
           sum
+          sumTableFilter
           sumarray
           svfilter
           syncgrain
@@ -1057,6 +1338,7 @@ module Rouge
           syncphasor
           system
           system_i
+          systime
           tab
           tab2pvs
           tab_i
@@ -1166,6 +1448,7 @@ module Rouge
           turnoff
           turnoff2
           turnon
+          tvconv
           unirand
           unwrap
           upsamp
@@ -1180,6 +1463,7 @@ module Rouge
           valpass
           vaset
           vbap
+          vbap1move
           vbapg
           vbapgmove
           vbaplsinit
@@ -1255,6 +1539,7 @@ module Rouge
           vtabwk
           vwrap
           waveset
+          websocket
           weibull
           wgbow
           wgbowedbar
@@ -1281,6 +1566,7 @@ module Rouge
           xscansmap
           xscanu
           xtratim
+          xyscale
           zacl
           zakinit
           zamod
@@ -1288,6 +1574,11 @@ module Rouge
           zarg
           zaw
           zawm
+          zdf_1pole
+          zdf_1pole_mode
+          zdf_2pole
+          zdf_2pole_mode
+          zdf_ladder
           zfilter2
           zir
           ziw

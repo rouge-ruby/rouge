@@ -364,7 +364,7 @@ module Rouge
         mixin :whitespace_and_macro_uses
         mixin :preprocessor_directives
 
-        rule /[abCefiqstvxy]/, Keyword
+        rule /[abCdefiqstvxy]/, Keyword
         # There is also a w statement that is generated internally and should
         # not be used; see https://github.com/csound/csound/issues/750.
 

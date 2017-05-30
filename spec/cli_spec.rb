@@ -56,7 +56,7 @@ describe Rouge::CLI do
         out, err = capture_io { subject.run }
 
         expected_tags = Rouge::Lexer.all.map(&:tag).sort
-        actual_tags = out.scan(/^(.*?):/).flatten
+        actual_tags = out.scan(/^([^\s]*?):/).flatten
 
         assert_equal expected_tags, actual_tags, "err: #{err.inspect}"
       end

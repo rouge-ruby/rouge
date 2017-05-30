@@ -3,7 +3,6 @@
 describe Rouge::Formatters::HTML do
   let(:subject) { Rouge::Formatters::HTMLLegacy.new(options) }
   let(:options) { {} }
-  Token = Rouge::Token
 
   describe 'skipping the wrapper' do
     let(:subject) { Rouge::Formatters::HTML.new }

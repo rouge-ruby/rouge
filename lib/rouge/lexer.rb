@@ -11,6 +11,8 @@ module Rouge
   class Lexer
     include Token::Tokens
 
+    @option_docs = {}
+
     class << self
       # Lexes `stream` with the given options.  The lex is delegated to a
       # new instance.
@@ -18,12 +20,6 @@ module Rouge
       # @see #lex
       def lex(stream, opts={}, &b)
         new(opts).lex(stream, &b)
-      end
-
-      def default_options(o={})
-        @default_options ||= {}
-        @default_options.merge!(o)
-        @default_options
       end
 
       # Given a string, return the correct lexer class.
@@ -45,19 +41,25 @@ module Rouge
       # This is used in the Redcarpet plugin as well as Rouge's own
       # markdown lexer for highlighting internal code blocks.
       #
-      def find_fancy(str, code=nil)
+      def find_fancy(str, code=nil, additional_options={})
         name, opts = str ? str.split('?', 2) : [nil, '']
 
         # parse the options hash from a cgi-style string
         opts = CGI.parse(opts || '').map do |k, vals|
-          [ k.to_sym, vals.empty? ? true : vals[0] ]
+          val = case vals.size
+          when 0 then true
+          when 1 then vals[0]
+          else vals
+          end
+
+          [ k.to_s, val ]
         end
 
-        opts = Hash[opts]
+        opts = additional_options.merge(Hash[opts])
 
         lexer_class = case name
         when 'guess', nil
-          self.guess(:source => code, :mimetype => opts[:mimetype])
+          self.guess(:source => code, :mimetype => opts['mimetype'])
         when String
           self.find(name)
         end
@@ -80,6 +82,14 @@ module Rouge
         else
           @desc = arg
         end
+      end
+
+      def option_docs
+        @option_docs ||= InheritableHash.new(superclass.option_docs)
+      end
+
+      def option(name, desc)
+        option_docs[name.to_s] = desc
       end
 
       # Specify or get the path name containing a small demo for
@@ -156,7 +166,17 @@ module Rouge
         guess :source => source
       end
 
-    private
+      def enable_debug!
+        @debug_enabled = true
+      end
+
+      def disable_debug!
+        @debug_enabled = false
+      end
+
+      def debug_enabled?
+        !!@debug_enabled
+      end
 
     protected
       # @private
@@ -234,6 +254,7 @@ module Rouge
 
     # -*- instance methods -*- #
 
+    attr_reader :options
     # Create a new lexer with the given options.  Individual lexers may
     # specify extra options.  The only current globally accepted option
     # is `:debug`.
@@ -244,42 +265,103 @@ module Rouge
     #   state stack at the beginning of each step, along with each regex
     #   tried and each stream consumed.  Try it, it's pretty useful.
     def initialize(opts={})
-      options(opts)
+      @options = {}
+      opts.each { |k, v| @options[k.to_s] = v }
 
-      @debug = option(:debug)
+      @debug = Lexer.debug_enabled? && bool_option(:debug)
     end
 
-    # get and/or specify the options for this lexer.
-    def options(o={})
-      (@options ||= {}).merge!(o)
-
-      self.class.default_options.merge(@options)
-    end
-
-    # get or specify one option for this lexer
-    def option(k, v=:absent)
-      if v == :absent
-        options[k]
+    def as_bool(val)
+      case val
+      when nil, false, 0, '0', 'off'
+        false
+      when Array
+        val.empty? ? true : as_bool(val.last)
       else
-        options({ k => v })
+        true
       end
     end
 
-    # @deprecated
-    # Instead of `debug { "foo" }`, simply `puts "foo" if @debug`.
-    #
-    # Leave a debug message if the `:debug` option is set.  The message
-    # is given as a block because some debug messages contain calculated
-    # information that is unnecessary for lexing in the real world.
-    #
-    # Calls to this method should be guarded with "if @debug" for best
-    # performance when debugging is turned off.
-    #
-    # @example
-    #   debug { "hello, world!" } if @debug
-    def debug
-      warn "Lexer#debug is deprecated.  Simply puts if @debug instead."
-      puts yield if @debug
+    def as_string(val)
+      return as_string(val.last) if val.is_a?(Array)
+
+      val ? val.to_s : nil
+    end
+
+    def as_list(val)
+      case val
+      when Array
+        val.flat_map { |v| as_list(v) }
+      when String
+        val.split(',')
+      else
+        []
+      end
+    end
+
+    def as_lexer(val)
+      return as_lexer(val.last) if val.is_a?(Array)
+      return val.new(@options) if val.is_a?(Class) && val < Lexer
+
+      case val
+      when Lexer
+        val
+      when String
+        lexer_class = Lexer.find(val)
+        lexer_class && lexer_class.new(@options)
+      end
+    end
+
+    def as_token(val)
+      return as_token(val.last) if val.is_a?(Array)
+      case val
+      when Token
+        val
+      else
+        Token[val]
+      end
+    end
+
+    def bool_option(name, &default)
+      if @options.key?(name.to_s)
+        as_bool(@options[name.to_s])
+      else
+        default ? default.call : false
+      end
+    end
+
+    def string_option(name, &default)
+      as_string(@options.delete(name.to_s, &default))
+    end
+
+    def lexer_option(name, &default)
+      as_lexer(@options.delete(name.to_s, &default))
+    end
+
+    def list_option(name, &default)
+      as_list(@options.delete(name.to_s, &default))
+    end
+
+    def token_option(name, &default)
+      as_token(@options.delete(name.to_s, &default))
+    end
+
+    def hash_option(name, defaults, &val_cast)
+      name = name.to_s
+      out = defaults.dup
+
+      base = @options.delete(name.to_s)
+      base = {} unless base.is_a?(Hash)
+      base.each { |k, v| out[k.to_s] = val_cast ? val_cast.call(v) : v }
+
+      @options.keys.each do |key|
+        next unless key =~ /(\w+)\[(\w+)\]/ and $1 == name
+        value = @options.delete(key)
+
+        out[$2] = val_cast ? val_cast.call(value) : value
+      end
+
+      out
     end
 
     # @abstract

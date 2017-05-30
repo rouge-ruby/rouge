@@ -1,7 +1,8 @@
+
 sio4@silver:~$ ls /var
 backups  crash  local  log   metrics  run    tmp
 cache    lib    lock   mail  opt      spool
-<...>
+# ...
 sio4@silver:~$ sudo su -
 [sudo] password for sio4: 
 root@silver:~# ls /bin/*sh
@@ -27,3 +28,16 @@ $ sudo su -
 # exit
 logout
 $ 
+
+~$ gpg2 --output private.key.asc \
+       --armor \
+       --export-secret-key $KEYID
+
+; cat <<HELLO
+> HELLO0
+> HELLO
+HELLO0
+;
+
+$ foo ; bar
+$ foo --thing > bar.txt

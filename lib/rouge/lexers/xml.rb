@@ -52,7 +52,7 @@ module Rouge
 
       state :attr do
         rule /\s+/m, Text
-        rule /".*?"|'.*?'|[^\s>]+/, Str, :pop!
+        rule /".*?"|'.*?'|[^\s>]+/m, Str, :pop!
       end
     end
   end

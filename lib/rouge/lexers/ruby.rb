@@ -254,25 +254,31 @@ module Rouge
       state :resolve_heredocs do
         mixin :string_intp_escaped
 
-        rule /(\n)([^#\\\n]*)$/ do |m|
+        rule /\n/, Str::Heredoc, :test_heredoc
+        rule /[#\\\n]/, Str::Heredoc
+        rule /[^#\\\n]+/, Str::Heredoc
+      end
+
+      state :test_heredoc do
+        rule /[^#\\\n]*$/ do |m|
           tolerant, heredoc_name = @heredoc_queue.first
-          check = tolerant ? m[2].strip : m[2].rstrip
+          check = tolerant ? m[0].strip : m[0].rstrip
 
           # check if we found the end of the heredoc
-          line_tok = if check == heredoc_name
+          puts "    end heredoc check #{check.inspect} = #{heredoc_name.inspect}" if @debug
+          if check == heredoc_name
             @heredoc_queue.shift
             # if there's no more, we're done looking.
             pop! if @heredoc_queue.empty?
-            Name::Constant
+            token Name::Constant
           else
-            Str::Heredoc
+            token Str::Heredoc
           end
 
-          groups(Str::Heredoc, line_tok)
+          pop!
         end
 
-        rule /[#\\\n]/, Str::Heredoc
-        rule /[^#\\\n]+/, Str::Heredoc
+        rule(//) { pop! }
       end
 
       state :funcname do

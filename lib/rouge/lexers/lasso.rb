@@ -12,6 +12,8 @@ module Rouge
       filenames '*.lasso', '*.lasso[89]'
       mimetypes 'text/x-lasso', 'text/html+lasso', 'application/x-httpd-lasso'
 
+      option :start_inline, 'Whether to start inline instead of requiring <?lasso or ['
+
       def self.analyze_text(text)
         rv = 0.0
         rv += 1 if text.shebang?('lasso9')
@@ -20,18 +22,14 @@ module Rouge
         return rv
       end
 
-      default_options :parent => 'html'
+      def initialize(*)
+        super
 
-      def initialize(opts={})
-        # if truthy, the lexer starts highlighting with Lasso code
-        # (no <?lasso or [ required)
-        @start_inline = opts.delete(:start_inline)
-
-        super(opts)
+        @start_inline = bool_option(:start_inline)
       end
 
       def start_inline?
-        !!@start_inline
+        @start_inline
       end
 
       start do
@@ -41,8 +39,9 @@ module Rouge
       class << self
         attr_reader :keywords
       end
+
       # Load Lasso keywords from separate YML file
-      @keywords = ::YAML.load(File.open(Pathname.new(__FILE__).dirname.join('lasso/keywords.yml'))).tap do |h|
+      @keywords = ::YAML.load_file(Pathname.new(__FILE__).dirname.join('lasso/keywords.yml')).tap do |h|
         h.each do |k,v|
           h[k] = Set.new v
         end

@@ -238,6 +238,8 @@ module Rouge
       attr_reader :input_file, :lexer_name, :mimetype, :formatter
 
       def initialize(opts={})
+        Rouge::Lexer.enable_debug!
+
         @input_file = opts[:input_file]
 
         if opts[:lexer]
@@ -349,6 +351,11 @@ module Rouge
             desc << " [aliases: #{lexer.aliases.join(',')}]"
           end
           puts "%s: %s" % [lexer.tag, desc]
+
+          lexer.option_docs.keys.sort.each do |option|
+            puts "  ?#{option}= #{lexer.option_docs[option]}"
+          end
+
           puts
         end
       end

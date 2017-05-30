@@ -13,7 +13,7 @@ module Rouge
         attr_reader :keywords
       end
       # Load Apache keywords from separate YML file
-      @keywords = ::YAML.load(File.open(Pathname.new(__FILE__).dirname.join('apache/keywords.yml'))).tap do |h|
+      @keywords = ::YAML.load_file(Pathname.new(__FILE__).dirname.join('apache/keywords.yml')).tap do |h|
         h.each do |k,v|
           h[k] = Set.new v
         end

@@ -1,0 +1,73 @@
+#! /usr/bin/env q
+
+  Demo for the Q programming language (kx.com)
+
+x:til 10
+
+/
+
+Multi-line
+comment
+
+\
+
+/ Line comments that start at the left margin
+  can be continued on indented lines.
+f:{ / but this comment will not continue
+   x + y}
+
+/ Over and scan
+f/1 2 3
+f\1 2 3
+
+do|if|while|select|update|delete|exec|from|by
+
+div|ij|insert|lj|ljf|mavg|mcount|mdev|mmax|mmin|mmu|mod|msum|over|prior|peach|pj|scan
+
+iasc|idesc|inv|keys|load|log|lsq|ltime|ltrim|maxs|md5|meta|mins|next|parse|plist|prds|prev|rand|rank|ratios
+
+0nh 0Nc 0wt 0Wu
+
+/ Operators
+(!;@;#;$;%;^;&;*)
+(!:;@:;#:;$:;%:;^:;&:;*:)
+(0:;1:;2:)
+(';/;\;':;;/:;\:)
+
+/ System namespaces
+(.z.i;.Q.K)
+
+/ Strings
+("";"x\n";"\007")
+
+
+10D 10D10 10D10:10 10D10:10:10 10D10:10:10.11
+10Dz 10D10p 10D10:10n 10D10:10:10z 10D10:10:10.11p
+
+2001.10.10D 2001.10.10D10 2001.10.10D10:10 2001.10.10D10:10:10 2001.10.10D10:10:10.11
+2001.10.10Dz 10D10p 2001.10.10D10:10n 2001.10.10D10:10:10z 2001.10.10D10:10:10.11p
+
+10:10 10:10:10 10:10:10.1111
+10:10u 10:10:10u 10:10:10.1111u
+10:10v 10:10:10v 10:10:10.1111v
+10:10p 10:10:10p 10:10:10.1111p
+10:10t 10:10:10t 10:10:10.1111t
+10:10n 10:10:10n 10:10:10.1111n
+
+2001.10.10 2001.10.10d 2001.10.10p 2001.10.10n 2001.10.10z 2001.10.10m
+
+10 10.1 10e10 10e-10 .1 .1e+10
+10e 10.1e 10e10e 10e-10e .1e .1e+10e
+10f 10.1f 10e10f 10e-10f .1f .1e+10f
+
+`sym`a_b
+`:path`:/a/b/c
+
+k)x:!5
+
+\
+til eof comment
+/
+no effect
+\
+no effect

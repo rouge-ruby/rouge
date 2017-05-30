@@ -11,10 +11,11 @@ module Rouge
       filenames '*.txt'
       mimetypes 'text/plain'
 
-      default_options :token => 'Text'
+      attr_reader :token
+      def initialize(*)
+        super
 
-      def token
-        @token ||= Token[option :token]
+        @token = token_option(:token) || Text
       end
 
       def stream_tokens(string, &b)

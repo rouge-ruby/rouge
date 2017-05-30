@@ -1,5 +1,10 @@
 echo $'ansi\tstrings'
 
+echo <<HERE
+ HEREE
+  HERE
+# comment
+
 ry::setup() {
 cat <<sh
 export PATH="$(ry fullpath "$@")";

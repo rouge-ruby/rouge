@@ -189,11 +189,14 @@ module Rouge
           :input_file => '-',
           :lexer_opts => {},
           :formatter_opts => {},
+          :requires => [],
         }
 
         until argv.empty?
           arg = argv.shift
           case arg
+          when '-r', '--require'
+            opts[:requires] << argv.shift
           when '--input-file', '-i'
             opts[:input_file] = argv.shift
           when '--mimetype', '-m'
@@ -242,6 +245,10 @@ module Rouge
 
       def initialize(opts={})
         Rouge::Lexer.enable_debug!
+
+        opts[:requires].each do |r|
+          require r
+        end
 
         @input_file = opts[:input_file]
 

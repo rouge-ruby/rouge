@@ -170,7 +170,7 @@ module Rouge
         yield %[                            terminal256.]
         yield %[]
         yield %[--theme|-t <theme>          specify the theme to use for highlighting]
-        yield %[                            the file.]
+        yield %[                            the file. (only applies to some formatters)]
         yield %[]
         yield %[--mimetype|-m <mimetype>    specify a mimetype for lexer guessing]
         yield %[]

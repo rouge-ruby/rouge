@@ -1,3 +1,5 @@
+if a then b else c
+
 structure C = struct
    val a = 12
    fun f x = x + 5
@@ -154,3 +156,7 @@ val () = print st
 val _ = foo::bar::4::[++]
 
 end
+
+infix ++
+fun l ++ [] = l
+  | l ++ (y::ys) = if y elt l then l ++ ys else (y::l) ++ ys

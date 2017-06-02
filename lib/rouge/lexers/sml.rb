@@ -41,7 +41,8 @@ module Rouge
         rule /[(\[{]/, Punctuation, :main
         rule /[)\]}]/, Punctuation, :pop!
 
-        rule /\b(let|if|local)\b(?!')/, Keyword::Reserved do
+        rule /\b(let|if|local)\b(?!')/ do
+          token Keyword::Reserved
           push; push
         end
 

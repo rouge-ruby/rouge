@@ -1,0 +1,40 @@
+# Hacked from https://en.wikipedia.org/wiki/Sieve_(mail_filtering_language)
+
+# Sieve filter
+
+# Declare the extensions used by this script.
+#
+require ["fileinto", "reject", "imapsieve", "environment", "variables"];
+
+# simple variable interpolation highlight test
+if environment :matches "imap.user" "*" {
+      set "username" "${1}";
+}
+
+# Messages bigger than 9K will be rejected with an error message
+#
+if size :over 9K {
+   reject "IT'S OVER NIIIINNE
+THOUSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAND!!!@$#!";
+}
+
+# Mails from a mailing list will be put into the folder "mailinglist"
+#
+elsif address :is ["From", "To"] "mailinglist@blafasel.invalid" {
+   fileinto "INBOX.mailinglist";
+}
+
+# Spam Rule: Message does not contain my address in To, CC or Bcc
+# header, or subject is something with "money" or "Viagra".
+#
+elsif anyof (not address :all :contains ["To", "Cc", "Bcc"] "me@blafasel.invalid",
+header :matches "Subject" ["*money*","*Viagra*"]) {
+      fileinto "INBOX.spam";
+}
+
+# Keep the rest.
+# This is not necessary because there is a "implicit keep" Rule
+#
+else {
+     keep;
+}

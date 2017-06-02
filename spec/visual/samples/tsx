@@ -1,0 +1,97 @@
+let myDivElement = <div className="foo" />;
+ReactDOM.render(myDivElement, document.getElementById('example'));
+
+
+
+let MyComponent = React.createClass({/*...*/});
+let myElement = <MyComponent someProperty={true} />;
+ReactDOM.render(myElement, document.getElementById('example'));
+
+let myElement = <MyComponent someProperty={{a:true}.a} />;
+let myElement = <MyComponent someProperty={function() {
+  let x = { a: true };
+  return x.a;
+}} />
+
+thing.otherThing<MyComponent.property // comment - this is comparison
+let myElement = <MyComponent thing={thing.otherThing>2}>
+  hello, world!
+</MyComponent>
+
+let content = <Container>{window.isLoggedIn ? <Nav /> : <Login />}</Container>;
+
+// These two are equivalent in TSX for disabling a button
+<input type="button" disabled />;
+<input type="button" disabled={true} />;
+
+// And these two are equivalent in TSX for not disabling a button
+<input type="button" />;
+<input type="button" disabled={false} />;
+
+let App = (
+  <Form>
+    <Form.Row>
+      <Form.Label />
+      <Form.Input />
+    </Form.Row>
+  </Form>
+);
+
+let content = (
+  <Nav>
+    {/* child comment, put {} around */}
+    a slash-star that isn't a comment because this is html: /*
+    <Person
+      /* multi
+         line
+         comment */
+      name={window.isLoggedIn ? window.name : ''} // end of line comment
+    />
+  </Nav>
+);
+
+let App = (
+  <Form>
+    <FormRow>
+      <FormLabel />
+      <FormInput />
+    </FormRow>
+  </Form>
+);
+
+let thing = <A b={function() { let c = <D e={true}>&quot;</D>; }()}/>
+
+export interface LikeButtonState {
+  liked: boolean;
+}
+
+class LikeButton extends React.Component<{ liked: boolean }, LikeButtonState> {
+  constructor(props: { liked: boolean }) {
+    super(props);
+
+    this.state = {
+      liked: this.props.liked
+    };
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState({ liked: !this.state.liked });
+  }
+
+  render() {
+    const text = this.state.liked ? 'liked' : 'haven\'t liked';
+
+    return (
+      <div onClick={this.handleClick}>
+        You {text} this. Click to toggle.
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <LikeButton liked={false} />,
+  document.getElementById('example')
+);

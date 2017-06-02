@@ -39,7 +39,7 @@ module Rouge
         rule /\b(#{KEYWORDS})\s*\b/, Keyword
         rule /\bcase\b/, Keyword, :case
 
-        rule /\b(#{BUILTINS})\s*\b(?!\.)/, Name::Builtin
+        rule /\b(#{BUILTINS})\s*\b(?!(\.|-))/, Name::Builtin
         rule /[.](?=\s)/, Name::Builtin
 
         rule /(\b\w+)(=)/ do |m|

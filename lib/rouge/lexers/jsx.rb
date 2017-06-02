@@ -3,7 +3,8 @@ module Rouge
     load_lexer 'javascript.rb'
 
     class JSX < Javascript
-      desc 'jsx'
+      title 'JSX'
+      desc 'React JSX (https://facebook.github.io/react/)'
       tag 'jsx'
       aliases 'jsx', 'react'
       filenames '*.jsx'

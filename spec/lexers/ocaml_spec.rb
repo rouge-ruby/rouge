@@ -17,5 +17,17 @@ describe Rouge::Lexers::OCaml do
       assert_guess :mimetype => 'text/x-ocaml'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'recognizes value as a Name' do
+      assert_tokens_equal 'value', ['Name', 'value']
+    end
+
+    it 'recognizes nonrec as a Keyword' do
+      assert_tokens_equal 'nonrec', ['Keyword', 'nonrec']
+    end
+  end
 end
 

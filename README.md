@@ -73,7 +73,7 @@ Allows you to specify which language the template is inside
 
 #### CSS theme options
 ##### scope: '.highlight'
-CSS selector that styles are applied to, e.g. `Rouge::Themes::Monokai.mode(:sublime).render(scope: 'code')`
+CSS selector that styles are applied to, e.g. `Rouge::Themes::MonokaiSublime.render(scope: 'code')`
 
 Rouge aims to be simple to extend, and to be a drop-in replacement for pygments, with the same quality of output. Also, Rouge ships with a `rougify` command which allows you to easily highlight files in your terminal:
 

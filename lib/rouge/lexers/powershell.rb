@@ -81,6 +81,42 @@ module Rouge
         swmi tee trcm type wget where wjb write \% \?
       ).join('|')
 
+      # Override from Shell
+      state :interp do
+        rule /`$/, Str::Escape # line continuation
+        rule /`./, Str::Escape
+        rule /\$\(\(/, Keyword, :math
+        rule /\$\(/, Keyword, :paren
+        rule /\${#?/, Keyword, :curly
+        rule /\$#?(\w+|.)/, Name::Variable
+      end
+
+      # Override from Shell
+      state :double_quotes do
+        # NB: "abc$" is literally the string abc$.
+        # Here we prevent :interp from interpreting $" as a variable.
+        rule /(?:\$#?)?"/, Str::Double, :pop!
+        mixin :interp
+        rule /[^"`$]+/, Str::Double
+      end
+
+      # Override from Shell
+      state :data do
+        rule /\s+/, Text
+        rule /\$?"/, Str::Double, :double_quotes
+        rule /\$'/, Str::Single, :ansi_string
+
+        rule /'/, Str::Single, :single_quotes
+
+        rule /\*/, Keyword
+
+        rule /;/, Text
+        rule /[^=\*\s{}()$"'`<]+/, Text
+        rule /\d+(?= |\Z)/, Num
+        rule /</, Text
+        mixin :interp
+      end
+
       prepend :basic do
         rule %r(<#[\s,\S]*?#>)m, Comment::Multiline
         rule /#.*$/, Comment::Single

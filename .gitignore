@@ -9,3 +9,6 @@ Gemfile.lock
 # docs
 /.yardoc
 /doc
+
+# tmp
+/tmp

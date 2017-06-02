@@ -24,10 +24,12 @@ module Rouge
         end
 
         state :brackets do
-          rule /\^?/ do
+          rule /\^/ do
             token Punctuation
             goto :brackets_int
           end
+
+          rule(//) { goto :brackets_int }
         end
 
         state :brackets_int do
@@ -133,7 +135,7 @@ module Rouge
         rule /\d+/, addr_tok
         rule /[$,~+!]/, addr_tok
 
-        rule %r((/)(\\.|.)*?(/)) do |m|
+        rule %r((/)((?:\\.|.)*?)(/)) do |m|
           token addr_tok, m[1]; delegate regex, m[2]; token addr_tok, m[3]
         end
 

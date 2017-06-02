@@ -2,6 +2,8 @@
 
 module Rouge
   module Lexers
+    load_lexer 'actionscript.rb'
+
     class LoomScript < Actionscript
       title 'LoomScript'
       desc "Scripting language for the Loom SDK, a native mobile app and game framework (https://github.com/LoomSDK/LoomSDK)"

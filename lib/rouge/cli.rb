@@ -179,6 +179,9 @@ module Rouge
         yield %[]
         yield %[--formatter-opts|-F <opts>  specify formatter options in CGI format]
         yield %[                            (opt1=val1&opt2=val2)]
+        yield %[]
+        yield %[--require|-r <filename>     require a filename or library before]
+        yield %[                            highlighting]
       end
 
       def self.parse(argv)

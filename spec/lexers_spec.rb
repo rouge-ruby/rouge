@@ -16,7 +16,19 @@ describe Rouge::Lexers do
 
       it 'lexes the sample without throwing' do
         sample = File.read(samples_dir.join(lexer_class.tag), encoding: 'utf-8')
-        subject.lex(sample).to_a
+
+        out_buf = ""
+        subject.lex(sample) do |token, value|
+          out_buf << value
+        end
+
+        if out_buf != sample
+          out_file = "tmp/mismatch.#{subject.tag}"
+          puts "mismatch with #{samples_dir.join(lexer_class.tag)}! logged to #{out_file}"
+          File.open(out_file, 'w') { |f| f << out_buf }
+        end
+
+        assert { out_buf == sample }
       end
     end
   end

@@ -26,7 +26,7 @@ module Rouge
         static switch this throw true try typeof unchecked unsafe
         virtual void volatile while
         add alias async await get global partial remove set value where
-        yield
+        yield nameof
         ascending by descending equals from group in into join let on
         orderby select
       )

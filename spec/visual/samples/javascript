@@ -251,3 +251,8 @@ global.foo = {
   * [Symbol.iterator] () { return }
 }
 for (const x of global.foo) {}
+
+// ES6 numbers
+
+var myBin   = 0b10;
+var myOct   = 0o67;

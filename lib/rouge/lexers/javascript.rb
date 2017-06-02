@@ -194,8 +194,11 @@ module Rouge
         end
 
         rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
-        rule /0x[0-9a-fA-F]+/, Num::Hex
+        rule /0x[0-9a-fA-F]+/i, Num::Hex
+        rule /0o[0-7][0-7_]*/i, Num::Oct
+        rule /0b[01][01_]*/i, Num::Bin
         rule /[0-9]+/, Num::Integer
+    
         rule /"(\\[\\"]|[^"])*"/, Str::Double
         rule /'(\\[\\']|[^'])*'/, Str::Single
         rule /:/, Punctuation

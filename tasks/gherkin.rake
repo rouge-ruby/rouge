@@ -2,7 +2,7 @@
 require 'open-uri'
 require 'json'
 
-I18N_CONFIG_URL = 'https://raw.github.com/cucumber/gherkin/master/lib/gherkin/i18n.json'
+I18N_CONFIG_URL = 'https://raw.githubusercontent.com/cucumber/cucumber/master/gherkin/gherkin-languages.json'
 
 module GherkinKeywords
   extend self
@@ -13,8 +13,8 @@ module GherkinKeywords
 
   def keywords_for(*keys)
     gherkin_i18n.values.map do |lang|
-      lang.values_at(*keys).map { |w| w.split('|') }
-    end.flatten.sort.uniq
+      lang.values_at(*keys)
+    end.flatten.compact.sort.uniq
   end
 
   def keywords

@@ -47,7 +47,7 @@ def render_keywords(keywords, &b)
 end
 
 def vim_keywords
-  syntax_file = ENV['syntax_file'] || '/usr/share/vim/vimcurrent/syntax/vim.vim'
+  syntax_file = ENV['syntax_file'] || '/usr/share/vim/vim80/syntax/vim.vim'
   out = nil
 
   File.open(syntax_file, 'r') do |f|

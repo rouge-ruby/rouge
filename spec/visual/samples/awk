@@ -1,0 +1,34 @@
+# single-line comment
+BEGIN { # end-of-line comment
+    # indented single-line comment
+    if (length(str) > NF)
+        print $42 > expr;
+    else
+        exit NR;
+    while (array[42] != FILENAME)
+        break;
+    for (i = 0; i < rand(); i++)
+        continue;
+    for (var in ENVIRON)
+        next;
+    do
+        getline < file;
+    while (str ~ /regexp/);
+    printf "%d%f", int(42), 0.123 > expr;
+    print "string" | pipe;
+    ternary = 0 ? 1 : sub(/regexp/, "nope.");
+    system("sl");
+}
+
+{
+    nextfile;
+}
+
+END {
+    delete array[answer()];
+    exit 1;
+}
+
+function answer(question) {
+    return 42;
+}

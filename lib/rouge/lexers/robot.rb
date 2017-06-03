@@ -23,11 +23,6 @@ module Rouge
 
 
       state :basic do
-#        #In robot framework tabs are very important, 
-#        #but highliting with a '→' sign can be an isssue for copypaste
-#        rule /\t/ do |m|
-#         #token Punctuation, '→' + m[0] 
-#        end
         rule %r(\n), Text
         rule %r(#.*$), Comment
         rule /\$\{.*?\}/, Name::Variable
@@ -39,11 +34,9 @@ module Rouge
         rule /'.+'/, Str::Single
         rule /".+"/, Str::Double
         rule  /\b[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\b/, Str # ipv4
-#        rule /\W-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?\W/i, Num::Float 
-#        rule /\W-?(?:0|[1-9]\d*)(?:e[+-]\d+)?\W/i, Num::Integer    
       end
 
-      # Token types are set for visual perfofmance in gitlab webui
+      # Token types are set for visual performance in gitlab webui
       state :root do
         mixin :basic
         rule /\*\*\*\s+Test Case(s)?\s+\*\*\*/i do 

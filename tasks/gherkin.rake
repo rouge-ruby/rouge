@@ -20,7 +20,7 @@ module GherkinKeywords
   def keywords
     @keywords ||= {
       :feature => keywords_for('feature'),
-      :element => keywords_for('background', 'scenario', 'scenario_outline'),
+      :element => keywords_for('background', 'scenario', 'scenarioOutline'),
       :examples => keywords_for('examples'),
       :step => keywords_for('given', 'when', 'then', 'and', 'but')
     }

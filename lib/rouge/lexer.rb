@@ -42,6 +42,11 @@ module Rouge
       # markdown lexer for highlighting internal code blocks.
       #
       def find_fancy(str, code=nil, additional_options={})
+        if str && !str.include?('?') && str != 'guess'
+          lexer_class = find(str)
+          return lexer_class && lexer_class.new(additional_options)
+        end
+
         name, opts = str ? str.split('?', 2) : [nil, '']
 
         # parse the options hash from a cgi-style string

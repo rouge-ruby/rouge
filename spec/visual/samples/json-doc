@@ -1,4 +1,12 @@
 {
+    // bare keys
+    bareKey: "Hello",
+    $: "Dollar",
+    foo     : "Foo",
+    bar
+
+      : { "bar": true }
+
     "firstName": "John",
     "lastName": "Smith",
     "age": 25,

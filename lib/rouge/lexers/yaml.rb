@@ -8,13 +8,15 @@ module Rouge
       mimetypes 'text/x-yaml'
       tag 'yaml'
       aliases 'yml'
+      filenames '*.yaml', '*.yml'
 
       def self.analyze_text(text)
         # look for the %YAML directive
         return 1 if text =~ /\A\s*%YAML/m
       end
 
-      filenames '*.yaml', '*.yml'
+      SPECIAL_VALUES = Regexp.union(%w(true false null))
+
       # NB: Tabs are forbidden in YAML, which is why you see things
       # like /[ ]+/.
 
@@ -335,6 +337,7 @@ module Rouge
         end
 
         rule /[ ]+/, Str
+        rule SPECIAL_VALUES, Name::Constant
         # regular non-whitespace characters
         rule /[^\s:]+/, Str
       end

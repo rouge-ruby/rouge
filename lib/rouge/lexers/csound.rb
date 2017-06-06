@@ -27,6 +27,7 @@ module Rouge
         rule /([^ \t]).*?\1/, Str, :pop!
       end
 
+      # States for macro definitions
       state :define_directive do
         rule /\n+/m, Text
         mixin :whitespace
@@ -39,6 +40,7 @@ module Rouge
           goto :before_macro_body
         end
       end
+
       state :macro_parameter_name_list do
         mixin :whitespace
         rule Csound.identifier, Comment::Preproc
@@ -48,6 +50,7 @@ module Rouge
           goto :before_macro_body
         end
       end
+
       state :before_macro_body do
         rule /\n+/m, Text
         mixin :whitespace
@@ -56,6 +59,7 @@ module Rouge
           goto :macro_body
         end
       end
+
       state :macro_body do
         rule /(?:\\(?!#)|[^#\\]|\n)+/m do
           recurse
@@ -64,11 +68,13 @@ module Rouge
         rule /(?<!\\)#/, Punctuation, :pop!
       end
 
+      # State for #ifdef, #ifndef, and #undef
       state :macro_directive do
         mixin :whitespace
         rule Csound.identifier, Comment::Preproc, :pop!
       end
 
+      # States for macro uses
       state :macro_uses do
         rule /(\$#{Csound.identifier}\.?)(\()/ do
           groups Comment::Preproc, Punctuation
@@ -76,6 +82,7 @@ module Rouge
         end
         rule /\$#{Csound.identifier}(?:\.|\b)/, Comment::Preproc
       end
+
       state :macro_parameter_value_list do
         rule(/(?:[^'#"{()]|{(?!{))+/) { recurse }
         rule /['#]/, Punctuation
@@ -93,16 +100,19 @@ module Rouge
         rule /\(/, Comment::Preproc, :macro_parameter_value_parenthetical
         rule /\)/, Punctuation, :pop!
       end
+
       state :macro_parameter_value_quoted_string do
         rule /\\\)/, Comment::Preproc
         rule /\)/, Error
         mixin :quoted_string
       end
+
       state :macro_parameter_value_braced_string do
         rule /\\\)/, Comment::Preproc
         rule /\)/, Error
         mixin :braced_string
       end
+
       state :macro_parameter_value_parenthetical do
         rule(/[^\\()]+/) { recurse }
         rule /\(/, Comment::Preproc, :push
@@ -236,6 +246,7 @@ module Rouge
         end
         rule /\n/, Text, :pop!
       end
+
       state :opcode_type_signatures do
         mixin :whitespace_and_macro_uses
 
@@ -254,6 +265,7 @@ module Rouge
         mixin :format_specifiers
         rule /[\\$%)]/, Str
       end
+
       state :braced_string do
         rule /}}/, Str, :pop!
         rule /(?:[^\\%)}]|}(?!}))+/, Str
@@ -261,10 +273,12 @@ module Rouge
         mixin :format_specifiers
         rule /[\\%)]/, Str
       end
+
       state :escape_sequences do
         # https://github.com/csound/csound/search?q=unquote_string+path%3AEngine+filename%3Acsound_orc_compile.c
         rule /\\(?:[\\abnrt"]|[0-7]{1,3})/, Str::Escape
       end
+
       # Format specifiers are highlighted in all strings, even though only
       #   fprintks        https://csound.github.io/docs/manual/fprintks.html
       #   fprints         https://csound.github.io/docs/manual/fprints.html
@@ -290,6 +304,7 @@ module Rouge
         rule /,/, Punctuation, :pop!
         mixin :partial_statements
       end
+
       state :goto_before_label do
         mixin :whitespace_and_macro_uses
         rule /\w+/, Name::Label, :pop!
@@ -301,6 +316,7 @@ module Rouge
         rule /"/, Str, :prints_quoted_string
         rule /(?!")/, Text, :pop!
       end
+
       state :prints_quoted_string do
         rule /\\\\[aAbBnNrRtT]/, Str::Escape
         rule /%[!nNrRtT]|[~^]{1,2}/, Str::Escape
@@ -315,6 +331,7 @@ module Rouge
         rule /\n/, Text, :pop!
         mixin :partial_statements
       end
+
       state :csound_score do
         rule /}}/, Str, :pop!
         rule /(?:[^}]|}(?!}))+/m do
@@ -329,6 +346,7 @@ module Rouge
         rule /\n/, Text, :pop!
         mixin :partial_statements
       end
+
       state :python do
         rule /}}/, Str, :pop!
         rule /(?:[^}]|}(?!}))+/m do
@@ -343,6 +361,7 @@ module Rouge
         rule /\n/, Text, :pop!
         mixin :partial_statements
       end
+
       state :lua do
         rule /}}/, Str, :pop!
         rule /(?:[^}]|}(?!}))+/m do
@@ -398,6 +417,7 @@ module Rouge
         rule /[$]/, Str
       end
 
+      # States for braced loops
       state :loop_after_left_brace do
         mixin :whitespace_and_macro_uses
         rule /\d+/ do
@@ -405,6 +425,7 @@ module Rouge
           goto :loop_after_repeat_count
         end
       end
+
       state :loop_after_repeat_count do
         mixin :whitespace_and_macro_uses
         rule Csound.identifier do
@@ -412,6 +433,7 @@ module Rouge
           goto :loop
         end
       end
+
       state :loop do
         rule /}/, Comment::Preproc, :pop!
         mixin :root

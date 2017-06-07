@@ -4,6 +4,16 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.1.0: 2017-06-07
+
+  * Ruby 2.4 support, now tested via Travis-CI
+  * breaking changes in the HTML Pygment formatter, see ae350ca9386d940
+  * 2 new cli options: --theme and --require
+  * 2 new themes: igor\_pro and pastie
+  * 15 new lexers: awk, digdag, dot, graphql, hylang, igorpro, irb, lasso,
+    mosel, plist, pony, q, sieve, tsx, wollock
+  * lots of bug fixes and improvements
+
 ## version 2.0.7: 2016-11-18
 
   * haml: fix balanced braces in attribute curlies

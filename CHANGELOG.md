@@ -4,6 +4,91 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.1.0: 2017-06-06
+
+  * javascript:
+    - fix for newlines in template expressions (#570 thanks @Kovensky!)
+    - update keywords to ES2017 (#594 thanks @Kovensky!)
+    - add ES6 binary and octal literals (#619 thanks @beaufortfrancois!)
+  * ruby:
+    - require an `=` on the `=end` block comment terminator
+    - bugfix for numeric ranges (#579 thanks @kjcpaas!)
+    - bugfix for constants following class/module declarations
+  * shell: support based numbers in math mode
+  * html-inline formatter:
+    - now accepts a search string, an instance, or aliases for the theme argument
+  * ocaml:
+    - highlight variant tags
+    - fixes for operators vs punctuation
+    - fix polymorphic variants, support local open expressions, fix keywords
+        (#643 thanks @emillon!)
+
+  * thankful-eyes theme:
+    - bold operators, to distinguish between punctuation
+
+  * rust:
+    - add support for range operators and type variables (#591 thanks @whitequark!)
+    - support rustdoc hidden lines that start with # (#652 thanks @seanmonstar!)
+  * html: allow template languages to interpolate within script or style tags
+  * clojure:
+    - finally add support for `@`
+    - associate `*.edn`
+  * new lexer: lasso (#584 thanks @EricFromCanada!)
+  * ruby 1.9 support: Fix unescaped `@` in regex (#588 thanks @jiphex!)
+  * fix comments at end of files in F# and R (#590 thanks @nickbabcock!)
+  * elixir: implement ruby-style sigil strings and regexes (#530 thanks @k3rni!)
+  * docker: add missing keywords
+  * add ruby 2.4 support
+  * coffeescript: bugfix for improper multiline comments (#604 thanks @dblessing!)
+  * json: make exponent signs optional (#597 thanks @HerrFolgreich!)
+  * terminal256 formatter: put reset characters at the end of each line
+      (#603 thanks @deivid-rodriguez!)
+  * csharp:
+    - actually highlight interface names
+    - highlight splice literals `$""` and `@$""` (#600 thanks @jmarianer!)
+    - recognize `nameof` as a keyword (#626 thanks @drovani!)
+  * new lexer: mosel (#606 thanks @germanriano!)
+  * php:
+    - more robust ident regex that supports unicode idents
+    - add heuristics to determine whether to start inline
+  * new lexer: q (kdb+) (#655 thanks @abalkin!)
+  * new lexer: pony (#651 thanks @katafrakt!)
+  * new lexer: igor-pro (#648 thanks @ukos-git!)
+  * new lexer: wollok (#647 thanks @mumuki!)
+  * new lexer: graphql (#634 thanks @hibariya!)
+  * properties: allow hyphens in key names (#629 thanks @cezariuszmarek!)
+  * HTMLPygments formatter: (breaking) wrap tokens with div.highlight
+  * new lexer: console (replaces old `shell_session` lexer)
+    - properly detects prompts and continuations
+    - fully configurable prompt string with `?prompt=...`
+    - optional root-level comments with `?comments`
+  * new lexer: irb
+  * xml: allow newlines in attribute values (#663 thanks @mojavelinux!)
+  * windows fix: use `YAML.load_file` to load apache keywords
+  * new lexer: dot (graphviz) (#627 thanks @kAworu)
+  * overhaul options handling, and treat options as untrusted user content
+  * add global opt-in to debug mode (`Rouge::Lexer.enable_debug!`) to prevent
+    debug mode from being activated by users
+  * shell: more strict builtins (don't highlight `cd-hello`) (#684 thanks @alex-felix!)
+  * new lexer: sieve (#682 thanks @kAworu!)
+  * new lexer: TSX (#669 thanks @timothykang!)
+  * fortran: update to 2008 (#667 thanks @pbregener!)
+  * powershell: use backtick as escape instead of backslash (#660 thanks @gmckeown!)
+  * new lexer: awk (#607 thanks @kAworu)
+  * new lexer: hylang (#623 thanks @profitware!)
+  * new lexer: plist (#622 thanks @segiddins!)
+  * groovy: support shebangs (#608 thanks @hwdegroot!)
+  * new lexer: pastie (#576 thanks @mojavelinux)
+  * sed: bugfix for dropped characters from regexes
+  * sml:
+    - bugfix for dropped keywords
+    - bugfix for mishighlighted keywords
+  * gherkin, php, lua, vim, matlab: update keyword files
+  * new lexer: digdag (#674 thanks @gfx!)
+  * json-doc: highlight bare keys
+  * HTMLTable: don't output a newline after the closing tag (#659 thanks @gpakosz!)
+
+
 ## version 2.0.7: 2016-11-18
 
   * haml: fix balanced braces in attribute curlies

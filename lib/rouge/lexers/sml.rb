@@ -191,7 +191,7 @@ module Rouge
       end
 
       state :breakout do
-        rule /(?=\w+\b(#{SML.keywords.to_a.join('|')})\b(?!'))/ do
+        rule /(?=\b(#{SML.keywords.to_a.join('|')})\b(?!'))/ do
           pop!
         end
       end

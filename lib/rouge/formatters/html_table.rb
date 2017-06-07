@@ -54,7 +54,7 @@ module Rouge
         yield formatted
         yield '</pre></td>'
 
-        yield "</tr></tbody></table>\n"
+        yield "</tr></tbody></table>"
       end
     end
   end

@@ -10,12 +10,14 @@ gem 'rake'
 # don't try to install redcarpet under jruby
 gem 'redcarpet', :platforms => :ruby
 
-gem 'pry'
+group :development do
+  gem 'pry'
 
-# docs
-gem 'yard'
-gem 'github-markup'
+  # docs
+  gem 'yard'
+  gem 'github-markup'
 
-# for visual tests
-gem 'sinatra'
-gem 'shotgun'
+  # for visual tests
+  gem 'sinatra'
+  gem 'shotgun'
+end

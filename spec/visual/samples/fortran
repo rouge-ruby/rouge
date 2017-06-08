@@ -169,3 +169,101 @@ contains
     end subroutine share_bottles
 
 end program bottles
+
+module openmp_various_examples
+contains
+
+SUBROUTINE REDUCTION2(A, B, C, D, X, Y, N)
+    REAL :: X(*), A, D
+    INTEGER :: Y(*), N, B, C
+    REAL :: A_P, D_P
+    INTEGER :: I, B_P, C_P
+
+    A = 0
+    B = 0
+    C = Y(1)
+    D = X(1)
+
+    !$OMP PARALLEL SHARED (X, Y, &
+    !$OMP                  A, B, C, D, N) &
+    !$OMP          PRIVATE(A_P, B_P, &
+    !$OMP                  C_P, D_P)
+    PRINT *, 'Parallel Section 1'
+    !$OMP END PARALLEL
+
+    !$OMP PARALLEL SHARED(X, Y, A, B, C, D, N) &
+    !$OMP&         PRIVATE(A_P, B_P, C_P, D_P)
+    PRINT *, 'Parallel Section 2'
+    A_P = 0.0
+    B_P = 0
+    C_P = HUGE(C_P)
+    D_P = -HUGE(D_P)
+
+    !$OMP DO PRIVATE(I)
+    DO I=1,N
+        A_P = A_P + X(I)
+        B_P = IEOR(B_P, Y(I))
+        C_P = MIN(C_P, Y(I))
+        IF (D_P < X(I)) D_P = X(I)
+    END DO
+
+    !$OMP CRITICAL
+    A = A + A_P
+    B = IEOR(B, B_P)
+    C = MIN(C, C_P)
+    D = MAX(D, D_P)
+    !$OMP END CRITICAL
+    !$OMP END PARALLEL
+END SUBROUTINE REDUCTION2
+
+function add1(a,b,fact) result(c)
+!$omp declare simd(add1) uniform(fact)
+    implicit none
+    double precision :: a,b,fact, c
+    c = a + b + fact
+end function
+
+function add2(a,b,i, fact) result(c)
+!$omp declare simd(add2) uniform(a,b,fact) linear(i:1)
+    implicit none
+    integer          :: i
+    double precision :: a(*),b(*),fact, c
+    c = a(i) + b(i) + fact
+end function
+
+subroutine work(a, b, n )
+    implicit none
+    double precision           :: a(n),b(n), tmp
+    integer                    :: n, i
+    double precision, external :: add1, add2
+
+    !$omp simd private(tmp)
+    do i = 1,n
+        tmp  = add1(a(i), b(i), 1.0d0)
+        a(i) = add2(a,    b, i, 1.0d0) + tmp
+        a(i) = a(i) + b(i) + 1.0d0
+    end do
+end subroutine
+
+end module openmp_various_examples
+
+module openmp_example_target_unstructured_data
+  real(8), allocatable :: A(:)
+
+  contains
+    subroutine initialize(N)
+      integer :: N
+
+      print *, 'Maximum number of threads:', omp_get_num_threads()
+      allocate(A(N))
+      !$omp target enter data map(alloc:A)
+
+    end subroutine initialize
+
+    subroutine finalize()
+
+      !$omp target exit data map(delete:A)
+      deallocate(A)
+
+    end subroutine finalize
+end module openmp_example_target_unstructured_data

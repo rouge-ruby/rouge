@@ -83,6 +83,16 @@ module Rouge
       end
 
       state :root do
+        # OpenMP
+        rule /(^\s*)(!\$omp)([ \t]*)(&?)([^&\r\n]+)(&?)$/i do |m|
+          token Text::Whitespace, m[1]
+          token Keyword::Reserved, m[2]
+          token Text::Whitespace, m[3]
+          token Punctuation, m[4]
+          delegate OpenMP, m[5]
+          token Punctuation, m[6]
+        end
+
         rule /[\s\n]+/, Text::Whitespace
         rule /!.*$/, Comment::Single
         rule /^#.*$/, Comment::Preproc
@@ -135,6 +145,8 @@ module Rouge
           elsif self.class.types.include? match
             token Keyword::Type
           elsif self.class.intrinsics.include? match
+            token Name::Builtin
+          elsif OpenMP::runtimeroutines.include? match
             token Name::Builtin
           else
             token Name

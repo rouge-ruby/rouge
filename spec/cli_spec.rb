@@ -21,6 +21,11 @@ describe Rouge::CLI do
       let(:argv) { %w(help) }
       it('parses') { assert { Rouge::CLI::Help === subject } }
     end
+
+    describe 'nil' do
+      let(:argv) { %w() }
+      it('parses') { assert { Rouge::CLI::Help === subject } }
+    end
   end
 
   describe Rouge::CLI::Highlight do

@@ -66,7 +66,7 @@ module Rouge
       return klass.parse(argv) if klass
 
       case mode
-      when '-h', '--help', 'help', '-help'
+      when '-h', '--help', 'help', '-help', nil
         Help.parse(argv)
       else
         argv.unshift(mode) if mode

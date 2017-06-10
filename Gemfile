@@ -5,6 +5,8 @@ gemspec
 gem 'minitest', '~> 4.0'
 gem 'wrong'
 
+gem 'rubocop'
+
 gem 'rake'
 
 # don't try to install redcarpet under jruby

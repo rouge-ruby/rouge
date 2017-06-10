@@ -105,7 +105,7 @@ module Rouge
       state :filters do
         mixin :whitespace
 
-        rule (/\}\}/) { token Punctuation; reset_stack }
+        rule(/\}\}/) { token Punctuation; reset_stack }
 
         rule /([^\s\|:]+)(:?)(\s*)/ do
           groups Name::Function, Punctuation, Text::Whitespace
@@ -156,11 +156,11 @@ module Rouge
       end
 
       state :end_of_tag do
-        rule (/\}\}/) { token Punctuation; reset_stack }
+        rule(/\}\}/) { token Punctuation; reset_stack }
       end
 
       state :end_of_block do
-        rule (/%\}/) { token Punctuation; reset_stack }
+        rule(/%\}/) { token Punctuation; reset_stack }
       end
 
       # states for unknown markup

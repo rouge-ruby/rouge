@@ -1,6 +1,46 @@
 AllCops:
   TargetRubyVersion: 2.0
-  DisabledByDefault: true
   DisplayCopNames: true
   Exclude:
     - tasks/**/*.*
+
+Style:
+  Enabled: false
+
+Layout:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Bundler:
+  Enabled: false
+
+Performance/RedundantBlockCall:
+  Enabled: false
+
+Lint/UselessAssignment:
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+Lint/UnusedBlockArgument:
+  Enabled: false
+
+Lint/EndAlignment:
+  Enabled: false
+
+Lint/EmptyWhen:
+  Enabled: false
+
+Lint/UnneededSplatExpansion:
+  Enabled: false
+
+# TODO: enable it in a future because `ruby -w` warns it
+Lint/AmbiguousRegexpLiteral:
+  Enabled: false
+
+# TODO: enable it in a future because `ruby -w` warns it
+Lint/AmbiguousOperator:
+  Enabled: false

@@ -56,7 +56,7 @@ module Rouge
         rule /([^\s:]+)( *)(:)( *)([^\r\n]+)(\r?\n|$)/ do |m|
           key = m[1]
           value = m[5]
-          if key.strip.downcase == 'content-type'
+          if key.strip.casecmp('content-type').zero?
             @content_type = value.split(';')[0].downcase
           end
 

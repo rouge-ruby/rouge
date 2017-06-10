@@ -73,7 +73,7 @@ module Rouge
         getbstat getdualray getiis getiissense getiistype getinfcause getinfeas getlb getloadedlinctrs getloadedmpvars getname getprimalray getprobstat getrange getsensrng getsize getsol getub getvars
         implies indicator isiisvalid isintegral loadbasis
         loadmipsol loadprob
-        maximize, minimize
+        maximize minimize
         postsolve
         readbasis readdirs readsol refinemipsol rejectintsol repairinfeas resetbasis resetiis resetsol
         savebasis savemipsol savesol savestate selectsol setbstat setcallback setcbcutoff setgndata setlb setmipdir setmodcut setsol setub setucbdata stopoptimize
@@ -100,15 +100,15 @@ module Rouge
         getasnumber getchar getcwd getdate getday getdaynum getdays getdirsep 
         getendparse setendparse
         getenv getfsize getfstat getftime gethour getminute getmonth getmsec getpathsep
-        getqtype, setqtype
+        getqtype setqtype
         getsecond
-        getsepchar, setsepchar
+        getsepchar setsepchar
         getsize
-        getstart, setstart
-        getsucc, setsucc
+        getstart setstart
+        getsucc setsucc
         getsysinfo getsysstat gettime
         gettmpdir 
-        gettrim, settrim
+        gettrim settrim
         getweekday getyear
         inserttext isvalid
         makedir makepath newtar

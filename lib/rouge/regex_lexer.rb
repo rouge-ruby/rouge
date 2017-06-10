@@ -102,7 +102,7 @@ module Rouge
           proc do |stream|
             puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
-            puts "    popping stack: #{1}" if @debug
+            puts "    popping stack: 1" if @debug
             @stack.pop or raise 'empty stack!'
           end
         when :push

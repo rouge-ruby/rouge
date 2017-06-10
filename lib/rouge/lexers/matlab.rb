@@ -11,7 +11,7 @@ module Rouge
       mimetypes 'text/x-matlab', 'application/x-matlab'
 
       def self.analyze_text(text)
-        return 0.4 if text.match(/^\s*% /) # % comments are a dead giveaway
+        return 0.4 if text =~ /^\s*% / # % comments are a dead giveaway
       end
 
       def self.keywords

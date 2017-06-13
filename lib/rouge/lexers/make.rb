@@ -96,7 +96,7 @@ module Rouge
         end
 
         rule(/\\./m) { delegate @shell }
-        stop = /\$\(|\(|\)|\n|\\/
+        stop = /\$\(|\(|\)|\n|\\|$/
         rule(/.+?(?=#{stop})/m) { delegate @shell }
         rule(stop) { delegate @shell }
       end

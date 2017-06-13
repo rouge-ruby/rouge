@@ -26,7 +26,7 @@ module Rouge
         end
       end
 
-    private
+
       TABLE_FOR_ESCAPE_HTML = {
         '&' => '&amp;',
         '<' => '&lt;',

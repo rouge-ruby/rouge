@@ -263,7 +263,7 @@ module Rouge
         rule %r(//), Comment, :comments
 
         rule /\b#{object}/ do |m|
-          if m[0].downcase.match /function/
+          if m[0].downcase =~ /function/
             token Keyword::Declaration
             push :parse_function
           elsif self.class.igorDeclarations.include? m[0].downcase
@@ -281,7 +281,7 @@ module Rouge
           elsif self.class.hdf5Operation.include? m[0].downcase
             token Keyword::Reserved
             push :operationFlags
-          elsif m[0].downcase.match /(v|s|w)_[a-z]+[a-z0-9]*/
+          elsif m[0].downcase =~ /(v|s|w)_[a-z]+[a-z0-9]*/
             token Name::Builtin
           else
             token Name

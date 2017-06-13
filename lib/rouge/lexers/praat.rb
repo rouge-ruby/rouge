@@ -166,7 +166,7 @@ module Rouge
           push :comma_list
         end
 
-        rule /[\s\n]/,    Text, :pop!
+        rule /[\s]/,    Text, :pop!
       end
 
       state :procedure_call do
@@ -175,7 +175,7 @@ module Rouge
         rule /(:|\s*\()/, Punctuation, :pop!
 
         rule /'/,            Name::Function
-        rule /[^:\('\n\s]+/, Name::Function
+        rule /[^:\('\s]+/, Name::Function
 
         rule /(?=\s+)/ do
           token Text
@@ -187,7 +187,7 @@ module Rouge
       state :procedure_definition do
         rule /(:|\s*\()/, Punctuation, :pop!
 
-        rule /[^:\(\n\s]+/, Name::Function
+        rule /[^:\(\s]+/, Name::Function
 
         rule /(\s+)/, Text, :pop!
       end

@@ -71,7 +71,7 @@ module Rouge
       state :objects do
         rule variable_naming do |m|
           variable = m[0]
-          if entities.include?(variable) || ('A'..'Z').include?(variable[0])
+          if entities.include?(variable) || ('A'..'Z').cover?(variable[0])
             token Name::Class
           else
             token Keyword::Variable

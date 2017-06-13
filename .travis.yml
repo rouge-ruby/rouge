@@ -8,3 +8,6 @@ rvm:
   - 2.4.0
 bundler_args: --without development
 before_install: gem update bundler
+script:
+  - bundle exec rake
+  - if ruby -e 'exit RUBY_VERSION >= "2.0.0"' ; then bundle exec rubocop ; fi

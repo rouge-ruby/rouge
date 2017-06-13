@@ -46,6 +46,7 @@ module Rouge
         @name = name
         @defn = defn
         @rules = []
+        @loaded = false
       end
 
       def to_state(lexer_class)
@@ -102,7 +103,7 @@ module Rouge
           proc do |stream|
             puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
-            puts "    popping stack: #{1}" if @debug
+            puts "    popping stack: 1" if @debug
             @stack.pop or raise 'empty stack!'
           end
         when :push
@@ -300,7 +301,7 @@ module Rouge
           # the most common, for now...
           next if rule.beginning_of_line && !stream.beginning_of_line?
 
-          if size = stream.skip(rule.re)
+          if (size = stream.skip(rule.re))
             puts "    got #{stream[0].inspect}" if @debug
 
             instance_exec(stream, &rule.callback)

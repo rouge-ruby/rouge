@@ -139,7 +139,7 @@ module Rouge
 
       state :root do
         mixin :expr_whitespace
-        rule (//) { push :statement }
+        rule(//) { push :statement }
         rule /^%[a-zA-Z0-9]+/, Comment::Preproc, :statement
 
         rule(

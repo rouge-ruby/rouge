@@ -41,3 +41,7 @@ HELLO0
 
 $ foo ; bar
 $ foo --thing > bar.txt
+
+# regression:
+--foo \
+--bar $

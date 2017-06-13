@@ -48,9 +48,9 @@ module Rouge
 
       def prompt_prefix_regex
         if allow_comments?
-          /^[^<#]*?/
+          /[^<#]*?/m
         else
-          /^.*?/
+          /.*?/m
         end
       end
 

@@ -4,30 +4,30 @@ backups  crash  local  log   metrics  run    tmp
 cache    lib    lock   mail  opt      spool
 # ...
 sio4@silver:~$ sudo su -
-[sudo] password for sio4: 
+[sudo] password for sio4:
 root@silver:~# ls /bin/*sh
 <...>
 /bin/bash
 <...>
-root@silver:~# 
-root@silver:~# 
+root@silver:~#
+root@silver:~#
 root@silver:~# exit
 logout
-sio4@silver:~$ 
+sio4@silver:~$
 $ ls /var
 backups  crash  local  log   metrics  run    tmp
 cache    lib    lock   mail  opt      spool
 <...>
 $ sudo su -
-[sudo] password for sio4: 
+[sudo] password for sio4:
 # ls /bin/*sh
 <...>
 /bin/bash
 <...>
-# 
+#
 # exit
 logout
-$ 
+$
 
 ~$ gpg2 --output private.key.asc \
        --armor \
@@ -41,3 +41,7 @@ HELLO0
 
 $ foo ; bar
 $ foo --thing > bar.txt
+
+# regression:
+--foo \
+--bar $

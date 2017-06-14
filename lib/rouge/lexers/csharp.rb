@@ -57,26 +57,26 @@ module Rouge
         rule /\\./, Str::Escape
         rule /{/, Punctuation, :nest
         rule /"|\n/, Str, :pop!
-        rule /./, Str
+        rule /[^"\{\\]\n+/, Str
       end
 
       state :splice_literal do
         rule /""/, Str::Escape
         rule /{/, Punctuation, :nest
         rule /"/, Str, :pop!
-        rule /./, Str
+        rule /[^"\{\\]+/, Str
       end
 
       state :string do
         rule /\\./, Str::Escape
         rule /["\n]/, Str, :pop!
-        rule /./, Str
+        rule /[^\\"\n]+/, Str
       end
 
       state :literal_string do
         rule /""/, Str::Escape
         rule /"/, Str, :pop!
-        rule /./, Str
+        rule /[^"]+/, Str
       end
 
       state :root do

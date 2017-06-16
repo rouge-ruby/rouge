@@ -18,8 +18,6 @@ module Rouge
 
       atoms = %w(False True Verde Rojo Azul Negro Norte Sur Este Oeste)
 
-      types = Set.new
-
       state :comments do
         def comment_between(start, finish)
           /#{start}.*?#{finish}/m
@@ -41,7 +39,6 @@ module Rouge
         rule any(reserved), Keyword::Reserved
         rule any(atoms), Literal
         rule /(type)(\s+)(\w+)/ do |m|
-          types.add(m[3])
           groups Keyword::Reserved, Text::Whitespace, Keyword::Type
         end
         mixin :functions
@@ -56,11 +53,7 @@ module Rouge
         end
 
         rule /([a-zA-Z][a-zA-Z'_0-9]*)(\()/ do |m|
-          if types.include?(m[1])
-            groups Keyword::Type, Text
-          else
-            groups Name::Function, Text
-          end
+          groups Name::Function, Text
         end
         rule /([a-z][a-zA-Z'_0-9]*)/, Name::Variable
       end

@@ -2,7 +2,8 @@ AllCops:
   TargetRubyVersion: 2.0
   DisplayCopNames: true
   Exclude:
-    - tasks/**/*.*
+    - "tasks/**/*"
+    - "vendor/**/*"
 
 Style:
   Enabled: false

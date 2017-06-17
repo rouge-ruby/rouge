@@ -12,3 +12,6 @@ Gemfile.lock
 
 # tmp
 /tmp
+
+# IntelliJ IDEA / RubyMine
+.idea/

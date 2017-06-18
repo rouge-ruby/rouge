@@ -68,7 +68,7 @@ module Rouge
           BaseApplication ConsoleApplication
         )
 
-        @types ||= Set.new (base_types + utils)
+        @types ||= Set.new(base_types + utils)
       end
 
       def self.attributes

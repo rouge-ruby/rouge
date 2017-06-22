@@ -4,6 +4,13 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.1.1: 2017-06-21
+
+  * rougify: display help when called with no arguments
+  * console: bugfix for line continuations dropping characters
+  * make: properly handle code that doesn't end in a newline
+  * fix some warnings with -w, add a rubocop configuration
+
 ## version 2.1.0: 2017-06-06
 
   * javascript:

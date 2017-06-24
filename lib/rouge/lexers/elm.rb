@@ -37,9 +37,9 @@ module Rouge
         @debug = ENV['ROUGE_DEBUG'] == '1'
       end
 
-        state :multi do
-          rule /\{-.*/, Comment::Multiline
-        end
+      state :multi do
+        rule /\{-.*/, Comment::Multiline
+      end
 
       state :root do
         rule /\n|\s/, Text

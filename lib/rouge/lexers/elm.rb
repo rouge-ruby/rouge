@@ -3,6 +3,28 @@
 module Rouge
   module Lexers
     class Elm < RegexLexer
+
+      BUILTIN_KEYWORDS = [
+        'if',
+        'else',
+        'then',
+        'case',
+        'of',
+        'type',
+        'let',
+        'in',
+      ]
+
+      RESERVED_KEYWORDS = [
+        'module',
+        'exposing',
+        'type',
+      ]
+
+      KeywordRegex = lambda do |arr|
+        /\b#{arr.join('\b|\b')}\b/
+      end
+
       title "Elm"
       desc "The Elm programming language (elm-lang.org)"
 
@@ -58,9 +80,8 @@ module Rouge
 
         rule /\.\./, Keyword::Declaration
 
-        rule /\bmodule\b|\bexposing\b|\btype\b/, Keyword::Reserved
-
-        rule /\bif\b|\belse\b|\bthen\b|\bcase\b|\bof\b|\btype\b|\blet\b|\bin\b/, Name::Builtin
+        rule KeywordRegex.(RESERVED_KEYWORDS), Keyword::Reserved
+        rule KeywordRegex.(BUILTIN_KEYWORDS), Name::Builtin
 
         rule /\A\w+ :/, Name::Function
         rule /[A-Z][a-z]+/, Keyword::Type

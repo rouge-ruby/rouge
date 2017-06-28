@@ -311,7 +311,7 @@ module Rouge
 
       state :assignment do
         mixin :whitespace
-        rule /\"/, Punctuation, :string1
+        rule /\"/, Literal::String::Double, :string1 #punctuation for string
         mixin :string2
         rule /#{number_float}/, Literal::Number::Float, :pop!
         rule /#{number_int}/, Literal::Number::Integer, :pop!
@@ -368,7 +368,7 @@ module Rouge
         rule /\s/, Text
         rule /#{operator}/, Operator
         rule /#{punctuation}/, Punctuation
-        rule /\"/, Punctuation, :string1
+        rule /\"/, Literal::String::Double, :string1 #punctuation for string
         mixin :string2
       end
 
@@ -388,7 +388,7 @@ module Rouge
         rule /\\\"/, Literal::String::Escape
         rule /\\/, Literal::String::Escape
         rule /[^"]/, Literal::String
-        rule /\"/, Punctuation, :pop!
+        rule /\"/, Literal::String::Double, :pop! #punctuation for string
       end
 
       state :string2 do

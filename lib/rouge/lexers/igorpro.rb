@@ -19,6 +19,7 @@ module Rouge
           break return continue
           for endfor do while
           case default
+	  try catch endtry
           abortonrte
         )
       end

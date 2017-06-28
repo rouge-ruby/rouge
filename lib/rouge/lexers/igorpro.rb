@@ -252,8 +252,7 @@ module Rouge
       end
 
       object = self.object_name
-      whitespace  = /[\s\r]+/
-      noLineBreak = /[ \t]+/
+      noLineBreak = /(?:[ \t]|(?:\\\s*[\r\n]))+/
       operator = %r([\#$~!%^&*+=\|?:<>/-])
       punctuation = /[{}()\[\],.;]/
       number_float= /0x[a-f0-9]+/i
@@ -294,6 +293,7 @@ module Rouge
 
         mixin :characters
         mixin :numbers
+        mixin :whitespace
       end
 
       state :preprocessor do

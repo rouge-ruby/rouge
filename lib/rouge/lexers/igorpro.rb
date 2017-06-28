@@ -282,8 +282,8 @@ module Rouge
           elsif self.class.hdf5Operation.include? m[0].downcase
             token Keyword::Reserved
             push :operationFlags
-          elsif m[0].downcase =~ /(v|s|w)_[a-z]+[a-z0-9]*/
-            token Name::Builtin
+          elsif m[0].downcase =~ /\b(v|s|w)_[a-z]+[a-z0-9]*/
+            token Name::Constant
           else
             token Name
           end

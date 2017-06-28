@@ -323,11 +323,11 @@ module Rouge
       state :parse_variables do
         mixin :whitespace
         rule /[=]/, Punctuation, :assignment
-        rule %r([/][a-z]+)i, Keyword::Pseudo, :parse_variables
         rule object, Name::Variable
         rule /[\[\]]/, Punctuation # optional variables in functions
         rule /[,]/, Punctuation, :parse_variables
         rule /\)/, Punctuation, :pop! # end of function
+        rule %r([/][a-z]+)i, Keyword::Pseudo, :parse_variables
         rule(//) { pop! }
       end
 

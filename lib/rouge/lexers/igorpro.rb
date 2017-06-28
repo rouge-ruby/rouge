@@ -248,7 +248,7 @@ module Rouge
       end
 
       def self.object_name
-        /[a-z][a-z0-9_]*\b/i
+        /\b[a-z][a-z0-9_\.]*\b/i
       end
 
       object = self.object_name
@@ -263,7 +263,7 @@ module Rouge
       state :root do
         rule %r(//), Comment, :comments
 
-        rule /\b#{object}/ do |m|
+        rule /#{object}/ do |m|
           if m[0].downcase =~ /function/
             token Keyword::Declaration
             push :parse_function

@@ -33,7 +33,7 @@ module Rouge
         # Message forwarding handler
         rule /forward(?=[(])/, Keyword
         # Execution-context methods
-        rule /(parameter|this|self|sender)(?=[(])/, Keyword
+        rule /(context|parameter|this|self|sender)(?=[(])/, Keyword
         # Reflection
         rule /(current_predicate|predicate_property)(?=[(])/, Keyword
         # DCGs and term expansion

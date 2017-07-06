@@ -1,0 +1,40 @@
+%Vincent Macri's improved Turing colour selector.
+import GUI
+setscreen ("graphics:600;600")
+
+
+var x, y, cC, c, m, font, lC : int
+var runButton : int
+c := 0
+lC := 0
+font := Font.New ("mono:50")
+
+
+for k : 0 .. 479 by 30 % Loop through y
+    for i : 0 .. 479 by 30 %Loop through x
+	drawfillbox (i, k, i + 25, k + 25, c)
+	c += 1
+    end for
+end for
+
+procedure drawSelect %Shows currently selected colour
+    drawfillbox (500, 0, 590, maxy, cC)
+
+    if (lC not= cC) then
+	drawfillbox (0, 510, 200, 600, white)
+	lC := cC
+	Font.Draw (intstr (cC), 50, 540, font, black)
+    end if
+end drawSelect
+
+procedure quitProgram
+    GUI.Quit
+end quitProgram
+runButton := GUI.CreateButton (300, 550, 50, "Quit", quitProgram)
+loop
+    Mouse.Where (x, y, m)
+    cC := View.WhatDotColour (x, y)
+    drawSelect
+    %stupidBooleanThatExistsBecauseTuringIsStupid := GUI.ProcessEvent
+    exit when GUI.ProcessEvent
+end loop

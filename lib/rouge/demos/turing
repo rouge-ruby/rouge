@@ -1,0 +1,10 @@
+var age : int
+
+put "Please enter your age: "
+get age
+
+if age < 18 then
+    put "You are not an adult."
+else
+    put "You are an adult."
+end if

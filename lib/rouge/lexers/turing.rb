@@ -132,6 +132,7 @@ module Rouge
 
       state :root do
         rule /[^\S\n]+/, Text
+	rule /\n/, Text
 
         rule /#{operators.join('|')}/, Operator
 
@@ -143,18 +144,20 @@ module Rouge
         rule /(?:#{reserved.join('|')})\b/, Keyword::Reserved
         rule /(?:#{types.join('|')})\b/, Keyword::Type
 
-        rule /(?:#{import.join('|')}).*\n/, Name::Namespace
+        rule /(?:#{import.join('|')}).*/, Name::Namespace
 
         rule /(?:#{modules.join('|')})(?=\.)\b/, Name::Builtin
         rule /(?:#{methods.join('|')})\b/, Name::Function
 
-        rule /".*"/, Literal::String # TODO: Handle quotes in strings
-        rule /'.'/, Literal::String::Char # TODO: Better handling of special characters such as \n
+
+        rule /"(\\\\|\\"|[^"])*"/, Literal::String
+        rule /'\\?.'/, Literal::String::Char
         rule /(?:\d*\.)?\d+/, Literal::Number
 
         rule /\b(#{wordOperators.join('|')})\b/, Operator::Word
 
         rule /[a-zA-Z_][a-zA-Z0-9_]*/, Name
+
       end
     end
   end

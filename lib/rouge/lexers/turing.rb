@@ -9,7 +9,7 @@ module Rouge
       filenames '*.t', '*.tu'
 
       def self.analyze_text(text)
-        return 1 if text =~ /whatdotcolour\s*\(|whatdotcolor\s*\(|drawmapleleaf\s*\(|drawfillmapleleaf\s*\(/
+        return 0.9 if text =~ /whatdotcolour\s*\(|whatdotcolor\s*\(|drawmapleleaf\s*\(|drawfillmapleleaf\s*\(/
       end
 
       methods = %w(
@@ -72,47 +72,89 @@ module Rouge
         yellow true false
       )
 
-      keywords = %w(
-        addressint all and array asm
+      reserved = %w(
+        addressint all asm
         assert begin bind bits body
-        boolean break by case char
+        break by case
         cheat checked class close collection
         condition const decreasing def deferred
-        div else elseif elsif end
-        endfor endif endloop enum exit
-        export external fcn flexible
+        else elseif elsif end
+        endfor endif endloop exit
+        export external fcn
         for fork forward free function
-        get handler if implement import
-        in include inherit init int
-        int1 int2 int4 invariant label
-        loop mod module monitor nat
-        nat1 nat2 nat4 new not
-        objectclass of opaque open or
+        get handler if implement
+        inherit init
+        invariant label
+        loop module monitor
+        new
+        objectclass of opaque open
         packed pause pervasive pointer post
         pre priority proc procedure process
-        put quit read real real4
-        real8 record register rem result
-        return seek self set shl
-        shr signal skip string tag
+        put quit read
+        record register result
+        return seek self set
+        signal skip tag
         tell then timeout to
-        type unchecked union unqualified var
-        wait when write xor
+        unchecked union unqualified
+        wait when write
       )
+
+      import = %w(import include)
 
       declarations = %w(
-        abstract const enum extends final implements native private protected
-        public static strictfp super synchronized throws transient volatile
+        var enum type unit
       )
 
-      types = %w(boolean byte char double float int long short void)
+      types = %w(
+        boolean char string
+        real real4 real8
+        int int1 int2 int4
+        nat nat1 nat2 nat4
+        flexible array
+      )
 
-      id = /[a-zA-Z_][a-zA-Z0-9_]*/
+      operators = %w(
+        \+ - \* \/
+        < > = :
+        \^ #
+        ~
+        & \|
+        \\( \\)
+        , \.
+      )
+
+      wordOperators = %w(
+        div mod rem
+        not and or xor
+        in
+        shl shr
+      )
 
       state :root do
         rule /[^\S\n]+/, Text
+
+        rule /#{operators.join('|')}/, Operator
+
         rule %r(%.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule /'.'/, Literal::String::Char
+
+        rule /(?:#{constants.join('|')})\b/, Keyword::Constant
+        rule /(?:#{declarations.join('|')})\b/, Keyword::Declaration
+        rule /(?:#{reserved.join('|')})\b/, Keyword::Reserved
+        rule /(?:#{types.join('|')})\b/, Keyword::Type
+
+        rule /(?:#{import.join('|')}).*\n/, Name::Namespace
+
+        rule /(?:#{modules.join('|')})(?=\.)\b/, Name::Builtin
+        rule /(?:#{methods.join('|')})\b/, Name::Function
+
+        rule /".*"/, Literal::String # TODO: Handle quotes in strings
+        rule /'.'/, Literal::String::Char # TODO: Better handling of special characters such as \n
+        rule /(?:\d*\.)?\d+/, Literal::Number
+
+        rule /\b(#{wordOperators.join('|')})\b/, Operator::Word
+
+        rule /[a-zA-Z_][a-zA-Z0-9_]*/, Name
       end
     end
   end

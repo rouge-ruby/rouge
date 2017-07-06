@@ -1,3 +1,23 @@
+var myStr : string := "hello"
+
+put(myStr) % Print myStr.
+put(myStr(1)) % Print the first character in myStr.
+put(myStr(*)) % Print the last character in myStr.
+put(myStr(* - 1)) % Print the second last character in myStr.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+var original : string := "123" % This is the string we will reverse.
+var reversed : string := "" % Create an empty string. We will add the characters in reverse order next.
+
+for decreasing i : length (original) .. 1 % Loop through the original string backwards.
+    reversed += original(i) % Add the characters one by one.
+end for
+
+put(original + " backwards is: " + reversed) % Print the final result.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 var age : int
 
 put "Please enter your age: "
@@ -8,3 +28,11 @@ if age < 18 then
 else
     put "You are an adult."
 end if
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+var startTime, endTime : int % Declare the two variables to keep track of time.
+startTime := Time.Sec % Set startTime to the number of seconds since the start of the universe (1970).
+delay(5000) % Wait 5 seconds.
+endTime := Time.Sec % Set endTime to the number of seconds since the start of the universe (1970).
+put(endTime - startTime) % Output the difference between startTime and endTime.

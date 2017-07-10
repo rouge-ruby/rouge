@@ -248,7 +248,7 @@ module Rouge
       end
 
       def self.object_name
-        /\b[a-z][a-z0-9_\.]*\b/i
+        /\b[a-z][a-z0-9_\.]*?\b/i
       end
 
       object = self.object_name

@@ -77,6 +77,8 @@ module Rouge
 
       def self.detect?(text)
         return true if text.shebang?('php')
+        return false if /^<\?hh/ =~ text
+        return true if /^<\?php/ =~ text
       end
 
       state :root do

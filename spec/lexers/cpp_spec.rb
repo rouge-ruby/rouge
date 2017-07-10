@@ -14,8 +14,10 @@ describe Rouge::Lexers::Cpp do
 
       assert_guess :filename => 'foo.hpp'
       assert_guess :filename => 'foo.h++'
-      assert_guess :filename => 'foo.hh'
       assert_guess :filename => 'foo.hxx'
+
+      # Disambiguate with hacklang.org
+      assert_guess :filename => 'foo.hh', :source => 'foo'
 
       # Arduino stuff
       assert_guess :filename => 'foo.pde'

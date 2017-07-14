@@ -12,7 +12,7 @@ module Rouge
       filenames '*.sh', '*.bash', '*.zsh', '*.ksh',
                 '.bashrc', '.zshrc', '.kshrc', '.profile', 'APKBUILD', 'PKGBUILD'
 
-      mimetypes 'application/x-sh', 'application/x-shellscript'
+      mimetypes 'application/x-sh', 'application/x-shellscript', 'text/x-sh', 'text/x-shellscript'
 
       def self.detect?(text)
         return true if text.shebang?(/(ba|z|k)?sh/)

@@ -94,8 +94,11 @@ module Rouge
         rule(%r{'|\/:|\\:|':|\\|\/|0:|1:|2:}, Operator)
 
         ## numbers
-        rule(/(?:\d+(?:\.\d*)?|\.\d+)(?:e[+\-]?\d+|\d+\.\d*|\.\d+)?[ef]?/, Num::Float)
-        rule(/[01]+b?/, Num)
+        rule(/(\d+[.]\d*|[.]\d+)(e[+-]?\d+)?[ef]?/, Num::Float)
+        rule(/\d+e[+-]?\d+[ef]?/, Num::Float)
+        rule(/\d+[ef]/, Num::Float)
+        rule(/0x[0-9a-f]+/i, Num::Hex)
+        rule(/[01]+b/, Num::Bin)
         rule(/[0-9]+[hij]?/, Num::Integer)
         ## symbols and paths
         rule(%r{(`:[:a-z0-9._\/]*|`(?:[a-z0-9.][:a-z0-9._]*)?)}i, Str::Symbol)

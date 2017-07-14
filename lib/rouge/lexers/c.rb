@@ -205,6 +205,11 @@ module Rouge
         rule %r(/), Comment::Preproc
       end
 
+      state :preprocessor do
+        rule /#+\w*/, Comment::Preproc
+        mixin :inline_whitespace
+      end
+
       state :if_0 do
         # NB: no \b here, to cover #ifdef and #ifndef
         rule /^\s*#if/, Comment, :if_0

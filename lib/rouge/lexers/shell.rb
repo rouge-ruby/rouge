@@ -12,7 +12,8 @@ module Rouge
       filenames '*.sh', '*.bash', '*.zsh', '*.ksh',
                 '.bashrc', '.zshrc', '.kshrc', '.profile',
                 'APKBUILD',
-                'PKGBUILD'
+                'PKGBUILD',
+                '*.ebuild', '*.eclass'
 
       mimetypes 'application/x-sh', 'application/x-shellscript', 'text/x-sh', 'text/x-shellscript'
 

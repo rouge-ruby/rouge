@@ -54,7 +54,7 @@ module Rouge
 
         # whitespace
         rule /[^\S\n]+/, Text
-        rule %r(//.*?$), Comment::Single
+        rule %r(//[^\r\n]*), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
         rule /@\w[\w\d.]*/, Name::Decorator
         rule /(class|interface|trait)\b/,  Keyword::Declaration, :class

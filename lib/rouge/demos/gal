@@ -3,44 +3,20 @@ typedef data=0..$MAX-1;
 // A lossy buffer, with a single cell, that can hold a data.
 gal Buffer {
 	// MAX models an empty buffer
-	int value=$MAX;
-	
+	int value=$MAX;	
 	/** Allows to write to the buffer, if it is empty */
 	transition put (data $d) [value==$MAX] label "send"($d) {
 		value = $d;
-	}
-	/** allows to read the value held by the buffer */
-	transition get (data $d) [value==$d] label "receive"($d) {
-		value = $MAX;
-	}
-	/** This buffer is lossy, at any time (no label) the data can be lost. */
-	transition lose [value!=$MAX] {
-		value = $MAX;
-	}		
+	}	
 }
 composite Channel {
 	// the sender sends at most three messages
 	BoundedCounter sender($BOUND=3);
 	Buffer buff;
-	// to count the sum of all data values in actually received packets
-	BoundedCounter summer($BOUND=20);
-	// to count the number of received messages
-	BoundedCounter receiver;
-	
-	// our sender sends a random packet, and increments its send counter by one
 	synchronization sendData (data $d) {
 		sender."inc"(1);
 		buff."send"($d);
-	}
-	// at reception, we read the data from the buffer
-	synchronization receiveData (data $d) {
-		buff."receive"($d);		
-		// increment "summer" by the value in the packet
-		summer."inc"($d);
-		// increment received message counter by 1 : a constant value
-		receiver."inc"(1);
 	}	
 }
-
 main Channel;
 property noDead [ctl] : AG (EX true);

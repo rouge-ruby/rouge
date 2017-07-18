@@ -21,7 +21,7 @@ module Rouge
 	  TRANSIENT typedef hotbit
 	  transition synchronization label predicate
 	  for if else abort fixpoint
-	  self
+	  self main
 	  property bounds reachable invariant never ctl ltl
 	  AG AF AX EG EF EX A E U W M R X
 	  true false

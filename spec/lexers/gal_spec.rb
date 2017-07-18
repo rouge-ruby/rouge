@@ -11,8 +11,5 @@ describe Rouge::Lexers::GAL do
       assert_guess :filename => 'FOO.GAL'
     end
 
-    it 'guesses by mimetype' do
-      assert_guess :mimetype => 'text/x-csrc'
-    end
   end
 end

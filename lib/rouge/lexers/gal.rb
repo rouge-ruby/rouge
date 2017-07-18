@@ -5,7 +5,6 @@ module Rouge
     class GAL < C
       tag 'gal'
       filenames '*.gal'
-      mimetypes 'text/x-chdr', 'text/x-csrc'
 
       title "GAL"
       desc "The Guarded Action Language"

@@ -11,7 +11,7 @@ module Rouge
 
       def stream(tokens, &b)
         tokens.each do |tok, val|
-          yield "#{tok} #{val.inspect}\n"
+          yield "#{tok.qualname} #{val.inspect}\n"
         end
       end
     end

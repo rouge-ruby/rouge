@@ -198,10 +198,22 @@ module Rouge
         rule /0o[0-7][0-7_]*/i, Num::Oct
         rule /0b[01][01_]*/i, Num::Bin
         rule /[0-9]+/, Num::Integer
-    
-        rule /"(\\[\\"]|[^"])*"/, Str::Double
-        rule /'(\\[\\']|[^'])*'/, Str::Single
+
+        rule /"/, Str::Double, :dq
+        rule /'/, Str::Single, :sq
         rule /:/, Punctuation
+      end
+
+      state :dq do
+        rule /[^\\"]+/, Str::Double
+        rule /\\"/, Str::Escape
+        rule /"/, Str::Double, :pop!
+      end
+
+      state :sq do
+        rule /[^\\']+/, Str::Single
+        rule /\\'/, Str::Escape
+        rule /'/, Str::Single, :pop!
       end
 
       # braced parts that aren't object literals

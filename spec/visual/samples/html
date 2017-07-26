@@ -6,6 +6,9 @@
         var el = document.getElementById(id);
     }
 </script>
+
+<script> "hello < world" </script>
+<script> 'hello < world' </script>
 <style>
 .syntax { border: 1px solid #d0d0d0; background-color: #f0f0f0;
           margin-left: 10px; margin-right: 10px; }

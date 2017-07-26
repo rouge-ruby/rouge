@@ -19,6 +19,7 @@ module Rouge
           break return continue
           for endfor do while
           case default
+	  try catch endtry
           abortonrte
         )
       end
@@ -247,12 +248,11 @@ module Rouge
       end
 
       def self.object_name
-        /[a-z][a-z0-9_]*\b/i
+        /\b[a-z][a-z0-9_\.]*?\b/i
       end
 
       object = self.object_name
-      whitespace  = /[\s\r]+/
-      noLineBreak = /[ \t]+/
+      noLineBreak = /(?:[ \t]|(?:\\\s*[\r\n]))+/
       operator = %r([\#$~!%^&*+=\|?:<>/-])
       punctuation = /[{}()\[\],.;]/
       number_float= /0x[a-f0-9]+/i
@@ -262,7 +262,7 @@ module Rouge
       state :root do
         rule %r(//), Comment, :comments
 
-        rule /\b#{object}/ do |m|
+        rule /#{object}/ do |m|
           if m[0].downcase =~ /function/
             token Keyword::Declaration
             push :parse_function
@@ -281,8 +281,8 @@ module Rouge
           elsif self.class.hdf5Operation.include? m[0].downcase
             token Keyword::Reserved
             push :operationFlags
-          elsif m[0].downcase =~ /(v|s|w)_[a-z]+[a-z0-9]*/
-            token Name::Builtin
+          elsif m[0].downcase =~ /\b(v|s|w)_[a-z]+[a-z0-9]*/
+            token Name::Constant
           else
             token Name
           end
@@ -293,6 +293,7 @@ module Rouge
 
         mixin :characters
         mixin :numbers
+        mixin :whitespace
       end
 
       state :preprocessor do
@@ -310,7 +311,7 @@ module Rouge
 
       state :assignment do
         mixin :whitespace
-        rule /\"/, Punctuation, :string1
+        rule /\"/, Literal::String::Double, :string1 #punctuation for string
         mixin :string2
         rule /#{number_float}/, Literal::Number::Float, :pop!
         rule /#{number_int}/, Literal::Number::Integer, :pop!
@@ -322,11 +323,11 @@ module Rouge
       state :parse_variables do
         mixin :whitespace
         rule /[=]/, Punctuation, :assignment
-        rule %r([/][a-z]+)i, Keyword::Pseudo, :parse_variables
         rule object, Name::Variable
         rule /[\[\]]/, Punctuation # optional variables in functions
         rule /[,]/, Punctuation, :parse_variables
         rule /\)/, Punctuation, :pop! # end of function
+        rule %r([/][a-z]+)i, Keyword::Pseudo, :parse_variables
         rule(//) { pop! }
       end
 
@@ -367,7 +368,7 @@ module Rouge
         rule /\s/, Text
         rule /#{operator}/, Operator
         rule /#{punctuation}/, Punctuation
-        rule /\"/, Punctuation, :string1
+        rule /\"/, Literal::String::Double, :string1 #punctuation for string
         mixin :string2
       end
 
@@ -387,7 +388,7 @@ module Rouge
         rule /\\\"/, Literal::String::Escape
         rule /\\/, Literal::String::Escape
         rule /[^"]/, Literal::String
-        rule /\"/, Punctuation, :pop!
+        rule /\"/, Literal::String::Double, :pop! #punctuation for string
       end
 
       state :string2 do

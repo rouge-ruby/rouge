@@ -21,8 +21,8 @@ module Rouge
     end
 
     # Format a token stream.  Delegates to {#format}.
-    def self.format(tokens, opts={}, &b)
-      new(opts).format(tokens, &b)
+    def self.format(tokens, *a, &b)
+      new(*a).format(tokens, &b)
     end
 
     def initialize(opts={})

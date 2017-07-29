@@ -9,6 +9,16 @@ module Rouge
       aliases 'nixos'
       filenames '*.nix'
 
+      state :comment do
+        rule /\/\/.*$/, Comment
+        rule /\/\*/, Comment, :multiline_comment
+      end
+
+      state :multiline_comment do
+        rule /\*\//, Comment, :pop!
+        rule /./, Comment
+      end
+
       state :number do
         rule /[0-9]/, Num::Integer
       end
@@ -40,6 +50,7 @@ module Rouge
       end
 
       state :root do
+        mixin :comment
         mixin :expression
       end
 

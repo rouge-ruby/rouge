@@ -133,6 +133,7 @@ module Rouge
         mixin :keywords_namespace
         mixin :keywords_declaration
         mixin :keywords_conditional
+        mixin :keywords_reserved
       end
 
       state :keywords_namespace do
@@ -148,6 +149,11 @@ module Rouge
       state :keywords_conditional do
         keywords = %w(if then else)
         rule /(?:#{keywords.join('|')})\b/, Keyword
+      end
+
+      state :keywords_reserved do
+        keywords = %w(rec assert map)
+        rule /(?:#{keywords.join('|')})\b/, Keyword::Reserved
       end
 
       state :ignore do

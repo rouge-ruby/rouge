@@ -83,7 +83,7 @@ module Rouge
       end
 
       state :operator do
-        rule /(\.|\?|\+\+|\+|!=|!|\/\/|\=\=|&&|\|\||->|\/|\*|-)/, Operator
+        rule /(\.|\?|\+\+|\+|!=|!|\/\/|\=\=|&&|\|\||->|\/|\*|-|<|>|<=|=>)/, Operator
       end
 
       state :assignment do

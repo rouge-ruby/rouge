@@ -27,6 +27,10 @@ ab = q
 
 12 + 3 / 2 * 1
 
+a < 42 || b <= 10
+
+b > 10 && 42 >= 12
+
 "this is a string"
 
 "interpolated ${x}"

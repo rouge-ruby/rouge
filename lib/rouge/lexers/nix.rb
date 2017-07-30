@@ -9,6 +9,11 @@ module Rouge
       aliases 'nixos'
       filenames '*.nix'
 
+      state :whitespaces do
+        rule /^\s*\n\s*$/m, Text
+        rule /\s+/, Text
+      end
+
       state :comment do
         rule /\/\/.*$/, Comment
         rule /\/\*/, Comment, :multiline_comment
@@ -23,8 +28,12 @@ module Rouge
         rule /[0-9]/, Num::Integer
       end
 
+      state :null do
+        rule /(null)/, Keyword::Constant
+      end
+
       state :boolean do
-        rule /(true|false)/, Keyword::Pseudo
+        rule /(true|false)/, Keyword::Constant
       end
 
       state :binding do
@@ -61,17 +70,33 @@ module Rouge
         rule /"/, Str::Double, :pop!
         rule /./, Str::Double
       end
+
+      state :operator do
+        rule /(\.|\?|\+\+|\+|!=|!|\/\/|\=\=|&&|\|\||->|\/|\*|-)/, Operator
+      end
+
+      state :assignment do
+        rule /(=)/, Operator
+      end
       
       state :expression do
-        mixin :number
         mixin :boolean
+        mixin :null
+        mixin :number
         mixin :string
         mixin :binding
       end
 
+      state :ignore do
+        mixin :whitespaces
+      end
+
       state :root do
+        mixin :ignore
         mixin :comment
         mixin :expression
+        mixin :operator
+        mixin :assignment
       end
 
       start do

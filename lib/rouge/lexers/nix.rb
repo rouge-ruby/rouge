@@ -78,12 +78,17 @@ module Rouge
       state :assignment do
         rule /(=)/, Operator
       end
+
+      state :delimiter do
+        rule /(;|,|:)/, Punctuation
+      end
       
       state :expression do
         mixin :ignore
         mixin :comment
         mixin :operator
         mixin :assignment
+        mixin :delimiter
         mixin :boolean
         mixin :null
         mixin :number

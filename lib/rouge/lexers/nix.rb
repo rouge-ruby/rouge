@@ -111,9 +111,31 @@ module Rouge
         mixin :null
         mixin :number
         mixin :string
+        mixin :keywords
         mixin :binding
         mixin :atom
         mixin :set
+      end
+
+      state :keywords do
+        mixin :keywords_namespace
+        mixin :keywords_declaration
+        mixin :keywords_conditional
+      end
+
+      state :keywords_namespace do
+        keywords = %w(with in)
+        rule /(?:#{keywords.join('|')})\b/, Keyword::Namespace
+      end
+
+      state :keywords_declaration do
+        keywords = %w(let in )
+        rule /(?:#{keywords.join('|')})\b/, Keyword::Declaration
+      end
+
+      state :keywords_conditional do
+        keywords = %w(if then else)
+        rule /(?:#{keywords.join('|')})\b/, Keyword
       end
 
       state :ignore do

@@ -101,6 +101,13 @@ e1 || e2
 
 e1 -> e2
 
+with e1; e2
+
+let as = { x = "foo"; y = "bar"; };
+in with as; x + y
+
+with (import ./definitions.nix); ...
+
 { stdenv, fetchurl, perl }: // 1
 
 stdenv.mkDerivation { // 2

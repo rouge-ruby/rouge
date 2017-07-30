@@ -40,6 +40,17 @@ module Rouge
         rule /[a-zA-Z_][a-zA-Z0-9-]*/, Name::Variable
       end
 
+      state :path do
+        word = "[a-zA-Z0-9\._-]+"
+        section = "(\/#{word})"
+        prefix = "[a-z\+]+:\/\/"
+        root = /#{section}+/.source
+        tilde = /~#{section}+/.source
+        basic = /#{word}(\/#{word})+/.source
+        url = /#{prefix}(\/?#{basic})/.source
+        rule /(#{root}|#{tilde}|#{basic}|#{url})/, Str::Other
+      end
+
       state :string do
         rule /"/, Str::Double, :string_double_quoted
         rule /''/, Str::Double, :string_indented
@@ -104,14 +115,15 @@ module Rouge
       state :expression do
         mixin :ignore
         mixin :comment
-        mixin :operator
-        mixin :assignment
-        mixin :delimiter
         mixin :boolean
         mixin :null
         mixin :number
+        mixin :path
         mixin :string
         mixin :keywords
+        mixin :operator
+        mixin :assignment
+        mixin :delimiter
         mixin :binding
         mixin :atom
         mixin :set

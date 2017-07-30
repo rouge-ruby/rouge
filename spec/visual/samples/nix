@@ -76,7 +76,28 @@ stdenv.mkDerivation {
     '';
 }
 
-// https://nixos.org/nix/manual/#sec-language-operators
+# paths
+
+/bin/sh
+
+./builder.sh
+
+../xyzzy/fnord.nix
+
+~/foo
+
+local/file
+
+https://nixos.org/nixos/manual/index.html
+git+https://nixos.org/nixos/manual/index.html
+
+file:///tmp/nixos
+
+~ # not a path
+
+/ # not a path
+
+# https://nixos.org/nix/manual/#sec-language-operators
 e . attrpath or def
 
 e1 e2

@@ -35,6 +35,39 @@ variable-y = variableX // note that the '-' character may be part of the variabl
 
 __variable__z_ = variable-y
 
+"Escaped chars ${x} \n \r \t \${q}"
+
+// Examples from https://nixos.org/nix/manual/#idm140737318143152
+
+"--with-freetype2-library=${freetype}/lib"
+
+"--with-freetype2-library=" + freetype + "/lib"
+
+configureFlags = "
+  -system-zlib -system-libpng -system-libjpeg
+  ${if openglSupport then "-dlopen-opengl
+    -L${mesa}/lib -I${mesa}/include
+    -L${libXmu}/lib -I${libXmu}/include" else ""}
+  ${if threadSupport then "-thread" else "-no-thread"}
+";
+
+// indented string
+indented = ''
+  This is the first line.
+  This is the second line.
+    This is the third line.
+'';
+
+stdenv.mkDerivation {
+  postInstall =
+    ''
+      mkdir $out/bin $out/etc
+      cp foo $out/bin
+      echo "Hello World" > $out/etc/foo.conf
+      ${if enableBar then "cp bar $out/bin" else ""}
+    '';
+}
+
 { stdenv, fetchurl, perl }: // 1
 
 stdenv.mkDerivation { // 2

@@ -82,6 +82,15 @@ module Rouge
       state :delimiter do
         rule /(;|,|:)/, Punctuation
       end
+
+      state :atom_content do
+        mixin :expression
+        rule /\)/, Punctuation, :pop!
+      end
+
+      state :atom do
+        rule /\(/, Punctuation, :atom_content
+      end
       
       state :expression do
         mixin :ignore
@@ -94,6 +103,7 @@ module Rouge
         mixin :number
         mixin :string
         mixin :binding
+        mixin :atom
       end
 
       state :ignore do

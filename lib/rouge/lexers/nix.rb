@@ -150,6 +150,7 @@ module Rouge
         mixin :keywords_declaration
         mixin :keywords_conditional
         mixin :keywords_reserved
+        mixin :keywords_builtin
       end
 
       state :keywords_namespace do
@@ -169,6 +170,22 @@ module Rouge
 
       state :keywords_reserved do
         keywords = %w(rec assert map)
+        rule /(?:#{keywords.join('|')})\b/, Keyword::Reserved
+      end
+
+      state :keywords_builtin do
+        keywords = %w(
+          abort
+          baseNameOf
+          builtins
+          derivation
+          fetchTarball
+          import
+          isNull
+          removeAttrs
+          throw
+          toString
+        )
         rule /(?:#{keywords.join('|')})\b/, Keyword::Reserved
       end
 

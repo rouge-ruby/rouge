@@ -25,6 +25,12 @@ false
 
 binding
 
+_12 = "twelve"
+
+variableX = _12
+
+variable-y = variableX // note that the '-' character may be part of the variable name
+
 { stdenv, fetchurl, perl }: // 1
 
 stdenv.mkDerivation { // 2

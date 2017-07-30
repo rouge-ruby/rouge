@@ -27,6 +27,10 @@ module Rouge
         rule /(true|false)/, Keyword::Pseudo
       end
 
+      state :binding do
+        rule /[a-zA-Z_][a-zA-Z0-9]*/, Name::Variable
+      end
+
       state :string do
         rule /"/, Str::Double, :double_quoted_string
       end
@@ -47,6 +51,7 @@ module Rouge
         mixin :number
         mixin :boolean
         mixin :string
+        mixin :binding
       end
 
       state :root do

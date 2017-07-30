@@ -31,18 +31,6 @@ ab = q
 
 "interpolated ${x}"
 
-reference
-
-_12 = "twelve"
-
-__blah = _12
-
-variableX = _12
-
-variable-y = variableX # note that the '-' character may be part of the variable name
-
-__variable__z_ = variable-y
-
 "Escaped chars ${x} \n \r \t \${q}"
 
 # Examples from https://nixos.org/nix/manual/#idm140737318143152
@@ -76,6 +64,19 @@ stdenv.mkDerivation {
     '';
 }
 
+reference
+
+_12 = "twelve"
+
+__blah = _12
+
+variableX = _12
+
+variable-y = variableX # note that the '-' character may be part of the variable name
+
+__variable__z_ = variable-y
+
+
 # paths
 
 /bin/sh
@@ -97,7 +98,93 @@ file:///tmp/nixos
 
 / # not a path
 
+# lists
+
+[ 123 ./foo.nix "abc" (f { x = y; }) ]
+
+[ 123 ./foo.nix "abc" f { x = y; } ]
+
+# sets
+
+{ x = 123;
+  text = "Hello";
+  y = f { bla = 456; };
+}
+
+{ a = "Foo"; b = "Bar"; }.a
+
+{ a = "Foo"; b = "Bar"; }.c or "Xyzzy"
+
+{ "foo ${bar}" = 123; "nix-1.0" = 456; }."foo ${bar}"
+
+{ foo = 123; }.${bar} or 456
+
+{ ${if foo then "bar" else null} = true; }
+
+# recursive sets
+
+rec {
+  x = y;
+  y = 123;
+}.x
+
+# let-expressions
+
+let
+  x = "foo";
+  y = "bar";
+in x + y
+
+let x = 123; in
+{ inherit x;
+  y = 456;
+}
+
+# functions
+
+pattern: body
+
+let negate = x: !x;
+    concat = x: y: x + y;
+in if negate true then concat "foo" "bar" else ""
+
+map (concat "foo") [ "bar" "bla" "abc" ]
+
+{ x, y, z }: z + y + x
+
+{ x, y, z, ... }: z + y + x
+
+{ x, y ? "foo", z ? "bar" }: z + y + x
+
+args@{ x, y, z, ... }: z + y + x + args.a
+
+let concat = { x, y }: x + y;
+in concat { x = "foo"; y = "bar"; }
+
+let add = { __functor = self: x: x + self.x; };
+    inc = add // { x = 1; };
+in inc 1
+
+# conditionals
+
+if e1 then e2 else e3
+
+# assertions
+
+assert e1; e2
+
+# with-expressions
+
+with e1; e2
+
+let as = { x = "foo"; y = "bar"; };
+in with as; x + y
+
+with (import ./definitions.nix); ...
+
+# Operators
 # https://nixos.org/nix/manual/#sec-language-operators
+
 e . attrpath or def
 
 e1 e2

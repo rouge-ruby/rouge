@@ -15,15 +15,23 @@
 
 47
 
+null
+
 true
 
 false
+
+ab = q
+
+42 == 24
+
+12 + 3 / 2 * 1
 
 "this is a string"
 
 "interpolated ${x}"
 
-binding
+reference
 
 _12 = "twelve"
 
@@ -67,6 +75,31 @@ stdenv.mkDerivation {
       ${if enableBar then "cp bar $out/bin" else ""}
     '';
 }
+
+// https://nixos.org/nix/manual/#sec-language-operators
+e . attrpath or def
+
+e1 e2
+
+e ? attrpath
+
+e1 ++ e2
+
+e1 + e2
+
+! e
+
+e1 // e2
+
+e1 == e2
+
+e1 != e2
+
+e1 && e2
+
+e1 || e2
+
+e1 -> e2
 
 { stdenv, fetchurl, perl }: // 1
 

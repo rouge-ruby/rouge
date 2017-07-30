@@ -80,6 +80,10 @@ module Rouge
       end
       
       state :expression do
+        mixin :ignore
+        mixin :comment
+        mixin :operator
+        mixin :assignment
         mixin :boolean
         mixin :null
         mixin :number
@@ -93,10 +97,7 @@ module Rouge
 
       state :root do
         mixin :ignore
-        mixin :comment
         mixin :expression
-        mixin :operator
-        mixin :assignment
       end
 
       start do

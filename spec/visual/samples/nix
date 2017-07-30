@@ -229,7 +229,7 @@ stdenv.mkDerivation { # 2
   ";
   meta = {
     # 3: Indented string
-    description = ''
+    description = '' # part of the string
     A contrived example of a Nix expression, suitable for testing the lexer for
     Rouge.
     '';

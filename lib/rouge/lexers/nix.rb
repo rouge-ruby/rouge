@@ -129,7 +129,7 @@ module Rouge
       end
 
       state :keywords_declaration do
-        keywords = %w(let in )
+        keywords = %w(let)
         rule /(?:#{keywords.join('|')})\b/, Keyword::Declaration
       end
 

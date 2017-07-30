@@ -103,6 +103,15 @@ module Rouge
         rule /\(/, Punctuation, :atom_content
       end
 
+      state :list do
+        rule /\[/, Punctuation, :list_content
+      end
+
+      state :list_content do
+        rule /\]/, Punctuation, :pop!
+        mixin :expression
+      end
+
       state :set do
         rule /{/, Punctuation, :set_content
       end
@@ -127,6 +136,7 @@ module Rouge
         mixin :binding
         mixin :atom
         mixin :set
+        mixin :list
       end
 
       state :keywords do

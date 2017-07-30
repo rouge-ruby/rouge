@@ -15,7 +15,7 @@ module Rouge
       end
 
       state :comment do
-        rule /\/\/.*$/, Comment
+        rule /#.*$/, Comment
         rule /\/\*/, Comment, :multiline_comment
       end
 

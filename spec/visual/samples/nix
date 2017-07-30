@@ -1,11 +1,11 @@
-// inline comments
-// another inline comment
+# inline comments
+# another inline comment
 
-// inline comment after empty line
+# inline comment after empty line
 
-  // inline comment after white-space
+  # inline comment after white-space
 
-12 // EOL comment
+12 # EOL comment
 
 /* multi-line
  * comment
@@ -39,13 +39,13 @@ __blah = _12
 
 variableX = _12
 
-variable-y = variableX // note that the '-' character may be part of the variable name
+variable-y = variableX # note that the '-' character may be part of the variable name
 
 __variable__z_ = variable-y
 
 "Escaped chars ${x} \n \r \t \${q}"
 
-// Examples from https://nixos.org/nix/manual/#idm140737318143152
+# Examples from https://nixos.org/nix/manual/#idm140737318143152
 
 "--with-freetype2-library=${freetype}/lib"
 
@@ -59,7 +59,7 @@ configureFlags = "
   ${if threadSupport then "-thread" else "-no-thread"}
 ";
 
-// indented string
+# indented string
 indented = ''
   This is the first line.
   This is the second line.
@@ -108,24 +108,24 @@ in with as; x + y
 
 with (import ./definitions.nix); ...
 
-{ stdenv, fetchurl, perl }: // 1
+{ stdenv, fetchurl, perl }: # 1
 
-stdenv.mkDerivation { // 2
-  name = "hello-2.1.1"; // 1: String
-  // 2: Multiline string
+stdenv.mkDerivation { # 2
+  name = "hello-2.1.1"; # 1: String
+  # 2: Multiline string
   configureFlags  = "
   ";
   meta = {
-    // 3: Indented string
+    # 3: Indented string
     description = ''
     A contrived example of a Nix expression, suitable for testing the lexer for
     Rouge.
     '';
   };
-  builder = ./builder.sh; // 4
+  builder = ./builder.sh; # 4
   src = fetchurl { 5
     url = ftp://ftp.nluug.nl/pub/gnu/hello/hello-2.1.1.tar.gz;
     md5 = "70c9ccf9fac07f762c24f2df2290784d";
   };
-  inherit perl; // 6
+  inherit perl; # 6
 }

@@ -27,9 +27,13 @@ binding
 
 _12 = "twelve"
 
+__blah = _12
+
 variableX = _12
 
 variable-y = variableX // note that the '-' character may be part of the variable name
+
+__variable__z_ = variable-y
 
 { stdenv, fetchurl, perl }: // 1
 

@@ -147,7 +147,7 @@ module Rouge
       end
 
       state :keywords_namespace do
-        keywords = %w(with in)
+        keywords = %w(with in inherit)
         rule /(?:#{keywords.join('|')})\b/, Keyword::Namespace
       end
 

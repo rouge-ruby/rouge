@@ -28,7 +28,7 @@ module Rouge
       end
 
       state :binding do
-        rule /[a-zA-Z_][a-zA-Z0-9]*/, Name::Variable
+        rule /[a-zA-Z_][a-zA-Z0-9-]*/, Name::Variable
       end
 
       state :string do

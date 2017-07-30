@@ -88,6 +88,11 @@ module Rouge
 
       state :assignment do
         rule /(=)/, Operator
+        rule /(@)/, Operator
+      end
+
+      state :accessor do
+        rule /(\$)/, Punctuation
       end
 
       state :delimiter do
@@ -131,6 +136,7 @@ module Rouge
         mixin :string
         mixin :keywords
         mixin :operator
+        mixin :accessor
         mixin :assignment
         mixin :delimiter
         mixin :binding

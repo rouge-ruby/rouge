@@ -19,27 +19,30 @@ module Rouge
       exponent = /[ED][+-]?\d+/i
 
       def self.keywords
-        # Fortran allows to omit whitespace between certain keywords...
+        # Special rules for two-word keywords are defined further down.
+        # Note: Fortran allows to omit whitespace between certain keywords.
         @keywords ||= Set.new %w(
-          abstract all allocatable allocate assign assignment asynchronous
-          backspace bind block blockdata close common concurrent contiguous call
-          case class codimension contains continue cycle data deallocate
-          deferred dimension do elemental else elseif elsewhere end endblock
-          endblockdata enddo endenum endfile endforall endfunction endif
-          endinterface endmodule endprogram endselect endsubmodule endsubroutine
-          endtype endwhere endwhile entry enum enumerator equivalence error exit
-          external final flush forall format function generic go goto if
-          implicit import in include inout inquire intent interface intrinsic is
-          module namelist non_overridable none nopass nullify only open operator
-          optional out parameter pass pause pointer print private procedure
-          program protected public pure read recursive result return rewind save
-          select selectcase sequence stop submodule subroutine target then to
-          type use value volatile wait where while write
+          abstract allocatable allocate assign assignment associate asynchronous
+          backspace bind block blockdata call case class close codimension
+          common concurrent contains contiguous continue critical cycle data
+          deallocate deferred dimension do elemental else elseif elsewhere end
+          endassociate endblock endblockdata enddo endenum endfile endforall
+          endfunction endif endinterface endmodule endprogram endselect
+          endsubmodule endsubroutine endtype endwhere endwhile entry enum
+          enumerator equivalence exit extends external final flush forall format
+          function generic goto if implicit import in include inout inquire
+          intent interface intrinsic is lock module namelist non_overridable
+          none nopass nullify only open operator optional out parameter pass
+          pause pointer print private procedure program protected public pure
+          read recursive result return rewind save select selectcase sequence
+          stop submodule subroutine target then type unlock use value volatile
+          wait where while write
         )
       end
 
       def self.types
-        # There is a separate rule for "double precision" (two words) below
+        # A special rule for the two-word version "double precision" is
+        # defined further down.
         @types ||= Set.new %w(
           character complex doubleprecision integer logical real
         )
@@ -48,16 +51,16 @@ module Rouge
       def self.intrinsics
         @intrinsics ||= Set.new %w(
           abs achar acos acosh adjustl adjustr aimag aint all allocated anint
-          any asin asinh associated atan atan2 atanh bessel_j0 bessel_j1
-          bessel_jn bessel_y0 bessel_y1 bessel_yn bge bgt bit_size ble blt btest
-          c_associated c_f_pointer c_f_procpointer c_funloc c_loc c_sizeof
-          ceiling char cmplx command_argument_count compiler_options
-          compiler_version conjg cos cosh count cpu_time cshift date_and_time
-          dble digits dim dot_product dprod dshiftl dshiftr eoshift epsilon erf
-          erfc_scaled erfc execute_command_line exp exponent extends_type_of
-          findloc floor fraction gamma get_command_argument get_command
-          get_environment_variable huge hypot iachar iall iand iany ibclr ibits
-          ibset ichar ieee_class ieee_copy_sign ieee_get_flag
+          any asin asinh associated atan atan2 atanh atomic_define atomic_ref
+          bessel_j0 bessel_j1 bessel_jn bessel_y0 bessel_y1 bessel_yn bge bgt
+          bit_size ble blt btest c_associated c_f_pointer c_f_procpointer
+          c_funloc c_loc c_sizeof ceiling char cmplx command_argument_count
+          compiler_options compiler_version conjg cos cosh count cpu_time cshift
+          date_and_time dble digits dim dot_product dprod dshiftl dshiftr
+          eoshift epsilon erf erfc_scaled erfc execute_command_line exp exponent
+          extends_type_of findloc floor fraction gamma get_command_argument
+          get_command get_environment_variable huge hypot iachar iall iand iany
+          ibclr ibits ibset ichar ieee_class ieee_copy_sign ieee_get_flag
           ieee_get_halting_mode ieee_get_rounding_mode ieee_get_status
           ieee_get_underflow_mode ieee_is_finite ieee_is_nan ieee_is_normal
           ieee_logb ieee_next_after ieee_rem ieee_rint ieee_scalb
@@ -124,9 +127,12 @@ module Rouge
         rule %r{\*\*|//|==|/=|<=|>=|=>|[-+*/<>=%]}, Operator
         rule /\.(?:EQ|NE|LT|LE|GT|GE|NOT|AND|OR|EQV|NEQV|[A-Z]+)\./i, Operator::Word
 
-        # To make sure "double precision" written as two words is highlighted
-        # properly. "doubleprecision" is covered by a different rule.
+        # Special rules for two-word keywords and types.
+        # Note: "doubleprecision" is covered by the normal keyword rule.
         rule /double\s+precision\b/i, Keyword::Type
+        rule /go\s+to\b/i, Keyword
+        rule /sync\s+(all|images|memory)\b/i, Keyword
+        rule /error\s+stop\b/i, Keyword
 
         rule /#{name}/m do |m|
           match = m[0].downcase

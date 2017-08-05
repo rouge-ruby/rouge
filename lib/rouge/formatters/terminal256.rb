@@ -9,17 +9,13 @@ module Rouge
       # @private
       attr_reader :theme
 
-      # @argument theme
+      # @param [Hash,Rouge::Theme] theme
       #   the theme to render with.
-      def initialize(theme='thankful_eyes')
-        if theme.is_a?(Class) && theme < Rouge::Theme
-          @theme = theme.new
-        elsif theme.is_a?(Rouge::Theme)
+      def initialize(theme = Themes::ThankfulEyes.new)
+        if theme.is_a?(Rouge::Theme)
           @theme = theme
-        elsif theme.is_a?(String)
-          @theme = Rouge::Theme.find(theme).new
         elsif theme.is_a?(Hash)
-          @theme = theme[:theme] || Themes::ThankfulEyes
+          @theme = theme[:theme] || Themes::ThankfulEyes.new
         else
           raise ArgumentError, "invalid theme: #{theme.inspect}"
         end

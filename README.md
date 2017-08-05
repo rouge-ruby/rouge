@@ -63,6 +63,8 @@ Builtin formatters include:
     * `line_numbers: false` - use an HTMLTable formatter
     * `wrap: true` - use an HTMLPygments wrapper
     * `css_class: 'codehilite'` - a CSS class to use for the pygments wrapper
+* `Rouge::Formatters::Terminal256.new(theme)`
+  * `theme` must be an instnce of `Rouge::Theme`, or a `Hash` structure with `:theme` entry
 
 #### Lexer options
 ##### debug: false

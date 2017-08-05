@@ -14,5 +14,5 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "rouge"
   s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'lib/**/*.yml', 'bin/rougify', 'lib/rouge/demos/*']
   s.executables = %w(rougify)
-  s.license = 'MIT, 2-clause BSD'
+  s.licenses = ['MIT', 'BSD-2-Clause']
 end

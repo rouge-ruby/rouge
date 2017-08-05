@@ -273,6 +273,7 @@ module Rouge
         when 'html-pygments' then Formatters::HTMLPygments.new(Formatters::HTML.new, opts[:css_class])
         when 'html-inline' then Formatters::HTMLInline.new(theme)
         when 'html-table' then Formatters::HTMLTable.new(Formatters::HTML.new)
+        when 'null', 'raw', 'tokens' then Formatters::Null.new
         else
           error! "unknown formatter preset #{opts[:formatter]}"
         end

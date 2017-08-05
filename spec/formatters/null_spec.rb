@@ -4,9 +4,9 @@ describe Rouge::Formatters::Null do
   let(:subject) { Rouge::Formatters::Null.new }
 
   it 'renders nothing' do
-    result = subject.format([[Token['Text'], 'foo']])
+    result = subject.format([[Token['Name.Constant'], 'foo']])
 
-    assert { result == %|Rouge::Token::Tokens::Text "foo"\n| }
+    assert { result == %|Name.Constant "foo"\n| }
   end
 
   it 'consumes tokens' do

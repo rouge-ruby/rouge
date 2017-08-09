@@ -4,6 +4,32 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.2.0: 2017-08-09
+
+https://github.com/jneen/rouge/compare/v2.1.1...v2.2.0
+
+* rougify:
+  * trap PIPE only when platform supports it
+* kotlin:
+  * update for companion object rename
+* igorpro:
+  * fix igorpro lexer errrors
+* nix:
+  * support nix expression language
+* q:
+  * fix rules for numeric literals
+* fortran:
+  * add missing Fortran keywords and intrinsics
+* general:
+  * speed up `shebang?` check
+  * don't default to a hash in Lexer.format
+  * use the token's qualname in null formatter
+  * let's use slightly nicer language here
+* formatter:
+  * fix "unknown formatter: terminal256"
+* gemspec:
+  * fix licenses to rubygems standard
+
 ## version 2.1.1: 2017-06-21
 
   * rougify: display help when called with no arguments

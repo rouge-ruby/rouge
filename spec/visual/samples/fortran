@@ -3,10 +3,14 @@
 module rats
 
     type rational
-        sequence
         integer :: numerator
         integer :: denominator
     end type rational
+
+    type, extends(rational) :: printable_rational
+        contains
+        procedure, pass :: printme => rat_print
+    end type printable_rational
 
     interface operator(+)
         module procedure rat_add
@@ -22,6 +26,13 @@ module rats
 
     interface operator(/)
         module procedure rat_div
+    end interface
+
+    ! Interface to allow implementation of rat_print in submodule
+    interface
+        module subroutine rat_print(self)
+        class(printable_rational), intent(inout) :: self
+        end subroutine rat_print
     end interface
 
 contains
@@ -97,13 +108,21 @@ contains
 
 end module rats
 
+submodule (rats) rats_print_implementation
+contains
+    module procedure rat_print
+    print '(I0, "/", I0)', self%numerator, self%denominator
+    end procedure rat_print
+end submodule rats_print_implementation
+
 program bottles
     use rats
     implicit none
 
-    character(20), parameter :: towels = 'Don''t Panic!'
+    character(len=*), parameter :: towels = 'Don''t Panic!'
     integer :: nbottles = 99
     type(rational) :: r = rational(1, 2), q = rational(1, 6)
+    type(printable_rational) :: p
 
     do while (nbottles > 0)
         call print_bottles(nbottles)
@@ -115,6 +134,8 @@ program bottles
     r = r - q
     write(*, '(I0, "/", I0)') rat_numerator(r), rat_denominator(r)
 
+    p = printable_rational(r)
+    call p%printme()
 contains
 
     subroutine print_bottles(n)
@@ -162,6 +183,7 @@ contains
 
       if (m == 0) then
         double = ieee_value(double, IEEE_QUIET_NAN)
+        error stop
       else
         double = real(n, kind(double)) / real(m, kind(another_double))
         print '(A,F0.2,A)', 'Everyone gets ', double, ' bottles!'

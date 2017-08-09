@@ -12,6 +12,24 @@ describe Rouge::Lexers::Fortran do
     assert { tokens.last[0] == Token['Name'] }
   end
 
+  it 'highlights "error stop" but not "error"' do
+    tokens = subject.lex('error stop').to_a
+    assert { tokens.size == 1 }
+    assert { tokens.first[0] == Token['Keyword'] }
+    tokens = subject.lex('error').to_a
+    assert { tokens.size == 1 }
+    assert { tokens.first[0] != Token['Keyword'] }
+  end
+
+  it 'highlights "sync images" but not "sync"' do
+    tokens = subject.lex('sync images').to_a
+    assert { tokens.size == 1 }
+    assert { tokens.first[0] == Token['Keyword'] }
+    tokens = subject.lex('sync').to_a
+    assert { tokens.size == 1 }
+    assert { tokens.first[0] != Token['Keyword'] }
+  end
+
   describe 'guessing' do
     include Support::Guessing
 

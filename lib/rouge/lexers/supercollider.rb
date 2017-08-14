@@ -105,7 +105,9 @@ module Rouge
 
         # class name
         rule /[A-Z]\w*/, Name::Class
-        rule /_\W+/, Name::Function
+
+        # primitive
+        rule /_\w+/, Name::Function
 
         # main identifiers section
         rule /[a-z]\w*/ do |m|
@@ -134,9 +136,10 @@ module Rouge
 
         # operators
         rule /[\+\-\*\/&\|%<>=]+/, Operator
+        rule /[\^:]/, Operator
 
-        # treat "return" as a special operator
-        rule /\^/, Keyword
+        # treat curry argument as a special operator
+        rule /_/, Name::Builtin
 
       end
     end

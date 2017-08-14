@@ -61,27 +61,82 @@ module Rouge
       state :root do
         mixin :whitespace
 
-        rule /$(\\.|.)/, Str::Char
-        rule /(\d+\*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
-        rule /\d+e[+-]?[0-9]+/i, Num::Float
-        rule /0x[0-9A-Fa-f]+/, Num::Hex
-        rule /0b[01]+/, Num::Bin
-        rule /\d+/, Num::Integer
+        ####################
+        ##### LITERALS #####
+        ####################
 
-#        from IDE's highlighter
-#    Token::RadixFloat, "^\\b\\d+r[0-9a-zA-Z]*(\\.[0-9A-Z]*)?" );
-#    Token::Float, "^\\b((\\d+(\\.\\d+)?([eE][-+]?\\d+)?(pi)?)|pi)\\b" );
-#    Token::HexInt, "^\\b0(x|X)(\\d|[a-f]|[A-F])+" );
-#    Token::SymbolArg, "^\\b[A-Za-z_]\\w*\\:" );
-#    Token::Name, "^[a-z]\\w*" );
-#    Token::Class, "^\\b[A-Z]\\w*" );
-#    Token::Primitive, "^\\b_\\w+" );
-#    Token::Symbol, "^\\\\\\w*" );
-#    Token::Char, "^\\$\\\\?." );
-#    Token::EnvVar, "^~\\w+" );
-#    Token::SingleLineComment, "^//[^\r\n]*" );
-#    Token::MultiLineCommentStart, "^/\\*" );
-#    Token::Operator, "^[\\+-\\*/&\\|\\^%<>=]+" );
+        # hex number
+        rule /[\-+]?0[xX]\h+/, Num::Hex
+
+        # radix float
+        rule /[\-+]?\d+r[0-9a-zA-Z]*(\.[0-9A-Z]*)?/, Num::Float
+
+        # normal float
+        rule /[\-+]?((\d+(\.\d+)?([eE][\-+]?\d+)?(pi)?)|pi)/, Num::Float
+
+        # integer
+        rule /[\-+]?\d+/, Num::Integer
+
+        # character
+        rule /\$(\\.|.)/, Str::Char
+
+        # strings
+        rule /"([^\\"]|\\.)*"/, Str
+
+        # symbols (single-quote notation)
+        rule /'([^\\']|\\.)*'/, Str::Other
+
+        # symbols (backslash notation)
+        rule /\\\w+/, Str::Other
+
+        ####################
+        ##### COMMENTS #####
+        ####################
+
+        # single-line comments
+        rule /\/\/.*$/, Comment::Single
+
+        #######################
+        ##### IDENTIFIERS #####
+        #######################
+
+        # symbol arg
+        rule /[A-Za-z_]\w*:/, Name::Label
+
+        # class name
+        rule /[A-Z]\w*/, Name::Class
+        rule /_\W+/, Name::Function
+
+        # main identifiers section
+        rule /[a-z]\w*/ do |m|
+          if keywords.include? m[0]
+            token Keyword
+          elsif constants.include? m[0]
+            token Keyword::Constant
+          elsif reserved.include? m[0]
+            token Keyword::Reserved
+          else
+            token Name
+          end
+        end
+
+        # environment variables
+        rule /~\w+/, Name::Variable::Global
+
+        # symbol arg
+
+        #################
+        ##### OTHER #####
+        #################
+
+        # punctuation
+        rule /[\{\}()\[\];,\.]/, Punctuation
+
+        # operators
+        rule /[\+\-\*\/&\|%<>=]+/, Operator
+
+        # treat "return" as a special operator
+        rule /\^/, Keyword
 
       end
     end

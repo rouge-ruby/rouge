@@ -134,9 +134,9 @@ module Rouge
         # punctuation
         rule /[\{\}()\[\];,\.]/, Punctuation
 
-        # operators
+        # operators. treat # (array unpack) as an operator
         rule /[\+\-\*\/&\|%<>=]+/, Operator
-        rule /[\^:]/, Operator
+        rule /[\^:#]/, Operator
 
         # treat curry argument as a special operator
         rule /_/, Name::Builtin

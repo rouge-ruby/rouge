@@ -1,3 +1,15 @@
+// modulate a sine frequency and a noise amplitude with another sine
+// whose frequency depends on the horizontal mouse pointer position
+~myFunction = {
+        var x = SinOsc.ar(MouseX.kr(1, 100));
+        SinOsc.ar(300 * x + 800, 0, 0.1)
+        +
+        PinkNoise.ar(0.1 * x + 0.1)
+};
+
+~myFunction.play;
+"that's all, folks!".postln;
+
 /* Test Class */
 Collection {
 	*newFrom { | aCollection |
@@ -62,6 +74,13 @@ Collection {
     postln("Bye!");
 };
 
+// function calls with symbol arguments:
+s.boot(startAliveThread: false, recover: true);
+Array.geom(size: 5, start: 1, grow: 8);
+[ 1, 8, 64, 512, 4096 ].collect { arg n;
+	n.squared
+};
+
 // some numbers
 // integers
 0;
@@ -83,9 +102,7 @@ Collection {
 1e-5;
 0.5e-5;
 10r2034.5;
-36r2358.abcdz;
 36r2358.ABCDZ;
--36r2358.abcdz;
 -36r2358.ABCDZ;
 15pi;
 15 pi;
@@ -98,6 +115,13 @@ Collection {
 "\"quoted\"";
 "\ttabbed\t";
 "\\\ttabbed with backslashes\t\\";
+
+// symbols
+\abc
+\a1
+\a_symbol
+'a symbol'
+'a cl3v3r\'_symb0l"'
 
 // characters
 $a;

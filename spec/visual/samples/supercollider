@@ -94,6 +94,9 @@ Array.geom(size: 5, start: 1, grow: 8);
 	n.squared
 };
 
+// array unpacking
+#a, b, c = [1, 4, 9];
+
 // some numbers
 // integers
 0;

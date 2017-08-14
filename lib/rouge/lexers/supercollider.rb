@@ -10,8 +10,14 @@ module Rouge
       desc 'A cross-platform interpreted programming language for sound synthesis, algorithmic composition, and realtime performance'
 
       keywords = Set.new %w(
-        case do for forBy loop if while
         var arg classvar const super this
+      )
+
+      # these aren't technically keywords, but we treat
+      # them as such because it makes things clearer 99%
+      # of the time
+      reserved = Set.new %w(
+        case do for forBy loop if while new newCopyArgs
       )
 
       constants = Set.new %w(

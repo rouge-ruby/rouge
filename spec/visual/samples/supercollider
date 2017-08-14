@@ -60,6 +60,19 @@ Collection {
 		};
 		^obj
 	}
+
+  // from Array
+  mirror2 {
+		_ArrayMirror2
+		^this.primitiveFailed
+	}
+}
+
+// class inheritance
+MyClass : Object {
+	classvar <>decorations;
+	var <>igloos;
+	const magicNumber = 3;
 }
 
 /* This is a multiline comment 
@@ -71,7 +84,7 @@ Collection {
 ~environmentVariable.value();
 
 ~myFunction = { arg size, offset, freq;
-    postln("Bye!");
+	postln("Bye!");
 };
 
 // function calls with symbol arguments:

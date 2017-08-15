@@ -1,5 +1,6 @@
 require 'rake/clean'
 require 'pathname'
+require "bundler/gem_tasks"
 
 task :spec do
   spec_files = FileList.new(ENV['files'] || './spec/**/*_spec.rb')

@@ -11,7 +11,6 @@ rvm:
 
 cache:
   bundler: true
-bundler_args: --without development
 before_install: gem update bundler
 script:
   - bundle exec rake

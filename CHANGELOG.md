@@ -9,26 +9,28 @@ practical matter.
 https://github.com/jneen/rouge/compare/v2.1.1...v2.2.0
 
 * rougify:
-  * trap PIPE only when platform supports it
+  * trap PIPE only when platform supports it (#700 thanks @maverickwoo)
+  * support null formatter (`-f tokens`) (#719 thanks @abalkin)
 * kotlin:
-  * update for companion object rename
+  * update for companion object rename (#702 thanks @stkent)
 * igorpro:
-  * fix igorpro lexer errrors
+  * fix igorpro lexer errrors (#706 thanks @ukos-git)
 * nix:
-  * support nix expression language
+  * support nix expression language (#732 thanks @vidbina)
 * q:
-  * fix rules for numeric literals
+  * fix rules for numeric literals (#717 thanks @abalkin)
 * fortran:
-  * add missing Fortran keywords and intrinsics
+  * add missing Fortran keywords and intrinsics (#739 thanks @pbregener)
+* javascript:
+  * Fix lexer on `<` in `<script>...</script>` (#727 thanks @cpallares)
 * general:
-  * speed up `shebang?` check
-  * don't default to a hash in Lexer.format
-  * use the token's qualname in null formatter
-  * let's use slightly nicer language here
+  * speed up `shebang?` check (#738 thanks @schneems)
+  * don't default to a hash in Lexer.format (#729)
+  * use the token's qualname in null formatter (#730)
 * formatter:
-  * fix "unknown formatter: terminal256"
+  * fix "unknown formatter: terminal256" (#735 thanks @cuihq)
 * gemspec:
-  * fix licenses to rubygems standard
+  * fix licenses to rubygems standard (#714 thanks @nomoon)
 
 ## version 2.1.1: 2017-06-21
 

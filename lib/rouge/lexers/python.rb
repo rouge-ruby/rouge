@@ -8,7 +8,7 @@ module Rouge
       desc "The Python programming language (python.org)"
       tag 'python'
       aliases 'py'
-      filenames '*.py', '*.pyw', '*.sc', 'SConstruct', 'SConscript', '*.tac'
+      filenames '*.py', '*.pyw', 'SConstruct', 'SConscript', '*.tac'
       mimetypes 'text/x-python', 'application/x-python'
 
       def self.detect?(text)

@@ -33,9 +33,10 @@ module Rouge
         search_space = (lines.first(@lines) + lines.last(@lines)).join("\n")
 
         matches = MODELINES.map { |re| re.match(search_space) }.compact
+        return lexers unless matches.any?
+        
         match_set = Set.new(matches.map { |m| m[1] })
-
-        lexers.select { |l| (Set.new([l.tag] + l.aliases) & match_set).any? }
+        lexers.select { |l| match_set.include?(l.tag) || l.aliases.any? { |a| match_set.include?(a) } }
       end
     end
   end

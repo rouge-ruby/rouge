@@ -2,6 +2,9 @@ source 'http://rubygems.org'
 
 gemspec
 
+gem 'bundler', '~> 1.15'
+gem 'rake', '~> 12.0'
+
 gem 'minitest', '~> 4.0'
 gem 'wrong'
 

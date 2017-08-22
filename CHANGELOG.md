@@ -4,6 +4,13 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 2.2.1: 2017/08/22
+
+* powershell:
+  * Adding PowerShell builtin commands for version 5 (#757 thanks JacodeWeerd)
+* general:
+  * Rouge::Guessers::Modeline#filter: reduce object allocations (#756 thanks @parkr)
+
 ## version 2.2.0: 2017-08-09
 
 https://github.com/jneen/rouge/compare/v2.1.1...v2.2.0

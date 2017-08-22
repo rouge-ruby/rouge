@@ -31,7 +31,8 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= Set.new %w(
+        return @builtins if @builtins
+        @builtins = Set.new %w(
           now
           true false
           assert require revert
@@ -56,7 +57,8 @@ module Rouge
       end
 
       def self.keywords_type
-        @keywords_type ||= Set.new %w(
+        return @keywords_type if @keywords_type
+        @keywords_type = Set.new %w(
           int uint bytes fixed ufixed address bool
         )
 

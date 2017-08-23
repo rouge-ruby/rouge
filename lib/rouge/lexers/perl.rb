@@ -14,7 +14,6 @@ module Rouge
 
       def self.analyze_text(text)
         return 1 if text.shebang? 'perl'
-        return 0.4 if text.include? 'my $'
       end
 
       keywords = %w(

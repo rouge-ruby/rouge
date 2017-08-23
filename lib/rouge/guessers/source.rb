@@ -1,6 +1,8 @@
 module Rouge
   module Guessers
     class Source < Guesser
+      include Util
+
       attr_reader :source
       def initialize(source)
         @source = source
@@ -16,14 +18,7 @@ module Rouge
         # the analysis more.
         threshold = lexers.size < 10 ? 0 : 0.5
 
-        source_text = case @source
-        when String
-          @source
-        when ->(s){ s.respond_to? :read }
-          @source.read
-        else
-          raise 'invalid source'
-        end
+        source_text = get_source(@source)
 
         Lexer.assert_utf8!(source_text)
 

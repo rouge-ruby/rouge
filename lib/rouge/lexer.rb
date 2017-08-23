@@ -133,6 +133,7 @@ module Rouge
         guessers << Guessers::Filename.new(filename) if filename
         guessers << Guessers::Modeline.new(source) if source
         guessers << Guessers::Source.new(source) if source
+        guessers << Guessers::Disambiguation.new(filename, source) if source && filename
 
         Guesser.guess(guessers, Lexer.all)
       end

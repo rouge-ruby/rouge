@@ -8,10 +8,6 @@ module Rouge
       tag 'coq'
       mimetypes 'text/x-coq'
 
-      def self.analyze_text(text)
-        return 0.3 if text.include? "Require"
-      end
-
       def self.gallina
         @gallina ||= Set.new %w(
           as fun if in let match then else return end Type Set Prop

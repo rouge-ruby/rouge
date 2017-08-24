@@ -20,10 +20,8 @@ module Rouge
         source_text = TextAnalyzer.new(source_text)
 
         collect_best(lexers) do |lexer|
-          next unless lexer.methods(false).include? :analyze_text
-          score = lexer.analyze_text(source_text)
-          raise "invalid score for #{lexer.tag}" unless [nil, 0, 1].include?(score)
-          score
+          next unless lexer.methods(false).include? :detect?
+          lexer.detect?(source_text) ? 1 : nil
         end
       end
     end

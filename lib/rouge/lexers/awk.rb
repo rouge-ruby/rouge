@@ -10,8 +10,8 @@ module Rouge
       filenames '*.awk'
       mimetypes 'application/x-awk'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang?('awk')
+      def self.detect?(text)
+        return true if text.shebang?('awk')
       end
 
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/

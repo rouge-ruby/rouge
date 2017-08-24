@@ -12,8 +12,8 @@ module Rouge
       filenames '*.feature'
       mimetypes 'text/x-gherkin'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'cucumber'
+      def self.detect?(text)
+        return true if text.shebang? 'cucumber'
       end
 
       # self-modifying method that loads the keywords file

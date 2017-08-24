@@ -11,10 +11,6 @@ module Rouge
       filenames '*.apib'
       mimetypes 'text/vnd.apiblueprint'
 
-      def self.analyze_text(text)
-        return 1 if text.start_with?('FORMAT: 1A\n')
-      end
-
       prepend :root do
         # Metadata
         rule(/(\S+)(:\s*)(.*)$/) do

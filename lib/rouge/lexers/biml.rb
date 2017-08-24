@@ -8,8 +8,8 @@ module Rouge
       tag 'biml'
       filenames '*.biml'
 
-      def self.analyze_text(text)
-        return 1 if text =~ /<\s*Biml\b/
+      def self.detect?(text)
+        return true if text =~ /<\s*Biml\b/
       end
 
       prepend :root do

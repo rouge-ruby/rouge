@@ -11,8 +11,8 @@ module Rouge
 
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
 
-      def self.analyze_text(text)
-        return 1 if text.shebang?(/groovy/)
+      def self.detect?(text)
+        return true if text.shebang?(/groovy/)
       end
 
       def self.keywords

@@ -9,10 +9,10 @@ module Rouge
       filenames '*.tcl'
       mimetypes 'text/x-tcl', 'text/x-script.tcl', 'application/x-tcl'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'tclsh'
-        return 1 if text.shebang? 'wish'
-        return 1 if text.shebang? 'jimsh'
+      def self.detect?(text)
+        return true if text.shebang? 'tclsh'
+        return true if text.shebang? 'wish'
+        return true if text.shebang? 'jimsh'
       end
 
       KEYWORDS = %w(

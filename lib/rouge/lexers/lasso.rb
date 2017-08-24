@@ -14,9 +14,9 @@ module Rouge
 
       option :start_inline, 'Whether to start inline instead of requiring <?lasso or ['
 
-      def self.analyze_text(text)
-        return 1 if text.shebang?('lasso9')
-        return 1 if text =~ /\A.*?<\?(lasso(script)?|=)/
+      def self.detect?(text)
+        return true if text.shebang?('lasso9')
+        return true if text =~ /\A.*?<\?(lasso(script)?|=)/
       end
 
       def initialize(*)

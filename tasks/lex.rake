@@ -19,8 +19,8 @@ module Rouge
 
       mimetypes 'text/x-#{language}', 'application/x-#{language}'
 
-      def self.analyze_text(text)
-        return 0
+      def self.detect?(text)
+        false
       end
 
       state :root do

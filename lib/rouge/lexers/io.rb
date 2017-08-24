@@ -9,8 +9,8 @@ module Rouge
       mimetypes 'text/x-iosrc'
       filenames '*.io'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'io'
+      def self.detect?(text)
+        return true if text.shebang? 'io'
       end
 
       def self.constants

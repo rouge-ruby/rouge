@@ -10,8 +10,8 @@ module Rouge
       filenames '*.py', '*.pyw', '*.sc', 'SConstruct', 'SConscript', '*.tac'
       mimetypes 'text/x-python', 'application/x-python'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang?(/pythonw?(3|2(\.\d)?)?/)
+      def self.detect?(text)
+        return true if text.shebang?(/pythonw?(3|2(\.\d)?)?/)
       end
 
       def self.keywords

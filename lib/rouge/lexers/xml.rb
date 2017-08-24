@@ -15,10 +15,10 @@ module Rouge
         application/atom+xml
       )
 
-      def self.analyze_text(text)
-        return nil if text.doctype?(/html/)
-        return 1 if text =~ /\A<\?xml\b/
-        return 1 if text.doctype?
+      def self.detect?(text)
+        return false if text.doctype?(/html/)
+        return true if text =~ /\A<\?xml\b/
+        return true if text.doctype?
       end
 
       state :root do

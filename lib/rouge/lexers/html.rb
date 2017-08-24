@@ -9,9 +9,9 @@ module Rouge
       filenames '*.htm', '*.html', '*.xhtml'
       mimetypes 'text/html', 'application/xhtml+xml'
 
-      def self.analyze_text(text)
-        return 1 if text.doctype?(/\bhtml\b/i)
-        return 1 if text =~ /<\s*html\b/
+      def self.detect?(text)
+        return true if text.doctype?(/\bhtml\b/i)
+        return true if text =~ /<\s*html\b/
       end
 
       start do

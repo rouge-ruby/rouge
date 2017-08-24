@@ -9,8 +9,8 @@ module Rouge
 
       mimetypes 'text/x-tulip', 'application/x-tulip'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'tulip'
+      def self.detect?(text)
+        return true if text.shebang? 'tulip'
       end
 
       id = /[a-z][\w-]*/i

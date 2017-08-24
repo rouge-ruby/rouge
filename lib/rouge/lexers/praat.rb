@@ -10,8 +10,8 @@ module Rouge
 
       filenames '*.praat', '*.proc', '*.psc'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'praat'
+      def self.detect?(text)
+        return true if text.shebang? 'praat'
       end
 
       keywords = %w(

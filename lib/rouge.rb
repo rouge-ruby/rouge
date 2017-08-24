@@ -41,15 +41,6 @@ load load_dir.join('rouge/util.rb')
 load load_dir.join('rouge/text_analyzer.rb')
 load load_dir.join('rouge/token.rb')
 
-load load_dir.join('rouge/guesser.rb')
-load load_dir.join('rouge/guessers/util.rb')
-load load_dir.join('rouge/guessers/glob_mapping.rb')
-load load_dir.join('rouge/guessers/modeline.rb')
-load load_dir.join('rouge/guessers/filename.rb')
-load load_dir.join('rouge/guessers/mimetype.rb')
-load load_dir.join('rouge/guessers/source.rb')
-load load_dir.join('rouge/guessers/disambiguation.rb')
-
 load load_dir.join('rouge/lexer.rb')
 load load_dir.join('rouge/regex_lexer.rb')
 load load_dir.join('rouge/template_lexer.rb')
@@ -58,6 +49,15 @@ lexers_dir = load_dir.join('rouge/lexers')
 Dir.glob(lexers_dir.join('*.rb')).each do |f|
   Rouge::Lexers.load_lexer(Pathname.new(f).relative_path_from(lexers_dir).to_s)
 end
+
+load load_dir.join('rouge/guesser.rb')
+load load_dir.join('rouge/guessers/util.rb')
+load load_dir.join('rouge/guessers/glob_mapping.rb')
+load load_dir.join('rouge/guessers/modeline.rb')
+load load_dir.join('rouge/guessers/filename.rb')
+load load_dir.join('rouge/guessers/mimetype.rb')
+load load_dir.join('rouge/guessers/source.rb')
+load load_dir.join('rouge/guessers/disambiguation.rb')
 
 load load_dir.join('rouge/formatter.rb')
 load load_dir.join('rouge/formatters/html.rb')

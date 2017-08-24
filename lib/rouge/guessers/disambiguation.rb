@@ -2,6 +2,7 @@ module Rouge
   module Guessers
     class Disambiguation < Guesser
       include Util
+      include Lexers
 
       def initialize(filename, source)
         @filename = File.basename(filename)
@@ -33,8 +34,8 @@ module Rouge
       end
 
       @disambiguators = []
-      def self.disambiguate(pattern, &decider)
-        @disambiguators << Disambiguator.new(pattern, &decider)
+      def self.disambiguate(*patterns, &decider)
+        @disambiguators << Disambiguator.new(patterns, &decider)
       end
 
       def self.disambiguators
@@ -44,8 +45,8 @@ module Rouge
       class Disambiguator
         include Util
 
-        def initialize(pattern, &decider)
-          @pattern = pattern
+        def initialize(patterns, &decider)
+          @patterns = patterns
           @decider = decider
         end
 
@@ -59,14 +60,28 @@ module Rouge
         end
 
         def match?(filename)
-          test_glob(@pattern, filename)
+          @patterns.any? { |p| test_glob(p, filename) }
         end
       end
 
       disambiguate '*.pl' do
-        next Lexers::Perl if contains?('my $')
-        next Lexers::Prolog if contains?(':-')
-        next Lexers::Prolog if matches?(/\A\w+(\(\w+\,\s*\w+\))*\./)
+        next Perl if contains?('my $')
+        next Prolog if contains?(':-')
+        next Prolog if matches?(/\A\w+(\(\w+\,\s*\w+\))*\./)
+      end
+
+      disambiguate '*.h' do
+        next ObjectiveC if matches?(/@(end|implementation|protocol|property)\b/)
+        next ObjectiveC if contains?('@"')
+
+        C
+      end
+
+      disambiguate '*.m' do
+        next ObjectiveC if matches?(/@(end|implementation|protocol|property)\b/)
+        next ObjectiveC if contains?('@"')
+
+        next Matlab if matches?(/^\s*?%/)
       end
     end
   end

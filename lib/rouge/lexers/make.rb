@@ -10,10 +10,6 @@ module Rouge
       filenames '*.make', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile'
       mimetypes 'text/x-makefile'
 
-      def self.analyze_text(text)
-        return 0.6 if text =~ /^\.PHONY:/
-      end
-
       bsd_special = %w(
         include undef error warning if else elif endif for endfor
       )

@@ -11,7 +11,6 @@ module Rouge
 
       def self.analyze_text(text)
         return 1 if text.shebang? 'tulip'
-        return 0
       end
 
       id = /[a-z][\w-]*/i

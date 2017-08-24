@@ -10,9 +10,10 @@ module Rouge
       mimetypes 'text/x-racket', 'application/x-racket'
 
       def self.analyze_text(text)
-        text = text.strip
-        return 1 if text.start_with? '#lang racket'
-        return 0.6 if text =~ %r(\A#lang [a-z/-]+$)i
+        text =~ /\A#lang\s*(.*?)$/
+        lang_attr = $1
+        return nil unless lang_attr
+        return 1 if lang_attr =~ /racket|scribble/
       end
 
       def self.keywords

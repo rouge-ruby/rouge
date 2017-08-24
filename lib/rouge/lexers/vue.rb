@@ -15,10 +15,6 @@ module Rouge
         @js = Javascript.new(options)
       end
 
-      def self.analyze_text(text)
-        return 0
-      end
-
       def lookup_lang(lang)
         case lang
         when 'html' then HTML

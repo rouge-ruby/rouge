@@ -10,9 +10,9 @@ module Rouge
       mimetypes 'text/x-diff', 'text/x-patch'
 
       def self.analyze_text(text)
-        return 1   if text.start_with?('Index: ')
-        return 1   if text.start_with?('diff ')
-        return 0.9 if text.start_with?('--- ')
+        return 1 if text.start_with?('Index: ')
+        return 1 if text =~ %r(\Adiff[^\n]*?\ba/[^\n]*\bb/)
+        return 1 if text =~ /(---|[+][+][+]).*?\n(---|[+][+][+])/
       end
 
       state :root do

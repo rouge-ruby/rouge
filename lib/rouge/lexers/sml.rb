@@ -28,10 +28,6 @@ module Rouge
       id = /[\w']+/i
       symbol = %r([!%&$#/:<=>?@\\~`^|*+-]+)
 
-      def self.analyze_text(text)
-        return 0
-      end
-
       state :whitespace do
         rule /\s+/m, Text
         rule /[(][*]/, Comment, :comment

@@ -15,10 +15,5 @@ describe Rouge::Lexers::Turtle do
       assert_guess :mimetype => 'text/turtle'
       assert_guess :mimetype => 'application/trig'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => '@base'
-      assert_guess :source => '@prefix'
-    end
   end
 end

@@ -38,8 +38,6 @@ module Rouge
           end.compact.min
         end
       end
-
-      private
     end
   end
 end

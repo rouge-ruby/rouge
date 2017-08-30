@@ -1,7 +1,7 @@
 # Rouge
 
-[![Build Status](https://secure.travis-ci.org/jneen/rouge.png)](http://travis-ci.org/jneen/rouge)
-[![Gem Version](https://badge.fury.io/rb/rouge.png)](http://badge.fury.io/rb/rouge)
+[![Build Status](https://secure.travis-ci.org/jneen/rouge.svg)](http://travis-ci.org/jneen/rouge)
+[![Gem Version](https://badge.fury.io/rb/rouge.svg)](http://badge.fury.io/rb/rouge)
 
 [rouge]: http://rouge.jneen.net/
 

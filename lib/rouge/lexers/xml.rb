@@ -6,7 +6,18 @@ module Rouge
       title "XML"
       desc %q(<desc for="this-lexer">XML</desc>)
       tag 'xml'
-      filenames *%w(*.xml *.xsl *.rss *.xslt *.xsd *.wsdl *.svg)
+      filenames *%w(
+        *.xml
+        *.xsl
+        *.rss
+        *.xslt
+        *.xsd
+        *.wsdl
+        *.svg
+        *.csproj
+        *.vbproj
+        *.dproj
+      )
       mimetypes *%w(
         text/xml
         application/xml

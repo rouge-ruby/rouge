@@ -14,6 +14,9 @@ describe Rouge::Lexers::XML do
       assert_guess :filename => 'foo.xsd'
       assert_guess :filename => 'foo.wsdl'
       assert_guess :filename => 'foo.svg'
+      assert_guess :filename => 'foo.csproj'
+      assert_guess :filename => 'foo.vbproj'
+      assert_guess :filename => 'foo.dproj'
     end
 
     it 'guesses by mimetype' do

@@ -10,10 +10,6 @@ module Rouge
       filenames '*.properties'
       mimetypes 'text/x-java-properties'
 
-      def self.analyze_text(text)
-        return 0.1 if text =~ /\A\[[\w.-]+\]\s*\w+=\w+/
-      end
-
       identifier = /[\w.-]+/
 
       state :basic do

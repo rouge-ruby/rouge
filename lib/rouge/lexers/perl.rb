@@ -12,9 +12,8 @@ module Rouge
       filenames '*.pl', '*.pm'
       mimetypes 'text/x-perl', 'application/x-perl'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'perl'
-        return 0.4 if text.include? 'my $'
+      def self.detect?(text)
+        return true if text.shebang? 'perl'
       end
 
       keywords = %w(

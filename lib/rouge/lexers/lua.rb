@@ -19,8 +19,8 @@ module Rouge
         super(opts)
       end
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'lua'
+      def self.detect?(text)
+        return true if text.shebang? 'lua'
       end
 
       def self.builtins

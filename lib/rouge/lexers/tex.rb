@@ -11,8 +11,8 @@ module Rouge
       filenames '*.tex', '*.aux', '*.toc', '*.sty', '*.cls'
       mimetypes 'text/x-tex', 'text/x-latex'
 
-      def self.analyze_text(text)
-        return 1 if text =~ /\A\s*\\(documentclass|input|documentstyle|relax|ProvidesPackage|ProvidesClass)/
+      def self.detect?(text)
+        return true if text =~ /\A\s*\\(documentclass|input|documentstyle|relax|ProvidesPackage|ProvidesClass)/
       end
 
       command = /\\([a-z]+|\s+|.)/i

@@ -19,8 +19,12 @@ module Rouge
 
       mimetypes 'text/x-#{language}', 'application/x-#{language}'
 
-      def self.analyze_text(text)
-        return 0
+      # a method to return true when the text unambiguously indicates
+      # this language (for things like shebangs and DOCTYPE declarations)
+      #
+      # Please remove this method if no such indication is possible.
+      def self.detect?(text)
+        false
       end
 
       state :root do

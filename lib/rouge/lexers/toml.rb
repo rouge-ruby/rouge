@@ -10,10 +10,6 @@ module Rouge
       filenames '*.toml'
       mimetypes 'text/x-toml'
 
-      def self.analyze_text(text)
-        return 0.1 if text =~ /\A\[[\w.]+\]\s*\w+\s*=\s*("\w+")+/
-      end
-
       identifier = /[\w.\S]+/
 
       state :basic do

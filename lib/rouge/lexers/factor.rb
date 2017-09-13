@@ -9,8 +9,8 @@ module Rouge
       filenames '*.factor'
       mimetypes 'text/x-factor'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'factor'
+      def self.detect?(text)
+        return true if text.shebang? 'factor'
       end
 
       def self.builtins

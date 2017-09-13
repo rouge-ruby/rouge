@@ -10,8 +10,8 @@ module Rouge
       filenames '*.jl'
       mimetypes 'text/x-julia', 'application/x-julia'
 
-      def self.analyze_text(text)
-        1 if text.shebang? 'julia'
+      def self.detect?(text)
+        return true if text.shebang? 'julia'
       end
 
       BUILTINS            = /\b(?:

@@ -11,8 +11,8 @@ module Rouge
       title "CoffeeScript"
       desc 'The Coffeescript programming language (coffeescript.org)'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'coffee'
+      def self.detect?(text)
+        return true if text.shebang? 'coffee'
       end
 
       def self.keywords

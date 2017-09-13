@@ -11,10 +11,6 @@ module Rouge
 
       mimetypes 'application/x-digdag'
 
-      def self.analyze_text(text)
-        # disable YAML.analyze_text
-      end
-
       # http://docs.digdag.io/operators.html
       # as of digdag v0.9.10
       KEYWORD_PATTERN = Regexp.union(%w(

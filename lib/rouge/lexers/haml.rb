@@ -16,10 +16,6 @@ module Rouge
       filenames '*.haml'
       mimetypes 'text/x-haml'
 
-      def self.analyze_text(text)
-        return 0.1 if text.start_with? '!!!'
-      end
-
       option 'filters[filter_name]', 'Mapping of lexers to use for haml :filters'
       attr_reader :filters
       # @option opts :filters

@@ -10,8 +10,8 @@ module Rouge
       filenames '*.sed'
       mimetypes 'text/x-sed'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'sed'
+      def self.detect?(text)
+        return true if text.shebang? 'sed'
       end
 
       class Regex < RegexLexer

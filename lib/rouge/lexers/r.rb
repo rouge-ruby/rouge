@@ -43,8 +43,8 @@ module Rouge
         trigamma trunc unclass untracemem UseMethod xtfrm
       )
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'Rscript'
+      def self.detect?(text)
+        return true if text.shebang? 'Rscript'
       end
 
       state :root do

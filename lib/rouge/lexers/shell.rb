@@ -13,8 +13,8 @@ module Rouge
 
       mimetypes 'application/x-sh', 'application/x-shellscript'
 
-      def self.analyze_text(text)
-        text.shebang?(/(ba|z|k)?sh/) ? 1 : 0
+      def self.detect?(text)
+        return true if text.shebang?(/(ba|z|k)?sh/)
       end
 
       KEYWORDS = %w(

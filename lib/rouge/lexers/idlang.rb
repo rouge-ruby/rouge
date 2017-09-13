@@ -10,12 +10,6 @@ module Rouge
       tag 'idlang'
       filenames '*.idl'
 
-      def self.analyze_text(text)
-        # Does there exist a statement that starts with 'pro' or
-        # 'function'?
-        return 0.4 if text =~ /^\s+(pro|function)\z/
-      end
-
       name = /[_A-Z]\w*/i
       kind_param = /(\d+|#{name})/
       exponent = /[dDeE][+-]\d+/

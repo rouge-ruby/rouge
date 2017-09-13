@@ -29,20 +29,6 @@ module Rouge
         @builtins ||= %w(YES NO nil)
       end
 
-      def self.analyze_text(text)
-        return 1 if text =~ /@(end|implementation|protocol|property)\b/
-
-        id = /[a-z$_][a-z0-9$_]*/i
-        return 0.4 if text =~ %r(
-          \[ \s* #{id} \s+
-          (?:
-            #{id} \s* \]
-            | #{id}? :
-          )
-        )x
-        return 0.4 if text.include? '@"'
-      end
-
       id = /[a-z$_][a-z0-9$_]*/i
 
       prepend :statements do

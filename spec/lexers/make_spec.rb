@@ -17,10 +17,6 @@ describe Rouge::Lexers::Make do
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-makefile'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => '.PHONY: all'
-    end
   end
 
   describe 'lexing' do

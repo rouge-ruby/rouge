@@ -32,10 +32,6 @@ module Rouge
         ]
       end
 
-      def self.analyze_text(text)
-        return 0
-      end
-
       state :root do
         # q allows a file to start with a shebang
         rule /#!(.*?)$/, Comment::Preproc, :top

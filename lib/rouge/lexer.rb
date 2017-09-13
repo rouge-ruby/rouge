@@ -133,6 +133,7 @@ module Rouge
         guessers << Guessers::Filename.new(filename) if filename
         guessers << Guessers::Modeline.new(source) if source
         guessers << Guessers::Source.new(source) if source
+        guessers << Guessers::Disambiguation.new(filename, source) if source && filename
 
         Guesser.guess(guessers, Lexer.all)
       end
@@ -148,7 +149,7 @@ module Rouge
       #   fails, will be searched for shebangs, <!DOCTYPE ...> tags, and
       #   other hints.
       #
-      # @see Lexer.analyze_text
+      # @see Lexer.detect?
       # @see Lexer.guesses
       def guess(info={})
         lexers = guesses(info)
@@ -425,16 +426,14 @@ module Rouge
 
     # @abstract
     #
-    # Return a number between 0 and 1 indicating the likelihood that
-    # the text given should be lexed with this lexer.  The default
-    # implementation returns 0.  Values under 0.5 will only be used
-    # to disambiguate filename or mimetype matches.
+    # Return true if there is an in-text indication (such as a shebang
+    # or DOCTYPE declaration) that this lexer should be used.
     #
     # @param [TextAnalyzer] text
     #   the text to be analyzed, with a couple of handy methods on it,
     #   like {TextAnalyzer#shebang?} and {TextAnalyzer#doctype?}
-    def self.analyze_text(text)
-      0
+    def self.detect?(text)
+      false
     end
   end
 

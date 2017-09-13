@@ -9,9 +9,9 @@ module Rouge
       aliases 'pp'
       filenames '*.pp'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'puppet-apply'
-        return 1 if text.shebang? 'puppet'
+      def self.detect?(text)
+        return true if text.shebang? 'puppet-apply'
+        return true if text.shebang? 'puppet'
       end
 
       def self.keywords

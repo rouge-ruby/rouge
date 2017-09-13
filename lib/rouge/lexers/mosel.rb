@@ -11,9 +11,9 @@ module Rouge
       filenames '*.mos'
 
       mimetypes 'text/x-mosel'
-      
-      def self.analyze_text(text)
-        return 1 if text =~ /^\s*(model|package)\s+/
+
+      def self.detect?(text)
+        return true if text =~ /^\s*(model|package)\s+/
       end
 
       id = /[a-zA-Z_][a-zA-Z0-9_]*/

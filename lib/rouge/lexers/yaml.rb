@@ -10,9 +10,9 @@ module Rouge
       aliases 'yml'
       filenames '*.yaml', '*.yml'
 
-      def self.analyze_text(text)
+      def self.detect?(text)
         # look for the %YAML directive
-        return 1 if text =~ /\A\s*%YAML/m
+        return true if text =~ /\A\s*%YAML/m
       end
 
       SPECIAL_VALUES = Regexp.union(%w(true false null))

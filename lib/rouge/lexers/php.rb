@@ -75,10 +75,8 @@ module Rouge
         )
       end
 
-      def self.analyze_text(text)
-        return 1 if text.shebang?('php')
-        return 0.3 if /<\?(?!xml)/ =~ text
-        0
+      def self.detect?(text)
+        return true if text.shebang?('php')
       end
 
       state :root do

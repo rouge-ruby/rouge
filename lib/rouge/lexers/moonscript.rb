@@ -22,8 +22,8 @@ module Rouge
         @disabled_modules = list_option(:disabled_modules)
       end
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'moon'
+      def self.detect?(text)
+        return true if text.shebang? 'moon'
       end
 
       def builtins

@@ -106,11 +106,6 @@ module Rouge
         )
       end
 
-      # high priority for filename matches
-      def self.analyze_text(*)
-        0.3
-      end
-
       def self.builtins
         @builtins ||= []
       end

@@ -9,10 +9,6 @@ module Rouge
 
       mimetypes 'text/x-tap', 'application/x-tap'
 
-      def self.analyze_text(text)
-        return 0
-      end
-
       state :root do
         # A TAP version may be specified.
         rule /^TAP version \d+\n/, Name::Namespace

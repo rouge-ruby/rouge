@@ -11,10 +11,6 @@ module Rouge
 
       mimetypes 'text/x-erlang', 'application/x-erlang'
 
-      def self.analyze_text(text)
-        return 0.3 if text =~ /^-module[(]\w+[)][.]/
-      end
-
       keywords = %w(
         after begin case catch cond end fun if
         let of query receive try when

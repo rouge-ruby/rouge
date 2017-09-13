@@ -10,10 +10,6 @@ module Rouge
       filenames '*.ll'
       mimetypes 'text/x-llvm'
 
-      def self.analyze_text(text)
-        return 0.1 if text =~ /\A%\w+\s=\s/
-      end
-
       string = /"[^"]*?"/
       identifier = /([-a-zA-Z$._][-a-zA-Z$._0-9]*|#{string})/
 

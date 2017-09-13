@@ -8,10 +8,6 @@ module Rouge
 
       mimetypes 'text/x-plist', 'application/x-plist'
 
-      def self.analyze_text(text)
-        return 0.6 if text.start_with?("// !$*UTF8*$!")
-      end
-
       state :whitespace do
         rule /\s+/, Text::Whitespace
       end

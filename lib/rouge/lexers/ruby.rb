@@ -13,8 +13,8 @@ module Rouge
 
       mimetypes 'text/x-ruby', 'application/x-ruby'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'ruby'
+      def self.detect?(text)
+        return true if text.shebang? 'ruby'
       end
 
       state :symbols do

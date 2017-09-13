@@ -10,8 +10,8 @@ module Rouge
       filenames '*.rs'
       mimetypes 'text/x-rust'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'rustc'
+      def self.detect?(text)
+        return true if text.shebang? 'rustc'
       end
 
       def self.keywords

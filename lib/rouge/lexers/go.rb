@@ -11,10 +11,6 @@ module Rouge
 
       mimetypes 'text/x-go', 'application/x-go'
 
-      def self.analyze_text(text)
-        return 0
-      end
-
       # Characters
 
       WHITE_SPACE            = /[\s\t\r\n]+/

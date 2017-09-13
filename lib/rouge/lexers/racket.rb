@@ -9,10 +9,11 @@ module Rouge
       filenames '*.rkt', '*.rktd', '*.rktl'
       mimetypes 'text/x-racket', 'application/x-racket'
 
-      def self.analyze_text(text)
-        text = text.strip
-        return 1 if text.start_with? '#lang racket'
-        return 0.6 if text =~ %r(\A#lang [a-z/-]+$)i
+      def self.detect?(text)
+        text =~ /\A#lang\s*(.*?)$/
+        lang_attr = $1
+        return false unless lang_attr
+        return true if lang_attr =~ /racket|scribble/
       end
 
       def self.keywords

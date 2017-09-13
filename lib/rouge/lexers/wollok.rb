@@ -8,10 +8,6 @@ module Rouge
       tag 'wollok'
       filenames *%w(*.wlk *.wtest *.wpgm)
 
-      def self.analyze_text(_text)
-        0.3
-      end
-
       keywords = %w(new super return if else var const override constructor)
 
       entity_name = /[a-zA-Z][a-zA-Z0-9]*/

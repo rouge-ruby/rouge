@@ -7,9 +7,5 @@ describe Rouge::Lexers::APIBlueprint do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.apib'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => 'FORMAT: 1A\n\n# My API\n'
-    end
   end
 end

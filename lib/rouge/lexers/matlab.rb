@@ -10,10 +10,6 @@ module Rouge
       filenames '*.m'
       mimetypes 'text/x-matlab', 'application/x-matlab'
 
-      def self.analyze_text(text)
-        return 0.4 if text =~ /^\s*% / # % comments are a dead giveaway
-      end
-
       def self.keywords
         @keywords = Set.new %w(
           break case catch classdef continue else elseif end for function

@@ -16,9 +16,8 @@ describe Rouge::Lexers::ObjectiveC do
     end
 
     it 'guesses by source' do
-      assert_guess :filename => 'foo.h', :source => '[foo bar: baz]'
       assert_guess :filename => 'foo.h', :source => '@"foo"'
-      assert_guess :source => '@implementation Foo'
+      assert_guess :filename => 'foo.h', :source => '@implementation Foo'
     end
   end
 end

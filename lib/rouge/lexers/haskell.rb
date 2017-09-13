@@ -11,8 +11,8 @@ module Rouge
       filenames '*.hs'
       mimetypes 'text/x-haskell'
 
-      def self.analyze_text(text)
-        return 1 if text.shebang?('runhaskell')
+      def self.detect?(text)
+        return true if text.shebang?('runhaskell')
       end
 
       reserved = %w(

@@ -11,10 +11,6 @@ module Rouge
 
       filenames '*.erb', '*.erubis', '*.rhtml', '*.eruby'
 
-      def self.analyze_text(text)
-        return 0.4 if text =~ /<%.*%>/
-      end
-
       def initialize(opts={})
         @ruby_lexer = Ruby.new(opts)
 

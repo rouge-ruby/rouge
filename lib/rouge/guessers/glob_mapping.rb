@@ -3,6 +3,8 @@ module Rouge
     # This class allows for custom behavior
     # with glob -> lexer name mappings
     class GlobMapping < Guesser
+      include Util
+
       def self.by_pairs(mapping, filename)
         glob_map = {}
         mapping.each do |(glob, lexer_name)|
@@ -29,17 +31,12 @@ module Rouge
 
         collect_best(lexers) do |lexer|
           score = (@glob_map[lexer.name] || []).map do |pattern|
-            if test_pattern(pattern, basename)
+            if test_glob(pattern, basename)
               # specificity is better the fewer wildcards there are
               -pattern.scan(/[*?\[]/).size
             end
           end.compact.min
         end
-      end
-
-      private
-      def test_pattern(pattern, path)
-        File.fnmatch?(pattern, path, File::FNM_DOTMATCH | File::FNM_CASEFOLD)
       end
     end
   end

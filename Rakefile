@@ -10,7 +10,7 @@ Rake::TestTask.new(:spec) do |t|
   t.pattern = FileList['spec/**/*_spec.rb']
 end
 
-task :test => [:spec] # alias for m
+task :test => [:spec]
 
 task :doc do
   sh 'bundle exec yard'

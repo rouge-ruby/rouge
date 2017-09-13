@@ -14,14 +14,14 @@ describe Rouge::Lexers::Kotlin do
       assert_guess :mimetype => 'text/x-kotlin'
     end
 
-    it 'parses functions ok' do
+    it 'parses function' do
       tokens = subject.lex('fun myFunction()').to_a
       assert { tokens[0][0] == Token['Keyword'] }
       assert { tokens[1][0] == Token['Text'] }
       assert { tokens[2][0] == Token['Name.Function'] }
     end
 
-    it 'parses extension functions ok' do
+    it 'parses extension function' do
       tokens = subject.lex('fun String.extensionFunction()').to_a
       assert { tokens[0][0] == Token['Keyword'] }
       assert { tokens[1][0] == Token['Text'] }
@@ -29,7 +29,7 @@ describe Rouge::Lexers::Kotlin do
       assert { tokens[3][0] == Token['Name.Function'] }
     end
 
-    it 'parses generic functions ok' do
+    it 'parses generic function' do
       tokens = subject.lex('fun <T> myFunction()').to_a
       assert { tokens[0][0] == Token['Keyword'] }
       assert { tokens[1][0] == Token['Text'] }
@@ -40,8 +40,30 @@ describe Rouge::Lexers::Kotlin do
       assert { tokens[6][0] == Token['Name.Function'] }
     end
 
-    it 'parses generic extension functions ok' do
+    it 'parses generic function - no space between bracket and function name' do
+      tokens = subject.lex('fun <T>myFunction()').to_a
+      assert { tokens[0][0] == Token['Keyword'] }
+      assert { tokens[1][0] == Token['Text'] }
+      assert { tokens[2][0] == Token['Punctuation'] }
+      assert { tokens[3][0] == Token['Text'] }
+      assert { tokens[4][0] == Token['Punctuation'] }
+      assert { tokens[5][0] == Token['Name.Function'] }
+    end
+
+    it 'parses generic extension function' do
       tokens = subject.lex('fun <T> String.myFunction()').to_a
+      assert { tokens[0][0] == Token['Keyword'] }
+      assert { tokens[1][0] == Token['Text'] }
+      assert { tokens[2][0] == Token['Punctuation'] }
+      assert { tokens[3][0] == Token['Text'] }
+      assert { tokens[4][0] == Token['Punctuation'] }
+      assert { tokens[5][0] == Token['Text'] }
+      assert { tokens[6][0] == Token['Punctuation'] }
+      assert { tokens[7][0] == Token['Name.Function'] }
+    end
+
+    it 'parses generic extension functions - no space between bracket and function name' do
+      tokens = subject.lex('fun <T>String.myFunction()').to_a
       assert { tokens[0][0] == Token['Keyword'] }
       assert { tokens[1][0] == Token['Text'] }
       assert { tokens[2][0] == Token['Punctuation'] }

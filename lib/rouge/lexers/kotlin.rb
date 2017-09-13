@@ -23,7 +23,7 @@ module Rouge
 
       name = %r'@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
 
-      id = %r'(#{name}|`#{name}`)'
+      id = %r'(?:#{name}|`#{name}`)'
 
       state :root do
         rule %r'^\s*\[.*?\]', Name::Attribute
@@ -56,20 +56,8 @@ module Rouge
           groups Keyword::Declaration, Text
           push :property
         end
-        rule %r'(fun)(\s+)(<)(#{name})(>)(\s*)(#{name})(\.)' do
+        rule %r'(fun)(\s+)(?:(<)(#{id})(>)(\s*))?(?:(#{id})(\.))?' do
           groups Keyword, Text, Punctuation, Text, Punctuation, Text, Text, Punctuation
-          push :function
-        end
-        rule %r'(fun)(\s+)(<)(#{name})(>)(\s*)' do
-          groups Keyword, Text, Punctuation, Text, Punctuation, Text
-          push :function
-        end
-        rule %r'(fun)(\s+)(#{name})(\.)' do
-          groups Keyword, Text, Text, Punctuation
-          push :function
-        end
-        rule %r'(fun)(\s+)' do
-          groups Keyword, Text
           push :function
         end
         rule /(?:#{keywords.join('|')})\b/, Keyword

@@ -56,8 +56,14 @@ module Rouge
           groups Keyword::Declaration, Text
           push :property
         end
-        rule %r'(fun)(\s+)(?:(<)(#{id})(>)(\s*))?(?:(#{id})(\.))?' do
-          groups Keyword, Text, Punctuation, Text, Punctuation, Text, Text, Punctuation
+        rule %r(
+          (fun)(\s+)          # Function keyword
+          ((?:<.*?>\s*)?      # Template parameters
+           (?:#{id}\.)?)      # Extension type declaration
+        )mx do |m|
+          token Keyword, m[1]
+          token Text, m[2]
+          delegate Kotlin, m[3]
           push :function
         end
         rule /(?:#{keywords.join('|')})\b/, Keyword

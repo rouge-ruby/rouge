@@ -150,6 +150,8 @@ module Rouge
       #   The source itself, which, if guessing by mimetype or filename
       #   fails, will be searched for shebangs, <!DOCTYPE ...> tags, and
       #   other hints.
+      # @param [Proc] fallback called if multiple lexers are detected.
+      #   If omitted, Guesser::Ambiguous is raised.
       #
       # @see Lexer.detect?
       # @see Lexer.guesses

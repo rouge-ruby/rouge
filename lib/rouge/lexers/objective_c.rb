@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'c.rb'
+    require_relative 'c.rb'
 
     class ObjectiveC < C
       tag 'objective_c'

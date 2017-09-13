@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'jinja.rb'
+    require_relative 'jinja.rb'
 
     class Twig < Jinja
       title "Twig"

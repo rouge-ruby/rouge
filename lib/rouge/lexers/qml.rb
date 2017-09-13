@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'javascript.rb'
+    require_relative 'javascript.rb'
 
     class Qml < Javascript
       title "QML"

@@ -13,7 +13,7 @@ module Rouge
       mimetypes 'text/x-vim'
 
       def self.keywords
-        load Pathname.new(__FILE__).dirname.join('viml/keywords.rb')
+        require_relative('./viml/keywords.rb')
         self.keywords
       end
 

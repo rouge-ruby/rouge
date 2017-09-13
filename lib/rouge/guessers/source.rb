@@ -1,3 +1,5 @@
+require_relative './util'
+
 module Rouge
   module Guessers
     class Source < Guesser

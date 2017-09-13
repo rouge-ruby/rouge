@@ -1,3 +1,5 @@
+require_relative './util'
+
 module Rouge
   module Guessers
     # This class allows for custom behavior

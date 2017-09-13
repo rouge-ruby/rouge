@@ -11,14 +11,14 @@ module Rouge
       mimetypes 'text/x-matlab', 'application/x-matlab'
 
       def self.keywords
-        @keywords = Set.new %w(
+        @keywords ||= Set.new %w(
           break case catch classdef continue else elseif end for function
           global if otherwise parfor persistent return spmd switch try while
         )
       end
 
       def self.builtins
-        load Pathname.new(__FILE__).dirname.join('matlab/builtins.rb')
+        require_relative('./matlab/builtins.rb')
         self.builtins
       end
 

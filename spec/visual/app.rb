@@ -8,22 +8,17 @@ Bundler.require(:default, :development)
 require 'pathname'
 
 class VisualTestApp < Sinatra::Application
-  BASE = Pathname.new(__FILE__).dirname
+  BASE = Pathname.new(__dir__)
   SAMPLES = BASE.join('samples')
   ROOT = BASE.parent.parent
 
-  ROUGE_LIB = ROOT.join('lib/rouge.rb')
-
   DEMOS = ROOT.join('lib/rouge/demos')
-
-  def reload_source!
-    Object.send :remove_const, :Rouge
-    load ROUGE_LIB
-  end
 
   def query_string
     env['rack.request.query_string']
   end
+
+  use Rack::Reloader
 
   configure do
     set :root, BASE
@@ -31,8 +26,6 @@ class VisualTestApp < Sinatra::Application
   end
 
   before do
-    reload_source!
-
     Rouge::Lexer.enable_debug!
 
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')

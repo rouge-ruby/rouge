@@ -2,8 +2,8 @@
 
 module Rouge
   module Lexers
-    load_lexer 'javascript.rb'
-    load_lexer 'typescript/common.rb'
+    require_relative 'javascript.rb'
+    require_relative 'typescript/common.rb'
 
     class Typescript < Javascript
       include TypescriptCommon

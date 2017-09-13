@@ -446,16 +446,4 @@ module Rouge
       false
     end
   end
-
-  module Lexers
-    @_loaded_lexers = {}
-
-    def self.load_lexer(relpath)
-      return if @_loaded_lexers.key?(relpath)
-      @_loaded_lexers[relpath] = true
-
-      root = Pathname.new(__FILE__).dirname.join('lexers')
-      load root.join(relpath)
-    end
-  end
 end

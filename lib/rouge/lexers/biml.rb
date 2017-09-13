@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    load_lexer 'xml.rb'
+    require_relative 'xml.rb'
 
     class BIML < XML
       title "BIML"

@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    load_lexer 'html.rb'
+    require_relative 'html.rb'
 
     class Vue < HTML
       desc 'Vue.js single-file components'

@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'json.rb'
+    require_relative 'json.rb'
 
     class JSONDOC < JSON
       desc "JavaScript Object Notation with extenstions for documentation"

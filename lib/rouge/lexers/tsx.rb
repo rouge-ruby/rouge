@@ -2,8 +2,8 @@
 
 module Rouge
   module Lexers
-    load_lexer 'jsx.rb'
-    load_lexer 'typescript/common.rb'
+    require_relative 'jsx.rb'
+    require_relative 'typescript/common.rb'
 
     class TSX < JSX
       include TypescriptCommon

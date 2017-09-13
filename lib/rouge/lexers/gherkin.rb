@@ -18,7 +18,7 @@ module Rouge
 
       # self-modifying method that loads the keywords file
       def self.keywords
-        load Pathname.new(__FILE__).dirname.join('gherkin/keywords.rb')
+        require_relative('./gherkin/keywords.rb')
         keywords
       end
 

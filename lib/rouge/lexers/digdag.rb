@@ -1,7 +1,7 @@
 require 'set'
 module Rouge
   module Lexers
-    load_lexer 'yaml.rb'
+    require_relative 'yaml.rb'
 
     class Digdag < YAML
       title 'digdag'

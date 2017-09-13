@@ -6,11 +6,6 @@ require 'pathname'
 # The containing module for Rouge
 module Rouge
   class << self
-    def reload!
-      Object.send :remove_const, :Rouge
-      load __FILE__
-    end
-
     # Highlight some text with a given lexer and formatter.
     #
     # @example
@@ -30,53 +25,35 @@ module Rouge
 
       formatter.format(lexer.lex(text), &b)
     end
+
+    # @private
+    def load_components(root, glob)
+      root_path = Pathname.new(root)
+      Dir.glob(root_path.join(glob)).each do |f|
+        relative_path = Pathname.new(f).relative_path_from(root_path).to_s
+        require_relative(relative_path)
+      end
+    end
   end
 end
 
-load_dir = Pathname.new(__FILE__).dirname
-load load_dir.join('rouge/version.rb')
+require_relative('rouge/version.rb')
 
-load load_dir.join('rouge/util.rb')
+require_relative('rouge/util.rb')
 
-load load_dir.join('rouge/text_analyzer.rb')
-load load_dir.join('rouge/token.rb')
+require_relative('rouge/text_analyzer.rb')
+require_relative('rouge/token.rb')
 
-load load_dir.join('rouge/lexer.rb')
-load load_dir.join('rouge/regex_lexer.rb')
-load load_dir.join('rouge/template_lexer.rb')
+require_relative('rouge/lexer.rb')
+require_relative('rouge/regex_lexer.rb')
+require_relative('rouge/template_lexer.rb')
+Rouge.load_components(__dir__, 'rouge/lexers/*.rb')
 
-lexers_dir = load_dir.join('rouge/lexers')
-Dir.glob(lexers_dir.join('*.rb')).each do |f|
-  Rouge::Lexers.load_lexer(Pathname.new(f).relative_path_from(lexers_dir).to_s)
-end
+require_relative('rouge/guesser.rb')
+Rouge.load_components(__dir__, 'rouge/guessers/*.rb')
 
-load load_dir.join('rouge/guesser.rb')
-load load_dir.join('rouge/guessers/util.rb')
-load load_dir.join('rouge/guessers/glob_mapping.rb')
-load load_dir.join('rouge/guessers/modeline.rb')
-load load_dir.join('rouge/guessers/filename.rb')
-load load_dir.join('rouge/guessers/mimetype.rb')
-load load_dir.join('rouge/guessers/source.rb')
-load load_dir.join('rouge/guessers/disambiguation.rb')
+require_relative('rouge/formatter.rb')
+Rouge.load_components(__dir__, 'rouge/formatters/*.rb')
 
-load load_dir.join('rouge/formatter.rb')
-load load_dir.join('rouge/formatters/html.rb')
-load load_dir.join('rouge/formatters/html_table.rb')
-load load_dir.join('rouge/formatters/html_pygments.rb')
-load load_dir.join('rouge/formatters/html_legacy.rb')
-load load_dir.join('rouge/formatters/html_linewise.rb')
-load load_dir.join('rouge/formatters/html_inline.rb')
-load load_dir.join('rouge/formatters/terminal256.rb')
-load load_dir.join('rouge/formatters/null.rb')
-
-load load_dir.join('rouge/theme.rb')
-load load_dir.join('rouge/themes/thankful_eyes.rb')
-load load_dir.join('rouge/themes/colorful.rb')
-load load_dir.join('rouge/themes/base16.rb')
-load load_dir.join('rouge/themes/github.rb')
-load load_dir.join('rouge/themes/igor_pro.rb')
-load load_dir.join('rouge/themes/monokai.rb')
-load load_dir.join('rouge/themes/molokai.rb')
-load load_dir.join('rouge/themes/monokai_sublime.rb')
-load load_dir.join('rouge/themes/gruvbox.rb')
-load load_dir.join('rouge/themes/tulip.rb')
+require_relative('rouge/theme.rb')
+Rouge.load_components(__dir__, 'rouge/themes/*.rb')

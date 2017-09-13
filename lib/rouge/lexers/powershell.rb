@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'shell.rb'
+    require_relative 'shell.rb'
 
     class Powershell < Shell
       title 'powershell'

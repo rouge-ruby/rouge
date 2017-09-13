@@ -1,6 +1,6 @@
 module Rouge
   module Lexers
-    load_lexer 'javascript.rb'
+    require_relative 'javascript.rb'
 
     class JSX < Javascript
       title 'JSX'

@@ -24,7 +24,7 @@ module Rouge
       end
 
       def self.builtins
-        load Pathname.new(__FILE__).dirname.join('lua/builtins.rb')
+        require_relative('./lua/builtins.rb')
         self.builtins
       end
 

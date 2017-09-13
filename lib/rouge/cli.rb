@@ -13,9 +13,9 @@ module Rouge
     def file
       case input
       when '-'
-        IO.new($stdin.fileno, 'r:utf-8')
+        IO.new($stdin.fileno, 'rt:bom|utf-8')
       when String
-        File.new(input, 'r:utf-8')
+        File.new(input, 'rt:bom|utf-8')
       when ->(i){ i.respond_to? :read }
         input
       end
@@ -390,14 +390,8 @@ module Rouge
       attr_reader :input_file, :input_source
 
       def initialize(opts)
-        input_file = opts[:input_file]
-        if input_file == '-' || input_file.nil?
-          @input_file = nil
-          @input_source = STDIN.read
-        else
-          @input_file = opts[:input_file]
-          @input_source = File.read(@input_file)
-        end
+        @input_file = opts[:input_file] || '-'
+        @input_source = FileReader.new(@input_file).read
       end
 
       def lexers

@@ -2,6 +2,7 @@
 
 describe Rouge::Lexers::XML do
   let(:subject) { Rouge::Lexers::XML.new }
+  let(:bom) { "\xEF\xBB\xBF" }
 
   describe 'guessing' do
     include Support::Guessing
@@ -26,6 +27,7 @@ describe Rouge::Lexers::XML do
 
     it 'guesses by source' do
       assert_guess :source => '<?xml version="1.0" encoding="utf-8"?>'
+      assert_guess :source => %{#{bom}<?xml version="1.0" encoding="utf-8"?>}
       assert_guess :source => '<!DOCTYPE xml>'
       deny_guess   :source => '<!DOCTYPE html>'
     end

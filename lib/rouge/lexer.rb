@@ -42,6 +42,7 @@ module Rouge
       # markdown lexer for highlighting internal code blocks.
       #
       def find_fancy(str, code=nil, additional_options={})
+
         if str && !str.include?('?') && str != 'guess'
           lexer_class = find(str)
           return lexer_class && lexer_class.new(additional_options)
@@ -109,7 +110,7 @@ module Rouge
       def demo(arg=:absent)
         return @demo = arg unless arg == :absent
 
-        @demo = File.read(demo_file, encoding: 'utf-8')
+        @demo = File.read(demo_file, mode: 'rt:bom|utf-8')
       end
 
       # @return a list of all lexers.

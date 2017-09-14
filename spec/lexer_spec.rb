@@ -3,6 +3,14 @@
 describe Rouge::Lexer do
   include Support::Lexing
 
+  it 'raises errors in .guess by default' do
+    assert { (Rouge::Lexer.guess(filename: 'foo.pl') rescue nil) == nil }
+  end
+
+  it 'customizes ambiguous cases in .guess' do
+    assert { Rouge::Lexer.guess(filename: 'foo.pl') { :fallback } == :fallback }
+  end
+
   it 'makes a simple lexer' do
     a_lexer = Class.new(Rouge::RegexLexer) do
       state :root do

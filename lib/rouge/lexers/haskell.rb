@@ -148,7 +148,7 @@ module Rouge
       state :character do
         rule /\\/ do
           token Str::Escape
-          push :character_end
+          goto :character_end
           push :escape
         end
 
@@ -174,7 +174,7 @@ module Rouge
         rule /\^[\]\[A-Z@\^_]/, Str::Escape, :pop!
         rule /#{ascii.join('|')}/, Str::Escape, :pop!
         rule /o[0-7]+/i, Str::Escape, :pop!
-        rule /x[\da-f]/i, Str::Escape, :pop!
+        rule /x[\da-f]+/i, Str::Escape, :pop!
         rule /\d+/, Str::Escape, :pop!
         rule /\s+\\/, Str::Escape, :pop!
       end

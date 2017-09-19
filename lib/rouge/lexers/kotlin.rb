@@ -43,23 +43,23 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
-        rule %r'(companion)(\s+)(object)' do
+        rule %r'\b(companion)(\s+)(object)\b' do
           groups Keyword, Text, Keyword
         end
-        rule %r'(class|data\s+class|interface|object)(\s+)' do
+        rule %r'\b(class|data\s+class|interface|object)(\s+)' do
           groups Keyword::Declaration, Text
           push :class
         end
-        rule %r'(package|import)(\s+)' do
+        rule %r'\b(package|import)(\s+)' do
           groups Keyword, Text
           push :package
         end
-        rule %r'(val|var)(\s+)' do
+        rule %r'\b(val|var)(\s+)' do
           groups Keyword::Declaration, Text
           push :property
         end
-        rule %r/fun/, Keyword
-        rule /(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/\bfun\b/, Keyword
+        rule /\b(?:#{keywords.join('|')})\b/, Keyword
         rule id, Name
       end
 

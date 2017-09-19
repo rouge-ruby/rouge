@@ -3,8 +3,10 @@
 module Rouge
   module Lexers
     class Kotlin < RegexLexer
+      # https://kotlinlang.org/docs/reference/grammar.html
+
       title "Kotlin"
-      desc "Kotlin <http://kotlinlang.org>"
+      desc "Kotlin Programming Language (http://kotlinlang.org)"
 
       tag 'kotlin'
       filenames '*.kt'
@@ -56,10 +58,7 @@ module Rouge
           groups Keyword::Declaration, Text
           push :property
         end
-        rule %r'(fun)(\s+)' do
-          groups Keyword, Text
-          push :function
-        end
+        rule %r/fun/, Keyword
         rule /(?:#{keywords.join('|')})\b/, Keyword
         rule id, Name
       end
@@ -74,10 +73,6 @@ module Rouge
 
       state :property do
         rule id, Name::Property, :pop!
-      end
-
-      state :function do
-        rule id, Name::Function, :pop!
       end
     end
   end

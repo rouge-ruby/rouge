@@ -377,3 +377,9 @@ check i n x f (Result (Just False) args : rs) = do
 progressReport :: Bool -> Int -> Int -> IO ()
 progressReport _ _ _ = return ()
 
+foo :: String
+foo = replicate n '\x1f363'
+  where n = 32
+
+bar :: String
+bar = "\x1f389\x1f363\x1f389"

@@ -23,7 +23,7 @@ module Rouge
 
       name = %r'@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
 
-      id = %r'(#{name}|`#{name}`)'
+      id = %r'(?:#{name}|`#{name}`)'
 
       state :root do
         rule %r'^\s*\[.*?\]', Name::Attribute
@@ -56,8 +56,14 @@ module Rouge
           groups Keyword::Declaration, Text
           push :property
         end
-        rule %r'(fun)(\s+)' do
-          groups Keyword, Text
+        rule %r(
+          (fun)(\s+)          # Function keyword
+          ((?:<.*?>\s*)?      # Template parameters
+           (?:#{id}\.)?)      # Extension type declaration
+        )mx do |m|
+          token Keyword, m[1]
+          token Text, m[2]
+          delegate Kotlin, m[3]
           push :function
         end
         rule /(?:#{keywords.join('|')})\b/, Keyword

@@ -13,5 +13,49 @@ describe Rouge::Lexers::Kotlin do
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-kotlin'
     end
+
+    it 'parses function' do
+      tokens = subject.lex('fun myFunction()').to_a
+      assert { tokens[0][0] == Token['Keyword'] }
+      assert { tokens[1][0] == Token['Text'] }
+      assert { tokens[2][0] == Token['Name.Function'] }
+    end
+
+    it 'parses extension function' do
+      tokens = subject.lex('fun String.extensionFunction()').to_a
+      assert { tokens[0][0] == Token['Keyword'] }
+      assert { tokens[1][0] == Token['Text'] }
+      assert { tokens[2][0] == Token['Name'] }
+      assert { tokens[3][0] == Token['Punctuation'] }
+      assert { tokens[4][0] == Token['Name.Function'] }
+    end
+
+    it 'parses generic function' do
+      tokens = subject.lex('fun <T> myFunction()').to_a
+      assert { tokens[0][0] == Token['Keyword'] }
+      assert { tokens[1][0] == Token['Text'] }
+      assert { tokens[2][0] == Token['Punctuation'] }
+      assert { tokens[3][0] == Token['Name'] }
+      assert { tokens[4][0] == Token['Punctuation'] }
+      assert { tokens[5][0] == Token['Text'] }
+      assert { tokens[6][0] == Token['Name.Function'] }
+    end
+
+    it 'parses generic extension function' do
+      tokens = subject.lex('fun <T, V> String.myFunction()').to_a
+      assert { tokens[0][0] == Token['Keyword'] }
+      assert { tokens[1][0] == Token['Text'] }
+      assert { tokens[2][0] == Token['Punctuation'] }
+      assert { tokens[3][0] == Token['Name'] }
+      assert { tokens[4][0] == Token['Punctuation'] }
+      assert { tokens[5][0] == Token['Text'] }
+      assert { tokens[6][0] == Token['Name'] }
+      assert { tokens[7][0] == Token['Punctuation'] }
+      assert { tokens[8][0] == Token['Text'] }
+      assert { tokens[9][0] == Token['Name'] }
+      assert { tokens[10][0] == Token['Punctuation'] }
+      assert { tokens[11][0] == Token['Name.Function'] }
+    end
+
   end
 end

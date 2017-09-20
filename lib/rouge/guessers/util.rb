@@ -17,14 +17,15 @@ module Rouge
         File.fnmatch?(pattern, path, File::FNM_DOTMATCH | File::FNM_CASEFOLD)
       end
 
+      # @param [String,IO] source
+      # @return [String]
       def get_source(source)
-        case source
-        when String
-          SourceNormalizer.normalize(source)
-        when ->(s){ s.respond_to? :read }
+        if source.respond_to?(:to_str)
+          SourceNormalizer.normalize(source.to_str)
+        elsif source.respond_to?(:read)
           SourceNormalizer.normalize(source.read)
         else
-          raise 'invalid source'
+          raise ArgumentError, "Invalid source: #{source.inspect}"
         end
       end
     end

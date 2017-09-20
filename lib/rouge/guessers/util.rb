@@ -8,7 +8,6 @@ module Rouge
         # @param [String,nil] source
         # @return [String,nil]
         def self.normalize(source)
-          return nil unless source
           source.sub(UTF8_BOM_RE, '').gsub(/\r\n/, "\n")
         end
       end

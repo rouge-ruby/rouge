@@ -11,6 +11,14 @@ describe Rouge::Lexer do
     assert { Rouge::Lexer.guesses(filename: 'foo.pl').map { |c| c.tag }.sort == ['perl', 'prolog'].sort }
   end
 
+  it 'raises errors in .guess by default' do
+    assert { (Rouge::Lexer.guess(filename: 'foo.pl') rescue nil) == nil }
+  end
+
+  it 'customizes ambiguous cases in .guess' do
+    assert { Rouge::Lexer.guess(filename: 'foo.pl') { :fallback } == :fallback }
+  end
+
   it 'makes a simple lexer' do
     a_lexer = Class.new(Rouge::RegexLexer) do
       state :root do

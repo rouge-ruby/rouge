@@ -22,7 +22,9 @@ module Rouge
         new(opts).lex(stream, &b)
       end
 
-      # Given a string, return the correct lexer class.
+      # Given a name in string, return the correct lexer class.
+      # @param [String] name
+      # @return [Class<Rouge::Lexer>,nil]
       def find(name)
         registry[name.to_s]
       end
@@ -148,16 +150,23 @@ module Rouge
       #   The source itself, which, if guessing by mimetype or filename
       #   fails, will be searched for shebangs, <!DOCTYPE ...> tags, and
       #   other hints.
+      # @param [Proc] fallback called if multiple lexers are detected.
+      #   If omitted, Guesser::Ambiguous is raised.
       #
       # @see Lexer.detect?
       # @see Lexer.guesses
-      def guess(info={})
+      # @return [Class<Rouge::Lexer>]
+      def guess(info={}, &fallback)
         lexers = guesses(info)
 
         return Lexers::PlainText if lexers.empty?
         return lexers[0] if lexers.size == 1
 
-        raise Guesser::Ambiguous.new(lexers)
+        if fallback
+          fallback.call(lexers)
+        else
+          raise Guesser::Ambiguous.new(lexers)
+        end
       end
 
       def guess_by_mimetype(mt)

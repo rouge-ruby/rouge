@@ -5,10 +5,10 @@ gemspec
 gem 'bundler', '~> 1.15'
 gem 'rake'
 
-gem 'minitest'
+gem 'minitest', '>= 5.0'
 gem 'minitest-power_assert'
 
-gem 'rubocop', '~> 0.49.1' if RUBY_VERSION >= '2.0.0'
+gem 'rubocop', '~> 0.49.1'
 
 # don't try to install redcarpet under jruby
 gem 'redcarpet', :platforms => :ruby

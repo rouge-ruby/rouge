@@ -58,29 +58,45 @@ module Rouge
         rule %r/\s+/m, Text
       end
 
+      state :regex_comment do
+        rule /^#(?!\{).*$/, Comment::Single
+        rule /(\s+)(#(?!\{).*)$/ do
+          groups Text, Comment::Single
+        end
+      end
+
+      state :multiline_regex_begin do
+        rule %r(///) do
+          token Str::Regex
+          goto :multiline_regex
+        end
+      end
+
+      state :multiline_regex_end do
+        rule %r(///([gimy]+\b|\B)), Str::Regex, :pop!
+      end
+
       state :multiline_regex do
-        # this order is important, so that #{ isn't interpreted
-        # as a comment
+        mixin :multiline_regex_end
+        mixin :regex_comment
         mixin :has_interpolation
         mixin :comments
         mixin :whitespace
+        mixin :code_escape
 
-        rule %r(///([gim]+\b|\B)), Str::Regex, :pop!
-        rule %r(/), Str::Regex
-        rule %r([^/#]+), Str::Regex
+        rule %r/\\\D/, Str::Escape
+        rule %r/\\\d+/, Name::Variable
+        rule %r/./m, Str::Regex
       end
 
       state :slash_starts_regex do
         mixin :comments
         mixin :whitespace
-        rule %r(///) do
-          token Str::Regex
-          goto :multiline_regex
-        end
+        mixin :multiline_regex_begin
 
         rule %r(
           /(\\.|[^\[/\\\n]|\[(\\.|[^\]\\\n])*\])+/ # a regex
-          ([gim]+\b|\B)
+          ([gimy]+\b|\B)
         )x, Str::Regex, :pop!
 
         rule(//) { pop! }
@@ -133,6 +149,15 @@ module Rouge
         rule %r/'''/, Str, :tsqs
         rule %r/"/, Str, :dqs
         rule %r/'/, Str, :sqs
+      end
+
+      state :code_escape do
+        rule %r(\\(
+          c[A-Z]|
+          x[0-9a-fA-F]{2}|
+          u[0-9a-fA-F]{4}|
+          u\{[0-9a-fA-F]{4}\}
+        ))x, Str::Escape
       end
 
       state :strings do

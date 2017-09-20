@@ -49,17 +49,21 @@ module Rouge
 
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
 
-      state :comments_and_whitespace do
-        rule %r/\s+/m, Text
+      state :comments do
         rule %r/###[^#].*?###/m, Comment::Multiline
         rule %r/#.*$/, Comment::Single
+      end
+
+      state :whitespace do
+        rule %r/\s+/m, Text
       end
 
       state :multiline_regex do
         # this order is important, so that #{ isn't interpreted
         # as a comment
         mixin :has_interpolation
-        mixin :comments_and_whitespace
+        mixin :comments
+        mixin :whitespace
 
         rule %r(///([gim]+\b|\B)), Str::Regex, :pop!
         rule %r(/), Str::Regex
@@ -67,7 +71,8 @@ module Rouge
       end
 
       state :slash_starts_regex do
-        mixin :comments_and_whitespace
+        mixin :comments
+        mixin :whitespace
         rule %r(///) do
           token Str::Regex
           goto :multiline_regex
@@ -83,7 +88,8 @@ module Rouge
 
       state :root do
         rule(%r(^(?=\s|/|<!--))) { push :slash_starts_regex }
-        mixin :comments_and_whitespace
+        mixin :comments
+        mixin :whitespace
         rule %r(
           [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\bin\b|\bof\b|
           [?]|:|=|[|][|]|\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&|^/])=?

@@ -163,7 +163,7 @@ module Rouge
       state :strings do
         # all coffeescript strings are multi-line
         rule %r/[^#\\'"]+/m, Str
-
+        mixin :code_escape
         rule %r/\\./, Str::Escape
         rule %r/#/, Str
       end

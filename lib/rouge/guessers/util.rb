@@ -1,7 +1,7 @@
 module Rouge
   module Guessers
     module Util
-      module StringNormalizer
+      module SourceNormalizer
         UTF8_BOM = "\xEF\xBB\xBF"
         UTF8_BOM_RE = /\A#{UTF8_BOM}/
 
@@ -20,9 +20,9 @@ module Rouge
       def get_source(source)
         case source
         when String
-          StringNormalizer.normalize(source)
+          SourceNormalizer.normalize(source)
         when ->(s){ s.respond_to? :read }
-          StringNormalizer.normalize(source.read)
+          SourceNormalizer.normalize(source.read)
         else
           raise 'invalid source'
         end

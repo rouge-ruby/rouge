@@ -1,12 +1,16 @@
 require 'rake/clean'
 require 'pathname'
 require "bundler/gem_tasks"
+require "rake/testtask"
 
-task :spec do
-  spec_files = FileList.new(ENV['files'] || './spec/**/*_spec.rb')
-  switch_spec_files = spec_files.map { |x| "-r#{x}" }.join(' ')
-  sh "ruby -I./lib -r ./spec/spec_helper #{switch_spec_files} -e Minitest::Unit.autorun"
+Rake::TestTask.new(:spec) do |t|
+  t.libs << "lib"
+  t.ruby_opts << "-r./spec/spec_helper"
+  t.warning = false # TODO: true
+  t.pattern = FileList['spec/**/*_spec.rb']
 end
+
+task :test => [:spec]
 
 task :doc do
   sh 'bundle exec yard'

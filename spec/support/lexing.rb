@@ -21,7 +21,7 @@ module Support
     end
 
     def deny_has_token(tokname, text, lexer=nil)
-      deny { filter_by_token(tokname, text, lexer).any? }
+      refute { filter_by_token(tokname, text, lexer).any? }
     end
 
     def assert_has_token(tokname, text, lexer=nil)

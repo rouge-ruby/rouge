@@ -3,12 +3,9 @@
 require 'rubygems'
 require 'bundler'
 Bundler.require
-
 require 'rouge'
 require 'minitest/spec'
-require 'wrong/adapters/minitest'
-
-Wrong.config[:color] = true
+require 'minitest/autorun'
 
 Token = Rouge::Token
 

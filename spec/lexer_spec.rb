@@ -3,6 +3,14 @@
 describe Rouge::Lexer do
   include Support::Lexing
 
+  it 'guesses the lexer with Lexer.guess' do
+    assert { Rouge::Lexer.guess(filename: 'foo.rb').tag == 'ruby' }
+  end
+
+  it 'guesses lexers with Lexer.guesses' do
+    assert { Rouge::Lexer.guesses(filename: 'foo.pl').map { |c| c.tag }.sort == ['perl', 'prolog'].sort }
+  end
+
   it 'raises errors in .guess by default' do
     assert { (Rouge::Lexer.guess(filename: 'foo.pl') rescue nil) == nil }
   end

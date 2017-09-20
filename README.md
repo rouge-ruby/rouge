@@ -130,7 +130,10 @@ If you're here to implement a lexer for your awesome language, there's a good ch
 
 ### Run the tests
 
-You can test the core of Rouge simply by running `rake` (no `bundle exec` required).  It's also set up with `guard`, if you like.
+You can test the core of Rouge simply by running `rake` (no `bundle exec` required), or `rake spec TEST=spec/xxx_spec.rb`
+to run a single test file.
+
+It's also set up with `guard`, if you like.
 
 To test a lexer visually, run `rackup` from the root and go to `localhost:9292/#{some_lexer}` where `some_lexer` is the tag or an alias of a lexer you'd like to test.  If you add `?debug=1`, helpful debugging info will be printed on stdout.
 

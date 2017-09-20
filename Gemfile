@@ -3,10 +3,10 @@ source 'http://rubygems.org'
 gemspec
 
 gem 'bundler', '~> 1.15'
-gem 'rake', '~> 12.0'
+gem 'rake'
 
-gem 'minitest', '~> 4.0'
-gem 'wrong'
+gem 'minitest', '>= 5.0'
+gem 'minitest-power_assert'
 
 gem 'rubocop', '~> 0.49.1'
 

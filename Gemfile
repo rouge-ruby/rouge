@@ -8,7 +8,7 @@ gem 'rake', '~> 12.0'
 gem 'minitest', '~> 4.0'
 gem 'wrong'
 
-gem 'rubocop', '~> 0.49.1' if RUBY_VERSION >= '2.0.0'
+gem 'rubocop', '~> 0.49.1'
 
 # don't try to install redcarpet under jruby
 gem 'redcarpet', :platforms => :ruby

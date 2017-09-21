@@ -548,9 +548,8 @@ module Rouge
         )
       end
 
-      # high priority for filename matches
-      def self.analyze_text(*)
-        0.3
+      def self.detect?(text)
+        false
       end
 
       state :root do

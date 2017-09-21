@@ -29,7 +29,7 @@ module Rouge
     # @private
     def load_components(root, glob)
       root_path = Pathname.new(root)
-      Dir.glob(root_path.join(glob)).each do |f|
+      Dir.glob(root_path.join(glob)).sort.each do |f|
         relative_path = Pathname.new(f).relative_path_from(root_path).to_s
         require_relative(relative_path)
       end

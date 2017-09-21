@@ -106,6 +106,9 @@ module Rouge
         rule(%r(^(?=\s|/|<!--))) { push :slash_starts_regex }
         mixin :comments
         mixin :whitespace
+
+        rule /#{id}(?=\s*:)/, Name::Attribute
+
         rule %r(
           [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\bin\b|\bof\b|
           [?]|:|=|[|][|]|\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&|^/])=?

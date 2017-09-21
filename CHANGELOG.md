@@ -4,7 +4,27 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 3.0.0: 2017/09/21
+
+https://github.com/jneen/rouge/compare/v2.2.1...v3.0.0
+
+There is no breaking change in the public API, but internals' is changed.
+
+* general:
+  * dropped support for Ruby 1.9, requireing Ruby v2.0.0 (#775 by gfx)
+  * [Internal API changes] refactored disaambiguators to removes the use of analyze_text's numeric score interface (#763 by jneen)
+    * See https://github.com/jneen/rouge/pull/763 for details
+  * added `rouge guess $file` sub-command to test guessers (#773 by gfx)
+  * added `Rouge::Lexe.guess { fallback }` interface (#777 by gfx)
+  * removes BOM and normalizes newlines in input sources before lexing (#776 by gfx)
+* kotlin:
+  * fix errors in generic functions (#782 by gfx; thanks to @rongi for reporting it)
+* haskell:
+  * fix escapes in char literals (#780 by gfx; thanks to @Tosainu for reporting it)
+
 ## version 2.2.1: 2017/08/22
+
+https://github.com/jneen/rouge/compare/v2.2.0...v2.2.1
 
 * powershell:
   * Adding PowerShell builtin commands for version 5 (#757 thanks JacodeWeerd)

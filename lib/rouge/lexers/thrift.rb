@@ -1,7 +1,7 @@
 module Rouge
   module Lexers
     class Thrift < RegexLexer
-      desc 'thrift'
+      desc 'Apache Thrift (https://thrift.apache.org/)'
       tag 'thrift'
       filenames '*.thrift'
 

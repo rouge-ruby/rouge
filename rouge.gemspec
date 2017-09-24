@@ -16,4 +16,8 @@ Gem::Specification.new do |s|
   s.executables = %w(rougify)
   s.licenses = ['MIT', 'BSD-2-Clause']
   s.required_ruby_version = '>= 2.0'
+  s.metadata = {
+    'source_code_uri' => 'https://github.com/jneen/rouge',
+    'changelog_uri' => 'https://github.com/jneen/rouge/blob/master/CHANGELOG.md'
+  }
 end

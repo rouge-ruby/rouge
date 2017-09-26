@@ -19,7 +19,7 @@ module Rouge
         rule /\s\s*/, Text::Whitespace
         rule /^G[0-9.][0-9.]*/, Keyword::Namespace
         rule /^M[0-9.][0-9.]*/, Keyword::Constant
-        rule /[PSRTXYZJDHQ][+-]?[0-9.]*/, Keyword::Type
+        rule /[PSRTXYZJDHQW][+-]?[0-9.]*/, Keyword::Type
         rule /E[+-]?[0-9.]*/, Name::Variable
         rule /F[+-]?[0-9.]*/, Literal::String::Char
       end

@@ -92,7 +92,6 @@ module Rouge
       disambiguate '*.hh' do
         next Cpp if matches?(/^\s*#include/)
         next Hack if matches?(/^<\?hh/)
-        next Hack if matches?(/\):\s*Awaitable</)
         next Hack if matches?(/(\(|, ?)\$\$/)
 
         Cpp

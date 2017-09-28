@@ -83,6 +83,19 @@ module Rouge
 
         next Matlab if matches?(/^\s*?%/)
       end
+
+      disambiguate '*.php' do
+        # PHP always takes precedence over Hack
+        PHP
+      end
+
+      disambiguate '*.hh' do
+        next Cpp if matches?(/^\s*#include/)
+        next Hack if matches?(/^<\?hh/)
+        next Hack if matches?(/(\(|, ?)\$\$/)
+
+        Cpp
+      end
     end
   end
 end

@@ -389,4 +389,10 @@ precedencegroup ComparisonPrecedence {
 }
 infix operator <> : ComparisonPrecedence
 
+// keyword as identifier
+var `var` = 3
+
+// keypath
+let keypath = \Person.firstName
+
 foo() // end-of-file comment

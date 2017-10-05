@@ -66,7 +66,7 @@ module Rouge
         mixin :whitespace
         rule /\$(([1-9]\d*)?\d)/, Name::Variable
 
-        rule %r{[()\[\]{}:;,?]}, Punctuation
+        rule %r{[()\[\]{}:;,?\\]}, Punctuation
         rule %r([-/=+*%<>!&|^.~]+), Operator
         rule /@?"/, Str, :dq
         rule /'(\\.|.)'/, Str::Char
@@ -134,6 +134,10 @@ module Rouge
           else
             token Name
           end
+        end
+
+        rule /(`)(#{id})(`)/ do
+          groups Punctuation,Name,Punctuation
         end
       end
 

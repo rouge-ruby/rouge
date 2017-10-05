@@ -177,7 +177,8 @@ try
     with
     | exn -> 
         if exn.InnerException <> null then
-            sprintf "Build failed.\nError:\n%s\nInnerException:\n%s" exn.Message exn.InnerException.Message
+            let ``inner message.#1`` = exn.InnerException.Message
+            sprintf "Build failed.\nError:\n%s\nInnerException:\n%s" exn.Message ``inner message.#1``
             |> traceError
             printUsage()
         else

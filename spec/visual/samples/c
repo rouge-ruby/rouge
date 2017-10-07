@@ -2649,3 +2649,4 @@ fast_yield:
 	return retval;
 }
 
+// Comment at EOF (#796)

@@ -24,13 +24,22 @@ module Rouge
 
       BUILTINS = %w(
         alias bg bind break builtin caller cd command compgen
-        complete declare dirs disown echo enable eval exec exit
-        export false fc fg getopts hash help history jobs kill let
-        local logout popd printf pushd pwd read readonly set shift
-        shopt source suspend test time times trap true type typeset
-        ulimit umask unalias unset wait
+        complete declare dirs disown enable eval exec exit
+        export false fc fg getopts hash help history jobs let
+        local logout mapfile popd pushd pwd read readonly set
+        shift shopt source suspend test time times trap true type
+        typeset ulimit umask unalias unset wait
 
-        ls tar cat grep sudo
+        cat tac nl od base32 base64 fmt pr fold head tail split csplit
+        wc sum cksum b2sum md5sum sha1sum sha224sum sha256sum sha384sum
+        sha512sum sort shuf uniq comm ptx tsort cut paste join tr expand
+        unexpand ls dir vdir dircolors cp dd install mv rm shred link ln
+        mkdir mkfifo mknod readlink rmdir unlink chown chgrp chmod touch
+        df du stat sync truncate echo printf yes expr tee basename dirname
+        pathchk mktemp realpath pwd stty printenv tty id logname whoami
+        groups users who date arch nproc uname hostname hostid uptime chcon
+        runcon chroot env nice nohup stdbuf timeout kill sleep factor numfmt
+        seq tar grep sudo awk sed gzip gunzip
       ).join('|')
 
       state :basic do

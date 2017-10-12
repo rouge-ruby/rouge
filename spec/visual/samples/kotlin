@@ -138,3 +138,6 @@ fun String.extensionFunction() {
 
 fun <T, V> String.genericExtensionFunction() {
    return
+}
+
+// comment at EOF (#797)

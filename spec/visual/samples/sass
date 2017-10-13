@@ -389,3 +389,5 @@ button.short
 
 table
   :border-collapse collapse
+
+// Comment at EOF (#797)

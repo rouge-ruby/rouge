@@ -31,7 +31,7 @@ module Rouge
         rule %r'^\s*\[.*?\]', Name::Attribute
         rule %r'[^\S\n]+', Text
         rule %r'\\\n', Text # line continuation
-        rule %r'//.*?\n', Comment::Single
+        rule %r'//.*?$', Comment::Single
         rule %r'/[*].*?[*]/'m, Comment::Multiline
         rule %r'\n', Text
         rule %r'::|!!|\?[:.]', Operator

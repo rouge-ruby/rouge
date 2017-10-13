@@ -13,7 +13,7 @@ module Rouge
 
       state :root do
         rule /\s+/, Text
-        rule %r(//.*?\n), Comment::Single
+        rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
         rule /@import\b/, Keyword, :value
 

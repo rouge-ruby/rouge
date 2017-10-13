@@ -24,4 +24,16 @@ describe Rouge::Lexers::PHP do
       deny_guess :filename => '.php', :source => '<?hh foo();'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'recognizes hash comments not followed by a newline (#797)' do
+      assert_tokens_equal '# comment', ['Comment.Single', '# comment']
+    end
+
+    it 'recognizes double-slash comments not followed by a newline (#797)' do
+      assert_tokens_equal '// comment', ['Comment.Single', '// comment']
+    end
+  end
 end

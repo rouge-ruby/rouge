@@ -99,8 +99,8 @@ module Rouge
         # heredocs
         rule /<<<('?)(#{id})\1\n.*?\n\2;?\n/im, Str::Heredoc
         rule /\s+/, Text
-        rule /#.*?\n/, Comment::Single
-        rule %r(//.*?\n), Comment::Single
+        rule /#.*?$/, Comment::Single
+        rule %r(//.*?$), Comment::Single
         # empty comment, otherwise seen as the start of a docstring
         rule %r(/\*\*/), Comment::Multiline
         rule %r(/\*\*.*?\*/)m, Str::Doc

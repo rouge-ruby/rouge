@@ -401,6 +401,7 @@ typealias StringDictionary<T> = Dictionary<String, T>
 
 #sourceLocation(file: "foo", line: 42)
 
+@available(swift, obsoleted: 5.0.0, renamed: "foo2(file:line:)")
 func foo(_ file: StaticString = #file, line: UInt = #line) { }
 
 precedencegroup ComparisonPrecedence {

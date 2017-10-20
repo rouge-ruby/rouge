@@ -11,6 +11,9 @@ describe Rouge::Lexers::Powershell do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.ps1'
       assert_guess :filename => 'foo.psm1'
+      assert_guess :filename => 'foo.psd1'
+      assert_guess :filename => 'foo.psrc'
+      assert_guess :filename => 'foo.pssc'
     end
 
   end

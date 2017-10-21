@@ -9,7 +9,7 @@ module Rouge
       desc 'powershell'
       tag 'powershell'
       aliases 'posh'
-      filenames '*.ps1', '*.psm1', '*.psd1'
+      filenames '*.ps1', '*.psm1', '*.psd1', '*.psrc', '*.pssc'
       mimetypes 'text/x-powershell'
 
       ATTRIBUTES = %w(

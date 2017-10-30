@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*- #
+<<<<<<< HEAD
 # frozen_string_literal: true
+=======
+>>>>>>> Added Squirrel lexer
 
 describe Rouge::Lexers::Squirrel do
   let(:subject) { Rouge::Lexers::Squirrel.new }

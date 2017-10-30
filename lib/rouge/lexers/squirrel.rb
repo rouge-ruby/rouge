@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 
 module Rouge
-  module Lexers
-    class Squirrel < RegexLexer
+	module Lexers
+  	class Squirrel < RegexLexer
       tag 'squirrel'
       filenames '*.nut'
       mimetypes 'text/x-squirrel'
@@ -77,14 +77,14 @@ module Rouge
       end
 
 			state :function_name do
-        mixin :whitespace
-        rule any, Name::Function, :pop!
-      end
+				mixin :whitespace
+				rule any, Name::Function, :pop!
+			end
 
 			state :variable_name do
-        mixin :whitespace
-        rule any, Name::Variable, :pop!
-      end
+				mixin :whitespace
+				rule any, Name::Variable, :pop!
+			end
 
     end
   end

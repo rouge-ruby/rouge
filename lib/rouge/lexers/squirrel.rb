@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 module Rouge
-  module Lexers
-    class Squirrel < RegexLexer
+	module Lexers
+  	class Squirrel < RegexLexer
       tag 'squirrel'
       filenames '*.nut'
       mimetypes 'text/x-squirrel'

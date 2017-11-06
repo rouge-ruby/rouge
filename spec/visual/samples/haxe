@@ -1,0 +1,27 @@
+package a.b.c;
+
+class Main {
+
+  // one line comment
+  public function new() {
+    var calculator = new Calculator();
+
+    trace(calculator.add(1, 2));
+    trace(calculator.multiply(2, 3));
+  }
+
+}
+
+class Calculator {
+  public function new() {
+    trace("A new calculator instance was created!");
+  }
+  
+  public function add(a:Int, b:Int): Int {
+    return a + b;
+  }
+  
+  public function multiply(a:Int, b:Int):Int {
+    return a * b;
+  }
+}

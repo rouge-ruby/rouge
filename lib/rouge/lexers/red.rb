@@ -166,20 +166,21 @@ module Rouge
 
         rule id do |m|
           match = m[0]
-          if self.class.functions.include? match
-            token Name::Function
-          elsif self.class.actions.include? match
-            token Name::Builtin::Pseudo
-          elsif self.class.natives.include? match
-            token Name::Builtin
-          elsif self.class.datatypes.include? match
-            token Keyword::Type
-          elsif self.class.operators.include? match
-            token Operator
-          else
-            token Text
-          end
+            if self.class.functions.include? match
+              token Name::Function
+            elsif self.class.actions.include? match
+              token Name::Builtin::Pseudo
+            elsif self.class.natives.include? match
+              token Name::Builtin
+            elsif self.class.datatypes.include? match
+              token Keyword::Type
+            elsif self.class.operators.include? match
+              token Operator
+            else
+              token Text
+            end
         end
+
       end
 
     end

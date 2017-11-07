@@ -12,7 +12,7 @@ module Rouge
 
       id = /[a-z0-9!$\%&*+,\/:<=>?@^_~|-]+/i			
 			
-			def self.functions
+      def self.functions
         @functions ||= Set.new %w(
           ? ?? a-an about acos action? all-word? also alter any-block? any-function? 
           any-list? any-object? any-path? any-string? any-word? asin atan atan2 attempt 

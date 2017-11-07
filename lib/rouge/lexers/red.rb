@@ -10,8 +10,13 @@ module Rouge
       filenames *%w(*.red)
       mimetypes *%w(text/red)
 
+<<<<<<< HEAD
       id = /[a-z0-9!$\%&*+,\/:<=>?@^_~|-]+/i
 
+=======
+      id = /[a-z0-9!$\%&*+,\/:<=>?@^_~|-]+/i			
+			
+>>>>>>> 8adc1250574fd706d86f10918094fcf18b6f3355
       def self.functions
         @functions ||= Set.new %w(
                                  ? ?? a-an about acos action? all-word? also alter any-block? any-function?

@@ -37,7 +37,10 @@ impl<A> &[A]: iterable<A> {
     }
 }
 
-fn length<A, T: iterable<A>>(x: T) -> uint {
+fn length<A, T>(x: T) -> uint
+where
+    T: iterable<A>,
+{
     let mut len = 0;
     for x.iterate() |_y| { len += 1 }
     return len;

@@ -10,9 +10,5 @@ describe Rouge::Lexers::HOCON do
     it 'guesses by filename' do
       assert_guess :filename => 'application.hocon'
     end
-
-    it 'guesses by mimetype' do
-      assert_guess :mimetype => 'application/hocon'
-    end
   end
 end

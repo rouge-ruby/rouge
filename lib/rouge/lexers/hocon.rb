@@ -7,8 +7,7 @@ module Rouge
       title 'HOCON'
       desc "Human-Optimized Object Configuration Notation (https://github.com/lightbend/config)"
       tag 'hocon'
-      filenames '*.hocon', '*.conf', '*.properties'
-      mimetypes 'application/hocon'
+      filenames '*.hocon'
 
       keywords = %w(include url file classpath)
       keys = '[\w\-\.]+?'

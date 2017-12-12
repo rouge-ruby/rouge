@@ -395,4 +395,10 @@ var `var` = 3
 // keypath
 let keypath = \Person.firstName
 
+// tuple destructuring
+let (t1, t2) = (1, 2)
+var ((`func`, foo), `protocol`) = ((3, 4), 5)
+var ( t3 , /* comment */
+    ( t4 , t5 ) ) = ("a", ("b", "c"))
+
 foo() // end-of-file comment

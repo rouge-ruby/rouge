@@ -142,12 +142,15 @@ module Rouge
         end
 
         rule /(`)(#{id})(`)/ do
-          groups Punctuation, Name, Punctuation
+          groups Punctuation, Name::Variable, Punctuation
         end
       end
 
       state :tuple do
         rule /(#{id})/, Name::Variable
+        rule /(`)(#{id})(`)/ do
+            groups Punctuation, Name::Variable, Punctuation
+        end
         rule /,/, Punctuation
         rule /[(]/, Punctuation, :push
         rule /[)]/, Punctuation, :pop!

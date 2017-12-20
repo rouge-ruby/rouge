@@ -45,7 +45,6 @@ $yellow: #fc0
     :text-decoration underline
     +compound
 
-
 #main
   :width 15em
   :color #0000ff
@@ -56,6 +55,14 @@ $yellow: #fc0
       :width 2px
   .cool
     :width 100px
+
+  a
+    &[href^="mailto:"]
+      :white-space nowrap
+
+  div
+    a[href^="mailto:"]
+      :white-space nowrap
 
 #left
   +bordered

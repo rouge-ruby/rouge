@@ -20,7 +20,7 @@ module Rouge
         mixin :content_common
 
         rule(/(?=[^;{}][;}])/) { push :attribute }
-        rule(/(?=[^;{}:]+:[^a-z])/) { push :attribute }
+        rule(/(?=[^;{}:\[]+:[^a-z])/) { push :attribute }
 
         rule(//) { push :selector }
       end

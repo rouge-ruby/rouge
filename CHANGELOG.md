@@ -4,6 +4,39 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 3.1.0: 2017/12/21
+
+Thanks a lot for contributions; not only for the code, but also for the issues and review comments, which are vitally helpful.
+
+https://github.com/jneen/rouge/compare/v3.0.0...v3.1.0
+* gemspec
+  * Add source code and changelog links to gemspec [#785](https://github.com/jneen/rouge/pull/785) by @timrogers
+* General
+  * Fix #796: comments not followed by a newline are not highlighted [#797](https://github.com/jneen/rouge/pull/797) by @tyxchen
+* Elem
+  * Add Elm language support [#744](https://github.com/jneen/rouge/pull/744) by @dmitryrogozhny
+* Ruby
+  * Add the .erb file extension to ruby highlighting [#713](https://github.com/jneen/rouge/pull/713) by @jstumbaugh
+* Hack
+  * Add basic Hack support [#712](https://github.com/jneen/rouge/pull/712) by @fredemmott
+* F#
+  * Allow double backtick F# identifiers [#793](https://github.com/jneen/rouge/pull/793) by @nickbabcock
+* Swift
+  * Swift support for backticks and keypath syntax  [#794](https://github.com/jneen/rouge/pull/794) by @johnfairh
+  * [Swift] Tuple destructuring, function call with lambda argument [#837](https://github.com/jneen/rouge/pull/837) by @dan-zheng
+* Python
+  * Add async and await keywords to Python lexer [#799](https://github.com/jneen/rouge/pull/799) by @BigChief45
+* Shell
+  * Add missing shell commands and missing GNU coreutils executables [#798](https://github.com/jneen/rouge/pull/798) by @kernhanda
+* PowerShell
+  * Add JEA file extensions to powershell [#807](https://github.com/jneen/rouge/pull/807) by @michaeltlombardi
+* SASS / SCSS
+  * Don't treat `[` as a part of an attribute name in SCSS [#839](https://github.com/jneen/rouge/pull/839) by @hibariya
+* Haskell
+  * Don't treat `error` specially in Haskell [#834](https://github.com/jneen/rouge/pull/834) by @enolan
+* Rust
+  * Rust: highlight the "where" keyword [#823](https://github.com/jneen/rouge/pull/823) by @lvillani
+
 ## version 3.0.0: 2017/09/21
 
 https://github.com/jneen/rouge/compare/v2.2.1...v3.0.0

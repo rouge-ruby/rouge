@@ -55,7 +55,6 @@ module Rouge
 
         rule /\bimport\b/, Keyword::Reserved, :import
         rule /\bmodule\b/, Keyword::Reserved, :module
-        rule /\berror\b/, Name::Exception
         rule /\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
         # not sure why, but ^ doesn't work here
         # rule /^[_a-z][\w']*/, Name::Function

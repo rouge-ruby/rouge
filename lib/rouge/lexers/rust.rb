@@ -18,8 +18,8 @@ module Rouge
         @keywords ||= %w(
           as assert break const copy do drop else enum extern fail false
           fn for if impl let log loop match mod move mut priv pub pure
-          ref return self static struct true trait type unsafe use while
-          box
+          ref return self static struct true trait type unsafe use where
+          while box
         )
       end
 

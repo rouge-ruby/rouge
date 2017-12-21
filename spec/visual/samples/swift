@@ -395,4 +395,19 @@ var `var` = 3
 // keypath
 let keypath = \Person.firstName
 
+// tuple destructuring
+let (t1, t2) = (1, 2)
+var ((`func`, foo), `protocol`) = ((3, 4), 5)
+var ( t3 , /* comment */
+    ( t4 , t5 ) ) = ("a", ("b", "c"))
+
+// function with lambda argument
+func funcWithLambdaArg(_ fn: (Int) -> Int) -> Int {
+    return fn(1)
+}
+
+funcWithLambdaArg { x in x + 5 }
+funcWithLambdaArg { $0 + 5 }
+funcWithLambdaArg({ x in x + 5 })
+
 foo() // end-of-file comment

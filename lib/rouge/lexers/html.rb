@@ -37,6 +37,7 @@ module Rouge
         rule /<\s*style\s*/m do
           token Name::Tag
           @css.reset!
+          @lang = @css
           push :style_content
           push :tag
         end
@@ -124,13 +125,13 @@ module Rouge
 
       state :style_content do
         rule /[^<]+/ do
-          delegate @css
+          delegate @lang
         end
 
         rule %r(<\s*/\s*style\s*>)m, Name::Tag, :pop!
 
         rule /</ do
-          delegate @css
+          delegate @lang
         end
       end
     end

@@ -7,11 +7,14 @@ rvm:
   - "2.2"
   - "2.3"
   - "2.4"
+  - "2.5"
 
 cache:
   bundler: true
 bundler_args: --without development
-before_install: gem update bundler
+before_install:
+  - gem update --system
+  - gem update bundler
 script:
   - bundle exec rake
   - bundle exec rubocop

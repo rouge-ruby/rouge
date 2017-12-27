@@ -16,13 +16,15 @@ module Rouge
       end
 
       def lookup_lang(lang)
+        lang.downcase!
+        lang = lang.gsub(/["']*/, '')
         case lang
         when 'html' then HTML
         when 'css' then CSS
         when 'javascript' then Javascript
         when 'sass' then Sass
         when 'scss' then Scss
-        when 'coffee' then CoffeeScript
+        when 'coffee' then Coffeescript
           # TODO: add more when the lexers are done
         else
           PlainText
@@ -77,7 +79,7 @@ module Rouge
       state :lang_tag do
         rule /(lang\s*=)(\s*)("(?:\\.|[^\\])*?"|'(\\.|[^\\])*?'|[^\s>]+)/ do |m|
           groups Name::Attribute, Text, Str
-          @lang = lookup_lang(m[2])
+          @lang = lookup_lang(m[3])
         end
 
         mixin :tag

@@ -12,7 +12,9 @@ rvm:
 cache:
   bundler: true
 bundler_args: --without development
-before_install: gem update bundler
+before_install:
+  - gem update --system
+  - gem update bundler
 script:
   - bundle exec rake
   - bundle exec rubocop

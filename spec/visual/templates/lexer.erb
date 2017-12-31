@@ -18,4 +18,16 @@
 <%= @highlighted %>
 
 <h2>Raw</h2>
-<pre><%= CGI.escape_html(@sample) %></pre>
+<pre id="rawtext"><%= CGI.escape_html(@sample) %></pre>
+
+<script type="text/javascript">
+  var errorSpans = document.querySelectorAll("code > span.err").length;
+  var highlightSection = document.getElementsByClassName("highlight")[0].textContent;
+  var rawSection = document.getElementById("rawtext").textContent;
+  if (highlightSection != rawSection) {
+    alert("Highlighted and raw section don't match!")
+  }
+  if (errorSpans > 0) {
+    alert("There are " + errorSpans + " errors.");
+  }
+</script>

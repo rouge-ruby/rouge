@@ -79,7 +79,7 @@ module Rouge
         rule slot, Name::Function
         rule operators, Operator
         rule braces, Punctuation
-        rule string, String
+        rule string, Str
       end
 
       # Allow for nested comments and special treatment of ::Section:: or :Author: markup

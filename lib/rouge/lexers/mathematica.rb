@@ -36,7 +36,7 @@ module Rouge
 
       # Slots for pure functions.
       # Examples: # ## #1 ##3 #Test #"Test" #[Test] #["Test"]
-      association_slot = /#(#{identifier}|\"#{identifier}\")| /
+      association_slot = /#(#{identifier}|\"#{identifier}\")/
       slot = /#{association_slot}|#[0-9]*/
 
       # Handling of message like symbol::usage or symbol::"argx"

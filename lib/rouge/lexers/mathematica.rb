@@ -64,22 +64,22 @@ module Rouge
         rule /\(\*/, Comment, :comment
         rule /#{base}\^\^#{number_base}#{precision}?(\*\^[+-]?\d+)?/, Num # a number with a base
         rule /(?:#{number}#{precision}?(?:\*\^[+-]?\d+)?)/, Num # all other numbers
-        rule message, Operator::Word
+        rule message, Name::Tag
         rule in_out, Generic::Prompt
         rule /#{context_symbol}/m do |m|
           match = m[0]
           if self.class.keywords.include? match
-            token Keyword::Reserved
+            token Name::Builtin::Pseudo
           elsif self.class.builtins.include? match
             token Name::Builtin
           else
-            token Name
+            token Name::Variable
           end
         end
-        rule slot, Name::Namespace
+        rule slot, Name::Function
         rule operators, Operator
-        rule braces, Operator::Word
-        rule string, Str::Single
+        rule braces, Punctuation
+        rule string, String
       end
 
       # Allow for nested comments and special treatment of ::Section:: or :Author: markup

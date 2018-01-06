@@ -67,7 +67,7 @@ module Rouge
         end
 
         # White space and comments
-        rule(%r{[ \t\r]\/.*$}, Comment::Single)
+        rule(%r{[ \t\r]+\/.*$}, Comment::Single)
         rule(/[ \t\r]+/, Text::Whitespace)
         rule(%r{^/$.*?^\\$}m, Comment::Multiline)
         rule(%r{^\/[^\n]*$(\n[^\S\n]+.*$)*}, Comment::Multiline)

@@ -73,28 +73,41 @@ module Rouge
       end
 
       def self.keywords
-        @keywords ||= Set.new %w(
-          if else while do for break return continue 
-          switch case default try catch new this throw in cast
-        )
-      end
+					@keywords ||= Set.new %w(
+							break case cast catch class continue default do else enum false for
+							function if import interface macro new null override package private
+							public return switch this throw true try untyped while
+					)
+			end
 
-      def self.declarations
-        @declarations ||= Set.new %w(var function)
-      end
+			def self.imports
+					@imports ||= Set.new %w(
+							import using
+					)
+			end
 
-      def self.reserved
-        @reserved ||= Set.new %w(
-          dynamic final public private class using untyped extern macro
-          override static package interface extends implements import
-          super trace inline build autoBuild abstract enum typedef
-        )
-      end
+			def self.declarations
+					@declarations ||= Set.new %w(
+							abstract dynamic extern extends implements inline
+							static typedef var
+					)
+			end
 
-      def self.constants
-        @constants ||= Set.new %w(true false null)
-      end
+			def self.cond_keywords
+					@cond_keywords ||= Set.new %w(
+							if else elseif end
+					)
+			end
 
+			def self.reserved
+					@reserved ||= Set.new %w(
+							super trace inline build autoBuild enum
+					)
+			end
+
+			def self.constants
+					@constants ||= Set.new %w(true false null)
+			end
       def self.builtins
         @builtins ||= %w(
           Void Dynamic Math Class Any Float Int UInt String StringTools Sys
@@ -130,9 +143,14 @@ module Rouge
           if self.class.keywords.include? m[0]
             token Keyword
             push :expr_start
+          elsif self.class.imports.include? m[0]
+            token Keyword
+            push :namespace
           elsif self.class.declarations.include? m[0]
             token Keyword::Declaration
             push :expr_start
+          #elsif self.class.cond_keywords.include? /^#{m[0]}\b/
+          #  token Comment::Preproc
           elsif self.class.reserved.include? m[0]
             token Keyword::Reserved
           elsif self.class.constants.include? m[0]

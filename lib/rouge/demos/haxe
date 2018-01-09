@@ -1,3 +1,4 @@
-function hello(name:String):Void {
-	trace("hello " + name);
+// hello world!
+public static function hello(arg : String) {
+    return 'Hello $arg';
 }

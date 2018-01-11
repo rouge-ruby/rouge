@@ -1,0 +1,8 @@
+class Foo
+  getter foo
+
+  def initialize(@foo = "Hello, World")
+  end
+end
+
+pp Foo.new.foo

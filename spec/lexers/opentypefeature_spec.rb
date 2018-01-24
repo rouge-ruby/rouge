@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- #
 
-describe Rouge::Lexers::OpenType do
-  let(:subject) { Rouge::Lexers::OpenType.new }
+describe Rouge::Lexers::OpenTypeFeature do
+  let(:subject) { Rouge::Lexers::OpenTypeFeature.new }
 
   describe 'guessing' do
     include Support::Guessing

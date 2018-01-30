@@ -81,6 +81,15 @@ module Rouge
 
         rule /\[\s*\]/, Keyword::Type
         rule /\(\s*\)/, Name::Builtin
+
+        # Quasiquotations
+        rule /(\[)([_a-z][\w']*)(\|)/ do |m|
+          token Operator, m[1]
+          token Name, m[2]
+          token Operator, m[3]
+          push :quasiquotation
+        end
+
         rule /[\[\](),;`{}]/, Punctuation
       end
 
@@ -160,6 +169,12 @@ module Rouge
       state :character_end do
         rule /'/, Str::Char, :pop!
         rule /./, Error, :pop!
+      end
+
+      state :quasiquotation do
+        rule /\|\]/, Operator, :pop!
+        rule /[^\|]+/m, Text
+        rule /\|/, Text
       end
 
       state :string do

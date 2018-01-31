@@ -4,6 +4,19 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 3.1.1: 2018/01/31
+
+https://github.com/jneen/rouge/compare/v3.1.0...v3.1.1
+
+* Perl
+  * [Fix \#851: error on modulo operato in Perl by miparnisari · Pull Request \#853 · jneen/rouge](https://github.com/jneen/rouge/pull/853)
+* JavaScript
+  * [Detect \*\.mjs files as being JavaScript by Kovensky · Pull Request \#866 · jneen/rouge](https://github.com/jneen/rouge/pull/866)
+* Swift
+  [\[Swift\] Undo parsing function calls with trailing closure by dan\-zheng · Pull Request \#862 · jneen/rouge](https://github.com/jneen/rouge/pull/862)
+* Vue
+  * [Fix load SCSS in Vue by purecaptain · Pull Request \#842 · jneen/rouge](https://github.com/jneen/rouge/pull/842)
+
 ## version 3.1.0: 2017/12/21
 
 Thanks a lot for contributions; not only for the code, but also for the issues and review comments, which are vitally helpful.

@@ -1,3 +1,18 @@
+(define (my-compare a b)
+  (cond [(< a b) -1]
+        [(= a b) 0]
+        [(> a b) 1]))
+
+(define (my-fibonacci n)
+  (let loop ([a 0]
+             [b 1]
+             [n n])
+    (if (zero? n)
+        b
+        (loop b
+              (+ a b)
+              (- n 1)))))
+
 (define my-hex #x10c)
 (define my-bin #b1001011101)
 (define my-oct #o1234)

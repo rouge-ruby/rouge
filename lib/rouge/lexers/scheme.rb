@@ -85,8 +85,8 @@ module Rouge
           groups Str::Symbol, Text, Punctuation
         end
 
-        rule /\(/, Punctuation, :command
-        rule /\)/, Punctuation
+        rule /\(|\[/, Punctuation, :command
+        rule /\)|\]/, Punctuation
 
         rule id, Name::Variable
       end

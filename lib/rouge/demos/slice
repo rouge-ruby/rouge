@@ -1,5 +1,7 @@
+// file system module
 module Filesystem
 {
+    // Node interface:
     interface Node
     {
         idempotent string name();
@@ -20,6 +22,7 @@ module Filesystem
 
     sequence<Node*> NodeSeq;
 
+    // Directory interface:
     interface Directory extends Node
     {
         idempotent NodeSeq list();

@@ -28,10 +28,10 @@ module Rouge
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule /"\\\[.*?\]\\"/m, Str              # escaped string
         rule /"(\\!"|[^"])*"/m, Str
-        rule /[~^*!%&\[\](){}<>\|+=:,.\/?-]/, Operator
-        rule /[0-9]+?/, Num::Integer
+        rule /[*!%&\[\](){}<>\|+=:\/-]/, Operator
+        rule /\b[+-]?([0-9]+(\.[0-9]+)?|\.[0-9]+|\.)(e[+-]?[0-9]+)?i?\b/i, Num
         rule /\n/, Text
-        rule /./, Text;
+        rule /./, Text
       end
     end
   end

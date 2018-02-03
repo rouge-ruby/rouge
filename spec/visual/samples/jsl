@@ -13,6 +13,9 @@ an escaped string]\"
 list = List( 1, 3, 5 );
 alsoAList = {7,9,11};
 
+scientificNotation = 5e9;
+decimal = 1.234;
+
 New Window( "Rouge Test",
     Text Box( "Syntax highlighting is great!" )
 );

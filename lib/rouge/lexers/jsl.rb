@@ -13,7 +13,7 @@ module Rouge
       state :root do
 
         # messages
-        rule /(<<)(.*?)(\(|;])/ do |m|
+        rule /(<<)(.*?)(\(|;)/ do |m|
           token Operator, m[1]
           token Name::Function, m[2]
           token Operator, m[3]

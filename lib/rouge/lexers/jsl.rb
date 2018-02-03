@@ -8,7 +8,6 @@ module Rouge
 
       tag 'jsl'
       filenames '*.jsl'
-      mimetypes 'text/x-jsl'
 
       state :root do
 

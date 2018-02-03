@@ -9,9 +9,6 @@ describe Rouge::Lexers::JSL do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.jsl'
     end
-
-    it 'guesses by mimetype' do
-      assert_guess :mimetype => 'text/x-jsl'
-    end
+    
   end
 end

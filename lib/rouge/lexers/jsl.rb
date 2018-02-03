@@ -31,6 +31,7 @@ module Rouge
         rule /"(\\!"|[^"])*"/m, Str
         rule /[~^*!%&\[\](){}<>\|+=:,.\/?-]/, Operator
         rule /[0-9]+?/, Num::Integer
+        rule /\n/, Text
         rule /./, Text;
       end
     end

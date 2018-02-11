@@ -30,7 +30,10 @@ module Rouge
         rule %r('), Str, :string_single
         rule %r(#.*), Comment::Single
         rule %r([$?]\w+), Name::Variable
-        rule %r(\w*:\w+), Str::Symbol
+        rule %r((\w*:)(\w+)) do |m|
+          token Name::Namespace, m[1]
+          token Str::Symbol, m[2]
+        end
         rule %r(<[^>]*>), Name::Namespace
         rule Regexp.union(KEYWORDS.map{ |str| /\b#{str}\b/i }), Keyword
         rule Regexp.union(BUILTINS.map{ |str| /\b#{str}\b/i }), Name::Builtin

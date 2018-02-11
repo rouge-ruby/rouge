@@ -36,7 +36,7 @@ module Rouge
         rule Regexp.union(BUILTINS.map{ |str| /\b#{str}\b/i }), Name::Builtin
         rule %r(-?([0-9]+\.[0-9]+|\.[0-9]+|[0-9]+)([eE][+-]?[0-9]+)?), Num
         rule %r([\]\[(){}.,;=]), Punctuation
-        rule %r([/?*+]), Operator
+        rule %r([/?*+=!<>]|&&|\|\|), Operator
         rule %r(\s+), Text::Whitespace
       end
 

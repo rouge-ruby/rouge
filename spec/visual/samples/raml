@@ -191,3 +191,4 @@ traits:
       get:
         is: [orderable: {fieldsList: "songTitle"}]
         description: Get the list of songs for the album with `albumId = {albumId}`
+

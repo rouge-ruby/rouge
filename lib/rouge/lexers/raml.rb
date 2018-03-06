@@ -7,7 +7,7 @@ module Rouge
     class RAML < YAML
       title "RAML"
       desc "Everyday I'm RAML-ing"
-      mimetypes 'text/raml+yaml'
+      mimetypes 'application/raml+yaml'
       tag 'raml'
       aliases 'raml'
       filenames '*.raml'

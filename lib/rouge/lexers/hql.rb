@@ -78,6 +78,11 @@ module Rouge
       prepend :root do
         rule /\$\{/, Name::Variable, :hive_variable
 
+        # The SQL class interprets this as Name::Variable; I'm not 100% sure that's
+        # a bug, but it certainly doesn't agree with what it means in HQL. So I'm
+        # overriding this to mean Str::Single here
+        rule /"/, Str::Single, :double_string
+
         rule /\w[\w\d]*/ do |m|
           if self.class.keywords_type.include? m[0].upcase
             token Keyword::Type
@@ -96,6 +101,8 @@ module Rouge
 
       prepend :double_string do
         rule /\$\{/, Name::Variable, :hive_variable
+        # override because SQL sees this as Name::Variable
+        rule /"/, Str::Single, :pop!
         rule /[^\\"\$]+/, Str::Single
       end
 

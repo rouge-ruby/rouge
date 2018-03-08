@@ -16,7 +16,7 @@ describe Rouge::Lexers::HQL do
     include Support::Lexing
 
     it 'recognizes variable interpolation within a string' do
-      assert_tokens_equal '"${var1}.${var2}"', ['Str.Single', '"', 'Name.Variable', '${var1}', 'Str.Single', '.', 'Name.Variable', '${var2}', 'Str.Single', '"']
+      assert_tokens_equal '"${var1}.${var2}"', ['Literal.String.Single', '"'], ['Name.Variable', '${var1}'], ['Literal.String.Single', '.'], ['Name.Variable', '${var2}'], ['Literal.String.Single', '"']
     end
   end
 end

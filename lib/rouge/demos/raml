@@ -3,3 +3,4 @@ title: DataType Include Example
 
 types:
   User: !include User.dataType.raml # include external type declaration
+  

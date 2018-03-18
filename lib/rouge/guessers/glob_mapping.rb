@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rouge
   module Guessers
     # This class allows for custom behavior

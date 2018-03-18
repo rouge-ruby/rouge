@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
+
 # vim: set ts=2 sw=2 et:
 
 module Rouge

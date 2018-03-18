@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rouge
   class Guesser
     class Ambiguous < StandardError

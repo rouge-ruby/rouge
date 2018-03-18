@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Formatters
@@ -22,7 +23,7 @@ module Rouge
       def stream(tokens, &b)
         num_lines = 0
         last_val = ''
-        formatted = ''
+        formatted = String.new('')
 
         tokens.each do |tok, val|
           last_val = val

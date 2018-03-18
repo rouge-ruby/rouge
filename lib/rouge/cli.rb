@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 # not required by the main lib.
 # to use this module, require 'rouge/cli'.
@@ -363,7 +364,7 @@ module Rouge
         puts "== Available Lexers =="
 
         Lexer.all.sort_by(&:tag).each do |lexer|
-          desc = "#{lexer.desc}"
+          desc = String.new("#{lexer.desc}")
           if lexer.aliases.any?
             desc << " [aliases: #{lexer.aliases.join(',')}]"
           end

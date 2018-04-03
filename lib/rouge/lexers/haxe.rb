@@ -73,41 +73,41 @@ module Rouge
       end
 
       def self.keywords
-					@keywords ||= Set.new %w(
-							break case cast catch class continue default do else enum false for
-							function if import interface macro new null override package private
-							public return switch this throw true try untyped while
-					)
-			end
+          @keywords ||= Set.new %w(
+              break case cast catch class continue default do else enum false for
+              function if import interface macro new null override package private
+              public return switch this throw true try untyped while
+          )
+      end
 
-			def self.imports
-					@imports ||= Set.new %w(
-							import using
-					)
-			end
+      def self.imports
+          @imports ||= Set.new %w(
+              import using
+          )
+      end
 
-			def self.declarations
-					@declarations ||= Set.new %w(
-							abstract dynamic extern extends implements inline
-							static typedef var
-					)
-			end
+      def self.declarations
+          @declarations ||= Set.new %w(
+              abstract dynamic extern extends implements inline
+              static typedef var
+          )
+      end
 
-			def self.cond_keywords
-					@cond_keywords ||= Set.new %w(
-							if else elseif end
-					)
-			end
+      def self.cond_keywords
+          @cond_keywords ||= Set.new %w(
+              if else elseif end
+          )
+      end
 
-			def self.reserved
-					@reserved ||= Set.new %w(
-							super trace inline build autoBuild enum
-					)
-			end
+      def self.reserved
+          @reserved ||= Set.new %w(
+              super trace inline build autoBuild enum
+          )
+      end
 
-			def self.constants
-					@constants ||= Set.new %w(true false null)
-			end
+      def self.constants
+          @constants ||= Set.new %w(true false null)
+      end
       def self.builtins
         @builtins ||= %w(
           Void Dynamic Math Class Any Float Int UInt String StringTools Sys
@@ -209,3 +209,4 @@ module Rouge
     end
   end
 end
+

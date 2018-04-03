@@ -2,3 +2,4 @@
 public static function hello(arg : String) {
     return 'Hello $arg';
 }
+

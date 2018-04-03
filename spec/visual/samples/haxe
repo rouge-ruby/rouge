@@ -16,12 +16,13 @@ class Calculator {
   public function new() {
     trace("A new calculator instance was created!");
   }
-  
+
   public function add(a:Int, b:Int): Int {
     return a + b;
   }
-  
+
   public function multiply(a:Int, b:Int):Int {
     return a * b;
   }
 }
+

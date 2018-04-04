@@ -3,7 +3,7 @@
 module Rouge
   module Themes
     class Github < CSSTheme
-      name 'github'
+      name 'isbl_editor_light'
 
       style Comment::Multiline,               :fg => '#555555', :italic => true
       style Comment::Preproc,                 :fg => '#999999', :bold => true

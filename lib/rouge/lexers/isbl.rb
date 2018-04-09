@@ -2832,8 +2832,8 @@ module Rouge
 
         #literals
         rule /\b(\d+(\.\d+)?)\b/, Literal::Number
-        rule /".*?("|$)/, Literal::String::Double
-        rule /'.*?('|$)/, Literal::String::Single
+        rule %r(["].*?["])m, Literal::String::Double
+        rule %r(['].*?['])m, Literal::String::Single
       end
     end
   end

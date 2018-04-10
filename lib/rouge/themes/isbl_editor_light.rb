@@ -62,10 +62,11 @@ module Rouge
       style Name::Variable::Global,           :fg => '#6f1C00', :bold => true
       style Name::Variable::Instance,         :fg => '#008080'
       style Name::Variable,                   :fg => '#5e1700'
+      style Name,                             :fg => '#000000'
       style Operator::Word,                   :fg => '#000000', :bold => true
       style Operator,                         :fg => '#000000'
       style Text::Whitespace,                 :fg => '#bbbbbb'
-      style Text,                             :bg => '#f8f8f8'
+      style Text,                             :fg => '#000000', :bg => '#f8f8f8'
     end
   end
 end

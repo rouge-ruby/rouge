@@ -2,6 +2,8 @@
 
 module Rouge
   module Lexers
+    load_lexer 'perl.rb'
+
     class Perl6 < Perl
       title "Perl 6"
       desc "The Perl 6 programming language (perl6.org)"

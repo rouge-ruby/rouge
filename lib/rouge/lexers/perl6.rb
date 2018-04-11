@@ -12,7 +12,7 @@ module Rouge
       filenames '*.pl6', '*.pm6'
       mimetypes 'text/x-perl6', 'application/x-perl6'
 
-      def self.analyze_text(text)
+      def self.detect?(text)
         return 1 if text.shebang? 'perl6'
         return 0.4 if text.include? 'use v6'
       end

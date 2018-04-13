@@ -6,7 +6,7 @@ module Rouge
       name 'isbl_editor_dark'
 
       style Comment::Multiline,               :fg => '#b5b5b5', :italic => true
-      style Comment::Preproc,                 :fg => '#b5b5b5', :bold => true
+      style Comment::Preproc,                 :fg => '#b5b5b5', :italic => true, :bold => true
       style Comment::Single,                  :fg => '#b5b5b5', :italic => true
       style Comment::Special,                 :fg => '#b5b5b5', :italic => true, :bold => true
       style Comment,                          :fg => '#b5b5b5', :italic => true

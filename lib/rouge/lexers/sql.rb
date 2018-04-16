@@ -108,10 +108,10 @@ module Rouge
         rule %r/\s+/m, Text
         rule %r/--.*/, Comment::Single
         rule %r(/\*), Comment::Multiline, :multiline_comments
-        rule %r/\d+/, Num::Integer
-        rule %r/'/, Str::Single, :single_string
-        rule %r/"/, Name::Variable, :double_string
-        rule %r/`/, Name::Variable, :backtick
+        rule %/\d+/, Num::Integer
+        rule %/'/, Str::Single, :single_string
+        rule %/"/, Str::Single, :double_string
+        rule %/`/, Name::Variable, :backtick
 
         rule %r/\w[\w\d]*/ do |m|
           if self.class.keywords_type.include? m[0].upcase
@@ -149,10 +149,10 @@ module Rouge
       end
 
       state :double_string do
-        rule %r/\\./, Str::Escape
-        rule %r/""/, Str::Escape
-        rule %r/"/, Name::Variable, :pop!
-        rule %r/[^\\"]+/, Name::Variable
+        rule %/\\./, Str::Escape
+        rule %/""/, Str::Escape
+        rule %/"/, Str::Single, :pop!
+        rule %/[^\\"]+/, Name::Variable
       end
     end
   end

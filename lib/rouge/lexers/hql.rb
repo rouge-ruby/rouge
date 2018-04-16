@@ -82,16 +82,6 @@ module Rouge
         # a bug, but it certainly doesn't agree with what it means in HQL. So I'm
         # overriding this to mean Str::Single here
         rule /"/, Str::Single, :double_string
-
-        rule /\w[\w\d]*/ do |m|
-          if self.class.keywords_type.include? m[0].upcase
-            token Keyword::Type
-          elsif self.class.keywords.include? m[0].upcase
-            token Keyword
-          else
-            token Name
-          end
-        end
       end
 
       prepend :single_string do

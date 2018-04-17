@@ -115,7 +115,7 @@ module Rouge
           # before we pass to the lang lexer so it can determine where
           # the "real" beginning of the line is
           $' =~ /\A\s*/
-          yield Text, $& unless $&.empty?
+          yield Text::Whitespace, $& unless $&.empty?
 
           lang_lexer.lex($', continue: true, &output)
         elsif comment_regex =~ input[0].strip

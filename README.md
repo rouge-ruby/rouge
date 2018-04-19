@@ -47,6 +47,10 @@ Builtin formatters include:
   This formatter will split your code into lines, each contained in its own div. The
   `class_format` option will be used to add a class name to the div, given the line
   number.
+* `Rouge::Formatters::HTMLLineanchors.new(formatter, class_format: 'line-%i')` This formatter
+  will generate an anchor link before each line. The `class_format` option will be used to add
+  a class name to the anchor, given the line number. This works the same as the `lineanchors`
+  option in Pygments.
 * `Rouge::Formatters::HTMLPygments.new(formatter, css_class='codehilite')`
   wraps the given formatter with div wrappers generally expected by stylesheets designed for
   Pygments.

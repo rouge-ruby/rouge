@@ -10,7 +10,9 @@ module Rouge
       tag 'html_legacy'
 
       # @option opts [String] :css_class ('highlight')
+      # @option opts [true/false] :line_anchors (false)
       # @option opts [true/false] :line_numbers (false)
+      # @option opts [true/false] :linewise (false)
       # @option opts [Rouge::CSSTheme] :inline_theme (nil)
       # @option opts [true/false] :wrap (true)
       #
@@ -27,6 +29,9 @@ module Rouge
         @formatter = opts[:inline_theme] ? HTMLInline.new(opts[:inline_theme])
                    : HTML.new
 
+        @formatter = HTMLLineanchors.new(@formatter, opts) if opts[:lineanchors]
+
+        @formatter = HTMLLinewise.new(@formatter, opts) if opts[:linewise]
 
         @formatter = HTMLTable.new(@formatter, opts) if opts[:line_numbers]
 

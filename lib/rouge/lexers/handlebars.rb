@@ -26,7 +26,15 @@ module Rouge
           push :open_sym
         end
 
-        rule(/(.+?)(?=\\|{{)/m) { delegate parent }
+        rule(/(.+?)(?=\\|{{)/m) do
+          delegate parent
+
+          # if parent state is attr, then we have an html attribute without quotes
+          # pop the parent state to return to the tag state
+          if parent.state?('attr')
+            parent.pop!
+          end
+        end
 
         # if we get here, there's no more mustache tags, so we eat
         # the rest of the doc
@@ -42,9 +50,12 @@ module Rouge
 
       state :stache do
         rule /}}}?/, Keyword, :pop!
+        rule /\|/, Punctuation
+        rule /~/, Keyword
         rule /\s+/m, Text
         rule /[=]/, Operator
         rule /[\[\]]/, Punctuation
+        rule /[\(\)]/, Punctuation
         rule /[.](?=[}\s])/, Name::Variable
         rule /[.][.]/, Name::Variable
         rule %r([/.]), Punctuation
@@ -64,7 +75,7 @@ module Rouge
           goto :block_name
         end
 
-        rule /[>^&]/, Keyword
+        rule /[>^&~]/, Keyword
 
         rule(//) { pop! }
       end

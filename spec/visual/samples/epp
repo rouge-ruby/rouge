@@ -1,0 +1,24 @@
+<%- | Boolean $keys_enable,
+      String  $keys_file,
+      Array   $keys_trusted,
+      String  $keys_requestkey,
+      String  $keys_controlkey
+| -%>
+<%# Parameter tag ↑ -%>
+
+<%# Non-printing tag ↓ -%>
+<% if $keys_enable { -%>
+
+<%# Expression-printing tag ↓ -%>
+keys <%= $keys_file %>
+<% unless $keys_trusted =~ Array[Data,0,0] { -%>
+trustedkey <%= $keys_trusted.join(' ') %>
+<% } -%>
+<% if $keys_requestkey =~ String[1] { -%>
+requestkey <%= $keys_requestkey %>
+<% } -%>
+<% if $keys_controlkey =~ String[1] { -%>
+controlkey <%= $keys_controlkey %>
+<% } -%>
+
+<% } -%>

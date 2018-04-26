@@ -1,0 +1,54 @@
+const nbtrains = 3;
+
+node switch(init, set, reset: bool) returns (state: bool);
+-- from an initial value (init), the state is set to true or reset to false
+-- and keeps its previous value otherwise
+let
+	state = init -> if set and not pre(state) then true
+                   else if reset and pre(state) then false
+                   else pre(state);
+tel;
+
+node count(init: int; reset, event: bool) returns (c: int);
+let
+	c = init -> if reset then init
+					else if event then pre(c)+1
+					else pre(c);
+tel;
+
+node train (s,b: bool) 
+returns (ontime, onbrake, late,  stopped: bool);
+-- a train receives signals "second" and "beacon" (assumed to be exclusive)
+-- and returns its state.
+var delta, nbrake: int;
+let
+	assert #(s,b);
+	assert (true -> (pre(stopped) => not b));
+	-- delta = nb_seconds - nb_beacons
+	delta = 0 -> pre(delta) +
+					if s then 1 else if b then -1 else 0;
+	ontime = true -> not (late or onbrake or stopped);
+	late = switch(false, delta>=10, delta<=0);
+	-- counting beacons when on-brake or stopped
+	nbrake = count(0, not(onbrake or stopped), b);
+	--early = onbrake or stopped;
+	onbrake = switch(false, delta<=-10 and pre(nbrake)<10, delta>=0 or pre(nbrake)>= 10);
+	stopped = switch(false, pre(onbrake) and pre(nbrake)>= 10, delta>=0);
+tel;
+
+node clock (late: bool^nbtrains; ss: bool) returns (s: bool);
+-- the clock broadcasts the "second" only when no train is late
+var 
+  onelatetrain: bool;
+let
+	onelatetrain = red<<or;nbtrains>>(false, late); 
+	s = if onelatetrain then false else ss;
+tel
+	
+node metro (sec: bool; beacons: bool^nbtrains)
+returns (ontime, onbrake, late,  stopped: bool^nbtrains);
+var second : bool;
+let
+	second = clock(late, sec);
+	(ontime, onbrake, late,  stopped) = map<<train;nbtrains>> (sec^nbtrains, beacons);
+tel

@@ -1,0 +1,258 @@
+-- 
+-- The examples provided in [SIES'13] "Engineering Functional
+-- Requirements of Reactive Systems using Synchronous Languages"
+
+node gen_x_v1() returns (x:real) = loop 0.0<x and x<42.0
+
+node gen_x_v2() returns (x:real) = 
+  loop { 0.0<x and x<42.0 fby loop [20] x = pre x }
+
+node gen_x_v3() returns (target:real; x:real=0.0) =
+  run target := gen_x_v2() in
+  loop { x = (pre x + target) / 2.0 }
+
+let inertia=0.6
+
+node gen_x_v4()  returns (target:real; x:real=0.0) =
+  run target := gen_x_v2() in
+  exist px,ppx : real = 0.0 in
+  loop { 
+      px = pre x and ppx = pre px and
+      x = (px+target) / 2.0+inertia*(px-ppx) 
+  }
+
+let  Between(x, min, max : real) : bool = ((min < x) and (x < max))
+node between (min, max : real) returns (x:real) = 
+   loop ((min < x) and (x < max))
+
+-- saw-tooth curves
+
+node up(init, delta:real) returns( x : real) = 
+   x = init fby loop { Between(x, pre x, pre x + delta) }
+
+node down(init, delta:real) returns( x : real) = 
+   x = init fby loop { Between(x, pre x - delta, pre x) }
+   
+node up_and_down1(min, max, delta : real) returns (x : real) =   
+   Between(x, min, max)
+ fby
+   loop {
+        | run x := up(pre x, delta)   in loop { x < max }
+        | run x := down(pre x, delta) in loop { x > min }
+       }
+
+-- Similar to up and down, except that the min, max, and delta are
+-- chosen randomly at each round
+node up_and_down2_old(min, max, delta : real) returns (x : real) =   
+   Between(x, min, max)
+ fby
+   loop 
+     exist lmin, lmax,ldelta : real in
+     run lmin   := between(min, pre x) in
+     run lmax   := between(pre x, max) in
+     run ldelta := between(0., delta) in
+      {
+        | run x := up(pre x, ldelta)   in loop { x < lmax }
+        | run x := down(pre x, ldelta) in loop { x > lmin }
+       }
+node up_down(min, max, delta : real) returns (x : real) =   
+   Between(x, min, max)
+ fby
+   loop 
+     exist lmin, lmax,ldelta : real in
+     run lmin   := between(min, pre x) in
+     run lmax   := between(pre x, max) in
+     run ldelta := between(0., delta) in
+     run x      := up_and_down1(lmin, lmax, ldelta)
+
+node up_and_down(min, max, delta:real) returns (x:real) =   
+   Between(x, min, max)
+ fby
+   loop 
+     exist lmin, lmax, ldelta : real in
+     run lmin   := between(min, pre x) in
+     run lmax   := between(pre x, max) in
+     run ldelta := between(0., delta) in
+      {
+        | run x := up(pre x, ldelta)   in loop { x < lmax }
+        | run x := down(pre x, ldelta) in loop { x > lmin }
+      }     
+
+
+ node example_of_use_of_up_and_down () returns (x:real) =
+    run x:= up_and_down(0.0, 100.0, 4.0)
+
+node env1(Speed, Roof_Speed :real) 
+returns(Start, Parked, Rot, Tick, OnOff, Done: bool ; Dist:real ) =
+ loop true
+
+
+-- Forbidding impossible inputs
+node env2(Speed,Roof_Speed:real) returns(
+Start,Parked,Rot,Tick,OnOff,Done:bool; Dist:real) =
+{
+   loop { not (OnOff and Start) } -- H1
+&> loop { Parked => not Rot     } -- H2
+&> true fby loop {
+      ( Speed > 0.0 => not Parked    ) -- H3
+  and ( Roof_Speed > 0.0 => not Done ) -- H4
+  }
+}
+
+-- With a scenario
+let geneRotTick(Start, Rot, Tick,Danger:bool) : trace =
+ let accel =  {{ | 1: not Rot | 5: Rot } &> { | 5: not Tick | 1: Tick } &>
+                 Start &> not Danger }
+ in
+ let decel =  {{ | 5: not Rot | 1: Rot } &> { | 1: not Tick | 5: Tick } } in
+ let stop = not Rot and Tick in
+ loop [50] not Rot fby 
+ loop { loop [0,300] accel fby
+--        loop [50] true fby  
+        loop [0,300] decel fby
+        loop [60,300] stop 
+        }
+-- loop { loop [0,300] decel fby loop [0,300] accel }
+node env3(Danger, Locked : bool; Speed:real) 
+returns(Start, Parked, Rot, Tick, OnOff, Done: bool ; Dist:real) =
+ run Dist := up_down(0.0, 500.0, 5.0) in
+   not (Start or Rot or Tick)  
+   fby geneRotTick(Start, Rot, Tick, Danger)
+-- 
+--&> loop { OnOff and Parked and Done fby loop [10] not Done } 
+
+-- With a scenario + Forbidding impossible inputs
+node env4(Danger:bool;Speed,Roof_Speed:real) returns 
+(Start,Parked,Rot,Tick,OnOff,Done:bool; Dist:real) =
+ run Dist := up_down(0.0, 500.0, 5.0) in
+ {   
+   loop { not (OnOff and Start) } -- H1
+&> loop { Parked => not Rot     } -- H2
+&> true fby loop {
+      ( Speed > 0.0 => not Parked    ) -- H3
+  and ( Roof_Speed > 0.0 => not Done ) -- H4
+   }
+&> not (Start or Rot or Tick) fby 
+   geneRotTick(Start, Rot, Tick, Danger)
+ }
+
+-- nb: in real life, Dist would actually depends on the vehicle
+-- Speed. But for testing or WCET purposes, it does not really
+-- matter.
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-- In order to test subnodes
+node speed(Speed:real) returns(Start, Parked, Rot,Tick,OnOff,Done:bool) =
+ let Danger = (Speed > 130.0) in
+-- more Tick ?
+--  { not Tick | 2: Tick }
+ let accel =  {{ | 1: not Rot | 5: Rot } &> Start &> not Danger} in
+ let decel =  {{ | 5: not Rot | 1: Rot } &> not Start} in
+--  loop [100] true fby
+ loop [50] not Rot fby 
+ loop { loop [0,300]  -- assert Speed < 150.0 in 
+                     { decel } fby 
+        loop [0,300] accel }
+
+node action_roof() returns (Tick:bool) = loop true -- Tick
+
+node roof(Roof_Speed:real) returns (Tick, Parked, OnOff, Done: bool) = 
+   assert Tick and Parked  in
+    {
+       true fby loop { Done = (Roof_Speed = 0.0) }
+    &>
+       loop { loop [0,10] not OnOff fby OnOff fby loop (not OnOff) and (not Done) } 
+    }
+   
+let abs(x:real) = if x > 0.0 then x else -x
+
+node vehicle() 
+returns (Start, Locked:bool ; Speed, Dist : real [0.0; 2000.0]) = 
+   Speed = 0.0 fby loop abs(Speed-pre Speed) < 0.5 and abs(Dist-pre Dist)<3.0 
+
+
+node may_collide() returns (Speed, Dist:real [0.0;2000.0]) = 
+  Speed = 0.0 and Dist = 1000.0 fby
+  assert abs(Speed-pre Speed) < 0.5 in
+  assert abs(Dist-pre Dist)<3.0 in
+  loop 
+     true
+   
+node roof_speed(Roof_Speed:real) returns (Tick:bool) = loop true
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-- mimick the content of the Stimulus Temporal library
+
+let OnceNow(condition:bool): trace = condition 
+let Repeat(BODY:trace)     : trace = loop BODY
+let Always(condition:bool) : trace = loop condition
+let DoAfterwards(DO,AFTER: trace) : trace = DO fby AFTER
+let AlwaysDuring(duration:int; condition:bool) : trace = loop [duration] condition
+let AsLongAs(event:bool; BODY:trace) : trace = assert event in BODY
+let From(event:bool; BODY:trace)     : trace = loop not event fby BODY
+let Until(event:bool; BODY:trace)    : trace = assert not event in BODY
+let OnceWithin(delay:int; condition:bool) : trace = 
+   loop [0,delay] not condition fby condition
+
+let AlwaysUntil(condition,event:bool) : trace = 
+    assert condition in loop not event fby event
+
+let OnceBefore(condition,event:bool) : trace = 
+    loop { not (event and condition)} fby
+    event and condition
+
+let when(condition:bool; BODY:trace) : trace =
+  loop { 
+    | assert condition in BODY
+    | not condition
+  }
+
+let IfThenElse(condition:bool;THEN,ELSE: trace) : trace = { 
+   |> { condition &> THEN }
+   |> ELSE
+}
+
+-- Tests
+let integers(init: int; cpt: int ref):trace =
+  cpt = init fby loop cpt = 1 + pre cpt
+           
+node test_when(condition:bool) returns (res:int) =
+  when(condition, integers(0,res))
+
+node test_AsLongAs(condition:bool) returns (res:int) =
+  AsLongAs(condition, integers(0,res))
+
+node test_From(condition:bool) returns (res:int) =
+  From(condition, integers(0,res))
+
+node test_Until(condition:bool) returns (res:int) =
+  Until(condition, integers(0,res))
+
+node test_IfThenElse(condition:bool) returns (res:int) =
+  IfThenElse(condition, integers(0,res), integers(-100,res))
+
+node test_DoAfterwards() returns (res:int) =
+  DoAfterwards( loop [2,5] res = 0, loop [2] res=1)
+
+node test_Repeat() returns (res:int) =
+     Repeat (res=0 fby res=1 fby res=2)
+
+node test_OnceBefore(event : bool) returns( condition : bool) =
+     OnceBefore(condition,event)
+
+node main(event:bool) returns (res:int) =
+  trap stop in 
+   { &> loop event  fby raise stop 
+     &> integers(0,res) 
+   } fby
+    raise stop

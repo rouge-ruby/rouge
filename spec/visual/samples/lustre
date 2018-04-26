@@ -1,6 +1,6 @@
 
 -------------------------------------------------------------------
--- Compute the roof motion speed
+(* Compute the roof motion speed *)
   
 const period = 0.1;  -- in seconds
 const wheel_girth = 1.4;  -- meter

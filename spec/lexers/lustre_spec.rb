@@ -10,7 +10,7 @@ describe Rouge::Lexers::Lustre do
       assert_guess :filename => 'foo.lus'
     end
 
-     it 'guesses by mimetype' do
+    it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-lustre'
     end
   end

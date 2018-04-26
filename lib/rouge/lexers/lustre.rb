@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*- #
-
+#
+# adapted from ocaml.rb, hence some ocaml-ism migth remains
 module Rouge
   module Lexers
     class Lustre < RegexLexer
       title "Lustre"
-      desc 'Lustre'
+      desc 'The Lustre programming language (Verimag)'
       tag 'lustre'
       filenames '*.lus'
       mimetypes 'text/x-lustre'
 
       def self.keywords
         @keywords ||= Set.new %w(
-          extern unsafe assert const current div else enum function
-          false if  let node not operator nor fby pre  returns
-          step struct tel type then true var when with model package needs
+          extern unsafe assert const current enum function
+          false let node operator returns
+          step struct tel type true var  model package needs
           provides uses is body end include merge
         )
       end
 
       def self.word_operators
-        @word_operators ||= Set.new %w(and xor mod or)
+        @word_operators ||= Set.new %w(
+           div and xor mod or not nor if then else fby pre when with) 
       end
 
       def self.primitives
@@ -28,15 +30,13 @@ module Rouge
 
       operator = %r([;,_!$%&*+./:<=>?@^|~#-]+)
       id = /[a-z_][\w']*/i
-      upper_id = /[A-Z][\w']*/
 
       state :root do
         rule /\s+/m, Text
         rule /false|true|[(][)]|\[\]/, Name::Builtin::Pseudo
-        rule /#{upper_id}(?=\s*[.])/, Name::Namespace, :dotted
-        rule /`#{id}/, Name::Tag
-        rule upper_id, Name::Class
-        rule /[(][*](?![)])/, Comment, :comment
+        rule %r(\-\-.*?$), Comment::Single
+        rule %r(/\*.*?\*/)m, Comment::Multiline
+        rule %r(\(\*.*?\*\))m, Comment::Multiline
         rule id do |m|
           match = m[0]
           if self.class.keywords.include? match
@@ -66,12 +66,6 @@ module Rouge
         rule /[~?]#{id}/, Name::Variable
       end
 
-      state :comment do
-        rule /[--]+/, Comment
-        rule(/[(][*]/) { token Comment; push }
-        rule /[*][)]/, Comment, :pop!
-      end
-
       state :string do
         rule /[^\\"]+/, Str::Double
         mixin :escape_sequence
@@ -88,8 +82,6 @@ module Rouge
       state :dotted do
         rule /\s+/m, Text
         rule /[.]/, Punctuation
-        rule /#{upper_id}(?=\s*[.])/, Name::Namespace
-        rule upper_id, Name::Class, :pop!
         rule id, Name, :pop!
         rule /[({\[]/, Punctuation, :pop!
       end

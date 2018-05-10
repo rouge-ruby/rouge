@@ -9,7 +9,7 @@ module Rouge
       desc "Kotlin Programming Language (http://kotlinlang.org)"
 
       tag 'kotlin'
-      filenames '*.kt'
+      filenames '*.kt', '*.kts'
       mimetypes 'text/x-kotlin'
 
       keywords = %w(

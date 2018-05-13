@@ -104,6 +104,7 @@ module Rouge
         rule /__END__\b/, Comment::Preproc, :end_part
         rule /\$\^[ADEFHILMOPSTWX]/, Name::Variable::Global
         rule /\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/-](?!\w)/, Name::Variable::Global
+        rule /[-+\/*%=<>&^\|!\\~]=?/, Operator
         rule /[$@%#]+/, Name::Variable, :varname
 
         rule /0_?[0-7]+(_[0-7]+)*/, Num::Oct
@@ -128,7 +129,6 @@ module Rouge
         rule /sub\s+/, Keyword, :funcname
         rule /\[\]|\*\*|::|<<|>>|>=|<=|<=>|={3}|!=|=~|!~|&&?|\|\||\.{1,3}/,
           Operator
-        rule /[-+\/*%=<>&^\|!\\~]=?/, Operator
         rule /[()\[\]:;,<>\/?{}]/, Punctuation
         rule(/(?=\w)/) { push :name }
       end

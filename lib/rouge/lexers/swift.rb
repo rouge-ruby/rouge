@@ -112,8 +112,8 @@ module Rouge
           push :tuple
         end
 
-        rule /(?!\b(if|while|for|private|internal|unowned|switch|case)\b)\b#{id}(?=(\?|!)?\s*[({])/ do |m|
-          if m[1] == '(' && m[0] =~ /^[[:upper:]]/
+        rule /(?!\b(if|while|for|private|internal|unowned|switch|case)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
+          if m[0] =~ /^[[:upper:]]/
             token Keyword::Type
           else
             token Name::Function

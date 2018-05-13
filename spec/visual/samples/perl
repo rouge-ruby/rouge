@@ -223,4 +223,6 @@ sub foo {
     "after the POD with the single quote, it's all still good"
 }
 
-
+# operators
+my $moduloOperation = $totalNumber % $columns ? 1 : 0;
+my $addOperation = $totalNumber + $myOtherVar;

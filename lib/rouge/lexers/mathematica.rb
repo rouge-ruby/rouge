@@ -87,7 +87,7 @@ module Rouge
         rule /\(\*/, Comment, :comment
         rule /\*\)/, Comment, :pop!
         rule /::#{identifier}::/, Comment::Preproc
-        rule /:(#{identifier}|[^\S])+:/, Comment::Preproc
+        rule /[ ]:(#{identifier}|[^\S])+:[ ]/, Comment::Preproc
         rule /./, Comment
       end
     end

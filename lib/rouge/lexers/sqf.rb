@@ -80,7 +80,7 @@ module Rouge
         rule %r"[0-9]+(\.)?(e[0-9]+)?", Literal::Number::Float
 
         # Symbols
-        rule %r"[\!\%\&\*\+\-\/\<\=\>\^\|]", Operator
+        rule %r"[\!\%\&\*\+\-\/\<\=\>\^\|\#]", Operator
         rule %r"[\(\)\{\}\[\]\,\:\;]", Punctuation
 
         # Identifiers (variables and functions)

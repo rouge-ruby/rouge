@@ -304,7 +304,9 @@ module Rouge
         yield %|usage: rougify style [<theme-name>] [<options>]|
         yield %||
         yield %|Print CSS styles for the given theme.  Extra options are|
-        yield %|passed to the theme.  Theme defaults to thankful_eyes.|
+        yield %|passed to the theme. To select a mode (light/dark) for the|
+        yield %|theme, append '.light' or '.dark' to the <theme-name>|
+        yield %|respectively. Theme defaults to thankful_eyes.|
         yield %||
         yield %|options:|
         yield %|  --scope	(default: .highlight) a css selector to scope by|

@@ -52,8 +52,8 @@ module Rouge
       end
 
       state :string do
-        rule /"/, Str::Double, :string_double_quoted
-        rule /''/, Str::Double, :string_indented
+        rule /"/, Str::Double, :double_quoted_string
+        rule /''/, Str::Double, :indented_string
       end
 
       state :string_content do
@@ -70,13 +70,13 @@ module Rouge
         rule /}/, Str::Interpol, :pop!
       end
 
-      state :string_indented do
+      state :indented_string do
         mixin :string_content
         rule /''/, Str::Double, :pop!
         rule /./, Str::Double
       end
 
-      state :string_double_quoted do
+      state :double_quoted_string do
         mixin :string_content
         rule /"/, Str::Double, :pop!
         rule /./, Str::Double

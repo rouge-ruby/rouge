@@ -58,12 +58,14 @@ module Rouge
 
       state :string_content do
         rule /\\./, Str::Escape
+        rule /\$\$/, Str::Escape
         rule /\${/, Str::Interpol, :string_interpolated_arg
       end
 
       state :indented_string_content do
         rule /'''/, Str::Escape
         rule /''\$/, Str::Escape
+        rule /\$\$/, Str::Escape
         rule /''\\./, Str::Escape
         rule /\${/, Str::Interpol, :string_interpolated_arg
       end

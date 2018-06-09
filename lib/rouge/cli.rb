@@ -311,12 +311,18 @@ module Rouge
         yield %|options:|
         yield %|  --scope	(default: .highlight) a css selector to scope by|
         yield %||
+        yield %|  --mode  (default: light) light themes are black on white and|
+        yield %|          dark themes are visa-versa|
+        yield %||
         yield %|available themes:|
         yield %|  #{Theme.registry.keys.sort.join(', ')}|
       end
 
       def self.parse(argv)
-        opts = { :theme_name => 'thankful_eyes' }
+        opts = {
+          theme_name: 'thankful_eyes',
+          mode: :light,
+        }
 
         until argv.empty?
           arg = argv.shift
@@ -333,8 +339,10 @@ module Rouge
 
       def initialize(opts)
         theme_name = opts.delete(:theme_name)
+        mode = opts.delete(:mode).to_sym
         theme_class = Theme.find(theme_name) \
           or error! "unknown theme: #{theme_name}"
+        theme_class = theme_class.mode(mode)
 
         @theme = theme_class.new(opts)
       end

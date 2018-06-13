@@ -43,9 +43,9 @@ Builtin formatters include:
 * `Rouge::Formatters::HTMLInline.new(theme)` - will render your code with no class names, but
   instead inline the styling options into the `style=` attribute. This is good for emails and
   other systems where CSS support is minimal.
-* `Rouge::Formatters::HTMLLinewise.new(formatter, class_format: 'line-%i')`
+* `Rouge::Formatters::HTMLLinewise.new(formatter, class: 'line-%i')`
   This formatter will split your code into lines, each contained in its own div. The
-  `class_format` option will be used to add a class name to the div, given the line
+  `class` option will be used to add a class name to the div, given the line
   number.
 * `Rouge::Formatters::HTMLPygments.new(formatter, css_class='codehilite')`
   wraps the given formatter with div wrappers generally expected by stylesheets designed for

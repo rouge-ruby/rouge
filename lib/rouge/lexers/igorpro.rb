@@ -48,202 +48,460 @@ module Rouge
 
       def self.igorFunction
         @igorFunction ||= Set.new %w(
-          axontelegraphsettimeoutms axontelegraphgettimeoutms
-          axontelegraphgetdatanum axontelegraphagetdatanum
-          axontelegraphgetdatastring axontelegraphagetdatastring
-          axontelegraphgetdatastruct axontelegraphagetdatastruct hdf5datasetinfo
-          hdf5attributeinfo hdf5typeinfo hdf5libraryinfo
-          mpfxgausspeak mpfxlorenzianpeak mpfxvoigtpeak mpfxemgpeak mpfxexpconvexppeak
-          abs acos acosh airya airyad airyb airybd
-          alog area areaxy asin asinh atan atan2 atanh axisvalfrompixel besseli
-          besselj besselk bessely beta betai binarysearch binarysearchinterp
-          binomial binomialln binomialnoise cabs capturehistorystart ceil cequal
-          char2num chebyshev chebyshevu checkname cmplx cmpstr conj contourz cos
-          cosh cosintegral cot coth countobjects countobjectsdfr cpowi
-          creationdate csc csch datafolderexists datafolderrefsequal
-          datafolderrefstatus date2secs datetime datetojulian dawson defined
-          deltax digamma dilogarithm dimdelta dimoffset dimsize ei enoise
-          equalwaves erf erfc erfcw exists exp expint expintegrale1 expnoise
-          factorial fakedata faverage faveragexy finddimlabel findlistitem floor
-          fontsizeheight fontsizestringwidth fresnelcos fresnelsin gamma
-          gammaeuler gammainc gammanoise gammln gammp gammq gauss gauss1d gauss2d
-          gcd getbrowserline getdefaultfontsize getdefaultfontstyle getkeystate
-          getrterror getrtlocation gizmoinfo gizmoscale gnoise grepstring hcsr
-          hermite hermitegauss hyperg0f1 hyperg1f1 hyperg2f1 hypergnoise hypergpfq
-          igorversion imag indextoscale integrate1d interp interp2d interp3d
-          inverseerf inverseerfc itemsinlist jacobicn jacobisn laguerre laguerrea
-          laguerregauss lambertw leftx legendrea limit ln log lognormalnoise
-          lorentziannoise magsqr mandelbrotpoint marcumq matrixcondition matrixdet
-          matrixdot matrixrank matrixtrace max mean median min mod moddate
-          norm numberbykey numpnts numtype numvarordefault nvar_exists p2rect
-          panelresolution paramisdefault pcsr pi pixelfromaxisval pnt2x
-          poissonnoise poly poly2d polygonarea qcsr r2polar real rightx round
-          sawtooth scaletoindex screenresolution sec sech selectnumber
-          setenvironmentvariable sign sin sinc sinh sinintegral sphericalbessj
-          sphericalbessjd sphericalbessy sphericalbessyd sphericalharmonics sqrt
-          startmstimer statsbetacdf statsbetapdf statsbinomialcdf statsbinomialpdf
-          statscauchycdf statscauchypdf statschicdf statschipdf statscmssdcdf
-          statscorrelation statsdexpcdf statsdexppdf statserlangcdf statserlangpdf
-          statserrorpdf statsevaluecdf statsevaluepdf statsexpcdf statsexppdf
-          statsfcdf statsfpdf statsfriedmancdf statsgammacdf statsgammapdf
-          statsgeometriccdf statsgeometricpdf statsgevcdf statsgevpdf
-          statshypergcdf statshypergpdf statsinvbetacdf statsinvbinomialcdf
-          statsinvcauchycdf statsinvchicdf statsinvcmssdcdf statsinvdexpcdf
-          statsinvevaluecdf statsinvexpcdf statsinvfcdf statsinvfriedmancdf
-          statsinvgammacdf statsinvgeometriccdf statsinvkuipercdf
-          statsinvlogisticcdf statsinvlognormalcdf statsinvmaxwellcdf
-          statsinvmoorecdf statsinvnbinomialcdf statsinvncchicdf statsinvncfcdf
-          statsinvnormalcdf statsinvparetocdf statsinvpoissoncdf statsinvpowercdf
-          statsinvqcdf statsinvqpcdf statsinvrayleighcdf statsinvrectangularcdf
-          statsinvspearmancdf statsinvstudentcdf statsinvtopdowncdf
-          statsinvtriangularcdf statsinvusquaredcdf statsinvvonmisescdf
-          statsinvweibullcdf statskuipercdf statslogisticcdf statslogisticpdf
-          statslognormalcdf statslognormalpdf statsmaxwellcdf statsmaxwellpdf
-          statsmedian statsmoorecdf statsnbinomialcdf statsnbinomialpdf
-          statsncchicdf statsncchipdf statsncfcdf statsncfpdf statsnctcdf
-          statsnctpdf statsnormalcdf statsnormalpdf statsparetocdf statsparetopdf
-          statspermute statspoissoncdf statspoissonpdf statspowercdf
-          statspowernoise statspowerpdf statsqcdf statsqpcdf statsrayleighcdf
-          statsrayleighpdf statsrectangularcdf statsrectangularpdf statsrunscdf
-          statsspearmanrhocdf statsstudentcdf statsstudentpdf statstopdowncdf
-          statstriangularcdf statstriangularpdf statstrimmedmean statsusquaredcdf
-          statsvonmisescdf statsvonmisesnoise statsvonmisespdf statswaldcdf
-          statswaldpdf statsweibullcdf statsweibullpdf stopmstimer str2num
-          stringcrc stringmatch strlen strsearch studenta studentt sum svar_exists
-          tagval tan tanh textencodingcode threadgroupcreate threadgrouprelease
-          threadgroupwait threadprocessorcount threadreturnvalue ticks trunc
-          unsetenvironmentvariable variance vcsr voigtfunc wavecrc wavedims
-          waveexists wavemax wavemin waverefsequal wavetextencoding wavetype
-          whichlistitem wintype wnoise x2pnt xcsr zcsr zerniker zeta addlistitem
-          annotationinfo annotationlist axisinfo axislist base64_decode
-          base64_encode capturehistory childwindowlist cleanupname contourinfo
-          contournamelist controlnamelist converttextencoding csrinfo csrwave
-          csrxwave ctablist datafolderdir date fetchurl fontlist funcrefinfo
-          functioninfo functionlist functionpath getbrowserselection getdatafolder
-          getdefaultfont getdimlabel getenvironmentvariable geterrmessage
-          getformula getindependentmodulename getindexedobjname
-          getindexedobjnamedfr getrterrmessage getrtlocinfo getrtstackinfo
-          getscraptext getuserdata getwavesdatafolder greplist guideinfo
-          guidenamelist hash igorinfo imageinfo imagenamelist
-          independentmodulelist indexeddir indexedfile juliantodate layoutinfo
-          listmatch lowerstr macrolist nameofwave normalizeunicode note num2char
-          num2istr num2str operationlist padstring parsefilepath pathlist pictinfo
-          pictlist possiblyquotename proceduretext removebykey removeending
-          removefromlist removelistitem replacenumberbykey replacestring
-          replacestringbykey secs2date secs2time selectstring sortlist
-          specialcharacterinfo specialcharacterlist specialdirpath stringbykey
-          stringfromlist stringlist strvarordefault tableinfo textencodingname
-          textfile threadgroupgetdf time tracefrompixel traceinfo tracenamelist
-          trimstring uniquename unpadstring upperstr urldecode urlencode
-          variablelist waveinfo wavelist wavename waverefwavetolist waveunits
-          winlist winname winrecreation wmfindwholeword xwavename
-          contournametowaveref csrwaveref csrxwaveref imagenametowaveref
-          listtotextwave listtowaverefwave newfreewave tagwaveref
-          tracenametowaveref waverefindexed waverefindexeddfr xwavereffromtrace
-          getdatafolderdfr getwavesdatafolderdfr newfreedatafolder
+          AddListItem AiryA AiryAD AiryB AiryBD AnnotationInfo
+          AnnotationList AxisInfo AxisList AxisValFromPixel
+          AxonTelegraphAGetDataNum AxonTelegraphAGetDataString
+          AxonTelegraphAGetDataStruct AxonTelegraphGetDataNum
+          AxonTelegraphGetDataString AxonTelegraphGetDataStruct
+          AxonTelegraphGetTimeoutMs AxonTelegraphSetTimeoutMs
+          Base64Decode Base64Encode Besseli Besselj Besselk
+          Bessely BinarySearch BinarySearchInterp CTabList
+          CaptureHistory CaptureHistoryStart CheckName
+          ChildWindowList CleanupName ContourInfo ContourNameList
+          ContourNameToWaveRef ContourZ ControlNameList
+          ConvertTextEncoding CountObjects CountObjectsDFR
+          CreationDate CsrInfo CsrWave CsrWaveRef CsrXWave
+          CsrXWaveRef DataFolderDir DataFolderExists
+          DataFolderRefStatus DataFolderRefsEqual DateToJulian
+          Dawson DimDelta DimOffset DimSize Faddeeva FetchURL
+          FindDimLabel FindListItem FontList FontSizeHeight
+          FontSizeStringWidth FresnelCos FresnelSin FuncRefInfo
+          FunctionInfo FunctionList FunctionPath
+          GISGetAllFileFormats GISSRefsAreEqual Gauss Gauss1D
+          Gauss2D GetBrowserLine GetBrowserSelection
+          GetDataFolder GetDataFolderDFR GetDefaultFont
+          GetDefaultFontSize GetDefaultFontStyle GetDimLabel
+          GetEnvironmentVariable GetErrMessage GetFormula
+          GetIndependentModuleName GetIndexedObjName
+          GetIndexedObjNameDFR GetKeyState GetRTErrMessage
+          GetRTError GetRTLocInfo GetRTLocation GetRTStackInfo
+          GetScrapText GetUserData GetWavesDataFolder
+          GetWavesDataFolderDFR GizmoInfo GizmoScale GrepList
+          GrepString GuideInfo GuideNameList HDF5AttributeInfo
+          HDF5DatasetInfo HDF5LibraryInfo HDF5TypeInfo Hash
+          HyperG0F1 HyperG1F1 HyperG2F1 HyperGNoise HyperGPFQ
+          IgorInfo IgorVersion ImageInfo ImageNameList
+          ImageNameToWaveRef IndependentModuleList IndexToScale
+          IndexedDir IndexedFile Inf Integrate1D Interp2D
+          Interp3D ItemsInList JacobiCn JacobiSn JulianToDate
+          Laguerre LaguerreA LaguerreGauss LambertW LayoutInfo
+          LegendreA ListMatch ListToTextWave ListToWaveRefWave
+          LowerStr MCC_AutoBridgeBal MCC_AutoFastComp
+          MCC_AutoPipetteOffset MCC_AutoSlowComp
+          MCC_AutoWholeCellComp MCC_GetBridgeBalEnable
+          MCC_GetBridgeBalResist MCC_GetFastCompCap
+          MCC_GetFastCompTau MCC_GetHolding MCC_GetHoldingEnable
+          MCC_GetMode MCC_GetNeutralizationCap
+          MCC_GetNeutralizationEnable MCC_GetOscKillerEnable
+          MCC_GetPipetteOffset MCC_GetPrimarySignalGain
+          MCC_GetPrimarySignalHPF MCC_GetPrimarySignalLPF
+          MCC_GetRsCompBandwidth MCC_GetRsCompCorrection
+          MCC_GetRsCompEnable MCC_GetRsCompPrediction
+          MCC_GetSecondarySignalGain MCC_GetSecondarySignalLPF
+          MCC_GetSlowCompCap MCC_GetSlowCompTau
+          MCC_GetSlowCompTauX20Enable MCC_GetSlowCurrentInjEnable
+          MCC_GetSlowCurrentInjLevel
+          MCC_GetSlowCurrentInjSetlTime MCC_GetWholeCellCompCap
+          MCC_GetWholeCellCompEnable MCC_GetWholeCellCompResist
+          MCC_SelectMultiClamp700B MCC_SetBridgeBalEnable
+          MCC_SetBridgeBalResist MCC_SetFastCompCap
+          MCC_SetFastCompTau MCC_SetHolding MCC_SetHoldingEnable
+          MCC_SetMode MCC_SetNeutralizationCap
+          MCC_SetNeutralizationEnable MCC_SetOscKillerEnable
+          MCC_SetPipetteOffset MCC_SetPrimarySignalGain
+          MCC_SetPrimarySignalHPF MCC_SetPrimarySignalLPF
+          MCC_SetRsCompBandwidth MCC_SetRsCompCorrection
+          MCC_SetRsCompEnable MCC_SetRsCompPrediction
+          MCC_SetSecondarySignalGain MCC_SetSecondarySignalLPF
+          MCC_SetSlowCompCap MCC_SetSlowCompTau
+          MCC_SetSlowCompTauX20Enable MCC_SetSlowCurrentInjEnable
+          MCC_SetSlowCurrentInjLevel
+          MCC_SetSlowCurrentInjSetlTime MCC_SetTimeoutMs
+          MCC_SetWholeCellCompCap MCC_SetWholeCellCompEnable
+          MCC_SetWholeCellCompResist MPFXEMGPeak
+          MPFXExpConvExpPeak MPFXGaussPeak MPFXLorenzianPeak
+          MPFXVoigtPeak MacroList MandelbrotPoint MarcumQ
+          MatrixCondition MatrixDet MatrixDot MatrixRank
+          MatrixTrace ModDate NVAR_Exists NaN NameOfWave
+          NewFreeDataFolder NewFreeWave NormalizeUnicode
+          NumVarOrDefault NumberByKey OperationList PICTInfo
+          PICTList PadString PanelResolution ParamIsDefault
+          ParseFilePath PathList Pi PixelFromAxisVal PolygonArea
+          PossiblyQuoteName ProcedureText RemoveByKey
+          RemoveEnding RemoveFromList RemoveListItem
+          ReplaceNumberByKey ReplaceString ReplaceStringByKey
+          SQL2DBinaryWaveToTextWave SQLAllocHandle SQLAllocStmt
+          SQLBinaryWavesToTextWave SQLBindCol SQLBindParameter
+          SQLBrowseConnect SQLBulkOperations SQLCancel
+          SQLCloseCursor SQLColAttributeNum SQLColAttributeStr
+          SQLColumnPrivileges SQLColumns SQLConnect
+          SQLDataSources SQLDescribeCol SQLDescribeParam
+          SQLDisconnect SQLDriverConnect SQLDrivers SQLEndTran
+          SQLError SQLExecDirect SQLExecute SQLFetch
+          SQLFetchScroll SQLForeignKeys SQLFreeConnect SQLFreeEnv
+          SQLFreeHandle SQLFreeStmt SQLGetConnectAttrNum
+          SQLGetConnectAttrStr SQLGetCursorName SQLGetDataNum
+          SQLGetDataStr SQLGetDescFieldNum SQLGetDescFieldStr
+          SQLGetDescRec SQLGetDiagFieldNum SQLGetDiagFieldStr
+          SQLGetDiagRec SQLGetEnvAttrNum SQLGetEnvAttrStr
+          SQLGetFunctions SQLGetInfoNum SQLGetInfoStr
+          SQLGetStmtAttrNum SQLGetStmtAttrStr SQLGetTypeInfo
+          SQLMoreResults SQLNativeSql SQLNumParams
+          SQLNumResultCols SQLNumResultRowsIfKnown
+          SQLNumRowsFetched SQLParamData SQLPrepare
+          SQLPrimaryKeys SQLProcedureColumns SQLProcedures
+          SQLPutData SQLReinitialize SQLRowCount
+          SQLSetConnectAttrNum SQLSetConnectAttrStr
+          SQLSetCursorName SQLSetDescFieldNum SQLSetDescFieldStr
+          SQLSetDescRec SQLSetEnvAttrNum SQLSetEnvAttrStr
+          SQLSetPos SQLSetStmtAttrNum SQLSetStmtAttrStr
+          SQLSpecialColumns SQLStatistics SQLTablePrivileges
+          SQLTables SQLTextWaveTo2DBinaryWave
+          SQLTextWaveToBinaryWaves SQLUpdateBoundValues
+          SQLXOPCheckState SVAR_Exists ScreenResolution Secs2Date
+          Secs2Time SelectNumber SelectString
+          SetEnvironmentVariable SortList SpecialCharacterInfo
+          SpecialCharacterList SpecialDirPath SphericalBessJ
+          SphericalBessJD SphericalBessY SphericalBessYD
+          SphericalHarmonics StartMSTimer StatsBetaCDF
+          StatsBetaPDF StatsBinomialCDF StatsBinomialPDF
+          StatsCMSSDCDF StatsCauchyCDF StatsCauchyPDF StatsChiCDF
+          StatsChiPDF StatsCorrelation StatsDExpCDF StatsDExpPDF
+          StatsEValueCDF StatsEValuePDF StatsErlangCDF
+          StatsErlangPDF StatsErrorPDF StatsExpCDF StatsExpPDF
+          StatsFCDF StatsFPDF StatsFriedmanCDF StatsGEVCDF
+          StatsGEVPDF StatsGammaCDF StatsGammaPDF
+          StatsGeometricCDF StatsGeometricPDF StatsHyperGCDF
+          StatsHyperGPDF StatsInvBetaCDF StatsInvBinomialCDF
+          StatsInvCMSSDCDF StatsInvCauchyCDF StatsInvChiCDF
+          StatsInvDExpCDF StatsInvEValueCDF StatsInvExpCDF
+          StatsInvFCDF StatsInvFriedmanCDF StatsInvGammaCDF
+          StatsInvGeometricCDF StatsInvKuiperCDF
+          StatsInvLogNormalCDF StatsInvLogisticCDF
+          StatsInvMaxwellCDF StatsInvMooreCDF
+          StatsInvNBinomialCDF StatsInvNCChiCDF StatsInvNCFCDF
+          StatsInvNormalCDF StatsInvParetoCDF StatsInvPoissonCDF
+          StatsInvPowerCDF StatsInvQCDF StatsInvQpCDF
+          StatsInvRayleighCDF StatsInvRectangularCDF
+          StatsInvSpearmanCDF StatsInvStudentCDF
+          StatsInvTopDownCDF StatsInvTriangularCDF
+          StatsInvUsquaredCDF StatsInvVonMisesCDF
+          StatsInvWeibullCDF StatsKuiperCDF StatsLogNormalCDF
+          StatsLogNormalPDF StatsLogisticCDF StatsLogisticPDF
+          StatsMaxwellCDF StatsMaxwellPDF StatsMedian
+          StatsMooreCDF StatsNBinomialCDF StatsNBinomialPDF
+          StatsNCChiCDF StatsNCChiPDF StatsNCFCDF StatsNCFPDF
+          StatsNCTCDF StatsNCTPDF StatsNormalCDF StatsNormalPDF
+          StatsParetoCDF StatsParetoPDF StatsPermute
+          StatsPoissonCDF StatsPoissonPDF StatsPowerCDF
+          StatsPowerNoise StatsPowerPDF StatsQCDF StatsQpCDF
+          StatsRayleighCDF StatsRayleighPDF StatsRectangularCDF
+          StatsRectangularPDF StatsRunsCDF StatsSpearmanRhoCDF
+          StatsStudentCDF StatsStudentPDF StatsTopDownCDF
+          StatsTriangularCDF StatsTriangularPDF StatsTrimmedMean
+          StatsUSquaredCDF StatsVonMisesCDF StatsVonMisesNoise
+          StatsVonMisesPDF StatsWaldCDF StatsWaldPDF
+          StatsWeibullCDF StatsWeibullPDF StopMSTimer
+          StrVarOrDefault StringByKey StringFromList StringList
+          StudentA StudentT TDMAddChannel TDMAddGroup
+          TDMAppendDataValues TDMAppendDataValuesTime
+          TDMChannelPropertyExists TDMCloseChannel TDMCloseFile
+          TDMCloseGroup TDMCreateChannelProperty TDMCreateFile
+          TDMCreateFileProperty TDMCreateGroupProperty
+          TDMFilePropertyExists TDMGetChannelPropertyNames
+          TDMGetChannelPropertyNum TDMGetChannelPropertyStr
+          TDMGetChannelPropertyTime TDMGetChannelPropertyType
+          TDMGetChannelStringPropertyLen TDMGetChannels
+          TDMGetDataType TDMGetDataValues TDMGetDataValuesTime
+          TDMGetFilePropertyNames TDMGetFilePropertyNum
+          TDMGetFilePropertyStr TDMGetFilePropertyTime
+          TDMGetFilePropertyType TDMGetFileStringPropertyLen
+          TDMGetGroupPropertyNames TDMGetGroupPropertyNum
+          TDMGetGroupPropertyStr TDMGetGroupPropertyTime
+          TDMGetGroupPropertyType TDMGetGroupStringPropertyLen
+          TDMGetGroups TDMGetLibraryErrorDescription
+          TDMGetNumChannelProperties TDMGetNumChannels
+          TDMGetNumDataValues TDMGetNumFileProperties
+          TDMGetNumGroupProperties TDMGetNumGroups
+          TDMGroupPropertyExists TDMOpenFile TDMOpenFileEx
+          TDMRemoveChannel TDMRemoveGroup TDMReplaceDataValues
+          TDMReplaceDataValuesTime TDMSaveFile
+          TDMSetChannelPropertyNum TDMSetChannelPropertyStr
+          TDMSetChannelPropertyTime TDMSetDataValues
+          TDMSetDataValuesTime TDMSetFilePropertyNum
+          TDMSetFilePropertyStr TDMSetFilePropertyTime
+          TDMSetGroupPropertyNum TDMSetGroupPropertyStr
+          TDMSetGroupPropertyTime TableInfo TagVal TagWaveRef
+          TextEncodingCode TextEncodingName TextFile
+          ThreadGroupCreate ThreadGroupGetDF ThreadGroupGetDFR
+          ThreadGroupRelease ThreadGroupWait ThreadProcessorCount
+          ThreadReturnValue TraceFromPixel TraceInfo
+          TraceNameList TraceNameToWaveRef TrimString URLDecode
+          URLEncode UnPadString UniqueName
+          UnsetEnvironmentVariable UpperStr VariableList Variance
+          VoigtFunc VoigtPeak WaveCRC WaveDims WaveExists
+          WaveHash WaveInfo WaveList WaveMax WaveMin WaveName
+          WaveRefIndexed WaveRefIndexedDFR WaveRefWaveToList
+          WaveRefsEqual WaveTextEncoding WaveType WaveUnits
+          WhichListItem WinList WinName WinRecreation WinType
+          XWaveName XWaveRefFromTrace ZernikeR abs acos acosh
+          alog area areaXY asin asinh atan atan2 atanh beta betai
+          binomial binomialNoise binomialln cabs ceil cequal
+          char2num chebyshev chebyshevU cmplx cmpstr conj cos
+          cosIntegral cosh cot coth cpowi csc csch date date2secs
+          datetime defined deltax digamma dilogarithm ei enoise
+          equalWaves erf erfc erfcw exists exp expInt
+          expIntegralE1 expNoise fDAQmx_AI_GetReader
+          fDAQmx_AO_UpdateOutputs fDAQmx_CTR_Finished
+          fDAQmx_CTR_IsFinished fDAQmx_CTR_IsPulseFinished
+          fDAQmx_CTR_ReadCounter fDAQmx_CTR_ReadWithOptions
+          fDAQmx_CTR_SetPulseFrequency fDAQmx_CTR_Start
+          fDAQmx_ConnectTerminals fDAQmx_DIO_Finished
+          fDAQmx_DIO_PortWidth fDAQmx_DIO_Read fDAQmx_DIO_Write
+          fDAQmx_DeviceNames fDAQmx_DisconnectTerminals
+          fDAQmx_ErrorString fDAQmx_ExternalCalDate
+          fDAQmx_NumAnalogInputs fDAQmx_NumAnalogOutputs
+          fDAQmx_NumCounters fDAQmx_NumDIOPorts fDAQmx_ReadChan
+          fDAQmx_ReadNamedChan fDAQmx_ResetDevice
+          fDAQmx_ScanGetAvailable fDAQmx_ScanGetNextIndex
+          fDAQmx_ScanStart fDAQmx_ScanStop fDAQmx_ScanWait
+          fDAQmx_ScanWaitWithTimeout fDAQmx_SelfCalDate
+          fDAQmx_SelfCalibration fDAQmx_WF_IsFinished
+          fDAQmx_WF_WaitUntilFinished fDAQmx_WaveformStart
+          fDAQmx_WaveformStop fDAQmx_WriteChan factorial fakedata
+          faverage faverageXY floor gamma gammaEuler gammaInc
+          gammaNoise gammln gammp gammq gcd gnoise hcsr hermite
+          hermiteGauss imag interp inverseERF inverseERFC leftx
+          limit ln log logNormalNoise lorentzianNoise magsqr max
+          mean median min mod norm note num2char num2istr num2str
+          numpnts numtype p2rect pcsr pnt2x poissonNoise poly
+          poly2D qcsr r2polar real rightx round sawtooth
+          scaleToIndex sec sech sign sin sinIntegral sinc sinh
+          sqrt str2num stringCRC stringmatch strlen strsearch sum
+          tan tango_close_device tango_command_inout
+          tango_compute_image_proj tango_get_dev_attr_list
+          tango_get_dev_black_box tango_get_dev_cmd_list
+          tango_get_dev_status tango_get_dev_timeout
+          tango_get_error_stack tango_open_device
+          tango_ping_device tango_read_attribute
+          tango_read_attributes tango_reload_dev_interface
+          tango_resume_attr_monitor tango_set_attr_monitor_period
+          tango_set_dev_timeout tango_start_attr_monitor
+          tango_stop_attr_monitor tango_suspend_attr_monitor
+          tango_write_attribute tango_write_attributes tanh ticks
+          time trunc vcsr viAssertIntrSignal viAssertTrigger
+          viAssertUtilSignal viClear viClose viDisableEvent
+          viDiscardEvents viEnableEvent viFindNext viFindRsrc
+          viGetAttribute viGetAttributeString viGpibCommand
+          viGpibControlATN viGpibControlREN viGpibPassControl
+          viGpibSendIFC viIn16 viIn32 viIn8 viLock viMapAddress
+          viMapTrigger viMemAlloc viMemFree viMoveIn16 viMoveIn32
+          viMoveIn8 viMoveOut16 viMoveOut32 viMoveOut8 viOpen
+          viOpenDefaultRM viOut16 viOut32 viOut8 viPeek16
+          viPeek32 viPeek8 viPoke16 viPoke32 viPoke8 viRead
+          viReadSTB viSetAttribute viSetAttributeString
+          viStatusDesc viTerminate viUnlock viUnmapAddress
+          viUnmapTrigger viUsbControlIn viUsbControlOut
+          viVxiCommandQuery viWaitOnEvent viWrite wnoise x2pnt
+          xcsr zcsr zeromq_client_connect zeromq_client_connect
+          zeromq_client_recv zeromq_client_recv
+          zeromq_client_send zeromq_client_send
+          zeromq_handler_start zeromq_handler_start
+          zeromq_handler_stop zeromq_handler_stop
+          zeromq_server_bind zeromq_server_bind
+          zeromq_server_recv zeromq_server_recv
+          zeromq_server_send zeromq_server_send zeromq_set
+          zeromq_set zeromq_stop zeromq_stop
+          zeromq_test_callfunction zeromq_test_callfunction
+          zeromq_test_serializeWave zeromq_test_serializeWave
+          zeta
         )
       end
 
       def self.igorOperation
         @igorOperation ||= Set.new %w(
-          abort addfifodata addfifovectdata addmovieaudio addmovieframe adoptfiles
-          apmath append appendimage appendlayoutobject appendmatrixcontour
-          appendtext appendtogizmo appendtograph appendtolayout appendtotable
-          appendxyzcontour autopositionwindow backgroundinfo beep boundingball
-          browseurl buildmenu button cd chart checkbox checkdisplayed choosecolor
-          close closehelp closemovie closeproc colorscale colortab2wave
-          concatenate controlbar controlinfo controlupdate
-          convertglobalstringtextencoding convexhull convolve copyfile copyfolder
-          copyscales correlate createaliasshortcut createbrowser cross
-          ctrlbackground ctrlfifo ctrlnamedbackground cursor curvefit
-          customcontrol cwt debugger debuggeroptions defaultfont
-          defaultguicontrols defaultguifont defaulttextencoding defineguide
-          delayupdate deleteannotations deletefile deletefolder deletepoints
-          differentiate dir display displayhelptopic displayprocedure doalert
-          doigormenu doupdate dowindow doxopidle dpss drawaction drawarc
-          drawbezier drawline drawoval drawpict drawpoly drawrect drawrrect
-          drawtext drawusershape dspdetrend dspperiodogram duplicate
-          duplicatedatafolder dwt edgestats edit errorbars execute
-          executescripttext experimentmodified exportgizmo extract
-          fastgausstransform fastop fbinread fbinwrite fft fgetpos fifo2wave
-          fifostatus filterfir filteriir findcontour findduplicates findlevel
-          findlevels findpeak findpointsinpoly findroots findsequence findvalue
-          fpclustering fprintf freadline fsetpos fstatus ftpcreatedirectory
-          ftpdelete ftpdownload ftpupload funcfit funcfitmd gbloadwave getaxis
-          getcamera getfilefolderinfo getgizmo getlastusermenuinfo getmarquee
-          getmouse getselection getwindow graphnormal graphwavedraw graphwaveedit
-          grep groupbox hanning hideigormenus hideinfo hideprocedures hidetools
-          hilberttransform histogram ica ifft imageanalyzeparticles imageblend
-          imageboundarytomask imageedgedetection imagefileinfo imagefilter
-          imagefocus imagefromxyz imagegenerateroimask imageglcm
-          imagehistmodification imagehistogram imageinterpolate imagelineprofile
-          imageload imagemorphology imageregistration imageremovebackground
-          imagerestore imagerotate imagesave imageseedfill imageskeleton3d
-          imagesnake imagestats imagethreshold imagetransform imageunwrapphase
-          imagewindow indexsort insertpoints integrate integrate2d integrateode
-          interp3dpath interpolate2 interpolate3d jcamploadwave jointhistogram
-          killbackground killcontrol killdatafolder killfifo killfreeaxis killpath
-          killpicts killstrings killvariables killwaves killwindow kmeans label
-          layout layoutpageaction layoutslideshow legend
-          linearfeedbackshiftregister listbox loaddata loadpackagepreferences
-          loadpict loadwave loess lombperiodogram make makeindex markperftesttime
-          matrixconvolve matrixcorr matrixeigenv matrixfilter matrixgaussj
-          matrixglm matrixinverse matrixlinearsolve matrixlinearsolvetd matrixlls
-          matrixlubksub matrixlud matrixludtd matrixmultiply matrixop matrixschur
-          matrixsolve matrixsvbksub matrixsvd matrixtranspose measurestyledtext
-          mlloadwave modify modifybrowser modifycamera modifycontour modifycontrol
-          modifycontrollist modifyfreeaxis modifygizmo modifygraph modifyimage
-          modifylayout modifypanel modifytable modifywaterfall movedatafolder
-          movefile movefolder movestring movesubwindow movevariable movewave
-          movewindow multitaperpsd multithreadingcontrol neuralnetworkrun
-          neuralnetworktrain newcamera newdatafolder newfifo newfifochan
-          newfreeaxis newgizmo newimage newlayout newmovie newnotebook newpanel
-          newpath newwaterfall note notebook notebookaction open openhelp
-          opennotebook optimize parseoperationtemplate pathinfo pauseforuser
-          pauseupdate pca playmovie playmovieaction playsound popupcontextualmenu
-          popupmenu preferences primefactors print printf printgraphs printlayout
-          printnotebook printsettings printtable project pulsestats putscraptext
-          pwd quit ratiofromnumber redimension remove removecontour
-          removefromgizmo removefromgraph removefromlayout removefromtable
-          removeimage removelayoutobjects removepath rename renamedatafolder
-          renamepath renamepict renamewindow reorderimages reordertraces
-          replacetext replacewave resample resumeupdate reverse rotate save
-          savedata saveexperiment savegraphcopy savenotebook
-          savepackagepreferences savepict savetablecopy setactivesubwindow setaxis
-          setbackground setdashpattern setdatafolder setdimlabel setdrawenv
-          setdrawlayer setfilefolderinfo setformula setigorhook setigormenumode
-          setigoroption setmarquee setprocesssleep setrandomseed setscale
-          setvariable setwavelock setwavetextencoding setwindow showigormenus
-          showinfo showtools silent sleep slider smooth smoothcustom sort
-          sortcolumns soundinrecord soundinset soundinstartchart soundinstatus
-          soundinstopchart soundloadwave soundsavewave sphericalinterpolate
-          sphericaltriangulate splitstring splitwave sprintf sscanf stack
-          stackwindows statsangulardistancetest statsanova1test statsanova2nrtest
-          statsanova2rmtest statsanova2test statschitest
-          statscircularcorrelationtest statscircularmeans statscircularmoments
-          statscirculartwosampletest statscochrantest statscontingencytable
-          statsdiptest statsdunnetttest statsfriedmantest statsftest
-          statshodgesajnetest statsjbtest statskde statskendalltautest statskstest
-          statskwtest statslinearcorrelationtest statslinearregression
-          statsmulticorrelationtest statsnpmctest statsnpnominalsrtest
-          statsquantiles statsrankcorrelationtest statsresample statssample
-          statsscheffetest statsshapirowilktest statssigntest statssrtest
-          statsttest statstukeytest statsvariancestest statswatsonusquaredtest
-          statswatsonwilliamstest statswheelerwatsontest statswilcoxonranktest
-          statswrcorrelationtest structget structput sumdimension sumseries
-          tabcontrol tag textbox threadgroupputdf threadstart tile tilewindows
-          titlebox tocommandline toolsgrid triangulate3d unwrap urlrequest
-          valdisplay waveclear wavemeanstdv wavestats wavetransform wfprintf
-        )
-      end
-
-      def self.hdf5Operation
-        @hdf5Operation ||= Set.new %w(
-          hdf5createfile hdf5openfile hdf5closefile hdf5creategroup hdf5opengroup
-          hdf5listgroup hdf5closegroup hdf5listattributes hdf5attributeinfo hdf5datasetinfo
-          hdf5loaddata hdf5loadimage hdf5loadgroup hdf5savedata hdf5saveimage hdf5savegroup
-          hdf5typeinfo hdf5createlink hdf5unlinkobject hdf5libraryinfo
-          hdf5dumpstate hdf5dump hdf5dumperrors
+          APMath Abort AddFIFOData AddFIFOVectData AddMovieAudio
+          AddMovieFrame AddWavesToBoxPlot AddWavesToViolinPlot
+          AdoptFiles Append AppendBoxPlot AppendImage
+          AppendLayoutObject AppendMatrixContour AppendText
+          AppendToGizmo AppendToGraph AppendToLayout
+          AppendToTable AppendViolinPlot AppendXYZContour
+          AutoPositionWindow AxonTelegraphFindServers
+          BackgroundInfo Beep BoundingBall BoxSmooth BrowseURL
+          BuildMenu Button CWT Chart CheckBox CheckDisplayed
+          ChooseColor Close CloseHelp CloseMovie CloseProc
+          ColorScale ColorTab2Wave Concatenate ControlBar
+          ControlInfo ControlUpdate
+          ConvertGlobalStringTextEncoding ConvexHull Convolve
+          CopyDimLabels CopyFile CopyFolder CopyScales Correlate
+          CreateAliasShortcut CreateBrowser Cross CtrlBackground
+          CtrlFIFO CtrlNamedBackground Cursor CurveFit
+          CustomControl DAQmx_AI_SetupReader DAQmx_AO_SetOutputs
+          DAQmx_CTR_CountEdges DAQmx_CTR_OutputPulse
+          DAQmx_CTR_Period DAQmx_CTR_PulseWidth DAQmx_DIO_Config
+          DAQmx_DIO_WriteNewData DAQmx_Scan DAQmx_WaveformGen
+          DPSS DSPDetrend DSPPeriodogram DWT Debugger
+          DebuggerOptions DefaultFont DefaultGuiControls
+          DefaultGuiFont DefaultTextEncoding DefineGuide
+          DelayUpdate DeleteAnnotations DeleteFile DeleteFolder
+          DeletePoints Differentiate Display DisplayHelpTopic
+          DisplayProcedure DoAlert DoIgorMenu DoUpdate DoWindow
+          DoXOPIdle DrawAction DrawArc DrawBezier DrawLine
+          DrawOval DrawPICT DrawPoly DrawRRect DrawRect DrawText
+          DrawUserShape Duplicate DuplicateDataFolder EdgeStats
+          Edit ErrorBars EstimatePeakSizes Execute
+          ExecuteScriptText ExperimentInfo ExperimentModified
+          ExportGizmo Extract FBinRead FBinWrite FFT FGetPos
+          FIFO2Wave FIFOStatus FMaxFlat FPClustering FReadLine
+          FSetPos FStatus FTPCreateDirectory FTPDelete
+          FTPDownload FTPUpload FastGaussTransform FastOp
+          FilterFIR FilterIIR FindAPeak FindContour
+          FindDuplicates FindLevel FindLevels FindPeak
+          FindPointsInPoly FindRoots FindSequence FindValue
+          FuncFit FuncFitMD GBLoadWave GISCreateVectorLayer
+          GISGetRasterInfo GISGetRegisteredFileInfo
+          GISGetVectorLayerInfo GISLoadRasterData
+          GISLoadVectorData GISRasterizeVectorData
+          GISRegisterFile GISTransformCoords GISUnRegisterFile
+          GISWriteFieldData GISWriteGeometryData GISWriteRaster
+          GPIB2 GPIBRead2 GPIBReadBinary2 GPIBReadBinaryWave2
+          GPIBReadWave2 GPIBWrite2 GPIBWriteBinary2
+          GPIBWriteBinaryWave2 GPIBWriteWave2 GetAxis GetCamera
+          GetFileFolderInfo GetGizmo GetLastUserMenuInfo
+          GetMarquee GetMouse GetSelection GetWindow GraphNormal
+          GraphWaveDraw GraphWaveEdit Grep GroupBox
+          HDF5CloseFile HDF5CloseGroup HDF5ConvertColors
+          HDF5CreateFile HDF5CreateGroup HDF5CreateLink HDF5Dump
+          HDF5DumpErrors HDF5DumpState HDF5FlushFile
+          HDF5ListAttributes HDF5ListGroup HDF5LoadData
+          HDF5LoadGroup HDF5LoadImage HDF5OpenFile HDF5OpenGroup
+          HDF5SaveData HDF5SaveGroup HDF5SaveImage
+          HDF5TestOperation HDF5UnlinkObject HDFInfo
+          HDFReadImage HDFReadSDS HDFReadVset Hanning
+          HideIgorMenus HideInfo HideProcedures HideTools
+          HilbertTransform Histogram ICA IFFT ITCCloseAll2
+          ITCCloseDevice2 ITCConfigAllChannels2
+          ITCConfigChannel2 ITCConfigChannelReset2
+          ITCConfigChannelUpload2 ITCFIFOAvailable2
+          ITCFIFOAvailableAll2 ITCGetAllChannelsConfig2
+          ITCGetChannelConfig2 ITCGetCurrentDevice2
+          ITCGetDeviceInfo2 ITCGetDevices2 ITCGetErrorString2
+          ITCGetSerialNumber2 ITCGetState2 ITCGetVersions2
+          ITCInitialize2 ITCOpenDevice2 ITCReadADC2
+          ITCReadDigital2 ITCReadTimer2 ITCSelectDevice2
+          ITCSetDAC2 ITCSetGlobals2 ITCSetModes2 ITCSetState2
+          ITCStartAcq2 ITCStopAcq2 ITCUpdateFIFOPosition2
+          ITCUpdateFIFOPositionAll2 ITCWriteDigital2
+          ImageAnalyzeParticles ImageBlend ImageBoundaryToMask
+          ImageComposite ImageEdgeDetection ImageFileInfo
+          ImageFilter ImageFocus ImageFromXYZ ImageGLCM
+          ImageGenerateROIMask ImageHistModification
+          ImageHistogram ImageInterpolate ImageLineProfile
+          ImageLoad ImageMorphology ImageRegistration
+          ImageRemoveBackground ImageRestore ImageRotate
+          ImageSave ImageSeedFill ImageSkeleton3d ImageSnake
+          ImageStats ImageThreshold ImageTransform
+          ImageUnwrapPhase ImageWindow IndexSort InsertPoints
+          Integrate Integrate2D IntegrateODE Interp3DPath
+          Interpolate2 Interpolate3D JCAMPLoadWave
+          JointHistogram KMeans KillBackground KillControl
+          KillDataFolder KillFIFO KillFreeAxis KillPICTs
+          KillPath KillStrings KillVariables KillWaves
+          KillWindow Label Layout LayoutPageAction
+          LayoutSlideShow Legend LinearFeedbackShiftRegister
+          ListBox LoadData LoadPICT LoadPackagePreferences
+          LoadWave Loess LombPeriodogram MCC_FindServers
+          MFR_CheckForNewBricklets MFR_CloseResultFile
+          MFR_CreateOverviewTable MFR_GetBrickletCount
+          MFR_GetBrickletData MFR_GetBrickletDeployData
+          MFR_GetBrickletMetaData MFR_GetBrickletRawData
+          MFR_GetReportTemplate MFR_GetResultFileMetaData
+          MFR_GetResultFileName MFR_GetVernissageVersion
+          MFR_GetVersion MFR_GetXOPErrorMessage
+          MFR_OpenResultFile
+          MLLoadWave Make MakeIndex MarkPerfTestTime
+          MatrixConvolve MatrixCorr MatrixEigenV MatrixFilter
+          MatrixGLM MatrixGaussJ MatrixInverse MatrixLLS
+          MatrixLUBkSub MatrixLUD MatrixLUDTD MatrixLinearSolve
+          MatrixLinearSolveTD MatrixMultiply MatrixOP
+          MatrixSVBkSub MatrixSVD MatrixSchur MatrixSolve
+          MatrixTranspose MeasureStyledText Modify ModifyBoxPlot
+          ModifyBrowser ModifyCamera ModifyContour ModifyControl
+          ModifyControlList ModifyFreeAxis ModifyGizmo
+          ModifyGraph ModifyImage ModifyLayout ModifyPanel
+          ModifyTable ModifyViolinPlot ModifyWaterfall
+          MoveDataFolder MoveFile MoveFolder MoveString
+          MoveSubwindow MoveVariable MoveWave MoveWindow
+          MultiTaperPSD MultiThreadingControl NC_CloseFile
+          NC_DumpErrors NC_Inquire NC_ListAttributes
+          NC_ListObjects NC_LoadData NC_OpenFile NI4882
+          NILoadWave NeuralNetworkRun NeuralNetworkTrain
+          NewCamera NewDataFolder NewFIFO NewFIFOChan
+          NewFreeAxis NewGizmo NewImage NewLayout NewMovie
+          NewNotebook NewPanel NewPath NewWaterfall Note
+          Notebook NotebookAction Open OpenHelp OpenNotebook
+          Optimize PCA ParseOperationTemplate PathInfo
+          PauseForUser PauseUpdate PlayMovie PlayMovieAction
+          PlaySound PopupContextualMenu PopupMenu Preferences
+          PrimeFactors Print PrintGraphs PrintLayout
+          PrintNotebook PrintSettings PrintTable Project
+          PulseStats PutScrapText Quit RatioFromNumber
+          Redimension Remez Remove RemoveContour RemoveFromGizmo
+          RemoveFromGraph RemoveFromLayout RemoveFromTable
+          RemoveImage RemoveLayoutObjects RemovePath Rename
+          RenameDataFolder RenamePICT RenamePath RenameWindow
+          ReorderImages ReorderTraces ReplaceText ReplaceWave
+          Resample ResumeUpdate Reverse Rotate SQLHighLevelOp
+          STFT Save SaveData SaveExperiment SaveGizmoCopy
+          SaveGraphCopy SaveNotebook SavePICT
+          SavePackagePreferences SaveTableCopy
+          SetActiveSubwindow SetAxis SetBackground
+          SetDashPattern SetDataFolder SetDimLabel SetDrawEnv
+          SetDrawLayer SetFileFolderInfo SetFormula
+          SetIdlePeriod SetIgorHook SetIgorMenuMode
+          SetIgorOption SetMarquee SetProcessSleep SetRandomSeed
+          SetScale SetVariable SetWaveLock SetWaveTextEncoding
+          SetWindow ShowIgorMenus ShowInfo ShowTools Silent
+          Sleep Slider Smooth SmoothCustom Sort SortColumns
+          SoundInRecord SoundInSet SoundInStartChart
+          SoundInStatus SoundInStopChart SoundLoadWave
+          SoundSaveWave SphericalInterpolate
+          SphericalTriangulate SplitString SplitWave Stack
+          StackWindows StatsANOVA1Test StatsANOVA2NRTest
+          StatsANOVA2RMTest StatsANOVA2Test
+          StatsAngularDistanceTest StatsChiTest
+          StatsCircularCorrelationTest StatsCircularMeans
+          StatsCircularMoments StatsCircularTwoSampleTest
+          StatsCochranTest StatsContingencyTable StatsDIPTest
+          StatsDunnettTest StatsFTest StatsFriedmanTest
+          StatsHodgesAjneTest StatsJBTest StatsKDE StatsKSTest
+          StatsKWTest StatsKendallTauTest
+          StatsLinearCorrelationTest StatsLinearRegression
+          StatsMultiCorrelationTest StatsNPMCTest
+          StatsNPNominalSRTest StatsQuantiles
+          StatsRankCorrelationTest StatsResample StatsSRTest
+          StatsSample StatsScheffeTest StatsShapiroWilkTest
+          StatsSignTest StatsTTest StatsTukeyTest
+          StatsVariancesTest StatsWRCorrelationTest
+          StatsWatsonUSquaredTest StatsWatsonWilliamsTest
+          StatsWheelerWatsonTest StatsWilcoxonRankTest String
+          StructFill StructGet StructPut SumDimension SumSeries
+          TDMLoadData TDMSaveData TabControl Tag TextBox
+          ThreadGroupPutDF ThreadStart TickWavesFromAxis Tile
+          TileWindows TitleBox ToCommandLine ToolsGrid
+          Triangulate3d URLRequest Unwrap VDT2 VDTClosePort2
+          VDTGetPortList2 VDTGetStatus2 VDTOpenPort2
+          VDTOperationsPort2 VDTRead2 VDTReadBinary2
+          VDTReadBinaryWave2 VDTReadHex2 VDTReadHexWave2
+          VDTReadWave2 VDTTerminalPort2 VDTWrite2
+          VDTWriteBinary2 VDTWriteBinaryWave2 VDTWriteHex2
+          VDTWriteHexWave2 VDTWriteWave2 VISAControl VISARead
+          VISAReadBinary VISAReadBinaryWave VISAReadWave
+          VISAWrite VISAWriteBinary VISAWriteBinaryWave
+          VISAWriteWave ValDisplay Variable WaveMeanStdv
+          WaveStats WaveTransform WignerTransform WindowFunction
+          XLLoadWave cd dir fprintf printf pwd sprintf sscanf
+          wfprintf
         )
       end
 
@@ -276,9 +534,6 @@ module Rouge
           elsif self.class.igorFunction.include? m[0].downcase
             token Name::Builtin
           elsif self.class.igorOperation.include? m[0].downcase
-            token Keyword::Reserved
-            push :operationFlags
-          elsif self.class.hdf5Operation.include? m[0].downcase
             token Keyword::Reserved
             push :operationFlags
           elsif m[0].downcase =~ /\b(v|s|w)_[a-z]+[a-z0-9]*/

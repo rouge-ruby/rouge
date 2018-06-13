@@ -8,6 +8,7 @@ describe Rouge::Lexers::Kotlin do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.kt'
+      assert_guess :filename => 'foo.kts'
     end
 
     it 'guesses by mimetype' do

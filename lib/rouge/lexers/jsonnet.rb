@@ -144,7 +144,7 @@ module Rouge
       state :string_block do
         mixin :string
         rule /\|\|\|/, Str, :pop!
-        rule /.*/, Str
+        rule /(.*?)(?=\|\|\|)/m, Str
       end
     end
   end

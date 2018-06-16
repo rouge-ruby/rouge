@@ -25,12 +25,12 @@ module Rouge
 
       def self.builtins
         @builtins ||= %w(
-          __import__ abs all any apply basestring bin bool buffer
+          __import__ abs all any apply ascii basestring bin bool buffer
           bytearray bytes callable chr classmethod cmp coerce compile
           complex delattr dict dir divmod enumerate eval execfile exit
-          file filter float frozenset getattr globals hasattr hash hex id
+          file filter float format frozenset getattr globals hasattr hash hex id
           input int intern isinstance issubclass iter len list locals
-          long map max min next object oct open ord pow property range
+          long map max memoryview min next object oct open ord pow property range
           raw_input reduce reload repr reversed round set setattr slice
           sorted staticmethod str sum super tuple type unichr unicode
           vars xrange zip

@@ -130,10 +130,11 @@ module Rouge
 
         rule /(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
         rule /\d+e[+-]?[0-9]+/i, Num::Float
-        rule /0[0-7]+/, Num::Oct
-        rule /0x[a-f0-9]+/i, Num::Hex
+        rule /0b(_?[0-1])+/i, Num::Bin
+        rule /0o(_?[0-7])+/i, Num::Oct
+        rule /0x(_?[a-f0-9])+/i, Num::Hex
         rule /\d+L/, Num::Integer::Long
-        rule /\d+/, Num::Integer
+        rule /([1-9](_?[0-9])*|0(_?0)*)/, Num::Integer
       end
 
       state :funcname do

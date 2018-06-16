@@ -79,9 +79,8 @@ module Rouge
 
       # Multiple line string with tripple double quotes, e.g. """ multi """
       state :multiline_string do
-        rule /\s*"""/, Str, :pop!
-        rule /.*/, Str
-        rule /\s*/, Str
+        rule /"""/, Str, :pop!
+        rule /(.*?)(?=""")/m, Str
       end
 
     end

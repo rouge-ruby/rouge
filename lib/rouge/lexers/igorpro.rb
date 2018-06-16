@@ -580,9 +580,9 @@ module Rouge
         rule /[=]/, Punctuation, :assignment
         rule object, Name::Variable
         rule /[\[\]]/, Punctuation # optional variables in functions
-        rule /[,]/, Punctuation, :parse_variables
+        rule /[,]/, Punctuation
         rule /\)/, Punctuation, :pop! # end of function
-        rule %r([/][a-z]+)i, Keyword::Pseudo, :parse_variables
+        rule %r([/][a-z]+)i, Keyword::Pseudo
         rule(//) { pop! }
       end
 
@@ -655,8 +655,7 @@ module Rouge
           # doxygen comments
           groups Comment, Comment::Special
         end
-        rule /[^\r\n]/, Comment
-        rule(//) { pop! }
+        rule /(.*?)(?=(\n|\r))/, Comment, :pop!
       end
     end
   end

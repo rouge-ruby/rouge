@@ -44,15 +44,21 @@ module Rouge
       def self.exceptions
         @exceptions ||= %w(
           ArithmeticError AssertionError AttributeError
-          BaseException DeprecationWarning EOFError EnvironmentError
-          Exception FloatingPointError FutureWarning GeneratorExit IOError
-          ImportError ImportWarning IndentationError IndexError KeyError
-          KeyboardInterrupt LookupError MemoryError NameError
-          NotImplemented NotImplementedError OSError OverflowError
-          OverflowWarning PendingDeprecationWarning ReferenceError
-          RuntimeError RuntimeWarning StandardError StopIteration
-          SyntaxError SyntaxWarning SystemError SystemExit TabError
-          TypeError UnboundLocalError UnicodeDecodeError
+          BaseException BlockingIOError BrokenPipeError BufferError
+          BytesWarning ChildProcessError ConnectionAbortedError
+          ConnectionError ConnectionRefusedError ConnectionResetError
+          DeprecationWarning EOFError EnvironmentError
+          Exception FileExistsError FileNotFoundError
+          FloatingPointError FutureWarning GeneratorExit IOError
+          ImportError ImportWarning IndentationError IndexError
+          InterruptedError IsADirectoryError KeyError KeyboardInterrupt
+          LookupError MemoryError ModuleNotFoundError NameError
+          NotADirectoryError NotImplemented NotImplementedError OSError
+          OverflowError OverflowWarning PendingDeprecationWarning
+          ProcessLookupError RecursionError ReferenceError ResourceWarning
+          RuntimeError RuntimeWarning StandardError StopAsyncIteration
+          StopIteration SyntaxError SyntaxWarning SystemError SystemExit
+          TabError TimeoutError TypeError UnboundLocalError UnicodeDecodeError
           UnicodeEncodeError UnicodeError UnicodeTranslateError
           UnicodeWarning UserWarning ValueError VMSError Warning
           WindowsError ZeroDivisionError

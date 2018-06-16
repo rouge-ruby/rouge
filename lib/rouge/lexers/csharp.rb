@@ -64,7 +64,7 @@ module Rouge
         rule /""/, Str
         rule /{/, Punctuation, :nest
         rule /"/, Str, :pop!
-        rule /./, Str
+        rule /./m, Str
       end
 
       state :root do

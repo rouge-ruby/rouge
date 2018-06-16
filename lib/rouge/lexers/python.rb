@@ -128,8 +128,13 @@ module Rouge
 
         rule identifier, Name
 
-        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
-        rule /\d+e[+-]?[0-9]+/i, Num::Float
+        digits = /[0-9](_?[0-9])*/
+        decimal = /((#{digits})?\.#{digits}|#{digits}\.)/
+        exponent = /e[+-]?#{digits}/i
+        rule /#{decimal}(#{exponent})?j?/i, Num::Float
+        rule /#{digits}#{exponent}j?/i, Num::Float
+        rule /#{digits}j/i, Num::Float
+
         rule /0b(_?[0-1])+/i, Num::Bin
         rule /0o(_?[0-7])+/i, Num::Oct
         rule /0x(_?[a-f0-9])+/i, Num::Hex

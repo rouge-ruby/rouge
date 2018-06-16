@@ -80,7 +80,8 @@ module Rouge
         rule /\\/, Text
 
         rule /(in|is|and|or|not)\b/, Operator::Word
-        rule /!=|==|<<|>>|[-~+\/*%=<>&^|]/, Operator
+        rule /(<<|>>|\/\/|\*\*)=?/, Operator
+        rule /[-~+\/*%=<>&^|@]=?|!=/, Operator
         rule /\.(?![0-9])/, Operator  # so it doesn't match float literals
 
         rule /(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do

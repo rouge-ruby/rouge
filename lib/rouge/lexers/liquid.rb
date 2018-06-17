@@ -237,7 +237,7 @@ module Rouge
       end
 
       state :whitespace do
-        rule /[ \t]+/, Text::Whitespace
+        rule /[\s\t\n]+/, Text::Whitespace
       end
 
       state :comment do
@@ -246,7 +246,7 @@ module Rouge
           reset_stack
         end
 
-        rule /./, Comment
+        rule /./m, Comment
       end
 
       state :raw do

@@ -21,7 +21,7 @@ module Rouge
 
       state :multiline_comment do
         rule /\*\//, Comment, :pop!
-        rule /./, Comment
+        rule /(.*?)(?=\*\/)/m, Comment
       end
 
       state :number do
@@ -78,13 +78,13 @@ module Rouge
       state :indented_string do
         mixin :indented_string_content
         rule /''/, Str::Double, :pop!
-        rule /./, Str::Double
+        rule /(.*?)(?='')/m, Str::Double
       end
 
       state :double_quoted_string do
         mixin :string_content
         rule /"/, Str::Double, :pop!
-        rule /./, Str::Double
+        rule /(.*?)(?=")/m, Str::Double
       end
 
       state :operator do

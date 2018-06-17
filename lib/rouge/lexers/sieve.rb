@@ -66,7 +66,7 @@ module Rouge
         rule /"/, Str::Double, :pop!
         # Variables Extension (rfc5229)
         rule /\${(?:[0-9][.0-9]*|[a-zA-Z_][.a-zA-Z0-9_]*)}/, Str::Interpol
-        rule /./, Str::Double
+        rule /./m, Str::Double
       end
 
       state :root do

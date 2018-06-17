@@ -434,7 +434,9 @@ module Rouge
   private
     def yield_token(tok, val)
       return if val.nil? || val.empty?
-      puts "    yielding #{tok.qualname}, #{val.inspect}" if @debug
+      if @debug && (tok != nil)
+        puts "    yielding #{tok.qualname}, #{val.inspect}"
+      end
       @output_stream.yield(tok, val)
     end
   end

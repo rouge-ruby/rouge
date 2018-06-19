@@ -5,6 +5,8 @@ var myOctal = 0x123;
 var myRegex = /asdf/;
 var myComplicatedRegex = /.[.](?=x\h\[[)])[^.{}abc]{foo}{3,}x{2,3}/
 var myObject = { a: 1, b: 2 }
+var someText = "hi";
+someText += "\nthere";
 
 var test = 123
 

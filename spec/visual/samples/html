@@ -58,7 +58,7 @@ pre.syntax { padding: 5px; margin-top: 0px; }
 </style>
 </head>
 <body>
-<pre id="code-block" class="syntax"><span class="cm"># -*- coding: utf-8 -*-</span>
+<pre id = "code-block" class="syntax"><span class="cm"># -*- coding: utf-8 -*-</span>
 <span class="st st-db">&quot;&quot;&quot;</span><span class="st">
     pocoo.pkg.core.acl
     ~~~~~~~~~~~~~~~~~~

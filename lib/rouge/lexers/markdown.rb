@@ -76,7 +76,7 @@ module Rouge
         end
 
         # links and images
-        rule /(!?\[)(#{edot}+?)(\])/ do
+        rule /(!?\[)(#{edot}*?)(\])/ do
           groups Punctuation, Name::Variable, Punctuation
           push :link
         end

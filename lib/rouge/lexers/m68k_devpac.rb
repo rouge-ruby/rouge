@@ -13,64 +13,64 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-            abcd add adda addi addq addx and andi asl asr
+          abcd add adda addi addq addx and andi asl asr
 
-            bcc bcs beq bge bgt bhi ble bls blt bmi bne bpl bvc bvs bhs blo
-            bchg bclr bfchg bfclr bfests bfextu bfffo bfins bfset bftst bkpt bra bse bsr btst
+          bcc bcs beq bge bgt bhi ble bls blt bmi bne bpl bvc bvs bhs blo
+          bchg bclr bfchg bfclr bfests bfextu bfffo bfins bfset bftst bkpt bra bse bsr btst
 
-            callm cas cas2 chk chk2 clr cmp cmpa cmpi cmpm cmp2
+          callm cas cas2 chk chk2 clr cmp cmpa cmpi cmpm cmp2
 
-            dbcc dbcs dbeq dbge dbgt dbhi dble dbls dblt dbmi dbne dbpl dbvc dbvs dbhs dblo
-            dbra dbf dbt divs divsl divu divul
+          dbcc dbcs dbeq dbge dbgt dbhi dble dbls dblt dbmi dbne dbpl dbvc dbvs dbhs dblo
+          dbra dbf dbt divs divsl divu divul
 
-            eor eori exg ext extb
+          eor eori exg ext extb
 
-            illegal jmp jsr lea link lsl lsr
+          illegal jmp jsr lea link lsl lsr
 
-            move movea move16 movem movep moveq muls mulu
+          move movea move16 movem movep moveq muls mulu
 
-            nbcd neg negx nop not or ori
+          nbcd neg negx nop not or ori
 
-            pack pea rol ror roxl roxr rtd rtm rtr rts
+          pack pea rol ror roxl roxr rtd rtm rtr rts
 
-            sbcd
+          sbcd
 
-            seq sne spl smi svc svs st sf sge sgt sle slt scc shi sls scs shs slo
-            sub suba subi subq subx swap
+          seq sne spl smi svc svs st sf sge sgt sle slt scc shi sls scs shs slo
+          sub suba subi subq subx swap
 
-            tas trap trapcc TODO trapv tst
+          tas trap trapcc TODO trapv tst
 
-            unlk unpk eori
+          unlk unpk eori
         )
       end
 
       def self.keywords_type
         @keywords_type ||= Set.new %w(
-            dc ds dcb
+          dc ds dcb
         )
       end
 
       def self.reserved
         @reserved ||= Set.new %w(
-            include incdir incbin end endf endfunc endmain endproc fpu func machine main mmu opword proc set opt section
-            rept endr
-            ifeq ifne ifgt ifge iflt ifle iif ifd ifnd ifc ifnc elseif else endc
-            even cnop fail machine
-            output radix __G2 __LK
-            list nolist plen llen ttl subttl spc page listchar format
-            equ equenv equr set reg
-            rsreset rsset offset
-            cargs
-            fequ.s fequ.d fequ.x fequ.p fequ.w fequ.l fopt
-            macro endm mexit narg
+          include incdir incbin end endf endfunc endmain endproc fpu func machine main mmu opword proc set opt section
+          rept endr
+          ifeq ifne ifgt ifge iflt ifle iif ifd ifnd ifc ifnc elseif else endc
+          even cnop fail machine
+          output radix __G2 __LK
+          list nolist plen llen ttl subttl spc page listchar format
+          equ equenv equr set reg
+          rsreset rsset offset
+          cargs
+          fequ.s fequ.d fequ.x fequ.p fequ.w fequ.l fopt
+          macro endm mexit narg
         )
       end
 
       def self.builtins
         @builtins ||=Set.new %w(
-        d0 d1 d2 d3 d4 d5 d6 d7
-        a0 a1 a2 a3 a4 a5 a6 a7 a7'
-        pc usp ssp ccr
+          d0 d1 d2 d3 d4 d5 d6 d7
+          a0 a1 a2 a3 a4 a5 a6 a7 a7'
+          pc usp ssp ccr
         )
       end
 

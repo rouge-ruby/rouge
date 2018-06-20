@@ -82,7 +82,7 @@ module Rouge
       end
 
       state :inline_whitespace do
-        rule /[ \t\r]+/, Text
+        rule /[\s\t\r]+/, Text
       end
 
       state :whitespace do
@@ -92,19 +92,8 @@ module Rouge
         mixin :inline_whitespace
       end
 
-      state :expr_whitespace do
-        rule /\n+/m, Text, :expr_bol
-        mixin :whitespace
-      end
-
       state :root do
-        mixin :expr_whitespace
-        rule(//) { push :statement }
-      end
-
-      state :statement do
-        mixin :expr_whitespace
-        mixin :statements
+        rule(//) { push :statements }
       end
 
       state :statements do

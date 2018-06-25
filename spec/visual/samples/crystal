@@ -1,0 +1,229 @@
+# vim: ft=crystal
+
+# types
+
+Foo
+Foo::Bar
+
+# builtin
+Int32
+String
+
+class Foo::Bar
+end
+
+struct Foo::Bar
+end
+
+enum Foo::Bar
+end
+
+module Foo::Bar
+end
+
+lib Foo
+  struct Bar
+  end
+
+  enum Bar
+  end
+
+  union Bar
+  end
+
+  type Bar = Foo
+end
+
+
+# constants
+
+FOO
+Foo::BAR
+
+# builtins
+ARGV
+PROGRAM_NAME
+
+
+# methods
+
+def foo
+end
+
+fun foo
+end
+
+macro foo
+end
+
+def self.foo
+end
+
+def Foo.foo
+end
+
+def foo?; end
+def foo!; end
+
+def +; end
+def -; end
+def *; end
+def /; end
+def %; end
+def **; end
+def ~; end
+def |; end
+def &; end
+def ^; end
+def <<; end
+def >>; end
+def ==; end
+def ===; end
+def !=; end
+def <; end
+def <=; end
+def >; end
+def >=; end
+def <=>; end
+def =~; end
+def !~; end
+
+# variables
+
+foo
+@foo
+@@foo
+
+$?
+$~
+$1
+$2?
+
+
+# method invocations
+
+foo.foo
+foo.foo?
+foo.foo!
+
+foo.foo do |bar|
+end
+foo.foo { |bar| }
+
+`foo #{foo} bar`
+
++foo
+-foo
+foo + bar
+foo - bar
+foo * bar
+foo / bar
+foo % bar
+foo ** bar
+(foo + bar) * (foo - bar)
+
+~foo
+foo | bar
+foo & bar
+foo ^ bar
+foo << bar
+foo >> bar
+
+foo == bar
+foo === bar
+foo != bar
+foo < bar
+foo <= bar
+foo > bar
+foo >= bar
+foo <=> bar
+foo =~ bar
+foo !~ bar
+
+!foo
+foo || bar
+foo && bar
+
+# keywords like method
+foo.is_a?(Foo)
+foo.nil?
+foo.as(Foo)
+foo.as?(Foo)
+
+
+# literals
+
+# char
+'?'
+'\\'
+
+# string
+""
+"foo\"bar"
+"foo#{{foo, bar}}bar"
+%(foo #{foo} bar)
+%q{foo #{foo} bar}
+%Q<foo #{foo} bar>
+%|foo bar|
+%w[foo bar]
+
+<<-FOO
+foo bar
+#{"foo bar"}
+FOO
+<<-'FOO'
+foo bar
+#{"foo bar"}
+FOO
+
+# number
+42
+3.14
+8i8
+16i16
+32i32
+123_456_789_i64
+128i128
+8u8
+16u16
+32u32
+64u64
+128u128
+0x123456789
+0xabcdefi64
+0xABCDEFu64
+123.4f32
+123e4f32
+123f32
+456.7f64
+456e71f64
+456f64
+0o1234567
+0b01
+
+# range
+
+1..10
+1...10
+1.0..100.0
+'a'..'z'
+
+# symbol
+:foo
+:"foo\"bar"
+%i(foo bar)
+
+# regexp
+//
+/foo # bar/
+/foo # bar/mix
+%r(foo # bar)
+%r{foo # bar}mix
+
+# componds
+['?', "", 42, :foo, //]
+{'?', "", 42, :foo, //}
+Set{'?', "", 42, :foo, //}
+{'?' => "", 42 => :foo}
+{foo: '?', bar: ""}
+Hash{'?' => "", 42 => :foo}

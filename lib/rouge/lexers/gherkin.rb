@@ -132,7 +132,7 @@ module Rouge
         mixin :basic
         rule /<.*?>/, Name::Variable
         rule /".*?"/, Str
-        rule /\S[^ <]*/, Text
+        rule /\S[^ \r\n\t<]*/, Text
         rule rest_of_line, Text, :pop!
       end
     end

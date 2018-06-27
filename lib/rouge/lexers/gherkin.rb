@@ -30,6 +30,8 @@ module Rouge
           keywords[:step].map do |w|
             if w.end_with? '<'
               Regexp.escape(w.chop)
+            elsif w.end_with?(' ')
+              Regexp.escape(w)
             else
               "#{Regexp.escape(w)}\\b"
             end
@@ -128,9 +130,9 @@ module Rouge
 
       state :step do
         mixin :basic
-        rule %r/<.*?>/, Name::Variable
-        rule %r/".*?"/, Str
-        rule %r/\S+/, Text
+        rule /<.*?>/, Name::Variable
+        rule /".*?"/, Str
+        rule /\S[^ <]*/, Text
         rule rest_of_line, Text, :pop!
       end
     end

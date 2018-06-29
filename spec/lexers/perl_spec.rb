@@ -10,6 +10,7 @@ describe Rouge::Lexers::Perl do
       # *.pl needs source hints because it's also used by Prolog
       assert_guess :filename => 'foo.pl', :source => 'my $foo = 1'
       assert_guess :filename => 'foo.pm'
+      assert_guess :filename => 'test.t'
     end
 
     it 'guesses by mimetype' do

@@ -27,7 +27,7 @@ module Rouge
         @keywords_type ||= Set.new %w(
         bit bit_vector boolean boolean_vector character integer integer_vector natural positive
         real real_vector severity_level signed std_logic std_logic_vector std_ulogic
-        std_ulogic_vector string unsigned time time__vector
+        std_ulogic_vector string unsigned time time_vector
         )
       end
 

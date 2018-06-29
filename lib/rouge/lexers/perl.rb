@@ -9,7 +9,7 @@ module Rouge
       tag 'perl'
       aliases 'pl'
 
-      filenames '*.pl', '*.pm'
+      filenames '*.pl', '*.pm', '*.t'
       mimetypes 'text/x-perl', 'application/x-perl'
 
       def self.detect?(text)

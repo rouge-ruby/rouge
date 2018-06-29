@@ -15,26 +15,20 @@ module Rouge
       end
 
       BUILTINS            = /\b(?:
-                              applicable      | assert    | convert
-                            | dlopen          | dlsym     | edit
-                            | eps             | error     | exit
-                            | finalizer       | hash      | im
-                            | Inf             | invoke    | is
-                            | isa             | isequal   | load
-                            | method_exists   | Nan       | new
-                            | ntuple          | pi        | promote
-                            | promote_type    | realmax   | realmin
-                            | sizeof          | subtype   | system
-                            | throw           | tuple     | typemax
-                            | typemin         | typeof    | uid
-                            | whos
+                              true      | false    | missing | nothing
+                            | Inf       | Inf16    | Inf32   | Inf64
+                            | NaN       | NaN16    | NaN32   | NaN64
+                            | stdout    | stderr   | stdin   | devnull
+                            | pi        | π        | ℯ       | im
                             )\b/x
 
       KEYWORDS            = /\b(?:
                               function | return | module | import | export
                             | if       | else   | elseif | end    | for
-                            | in       | while  | try    | catch  | super
-                            | const
+                            | in       | isa    | while  | try    | catch
+                            | const    | local  | global | using  | struct
+                            | mutable struct    | abstract type   | finally
+                            | begin    | do     | quote  | macro  | for outer
                             )\b/x
 
       TYPES               = /\b(?:
@@ -43,14 +37,13 @@ module Rouge
                             | Int32       | UInt32         | Int64
                             | UInt64      | Int128         | UInt128
                             | Float16     | Float32        | Float64
-                            | Bool        | Inf            | Inf16
-                            | Inf32       | NaN            | NaN16
-                            | NaN32       | BigInt         | BigFloat
-                            | Char        | ASCIIString    | UTF8String
-                            | UTF16String | UTF32String    | AbstractString
-                            | WString     | String         | Regex
-                            | RegexMatch  | Complex64      | Complex128
-                            | Any         | Nothing        | None
+                            | Bool        | BigInt         | BigFloat
+                            | Complex     | ComplexF16     | ComplexF32
+                            | ComplexF64  | Missing        | Nothing
+                            | Char        | String         | SubString
+                            | Regex       | RegexMatch     | Any
+                            | Type        | DataType       | UnionAll
+                            | (Abstract)?(Array|Vector|Matrix|VecOrMat)
                             )\b/x
 
       OPERATORS           = / \+      | =        | -     | \*   | \/
@@ -63,10 +56,11 @@ module Rouge
                               | <=    | ≤        | >=    | ≥    | \.
                               | ::    | <:       | ->    | \?   | \.\*
                               | \.\^  | \.\\     | \.\/  | \\   | <
-                              | >
+                              | >     | ÷        | >:    | :    | ===
+                              | !==
                             /x
 
-      PUNCTUATION         = / [ \[ \] { } : \( \) , ; @ ] /x
+      PUNCTUATION         = / [ \[ \] { } \( \) , ; @ ] /x
 
 
       state :root do

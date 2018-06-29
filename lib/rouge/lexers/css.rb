@@ -264,7 +264,7 @@ module Rouge
       state :stanza_value do
         rule /;/, Punctuation, :pop!
         rule(/(?=})/) { pop! }
-        rule /!important\b/, Comment::Preproc
+        rule /!\s*important\b/, Comment::Preproc
         rule /^@.*?$/, Comment::Preproc
         mixin :value
       end

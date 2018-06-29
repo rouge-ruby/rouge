@@ -8,7 +8,7 @@ describe Rouge::Lexers::Mathematica do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.wl'
-      assert_guess :filename => 'foo.m'
+      assert_guess :filename => 'foo.m', :source => '(* Fibonacci numbers with memoization *)'
     end
 
     it 'guesses by mimetype' do

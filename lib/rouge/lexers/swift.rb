@@ -75,7 +75,7 @@ module Rouge
         rule /'(\\.|.)'/, Str::Char
         rule /(\d+\*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
         rule /\d+e[+-]?[0-9]+/i, Num::Float
-        rule /0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
+        rule /0o?[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule /0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer

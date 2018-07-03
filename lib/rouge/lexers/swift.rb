@@ -165,6 +165,7 @@ module Rouge
         rule /\\[(]/, Str::Escape, :interp
         rule /\\u\{\h{1,8}\}/, Str::Escape
         rule /[^\\"]+/, Str
+        rule /"""/, Str, :pop!
         rule /"/, Str, :pop!
       end
 

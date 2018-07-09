@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 
 module Rouge
-	module Lexers
-  	class Squirrel < RegexLexer
+  module Lexers
+    class Squirrel < RegexLexer
       tag 'squirrel'
       filenames '*.nut'
       mimetypes 'text/x-squirrel'
@@ -13,9 +13,8 @@ module Rouge
       any = /@?[_a-z]\w*/i
 
       state :whitespace do
-        rule /\s+/m, Text
-        rule %r(//.*?$), Comment::Single
-				rule %r(#.*?$), Comment::Single
+        rule /\s+/, Text
+        rule %r((#|//).*$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
       end
 
@@ -42,49 +41,49 @@ module Rouge
       state :root do
         mixin :whitespace
 
-				# strings
+        # strings
         rule /[$]\s*"/, Str, :splice_string
         rule /[$]@\s*"/, Str, :splice_literal
-				rule /@"(""|[^"])*"/m, Str
-				rule /"(\\.|.)*?["\n]/, Str
-				rule /'(\\.|.)'/, Str::Char
+        rule /@"(""|[^"])*"/m, Str
+        rule /"(\\.|.)*?["\n]/, Str
+        rule /'(\\.|.)'/, Str::Char
 
-				# naming
-				rule /\b(?:class)\b/, Keyword, :class_name
-				rule /\b(?:function)\b/, Keyword, :function_name
-				rule /\b(?:local)\b/, Keyword, :variable_name
+        # naming
+        rule /\b(?:class)\b/, Keyword, :class_name
+        rule /\b(?:function)\b/, Keyword, :function_name
+        rule /\b(?:local)\b/, Keyword, :variable_name
 
-				# reserved words
-				rule %r((base|break|case|catch|clone|const|default|delete|do|else|extends|for|foreach|if|in|instanceof|resume|return|static|switch|this|throw|try|typeof|while|yield)\b), Keyword
-				rule %r((class|constructor|function|local)\b), Keyword::Declaration
-				rule %r((true|false|null)\b), Keyword::Constant
+        # reserved words
+        rule %r((base|break|case|catch|clone|const|default|delete|do|else|extends|for|foreach|if|in|instanceof|resume|return|static|switch|this|throw|try|typeof|while|yield)\b), Keyword
+        rule %r((class|constructor|function|local)\b), Keyword::Declaration
+        rule %r((true|false|null)\b), Keyword::Constant
 
-				# operators and punctuation
-				rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
+        # operators and punctuation
+        rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
 
-				# numbers
-				rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
-				rule %r((?i)\d+e[+-]?\d+), Num::Float
-				rule %r((?i)0x[0-9a-f]*), Num::Hex
-				rule %r(\d+), Num::Integer
+        # numbers
+        rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
+        rule %r((?i)\d+e[+-]?\d+), Num::Float
+        rule %r((?i)0x[0-9a-f]*), Num::Hex
+        rule %r(\d+), Num::Integer
 
         rule any, Name
       end
 
       state :class_name do
         mixin :whitespace
-				rule any, Name::Class, :pop!
+        rule any, Name::Class, :pop!
       end
 
-			state :function_name do
-				mixin :whitespace
-				rule any, Name::Function, :pop!
-			end
+      state :function_name do
+        mixin :whitespace
+        rule any, Name::Function, :pop!
+      end
 
-			state :variable_name do
-				mixin :whitespace
-				rule any, Name::Variable, :pop!
-			end
+      state :variable_name do
+        mixin :whitespace
+        rule any, Name::Variable, :pop!
+      end
 
     end
   end

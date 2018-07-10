@@ -2,11 +2,11 @@
 
 module Rouge
   module Lexers
-    class M68kDevpac < RegexLexer
-      tag 'm68k_devpac'
+    class M68k < RegexLexer
+      tag 'm68k'
 
-      title "M68k (Devpac)"
-      desc "Motorola 68k Assembler (Devpac)"
+      title "M68k"
+      desc "Motorola 68k Assembler"
 
       ws = %r((?:\s|;.*?\n/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/

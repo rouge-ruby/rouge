@@ -15,6 +15,7 @@ module Rouge
         'rust,should_panic', 'rs,should_panic'
       filenames '*.rs'
       mimetypes 'text/x-rust'
+      @beginning=true
 
       def self.detect?(text)
         return true if text.shebang? 'rustc'
@@ -60,14 +61,10 @@ module Rouge
       )x
       size = /8|16|32|64/
 
-      state :start_line do
+      state :try_doc_comment do
         mixin :whitespace
-        rule %r/\s+/, Text
-        rule %r/#\[/ do
-          token Name::Decorator; push :attribute
-        end
-        rule(//) { pop! }
-        rule %r/#\s[^\n]*/, Comment::Preproc
+        rule /#\s[^\n]*/, Comment::Preproc
+        rule //, Text, :pop!
       end
 
       state :attribute do
@@ -85,9 +82,14 @@ module Rouge
       end
 
       state :root do
-        rule %r/\n/, Text, :start_line
+        if @beginning
+          rule //, Text, :try_doc_comment
+          @beginning = false
+        end
+        rule /\n/, Text, :try_doc_comment
         mixin :whitespace
-        rule %r/\b(?:#{Rust.keywords.join('|')})\b/, Keyword
+        rule /#\[/, Name::Decorator, :attribute
+        rule /\b(?:#{Rust.keywords.join('|')})\b/, Keyword
         mixin :has_literals
 
         rule %r([=-]>), Keyword

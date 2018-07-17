@@ -1,3 +1,4 @@
+#[test]
 fn f() {
     let a = String::new("hello");
     let b: &str = a;

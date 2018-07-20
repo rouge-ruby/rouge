@@ -68,7 +68,7 @@ module Rouge
         end
 
         rule /[^\S\n]+/, Text
-        rule /#.*$/, Comment
+        rule %r(#(.*)?\n), Comment::Single
         rule /[\[\]{}:(),;]/, Punctuation
         rule /\\\n/, Text
         rule /\\/, Text

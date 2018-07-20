@@ -20,7 +20,7 @@ module Rouge
         rule /#.*$/, Comment::Single
         rule %r{\b(case|cond|end|bc|lc|if|unless|try|loop|receive|fn|defmodule|
              defp?|defprotocol|defimpl|defrecord|defmacrop?|defdelegate|
-             defexception|exit|raise|throw|after|rescue|catch|else)\b(?![?!])|
+             defexception|defguardp?|defstruct|exit|raise|throw|after|rescue|catch|else)\b(?![?!])|
              (?<!\.)\b(do|\-\>)\b}x, Keyword
         rule /\b(import|require|use|recur|quote|unquote|super|refer)\b(?![?!])/, Keyword::Namespace
         rule /(?<!\.)\b(and|not|or|when|xor|in)\b/, Operator::Word

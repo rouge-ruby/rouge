@@ -12,6 +12,7 @@ practical matter.
   * Update CLI style help text ([#923](https://github.com/jneen/rouge/pull/923) by nixpulvis)
   * Fix HTMLLinewise formatter documentation in README.md ([#910](https://github.com/jneen/rouge/pull/910) by rohitpaulk)
 * Terraform Lexer (NEW - [#917](https://github.com/jneen/rouge/pull/917) by lowjoel)
+* Crystal Lexer (NEW - [#441](https://github.com/jneen/rouge/pull/441) by splattael)
 * Scheme Lexer
   * Allow square brackets ([#849](https://github.com/jneen/rouge/pull/849) by EFanZh)
 * Haskell Lexer

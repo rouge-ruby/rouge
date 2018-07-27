@@ -30,9 +30,9 @@ comment
 	extends(parent)).
 
 	:- info([
-		version is 1.36,
+		version is 1.41,
 		author is 'Paulo Moura',
-		date is 2017/06/29,
+		date is 2018/07/26,
 		comment is 'Sample prototype for testing syntax coloring.'
 	]).
 
@@ -152,8 +152,9 @@ comment
 		logtalk_load(File, Options),
 		logtalk_library_path(Library, Path),
 		logtalk_load_context(Key, Value),
-		logtalk_make(clean),
-		logtalk_make.
+		logtalk_make(Action),
+		logtalk_make,
+		logtalk_make_target_action(Target).
 
 	flags :-
 		current_logtalk_flag(Flag, Value),
@@ -181,7 +182,17 @@ comment
 
 	exception_methods :-
 		catch(Goal, Error, Catcher),
-		throw(Error).
+		throw(Error),
+		instantiation_error,
+		type_error(Type, Culprit),
+		domain_error(Domain, Culprit),
+		existence_error(Thing, Culprit),
+		permission_error(Operation, Permission, Culprit),
+		representation_error(Flag),
+		evaluation_error(Exception),
+		resource_error(Resource),
+		syntax_error(Description),
+		system_error.
 
 	all_solutions_methods :-
 		bagof(Term, Goal, List),

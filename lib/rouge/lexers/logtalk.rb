@@ -4,7 +4,7 @@ module Rouge
   module Lexers
     class Logtalk < RegexLexer
       title "Logtalk"
-      desc "The Logtalk programming language (http://logtalk.org/)"
+      desc "The Logtalk programming language (https://logtalk.org/)"
       tag 'logtalk'
       aliases 'logtalk'
       filenames '*.lgt', '*.logtalk'
@@ -54,14 +54,15 @@ module Rouge
         rule /(create_logtalk_flag|current_logtalk_flag|set_logtalk_flag)(?=[(])/, Keyword
         # Compiling, loading, and library paths
         rule /(logtalk_compile|logtalk_load)(?=[(])/, Keyword
-        rule /(logtalk_library_path|logtalk_load_context|logtalk_make)(?=[(])/, Keyword
+        rule /(logtalk_library_path|logtalk_load_context|logtalk_make|logtalk_make_target_action)(?=[(])/, Keyword
         rule /\blogtalk_make\b/, Keyword
         # Database
         rule /(clause|retract|retractall)(?=[(])/, Keyword
         rule /(abolish|asserta|assertz)(?=[(])/, Keyword
         # Control constructs
         rule /(call|catch|throw)(?=[(])/, Keyword
-        rule /(fail|false|true)\b/, Keyword
+        rule /(fail|false|true|instantiation_error|system_error)\b/, Keyword
+        rule /(type_error|domain_error|existence_error|permission_error|representation_error|evaluation_error|resource_error|syntax_error)(?=[(])/, Keyword
         # All solutions
         rule /(bagof|setof|findall|forall)(?=[(])/, Keyword
         # Multi-threading meta-predicates

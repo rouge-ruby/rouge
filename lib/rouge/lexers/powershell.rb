@@ -108,7 +108,7 @@ module Rouge
         Export-BCSecretKey Export-IscsiTargetServerConfiguration 
         Export-ODataEndpointProxy Export-RDPersonalSessionDesktopAssignment 
         Export-RDPersonalVirtualDesktopAssignment Export-ScheduledTask 
-        Find-NetIPsecRule Find-NetRoute Format-Hex Format-Volume Get-AppBackgroundTask 
+        Find-NetIPsecRule Find-NetRoute ForEach-Object Format-Hex Format-Volume Get-AppBackgroundTask 
         Get-AppvVirtualProcess Get-AppxLastError Get-AppxLog Get-AssignedAccess 
         Get-AutologgerConfig Get-BCClientConfiguration Get-BCContentServerConfiguration 
         Get-BCDataCache Get-BCDataCacheExtension Get-BCHashCache 
@@ -231,11 +231,11 @@ module Rouge
         New-StorageSubsystemVirtualDisk New-StorageTier New-TemporaryFile 
         New-VirtualDisk New-VirtualDiskClone New-VirtualDiskSnapshot New-Volume 
         New-VpnServerAddress Open-NetGPO Optimize-StoragePool Optimize-Volume 
-        Publish-BCFileContent Publish-BCWebContent Publish-SilData Read-PrinterNfcTag 
+        Parse-Path Publish-BCFileContent Publish-BCWebContent Publish-SilData Read-PrinterNfcTag 
         Register-ClusteredScheduledTask Register-DnsClient Register-IscsiSession 
         Register-ScheduledTask Register-StorageSubsystem Remove-AutologgerConfig 
         Remove-BCDataCacheExtension Remove-DAEntryPointTableItem 
-        Remove-DnsClientNrptRule Remove-DscConfigurationDocument 
+        Remove-DnsClientNrptRule Remove-Drive Remove-DscConfigurationDocument 
         Remove-DtcClusterTMMapping Remove-EtwTraceProvider Remove-EtwTraceSession 
         Remove-FileShare Remove-InitiatorId Remove-InitiatorIdFromMaskingSet 
         Remove-IscsiTargetPortal Remove-MaskingSet Remove-MpPreference Remove-MpThreat 
@@ -446,10 +446,10 @@ module Rouge
         Get-CertificateEnrollmentPolicyServer Get-CertificateNotificationTask 
         Get-ChildItem Get-CimAssociatedInstance Get-CimClass Get-CimInstance 
         Get-CimSession Get-CIPolicy Get-CIPolicyIdInfo Get-CIPolicyInfo Get-Clipboard 
-        Get-CmsMessage Get-ComputerInfo Get-ComputerRestorePoint Get-Content 
+        Get-CmsMessage Get-Command Get-ComputerInfo Get-ComputerRestorePoint Get-Content 
         Get-ControlPanelItem Get-Counter Get-Credential Get-Culture Get-DAPolicyChange 
         Get-Date Get-Event Get-EventLog Get-EventSubscriber Get-ExecutionPolicy 
-        Get-FormatData Get-Host Get-HotFix Get-IISAppPool Get-IISCentralCertProvider 
+        Get-FormatData Get-Help Get-Host Get-HotFix Get-IISAppPool Get-IISCentralCertProvider 
         Get-IISConfigAttributeValue Get-IISConfigCollection 
         Get-IISConfigCollectionElement Get-IISConfigElement Get-IISConfigSection 
         Get-IISServerManager Get-IISSharedConfig Get-IISSite Get-IscsiServerTarget 
@@ -614,7 +614,7 @@ module Rouge
         Unregister-Event Unregister-ScheduledJob Unregister-UevTemplate 
         Unregister-WindowsDeveloperLicense Update-FormatData Update-List 
         Update-TypeData Update-UevTemplate Update-WIMBootEntry Use-Transaction 
-        Use-WindowsUnattend Wait-Debugger Wait-Event Wait-Process Write-Debug 
+        Use-WindowsUnattend Wait-Debugger Wait-Event Wait-Process Where-Object Write-Debug 
         Write-Error Write-EventLog Write-Host Write-Information Write-Output 
         Write-Progress Write-Verbose Write-Warning \% \? ac asnp cat cd chdir clc clear 
         clhy cli clp cls clv cnsn compare copy cp cpi cpp curl cvpa dbp del diff dir 
@@ -668,10 +668,12 @@ module Rouge
         rule /#.*$/, Comment::Single
         rule /\b(#{OPERATORS})\s*\b/i, Operator
         rule /\b(#{ATTRIBUTES})\s*\b/i, Name::Attribute
+        rule /\b(#{BUILTINS})\s*\b(?!\.)/i, Name::Builtin
         rule /\b(#{KEYWORDS})\s*\b/i, Keyword
         rule /\b(#{KEYWORDS_TYPE})\s*\b/i, Keyword::Type
+        
         rule /\bcase\b/, Keyword, :case
-        rule /\b(#{BUILTINS})\s*\b(?!\.)/i, Name::Builtin
+        
       end
     end
   end

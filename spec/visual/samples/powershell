@@ -59,3 +59,15 @@ try {
 } catch {
     write-output "something else"
 }
+
+ForEach ($i in (1..1E4)) {
+
+    $i
+
+} | Measure-Object
+
+ForEach-Object -InputObject (1..1E4) {
+
+    $_
+
+} | Measure-Object

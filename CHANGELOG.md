@@ -4,7 +4,9 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
-## version TBD: (unreleased)
+## version 3.2.0: (2018/08/02)
+
+https://github.com/jneen/rouge/compare/v3.1.1...v3.2.0
 
 * General
   * Load pastie theme ([#809](https://github.com/jneen/rouge/pull/809) by rramsden)

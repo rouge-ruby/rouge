@@ -6,7 +6,7 @@ module Rouge
       title "Logtalk"
       desc "The Logtalk programming language (https://logtalk.org/)"
       tag 'logtalk'
-      aliases 'logtalk'
+      aliases 'lgt'
       filenames '*.lgt', '*.logtalk'
       mimetypes 'text/x-logtalk'
 
@@ -228,6 +228,7 @@ module Rouge
       end
 
       state :numbers do
+        rule /0'\\./, Num
         rule /0'./, Num
         rule /0b[01]+/, Num
         rule /0o[0-7]+/, Num

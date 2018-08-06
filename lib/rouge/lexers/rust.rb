@@ -88,7 +88,7 @@ module Rouge
         end
         rule /\n/, Text, :try_doc_comment
         mixin :whitespace
-        rule /#\[/, Name::Decorator, :attribute
+        rule /#!?\[/, Name::Decorator, :attribute
         rule /\b(?:#{Rust.keywords.join('|')})\b/, Keyword
         mixin :has_literals
 

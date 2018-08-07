@@ -19,18 +19,18 @@ module Rouge
           assert break continue del elif else except exec
           finally for global if lambda pass print raise
           return try while yield as with from import yield
-          async await
+          async await nonlocal
         )
       end
 
       def self.builtins
         @builtins ||= %w(
-          __import__ abs all any apply basestring bin bool buffer
+          __import__ abs all any apply ascii basestring bin bool buffer
           bytearray bytes callable chr classmethod cmp coerce compile
           complex delattr dict dir divmod enumerate eval execfile exit
-          file filter float frozenset getattr globals hasattr hash hex id
+          file filter float format frozenset getattr globals hasattr hash hex id
           input int intern isinstance issubclass iter len list locals
-          long map max min next object oct open ord pow property range
+          long map max memoryview min next object oct open ord pow property range
           raw_input reduce reload repr reversed round set setattr slice
           sorted staticmethod str sum super tuple type unichr unicode
           vars xrange zip
@@ -44,15 +44,21 @@ module Rouge
       def self.exceptions
         @exceptions ||= %w(
           ArithmeticError AssertionError AttributeError
-          BaseException DeprecationWarning EOFError EnvironmentError
-          Exception FloatingPointError FutureWarning GeneratorExit IOError
-          ImportError ImportWarning IndentationError IndexError KeyError
-          KeyboardInterrupt LookupError MemoryError NameError
-          NotImplemented NotImplementedError OSError OverflowError
-          OverflowWarning PendingDeprecationWarning ReferenceError
-          RuntimeError RuntimeWarning StandardError StopIteration
-          SyntaxError SyntaxWarning SystemError SystemExit TabError
-          TypeError UnboundLocalError UnicodeDecodeError
+          BaseException BlockingIOError BrokenPipeError BufferError
+          BytesWarning ChildProcessError ConnectionAbortedError
+          ConnectionError ConnectionRefusedError ConnectionResetError
+          DeprecationWarning EOFError EnvironmentError
+          Exception FileExistsError FileNotFoundError
+          FloatingPointError FutureWarning GeneratorExit IOError
+          ImportError ImportWarning IndentationError IndexError
+          InterruptedError IsADirectoryError KeyError KeyboardInterrupt
+          LookupError MemoryError ModuleNotFoundError NameError
+          NotADirectoryError NotImplemented NotImplementedError OSError
+          OverflowError OverflowWarning PendingDeprecationWarning
+          ProcessLookupError RecursionError ReferenceError ResourceWarning
+          RuntimeError RuntimeWarning StandardError StopAsyncIteration
+          StopIteration SyntaxError SyntaxWarning SystemError SystemExit
+          TabError TimeoutError TypeError UnboundLocalError UnicodeDecodeError
           UnicodeEncodeError UnicodeError UnicodeTranslateError
           UnicodeWarning UserWarning ValueError VMSError Warning
           WindowsError ZeroDivisionError
@@ -74,7 +80,9 @@ module Rouge
         rule /\\/, Text
 
         rule /(in|is|and|or|not)\b/, Operator::Word
-        rule /!=|==|<<|>>|[-~+\/*%=<>&^|.]/, Operator
+        rule /(<<|>>|\/\/|\*\*)=?/, Operator
+        rule /[-~+\/*%=<>&^|@]=?|!=/, Operator
+        rule /\.(?![0-9])/, Operator  # so it doesn't match float literals
 
         rule /(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do
           groups Keyword::Namespace,
@@ -128,12 +136,18 @@ module Rouge
 
         rule identifier, Name
 
-        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
-        rule /\d+e[+-]?[0-9]+/i, Num::Float
-        rule /0[0-7]+/, Num::Oct
-        rule /0x[a-f0-9]+/i, Num::Hex
+        digits = /[0-9](_?[0-9])*/
+        decimal = /((#{digits})?\.#{digits}|#{digits}\.)/
+        exponent = /e[+-]?#{digits}/i
+        rule /#{decimal}(#{exponent})?j?/i, Num::Float
+        rule /#{digits}#{exponent}j?/i, Num::Float
+        rule /#{digits}j/i, Num::Float
+
+        rule /0b(_?[0-1])+/i, Num::Bin
+        rule /0o(_?[0-7])+/i, Num::Oct
+        rule /0x(_?[a-f0-9])+/i, Num::Hex
         rule /\d+L/, Num::Integer::Long
-        rule /\d+/, Num::Integer
+        rule /([1-9](_?[0-9])*|0(_?0)*)/, Num::Integer
       end
 
       state :funcname do

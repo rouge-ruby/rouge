@@ -113,6 +113,8 @@ def the_word_strand():
     c = stror
     c = string
 
+py2_long = -123L
+
 # Python 3
 
 def test():
@@ -123,3 +125,20 @@ def exceptions():
         print("Hello")
     except Exception as e:
         print("Exception")
+
+# PEP 515
+integer_literals = [
+    123, -1_2_0, 0, 00, 0_0_00, 0b1, 0B1_0, 0b_1, 0b00_0,
+    0o1, 0O1_2, 0O_1, 0o00_0, 0x1, 0X1_2, 0x_1, 0x00_0
+]
+float_literals = [
+    0., 1., 00., 0_00., 1_0_0., 0_1., .0,
+    .1_2, 3.4_5, 1_2.3_4, 00_0.0_0_0, 0_0.1_2,
+    0_1_2j, 0_00J, 1.2J, 0.1j, 1_0.J,
+    0_00E+2_34_5, 0.e+1, 00_1.E-0_2, -100.e+20, 1e01,
+    0_00E+2_34_5j, 0.e+1J, 00_1.E-0_2j, -100.e+20J 1e01j
+]
+
+# PEP 465
+a = b @ c
+x @= y

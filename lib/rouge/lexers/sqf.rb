@@ -10,40 +10,40 @@ module Rouge
       desc "Status Quo Function, a Real Virtuality engine scripting language"
 
       def self.wordoperators
-        @wordoperators = Set.new %w(
+        @wordoperators ||= Set.new %w(
           and or not
         )
       end
 
       def self.initializers
-        @initializers = Set.new %w(
+        @initializers ||= Set.new %w(
           private param params
         )
       end
 
       def self.controlflow
-        @controlflow = Set.new %w(
+        @controlflow ||= Set.new %w(
           if then else exitwith switch do case default while for from to step
           foreach
         )
       end
 
       def self.constants
-        @constants = Set.new %w(
+        @constants ||= Set.new %w(
           true false player confignull controlnull displaynull grpnull
           locationnull netobjnull objnull scriptnull tasknull teammembernull
         )
       end
 
       def self.namespaces
-        @namespaces = Set.new %w(
+        @namespaces ||= Set.new %w(
           currentnamespace missionnamespace parsingnamespace profilenamespace
           uinamespace
         )
       end
 
       def self.diag_commands
-        @diag_commands = Set.new %w(
+        @diag_commands ||= Set.new %w(
           diag_activemissionfsms diag_activesqfscripts diag_activesqsscripts
           diag_activescripts diag_captureframe diag_captureframetofile
           diag_captureslowframe diag_codeperformance diag_drawmode diag_enable
@@ -56,10 +56,6 @@ module Rouge
       def self.commands
         load Pathname.new(__FILE__).dirname.join("sqf/commands.rb")
         @commands = self.commands
-      end
-
-      def self.detect?(text)
-        false
       end
 
       state :root do
@@ -107,7 +103,6 @@ module Rouge
           end
         end
       end
-
     end
   end
 end

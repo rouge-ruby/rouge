@@ -112,7 +112,7 @@ module Rouge
 
         rule %r/[~!%^&*+=\|:.<>\/?@-]+/, Operator
         rule %r/[\[\]{}();,]/, Punctuation
-        rule %r/class\b/, Keyword, :classname
+        rule %r/(class|interface|trait)\b/, Keyword::Declaration, :classname
         # anonymous functions
         rule %r/(function)(\s*)(?=\()/ do
           groups Keyword, Text

@@ -4,6 +4,16 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 3.2.1: (2018/08/16)
+
+https://github.com/jneen/rouge/compare/v3.2.0...v3.2.1
+
+* Perl Lexer
+  * Allow any non-whitespace character to delimit regexes ([#974](https://github.com/jneen/rouge/pull/974) by dblessing)
+    * Details: In specific cases where a previously unsupported regex delimiter was
+      used, a later rule could cause a backtrack in the regex system.
+      This resulted in Rouge hanging for an unspecified amount of time.
+
 ## version 3.2.0: (2018/08/02)
 
 https://github.com/jneen/rouge/compare/v3.1.1...v3.2.0

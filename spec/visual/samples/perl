@@ -225,4 +225,8 @@ sub foo {
 
 # operators
 my $moduloOperation = $totalNumber % $columns ? 1 : 0;
+$moduloOperation = 2;
 my $addOperation = $totalNumber + $myOtherVar;
+
+# regexes delimited by non-standard (non-whitespace) character
+if $filename and $filename =~ m,usr/share/doc/[^/]+/examples/,;

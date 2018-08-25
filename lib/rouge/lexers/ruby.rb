@@ -9,7 +9,8 @@ module Rouge
       aliases 'rb'
       filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
                 'Rakefile', 'Guardfile', 'Gemfile', 'Capfile', 'Podfile',
-                'Vagrantfile', '*.ru', '*.prawn', 'Berksfile', '*.arb'
+                'Vagrantfile', '*.ru', '*.prawn', 'Berksfile', '*.arb',
+                'Fastfile', 'Deliverfile', 'Appfile'
 
       mimetypes 'text/x-ruby', 'application/x-ruby'
 

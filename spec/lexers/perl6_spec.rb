@@ -17,7 +17,7 @@ describe Rouge::Lexers::Perl6 do
     end
 
     it 'guesses by source' do
-      assert_guess :source => '#!/usr/local/env perl6'
+      assert_guess :source => '#!/usr/bin/env perl6'
     end
   end
 end

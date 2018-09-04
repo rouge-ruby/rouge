@@ -10,3 +10,12 @@ node /www\.example\.com/ {
     }
   }
 }
+
+class foo::bar (
+  Array[String] = foo::bar::baz,
+) {
+  $foo = [
+    'bar',
+    'baz',
+  ]
+}

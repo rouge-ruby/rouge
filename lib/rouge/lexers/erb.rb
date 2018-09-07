@@ -38,7 +38,7 @@ module Rouge
 
       state :comment do
         rule close, Comment, :pop!
-        rule /.+(?=#{close})|.+/m, Comment
+        rule /.+?(?=#{close})|.+/m, Comment
       end
 
       state :ruby do

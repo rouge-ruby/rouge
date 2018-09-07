@@ -383,3 +383,12 @@ foo = replicate n '\x1f363'
 
 bar :: String
 bar = "\x1f389\x1f363\x1f389"
+
+quasi1 = [quoter|Some quoted text|]
+
+quasi2 = [quoter'|Some text with a | in it|]
+
+quasi3 = [here|Newlines
+are part of
+the quotation
+|]

@@ -9,7 +9,7 @@ module Rouge
       tag 'objective_c'
       title "Objective-C"
       desc 'an extension of C commonly used to write Apple software'
-      aliases 'objc'
+      aliases 'objc', 'obj-c', 'obj_c', 'objectivec'
       filenames '*.m', '*.h'
 
       mimetypes 'text/x-objective_c', 'application/x-objective_c'

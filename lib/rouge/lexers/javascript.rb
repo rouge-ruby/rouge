@@ -207,6 +207,7 @@ module Rouge
 
       state :dq do
         rule /[^\\"]+/, Str::Double
+        rule /\\n/, Str::Escape
         rule /\\"/, Str::Escape
         rule /"/, Str::Double, :pop!
       end

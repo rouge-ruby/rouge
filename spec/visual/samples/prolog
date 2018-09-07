@@ -48,6 +48,10 @@ turing(Tape0, Tape) :-
  * This is a multiline comment.
 */
 
+% This is a single-line comment
+
+A is 1. % This is a trailing comment
+
 perform(qf, Ls, Ls, Rs, Rs) :- !.
 perform(Q0, Ls0, Ls, Rs0, Rs) :-
     symbol(Rs0, Sym, RsRest),

@@ -4,6 +4,58 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 3.2.1: (2018/08/16)
+
+https://github.com/jneen/rouge/compare/v3.2.0...v3.2.1
+
+* Perl Lexer
+  * Allow any non-whitespace character to delimit regexes ([#974](https://github.com/jneen/rouge/pull/974) by dblessing)
+    * Details: In specific cases where a previously unsupported regex delimiter was
+      used, a later rule could cause a backtrack in the regex system.
+      This resulted in Rouge hanging for an unspecified amount of time.
+
+## version 3.2.0: (2018/08/02)
+
+https://github.com/jneen/rouge/compare/v3.1.1...v3.2.0
+
+* General
+  * Load pastie theme ([#809](https://github.com/jneen/rouge/pull/809) by rramsden)
+  * Fix build failures ([#892](https://github.com/jneen/rouge/pull/892) by olleolleolle)
+  * Update CLI style help text ([#923](https://github.com/jneen/rouge/pull/923) by nixpulvis)
+  * Fix HTMLLinewise formatter documentation in README.md ([#910](https://github.com/jneen/rouge/pull/910) by rohitpaulk)
+* Terraform Lexer (NEW - [#917](https://github.com/jneen/rouge/pull/917) by lowjoel)
+* Crystal Lexer (NEW - [#441](https://github.com/jneen/rouge/pull/441) by splattael)
+* Scheme Lexer
+  * Allow square brackets ([#849](https://github.com/jneen/rouge/pull/849) by EFanZh)
+* Haskell Lexer
+  * Support for Quasiquotations ([#868](https://github.com/jneen/rouge/pull/868) by enolan)
+* Java Lexer
+  * Support for Java 10 `var` keyword ([#888](https://github.com/jneen/rouge/pull/888) by lc-soft)
+* VHDL Lexer
+  * Fix `time_vector` keyword typo ([#911](https://github.com/jneen/rouge/pull/911) by ttobsen)
+* Perl Lexer
+  * Recognize `.t` as valid file extension ([#918](https://github.com/jneen/rouge/pull/918) by miparnisari)
+* Nix Lexer
+  * Improved escaping sequences for indented strings ([#926](https://github.com/jneen/rouge/pull/926) by veprbl)
+* Fortran Lexer
+  * Recognize `.f` as valid file extension ([#931](https://github.com/jneen/rouge/pull/931) by veprbl)
+* Igor Pro Lexer
+  * Update functions and operations for Igor Pro 8 ([#921](https://github.com/jneen/rouge/pull/921) by t-b)
+* Julia Lexer
+  * Various improvements and fixes ([#912](https://github.com/jneen/rouge/pull/912) by ararslan)
+* Kotlin Lexer
+  * Recognize `.kts` as valid file extension ([#908](https://github.com/jneen/rouge/pull/908) by mkobit)
+* CSS Lexer
+  * Minor fixes ([#916](https://github.com/jneen/rouge/pull/916) by miparnisari)
+* HTML Lexer
+  * Minor fixes ([#916](https://github.com/jneen/rouge/pull/916) by miparnisari)
+* Javascript Lexer
+  * Minor fixes ([#916](https://github.com/jneen/rouge/pull/916) by miparnisari)
+* Markdown Lexer
+  * Images may not have alt text ([#904](https://github.com/jneen/rouge/pull/904) by Himura2la)
+* ERB Lexer
+  * Fix greedy comment matching ([#902](https://github.com/jneen/rouge/pull/902) by ananace)
+
 ## version 3.1.1: 2018/01/31
 
 https://github.com/jneen/rouge/compare/v3.1.0...v3.1.1

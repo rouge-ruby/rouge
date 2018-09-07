@@ -10,7 +10,7 @@ module Rouge
       tag 'perl'
       aliases 'pl'
 
-      filenames '*.pl', '*.pm'
+      filenames '*.pl', '*.pm', '*.t'
       mimetypes 'text/x-perl', 'application/x-perl'
 
       def self.detect?(text)
@@ -78,11 +78,11 @@ module Rouge
         rule /(?:eq|lt|gt|le|ge|ne|not|and|or|cmp)\b/, Operator::Word
 
         # common delimiters
-        rule %r(s/(\\\\|\\/|[^/])*/(\\\\|\\/|[^/])*/[egimosx]*), re_tok
-        rule %r(s!(\\\\|\\!|[^!])*!(\\\\|\\!|[^!])*![egimosx]*), re_tok
-        rule %r(s\\(\\\\|[^\\])*\\(\\\\|[^\\])*\\[egimosx]*), re_tok
-        rule %r(s@(\\\\|\\@|[^@])*@(\\\\|\\@|[^@])*@[egimosx]*), re_tok
-        rule %r(s%(\\\\|\\%|[^%])*%(\\\\|\\%|[^%])*%[egimosx]*), re_tok
+        rule %r(s/(\\\\|\\/|[^/])*/(\\\\|\\/|[^/])*/[msixpodualngc]*), re_tok
+        rule %r(s!(\\\\|\\!|[^!])*!(\\\\|\\!|[^!])*![msixpodualngc]*), re_tok
+        rule %r(s\\(\\\\|[^\\])*\\(\\\\|[^\\])*\\[msixpodualngc]*), re_tok
+        rule %r(s@(\\\\|\\@|[^@])*@(\\\\|\\@|[^@])*@[msixpodualngc]*), re_tok
+        rule %r(s%(\\\\|\\%|[^%])*%(\\\\|\\%|[^%])*%[msixpodualngc]*), re_tok
 
         # balanced delimiters
         rule %r(s{(\\\\|\\}|[^}])*}\s*), re_tok, :balanced_regex
@@ -90,9 +90,13 @@ module Rouge
         rule %r(s\[(\\\\|\\\]|[^\]])*\]\s*), re_tok, :balanced_regex
         rule %r[s\((\\\\|\\\)|[^\)])*\)\s*], re_tok, :balanced_regex
 
-        rule %r(m?/(\\\\|\\/|[^/\n])*/[gcimosx]*), re_tok
+        rule %r(m?/(\\\\|\\/|[^/\n])*/[msixpodualngc]*), re_tok
         rule %r(m(?=[/!\\{<\[\(@%\$])), re_tok, :balanced_regex
-        rule %r(((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[gcimosx]*),
+
+        # Perl allows any non-whitespace character to delimit
+        # a regex when `m` is used.
+        rule %r(m(\S).*\1[msixpodualngc]*), re_tok
+        rule %r(((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[msixpodualngc]*),
           re_tok, :balanced_regex
 
         rule /\s+/, Text

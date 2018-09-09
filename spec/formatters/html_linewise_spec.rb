@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Formatters::HTMLLinewise do
   let(:subject) { Rouge::Formatters::HTMLLinewise.new(formatter, options) }

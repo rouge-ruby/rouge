@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::Swift do
   let(:subject) { Rouge::Lexers::Swift.new }
@@ -15,7 +16,7 @@ describe Rouge::Lexers::Swift do
     include Support::Lexing
 
     it 'lexes multiline comments with asterisks and forward slashes' do
-      multiline_comment = <<EOS.strip!
+      multiline_comment = <<EOS.strip
 /*
   Multiline comment
   with asterisks (*) and forward slashes (//)
@@ -27,7 +28,7 @@ EOS
     end
 
     it 'lexes nested comments as a single comment' do
-      nested_comment = <<EOS.strip!
+      nested_comment = <<EOS.strip
 /*
   /*
     Define a and b constants
@@ -45,7 +46,7 @@ EOS
 */
 EOS
 
-      separate_comment = <<EOS.strip!
+      separate_comment = <<EOS.strip
 /*
   A separate comment
 */

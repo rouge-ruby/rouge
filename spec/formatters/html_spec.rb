@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Formatters::HTML do
   let(:subject) { Rouge::Formatters::HTMLLegacy.new(options) }

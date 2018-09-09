@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'pathname'
 ROOT_DIR = Pathname.new(__FILE__).dirname.parent

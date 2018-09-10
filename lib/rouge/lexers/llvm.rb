@@ -20,6 +20,7 @@ module Rouge
         rule /#{identifier}\s*:/, Name::Label
 
         rule /@(#{identifier}|\d+)/, Name::Variable::Global
+        rule /#\d+/, Name::Variable::Global
         rule /(%|!)#{identifier}/, Name::Variable
         rule /(%|!)\d+/, Name::Variable
 

@@ -126,7 +126,7 @@ module Rouge
 
         rule strings do |m|
           thestring = m[0]
-          if /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/.match(thestring)
+          if thestring =~ /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/
             token Str::Escape
           else
             token Str

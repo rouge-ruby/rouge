@@ -24,8 +24,9 @@ module Rouge
       )
 
       name = %r'@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
+      name_backtick = %r'#{name}|`#{name}`'
 
-      id = %r'(#{name}|`#{name}`)'
+      id = %r'(#{name_backtick})'
 
       state :root do
         rule %r'^\s*\[.*?\]', Name::Attribute
@@ -76,10 +77,10 @@ module Rouge
       end
 
       state :function do
-        rule %r'(<)(#{name}(?:(?:,\s*#{name})*))(>)(\s+)' do
+        rule %r'(<)(#{name_backtick}(?:(?:,\s*#{name_backtick})*))(>)(\s+)' do
           groups Punctuation, Text, Punctuation, Text
         end
-        rule %r'(#{name})(\.)' do
+        rule %r'(#{name_backtick})(\.)' do
           groups Name::Class, Punctuation
         end
         rule id, Name::Function, :pop!

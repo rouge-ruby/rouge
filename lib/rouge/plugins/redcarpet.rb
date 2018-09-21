@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 # this file is not require'd from the root.  To use this plugin, run:
 #

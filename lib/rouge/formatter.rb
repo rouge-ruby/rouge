@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   # A Formatter takes a token stream and formats it for human viewing.
@@ -33,7 +34,7 @@ module Rouge
     def format(tokens, &b)
       return stream(tokens, &b) if block_given?
 
-      out = ''
+      out = String.new('')
       stream(tokens) { |piece| out << piece }
 
       out

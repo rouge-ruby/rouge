@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::ABAP do
   let(:subject) { Rouge::Lexers::ABAP.new }

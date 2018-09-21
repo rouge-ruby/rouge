@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Formatter do
   it 'finds terminal256' do
     assert { Rouge::Formatter.find('terminal256') }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::Prometheus do
   let(:subject) { Rouge::Lexers::Prometheus.new }
 

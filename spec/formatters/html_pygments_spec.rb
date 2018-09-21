@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Formatters::HTMLPygments do
   let(:formatter) { Rouge::Formatters::HTML.new }
   let(:source) { 'echo "Hello World"' }

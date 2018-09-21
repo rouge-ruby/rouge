@@ -29,21 +29,6 @@ module Rouge
       id = %r'(#{name_backtick})'
 
       state :root do
-        rule %r'^\s*\[.*?\]', Name::Attribute
-        rule %r'[^\S\n]+', Text
-        rule %r'\\\n', Text # line continuation
-        rule %r'//.*?$', Comment::Single
-        rule %r'/[*].*?[*]/'m, Comment::Multiline
-        rule %r'\n', Text
-        rule %r'::|!!|\?[:.]', Operator
-        rule %r"(\.\.)", Operator
-        rule %r'[~!%^&*()+=|\[\]:;,.<>/?-]', Punctuation
-        rule %r'[{}]', Punctuation
-        rule %r'@"(""|[^"])*"'m, Str
-        rule %r'""".*?"""'m, Str
-        rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
-        rule %r"'\\.'|'[^\\]'", Str::Char
-        rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
         rule %r'\b(companion)(\s+)(object)\b' do
           groups Keyword, Text, Keyword
         end
@@ -72,6 +57,21 @@ module Rouge
         end
         rule %r/\bfun\b/, Keyword
         rule /\b(?:#{keywords.join('|')})\b/, Keyword
+        rule %r'^\s*\[.*?\]', Name::Attribute
+        rule %r'[^\S\n]+', Text
+        rule %r'\\\n', Text # line continuation
+        rule %r'//.*?$', Comment::Single
+        rule %r'/[*].*?[*]/'m, Comment::Multiline
+        rule %r'\n', Text
+        rule %r'::|!!|\?[:.]', Operator
+        rule %r"(\.\.)", Operator
+        rule %r'[~!%^&*()+=|\[\]:;,.<>/?-]', Punctuation
+        rule %r'[{}]', Punctuation
+        rule %r'@"(""|[^"])*"'m, Str
+        rule %r'""".*?"""'m, Str
+        rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
+        rule %r"'\\.'|'[^\\]'", Str::Char
+        rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
         rule id, Name
       end
 

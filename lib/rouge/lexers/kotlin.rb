@@ -30,7 +30,13 @@ module Rouge
       id = %r'(#{name_backtick})'
 
       state :root do
-        rule /@#{id}/, Name::Decorator
+        rule %r'(\))(\s*)(:)(\s+)(#{name_backtick})(<)' do
+          groups Punctuation, Text, Punctuation, Text, Name::Class, Punctuation
+          push :generic_parameters
+        end
+        rule %r'(\))(\s*)(:)(\s+)(#{name_backtick})' do
+          groups Punctuation, Text, Punctuation, Text, Name::Class
+        end
         rule %r'\b(companion)(\s+)(object)\b' do
           groups Keyword, Text, Keyword
         end
@@ -74,6 +80,7 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
+        rule /@#{id}/, Name::Decorator
         rule id, Name
       end
 
@@ -99,10 +106,6 @@ module Rouge
         rule %r'(,)', Punctuation
         rule %r'(\s+)', Text
         rule %r'(>)', Punctuation, :pop!
-      end
-
-      state :function_parameter do
-
       end
 
       state :property do

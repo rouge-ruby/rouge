@@ -55,6 +55,13 @@ module Rouge
           groups Keyword, Text
           push :function
         end
+        rule %r'(#{name_backtick})(:)(\s+)(#{name_backtick})(<)' do
+          groups Name::Variable, Punctuation, Text, Name::Class, Punctuation
+          push :generic_parameters
+        end
+        rule %r'(#{name_backtick})(:)(\s+)(#{name_backtick})' do
+          groups Name::Variable, Punctuation, Text, Name::Class
+        end
         rule %r'\b(package|import)(\s+)' do
           groups Keyword, Text
           push :package
@@ -82,13 +89,7 @@ module Rouge
         rule %r'(#{name_backtick})(\.)' do
           groups Name::Class, Punctuation
         end
-        rule %r'(\()', Punctuation, :function_parameters
-        rule %r'(:)(\s+)(#{name_backtick})' do
-          groups Punctuation, Text, Name::Class
-        end
-        rule %r'(\{)', Punctuation, :pop!
-        rule %r'(\=)', Punctuation, :pop!
-        rule id, Name::Function
+        rule id, Name::Function, :pop!
       end
 
       state :generic_parameters do
@@ -98,14 +99,8 @@ module Rouge
         rule %r'(>)', Punctuation, :pop!
       end
 
-      state :function_parameters do
-        rule %r'(,)', Punctuation
-        rule %r'(\s+)', Text
-        rule %r'(@#{name_backtick})'
-        rule %r'(#{name_backtick})(\s*)(:)(\s*)(#{name_backtick})' do
-          groups Name::Variable, Text, Punctuation, Text, Name::Class
-        end
-        rule %r'\)', Punctuation, :pop!
+      state :function_parameter do
+
       end
 
       state :property do

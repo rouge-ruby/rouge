@@ -29,6 +29,9 @@ module Rouge
       id = %r'(#{name_backtick})'
 
       state :root do
+        rule %r'(\))(\s*)(:)(\s+)(#{name_backtick})' do
+          groups Punctuation, Text, Punctuation, Text, Name::Class
+        end
         rule %r'\b(companion)(\s+)(object)\b' do
           groups Keyword, Text, Keyword
         end

@@ -50,15 +50,6 @@ module Rouge
           groups Keyword::Declaration, Text
           push :class
         end
-        # rule %r'\b(fun)(\s+)(<[a-zA-Z0-9]+(?:(?:,\s*[a-zA-Z0-9]+)*)>)(\s+)([a-zA-Z0-9]+)(\()' do
-        #   groups Keyword, Text, Text, Text, Name::Function, Punctuation
-        # end
-        # rule %r'\b(fun)(\s+)(<[a-zA-Z0-9]+(?:(?:,\s*[a-zA-Z0-9]+)*)>)(\s+)([a-zA-Z0-9]+)(\.)([a-zA-Z0-9]+)(\()' do
-        #   groups Keyword, Text, Text, Text, Name::Class, Punctuation, Name::Function, Punctuation
-        # end
-        # rule %r'\b(fun)(\s+)([a-zA-Z0-9]+)(\.)([a-zA-Z0-9]+)(\()' do
-        #   groups Keyword, Text, Name::Class, Punctuation, Name::Function, Punctuation
-        # end
         rule %r'\b(fun)(\s+)' do
           groups Keyword, Text
           push :function
@@ -87,6 +78,9 @@ module Rouge
       state :function do
         rule %r'(<)(#{name}(?:(?:,\s*#{name})*))(>)(\s+)' do
           groups Punctuation, Text, Punctuation, Text
+        end
+        rule %r'(#{name})(\.)' do
+          groups Name::Class, Punctuation
         end
         rule id, Name::Function, :pop!
       end

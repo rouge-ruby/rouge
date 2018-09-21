@@ -82,7 +82,13 @@ module Rouge
         rule %r'(#{name_backtick})(\.)' do
           groups Name::Class, Punctuation
         end
-        rule id, Name::Function, :pop!
+        rule %r'(\()', Punctuation, :function_parameters
+        rule %r'(:)(\s+)(#{name_backtick})' do
+          groups Punctuation, Text, Name::Class
+        end
+        rule %r'(\{)', Punctuation, :pop!
+        rule %r'(\=)', Punctuation, :pop!
+        rule id, Name::Function
       end
 
       state :generic_parameters do
@@ -90,6 +96,16 @@ module Rouge
         rule %r'(,)', Punctuation
         rule %r'(\s+)', Text
         rule %r'(>)', Punctuation, :pop!
+      end
+
+      state :function_parameters do
+        rule %r'(,)', Punctuation
+        rule %r'(\s+)', Text
+        rule %r'(@#{name_backtick})'
+        rule %r'(#{name_backtick})(\s*)(:)(\s*)(#{name_backtick})' do
+          groups Name::Variable, Text, Punctuation, Text, Name::Class
+        end
+        rule %r'\)', Punctuation, :pop!
       end
 
       state :property do

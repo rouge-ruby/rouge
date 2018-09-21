@@ -24,7 +24,7 @@ describe Rouge::Lexers::Kotlin do
     end
 
     describe 'functions' do
-      
+
       it 'recognizes function' do
         assert_tokens_equal 'fun makeField()',
           ['Keyword', 'fun'],
@@ -66,7 +66,10 @@ describe Rouge::Lexers::Kotlin do
           ['Keyword', 'fun'],
           ['Text', " "],
           ['Punctuation', '<'],
-          ['Text', 'T, ClassT'],
+          ['Name.Class', 'T'],
+          ['Punctuation', ','],
+          ['Text', " "],
+          ['Name.Class', 'ClassT'],
           ['Punctuation', '>'],
           ['Text', " "],
           ['Name.Function', 'makeField'],
@@ -78,7 +81,10 @@ describe Rouge::Lexers::Kotlin do
           ['Keyword', 'fun'],
           ['Text', " "],
           ['Punctuation', '<'],
-          ['Text', 'T, ClassT'],
+          ['Name.Class', 'T'],
+          ['Punctuation', ','],
+          ['Text', " "],
+          ['Name.Class', 'ClassT'],
           ['Punctuation', '>'],
           ['Text', " "],
           ['Name.Class', 'String'],

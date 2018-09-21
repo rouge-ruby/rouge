@@ -77,13 +77,19 @@ module Rouge
       end
 
       state :function do
-        rule %r'(<)(#{name_backtick}(?:(?:,\s*#{name_backtick})*))(>)(\s+)' do
-          groups Punctuation, Text, Punctuation, Text
-        end
+        rule %r'(<)', Punctuation, :generic_parameters
+        rule %r'(\s+)', Text
         rule %r'(#{name_backtick})(\.)' do
           groups Name::Class, Punctuation
         end
         rule id, Name::Function, :pop!
+      end
+
+      state :generic_parameters do
+        rule id, Name::Class
+        rule %r'(,)', Punctuation
+        rule %r'(\s+)', Text
+        rule %r'(>)', Punctuation, :pop!
       end
 
       state :property do

@@ -29,6 +29,10 @@ module Rouge
       id = %r'(#{name_backtick})'
 
       state :root do
+        rule %r'(\))(\s*)(:)(\s+)(#{name_backtick})(<)' do
+          groups Punctuation, Text, Punctuation, Text, Name::Class, Punctuation
+          push :generic_parameters
+        end
         rule %r'(\))(\s*)(:)(\s+)(#{name_backtick})' do
           groups Punctuation, Text, Punctuation, Text, Name::Class
         end

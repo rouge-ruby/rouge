@@ -93,6 +93,16 @@ describe Rouge::Lexers::Kotlin do
           ['Punctuation', '()']
       end
 
+      it 'recognizes function return type' do
+        assert_tokens_equal 'fun makeField(): String',
+          ['Keyword', 'fun'],
+          ['Text', " "],
+          ['Name.Function', 'makeField'],
+          ['Punctuation', '():'],
+          ['Text', " "],
+          ['Name.Class', 'String']
+      end
+
     end
   end
 end

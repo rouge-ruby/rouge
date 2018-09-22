@@ -110,10 +110,6 @@ module Rouge
         rule %r'(>)', Punctuation, :pop!
       end
 
-      state :function_parameter do
-
-      end
-
       state :property do
         rule id, Name::Property, :pop!
       end

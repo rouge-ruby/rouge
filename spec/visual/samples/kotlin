@@ -140,4 +140,6 @@ fun <T, V> String.genericExtensionFunction() {
    return
 }
 
+val (a, b) = pair
+
 // comment at EOF (#797)

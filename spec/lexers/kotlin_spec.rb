@@ -137,6 +137,19 @@ describe Rouge::Lexers::Kotlin do
           ['Name.Class', 'String']
       end
 
+      it 'recognizes function return generic type' do
+        assert_tokens_equal 'fun makeField(): Array<String>',
+          ['Keyword', 'fun'],
+          ['Text', " "],
+          ['Name.Function', 'makeField'],
+          ['Punctuation', '():'],
+          ['Text', " "],
+          ['Name.Class', 'Array'],
+          ['Punctuation', '<'],
+          ['Name.Class', 'String'],
+          ['Punctuation', '>']
+      end
+
     end
   end
 end

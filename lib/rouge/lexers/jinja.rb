@@ -31,6 +31,10 @@ module Rouge
         @@pseudo_keywords ||= %w(true false none True False None)
       end
 
+      def self.raw_keywords
+        @@raw_keywords ||= %w(raw verbatim)
+      end
+
       def self.word_operators
         @@word_operators ||= %w(is in and or not)
       end
@@ -113,7 +117,10 @@ module Rouge
 
       state :statement do
         rule /(\w+\.?)/ do |m|
-          if self.class.keywords.include?(m[0])
+          if self.class.raw_keywords.include?(m[0])
+            token Keyword
+            goto :raw
+          elsif self.class.keywords.include?(m[0])
             groups Keyword
           elsif self.class.pseudo_keywords.include?(m[0])
             groups Keyword::Pseudo
@@ -132,6 +139,25 @@ module Rouge
         mixin :text
 
         rule /\%\}/, Comment::Preproc, :pop!
+      end
+
+      state :raw do
+        mixin :text
+
+        rule /\%\}/ do
+          token Comment::Preproc
+          push :raw_block
+        end
+      end
+
+      state :raw_block do
+        rule %r{(\{\%)(\s+)(endverbatim|endraw)(\s+)(\%\})} do
+          groups Comment::Preproc, Text::Whitespace, Keyword, Text::Whitespace,
+                 Comment::Preproc
+          pop!(2)
+        end
+
+        rule /(.+?)/, Text
       end
     end
   end

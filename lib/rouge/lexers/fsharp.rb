@@ -7,7 +7,7 @@ module Rouge
       title "FSharp"
       desc 'F# (fsharp.net)'
       tag 'fsharp'
-      filenames '*.fs', '*.fsx'
+      filenames '*.fs', '*.fsi', '*.fsx'
       mimetypes 'application/fsharp-script', 'text/x-fsharp', 'text/x-fsi'
 
       def self.keywords

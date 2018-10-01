@@ -128,11 +128,19 @@ fun makeField(s: String): Field {
     return Field(longestLine.length, lines.size) { i, j -> lines[i][j] == '*' }
 }
 
+fun `backtickedFunction`() {
+    return
+}
+
 fun <T, V> genericFunction() {
     return
 }
 
 fun String.extensionFunction() {
+   return
+}
+
+fun `String`.`backTickedExtensionFunction`() {
    return
 }
 

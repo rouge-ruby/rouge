@@ -140,4 +140,8 @@ fun <T, V> String.genericExtensionFunction() {
    return
 }
 
+@Deprecated("This is an annotation")
+fun anAnnotatedFunction() = {
+}
+
 // comment at EOF (#797)

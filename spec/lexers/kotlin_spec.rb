@@ -22,9 +22,5 @@ describe Rouge::Lexers::Kotlin do
     it 'recognizes one-line comments not followed by a newline (#797)' do
       assert_tokens_equal '// comment', ['Comment.Single', '// comment']
     end
-
-    it 'recognizes annotations' do
-      assert_tokens_equal '@Deprecated', ['Name.Decorator', '@Deprecated']
-    end
   end
 end

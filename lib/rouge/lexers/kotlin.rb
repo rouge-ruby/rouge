@@ -59,6 +59,10 @@ module Rouge
           groups Keyword, Text
           push :package
         end
+        rule %r'\b(val|var)(\s+)(\()' do
+          groups Keyword::Declaration, Text, Punctuation
+          push :destructure
+        end
         rule %r'\b(val|var)(\s+)' do
           groups Keyword::Declaration, Text
           push :property
@@ -110,6 +114,13 @@ module Rouge
 
       state :property do
         rule id, Name::Property, :pop!
+      end
+
+      state :destructure do
+        rule %r'(,)', Punctuation
+        rule %r'(\))', Punctuation, :pop!
+        rule %r'(\s+)', Text
+        rule id, Name::Property
       end
     end
   end

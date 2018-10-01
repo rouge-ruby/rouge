@@ -152,4 +152,6 @@ fun <T, V> String.genericExtensionFunction() {
 fun anAnnotatedFunction() = {
 }
 
+val (a, b) = pair
+
 // comment at EOF (#797)

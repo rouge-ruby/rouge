@@ -4,6 +4,51 @@ This log summarizes the changes in each released version of rouge. The versionin
 we use is semver, although we will often release new lexers in minor versions, as a
 practical matter.
 
+## version 3.3.0: (2018/10/01)
+
+https://github.com/jneen/rouge/compare/v3.2.1...v3.3.0
+
+> **Release Highlight**: Due to #883 with the introduction of frozen string literals,
+  Rouge memory usage and total objects dropped quite dramatically. See
+  [#883](https://github.com/jneen/rouge/pull/883) for more details. Thanks @ashmaroli
+  for this PR.
+
+* General
+  * Add frozen_string_literal ([#883](https://github.com/jneen/rouge/pull/883) ashmaroli)
+* Mathematica Lexer (NEW)
+  * Support for Mathematic/Wolfram ([#854](https://github.com/jneen/rouge/pull/854) by halirutan)
+* Motorola 68k Lexer (NEW)
+  * Add m68k assembly lexer ([#909](https://github.com/jneen/rouge/pull/909) by nguillaumin)
+* SQF Lexer (NEW)
+  * Add SQF Lexer ([#761](https://github.com/jneen/rouge/pull/761) by BaerMitUmlaut)
+  * Minor changes to SQF ([#970](https://github.com/jneen/rouge/pull/970) by dblessing)
+* JSP Lexer (NEW)
+  * Add Java Server Pages lexer ([#915](https://github.com/jneen/rouge/pull/915) by miparnisari)
+* Elixir Lexer
+  * Add `defstruct` and `defguardp` ([#960](https://github.com/jneen/rouge/pull/960) by bjfish)
+* F# / FSharp Lexer
+  * Add `.fsi` extension ([#1002](https://github.com/jneen/rouge/pull/1002) by adam-becker)
+* Kotlin Lexer
+  * Recognise annotations and map to decorator ([#995](https://github.com/jneen/rouge/pull/995) by lordcodes)
+  * Function names ([#996](https://github.com/jneen/rouge/pull/996) by lordcodes)
+  * Recognizing function parameters and return type ([#999](https://github.com/jneen/rouge/pull/999) by lordcodes)
+  * Recognize destructuring assignment ([#1001](https://github.com/jneen/rouge/pull/1001) by lordcodes)
+* Objective-C Lexer
+  * Add `objectivec` as tag/alias ([#951](https://github.com/jneen/rouge/pull/951) by revolter)
+* Prolog Lexer
+  * Add % as single-line comment ([#898](https://github.com/jneen/rouge/pull/898) by jamesnvc)
+* Puppet Lexer
+  * Add = as Operator in Puppet lexer ([#980](https://github.com/jneen/rouge/pull/980) by alexharv074)
+* Python Lexer
+  * Improve #-style comments ([#959](https://github.com/jneen/rouge/pull/959) by 1orenz0)
+  * Improvements for builtins, literals and operators ([#940](https://github.com/jneen/rouge/pull/940) by aldanor)
+* Ruby Lexer
+  * Add `Dangerfile` as Ruby filename ([#1004](https://github.com/jneen/rouge/pull/1004) by leipert)
+* Rust Lexer
+  * Add additional aliases for Rust ([#988](https://github.com/jneen/rouge/pull/988) by LegNeato)
+* Swift Lexer
+  * Add `convenience` method ([#950](https://github.com/jneen/rouge/pull/950) by damian-rzeszot)
+
 ## version 3.2.1: (2018/08/16)
 
 https://github.com/jneen/rouge/compare/v3.2.0...v3.2.1

@@ -27,6 +27,13 @@ module Rouge
         rule /\bunion\b/, Keyword, :union_definition
 
         mixin :basic
+
+        # Markdown descriptions
+        rule /(""")(.*?)(""")/m do |m|
+          token Str::Double, m[1]
+          delegate Markdown, m[2]
+          token Str::Double, m[3]
+        end
       end
 
       state :basic do

@@ -1,3 +1,23 @@
+"""
+Decimal number serialized as string.
+
+Should match regexp: `/^[+-]?[0-9]+(\.[0-9]+)$/`
+
+Format:
+  `<sign>`? `<digit>`+ ( `.` `<digit>`+ )?
+
+Example:
+ - `"1000"`
+ - `"0.00000001"`
+ - `"-10"`
+ - `"+1"`
+
+This is invalid:
+ - `".01"` *missing preceding zero*
+ - `"1,000.00"` *invalid character*
+ - `"1e-10"` *exponential form is not allowed*
+"""
+
 # Most code copied from https://github.com/rmosolgo/language-graphql/blob/master/spec/fixtures/example.graphql
 fragment on AnalysisImage @relay(plural: true) {
   extension
@@ -46,7 +66,10 @@ query
     queryName(
       $float: f = 123.011e-1, $float:  f = 123.00, $float: f = 123e+20
       $boolean: b ! = true, $boolean: b = false
-      $String: s = "Some string \" \\ \/ \b \f \r \r and the rest"
+      $String: s = """Multiline
+                   string
+                   here
+                   """
       $enum: e = aaaa, $enum: e = AAAA_AA
       $list :  [ String!, Boolean!, ID, Int, Float ] ! = ["aaa", 1 , aFlag]
       $object: o = {

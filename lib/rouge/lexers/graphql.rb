@@ -227,6 +227,9 @@ module Rouge
           }
         }
 
+        # Multiline strings
+        rule /""".*?"""/m, Str::Double
+
         rule /\$#{name}\b/, &pop_unless_list[Name::Variable]
         rule /\b(?:true|false|null)\b/, &pop_unless_list[Keyword::Constant]
         rule /[+-]?[0-9]+\.[0-9]+(?:[eE][+-]?[0-9]+)?/, &pop_unless_list[Num::Float]

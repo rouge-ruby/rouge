@@ -7,6 +7,9 @@
 {% endfor %}
 </ul>
 
+{% set navigation = [('index.html', 'Index'), ('about.html', 'About')] %}
+{% set key, value = call_something() %}
+
 {# A comment #}
 
 Hello {{ user.name|capitalize }} !

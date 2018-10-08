@@ -82,7 +82,7 @@ module Rouge
 
         # Arithmetic operators (+, -, *, **, //, /)
         # TODO : implement modulo (%)
-        rule /(\+|\-|\*|\/\/?|\*\*?)/, Operator
+        rule /(\+|\-|\*|\/\/?|\*\*?|=)/, Operator
 
         # Comparisons operators (<=, <, >=, >, ==, ===, !=)
         rule /(<=?|>=?|===?|!=)/, Operator

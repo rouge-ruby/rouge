@@ -38,8 +38,11 @@ module Rouge
         rule %r/[a-zA-Z_!]\w*[!\?]?/, Name
         rule %r{::|[%(){};,/\|:\\\[\]]}, Punctuation
         rule %r/@[a-zA-Z_]\w*|&\d/, Name::Variable
-        rule %r{\b(0[xX][0-9A-Fa-f]+|\d(_?\d)*(\.(?![^\d\s])
-             (_?\d)*)?([eE][-+]?\d(_?\d)*)?|0[bB][01]+)\b}x, Num
+        rule %r{\b\d(_?\d)*(\.(?![^\d\s])(_?\d)+)([eE][-+]?\d(_?\d)*)?\b}, Num::Float
+        rule %r{\b0x[0-9A-Fa-f](_?[0-9A-Fa-f])*\b}, Num::Hex
+        rule %r{\b0o[0-7](_?[0-7])*\b}, Num::Oct
+        rule %r{\b0b[01](_?[01])*\b}, Num::Bin
+        rule %r{\b\d(_?\d)*\b}, Num::Integer
 
         mixin :strings
         mixin :sigil_strings

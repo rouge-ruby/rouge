@@ -1,0 +1,34 @@
+/- lean: leanprover.github.io
+/- nested comments are allowed -/
+-/
+
+section
+set_option formatter.hide_full_terms false
+parameters
+  (W : hott.trunctype.{u} 0)
+  (deg : W → ℕ)
+  (R : W → W → Type u)
+  (dec_R : Π {w v}, R v w → deg w < deg v)
+include W deg R dec_R -- test
+
+@[hott] def R_r : W → W → Type u := λ v w, R "test\nstrings" v w ⊎ (v = w)
+
+import hott.types.trunc
+import hott.types.sigma
+import hott.function
+import hott.hit.pushout
+universes u v w
+
+hott_theory
+
+open hott hott.trunc hott.pushout
+
+@[hott, instance] def is_prop_total_image_of_weakly_constant {A : Type u} {P : Type v}
+  [is_set P] (f : A → P) [p : hott.is_weakly_constant f] : is_prop (hott.total_image f) :=
+begin
+  fapply hott.is_trunc.is_prop.mk, intros x y,
+  cases x with x fx, cases y with y fy, hinduction fx with fx, hinduction fy with fy,
+  cases fx with a ax, cases fy with b be, induction ax, induction be,
+  fapply hott.sigma.sigma_eq, apply p,
+  apply hott.is_trunc.is_prop.elimo,
+end

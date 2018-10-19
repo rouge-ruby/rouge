@@ -1,0 +1,9 @@
+import hott.hit.pushout
+universes u v w
+
+hott_theory
+
+open hott hott.trunc hott.pushout
+
+@[hott, instance] def is_prop_total_image_of_weakly_constant {A : Type u} {P : Type v}
+  [is_set P] (f : A → P) [p : hott.is_weakly_constant f] : is_prop (hott.total_image f) :=

@@ -61,6 +61,7 @@ module Rouge
         # rule /^[_a-z][\w']*/, Name::Function
         rule /[_a-z][\w']*/, Name
         rule /[A-Z][\w']*/, Keyword::Type
+        rule /'[A-Z]\w[\w']*/, Keyword::Type  # promoted data constructor
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function

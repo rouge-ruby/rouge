@@ -13,18 +13,54 @@ module Rouge
                 'application/schema+json'
 
       state :root do
-        rule %r/\s+/m, Text::Whitespace
-        rule %r/"/, Str::Double, :string
-        rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/[{},:\[\]]/, Punctuation
-        rule %r/-?(?:0|[1-9]\d*)\.\d+(?:e[+-]?\d+)?/i, Num::Float
-        rule %r/-?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
+        rule /\s+/, Text::Whitespace
+        rule /{/, Punctuation, :object
+        rule /\[/, Punctuation, :array
       end
 
-      state :string do
-        rule %r/[^\\"]+/, Str::Double
-        rule %r/\\./, Str::Escape
-        rule %r/"/, Str::Double, :pop!
+      state :object do
+        rule /\s+/, Text::Whitespace
+        rule /"/, Str::Double, :key
+        rule /:/, Punctuation, :value
+        rule /,/, Punctuation
+        rule /}/, Punctuation, :pop!
+      end
+
+      state :value do
+        rule /"/, Str::Char, :stringvalue
+        mixin :constants
+        rule /\s*?(?=})/, Text::Whitespace, :pop!
+        rule /\[/, Punctuation, :array
+        rule /{/, Punctuation, :object
+        rule /}/, Punctuation, :pop!
+        rule /,/, Punctuation, :pop!
+        rule /\s+/, Text::Whitespace
+      end
+
+      state :key do
+        rule /[^\\"]+/, Str::Double
+        rule /\\./, Str::Escape
+        rule /"/, Str::Double, :pop!
+      end
+
+      state :stringvalue do
+        rule /[^\\"]+/, Str::Char
+        rule /\\./, Str::Escape
+        rule /"/, Str::Char, :pop!
+      end
+
+      state :array do
+        rule /\]/, Punctuation, :pop!
+        rule /"/, Str::Char, :stringvalue
+        rule /,/, Punctuation
+        mixin :constants
+        mixin :root
+      end
+
+      state :constants do 
+        rule /(?:true|false|null)/, Keyword::Constant
+        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]?\d+)?/i, Num::Float
+        rule /-?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
       end
     end
   end

@@ -12,6 +12,7 @@ module Rouge
 
       def self.detect?(text)
         return true if text.doctype?(/\bhtml\b/i)
+        return false if text =~ /\A<\?xml\b/
         return true if text =~ /<\s*html\b/
       end
 

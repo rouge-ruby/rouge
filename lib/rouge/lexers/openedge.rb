@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class OpenEdge < RegexLexer
       tag 'openedge'
-      filenames '*.p', '*.w', '*.i', '*.cls'
+      filenames '*.w', '*.i'
       mimetypes 'text/x-openedge'
 
       title "OpenEdge ABL"

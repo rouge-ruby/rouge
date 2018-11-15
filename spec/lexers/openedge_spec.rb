@@ -8,10 +8,8 @@ describe Rouge::Lexers::OpenEdge do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.p'
       assert_guess :filename => 'foo.w'
       assert_guess :filename => 'foo.i'
-      assert_guess :filename => 'foo.cls'
     end
 
     it 'guesses by mimetype' do

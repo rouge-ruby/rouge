@@ -55,17 +55,29 @@ module Rouge
       end
 
       state :splice_string do
-        rule /\\./, Str
+        rule /\\./, Str::Escape
         rule /{/, Punctuation, :nest
         rule /"|\n/, Str, :pop!
-        rule /./, Str
+        rule /[^"\{\\]\n+/, Str
       end
 
       state :splice_literal do
-        rule /""/, Str
+        rule /""/, Str::Escape
         rule /{/, Punctuation, :nest
         rule /"/, Str, :pop!
-        rule /./, Str
+        rule /[^"\{\\]+/, Str
+      end
+
+      state :string do
+        rule /\\./, Str::Escape
+        rule /["\n]/, Str, :pop!
+        rule /[^\\"\n]+/, Str
+      end
+
+      state :literal_string do
+        rule /""/, Str::Escape
+        rule /"/, Str, :pop!
+        rule /[^"]+/, Str
       end
 
       state :root do
@@ -74,13 +86,13 @@ module Rouge
         rule /^\s*\[.*?\]/, Name::Attribute
         rule /[$]\s*"/, Str, :splice_string
         rule /[$]@\s*"/, Str, :splice_literal
+        rule /@"/, Str, :literal_string
+        rule /"/, Str, :string
 
         rule /(<\[)\s*(#{id}:)?/, Keyword
         rule /\]>/, Keyword
 
         rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
-        rule /@"(""|[^"])*"/m, Str
-        rule /"(\\.|.)*?["\n]/, Str
         rule /'(\\.|.)'/, Str::Char
         rule /0x[0-9a-f]+[lu]?/i, Num
         rule %r(

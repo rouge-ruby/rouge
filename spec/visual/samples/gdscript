@@ -1,0 +1,28 @@
+""" Everything on these lines is considered
+a comment. """
+
+tool
+extends BaseClass
+
+# Variables & Built-in Types
+
+var a = 5
+var b = true
+var s = "Hello"
+var arr = [1, 2, 3]
+var dict = {"key": "value", 2: 3}
+var v = Vector2(1, 2)
+
+# Constants & Enums
+
+const ANSWER = 42
+enum { UNIT_NEUTRAL, UNIT_ENEMY, UNIT_ALLY }
+
+# Functions
+
+signal some_signal
+
+func some_function(param1, param2):
+    var local_var = 5
+    print(param1, param2, local_var)
+    return local_var

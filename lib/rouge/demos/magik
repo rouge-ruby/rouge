@@ -1,0 +1,58 @@
+def_slotted_exemplar(
+	:test_object,
+	{
+		{:slot, _unset}
+	})
+$
+
+_method test_object.new()
+	_return _clone.init()
+_endmethod
+$
+
+_method test_object.init()
+	## initializer
+	_return _self
+_endmethod
+$
+
+_method test_object.run(arg_1, _gather args)
+	## Does something.
+	write("calling test_object.run()")
+	write(%tab, %newline)
+	show(:args, _scatter args)
+
+	_local x <<
+		_if arg_1 _is :start
+		_then
+			>> 10.0
+		_endif
+	_local results << rope.new()
+
+	_for arg _over rgs.fast_elements()
+	_loop
+		results.add_last(arg)
+	_endloop
+	
+	_local stream << external_text_output_stream.new("$HOME/test.txt")
+	_protect
+		local y << p_args.map(_proc(p_obj)
+			>> p_obj + 1
+		_endproc
+	_protection
+		stream.close()
+	_endprotect
+
+	_return results
+_endmethod
+$
+
+_block
+	_local obj << test_object.new()
+	_try _with cond
+		_local results << obj.run()
+	_when error
+		write("Caught error: ", cond.report_string)
+	_endtry
+endblock
+$

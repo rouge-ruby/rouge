@@ -47,10 +47,10 @@ module Rouge
 
       character = /%u[0-9a-z]{4}|%[^\s]+/i
 
-      simple_identifier = /(?:[a-z!]|\\.)(?:[a-z0-9_!?]|\\.)*/i
+      simple_identifier = /(?>(?:[a-z0-9_!?]|\\.)+)/i
       piped_identifier = /\|[^\|\n]*\|/
       identifier = /(?:#{simple_identifier}|#{piped_identifier})+/i
-
+      package_identifier = /#{identifier}:#{identifier}/
       symbol = /:#{identifier}/i
       global_ref = /@[\s]*#{identifier}:#{identifier}/
       label = /@[\s]*#{identifier}/
@@ -73,15 +73,14 @@ module Rouge
         rule label, Name::Label
         rule character, Literal::String::Char
         rule number, Literal::Number
+        rule package_identifier, Name
+        rule identifier, Name
 
         rule /[\[\]{}()\.,;]/, Punctuation
         rule /\$/, Punctuation
         rule /(<<|^<<)/, Operator
         rule /(>>)/, Operator
         rule /[-~+\/*%=&^<>]|!=/, Operator
-
-        rule /#{identifier}:#{identifier}/, Name
-        rule identifier, Name
 
         rule /[\s]+/, Text::Whitespace
       end

@@ -5,8 +5,22 @@ describe Rouge::Lexers::HTML do
   let(:subject) { Rouge::Lexers::HTML.new }
   include Support::Lexing
 
-  it 'lexes embedded script tags' do
-    assert_no_errors '<script>x && x < y;</script>'
+  describe 'embedded script tag' do
+    it 'lexes javascript' do
+      assert_no_errors '<script>x && x < y;</script>'
+    end
+
+    it 'lexes type text/x-tpl' do
+      assert_no_errors '<script type="text/x-tpl" >
+          <a href="#" class="dialog-close modal-close">&times;</a>
+        </script>'
+    end
+
+    it 'lexes type text/template' do
+      assert_no_errors '<script class="hello-world" type="text/template">
+          <a href="#" class="dialog-close modal-close">&times;</a>
+        </script>'
+    end
   end
 
   describe 'lexing' do

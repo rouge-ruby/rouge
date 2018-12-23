@@ -33,7 +33,8 @@ module Rouge
         rule /^##*.*?$/, Generic::Subheading
 
         rule /^([ \t]*)(```|~~~)([^\n]*\n)((.*?)(\2))?/m do |m|
-          sublexer = Lexer.find_fancy(m[3].strip, m[5], @options)
+          name = m[3].strip
+          sublexer = Lexer.find_fancy(name.empty? ? "guess" : name, m[5], @options)
           sublexer ||= PlainText.new(@options.merge(:token => Str::Backtick))
           sublexer.reset!
 

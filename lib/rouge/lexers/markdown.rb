@@ -45,17 +45,17 @@ module Rouge
             delegate sublexer, m[5]
           end
 
-          token Punctuation, m[6]
           if m[6]
+            token Punctuation, m[6]
           else
             push do
-              rule /^([ \t]*)(#{m[2]})/ do |m|
+              rule /^([ \t]*)(#{m[2]})/ do |mb|
                 pop!
-                token Text, m[1]
-                token Punctuation, m[2]
+                token Text, mb[1]
+                token Punctuation, mb[2]
               end
-              rule /^.*\n/ do |m|
-                delegate sublexer, m[1]
+              rule /^.*\n/ do |mb|
+                delegate sublexer, mb[1]
               end
             end
           end

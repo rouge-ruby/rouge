@@ -19,9 +19,9 @@ module Rouge
         external false final finally for fun get if import in infix
         inline inner interface internal is lateinit noinline null
         object open operator out override package private protected
-        public reified return sealed set super tailrec this throw
-        true try typealias typeof val var vararg when where while
-        yield
+        public reified return sealed set super suspend tailrec this
+        throw true try typealias typeof val var vararg when where
+        while yield
       )
 
       name = %r'@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'

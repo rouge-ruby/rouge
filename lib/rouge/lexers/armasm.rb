@@ -38,8 +38,9 @@ module Rouge
         rule /(0[Ff]_[0-9A-Fa-f]{8}|0[Dd]_[0-9A-Fa-f]{16})/, Literal::Number::Float
         rule /(2_[01]+|3_[0-2]+|4_[0-3]+|5_[0-4]+|6_[0-5]+|7_[0-6]+|8_[0-7]+|9_[0-8]+|[0-9]+)(?![0-9Ee])/, Literal::Number::Integer
         rule /(2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.0-9]+)([Ee][-+]?[0-9]+)?/, Literal::Number::Float
+        rule /[@:](?=[ \t]*(8|16|32|64|128|256)[^0-9])/, Operator
         rule /[.@]|\{(ARCHITECTURE|AREANAME|ARMASM_VERSION|CODESIZE|COMMANDLINE|CONFIG|CPU|ENDIAN|FALSE|FPIC|FPU|INPUTFILE|INTER|LINENUM(UP(PER)?)?|OBJASM_VERSION|OPT|PC|PCSTOREOFFSET|REENTRANT|ROPI|RWPI|TRUE|VAR)\}/, Name::Constant
-        rule /([-!#%&()*+,\/:<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(AND|BASE|CC|CC_ENCODING|CHR|DEF|EOR|FATTR|FEXEC|FLOAD|FSIZE|INDEX|LAND|LEFT|LEN|LEOR|LNOT|LOR|LOWERCASE|MOD|NOT|OR|RCONST|REVERSE_CC|RIGHT|ROL|ROR|SHL|SHR|STR|TARGET_ARCH_[A-Z_]+|TARGET_FEATURE_[A-Z_]+|TARGET_FPU_[A-Z_]+|TARGET_PROFILE_[ARM]|UAL|UPPERCASE):)/, Operator
+        rule /([-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(AND|BASE|CC|CC_ENCODING|CHR|DEF|EOR|FATTR|FEXEC|FLOAD|FSIZE|INDEX|LAND|LEFT|LEN|LEOR|LNOT|LOR|LOWERCASE|MOD|NOT|OR|RCONST|REVERSE_CC|RIGHT|ROL|ROR|SHL|SHR|STR|TARGET_ARCH_[A-Z_]+|TARGET_FEATURE_[A-Z_]+|TARGET_FPU_[A-Z_]+|TARGET_PROFILE_[ARM]|UAL|UPPERCASE):)/, Operator
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
         rule /'/, Literal::String::Char, :singlequoted
         rule /"/, Literal::String::Double, :doublequoted

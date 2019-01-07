@@ -9,7 +9,7 @@ module Rouge
 
       tag 'haskell'
       aliases 'hs'
-      filenames '*.hs'
+      filenames '*.hs', '*.hs-boot'
       mimetypes 'text/x-haskell'
 
       def self.detect?(text)

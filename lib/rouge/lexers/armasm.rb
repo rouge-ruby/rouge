@@ -11,26 +11,39 @@ module Rouge
 
       state :root do
         rule /\n/, Text
+        rule /^[ \t]*#[ \t]*((define|elif|else|endif|error|if|ifdef|ifndef|include|line|pragma|undef|warning)[ \t].*)?\n/, Comment::Preproc
         rule /[ \t]+/, Text, :command
         rule /;.*\n/, Comment
-        rule /\$[A-Za-z_][0-9A-Za-z_]*\.?/, Name::Namespace # variable substitution or macro argument
-        rule /([0-9A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Label
+        rule /\$[A-Za-z_][0-9A-Za-z_]*\.?/, Name::Namespace, :afterlabel # variable substitution or macro argument
+        rule /([0-9A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Label, :afterlabel
         end
+
+      state :afterlabel do
+        rule /\n/, Text, :root
+        rule /[ \t]+/, Text, :command
+        rule /;.*\n/, Comment, :root
+      end
 
       state :command do
         rule /\n/, Text, :root
         rule /[ \t]+/, Text, :args
         rule /;.*\n/, Comment, :root
-        rule /(ALIAS|ALIGN|AOF|AOUT|AREA|ARM|ASSERT|ATTR|BIN|CN|CODE16|CODE32|COMMON|CP|DATA|DCB|DCD|DCDO|DCDU|DCFD|DCFDU|DCFH|DCFHU|DCFS|DCFSU|DCI(\.[NW])?|DCQ|DCQU|DCW|DCWU|DN|ELIF|ELSE|END|ENDFUNC|ENDIF|ENDP|ENTRY|EQU|EXPORT|EXPORTAS|EXTERN|FIELD|FILL|FN|FRAME|FUNCTION|GBL[ALS]|GET|GLOBAL|IF|IMPORT|INCBIN|INCLUDE|INFO|KEEP|LCL[ALS]|LEADR|LEAF|LNK|LTORG|MACRO|MAP|MEND|MEXIT|NOFP|OPT|ORG|PRESERVE8|PROC|QN|RELOC|REQUIRE8?|RLIST|RN|ROUT|SET[ALS]|SN|SPACE|STRONG|SUBT|THUMBX?|TTL|WEND|WHILE|\[|\]|[|!#*=%&^])(?=[; \t\n])/, Keyword
+        rule /(BIN|GET|INCBIN|INCLUDE|LNK)(?=[ \t])/, Keyword, :filespec
+        rule /(ALIAS|ALIGN|AOF|AOUT|AREA|ARM|ASSERT|ATTR|CN|CODE16|CODE32|COMMON|CP|DATA|DCB|DCD|DCDO|DCDU|DCFD|DCFDU|DCFH|DCFHU|DCFS|DCFSU|DCI(\.[NW])?|DCQ|DCQU|DCW|DCWU|DN|ELIF|ELSE|END|ENDFUNC|ENDIF|ENDP|ENTRY|EQU|EXPORT|EXPORTAS|EXTERN|FIELD|FILL|FN|FRAME|FUNCTION|GBL[ALS]|GLOBAL|IF|IMPORT|INFO|KEEP|LCL[ALS]|LEADR|LEAF|LTORG|MACRO|MAP|MEND|MEXIT|NOFP|OPT|ORG|PRESERVE8|PROC|QN|RELOC|REQUIRE8?|RLIST|RN|ROUT|SET[ALS]|SN|SPACE|STRONG|SUBT|THUMBX?|TTL|WEND|WHILE|\[|\]|[|!#*=%&^])(?=[; \t\n])/, Keyword
         rule /([A-Z][0-9A-Z]*|[a-z][0-9a-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^0-9A-Za-z_])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
         rule /([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Function # probably a macro name
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+      end
+
+      state :filespec do
+        rule /.*\n/, Literal::String::Other, :root
       end
 
       state :args do
         rule /\n/, Text, :root
         rule /[ \t]+/, Text
         rule /;.*\n/, Comment, :root
+        rule /(?<![0-9A-Za-z_])(ASR|LSL|LSR|ROR|RRX|AL|CC|CS|EQ|GE|GT|HI|HS|LE|LO|LS|LT|MI|NE|PL|VC|VS|asr|lsl|lsr|ror|rrx|al|cc|cs|eq|ge|gt|hi|hs|le|lo|ls|lt|mi|ne|pl|vc|vs)(?![0-9A-Za-z_])/, Name::Builtin
         rule /([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
         rule /%[BFbf]?[ATat]?[0-9]+([A-Za-z_][0-9A-Za-z_]*)?/, Name::Label
         rule /(&|0[Xx])[0-9A-Fa-f]+(?![0-9A-FPa-fp])/, Literal::Number::Hex

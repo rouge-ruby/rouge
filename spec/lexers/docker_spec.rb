@@ -10,6 +10,7 @@ describe Rouge::Lexers::Docker do
     it 'guesses by filename' do
       assert_guess :filename => 'Dockerfile'
       assert_guess :filename => 'docker.docker'
+      assert_guess :filename => 'some.Dockerfile'
     end
 
     it 'guesses by mimetype' do

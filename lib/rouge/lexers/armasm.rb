@@ -35,10 +35,6 @@ module Rouge
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
       end
 
-      state :filespec do
-        rule /.*\n/, Literal::String::Other, :root
-      end
-
       state :args do
         rule /\n/, Text, :root
         rule /[ \t]+/, Text
@@ -73,6 +69,13 @@ module Rouge
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
         rule /"/, Literal::String::Double, :args
         rule /[^$"\n]+/, Literal::String::Double
+      end
+
+      state :filespec do
+        rule /\n/, Text, :root
+        rule /\$\$/, Literal::String::Other
+        rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule /[^$\n]+/, Literal::String::Other
       end
     end
   end

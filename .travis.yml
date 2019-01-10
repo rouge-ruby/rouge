@@ -14,7 +14,7 @@ cache:
 bundler_args: --without development
 before_install:
   - gem update --system
-  - gem install bundler -v 1.17.2
+  - gem install bundler -v 1.15
 script:
   - bundle exec rake
   - bundle exec rubocop

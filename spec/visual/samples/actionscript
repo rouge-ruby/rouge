@@ -1,12 +1,27 @@
+package rouge.test
+{
+  private function variousOps():void
+  {
+    var a = ((100 + 200 - 0) / 300) % 2;
+    var b = 100 * 30;
+    var d = true && (b > 301);
+    var e = 0x10 | 0x01;
+    var f = (false || d);
+
+    b++; b--;
+    a += 300; a -= 5; a *= 4; a /= 2; a %= 7;
+  }
+}
+
 package a.b.c
 {
   import flash.events.Event;
   import flash.events.EventDispatcher;
-  
+
   /**
    * @langversion 3.0
    */
-  
+
   public final class Dispatcher extends EventDispatcher implements IEventDispatcher
   {
 
@@ -24,7 +39,7 @@ package a.b.c
         return true;
       }
     }
-    
+
   }
 }
 
@@ -38,61 +53,61 @@ package com.jx.screenshot
 
   public class Screenshot
   {
-    
+
     public static const INCLUDE_BOUNDS:Boolean = true;
-    
+
     public static var dictionary:Object;
     public static var save:Save;
     public static var comparer:Comparer;
     public static var resizer:Resizer;
-    
+
     public function Screenshot()
     {
       throw new IllegalOperationError("Can't be instantiated.");
     }
-    
+
     public static function compare(fixtureName:String, component:DisplayObject, includeBounds:Boolean = false):Boolean
     {
       checkPreconditions();
       comparer = comparer || new NativeComparer(save);
       resizer = resizer || new Resizer();
-      
+
       var matrix:Matrix;
       var newWidth:uint = component.width;
       var newHeight:uint = component.height;
-      
+
       if (includeBounds) {
         var bounds:Rectangle = component.getBounds(component);
-        
+
         matrix = new Matrix();
         matrix.translate(-1 * bounds.x, -1 * bounds.y);
-        
+
         newWidth = bounds.width;
         newHeight = bounds.height;
       }
-      
+
       var screenshot:BitmapData = new BitmapData(newWidth, newHeight);
-        screenshot.draw(component, matrix);
+      screenshot.draw(component, matrix);
       var resizedScreenshot:BitmapData = resizer.resize(screenshot);
       var originalScreen:BitmapData = dictionary[fixtureName];
-      
+
       // for manual comparison
       save.save(fixtureName + "-actual", resizedScreenshot);
-      
+
       return comparer.compare(fixtureName, originalScreen, resizedScreenshot);
     }
-    
+
     private static function checkPreconditions():void
     {
       if (!dictionary) {
         throw new IllegalOperationError('You have to set the dictionary first.');
       }
-      
+
       if (!save) {
         throw new IllegalOperationError("You have to set the save first.");
       }
     }
-    
+
   }
 }
 
@@ -140,7 +155,7 @@ final public dynamic class Generator extends Proxy
       value = null;
       this.error = error;
     }
-      
+
     if (this.error) {
       throw this.error;
     }
@@ -164,7 +179,7 @@ final public class GeneratorResult
   }
 
   public function get done():Boolean
-  { 
+  {
     return _done;
   }
 

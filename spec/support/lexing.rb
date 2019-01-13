@@ -29,6 +29,20 @@ module Support
       assert { filter_by_token(tokname, text, lexer).any? }
     end
 
+    def assert_first_token_type(tokens, type)
+      assert { tokens.first[0] == Token[type] }
+    end
+
+    def assert_last_token_type(tokens, type)
+      assert { tokens.last[0] == Token[type] }
+    end
+
+    def assert_token_type_at(tokens, indices, type)
+      indices.each do |i|
+        assert { tokens[i][0] == Token[type] }
+      end
+    end
+
     def assert_no_errors(*a)
       deny_has_token('Error', *a)
     end

@@ -1,0 +1,104 @@
+_TaskName:ChangeFSI
+_Version:Substituted at build time
+# Picture menu
+Pimg:Image info
+Psrc:Source info
+Prange:Range info
+Pzoom:Zoom
+Psave:Save image
+# Iconbar menu
+Iinfo:Info
+Iscale:Scaling
+Iproc:Processing
+Ijpg:JPEG output
+Ispr:Sprite output
+Ifast:Fast
+Ichoice:Save choices
+Iquit:Quit
+# Common menus
+PIredo:Reprocess
+# General messages
+ScaleFill:Scale to fill %0 by %1
+NoRange:Range not used
+OverW:Overwrite source file?
+ButErr:Ignore,Quit
+ButCon:Cancel,Discard
+BadJQ:Invalid JPEG quality in JPEG output dialogue box
+BadMode:Invalid mode number in sprite output dialogue box
+Proc:processed in %0 seconds
+Unsaved:Image created from '%0' not saved
+# Interactive help
+Hinfo?/Hinfo??:This \w displays information about ChangeFSI.
+Hpic?/Hpic??:\Toutput image from ChangeFSI.
+Hsave0:Drag this icon to the directory in which you want to save the file, or drag it to the program into which you want to transfer the data.
+Hsave1:This shows the filename for this data. If it is not a full pathname, drag the icon into a directory display.
+Hsave2:\Ssave the data with the current filename. If it is not a full pathname, you must drag the icon to a directory first.
+Hsave?/Hsave??:This \w allows you to save data in a file, or transfer it to another application.
+Hsprite?/Hsprite??:This \w displays information on the output image produced.
+Hjpeg1:\Screate colour JPEGs.
+Hjpeg2:\Screate greyscale JPEGs.
+Hjpeg5:Enter a quality directly in this box.|MValues in the range 0-100 are accepted and trade off file size with image quality.|MA value of 100 means 'do not compress'.|M
+Hjpeg3:\Sdecrease the quality (smaller output file).
+Hjpeg4:\Sincrease the quality (larger output file).
+Hjpeg?/Hjpeg??:This \w sets the output JPEG type.
+Hzoom?/Hzoom??:Either fill in the numerator and denominator, or click \s on the arrows, to use the given zoom factor.
+Hrange?/Hrange??:This \w displays the range of pixel intensities used.
+Hsrc?/Hsrc??:This \w displays information on the source image that was processed.
+Hscale0:\Sdisable automatic pixel size correction for source pixels only.
+Hscale18:\Sdisable all automatic pixel size correction.
+Hscale19:\Sattempt to scale the image as requested but overall retain the picture aspect ratio. 
+Hscale1:\Sscale to fill the current screen size.
+Hscale2:\Sperform no scaling.
+Hscale3:\Shalve the height.
+Hscale4:\Shalve the width.
+Hscale5:\Shalve both the width and height.
+Hscale9:\Suse a custom scaling factor.
+Hscale10/Hscale12:The numerator is an initial scaling up of the source image.
+Hscale11/Hscale13:The denominator is a subsequent scaling down of the source image.
+Hscale6:\Senable rotation.
+Hscale16:\Srotate clockwise 90 degrees.
+Hscale17:\Srotate anti-clockwise 90 degrees.
+Hscale7:\Sflip the image about its vertical edge.
+Hscale8:\Sflip the image about its horizontal edge.
+Hscale?/Hscale??:This \w sets up geometrical operations to perform on the source image.
+Hproc0:\Sanalyse the source image and attempt to maximise the dynamic range used in the output.
+Hproc1:\Sanalyse the source image and attempt to spread the intensities evenly in the output.
+Hproc2:\Sturn off the error diffusion patterns used to trick the eye when not enough colours are available.
+Hproc3:\Smake a negative.
+Hproc4:\Sslightly lighten the output image.
+Hproc5:\Sattempt to correct for black inked spots bigger than the given size.
+Hproc6:\Sapply gamma correction for the display.
+Hproc7:\Sdigitally sharpen the source image.
+Hproc12:\Sdigitally soften the source image.
+Hproc8:Enter a number in the range 0-128.|M0 means no correction, 128 is severe correction.
+Hproc9:Enter a number for gamma.|MMonitors typically use a gamma factor of 2.2.
+Hproc10:Enter a number in the range 8-31.|M8 means most sharp, 31 is slight sharpening.
+Hproc11:Enter a number in the range 1 to 23.|M1 means most soft, 23 is slight softening.
+Hproc?/Hproc??:This \w sets up special effects to perform on the source image.
+Hout16:\Screate colour sprites.
+Hout17:\Screate greyscale sprites.
+Hout18:\Screate a sprite for the current desktop mode.
+Hout24:\Screate a sprite for the a numbered mode.
+Hout33:Enter a numbered Archimedes screen mode.
+Hout3/Hout4/Hout5/Hout6/Hout7/Hout8:\Screate a sprite with the given number of colours, and square pixels.
+Hout9/Hout10/Hout11/Hout12/Hout13/Hout14:\Screate a sprite with the given number of colours, and rectangular pixels.
+Hout20:This is the equivalent mode number based on the current selection.
+Hout15:\Screate a sprite using one of ChangeFSI's special colour matching options.
+Hout19:Choose from one of four colour matching options, depending on the output colours selected.|Mc: 2 or 4 colours|Md: 2, 16 or 256 colours|Mt: 2, 16 or 256 colours|Mr: 4, 16 or 256 colours
+Hout?/Hout??:This \w sets the output sprite type.
+Himnu0:\Rsee information about ChangeFSI.
+Himnu1:\Rset the scaling factors.
+Himnu2:\Rset extra image processing steps.
+Himnu3:\Schoose sprite output.|M\Rset the output sprite type.
+Himnu4:\Schoose JPEG output.|M\Rset the output JPEG type.
+Himnu5/Hpmnu5:\Sredo this image with the selected options.
+Himnu5g:\Gno image has been processed yet.
+Himnu6:\Sswitch to a low video mode while calculating.
+Himnu6g:\Gthe computer is already configured to be fast.
+Himnu7:\Ssave the current setup as the default.
+Himnu8:\Squit ChangeFSI.
+Hpmnu0:\Rsee information about the output image.
+Hpmnu1:\Rsee information about the input image.
+Hpmnu2:\Rsee information about the range used.
+Hpmnu3:\Rset the zoom factors.
+Hpmnu4:\Rsave this image to disc.

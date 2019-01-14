@@ -1,0 +1,19 @@
+REM > DefaultFilename
+PRINT:REM Ordinary comment: This is still a comment
+*Cat
+FOR n=1 TO 10
+PRINTTAB(n)"Hello there ";FNnumber(n)DIV3+1'INKEY$(500)
+NEXT
+DIM code% 100
+FOR opt=0 TO 3 STEP 3
+P%=code%
+[OPT opt
+.label1%
+.label2% LDR r0,[P%MOD2,#0]
+ MOV pc,r14:REM comments in assembly terminate at colon:EQUD -1
+.label3;comment
+ ALIGN
+.label4
+]
+END
+DEFFNnumber(x%)=ABS(x%-4)

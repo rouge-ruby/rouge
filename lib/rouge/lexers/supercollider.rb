@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -61,11 +62,6 @@ module Rouge
       state :root do
         mixin :whitespace
 
-        ####################
-        ##### LITERALS #####
-        ####################
-
-        # hex number
         rule /[\-+]?0[xX]\h+/, Num::Hex
 
         # radix float
@@ -74,13 +70,10 @@ module Rouge
         # normal float
         rule /[\-+]?((\d+(\.\d+)?([eE][\-+]?\d+)?(pi)?)|pi)/, Num::Float
 
-        # integer
         rule /[\-+]?\d+/, Num::Integer
 
-        # character
         rule /\$(\\.|.)/, Str::Char
 
-        # strings
         rule /"([^\\"]|\\.)*"/, Str
 
         # symbols (single-quote notation)
@@ -89,21 +82,11 @@ module Rouge
         # symbols (backslash notation)
         rule /\\\w+/, Str::Other
 
-        ####################
-        ##### COMMENTS #####
-        ####################
-
-        # single-line comments
         rule /\/\/.*$/, Comment::Single
-
-        #######################
-        ##### IDENTIFIERS #####
-        #######################
 
         # symbol arg
         rule /[A-Za-z_]\w*:/, Name::Label
 
-        # class name
         rule /[A-Z]\w*/, Name::Class
 
         # primitive
@@ -125,13 +108,6 @@ module Rouge
         # environment variables
         rule /~\w+/, Name::Variable::Global
 
-        # symbol arg
-
-        #################
-        ##### OTHER #####
-        #################
-
-        # punctuation
         rule /[\{\}()\[\];,\.]/, Punctuation
 
         # operators. treat # (array unpack) as an operator

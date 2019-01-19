@@ -13,7 +13,7 @@ cache:
   bundler: true
 bundler_args: --without development
 before_install:
-  - gem install bundler
+  - gem install bundler -v 1.17.2
   - gem update --system
 script:
   - bundle exec rake

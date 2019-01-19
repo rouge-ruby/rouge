@@ -9,6 +9,7 @@ describe Rouge::Lexers::Docker do
 
     it 'guesses by filename' do
       assert_guess :filename => 'Dockerfile'
+      assert_guess :filename => 'Dockerfile_*'
       assert_guess :filename => 'docker.docker'
     end
 

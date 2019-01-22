@@ -86,14 +86,19 @@ module Rouge
         rule /::?#{keyword}/, Name::Constant
         rule /\\(.|[a-z]+)/i, Str::Char
 
-
-        rule /~@|[`\'#^~&@]/, Operator
+        rule /(')(\()(\s*)/m do |m|
+          token Operator, m[1]
+          token Punctuation, m[2]
+          token Text::Whitespace, m[3]
+        end
 
         rule /(\()(\s*)(#{identifier})/m do |m|
           token Punctuation, m[1]
           token Text::Whitespace, m[2]
           token(name_token(m[3]) || Name::Function, m[3])
         end
+
+        rule /~@|[`\'#^~&@]/, Operator
 
         rule identifier do |m|
           token name_token(m[0]) || Name

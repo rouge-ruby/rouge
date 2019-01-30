@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 # http://www.adobe.com/devnet/opentype/afdko/topic_feature_file_syntax.html
 

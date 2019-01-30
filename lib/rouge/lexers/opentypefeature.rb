@@ -63,12 +63,6 @@ module Rouge
         rule /(?<!\.)#{identifier}/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
-          # elsif self.class.exceptions.include? m[0]
-          #   token Name::Builtin
-          # elsif self.class.builtins.include? m[0]
-          #   token Name::Builtin
-          # elsif self.class.builtins_pseudo.include? m[0]
-          #   token Name::Builtin::Pseudo
           else
             token Name
           end

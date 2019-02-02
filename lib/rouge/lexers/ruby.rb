@@ -152,7 +152,7 @@ module Rouge
       state :whitespace do
         mixin :inline_whitespace
         rule /\n\s*/m, Text, :expr_start
-        rule /#.*$/, Comment::Single
+        rule /#[^\r\n]*/, Comment::Single
 
         rule %r(=begin\b.*?\n=end\b)m, Comment::Multiline
       end

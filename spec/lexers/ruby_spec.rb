@@ -31,6 +31,14 @@ describe Rouge::Lexers::Ruby do
         end
       end
 
+      describe 'line endings' do
+        it 'handles CRLF line endings in single line comments' do
+          assert_tokens_equal "# single line comment with CRLF\r\n",
+            ['Comment.Single', '# single line comment with CRLF'],
+            ['Text', "\r\n"]
+        end
+      end
+
       describe 'trailing dot' do
         it 'handles whitespace between the receiver and the method' do
           assert_tokens_equal "foo.\n  bar()",

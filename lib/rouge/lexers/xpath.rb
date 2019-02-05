@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class XPath < RegexLexer
       title 'XPath'
-      desc 'XPath 3.0'
+      desc 'XML Path Language (XPath) 3.1'
       tag 'xpath'
       filenames '*.xpath'
 
@@ -27,6 +27,7 @@ module Rouge
 
       # Terminal symbols:
       # https://www.w3.org/TR/xpath-30/#id-terminal-delimitation
+
       kindTest = Regexp.union(%w(
         element attribute schema-element schema-attribute
         comment text node document-node namespace-node

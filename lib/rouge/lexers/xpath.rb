@@ -1,41 +1,43 @@
+# -*- coding: utf-8 -*- #
+# frozen_string_literal: true
+
 module Rouge
   module Lexers
     class XPath < RegexLexer
       title 'XPath'
-      desc 'XPath 2.0'
+      desc 'XPath 3.0'
       tag 'xpath'
-
-      def self.regexify(list)
-        Regexp.new(list.map {
-            |x| Regexp.escape(x)
-        }.join('|'))
-      end
 
       # Terminal literals:
       # https://www.w3.org/TR/xpath-30/#terminal-symbols
-      ncName = /[a-z_][a-z_\-.0-9]*/i
-      qName = /(?:#{ncName})(?::#{ncName})?/
+
       digits = /[0-9]+/
       decimalLiteral = /\.#{digits}|#{digits}\.[0-9]*/
       doubleLiteral = /(\.#{digits})|#{digits}(\.[0-9]*)?[eE][+-]?#{digits}/
       stringLiteral = /("(("")|[^"])*")|('(('')|[^'])*')/
+
+      ncName = /[a-z_][a-z_\-.0-9]*/i
+      qName = /(?:#{ncName})(?::#{ncName})?/
+      uriQName = /Q{[^{}]*}#{ncName}/
+      eqName = /#{qName}|#{uriQName}/
+
       commentStart = /\(:/
 
       # Terminal symbols:
       # https://www.w3.org/TR/xpath-30/#id-terminal-delimitation
-      kindTest = self.regexify(%w(
+      kindTest = Regexp.union(%w(
         element attribute schema-element schema-attribute
-        comment text node document-node
+        comment text node document-node namespace-node
       ))
-      kindTestForPi = self.regexify(%w(processing-instruction))
-      axes = self.regexify(%w(
+      kindTestForPi = Regexp.union(%w(processing-instruction))
+      axes = Regexp.union(%w(
         child descendant attribute self descendant-or-self
         following-sibling following namespace
         parent ancestor preceding-sibling preceding ancestor-or-self
       ))
-      operators = self.regexify(%w(, = := >= >> > <= << < - * != + // / |))
-      keyword_operators = self.regexify(%w(then else return in satisfies))
-      word_operators = self.regexify(%w(
+      operators = Regexp.union(%w(, = := >= >> > <= << < - * != + // / |))
+      keyword_operators = Regexp.union(%w(then else return in satisfies))
+      word_operators = Regexp.union(%w(
         and or eq ge gt le lt ne is
         div mod idiv
         intersect except union
@@ -45,179 +47,237 @@ module Rouge
       # Lexical states:
       # https://www.w3.org/TR/xquery-xpath-parsing/#XPath-lexical-states
       # https://lists.w3.org/Archives/Public/public-qt-comments/2004Aug/0127.html
-      state :root do
-        rule /\s+/m, Text
+      # https://www.w3.org/TR/xpath-30/#id-revision-log
+      # https://www.w3.org/TR/xpath-31/#id-revision-log
 
+      state :root do
+        # Comments
+        rule commentStart, Comment, :comment
+
+        # Literals
         rule doubleLiteral, Num::Float, :operator
         rule decimalLiteral, Num::Float, :operator
         rule digits, Num, :operator
         rule stringLiteral, Literal::String, :operator
+
+        # Variables
+        rule /\$/, Name::Variable, :varname
+
+        # Keywords
+        rule /(for|some|every|let)/, Keyword
+
+        # Functions
+        rule /(function)(\s*)(\()/ do
+          groups Keyword, Text, Punctuation, :operator
+        end
+        rule /(#{kindTest})(\s*)(\()/ do
+          push :operator
+          groups Keyword, Text, Punctuation, :kindtest
+        end
+        rule /(#{kindTestForPi})(\s*)(\()/ do
+          push :operator
+          groups Keyword, Text, Punctuation, :kindtestforpi
+        end
+        rule /(if)(\s*)(\()/ do
+          groups Keyword, Text, Punctuation
+        end
+        rule /(#{eqName})(\s*)(\()/ do
+          groups Name::Function, Text, Punctuation
+        end
+        rule /\)/, Punctuation, :operator
+        rule /[,(]/, Punctuation
+
+        # Paths
         rule /\.\.|\.|\*/, Operator, :operator
         rule /(#{ncName})(\s*)(:)(\s*)(\*)/ do
           groups Name::Tag, Text, Punctuation, Text, Keyword::Reserved, :operator
         end
-        rule /\)/, Punctuation, :operator
         rule /(\*)(\s*)(:)(\s*)(#{ncName})/ do
           groups Keyword::Reserved, Text, Punctuation, Text, Name::Tag, :operator
         end
-
-        rule /\$/, Name::Variable, :varname
-        rule /(for|some|every)(\s*)(\$)/ do
-          groups Keyword, Text, Name::Variable
-          push :varname
-        end
-
-        rule /(#{kindTest})(\s*)(\()/ do
-          push :operator
-          groups Keyword, Text, Punctuation, :kindtest
-        end
-
-        rule /(#{kindTestForPi})(\s*)(\()/ do
-          push :operator
-          groups Keyword, Text, Punctuation, :kindtestforpi
-        end
-
-        rule commentStart, Comment, :comment
-
-        rule /[,({}]/, Punctuation
-        rule /(if)(\s*)(\()/ do
-          groups Keyword, Text, Punctuation
-        end
-        rule /(#{qName})(\s*)(\()/ do
-          groups Name::Function, Text, Punctuation
-        end
-        rule /@/, Name::Attribute, :attrname
-        rule %r((-|\+|/|//)), Operator
         rule /(#{axes})(\s*)(::)/ do
           groups Keyword, Text, Operator
         end
+        rule /@/, Name::Attribute, :attrname
+        rule eqName, Name::Tag, :operator
 
-        rule qName, Name::Tag, :operator
+        # Path separators
+        rule %r((-|\+|/|//)), Operator
+
+        # Whitespace
+        rule /\s+/m, Text
       end
 
       state :operator do
+        # Comments
+        rule commentStart, Comment, :comment
+
+        # Operators
         rule operators, Operator, :root
         rule /\s+#{word_operators}(\s+|$)/, Operator::Word, :root
-        rule keyword_operators, Keyword, :root
-        rule /\[/, Punctuation, :root
+        rule /\s+#{keyword_operators}(\s+|$)/, Operator::Word, :root
+        rule /[\[({]/, Punctuation, :root
 
+        # Type commands
         rule /(cast(able)?)(\s+)(as)/ do
           groups Keyword, Text, Keyword, :singletype
         end
-
         rule /(instance)(\s+)(of)|(treat)(\s+)(as)/ do
           groups Keyword, Text, Keyword, :itemtype
         end
+        rule /as/, Keyword, :itemtype
 
+        # Variables
         rule /\$/, Name::Variable, :varname
-        rule /(for)(\s*)(\$)/ do
-          groups Keyword, Text, Name::Variable, :varname
-        end
+        rule /[)?\]}]/, Punctuation
 
-        rule commentStart, Comment, :comment
-
-        rule /[)?\]]/, Punctuation
-
+        # Literals
         rule stringLiteral, Literal::String
+
+        # Whitespace
         rule /(\s+)/m, Text
       end
 
       state :singletype do
-        rule qName, Keyword::Type, :operator
+        # Whitespace and comments
+        rule /\s+/m, Text
         rule commentStart, Comment, :comment
+
+        # Type name
+        rule eqName, Keyword::Type, :operator
       end
 
       state :itemtype do
+        # Whitespace and comments
         rule /\s+/m, Text
-
-        rule /(void)(\s*)(\()(\s*)(\))/ do
-          groups Keyword::Type, Text, Punctuation, Text, Punctuation, :operator
-        end
-
         rule commentStart, Comment, :comment
 
+        # Type tests
         rule /(#{kindTest})(\s*)(\()/ do
           push :occurrenceindicator
           groups Keyword, Text, Punctuation, :kindtest
         end
-
         rule /(#{kindTestForPi})(\s*)(\()/ do
           push :occurrenceindicator
           groups Keyword, Text, Punctuation, :kindtestforpi
         end
-
         rule /(item)(\s*)(\()(\s*)(\))/ do
-          groups Keyword, Text, Punctuation, Text, Punctuation, :occurrenceindicator
+          groups Keyword::Type, Text, Punctuation, Text, Punctuation, :occurrenceindicator
+        end
+        rule /(function)(\s*)(\()/ do
+          groups Keyword::Type, Text, Punctuation
         end
 
-        rule operators, Operator, :root
-        rule word_operators, Operator::Word, :root
-        rule keyword_operators, Keyword, :root
-        rule /[\[)]/, Punctuation, :root
-        # todo: we still lex *, +, / and //, even though they are illegal here
-        # todo: this is because they are part of operators
-
+        # Type commands
         rule /(cast(able)?)(\s+)(as)/ do
           groups Keyword, Text, Keyword, :singletype
         end
-
         rule /(instance)(\s+)(of)|(treat)(\s+)(as)/ do
           groups Keyword, Text, Keyword, :itemtype
         end
+        rule /as/, Keyword
 
-        rule qName, Keyword::Type, :occurrenceindicator
+        # Operators
+        rule operators, Operator, :root
+        rule word_operators, Operator::Word, :root
+        rule keyword_operators, Keyword, :root
+        rule /[\[),]/, Punctuation, :root
+
+        # Other types (e.g. xs:double)
+        rule eqName, Keyword::Type, :occurrenceindicator
       end
 
+
+      # For pseudo-parameters for the KindTest productions
       state :kindtest do
-        rule /\)/, Punctuation, :pop!
+        # Whitespace and comments
+        rule /\s+/m, Text
+        rule commentStart, Comment, :comment
 
+        # Pseudo-parameters:
         rule /\*/, Keyword, :closekindtest
-        rule qName, Name, :closekindtest
-
+        rule eqName, Name, :closekindtest
         rule /(element|schema-element)(\s*)(\()/ do
           group Keyword, Text, Punctuation, :kindtest
         end
 
-        rule commentStart, Comment, :comment
+        # End of pseudo-parameters
+        rule /\)/, Punctuation, :pop!
       end
 
+      # Similar to :kindtest, but recognizes NCNames instead of EQNames
       state :kindtestforpi do
-        rule /\)/, Punctuation, :pop!
+        # Whitespace and comments
+        rule /\s+/m, Text
         rule commentStart, Comment, :comment
+
+        # Pseudo-parameters
         rule ncName, Name
         rule stringLiteral, Literal::String
+
+        # End of pseudo-parameters
+        rule /\)/, Punctuation, :pop!
       end
 
       state :closekindtest do
+        # Whitespace and comments
+        rule /\s+/m, Text
+        rule commentStart, Comment, :comment
+
+        # Closing or continuing a kindtest
         rule /\)/, Punctuation, :pop!
         rule /,/, Punctuation, :kindtest
         rule /\?/, Punctuation
-        rule commentStart, Comment, :comment
       end
 
       state :occurrenceindicator do
+        # Whitespace and comments
+        rule /\s+/m, Text
         rule commentStart, Comment, :comment
-        rule /(?![?*+])/, :operator
+
+        # Occurrence indicator
         rule /[?*+]/, Operator, :operator
+
+        # Otherwise, lex it in operator state:
+        rule /(?![?*+])/ do
+          push :operator
+        end
       end
 
       state :varname do
+        # Whitespace and comments
         rule /\s+/m, Text
-        rule qName, Name::Variable, :operator
         rule commentStart, Comment, :comment
+
+        # Function call
+        rule /(#{eqName})(\s*)(\()/ do
+          push :root
+          groups Name::Variable, Text, Punctuation
+        end
+
+        # Variable name
+        rule eqName, Name::Variable, :operator
       end
 
       state :attrname do
+        # Whitespace and comments
         rule /\s+/m, Text
-        rule qName, Name::Attribute, :operator
         rule commentStart, Comment, :comment
+
+        # Attribute name
+        rule eqName, Name::Attribute, :operator
       end
 
       state :comment do
+        # Comment end
         rule /:\)/, Comment, :pop!
-        rule /[^:(]+/m, Comment
+
+        # Nested comment
         rule commentStart, Comment, :comment
-        rule /:/, Comment
+
+        # Comment contents
+        rule /[^:(]+/m, Comment
+        rule /[:(]/, Comment
       end
     end
   end

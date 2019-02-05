@@ -20,7 +20,7 @@ module Rouge
       ncName = /[a-z_][a-z_\-.0-9]*/i
       qName = /(?:#{ncName})(?::#{ncName})?/
       uriQName = /Q{[^{}]*}#{ncName}/
-      eqName = /#{qName}|#{uriQName}/
+      eqName = /(?:#{qName}|#{uriQName})/
 
       commentStart = /\(:/
       openParens   = /\((?!:)/
@@ -45,7 +45,7 @@ module Rouge
         intersect except union
         to
       ))
-      constructorTypes = Regexp.union(%w(function array map item empty-sequence))
+      constructorTypes = Regexp.union(%w(function array map empty-sequence))
 
       # Lexical states:
       # https://www.w3.org/TR/xquery-xpath-parsing/#XPath-lexical-states
@@ -94,7 +94,7 @@ module Rouge
           groups Name::Function, Text, Name::Function, Text, Name::Function, Text, Punctuation
         end
         rule /\)/, Punctuation, :operator
-        rule /[,(\[]/, Punctuation
+        rule /[?,(\[]/, Punctuation
 
         # Paths
         rule /\.\.|\.|\*/, Operator, :operator
@@ -128,11 +128,17 @@ module Rouge
         rule /[\[({]/, Punctuation, :root
 
         # Type commands
-        rule /(cast(able)?)(\s+)(as)/ do
-          groups Keyword, Text, Keyword, :singletype
+        rule /(cast|castable)(\s+)(as)/ do
+          push :singletype
+          groups Keyword, Text, Keyword
         end
-        rule /(instance)(\s+)(of)|(treat)(\s+)(as)/ do
-          groups Keyword, Text, Keyword, :itemtype
+        rule /(treat)(\s+)(as)/ do
+          push :itemtype
+          groups Keyword, Text, Keyword
+        end
+        rule /(instance)(\s+)(of)/ do
+          push :itemtype
+          groups Keyword, Text, Keyword
         end
         rule /as/, Keyword, :itemtype
 
@@ -178,10 +184,14 @@ module Rouge
         end
 
         # Type commands
-        rule /(cast(able)?)(\s+)(as)/ do
-          groups Keyword, Text, Keyword, :singletype
+        rule /(cast|castable)(\s+)(as)/ do
+          push :singletype
+          groups Keyword, Text, Keyword
         end
-        rule /(instance)(\s+)(of)|(treat)(\s+)(as)/ do
+        rule /(treat)(\s+)(as)/ do
+          groups Keyword, Text, Keyword, :itemtype
+        end
+        rule /(instance)(\s+)(of)/ do
           groups Keyword, Text, Keyword, :itemtype
         end
         rule /as/, Keyword

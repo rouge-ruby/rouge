@@ -7,9 +7,10 @@ module Rouge
       title 'XPath'
       desc 'XPath 3.0'
       tag 'xpath'
+      filenames '*.xpath'
 
       # Terminal literals:
-      # https://www.w3.org/TR/xpath-30/#terminal-symbols
+      # https://www.w3.org/TR/xpath-31/#terminal-symbols
 
       digits = /[0-9]+/
       decimalLiteral = /\.#{digits}|#{digits}\.[0-9]*/
@@ -22,6 +23,7 @@ module Rouge
       eqName = /#{qName}|#{uriQName}/
 
       commentStart = /\(:/
+      openParens   = /\((?!:)/
 
       # Terminal symbols:
       # https://www.w3.org/TR/xpath-30/#id-terminal-delimitation
@@ -35,7 +37,7 @@ module Rouge
         following-sibling following namespace
         parent ancestor preceding-sibling preceding ancestor-or-self
       ))
-      operators = Regexp.union(%w(, = := >= >> > <= << < - * != + // / |))
+      operators = Regexp.union(%w(, => = := : >= >> > <= << < - * != + // / || |))
       keyword_operators = Regexp.union(%w(then else return in satisfies))
       word_operators = Regexp.union(%w(
         and or eq ge gt le lt ne is
@@ -43,6 +45,7 @@ module Rouge
         intersect except union
         to
       ))
+      constructorTypes = Regexp.union(%w(function array map item empty-sequence))
 
       # Lexical states:
       # https://www.w3.org/TR/xquery-xpath-parsing/#XPath-lexical-states
@@ -67,25 +70,31 @@ module Rouge
         rule /(for|some|every|let)/, Keyword
 
         # Functions
-        rule /(function)(\s*)(\()/ do
+        rule /(function|empty-sequence)(\s*)(#{openParens})/ do
           groups Keyword, Text, Punctuation, :operator
         end
-        rule /(#{kindTest})(\s*)(\()/ do
+        rule /(map|array)(\s*)(\{)/ do
+          groups Keyword, Text, Punctuation
+        end
+        rule /(#{kindTest})(\s*)(#{openParens})/ do
           push :operator
           groups Keyword, Text, Punctuation, :kindtest
         end
-        rule /(#{kindTestForPi})(\s*)(\()/ do
+        rule /(#{kindTestForPi})(\s*)(#{openParens})/ do
           push :operator
           groups Keyword, Text, Punctuation, :kindtestforpi
         end
-        rule /(if)(\s*)(\()/ do
+        rule /(if)(\s*)(#{openParens})/ do
           groups Keyword, Text, Punctuation
         end
-        rule /(#{eqName})(\s*)(\()/ do
+        rule /(#{eqName})(\s*)(#{openParens})/ do
           groups Name::Function, Text, Punctuation
         end
+        rule /(#{eqName})(\s*)(#)(\s*)(#{digits})(\s*)(#{openParens})/ do # namedFunctionRef
+          groups Name::Function, Text, Name::Function, Text, Name::Function, Text, Punctuation
+        end
         rule /\)/, Punctuation, :operator
-        rule /[,(]/, Punctuation
+        rule /[,(\[]/, Punctuation
 
         # Paths
         rule /\.\.|\.|\*/, Operator, :operator
@@ -153,18 +162,18 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Type tests
-        rule /(#{kindTest})(\s*)(\()/ do
+        rule /(#{kindTest})(\s*)(#{openParens})/ do
           push :occurrenceindicator
           groups Keyword, Text, Punctuation, :kindtest
         end
-        rule /(#{kindTestForPi})(\s*)(\()/ do
+        rule /(#{kindTestForPi})(\s*)(#{openParens})/ do
           push :occurrenceindicator
           groups Keyword, Text, Punctuation, :kindtestforpi
         end
-        rule /(item)(\s*)(\()(\s*)(\))/ do
+        rule /(item)(\s*)(#{openParens})(\s*)(\))/ do
           groups Keyword::Type, Text, Punctuation, Text, Punctuation, :occurrenceindicator
         end
-        rule /(function)(\s*)(\()/ do
+        rule /(#{constructorTypes})(\s*)(#{openParens})/ do
           groups Keyword::Type, Text, Punctuation
         end
 
@@ -197,7 +206,7 @@ module Rouge
         # Pseudo-parameters:
         rule /\*/, Keyword, :closekindtest
         rule eqName, Name, :closekindtest
-        rule /(element|schema-element)(\s*)(\()/ do
+        rule /(element|schema-element)(\s*)(#{openParens})/ do
           group Keyword, Text, Punctuation, :kindtest
         end
 
@@ -250,7 +259,7 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Function call
-        rule /(#{eqName})(\s*)(\()/ do
+        rule /(#{eqName})(\s*)(#{openParens})/ do
           push :root
           groups Name::Variable, Text, Punctuation
         end

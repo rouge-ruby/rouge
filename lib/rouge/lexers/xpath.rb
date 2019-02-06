@@ -23,7 +23,7 @@ module Rouge
       eqName = /(?:#{qName}|#{uriQName})/
 
       commentStart = /\(:/
-      openParens   = /\((?!:)/
+      openParen    = /\((?!:)/
 
       # Terminal symbols:
       # https://www.w3.org/TR/xpath-30/#id-terminal-delimitation
@@ -39,7 +39,7 @@ module Rouge
         parent ancestor preceding-sibling preceding ancestor-or-self
       ))
       operators = Regexp.union(%w(, => = := : >= >> > <= << < - * != + // / || |))
-      keyword_operators = Regexp.union(%w(then else return in satisfies))
+      keywords = Regexp.union(%w(let for some every if then else return in satisfies))
       word_operators = Regexp.union(%w(
         and or eq ge gt le lt ne is
         div mod idiv
@@ -59,74 +59,37 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Literals
-        rule doubleLiteral, Num::Float, :operator
-        rule decimalLiteral, Num::Float, :operator
-        rule digits, Num, :operator
-        rule stringLiteral, Literal::String, :operator
+        rule doubleLiteral, Num::Float
+        rule decimalLiteral, Num::Float
+        rule digits, Num
+        rule stringLiteral, Literal::String
 
         # Variables
         rule /\$/, Name::Variable, :varname
 
-        # Keywords
-        rule /(for|some|every|let)/, Keyword
+        # Operators
+        rule operators, Operator
+        rule /\b#{word_operators}\b/, Operator::Word
+        rule /\b#{keywords}\b/, Keyword
+        rule /[?,{}()\[\]]/, Punctuation
 
         # Functions
-        rule /(function|empty-sequence)(\s*)(#{openParens})/ do
-          groups Keyword, Text, Punctuation, :operator
-        end
-        rule /(map|array)(\s*)(\{)/ do
+        rule /(function)(\s*)(#{openParen})/ do # function declaration
           groups Keyword, Text, Punctuation
         end
-        rule /(#{kindTest})(\s*)(#{openParens})/ do
-          push :operator
+        rule /(map|array|empty-sequence)/, Keyword # constructors
+        rule /(#{kindTest})(\s*)(#{openParen})/ do  # kindtest
           groups Keyword, Text, Punctuation, :kindtest
         end
-        rule /(#{kindTestForPi})(\s*)(#{openParens})/ do
-          push :operator
+        rule /(#{kindTestForPi})(\s*)(#{openParen})/ do # processing instruction kindtest
           groups Keyword, Text, Punctuation, :kindtestforpi
         end
-        rule /(if)(\s*)(#{openParens})/ do
-          groups Keyword, Text, Punctuation
-        end
-        rule /(#{eqName})(\s*)(#{openParens})/ do
+        rule /(#{eqName})(\s*)(#{openParen})/ do # function call
           groups Name::Function, Text, Punctuation
         end
-        rule /(#{eqName})(\s*)(#)(\s*)(#{digits})(\s*)(#{openParens})/ do # namedFunctionRef
-          groups Name::Function, Text, Name::Function, Text, Name::Function, Text, Punctuation
+        rule /(#{eqName})(\s*)(#)(\s*)(#{digits})/ do # namedFunctionRef
+          groups Name::Function, Text, Name::Function, Text, Name::Function
         end
-        rule /\)/, Punctuation, :operator
-        rule /[?,(\[]/, Punctuation
-
-        # Paths
-        rule /\.\.|\.|\*/, Operator, :operator
-        rule /(#{ncName})(\s*)(:)(\s*)(\*)/ do
-          groups Name::Tag, Text, Punctuation, Text, Keyword::Reserved, :operator
-        end
-        rule /(\*)(\s*)(:)(\s*)(#{ncName})/ do
-          groups Keyword::Reserved, Text, Punctuation, Text, Name::Tag, :operator
-        end
-        rule /(#{axes})(\s*)(::)/ do
-          groups Keyword, Text, Operator
-        end
-        rule /@/, Name::Attribute, :attrname
-        rule eqName, Name::Tag, :operator
-
-        # Path separators
-        rule %r((-|\+|/|//)), Operator
-
-        # Whitespace
-        rule /\s+/m, Text
-      end
-
-      state :operator do
-        # Comments
-        rule commentStart, Comment, :comment
-
-        # Operators
-        rule operators, Operator, :root
-        rule /\s+#{word_operators}(\s+|$)/, Operator::Word, :root
-        rule /\s+#{keyword_operators}(\s+|$)/, Operator::Word, :root
-        rule /[\[({]/, Punctuation, :root
 
         # Type commands
         rule /(cast|castable)(\s+)(as)/ do
@@ -143,12 +106,19 @@ module Rouge
         end
         rule /as/, Keyword, :itemtype
 
-        # Variables
-        rule /\$/, Name::Variable, :varname
-        rule /[)?\]}]/, Punctuation
-
-        # Literals
-        rule stringLiteral, Literal::String
+        # Paths
+        rule /\.\.|\.|\*/, Operator
+        rule /(#{ncName})(\s*)(:)(\s*)(\*)/ do
+          groups Name::Tag, Text, Punctuation, Text, Keyword::Reserved
+        end
+        rule /(\*)(\s*)(:)(\s*)(#{ncName})/ do
+          groups Keyword::Reserved, Text, Punctuation, Text, Name::Tag
+        end
+        rule /(#{axes})(\s*)(::)/ do
+          groups Keyword, Text, Operator
+        end
+        rule /@/, Name::Attribute, :attrname
+        rule eqName, Name::Tag
 
         # Whitespace
         rule /(\s+)/m, Text
@@ -160,7 +130,7 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Type name
-        rule eqName, Keyword::Type, :operator
+        rule eqName, Keyword::Type, :root
       end
 
       state :itemtype do
@@ -169,18 +139,18 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Type tests
-        rule /(#{kindTest})(\s*)(#{openParens})/ do
+        rule /(#{kindTest})(\s*)(#{openParen})/ do
           push :occurrenceindicator
-          groups Keyword, Text, Punctuation, :kindtest
+          groups Keyword::Type, Text, Punctuation, :kindtest
         end
-        rule /(#{kindTestForPi})(\s*)(#{openParens})/ do
+        rule /(#{kindTestForPi})(\s*)(#{openParen})/ do
           push :occurrenceindicator
-          groups Keyword, Text, Punctuation, :kindtestforpi
+          groups Keyword::Type, Text, Punctuation, :kindtestforpi
         end
-        rule /(item)(\s*)(#{openParens})(\s*)(\))/ do
+        rule /(item)(\s*)(#{openParen})(\s*)(\))/ do
           groups Keyword::Type, Text, Punctuation, Text, Punctuation, :occurrenceindicator
         end
-        rule /(#{constructorTypes})(\s*)(#{openParens})/ do
+        rule /(#{constructorTypes})(\s*)(#{openParen})/ do
           groups Keyword::Type, Text, Punctuation
         end
 
@@ -199,8 +169,8 @@ module Rouge
 
         # Operators
         rule operators, Operator, :root
-        rule word_operators, Operator::Word, :root
-        rule keyword_operators, Keyword, :root
+        rule /\b#{word_operators}\b/, Operator::Word, :root
+        rule /\b#{keywords}\b/, Keyword, :root
         rule /[\[),]/, Punctuation, :root
 
         # Other types (e.g. xs:double)
@@ -217,7 +187,7 @@ module Rouge
         # Pseudo-parameters:
         rule /\*/, Keyword, :closekindtest
         rule eqName, Name, :closekindtest
-        rule /(element|schema-element)(\s*)(#{openParens})/ do
+        rule /(element|schema-element)(\s*)(#{openParen})/ do
           group Keyword, Text, Punctuation, :kindtest
         end
 
@@ -256,11 +226,11 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Occurrence indicator
-        rule /[?*+]/, Operator, :operator
+        rule /[?*+]/, Operator, :root
 
         # Otherwise, lex it in operator state:
         rule /(?![?*+])/ do
-          push :operator
+          push :root
         end
       end
 
@@ -270,13 +240,13 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Function call
-        rule /(#{eqName})(\s*)(#{openParens})/ do
+        rule /(#{eqName})(\s*)(#{openParen})/ do
           push :root
           groups Name::Variable, Text, Punctuation
         end
 
         # Variable name
-        rule eqName, Name::Variable, :operator
+        rule eqName, Name::Variable, :pop!
       end
 
       state :attrname do
@@ -285,7 +255,7 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Attribute name
-        rule eqName, Name::Attribute, :operator
+        rule eqName, Name::Attribute, :pop!
       end
 
       state :comment do

@@ -20,7 +20,7 @@ module Rouge
       ncName = /[a-z_][a-z_\-.0-9]*/i
       qName = /(?:#{ncName})(?::#{ncName})?/
       uriQName = /Q{[^{}]*}#{ncName}/
-      eqName = /(?:#{qName}|#{uriQName})/
+      eqName = /(?:#{uriQName}|#{qName})/
 
       commentStart = /\(:/
       openParen    = /\((?!:)/
@@ -104,7 +104,7 @@ module Rouge
           push :itemtype
           groups Keyword, Text, Keyword
         end
-        rule /as/, Keyword, :itemtype
+        rule /\b(as)\b/, Keyword, :itemtype
 
         # Paths
         rule /\.\.|\.|\*/, Operator
@@ -130,7 +130,7 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Type name
-        rule eqName, Keyword::Type, :root
+        rule eqName, Keyword::Type, :pop!
       end
 
       state :itemtype do
@@ -165,7 +165,7 @@ module Rouge
         rule /(instance)(\s+)(of)/ do
           groups Keyword, Text, Keyword, :itemtype
         end
-        rule /as/, Keyword
+        rule /\b(as)\b/, Keyword
 
         # Operators
         rule operators, Operator, :root

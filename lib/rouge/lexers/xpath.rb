@@ -79,10 +79,12 @@ module Rouge
         end
         rule /(map|array|empty-sequence)/, Keyword # constructors
         rule /(#{kindTest})(\s*)(#{openParen})/ do  # kindtest
-          groups Keyword, Text, Punctuation, :kindtest
+          push :kindtest
+          groups Keyword, Text, Punctuation
         end
         rule /(#{kindTestForPi})(\s*)(#{openParen})/ do # processing instruction kindtest
-          groups Keyword, Text, Punctuation, :kindtestforpi
+          push :kindtestforpi
+          groups Keyword, Text, Punctuation
         end
         rule /(#{eqName})(\s*)(#{openParen})/ do # function call
           groups Name::Function, Text, Punctuation
@@ -93,18 +95,21 @@ module Rouge
 
         # Type commands
         rule /(cast|castable)(\s+)(as)/ do
-          push :singletype
+          goto :singletype
           groups Keyword, Text, Keyword
         end
         rule /(treat)(\s+)(as)/ do
-          push :itemtype
+          goto :itemtype
           groups Keyword, Text, Keyword
         end
         rule /(instance)(\s+)(of)/ do
-          push :itemtype
+          goto :itemtype
           groups Keyword, Text, Keyword
         end
-        rule /\b(as)\b/, Keyword, :itemtype
+        rule /\b(as)\b/ do
+          token Keyword
+          goto :itemtype
+        end
 
         # Paths
         rule /\.\.|\.|\*/, Operator
@@ -130,7 +135,10 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Type name
-        rule eqName, Keyword::Type, :pop!
+        rule eqName do
+          token Keyword::Type
+          goto :root
+        end
       end
 
       state :itemtype do
@@ -140,15 +148,20 @@ module Rouge
 
         # Type tests
         rule /(#{kindTest})(\s*)(#{openParen})/ do
-          push :occurrenceindicator
-          groups Keyword::Type, Text, Punctuation, :kindtest
+          groups Keyword::Type, Text, Punctuation
+          # go to kindtest then occurrenceindicator
+          goto :occurrenceindicator
+          push :kindtest
         end
         rule /(#{kindTestForPi})(\s*)(#{openParen})/ do
-          push :occurrenceindicator
-          groups Keyword::Type, Text, Punctuation, :kindtestforpi
+          groups Keyword::Type, Text, Punctuation
+          # go to kindtestforpi then occurrenceindicator
+          goto :occurrenceindicator
+          push :kindtestforpi
         end
         rule /(item)(\s*)(#{openParen})(\s*)(\))/ do
-          groups Keyword::Type, Text, Punctuation, Text, Punctuation, :occurrenceindicator
+          goto :occurrenceindicator
+          groups Keyword::Type, Text, Punctuation, Text, Punctuation
         end
         rule /(#{constructorTypes})(\s*)(#{openParen})/ do
           groups Keyword::Type, Text, Punctuation
@@ -156,27 +169,43 @@ module Rouge
 
         # Type commands
         rule /(cast|castable)(\s+)(as)/ do
-          push :singletype
           groups Keyword, Text, Keyword
+          goto :singletype
         end
         rule /(treat)(\s+)(as)/ do
-          groups Keyword, Text, Keyword, :itemtype
+          groups Keyword, Text, Keyword
+          goto :itemtype
         end
         rule /(instance)(\s+)(of)/ do
-          groups Keyword, Text, Keyword, :itemtype
+          groups Keyword, Text, Keyword
+          goto :itemtype
         end
         rule /\b(as)\b/, Keyword
 
         # Operators
-        rule operators, Operator, :root
-        rule /\b#{word_operators}\b/, Operator::Word, :root
-        rule /\b#{keywords}\b/, Keyword, :root
-        rule /[\[),]/, Punctuation, :root
+        rule operators do
+          token Operator
+          goto :root
+        end
+        rule /\b#{word_operators}\b/ do
+          token Operator::Word
+          goto :root
+        end
+        rule /\b#{keywords}\b/ do
+          token Keyword
+          goto :root
+        end
+        rule /[\[),]/ do
+          token Punctuation
+          goto :root
+        end
 
         # Other types (e.g. xs:double)
-        rule eqName, Keyword::Type, :occurrenceindicator
+        rule eqName do
+          token Keyword::Type
+          goto :occurrenceindicator
+        end
       end
-
 
       # For pseudo-parameters for the KindTest productions
       state :kindtest do
@@ -185,11 +214,13 @@ module Rouge
         rule commentStart, Comment, :comment
 
         # Pseudo-parameters:
-        rule /\*/, Keyword, :closekindtest
-        rule eqName, Name, :closekindtest
+        rule /[?*]/, Operator
+        rule /,/, Punctuation
         rule /(element|schema-element)(\s*)(#{openParen})/ do
-          group Keyword, Text, Punctuation, :kindtest
+          push :kindtest
+          groups Keyword::Type, Text, Punctuation
         end
+        rule eqName, Name::Tag
 
         # End of pseudo-parameters
         rule /\)/, Punctuation, :pop!
@@ -209,28 +240,20 @@ module Rouge
         rule /\)/, Punctuation, :pop!
       end
 
-      state :closekindtest do
-        # Whitespace and comments
-        rule /\s+/m, Text
-        rule commentStart, Comment, :comment
-
-        # Closing or continuing a kindtest
-        rule /\)/, Punctuation, :pop!
-        rule /,/, Punctuation, :kindtest
-        rule /\?/, Punctuation
-      end
-
       state :occurrenceindicator do
         # Whitespace and comments
         rule /\s+/m, Text
         rule commentStart, Comment, :comment
 
         # Occurrence indicator
-        rule /[?*+]/, Operator, :root
+        rule /[?*+]/ do
+          token Operator
+          goto :root
+        end
 
-        # Otherwise, lex it in operator state:
+        # Otherwise, lex it in root state:
         rule /(?![?*+])/ do
-          push :root
+          goto :root
         end
       end
 
@@ -241,8 +264,8 @@ module Rouge
 
         # Function call
         rule /(#{eqName})(\s*)(#{openParen})/ do
-          push :root
           groups Name::Variable, Text, Punctuation
+          pop!
         end
 
         # Variable name
@@ -256,6 +279,7 @@ module Rouge
 
         # Attribute name
         rule eqName, Name::Attribute, :pop!
+        rule /\*/, Operator, :pop!
       end
 
       state :comment do

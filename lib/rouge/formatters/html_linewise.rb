@@ -16,7 +16,7 @@ module Rouge
           line.each do |tok, val|
             yield @formatter.span(tok, val)
           end
-          yield "</#{@tag_name}>\n"
+          yield "</#{@tag_name}>"
         end
       end
 

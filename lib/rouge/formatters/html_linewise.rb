@@ -6,16 +6,17 @@ module Rouge
     class HTMLLinewise < Formatter
       def initialize(formatter, opts={})
         @formatter = formatter
+        @tag_name = opts.fetch(:tag_name, 'div')
         @class_format = opts.fetch(:class, 'line-%i')
       end
 
       def stream(tokens, &b)
         token_lines(tokens) do |line|
-          yield "<div class=#{next_line_class}>"
+          yield "<#{@tag_name} class=#{next_line_class}>"
           line.each do |tok, val|
             yield @formatter.span(tok, val)
           end
-          yield '</div>'
+          yield "</#{@tag_name}>\n"
         end
       end
 

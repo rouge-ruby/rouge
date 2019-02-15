@@ -67,7 +67,7 @@ module Rouge
         rule /(bagof|setof|findall|forall)(?=[(])/, Keyword
         # Multi-threading meta-predicates
         rule /threaded(?=[(])/, Keyword
-        rule /(threaded_call|threaded_once|threaded_ignore|threaded_exit|threaded_peek)(?=[(])/, Keyword
+        rule /(threaded_call|threaded_cancel|threaded_once|threaded_ignore|threaded_exit|threaded_peek)(?=[(])/, Keyword
         rule /(threaded_wait|threaded_notify)(?=[(])/, Keyword
         # Threaded engines
         rule /(threaded_engine|threaded_engine_create|threaded_engine_destroy|threaded_engine_self)(?=[(])/, Keyword

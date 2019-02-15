@@ -30,9 +30,9 @@ comment
 	extends(parent)).
 
 	:- info([
-		version is 1.41,
+		version is 1.44,
 		author is 'Paulo Moura',
-		date is 2018/07/26,
+		date is 2019/02/12,
 		comment is 'Sample prototype for testing syntax coloring.'
 	]).
 
@@ -40,8 +40,6 @@ comment
 	:- threaded.
 	:- dynamic.
 	:- initialization(some_goal(X, Y)).
-	:- calls(some_other_protocol).
-	:- uses(another_object).
 
 	:- alias(set, [member/2 as set_member/2]).
 	:- alias(words, [singular//0 as peculiar//0]).
@@ -129,10 +127,15 @@ comment
 	multi_threading :-
 		threaded(Goals),
 		threaded_call(Goal),
+		threaded_call(Goal, Tag),
 		threaded_once(Goal),
+		threaded_once(Goal, Tag),
 		threaded_ignore(Goal),
 		threaded_exit(Goal),
+		threaded_exit(Goal, Tag),
 		threaded_peek(Goal),
+		threaded_peek(Goal, Tag),
+		threaded_cancel(Tag),
 		threaded_wait(Notification),
 		threaded_notify(Notification).
 
@@ -245,7 +248,8 @@ comment
 		X1 is 13, X2 is -13, X3 is +13,
 		Y1 is 13.13, Y2 is -13.13, Y3 is +13.13,
 		Z1 is 13.13e-23, Z2 is -13.13e-23, Z3 is +13.13e-23,
-		C1 is 0'A, C2 is 0'', C3 is 0'",
+		C1 is 0'A, C2 is 0'', C3 is 0'", C4 is 0'%,
+		C5 is 0'\n, C6 is 0'\\, C7 is 0'\', C8 is 0'\", C9 is 0'\`,
 		B1 is 0b1011101,
 		O1 is 0o1234560,
 		H1 is 0x1234567890abcDEF.

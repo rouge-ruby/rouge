@@ -5,14 +5,13 @@
 module Rouge
   module Lexers
     class PostScript < RegexLexer
-      """
+=begin
       Lexer for PostScript files.
 
       The PostScript Language Reference published by Adobe at
       <http://partners.adobe.com/public/developer/en/ps/PLRM.pdf>
       is the authority for this.
-      """
-
+=end
       title "PostScript"
       desc "PostScript"
       tag "postscript"

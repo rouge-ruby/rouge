@@ -19,6 +19,10 @@ module Rouge
       filenames "*.ps", "*.eps"
       mimetypes "application/postscript"
 
+      def self.detect?(text)
+        /%^%!/
+      end
+
       delimiter = %s"()<>\[\]{}/%\s"
       delimiter_end = Regexp.new("(?=[#{delimiter}])")
       valid_name_chars = Regexp.new("[^#{delimiter}]")

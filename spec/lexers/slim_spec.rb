@@ -19,4 +19,28 @@ describe Rouge::Lexers::Slim do
     end
   end
 
+  describe 'multi line ruby code' do
+    it 'handles comma at the end of the line' do
+      assert_tokens_equal "= puts 1,\n2",
+        ['Punctuation', '='],
+        ['Text', ' '],
+        ['Name.Builtin', 'puts'],
+        ['Text', ' '],
+        ['Literal.Number.Integer', '1'],
+        ['Punctuation', ","],
+        ['Text', "\n"],
+        ['Literal.Number.Integer', '2']
+    end
+
+    it 'handles backslash at the end of the line' do
+      assert_tokens_equal "= puts \\\n1",
+        ['Punctuation', '='],
+        ['Text', ' '],
+        ['Name.Builtin', 'puts'],
+        ['Text', ' '],
+        ['Punctuation', "\\"],
+        ['Text', "\n"],
+        ['Literal.Number.Integer', '1']
+    end
+  end
 end

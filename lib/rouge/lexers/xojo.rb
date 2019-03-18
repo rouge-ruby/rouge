@@ -69,11 +69,6 @@ module Rouge
           | [#]ElseIf\b .*? \bThen
           | [#]End \s+ If
           | [#]Const
-          | [#]ExternalSource .*? \n
-          | [#]End \s+ ExternalSource
-          | [#]Region .*? \n
-          | [#]End \s+ Region
-          | [#]ExternalChecksum
           | [#]tag.*\n
         )ix, Comment::Preproc
         rule /[.]/, Punctuation, :dotted
@@ -104,9 +99,7 @@ module Rouge
         )
 
         rule /"/, Str, :string
-        rule /#{id}[%&@!#\$]?/, Name
-        rule /#.*?#/, Literal::Date
-
+        rule /#{id}([.]\w+)?/, Name::Variable
         rule /[+-]?(\d+\.\d*|\d*\.\d+)(f[+-]?\d+)?/i, Num::Float
         rule /[+-]?\d+/, Num::Integer
         rule /&[CH][0-9a-f]+/i, Num::Integer
@@ -138,11 +131,6 @@ module Rouge
       state :classname do
         mixin :whitespace
         rule id, Name::Class, :pop!
-      end
-
-      state :namespace do
-        mixin :whitespace
-        rule /#{id}([.]#{id})*/, Name::Namespace, :pop!
       end
 
       state :end do

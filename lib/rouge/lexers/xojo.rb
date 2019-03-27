@@ -15,9 +15,9 @@ module Rouge
           addhandler aggregates array asc assigns attributes begin break
           byref byval call case catch class const continue char ctype declare
           delegate dim do downto each else elseif end endif enum event exception
-          exit extends false finally for function global goto handles if
+          exit extends false finally for function global goto if
           implements inherits interface lib loop mod module
-          namespace new next nil object of optional paramarray
+          new next nil object of optional paramarray
           private property protected public raise raiseevent rect redim
           removehandler return select shared soft static step sub super
           then to true try until using uend uhile
@@ -53,7 +53,7 @@ module Rouge
         rule /\n/, Text, :bol
         rule /rem\b.*?$/i, Comment::Single
         rule /\/\/.*$/, Comment::Single
-        rule /\#tag Note.*\#tag EndNote/m, Comment::Multiline
+        rule /\#tag Note.*\#tag EndNote/m, Comment::Doc
       end
 
       state :bol do
@@ -69,8 +69,10 @@ module Rouge
           | [#]ElseIf\b .*? \bThen
           | [#]End \s+ If
           | [#]Const
-          | [#]tag.*\n
         )ix, Comment::Preproc
+       rule %r(
+          [#]tag.*\n
+        )ix, Name::Tag
         rule /[.]/, Punctuation, :dotted
         rule /[(){}!#,:]/, Punctuation
         rule /End\b/i, Keyword, :end
@@ -135,7 +137,7 @@ module Rouge
 
       state :end do
         mixin :whitespace
-        rule /(Function|Sub|Property|Class|Structure|Enum|Module|Namespace)\b/i,
+        rule /(Function|Sub|Property|Class|Structure|Enum|Module)\b/i,
           Keyword, :pop!
         rule(//) { pop! }
       end

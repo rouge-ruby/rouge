@@ -2,12 +2,10 @@ sudo: false
 dist: trusty
 language: ruby
 rvm:
-  - "2.0"
-  - "2.1"
-  - "2.2"
   - "2.3"
   - "2.4"
   - "2.5"
+  - "2.6"
 
 cache:
   bundler: true

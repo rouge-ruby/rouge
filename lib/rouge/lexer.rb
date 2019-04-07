@@ -188,11 +188,11 @@ module Rouge
       end
 
       def disable_debug!
-        @debug_enabled = false
+        remove_instance_variable :@debug_enabled
       end
 
       def debug_enabled?
-        !!@debug_enabled
+        (defined? @debug_enabled) ? true : false
       end
 
     protected

@@ -60,7 +60,7 @@ module Rouge
         # not sure why, but ^ doesn't work here
         # rule /^[_a-z][\w']*/, Name::Function
         rule /[_a-z][\w']*/, Name
-        rule /[A-Z][\w']*/, Keyword::Type
+        rule /'?[A-Z]\w[\w']*/, Keyword::Type
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function

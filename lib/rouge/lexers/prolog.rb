@@ -11,9 +11,15 @@ module Rouge
       filenames '*.pro', '*.P', '*.prolog', '*.pl'
       mimetypes 'text/x-prolog'
 
+      start { push :bol }
+
+      state :bol do
+        rule /#.*/, Comment::Single
+        rule(//) { pop! }
+      end
+
       state :basic do
         rule /\s+/, Text
-        rule /^#!.*/, Comment::Single
         rule /%.*/, Comment::Single
         rule /\/\*/, Comment::Multiline, :nested_comment
 

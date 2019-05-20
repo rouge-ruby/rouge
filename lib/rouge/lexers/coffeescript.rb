@@ -43,7 +43,7 @@ module Rouge
 
       state :comments_and_whitespace do
         rule /\s+/m, Text
-        rule /###\s*\n.*?###/m, Comment::Multiline
+        rule /###[^#].*?###/m, Comment::Multiline
         rule /#.*$/, Comment::Single
       end
 

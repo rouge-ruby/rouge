@@ -113,11 +113,9 @@ module Rouge
 
       def self.reserved
         @reserved ||= Set.new %w(
-          abstract boolean byte char debugger double enum
-          final float goto implements int interface
-          long native package private protected public short static
-          synchronized throws transient volatile
-          eval arguments await
+          debugger enum implements interface
+          package private protected public static
+          throws eval arguments await
         )
       end
 

@@ -98,9 +98,9 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          for in of while do break return continue switch case default
-          if else throw try catch finally new delete typeof instanceof
-          void this yield import export from as async super this
+          as async await break case catch continue debugger default delete
+          do else export finally from for if import ininstanceof new of
+          return super switch this throw try typeof void while yield
         )
       end
 

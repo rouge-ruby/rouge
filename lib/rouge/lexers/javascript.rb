@@ -113,9 +113,8 @@ module Rouge
 
       def self.reserved
         @reserved ||= Set.new %w(
-          debugger enum implements interface
+          enum implements interface
           package private protected public
-          throws eval arguments await
         )
       end
 

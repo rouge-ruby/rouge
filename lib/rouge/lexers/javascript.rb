@@ -107,14 +107,14 @@ module Rouge
       def self.declarations
         @declarations ||= Set.new %w(
           var let const with function class
-          extends constructor get set
+          extends constructor get set static
         )
       end
 
       def self.reserved
         @reserved ||= Set.new %w(
           debugger enum implements interface
-          package private protected public static
+          package private protected public
           throws eval arguments await
         )
       end

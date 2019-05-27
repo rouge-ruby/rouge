@@ -34,51 +34,54 @@ module Rouge
   end
 end
 
-load_dir = Pathname.new(__FILE__).dirname
-load load_dir.join('rouge/version.rb')
-
-load load_dir.join('rouge/util.rb')
-
-load load_dir.join('rouge/text_analyzer.rb')
-load load_dir.join('rouge/token.rb')
-
-load load_dir.join('rouge/lexer.rb')
-load load_dir.join('rouge/regex_lexer.rb')
-load load_dir.join('rouge/template_lexer.rb')
-
-lexers_dir = load_dir.join('rouge/lexers')
-Dir.glob(lexers_dir.join('*.rb')).each do |f|
-  Rouge::Lexers.load_lexer(Pathname.new(f).relative_path_from(lexers_dir).to_s)
+# mimic Kernel#require_relative API
+def load_relative(path)
+  load File.join(__dir__, "#{path}.rb")
 end
 
-load load_dir.join('rouge/guesser.rb')
-load load_dir.join('rouge/guessers/util.rb')
-load load_dir.join('rouge/guessers/glob_mapping.rb')
-load load_dir.join('rouge/guessers/modeline.rb')
-load load_dir.join('rouge/guessers/filename.rb')
-load load_dir.join('rouge/guessers/mimetype.rb')
-load load_dir.join('rouge/guessers/source.rb')
-load load_dir.join('rouge/guessers/disambiguation.rb')
+def lexer_dir(path = '')
+  File.join(__dir__, 'rouge', 'lexers', path)
+end
 
-load load_dir.join('rouge/formatter.rb')
-load load_dir.join('rouge/formatters/html.rb')
-load load_dir.join('rouge/formatters/html_table.rb')
-load load_dir.join('rouge/formatters/html_pygments.rb')
-load load_dir.join('rouge/formatters/html_legacy.rb')
-load load_dir.join('rouge/formatters/html_linewise.rb')
-load load_dir.join('rouge/formatters/html_inline.rb')
-load load_dir.join('rouge/formatters/terminal256.rb')
-load load_dir.join('rouge/formatters/null.rb')
+load_relative 'rouge/version'
+load_relative 'rouge/util'
+load_relative 'rouge/text_analyzer'
+load_relative 'rouge/token'
 
-load load_dir.join('rouge/theme.rb')
-load load_dir.join('rouge/themes/thankful_eyes.rb')
-load load_dir.join('rouge/themes/colorful.rb')
-load load_dir.join('rouge/themes/base16.rb')
-load load_dir.join('rouge/themes/github.rb')
-load load_dir.join('rouge/themes/igor_pro.rb')
-load load_dir.join('rouge/themes/monokai.rb')
-load load_dir.join('rouge/themes/molokai.rb')
-load load_dir.join('rouge/themes/monokai_sublime.rb')
-load load_dir.join('rouge/themes/gruvbox.rb')
-load load_dir.join('rouge/themes/tulip.rb')
-load load_dir.join('rouge/themes/pastie.rb')
+load_relative 'rouge/lexer'
+load_relative 'rouge/regex_lexer'
+load_relative 'rouge/template_lexer'
+
+Dir.glob(lexer_dir('*rb')).each { |f| Rouge::Lexers.load_lexer(f.sub(lexer_dir, '')) }
+
+load_relative 'rouge/guesser'
+load_relative 'rouge/guessers/util'
+load_relative 'rouge/guessers/glob_mapping'
+load_relative 'rouge/guessers/modeline'
+load_relative 'rouge/guessers/filename'
+load_relative 'rouge/guessers/mimetype'
+load_relative 'rouge/guessers/source'
+load_relative 'rouge/guessers/disambiguation'
+
+load_relative 'rouge/formatter'
+load_relative 'rouge/formatters/html'
+load_relative 'rouge/formatters/html_table'
+load_relative 'rouge/formatters/html_pygments'
+load_relative 'rouge/formatters/html_legacy'
+load_relative 'rouge/formatters/html_linewise'
+load_relative 'rouge/formatters/html_inline'
+load_relative 'rouge/formatters/terminal256'
+load_relative 'rouge/formatters/null'
+
+load_relative 'rouge/theme'
+load_relative 'rouge/themes/thankful_eyes'
+load_relative 'rouge/themes/colorful'
+load_relative 'rouge/themes/base16'
+load_relative 'rouge/themes/github'
+load_relative 'rouge/themes/igor_pro'
+load_relative 'rouge/themes/monokai'
+load_relative 'rouge/themes/molokai'
+load_relative 'rouge/themes/monokai_sublime'
+load_relative 'rouge/themes/gruvbox'
+load_relative 'rouge/themes/tulip'
+load_relative 'rouge/themes/pastie'

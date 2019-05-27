@@ -320,7 +320,7 @@ module Rouge
 
         rule /\(/, Punctuation, :root
         rule /\)/, Punctuation do
-          if stack.empty?
+          if stack.size == 1
             token Error
           else
             token Punctuation

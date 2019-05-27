@@ -71,7 +71,6 @@ module Rouge
       state :root do
         mixin :whitespace
 
-        rule /^\s*\[.*?\]/, Name::Attribute
         rule /[$]\s*"/, Str, :splice_string
         rule /[$]@\s*"/, Str, :splice_literal
 

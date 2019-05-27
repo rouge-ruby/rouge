@@ -25,7 +25,7 @@ module Rouge
 
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
       const_name = /[A-Z][A-Z0-9_]*\b/
-      class_name = /[A-Z][a-zA-Z]*\b/
+      class_name = /[A-Z][a-zA-Z0-9]*\b/
 
       state :root do
         rule /[^\S\n]+/, Text

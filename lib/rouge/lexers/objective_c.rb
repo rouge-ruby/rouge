@@ -160,8 +160,10 @@ module Rouge
           ([(].*?[)])?(\s*)
           (?=#{id}:?)
         )ix do |m|
-          token Keyword, m[1]; token Text, m[2]
-          recurse m[3]; token Text, m[4]
+          token Keyword, m[1]
+          token Text, m[2]
+          recurse(m[3]) if m[3]
+          token Text, m[4]
           push :method_definition
         end
       end

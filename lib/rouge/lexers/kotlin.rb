@@ -73,7 +73,8 @@ module Rouge
         rule %r'[^\S\n]+', Text
         rule %r'\\\n', Text # line continuation
         rule %r'//.*?$', Comment::Single
-        rule %r'/[*].*?[*]/'m, Comment::Multiline
+        rule %r'/[*].*[*]/', Comment::Multiline # single line block comment
+        rule %r'/[*].*', Comment::Multiline, :comment # multiline block comment
         rule %r'\n', Text
         rule %r'::|!!|\?[:.]', Operator
         rule %r"(\.\.)", Operator
@@ -121,6 +122,12 @@ module Rouge
         rule %r'(\))', Punctuation, :pop!
         rule %r'(\s+)', Text
         rule id, Name::Property
+      end
+
+      state :comment do
+        rule %r'\s*/[*].*', Comment::Multiline, :comment
+        rule %r'.*[*]/', Comment::Multiline, :pop!
+        rule %r'.*', Comment::Multiline
       end
     end
   end

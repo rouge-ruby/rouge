@@ -4,12 +4,12 @@ source 'http://rubygems.org'
 
 gemspec
 
-gem 'bundler', '~> 1.15'
 gem 'rake'
 
 gem 'minitest', '>= 5.0'
 gem 'minitest-power_assert'
 
+gem 'parallel', '~> 1.13.0' if RUBY_VERSION < '2.2.0'
 gem 'rubocop', '~> 0.49.1'
 
 # don't try to install redcarpet under jruby
@@ -23,6 +23,10 @@ group :development do
   gem 'github-markup'
 
   # for visual tests
-  gem 'sinatra'
+  if RUBY_VERSION < '2.2.0'
+    gem 'sinatra', '~> 1.4.8'
+  else
+    gem 'sinatra'
+  end
   gem 'shotgun'
 end

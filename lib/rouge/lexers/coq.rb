@@ -141,7 +141,7 @@ module Rouge
       end
 
       state :string do
-        rule /[^\\"]+/, Str::Double
+        rule /(?:\\")+|[^"]/, Str::Double
         mixin :escape_sequence
         rule /\\\n/, Str::Double
         rule /"/, Str::Double, :pop!

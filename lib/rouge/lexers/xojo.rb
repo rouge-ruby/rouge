@@ -42,7 +42,7 @@ module Rouge
       end
       
     
-        state :root do
+      state :root do
         mixin :whitespace
         rule /\s*[#].*$/x, Comment::Preproc
         rule /[(){}!#,:]/, Punctuation

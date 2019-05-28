@@ -18,9 +18,17 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          for in of while break return continue switch when then if else
-          throw try catch finally new delete typeof instanceof super
-          extends this class by
+          for by while until loop break continue return
+          switch when then if else do yield throw try catch finally await
+          new delete typeof instanceof super extends this class
+          import export debugger
+        )
+      end
+
+      def self.reserved
+        @reserved ||= Set.new %w(
+          case function var void with const let enum
+          native implements interface package private protected public static
         )
       end
 
@@ -77,8 +85,8 @@ module Rouge
         rule(%r(^(?=\s|/|<!--))) { push :slash_starts_regex }
         mixin :comments_and_whitespace
         rule %r(
-          [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|[?]|:|=|
-          [|][|]|\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&|^/])=?
+          [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\bin\b|\bof\b|
+          [?]|:|=|[|][|]|\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&|^/])=?
         )x, Operator, :slash_starts_regex
 
         rule /[-=]>/, Name::Function

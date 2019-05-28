@@ -44,15 +44,8 @@ module Rouge
         rule /@\d+l?/, Num::Integer
         rule /\bin\b/, Keyword
 
-        rule /@(?:interface|implementation)\b/ do
-          token Keyword
-          goto :classname
-        end
-
-        rule /@(?:class|protocol)\b/ do
-          token Keyword
-          goto :forward_classname
-        end
+        rule /@(?:interface|implementation)\b/, Keyword, :classname
+        rule /@(?:class|protocol)\b/, Keyword, :forward_classname
 
         rule /@([[:alnum:]]+)/ do |m|
           if self.class.at_keywords.include? m[1]
@@ -80,7 +73,7 @@ module Rouge
         rule /\{/, Punctuation, :pop!
         rule /;/, Error
 
-        mixin :statement
+        mixin :statements
       end
 
       state :message do

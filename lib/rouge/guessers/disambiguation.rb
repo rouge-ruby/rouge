@@ -101,6 +101,12 @@ module Rouge
 
         Cpp
       end
+
+      disambiguate '*.plist' do
+        next XML if matches?(/\A<\?xml\b/)
+
+        Plist
+      end
     end
   end
 end

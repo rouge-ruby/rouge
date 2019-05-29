@@ -48,7 +48,7 @@ module Rouge
         rule /\b(?:#{keywords_type.join('|')})\b/i, Keyword::Declaration
 
         rule /\b(?:#{operator_words.join('|')})\b/i, Operator
-        rule /[+-]?(\d+\.\d*|\d*\.\d+)\b/i, Literal::Number::Float
+        rule /[+-]?(\d+\.\d*|\d*\.\d+)/i, Literal::Number::Float
         rule /[+-]?\d+/, Literal::Number::Integer
         rule /&[CH][0-9a-f]+/i, Literal::Number::Hex
         rule /&O[0-7]+/i, Literal::Number::Oct

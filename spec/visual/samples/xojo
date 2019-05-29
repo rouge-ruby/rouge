@@ -15,7 +15,7 @@ Begin iosView DrawView
       AutoLayout      =   DrawingCanvas, 1, <Parent>, 1, False, +1.00, 1, 1, 0, 
       AutoLayout      =   DrawingCanvas, 2, <Parent>, 2, False, +1.00, 2, 1, 0, 
       AutoLayout      =   DrawingCanvas, 3, TopLayoutGuide, 4, False, +1.00, 1, 1, 0, 
-      Height          =   503.0
+      Height          =   503.
       Left            =   0
       LockedInPosition=   False
       Scope           =   0
@@ -30,7 +30,8 @@ End
 	#tag Event
 		Sub Activate()
 		  DrawingCanvas.Invalidate
-		  dim x as double=1..0 //this should error on the double dot
+		  dim x as double=1. //this is allowed
+		  dim y as double=.1 //also allowed
 		  rem This is an old style comment (throw back to Basic)
 		  dim escaped_quotes as string="this is an ""escaped"" string" //would compile as 'this is an "escaped" string'
 		End Sub

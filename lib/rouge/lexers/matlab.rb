@@ -58,14 +58,21 @@ module Rouge
         rule /\d+L/, Num::Integer::Long
         rule /\d+/, Num::Integer
 
-        rule /'(?=(.*'))/, Str::Single, :string
+        rule /'(?=(.*'))/, Str::Single, :chararray
+        rule /"(?=(.*"))/, Str::Double, :string
         rule /'/, Operator
       end
 
-      state :string do
+      state :chararray do
         rule /[^']+/, Str::Single
         rule /''/, Str::Escape
         rule /'/, Str::Single, :pop!
+      end
+
+      state :string do
+        rule /[^"]+/, Str::Double
+        rule /""/, Str::Escape
+        rule /"/, Str::Double, :pop!
       end
     end
   end

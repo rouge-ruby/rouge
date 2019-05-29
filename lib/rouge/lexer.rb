@@ -188,11 +188,11 @@ module Rouge
       end
 
       def disable_debug!
-        @debug_enabled = false
+        remove_instance_variable :@debug_enabled
       end
 
       def debug_enabled?
-        !!@debug_enabled
+        (defined? @debug_enabled) ? true : false
       end
 
     protected
@@ -454,9 +454,7 @@ module Rouge
     def self.load_lexer(relpath)
       return if @_loaded_lexers.key?(relpath)
       @_loaded_lexers[relpath] = true
-
-      root = Pathname.new(__FILE__).dirname.join('lexers')
-      load root.join(relpath)
+      load File.join(__dir__, 'lexers', relpath)
     end
   end
 end

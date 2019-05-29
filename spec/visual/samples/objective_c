@@ -37,6 +37,10 @@ void (^simpleBlock)(void) = ^{
     NSLog(@"This is a block");
 };
 
+- foo:(id) foo {
+    [self bar:foo];
+}
+
 [[SomeClass] inlineBlock:(^NSString *){
     NSString *var = @"blah";
     return var;

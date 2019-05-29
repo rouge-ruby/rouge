@@ -16,6 +16,8 @@ describe Rouge::Lexers::XML do
       assert_guess :filename => 'foo.xsd'
       assert_guess :filename => 'foo.wsdl'
       assert_guess :filename => 'foo.svg'
+      assert_guess :filename => 'foo.plist', :source => '<?xml version="1.0" encoding="utf-8"?>'
+      deny_guess   :filename => 'foo.plist', :source => 'foo'
     end
 
     it 'guesses by mimetype' do

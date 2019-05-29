@@ -106,7 +106,7 @@ module Rouge
         rule /\d+[lu]*/i, Num::Integer
         rule %r(\*/), Error
         rule %r([~!%^&*+=\|?:<>/-]), Operator
-        rule /[()\[\],.]/, Punctuation
+        rule /[()\[\],.;]/, Punctuation
         rule /\bcase\b/, Keyword, :case
         rule /(?:true|false|NULL)\b/, Name::Builtin
         rule id do |m|
@@ -133,13 +133,11 @@ module Rouge
 
       state :root do
         mixin :expr_whitespace
-
-        # functions
         rule %r(
           ([\w*\s]+?[\s*]) # return arguments
           (#{id})          # function name
           (\s*\([^;]*?\))  # signature
-          (#{ws})({)         # open brace
+          (#{ws}?)({|;)    # open brace or semicolon
         )mx do |m|
           # TODO: do this better.
           recurse m[1]
@@ -147,33 +145,12 @@ module Rouge
           recurse m[3]
           recurse m[4]
           token Punctuation, m[5]
-          push :function
+          if m[5] == ?{
+            push :function
+          end
         end
-
-        # function declarations
-        rule %r(
-          ([\w*\s]+?[\s*]) # return arguments
-          (#{id})          # function name
-          (\s*\([^;]*?\))  # signature
-          (#{ws})(;)       # semicolon
-        )mx do |m|
-          # TODO: do this better.
-          recurse m[1]
-          token Name::Function, m[2]
-          recurse m[3]
-          recurse m[4]
-          token Punctuation, m[5]
-          push :statement
-        end
-
-        rule(//) { push :statement }
-      end
-
-      state :statement do
-        rule /;/, Punctuation, :pop!
-        mixin :expr_whitespace
+        rule /\{/, Punctuation, :function
         mixin :statements
-        rule /[{}]/, Punctuation
       end
 
       state :function do

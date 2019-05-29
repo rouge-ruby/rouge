@@ -10,7 +10,7 @@ module Rouge
       tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
       filenames '*.sh', '*.bash', '*.zsh', '*.ksh',
-                '.bashrc', '.zshrc', '.kshrc', '.profile', 'PKGBUILD'
+                '.bashrc', '.zshrc', '.kshrc', '.profile', 'APKBUILD', 'PKGBUILD'
 
       mimetypes 'application/x-sh', 'application/x-shellscript'
 

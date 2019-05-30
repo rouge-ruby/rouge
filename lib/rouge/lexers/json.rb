@@ -20,38 +20,44 @@ module Rouge
 
       state :object do
         rule /\s+/, Text::Whitespace
-        rule /"/, Str::Double, :key
+        rule /"/, Str::Double, :name
         rule /:/, Punctuation, :value
         rule /,/, Punctuation
         rule /}/, Punctuation, :pop!
       end
 
       state :value do
-        rule /"/, Str::Char, :stringvalue
+        rule /"/, Name::Tag, :stringvalue
         mixin :constants
-        rule /\s*?(?=})/, Text::Whitespace, :pop!
+        rule /}/ do
+          token Punctuation
+          pop! 2 # pop both this state and the :object one below it
+        end
         rule /\[/, Punctuation, :array
         rule /{/, Punctuation, :object
-        rule /}/, Punctuation, :pop!
+        rule /}/ do
+          token Punctuation
+          pop! 2 # pop both this state and the :object one below it
+        end
         rule /,/, Punctuation, :pop!
         rule /\s+/, Text::Whitespace
       end
 
-      state :key do
+      state :name do
         rule /[^\\"]+/, Str::Double
         rule /\\./, Str::Escape
         rule /"/, Str::Double, :pop!
       end
 
       state :stringvalue do
-        rule /[^\\"]+/, Str::Char
+        rule /[^\\"]+/, Name::Tag
         rule /\\./, Str::Escape
-        rule /"/, Str::Char, :pop!
+        rule /"/, Name::Tag, :pop!
       end
 
       state :array do
         rule /\]/, Punctuation, :pop!
-        rule /"/, Str::Char, :stringvalue
+        rule /"/, Name::Tag, :stringvalue
         rule /,/, Punctuation
         mixin :constants
         mixin :root

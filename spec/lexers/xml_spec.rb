@@ -31,6 +31,7 @@ describe Rouge::Lexers::XML do
     it 'guesses by source' do
       assert_guess :source => '<?xml version="1.0" encoding="utf-8"?>'
       assert_guess :source => %{#{bom}<?xml version="1.0" encoding="utf-8"?>}
+      assert_guess :source => '<?xml version="1.0" ?><html destdir="${reportfolderPath}" encoding="utf-8" />'
       assert_guess :source => '<!DOCTYPE xml>'
       deny_guess   :source => '<!DOCTYPE html>'
     end

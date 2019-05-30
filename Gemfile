@@ -29,4 +29,9 @@ group :development do
     gem 'sinatra'
   end
   gem 'shotgun'
+
+  # Profiling
+  if RUBY_VERSION >= '2.3.0'
+    gem 'memory_profiler', :require => false
+  end
 end

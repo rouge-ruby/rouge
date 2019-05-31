@@ -9,7 +9,7 @@
 
 If you'd like to help out with this project, assign yourself something from the [issues][] page, and send me a pull request (even if it's not done yet!).  Bonus points for feature branches.
 
-[issues]: https://github.com/jneen/rouge/issues "Help Out"
+[issues]: https://github.com/rouge-ruby/rouge/issues "Help Out"
 [pygments]: http://pygments.org/ "Pygments"
 
 ## Usage
@@ -86,7 +86,7 @@ $ rougify style monokai.sublime > syntax.css
 
 ### Advantages to pygments.rb
 * No need to [spawn Python processes](https://github.com/tmm1/pygments.rb).
-* We're faster in [almost every measure](https://github.com/jneen/rouge/pull/41#issuecomment-223751572)
+* We're faster in [almost every measure](https://github.com/rouge-ruby/rouge/pull/41#issuecomment-223751572)
 
 ### Advantages to CodeRay
 * The HTML output from Rouge is fully compatible with stylesheets designed for pygments.
@@ -126,7 +126,7 @@ Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a dif
 
 ### Installing Ruby
 
-If you're here to implement a lexer for your awesome language, there's a good chance you don't already have a ruby development environment set up.  Follow the [instructions on the wiki](https://github.com/jneen/rouge/wiki/Setting-up-Ruby) to get up and running.  If you have trouble getting set up, let me know - I'm always happy to help.
+If you're here to implement a lexer for your awesome language, there's a good chance you don't already have a ruby development environment set up.  Follow the [instructions on the wiki](https://github.com/rouge-ruby/rouge/wiki/Setting-up-Ruby) to get up and running.  If you have trouble getting set up, let me know - I'm always happy to help.
 
 ### Run the tests
 
@@ -145,7 +145,7 @@ is at http://rubydoc.info/gems/rouge/frames.
 
 We have [a guide][lexer-dev-doc] on lexer development in the documentation but you'll also learn a lot by reading through the existing lexers. 
 
-[lexer-dev-doc]: https://www.rubydoc.info/github/jneen/rouge/file/docs/LexerDevelopment.md
+[lexer-dev-doc]: https://www.rubydoc.info/github/rouge-ruby/rouge/file/docs/LexerDevelopment.md
 
 Please don't submit lexers that are largely copy-pasted from other files.
 

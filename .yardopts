@@ -2,3 +2,4 @@
 --protected
 --markup-provider=redcarpet
 --markup=markdown
+- docs/LexerDevelopment.md

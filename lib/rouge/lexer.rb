@@ -236,6 +236,13 @@ module Rouge
 
       # Specify a list of filename globs associated with this lexer.
       #
+      # If a filename glob is associated with more than one lexer, this can
+      # cause a Guesser::Ambiguous error to be raised in various guessing
+      # methods. These errors can be avoided by disambiguation. Filename globs
+      # are disambiguated in one of two ways. Either the lexer will define a
+      # `self.detect?` method (intended for use with shebangs and doctypes) or a
+      # manual rule will be specified in Guessers::Disambiguation.
+      #
       # @example
       #   class Ruby < Lexer
       #     filenames '*.rb', '*.ruby', 'Gemfile', 'Rakefile'

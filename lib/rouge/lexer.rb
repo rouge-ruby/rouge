@@ -198,6 +198,8 @@ module Rouge
     protected
       # @private
       def register(name, lexer)
+        # reset an existing list of lexers
+        @all = nil if @all
         registry[name.to_s] = lexer
       end
 

@@ -29,7 +29,7 @@ module Rouge
       start { @shell.reset! }
 
       state :root do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule /#.*?\n/, Comment
 
@@ -59,7 +59,7 @@ module Rouge
       state :export do
         rule /[\w\${}-]/, Name::Variable
         rule /\n/, Text, :pop!
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
       end
 
       state :block_header do

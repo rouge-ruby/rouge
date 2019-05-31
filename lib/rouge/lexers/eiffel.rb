@@ -48,7 +48,7 @@ module Rouge
 
         rule /[A-Z][\dA-Z_]*/, Name::Class
         rule /[A-Za-z][\dA-Za-z_]*/, Name
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
       end
 
       state :aligned_verbatim_string do

@@ -41,7 +41,7 @@ module Rouge
       id = /[a-zA-Z][a-zA-Z0-9_]*/
 
       state :whitespace do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\n/, Text
         # Find Comments (VHDL doesn't support multiline comments)
         rule /--.*$/, Comment::Single

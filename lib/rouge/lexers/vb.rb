@@ -54,7 +54,7 @@ module Rouge
       upper_id = /[A-Z]\w*/
 
       state :whitespace do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\n/, Text, :bol
         rule /rem\b.*?$/i, Comment::Single
         rule %r(%\{.*?%\})m, Comment::Multiline
@@ -62,7 +62,7 @@ module Rouge
       end
 
       state :bol do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /<.*?>/, Name::Attribute
         rule(//) { :pop! }
       end

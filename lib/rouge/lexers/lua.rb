@@ -89,7 +89,7 @@ module Rouge
       end
 
       state :function_name do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r((?:([A-Za-z_][A-Za-z0-9_]*)(\.))?([A-Za-z_][A-Za-z0-9_]*)) do
           groups Name::Class, Punctuation, Name::Function
           pop!

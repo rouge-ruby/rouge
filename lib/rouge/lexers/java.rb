@@ -79,12 +79,12 @@ module Rouge
       end
 
       state :class do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule id, Name::Class, :pop!
       end
 
       state :import do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
       end
     end

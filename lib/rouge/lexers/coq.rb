@@ -91,7 +91,7 @@ module Rouge
 
       state :root do
         rule /[(][*](?![)])/, Comment, :comment
-        rule /\s+/m, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text::Whitespace
         rule module_type do |m|
           token Keyword , 'Module'
           token Text::Whitespace , m[1]

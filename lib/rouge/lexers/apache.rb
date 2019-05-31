@@ -31,7 +31,7 @@ module Rouge
 
       state :whitespace do
         rule /\#.*/, Comment
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
       end
 
       state :root do

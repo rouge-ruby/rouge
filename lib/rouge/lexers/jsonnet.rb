@@ -93,7 +93,7 @@ module Rouge
       identifier = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(//.*?$), Comment::Single
         rule %r(#.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline

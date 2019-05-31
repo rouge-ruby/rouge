@@ -62,7 +62,7 @@ module Rouge
 
       state :start_line do
         mixin :whitespace
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /#\[/ do
           token Name::Decorator; push :attribute
         end
@@ -79,7 +79,7 @@ module Rouge
       end
 
       state :whitespace do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(//[^\n]*), Comment
         rule %r(/[*].*?[*]/)m, Comment::Multiline
       end

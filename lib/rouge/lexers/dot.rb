@@ -16,7 +16,7 @@ module Rouge
       end
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(#.*?\n), Comment::Single
         rule %r(//.*?\n), Comment::Single
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline

@@ -61,7 +61,7 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE, Text::Whitespace
         rule /\(\*/, Comment, :comment
         rule /#{base}\^\^#{number_base}#{precision}?(\*\^[+-]?\d+)?/, Num # a number with a base
         rule /(?:#{number}#{precision}?(?:\*\^[+-]?\d+)?)/, Num # all other numbers

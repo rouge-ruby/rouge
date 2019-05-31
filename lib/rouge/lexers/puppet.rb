@@ -39,7 +39,7 @@ module Rouge
       qualname = /(::)?(#{id}::)*\w+/
 
       state :whitespace do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /#.*?\n/, Comment
       end
 

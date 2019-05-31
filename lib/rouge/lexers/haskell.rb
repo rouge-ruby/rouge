@@ -27,7 +27,7 @@ module Rouge
       )
 
       state :basic do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /{-#/, Comment::Preproc, :comment_preproc
         rule /{-/, Comment::Multiline, :comment
         rule /^--\s+\|.*?$/, Comment::Doc
@@ -95,7 +95,7 @@ module Rouge
       end
 
       state :import do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /"/, Str, :string
         rule /\bqualified\b/, Keyword
         # import X as Y
@@ -132,7 +132,7 @@ module Rouge
       end
 
       state :module do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         # module Foo (functions)
         rule /([A-Z][\w.]*)(\s+)(\()/ do
           groups Name::Namespace, Text, Punctuation

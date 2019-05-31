@@ -144,7 +144,7 @@ module Rouge
         rule(/[0-9][0-9_]*/,                  Num::Integer, :intsuffix)
 
         # Whitespace
-        rule(/\s+/, Text)
+        rule(RegexLexer::WHITESPACE_RE, Text)
         rule(/.+$/, Error)
       end
 

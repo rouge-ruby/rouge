@@ -55,7 +55,7 @@ module Rouge
 
       state :root do
         rule /;.*?$/, Comment::Single
-        rule /\s+/m, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text::Whitespace
 
         rule /-?\d+\.\d+/, Num::Float
         rule /-?\d+/, Num::Integer

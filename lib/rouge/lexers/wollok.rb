@@ -17,7 +17,7 @@ module Rouge
       entities = []
 
       state :whitespaces_and_comments do
-        rule /\s+/m, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text::Whitespace
         rule /$+/m, Text::Whitespace
         rule %r(//.*$), Comment::Single
         rule %r(/\*(.|\s)*?\*/)m, Comment::Multiline

@@ -50,7 +50,7 @@ module Rouge
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
 
       state :comments_and_whitespace do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /###[^#].*?###/m, Comment::Multiline
         rule /#.*$/, Comment::Single
       end

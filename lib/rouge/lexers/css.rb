@@ -240,7 +240,7 @@ module Rouge
       end
 
       state :basics do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule %r(/\*(?:.*?)\*/)m, Comment
       end
 

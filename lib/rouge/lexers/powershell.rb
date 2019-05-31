@@ -649,7 +649,7 @@ module Rouge
 
       # Override from Shell
       state :data do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\$?"/, Str::Double, :double_quotes
         rule /\$'/, Str::Single, :ansi_string
 

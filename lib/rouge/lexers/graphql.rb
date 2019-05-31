@@ -37,7 +37,7 @@ module Rouge
       end
 
       state :basic do
-        rule /\s+/m, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text::Whitespace
         rule /#.*$/, Comment
 
         rule /[!,]/, Punctuation

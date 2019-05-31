@@ -105,9 +105,9 @@ module Rouge
           groups Text, Comment::Single
         end
 
-        rule /^#.*?$/,         Comment::Single
-        rule /;[^\n]*/,        Comment::Single
-        rule /\s+/,            Text
+        rule /^#.*?$/, Comment::Single
+        rule /;[^\n]*/, Comment::Single
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule /(\bprocedure)(\s+)/ do
           groups Keyword, Text
@@ -200,7 +200,7 @@ module Rouge
       end
 
       state :function do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule /(?::|\s*\()/ do
           token Text
@@ -216,7 +216,7 @@ module Rouge
 
         rule /\s*[\])\n]/, Text, :pop!
 
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /"/,   Literal::String, :string
         rule /\b(if|then|else|fi|endif)\b/, Keyword
 
@@ -308,7 +308,7 @@ module Rouge
           groups Text, Comment::Single
         end
 
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule /(optionmenu|choice)([ \t]+\S+:[ \t]+)/ do
           groups Keyword, Text

@@ -23,7 +23,7 @@ module Rouge
 
       state :root do
         # Whitespaces
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         # Single line comments
         rule /--.*/, Comment::Single
         # Multiline comments

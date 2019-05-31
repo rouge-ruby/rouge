@@ -39,7 +39,7 @@ module Rouge
       end
 
       state :base do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule /#.*?\n/, Comment::Single
         rule /(?:on|off)\b/, Name::Constant

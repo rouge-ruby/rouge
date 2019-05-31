@@ -86,7 +86,7 @@ module Rouge
 
       state :whitespaces do
         rule /! !$/, Keyword # squeak chunk delimiter
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /".*?"/m, Comment
       end
 

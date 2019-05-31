@@ -6,6 +6,9 @@ module Rouge
   # A stateful lexer that uses sets of regular expressions to
   # tokenize a string.  Most lexers are instances of RegexLexer.
   class RegexLexer < Lexer
+    WHITESPACE_RE = /\s+/.freeze
+    WHITESPACE_RE_MULTILINE = /\s+/m.freeze
+
     # A rule is a tuple of a regular expression to test, and a callback
     # to perform if the test succeeds.
     #

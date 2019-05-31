@@ -99,7 +99,7 @@ module Rouge
         rule /\?>/, Comment::Preproc, :pop!
         # heredocs
         rule /<<<('?)(#{id})\1\n.*?\n\2;?\n/im, Str::Heredoc
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /#.*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single
         # empty comment, otherwise seen as the start of a docstring
@@ -156,7 +156,7 @@ module Rouge
       end
 
       state :classname do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /#{nsid}/, Name::Class, :pop!
       end
 

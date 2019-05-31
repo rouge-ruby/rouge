@@ -47,7 +47,7 @@ module Rouge
       end
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(#.*?$), Comment::Single
       end
 

@@ -166,7 +166,7 @@ module Rouge
 
       state :whitespace do
         # Spaces
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         # ! Comments
         rule %r((!).*$\n?), Comment::Single
         # (! Comments !)

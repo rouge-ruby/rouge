@@ -33,7 +33,7 @@ module Rouge
       end
 
       state :directive_tag do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /[\w.:-]+\s*=/m, Name::Attribute, :attr
         rule /[\w]+\s*/m, Name::Attribute
         rule %r(/?\s*#>), Name::Tag, :pop!

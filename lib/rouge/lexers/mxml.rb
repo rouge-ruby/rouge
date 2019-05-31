@@ -34,13 +34,13 @@ module Rouge
       end
 
       state :tag do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /[\w.:-]+\s*=/m, Name::Attribute, :attribute
         rule %r(/?\s*>), Name::Tag, :root
       end
 
       state :attribute do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /(")({|@{)/m do
           groups Str, Punctuation
           push :actionscript_attribute

@@ -12,7 +12,7 @@ module Rouge
 
       state :whitespaces do
         rule /^\s*\n\s*$/m, Text
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
       end
 
       state :comment do

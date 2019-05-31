@@ -167,7 +167,7 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
 
         rule /(:|::|MACRO:|MEMO:|GENERIC:|HELP:)(\s+)(\S+)/m do
           groups Keyword, Text, Name::Function
@@ -279,7 +279,7 @@ module Rouge
       end
 
       state :stack_effect do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\(/, Name::Function, :stack_effect
         rule /\)/, Name::Function, :pop!
 
@@ -288,14 +288,14 @@ module Rouge
       end
 
       state :slots do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /;(?=\s)/, Keyword, :pop!
         rule /\S+/, Name::Variable
       end
 
       state :import do
         rule /;(?=\s)/, Keyword, :pop!
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\S+/, Name::Namespace
       end
     end

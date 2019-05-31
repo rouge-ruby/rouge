@@ -54,7 +54,7 @@ module Rouge
         rule /GRAPH\b/, Keyword
         rule /a\b/, Keyword
 
-        rule /\s+/, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE, Text::Whitespace
 
         rule /[^:;<>#\@"\(\).\[\]\{\} ]+:/, Name::Namespace
         rule /[^:;<>#\@"\(\).\[\]\{\} ]+/, Name

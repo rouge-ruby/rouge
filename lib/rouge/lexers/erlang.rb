@@ -64,7 +64,7 @@ module Rouge
       base_re = %r{(?:[2-9]|[12][0-9]|3[0-6])}
 
       state :root do
-        rule(/\s+/, Text)
+        rule(RegexLexer::WHITESPACE_RE, Text)
         rule(/%.*\n/, Comment)
         rule(%r{(#{keywords.join('|')})\b}, Keyword)
         rule(%r{(#{builtins.join('|')})\b}, Name::Builtin)

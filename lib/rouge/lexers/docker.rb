@@ -18,7 +18,7 @@ module Rouge
       start { @shell = Shell.new(@options) }
 
       state :root do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule /^(ONBUILD)(\s+)(#{KEYWORDS})(.*)/io do |m|
           groups Keyword, Text::Whitespace, Keyword, Str

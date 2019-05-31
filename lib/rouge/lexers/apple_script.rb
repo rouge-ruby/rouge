@@ -319,7 +319,7 @@ module Rouge
       identifiers = %r(\b([a-zA-Z]\w*)\b)
 
       state :root do
-        rule /\s+/, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE, Text::Whitespace
         rule /¬\n/, Literal::String::Escape
         rule /'s\s+/, Text
         rule /(--|#).*?$/, Comment::Single

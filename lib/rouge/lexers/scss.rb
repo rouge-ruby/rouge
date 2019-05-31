@@ -13,7 +13,7 @@ module Rouge
       mimetypes 'text/x-scss'
 
       state :root do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
         rule /@import\b/, Keyword, :value

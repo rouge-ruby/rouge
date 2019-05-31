@@ -13,7 +13,7 @@ module Rouge
       mimetypes 'application/x-actionscript'
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
       end

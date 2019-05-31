@@ -26,7 +26,7 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule %r(//.*?\n), Comment::Single
         rule %r(#.*?\n), Comment::Single
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline

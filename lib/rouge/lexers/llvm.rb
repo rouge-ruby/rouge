@@ -16,7 +16,7 @@ module Rouge
 
       state :basic do
         rule /;.*?$/, Comment::Single
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule /#{identifier}\s*:/, Name::Label
 

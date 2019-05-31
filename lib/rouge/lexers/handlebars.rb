@@ -43,7 +43,7 @@ module Rouge
 
       state :stache do
         rule /}}}?/, Keyword, :pop!
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /[=]/, Operator
         rule /[\[\]]/, Punctuation
         rule /[.](?=[}\s])/, Name::Variable

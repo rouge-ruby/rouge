@@ -19,7 +19,7 @@ module Rouge
       upper_id = /[A-Z][\w-]*/
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /#.*?$/, Comment
       end
 

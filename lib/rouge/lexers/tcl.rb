@@ -147,7 +147,7 @@ module Rouge
 
       state :whitespace do
         # not a multiline regex because we want to capture \n sometimes
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
       end
 
       state :interp do

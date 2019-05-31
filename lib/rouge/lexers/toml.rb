@@ -14,7 +14,7 @@ module Rouge
       identifier = /[\w.\S]+/
 
       state :basic do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /#.*?$/, Comment
         rule /(true|false)/, Keyword::Constant
         rule /(?<!=)\s*\[[\w\d\S]+\]/, Name::Namespace

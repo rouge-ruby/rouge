@@ -147,7 +147,7 @@ module Rouge
 
       state :inline_url do
         rule /[^<\s)]+/, Str::Other, :pop!
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         mixin :url
       end
     end

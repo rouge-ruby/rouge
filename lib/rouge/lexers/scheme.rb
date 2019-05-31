@@ -62,7 +62,7 @@ module Rouge
       state :root do
         # comments
         rule /;.*$/, Comment::Single
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /-?\d+\.\d+/, Num::Float
         rule /-?\d+/, Num::Integer
 

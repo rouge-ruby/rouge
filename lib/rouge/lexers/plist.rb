@@ -11,7 +11,7 @@ module Rouge
       mimetypes 'text/x-plist', 'application/x-plist'
 
       state :whitespace do
-        rule /\s+/, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE, Text::Whitespace
       end
 
       state :root do

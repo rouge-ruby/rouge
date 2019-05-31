@@ -50,7 +50,7 @@ module Rouge
       state :root do
         rule /^#![ \S]+lasso9\b/, Comment::Preproc, :lasso
         rule(/(?=\[|<)/) { push :delimiters }
-        rule /\s+/, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE, Text::Whitespace
         rule(//) { push :delimiters; push :lassofile }
       end
 
@@ -89,7 +89,7 @@ module Rouge
       end
 
       state :whitespacecomments do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(//.*?\n), Comment::Single
         rule %r(/\*\*!.*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline

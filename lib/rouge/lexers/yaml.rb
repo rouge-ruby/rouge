@@ -194,7 +194,7 @@ module Rouge
       end
 
       state :flow_collection do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         mixin :basic
         rule /[?:,]/, Punctuation::Indicator
         mixin :descriptors

@@ -17,7 +17,7 @@ module Rouge
       mimetypes 'text/x-elixir', 'application/x-elixir'
 
       state :root do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /#.*$/, Comment::Single
         rule %r{\b(case|cond|end|bc|lc|if|unless|try|loop|receive|fn|defmodule|
              defp?|defprotocol|defimpl|defrecord|defmacrop?|defdelegate|

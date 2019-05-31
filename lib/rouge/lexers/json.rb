@@ -12,7 +12,7 @@ module Rouge
                 'application/hal+json'
 
       state :root do
-        rule /\s+/m, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text::Whitespace
         rule /"/, Str::Double, :string
         rule /(?:true|false|null)\b/, Keyword::Constant
         rule /[{},:\[\]]/, Punctuation

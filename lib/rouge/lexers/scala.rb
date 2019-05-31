@@ -114,7 +114,7 @@ module Rouge
           push :typeparam
         end
 
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /{/, Operator, :pop!
         rule /\(/, Operator, :pop!
         rule %r(//.*?\n), Comment::Single, :pop!
@@ -122,7 +122,7 @@ module Rouge
       end
 
       state :type do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /<[%:]|>:|[#_\u21D2]|forSome|type/, Keyword
         rule /([,\);}]|=>|=)(\s*)/ do
           groups Operator, Text

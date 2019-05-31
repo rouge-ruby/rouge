@@ -182,7 +182,7 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
 
         rule /".*/, Comment::Single
         rule %r(^\*.*), Comment::Multiline

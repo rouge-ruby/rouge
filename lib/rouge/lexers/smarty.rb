@@ -59,7 +59,7 @@ module Rouge
         end
 
         rule /}/, Keyword, :pop!
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule %r([~!%^&*()+=|\[\]:;,.<>/@?-]), Operator
         rule /#[a-zA-Z_]\w*#/, Name::Variable
         rule /\$[a-zA-Z_]\w*(\.\w+)*/, Name::Variable

@@ -215,7 +215,7 @@ module Rouge
       symbol = /(\|[^\|]+\||#{nonmacro}#{constituent}*)/
 
       state :root do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /;.*$/, Comment::Single
         rule /#\|/, Comment::Multiline, :multiline_comment
 

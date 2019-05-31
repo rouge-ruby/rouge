@@ -97,7 +97,7 @@ module Rouge
 
       # same as java, broken out
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
       end
@@ -145,7 +145,7 @@ module Rouge
       end
 
       state :import do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
       end
 

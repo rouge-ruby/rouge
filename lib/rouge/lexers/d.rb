@@ -42,7 +42,7 @@ module Rouge
 
       state :whitespace do
         rule /\n/m, Text
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
       end
 
       state :root do

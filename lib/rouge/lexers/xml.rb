@@ -44,13 +44,13 @@ module Rouge
       end
 
       state :tag do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /[\w.:-]+\s*=/m, Name::Attribute, :attr
         rule %r(/?\s*>), Name::Tag, :pop!
       end
 
       state :attr do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /".*?"|'.*?'|[^\s>]+/m, Str, :pop!
       end
     end

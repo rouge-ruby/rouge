@@ -100,12 +100,12 @@ module Rouge
       end
 
       state :class do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\w[\w\d]*/, Name::Class, :pop!
       end
 
       state :import do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /[\w\d.]+[*]?/, Name::Namespace, :pop!
       end
     end

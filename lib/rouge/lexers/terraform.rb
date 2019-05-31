@@ -77,7 +77,7 @@ module Rouge
 
       state :expression do
         mixin :primitives
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | == | != )x, Operator
         rule %r([-<>+*%&|\^/!=?:]=?), Operator

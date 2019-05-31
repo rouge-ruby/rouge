@@ -99,7 +99,7 @@ module Rouge
         rule %r(((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[msixpodualngc]*),
           re_tok, :balanced_regex
 
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /(?:#{builtins.join('|')})\b/, Name::Builtin
         rule /((__(DATA|DIE|WARN)__)|(STD(IN|OUT|ERR)))\b/,
           Name::Builtin::Pseudo
@@ -149,7 +149,7 @@ module Rouge
       end
 
       state :varname do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\{/, Punctuation, :pop! # hash syntax
         rule /\)|,/, Punctuation, :pop! # arg specifier
         mixin :name_common
@@ -167,7 +167,7 @@ module Rouge
 
       state :funcname do
         rule /[a-zA-Z_]\w*[!?]?/, Name::Function
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         # argument declaration
         rule /(\([$@%]*\))(\s*)/ do

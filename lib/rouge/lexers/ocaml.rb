@@ -33,7 +33,7 @@ module Rouge
       upper_id = /[A-Z][\w']*/
 
       state :root do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /false|true|[(][)]|\[\]/, Name::Builtin::Pseudo
         rule /#{upper_id}(?=\s*[.])/, Name::Namespace, :dotted
         rule /`#{id}/, Name::Tag
@@ -89,7 +89,7 @@ module Rouge
       end
 
       state :dotted do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /[.]/, Punctuation
         rule /#{upper_id}(?=\s*[.])/, Name::Namespace
         rule upper_id, Name::Class, :pop!

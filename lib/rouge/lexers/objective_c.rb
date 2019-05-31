@@ -181,7 +181,7 @@ module Rouge
 
         mixin :inline_whitespace
         rule %r(//.*?\n), Comment::Single
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
 
         rule(//) { pop! }
       end

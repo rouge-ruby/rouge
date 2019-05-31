@@ -165,7 +165,7 @@ module Rouge
         rule(/(#{ruby_chars}+\(.*?\))/) { |m| delegate ruby, m[1]; pop! }
         rule(/(#{ruby_chars}+)/) { |m| delegate ruby, m[1]; pop! }
 
-        rule /\s+/, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE, Text::Whitespace
       end
 
       state :ruby_line do

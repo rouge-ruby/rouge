@@ -51,7 +51,7 @@ module Rouge
       state :root do
         rule /#'.*?$/, Comment::Doc
         rule /#.*?$/, Comment::Single
-        rule /\s+/m, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text::Whitespace
 
         rule /`[^`]+?`/, Name
         rule /'(\\.|.)*?'/m, Str::Single

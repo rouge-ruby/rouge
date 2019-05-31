@@ -40,7 +40,7 @@ module Rouge
           token Punctuation, m[4]
         end
 
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule /"/, Str, :dqs
@@ -69,7 +69,7 @@ module Rouge
       end
 
       state :class do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule id, Name::Class, :pop!
       end
 

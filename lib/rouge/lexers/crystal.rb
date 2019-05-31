@@ -275,7 +275,7 @@ module Rouge
       end
 
       state :funcname do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\(/, Punctuation, :defexpr
         rule %r(
           (?:([a-zA-Z_][\w_]*)(\.))?
@@ -294,7 +294,7 @@ module Rouge
       end
 
       state :classname do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\(/ do
           token Punctuation
           push :defexpr
@@ -377,7 +377,7 @@ module Rouge
 
         rule(%r((?=\s*/))) { pop! }
 
-        rule(/\s+/) { token Text; goto :expr_start }
+        rule(RegexLexer::WHITESPACE_RE) { token Text; goto :expr_start }
         rule(//) { pop! }
       end
 

@@ -24,7 +24,7 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text # Whitespace
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text # Whitespace
         rule %r([{]%.*?%[}])m, Comment::Multiline
         rule /%.*$/, Comment::Single
         rule /([.][.][.])(.*?)$/ do

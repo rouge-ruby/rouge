@@ -277,7 +277,7 @@ module Rouge
       state :funcname do
         rule /#{name}/, Name::Function
 
-        rule /\s+/, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE, Text::Whitespace
         rule /(:+|\$)/, Operator
         rule /;.*/, Comment::Single
 

@@ -12,7 +12,7 @@ module Rouge
       mimetypes 'text/x-prolog'
 
       state :basic do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /^#.*/, Comment::Single
         rule /%.*/, Comment::Single
         rule /\/\*/, Comment::Multiline, :nested_comment

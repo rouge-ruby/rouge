@@ -60,7 +60,7 @@ module Rouge
       start { regex.reset!; replacement.reset! }
 
       state :whitespace do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule(/#.*?\n/) { token Comment; reset_stack }
         rule(/\n/) { token Text; reset_stack }
         rule(/;/) { token Punctuation; reset_stack }

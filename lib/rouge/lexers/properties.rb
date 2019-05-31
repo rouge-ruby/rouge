@@ -15,7 +15,7 @@ module Rouge
 
       state :basic do
         rule /[!#].*?\n/, Comment
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /\\\n/, Str::Escape
       end
 

@@ -169,14 +169,14 @@ module Rouge
       end
 
       state :html_attributes do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule /#{identifier}\s*=/, Name::Attribute, :html_attribute_value
         rule identifier, Name::Attribute
         rule /\)/, Text, :pop!
       end
 
       state :html_attribute_value do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule ruby_var, Name::Variable, :pop!
         rule /@#{ruby_var}/, Name::Variable::Instance, :pop!
         rule /\$#{ruby_var}/, Name::Variable::Global, :pop!

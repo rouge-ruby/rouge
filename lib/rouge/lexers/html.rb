@@ -60,12 +60,12 @@ module Rouge
       end
 
       state :tag_end_end do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
         rule />/, Name::Tag, :pop!
       end
 
       state :tag_start do
-        rule /\s+/, Text
+        rule RegexLexer::WHITESPACE_RE, Text
 
         rule /[a-zA-Z0-9:-]+/ do
           token Name::Tag
@@ -82,7 +82,7 @@ module Rouge
       end
 
       state :tag do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         rule /[a-zA-Z0-9_:-]+\s*=\s*/m, Name::Attribute, :attr
         rule /[a-zA-Z0-9_:-]+/, Name::Attribute
         rule %r(/?\s*>)m, Name::Tag, :pop!

@@ -69,7 +69,7 @@ module Rouge
       end
 
       state :text do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
       end
 
       state :literal do

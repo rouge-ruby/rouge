@@ -42,7 +42,7 @@ module Rouge
       end
 
       state :inline_whitespace do
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
         mixin :has_comments
       end
 

@@ -34,7 +34,7 @@ module Rouge
         )
 
       state :root do
-        rule /\s+/, Text::Whitespace
+        rule RegexLexer::WHITESPACE_RE, Text::Whitespace
 
         rule /rem\b.*?$/i, Comment::Single
         rule /\/\/.*$/, Comment::Single

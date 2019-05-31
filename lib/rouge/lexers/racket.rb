@@ -488,7 +488,7 @@ module Rouge
       state :root do
         # comments
         rule /;.*$/, Comment::Single
-        rule /\s+/m, Text
+        rule RegexLexer::WHITESPACE_RE_MULTILINE, Text
 
         rule /[+-]inf[.][f0]/, Num::Float
         rule /[+-]nan[.]0/, Num::Float

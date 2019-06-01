@@ -254,12 +254,11 @@ module Rouge
         (@mimetypes ||= []).concat(mts)
       end
 
-      VALID_ENCODINGS = %w(US-ASCII UTF-8 ASCII-8BIT).freeze
-      private_constant :VALID_ENCODINGS
-
       # @private
       def assert_utf8!(str)
-        return if VALID_ENCODINGS.include? str.encoding.name
+        encoding = str.encoding.name
+        return if encoding == 'US-ASCII' || encoding == 'UTF-8' || encoding == 'ASCII-8BIT'
+
         raise EncodingError.new(
           "Bad encoding: #{str.encoding.names.join(',')}. " +
           "Please convert your string to UTF-8."

@@ -15,6 +15,11 @@ gem 'rubocop', '~> 0.49.1'
 # don't try to install redcarpet under jruby
 gem 'redcarpet', :platforms => :ruby
 
+# Profiling
+if RUBY_VERSION >= '2.3.0'
+  gem 'memory_profiler', :require => false
+end
+
 group :development do
   gem 'pry'
 

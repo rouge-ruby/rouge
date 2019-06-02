@@ -47,12 +47,10 @@ module Rouge
       state :root do
         rule %r/\n/, Text
         rule %r/^(\s*)([rRuUbB]{,2})("""(?:.|\n)*?""")/ do
-          # groups Text, Str::Affix, Str::Doc
-          groups Text, Str::Char, Str::Doc
+          groups Text, Str::Affix, Str::Doc
         end
         rule %r/^(\s*)([rRuUbB]{,2})('''(?:.|\n)*?''')/ do
-          # groups Text, Str::Affix, Str::Doc
-          groups Text, Str::Char, Str::Doc
+          groups Text, Str::Affix, Str::Doc
         end
         rule %r/[^\S\n]+/, Text
         rule %r/#.*$/, Comment::Single
@@ -72,43 +70,35 @@ module Rouge
         mixin :keywords
         mixin :buildins
         rule %r/(#{affix_long})(""")/ do
-          # groups Str::Affix, Str::Double
-          groups Str::Char, Str::Double
+          groups Str::Affix, Str::Double
           push :tdqs
         end
         rule %r/(#{affix_long})(''')/ do
-          # groups Str::Affix, Str::Double
-          groups Str::Char, Str::Single
+          groups Str::Affix, Str::Double
           push :tsqs
         end
         rule %r/(#{affix_long})(")/ do
-          # groups Str::Affix, Str::Double
-          groups Str::Char, Str::Double
+          groups Str::Affix, Str::Double
           push :dqs
         end
         rule %r/(#{affix_long})(')/ do
-          # groups Str::Affix, Str::Double
-          groups Str::Char, Str::Single
+          groups Str::Affix, Str::Double
           push :sqs
         end
         rule %r/(#{affix_short})(""")/ do
-          # groups Str::Affix, Str::Double
-          groups Str::Char, Str::Double
+          groups Str::Affix, Str::Double
           push :escape_tdqs
         end
         rule %r/(#{affix_short})(''')/ do
-          # groups Str::Affix, Str::Double
-          groups Str::Char, Str::Single
+          groups Str::Affix, Str::Double
           push :escape_tsqs
         end
         rule %r/(#{affix_short})(")/ do
-          # groups Str::Affix, Str::Double
-          groups Str::Char, Str::Double
+          groups Str::Affix, Str::Double
           push :escape_dqs
         end
         rule %r/(#{affix_short})(')/ do
-          # groups Str::Affix, Str::Double
-          groups Str::Char, Str::Single
+          groups Str::Affix, Str::Double
           push :escape_sqs
         end
         mixin :name

@@ -2,7 +2,8 @@
 # frozen_string_literal: true
 
 describe Rouge::Lexers::ABAP do
-  let(:subject) { Rouge::Lexers::ABAP.new }
+  let(:described_class) { Rouge::Lexers::ABAP }
+  let(:subject) { described_class.new }
 
   describe 'guessing' do
     include Support::Guessing
@@ -14,5 +15,10 @@ describe Rouge::Lexers::ABAP do
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-abap'
     end
+  end
+
+  it 'does not respond to self.class.detect?' do
+    refute { described_class.methods(false).include?(:detect?) }
+    refute { described_class.detectable? }
   end
 end

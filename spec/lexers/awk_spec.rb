@@ -2,7 +2,8 @@
 # frozen_string_literal: true
 
 describe Rouge::Lexers::Awk do
-  let(:subject) { Rouge::Lexers::Awk.new }
+  let(:described_class) { Rouge::Lexers::Awk }
+  let(:subject) { described_class.new }
 
   describe 'lexing' do
     include Support::Lexing
@@ -28,5 +29,10 @@ describe Rouge::Lexers::Awk do
       assert_guess :source => '#!/usr/bin/awk'
       assert_guess :source => '#!/usr/bin/env awk'
     end
+  end
+
+  it 'responds to self.class.detect?' do
+    assert { described_class.methods(false).include?(:detect?) }
+    assert { described_class.detectable? }
   end
 end

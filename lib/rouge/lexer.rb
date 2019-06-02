@@ -195,6 +195,12 @@ module Rouge
         (defined? @debug_enabled) ? true : false
       end
 
+      # Determine if a lexer has a method named +:detect?+ defined in its
+      # singleton class.
+      def detectable?
+        @detectable ||= methods(false).include?(:detect?)
+      end
+
     protected
       # @private
       def register(name, lexer)

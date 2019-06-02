@@ -162,4 +162,22 @@ describe Rouge::Lexer do
     deny_has_token('not-start', 'a', MyLexer)
     assert_has_token('not-start', 'aa', MyLexer)
   end
+
+  it 'is detectable' do
+    class DetectableLexer < Rouge::Lexer
+      def self.detect?
+        return true
+      end
+    end
+
+    assert { DetectableLexer.methods(false).include?(:detect?) }
+    assert { DetectableLexer.detectable? }
+  end
+
+  it 'is undetectable' do
+    UndetectableLexer = Class.new(Rouge::Lexer)
+
+    refute { UndetectableLexer.methods(false).include?(:detect?) }
+    refute { UndetectableLexer.detectable? }
+  end
 end

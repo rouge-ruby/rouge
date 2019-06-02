@@ -41,6 +41,7 @@ describe Rouge::Lexers::Shell do
       assert_guess :filename => 'foo.zsh'
       assert_guess :filename => 'foo.ksh'
       assert_guess :filename => 'foo.bash'
+      assert_guess :filename => 'APKBUILD'
       assert_guess :filename => 'PKGBUILD'
       deny_guess   :filename => 'foo'
     end

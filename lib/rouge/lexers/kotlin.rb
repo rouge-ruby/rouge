@@ -19,9 +19,9 @@ module Rouge
         external false final finally for fun get if import in infix
         inline inner interface internal is lateinit noinline null
         object open operator out override package private protected
-        public reified return sealed set super tailrec this throw
-        true try typealias typeof val var vararg when where while
-        yield
+        public reified return sealed set super suspend tailrec this
+        throw true try typealias typeof val var vararg when where
+        while yield
       )
 
       name = %r'@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
@@ -73,7 +73,8 @@ module Rouge
         rule %r'[^\S\n]+', Text
         rule %r'\\\n', Text # line continuation
         rule %r'//.*?$', Comment::Single
-        rule %r'/[*].*?[*]/'m, Comment::Multiline
+        rule %r'/[*].*[*]/', Comment::Multiline # single line block comment
+        rule %r'/[*].*', Comment::Multiline, :comment # multiline block comment
         rule %r'\n', Text
         rule %r'::|!!|\?[:.]', Operator
         rule %r"(\.\.)", Operator
@@ -121,6 +122,12 @@ module Rouge
         rule %r'(\))', Punctuation, :pop!
         rule %r'(\s+)', Text
         rule id, Name::Property
+      end
+
+      state :comment do
+        rule %r'\s*/[*].*', Comment::Multiline, :comment
+        rule %r'.*[*]/', Comment::Multiline, :pop!
+        rule %r'.*', Comment::Multiline
       end
     end
   end

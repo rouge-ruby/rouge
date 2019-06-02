@@ -188,11 +188,17 @@ module Rouge
       end
 
       def disable_debug!
-        @debug_enabled = false
+        remove_instance_variable :@debug_enabled
       end
 
       def debug_enabled?
-        !!@debug_enabled
+        (defined? @debug_enabled) ? true : false
+      end
+
+      # Determine if a lexer has a method named +:detect?+ defined in its
+      # singleton class.
+      def detectable?
+        @detectable ||= methods(false).include?(:detect?)
       end
 
     protected
@@ -236,6 +242,13 @@ module Rouge
 
       # Specify a list of filename globs associated with this lexer.
       #
+      # If a filename glob is associated with more than one lexer, this can
+      # cause a Guesser::Ambiguous error to be raised in various guessing
+      # methods. These errors can be avoided by disambiguation. Filename globs
+      # are disambiguated in one of two ways. Either the lexer will define a
+      # `self.detect?` method (intended for use with shebangs and doctypes) or a
+      # manual rule will be specified in Guessers::Disambiguation.
+      #
       # @example
       #   class Ruby < Lexer
       #     filenames '*.rb', '*.ruby', 'Gemfile', 'Rakefile'
@@ -256,7 +269,9 @@ module Rouge
 
       # @private
       def assert_utf8!(str)
-        return if %w(US-ASCII UTF-8 ASCII-8BIT).include? str.encoding.name
+        encoding = str.encoding.name
+        return if encoding == 'US-ASCII' || encoding == 'UTF-8' || encoding == 'ASCII-8BIT'
+
         raise EncodingError.new(
           "Bad encoding: #{str.encoding.names.join(',')}. " +
           "Please convert your string to UTF-8."
@@ -454,9 +469,7 @@ module Rouge
     def self.load_lexer(relpath)
       return if @_loaded_lexers.key?(relpath)
       @_loaded_lexers[relpath] = true
-
-      root = Pathname.new(__FILE__).dirname.join('lexers')
-      load root.join(relpath)
+      load File.join(__dir__, 'lexers', relpath)
     end
   end
 end

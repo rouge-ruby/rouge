@@ -31,9 +31,6 @@ static int not_a_comment();
 
 #macro
 
-
-/* Bug #277: C function prototype syntax highlighting broken if space before semicolon */
-
 void foo() ;
 
 void foo() {
@@ -45,6 +42,14 @@ void foo2(void)
     /* nothing */
 }
 
+/* Broken declarations should not break subsequent highlighting */
+
+void foo() {
+    if(x) {
+    } else if(y) {
+      puts("foo")
+    }
+  }
 
 /* Execute compiled code */
 

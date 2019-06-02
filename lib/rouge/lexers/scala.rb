@@ -47,12 +47,38 @@ module Rouge
         rule %r(/\*), Comment::Multiline, :comment
 
         rule /@#{idrest}/, Name::Decorator
+
+        rule /(def)(\s+)(#{idrest}|#{op}+|`[^`]+`)(\s*)/ do
+          groups Keyword, Text, Name::Function, Text
+        end
+
+        rule /(val)(\s+)(#{idrest}|#{op}+|`[^`]+`)(\s*)/ do
+          groups Keyword, Text, Name::Variable, Text
+        end
+
+        rule /(this)(\n*)(\.)(#{idrest})/ do
+          groups Keyword, Text, Operator, Name::Property
+        end
+
+        rule /(#{idrest}|_)(\n*)(\.)(#{idrest})/ do
+          groups Name::Variable, Text, Operator, Name::Property
+        end
+
+        rule /#{upper}#{idrest}\b/, Name::Class
+
+        rule /(#{idrest})(#{whitespace}*)(\()/ do
+          groups Name::Function, Text, Operator
+        end
+
+        rule /(\.)(#{idrest})/ do
+          groups Operator, Name::Property
+        end
+
         rule %r(
           (#{keywords.join("|")})\b|
           (<[%:-]|=>|>:|[#=@_\u21D2\u2190])(\b|(?=\s)|$)
         )x, Keyword
-        rule /:(?!#{op})/, Keyword, :type
-        rule /#{upper}#{idrest}\b/, Name::Class
+        rule /:(?!#{op})/, Keyword, :type        
         rule /(true|false|null)\b/, Keyword::Constant
         rule /(import|package)(\s+)/ do
           groups Keyword, Text

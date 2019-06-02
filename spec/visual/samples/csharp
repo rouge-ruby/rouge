@@ -2,6 +2,7 @@ interface IFoo {
   // stuff
 }
 
+[Bar("foo/[bar]")]
 class Foo {
   // stuff
 }

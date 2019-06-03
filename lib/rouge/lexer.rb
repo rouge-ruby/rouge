@@ -126,7 +126,7 @@ module Rouge
 
       # @return a list of all lexers.
       def all
-        registry.values.uniq
+        @all ||= registry.values.uniq
       end
 
       # Guess which lexer to use based on a hash of info.
@@ -212,6 +212,8 @@ module Rouge
     protected
       # @private
       def register(name, lexer)
+        # reset an existing list of lexers
+        @all = nil if @all
         registry[name.to_s] = lexer
       end
 

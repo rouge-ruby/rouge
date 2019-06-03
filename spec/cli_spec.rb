@@ -51,6 +51,26 @@ describe Rouge::CLI do
         assert { Rouge::Lexers::Ruby === subject.lexer }
       }
     end
+
+    describe 'escaping by default' do
+      let(:argv) { %w(highlight --escape -l ruby) }
+      it('parses') {
+        assert { Rouge::Lexers::Escape === subject.lexer }
+        assert { Rouge::Lexers::Ruby === subject.lexer.lang }
+        assert { subject.lexer.start == '<!' }
+        assert { subject.lexer.end == '!>' }
+      }
+    end
+
+    describe 'escaping with custom delimiters' do
+      let(:argv) { %w(highlight --escape-with [===[ ]===] -l ruby) }
+      it('parses') {
+        assert { Rouge::Lexers::Escape === subject.lexer }
+        assert { Rouge::Lexers::Ruby === subject.lexer.lang }
+        assert { subject.lexer.start == '[===[' }
+        assert { subject.lexer.end == ']===]' }
+      }
+    end
   end
 
   describe Rouge::CLI::List do

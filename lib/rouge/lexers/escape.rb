@@ -10,6 +10,10 @@ module Rouge
       option :end, 'the end of the escaped section, e.g. "!>"'
       option :lang, 'the language to lex in unescaped sections'
 
+      attr_reader :start
+      attr_reader :end
+      attr_reader :lang
+
       def initialize(*)
         super
         @start = string_option(:start) { '<!' }

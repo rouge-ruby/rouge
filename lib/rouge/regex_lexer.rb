@@ -352,10 +352,10 @@ module Rouge
       end
     end
 
-    # Delegate the lex to another lexer.  The #lex method will be called
-    # with `:continue` set to true, so that #reset! will not be called.
-    # In this way, a single lexer can be repeatedly delegated to while
-    # maintaining its own internal state stack.
+    # Delegate the lex to another lexer. We use the `continue_lex` method
+    # so that #reset! will not be called.  In this way, a single lexer
+    # can be repeatedly delegated to while maintaining its own internal
+    # state stack.
     #
     # @param [#lex] lexer
     #   The lexer or lexer class to delegate to
@@ -365,7 +365,7 @@ module Rouge
       puts "    delegating to #{lexer.inspect}" if @debug
       text ||= @current_stream[0]
 
-      lexer.lex(text, :continue => true) do |tok, val|
+      lexer.continue_lex(text) do |tok, val|
         puts "    delegated token: #{tok.inspect}, #{val.inspect}" if @debug
         yield_token(tok, val)
       end

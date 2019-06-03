@@ -31,7 +31,7 @@ describe Rouge::Lexers::Markdown do
 
     it 'recognizes code block when lexer is continued' do
       subject.lex("```ruby\n").to_a
-      actual = subject.lex("@foo\n```\n",continue: true).map { |token, value| [ token.qualname, value ] }
+      actual = subject.continue_lex("@foo\n```\n").map { |token, value| [ token.qualname, value ] }
       assert { ["Name.Variable.Instance", "@foo"] == actual.first }
     end
 

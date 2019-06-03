@@ -23,6 +23,14 @@ module Rouge
         new(opts).lex(stream, &b)
       end
 
+      # In case #continue_lex is called statically, we simply
+      # begin a new lex from the beginning, since there is no state.
+      #
+      # @see #continue_lex
+      def continue_lex(*a, &b)
+        lex(*a, &b)
+      end
+
       # Given a name in string, return the correct lexer class.
       # @param [String] name
       # @return [Class<Rouge::Lexer>,nil]
@@ -195,6 +203,12 @@ module Rouge
         (defined? @debug_enabled) ? true : false
       end
 
+      # Determine if a lexer has a method named +:detect?+ defined in its
+      # singleton class.
+      def detectable?
+        @detectable ||= methods(false).include?(:detect?)
+      end
+
     protected
       # @private
       def register(name, lexer)
@@ -263,7 +277,9 @@ module Rouge
 
       # @private
       def assert_utf8!(str)
-        return if %w(US-ASCII UTF-8 ASCII-8BIT).include? str.encoding.name
+        encoding = str.encoding.name
+        return if encoding == 'US-ASCII' || encoding == 'UTF-8' || encoding == 'ASCII-8BIT'
+
         raise EncodingError.new(
           "Bad encoding: #{str.encoding.names.join(',')}. " +
           "Please convert your string to UTF-8."
@@ -397,15 +413,23 @@ module Rouge
 
     # Given a string, yield [token, chunk] pairs.  If no block is given,
     # an enumerator is returned.
-    #
-    # @option opts :continue
-    #   Continue the lex from the previous state (i.e. don't call #reset!)
-    def lex(string, opts={}, &b)
-      return enum_for(:lex, string, opts) unless block_given?
+    def lex(string, opts=nil, &b)
+      if opts
+        warn 'the :continue option to Formatter#lex is deprecated, use #continue_lex instead.'
+        return continue_lex(string, &b)
+      end
+
+      return enum_for(:lex, string) unless block_given?
 
       Lexer.assert_utf8!(string)
+      reset!
 
-      reset! unless opts[:continue]
+      continue_lex(string, &b)
+    end
+
+    # Continue the lex from the the current state without resetting
+    def continue_lex(string, &b)
+      return enum_for(:continue_lex, string, &b) unless block_given?
 
       # consolidate consecutive tokens of the same type
       last_token = nil

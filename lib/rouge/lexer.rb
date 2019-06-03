@@ -294,6 +294,11 @@ module Rouge
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
 
+      unless self.class.lexer.nil?
+        self.class.lexer.call
+        self.class.remove_instance_variable :@lexer
+      end
+
       @debug = Lexer.debug_enabled? && bool_option(:debug)
     end
 
@@ -442,6 +447,16 @@ module Rouge
     #   the stream
     def stream_tokens(stream, &b)
       raise 'abstract'
+    end
+
+    # @abstract
+    #
+    # Sets or returns the lexing logic for this lexer.
+    #
+    # @param [Proc] b
+    #   the block defining the lexing logic
+    def self.lexer(&b)
+      return nil
     end
 
     # @abstract

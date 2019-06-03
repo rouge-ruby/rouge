@@ -149,6 +149,39 @@ module Rouge
       end
     end
 
+    # Specify or get this lexer's lexing logic.
+    def self.lexer(&b)
+      return @lexer if b.nil?
+
+      @lexer = b
+    end
+
+    # Specify a group of registered words for this lexer.
+    #
+    # This provides a DSL keyword for defining groups of registered words. It
+    # effectively "wraps" the array of words in a method (called the value of
+    # `name`) to avoid unnecessary object creation. The first time the method
+    # is called, it will call the block and memoise the result.
+    #
+    # @param [Symbol] name
+    #   the name of this group, an instance method will be created with this
+    #   name
+    # @param [Proc] b
+    #   the proc to call if no value has been initialised
+    #
+    # @example
+    #   registered :keywords do
+    #     %w(if else)
+    #   end
+    def self.registered(name, &b)
+      ivar_name = "@#{name}"
+
+      define_method name do
+        instance_variable_get(ivar_name) ||
+        instance_variable_set(ivar_name, b.call)
+      end
+    end
+
     # The states hash for this lexer.
     # @see state
     def self.states

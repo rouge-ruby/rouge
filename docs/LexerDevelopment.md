@@ -253,7 +253,7 @@ end
 
 Rouge will attempt to guess the appropriate lexer if it is not otherwise clear.
 If Rouge is unable to do this on the basis of any tag, associated filename or
-associated mimetype, it will try to detect the appopriate lexer on the basis of
+associated mimetype, it will try to detect the appropriate lexer on the basis of
 the text itself (the source). This is done by calling `self.detect?` on the
 possible lexer (a default `self.detect?` method is defined in {Rouge::Lexer}
 and simply returns `false`).

@@ -179,7 +179,7 @@ specifying the rules that Rouge will try to match as it parses the text.
 
 #### Rules
 
-A rule is defined using the {Rouge::RegexLexer::StateDSL#rule}e method. The
+A rule is defined using the {Rouge::RegexLexer::StateDSL#rule} method. The
 `rule` method can define either "simple" rules or "complex" rules.
 
 *Simple Rules*

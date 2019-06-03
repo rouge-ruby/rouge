@@ -449,7 +449,7 @@ should be able to be parsed without producing any `Error` tokens.
 The demo is also used on [rouge.jneen.net][hp] as the default text to display
 when a lexer is chosen. It should be short (less than 20 lines if possible).
 
-[hp]: http;//rouge.jneen.net/
+[hp]: http://rouge.jneen.net/
 
 ### Visual Samples
 

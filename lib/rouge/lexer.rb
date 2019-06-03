@@ -416,6 +416,7 @@ module Rouge
     def lex(string, opts=nil, &b)
       if opts
         warn 'the :continue option to Formatter#lex is deprecated, use #continue_lex instead.'
+        return continue_lex(string, &b)
       end
 
       return enum_for(:lex, string) unless block_given?

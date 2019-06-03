@@ -13,6 +13,8 @@ module Rouge
       end
 
       def span(tok, val)
+        return val if escape?(tok)
+
         safe_span(tok, val.gsub(/[&<>]/, TABLE_FOR_ESCAPE_HTML))
       end
 

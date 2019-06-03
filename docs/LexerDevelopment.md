@@ -258,9 +258,9 @@ the text itself (the source). This is done by calling `self.detect?` on the
 possible lexer (a default `self.detect?` method is defined in {Rouge::Lexer}
 and simply returns `false`).
 
-A lexer can implement its own `self.detect?` method that takes as a parameter a
-{Rouge::TextAnalyzer} object. If the `self.detect?` method returns true, the
-lexer will be selected as the appropriate lexer.
+A lexer can implement its own `self.detect?` method that takes a
+{Rouge::TextAnalyzer} object as a parameter. If the `self.detect?` method
+returns true, the lexer will be selected as the appropriate lexer.
 
 It is important to note that `self.detect?` should _only_ return `true` if it
 is 100% sure that the language is detected. The most common ways for source

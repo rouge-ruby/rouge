@@ -23,6 +23,14 @@ module Rouge
         new(opts).lex(stream, &b)
       end
 
+      # In case #continue_lex is called statically, we simply
+      # begin a new lex from the beginning, since there is no state.
+      #
+      # @see #continue_lex
+      def continue_lex(*a, &b)
+        lex(*a, &b)
+      end
+
       # Given a name in string, return the correct lexer class.
       # @param [String] name
       # @return [Class<Rouge::Lexer>,nil]
@@ -405,15 +413,23 @@ module Rouge
 
     # Given a string, yield [token, chunk] pairs.  If no block is given,
     # an enumerator is returned.
-    #
-    # @option opts :continue
-    #   Continue the lex from the previous state (i.e. don't call #reset!)
-    def lex(string, opts={}, &b)
-      return enum_for(:lex, string, opts) unless block_given?
+    def lex(string, opts=nil, &b)
+      if opts
+        warn 'the :continue option to Formatter#lex is deprecated, use #continue_lex instead.'
+        return continue_lex(string, &b)
+      end
+
+      return enum_for(:lex, string) unless block_given?
 
       Lexer.assert_utf8!(string)
+      reset!
 
-      reset! unless opts[:continue]
+      continue_lex(string, &b)
+    end
+
+    # Continue the lex from the the current state without resetting
+    def continue_lex(string, &b)
+      return enum_for(:continue_lex, string, &b) unless block_given?
 
       # consolidate consecutive tokens of the same type
       last_token = nil

@@ -9,7 +9,8 @@ describe Rouge::Lexers::SuperCollider do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.scd'
-      assert_guess :filename => 'foo.sc'
+      assert_guess :filename => 'foo.sc', :source => '~x = 3'
+      assert_guess :filename => 'foo.sc', :source => '0;'
     end
   end
 end

@@ -12,7 +12,7 @@ describe Rouge::Formatters::HTMLLinewise do
     let(:input_stream) { [[Token['Name'], 'foo']] }
 
     it 'formats' do
-      assert { output == %(<div class="line-1"><span class="n">foo</span></div>) }
+      assert { output == %(<div class="line-1"><span class="n">foo</span>\n</div>) }
     end
   end
 
@@ -20,7 +20,7 @@ describe Rouge::Formatters::HTMLLinewise do
     let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar\n"]] }
 
     it 'formats' do
-      assert { output == %(<div class="line-1">foo</div><div class="line-2"><span class="n">bar</span></div>) }
+      assert { output == %(<div class="line-1">foo\n</div><div class="line-2"><span class="n">bar</span>\n</div>) }
     end
   end
 
@@ -28,7 +28,16 @@ describe Rouge::Formatters::HTMLLinewise do
     let(:input_stream) { [[Token['Name'], "foo\nbar"]] }
 
     it 'formats' do
-      assert { output == %(<div class="line-1"><span class="n">foo</span></div><div class="line-2"><span class="n">bar</span></div>) }
+      assert { output == %(<div class="line-1"><span class="n">foo</span>\n</div><div class="line-2"><span class="n">bar</span>\n</div>) }
+    end
+  end
+
+  describe 'alternate tag name' do
+    let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar\n"]] }
+    let(:options) { { tag_name: 'span' } }
+
+    it 'should use tag name specified by :tag_name option' do
+      assert { output == %(<span class="line-1">foo\n</span><span class="line-2"><span class="n">bar</span>\n</span>) }
     end
   end
 

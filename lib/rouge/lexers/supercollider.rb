@@ -50,6 +50,7 @@ module Rouge
         rule %r(/[*]), Comment::Multiline, :nested_comment
         rule %r([*]/), Comment::Multiline, :pop!
         rule %r([^*/]+)m, Comment::Multiline
+        rule /./, Comment::Multiline
       end
 
       state :root do
@@ -107,7 +108,7 @@ module Rouge
         rule /[\^:#]/, Operator
 
         # treat curry argument as a special operator
-        rule /_/, Name::Builtin
+        rule /\b_\b/, Name::Builtin
       end
     end
   end

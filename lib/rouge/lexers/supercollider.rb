@@ -10,23 +10,29 @@ module Rouge
       title "SuperCollider"
       desc 'A cross-platform interpreted programming language for sound synthesis, algorithmic composition, and realtime performance'
 
-      keywords = Set.new %w(
-        var arg classvar const super this
-      )
+      def self.keywords
+        @keywords ||= Set.new %w(
+          var arg classvar const super this
+        )
+      end
 
       # these aren't technically keywords, but we treat
       # them as such because it makes things clearer 99%
       # of the time
-      reserved = Set.new %w(
-        case do for forBy loop if while new newCopyArgs
-      )
+      def self.reserved
+        @reserved ||= Set.new %w(
+          case do for forBy loop if while new newCopyArgs
+        )
+      end
 
-      constants = Set.new %w(
-        true false nil inf thisThread
-        thisMethod thisFunction thisProcess
-        thisFunctionDef currentEnvironment
-        topEnvironment
-      )
+      def self.constants
+        @constants ||= Set.new %w(
+          true false nil inf thisThread
+          thisMethod thisFunction thisProcess
+          thisFunctionDef currentEnvironment
+          topEnvironment
+        )
+      end
 
       start { push :bol }
 
@@ -94,11 +100,11 @@ module Rouge
 
         # main identifiers section
         rule /[a-z]\w*/ do |m|
-          if keywords.include? m[0]
+          if self.class.keywords.include? m[0]
             token Keyword
-          elsif constants.include? m[0]
+          elsif self.class.constants.include? m[0]
             token Keyword::Constant
-          elsif reserved.include? m[0]
+          elsif self.class.reserved.include? m[0]
             token Keyword::Reserved
           else
             token Name

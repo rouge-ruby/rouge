@@ -133,11 +133,11 @@ Array.geom(size: 5, start: 1, grow: 8);
 "\\\ttabbed with backslashes\t\\";
 
 // symbols
-\abc
-\a1
-\a_symbol
-'a symbol'
-'a cl3v3r\'_symb0l"'
+\abc;
+\a1;
+\a_symbol;
+'a symbol';
+'a cl3v3r\'_symb0l"';
 
 // characters
 $a;

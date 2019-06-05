@@ -34,39 +34,27 @@ module Rouge
         )
       end
 
-      start { push :bol }
-
-      # beginning of line
-      state :bol do
-        mixin :inline_whitespace
-
-        rule(//) { pop! }
-      end
-
-      state :inline_whitespace do
-        rule /\s+/m, Text
-        mixin :has_comments
-      end
-
       state :whitespace do
-        rule /\n+/m, Text, :bol
-        rule %r(\/\/\.*?$), Comment::Single, :bol
-        mixin :inline_whitespace
+        rule /\s+/m, Text
       end
 
-      state :has_comments do
-        rule %r(/[*]), Comment::Multiline, :nested_comment
+      state :comments do
+        rule %r(//.*?$), Comment::Single
+        rule %r(/[*]) do
+          token Comment::Multiline
+          push :nested_comment
+        end
       end
 
       state :nested_comment do
-        mixin :has_comments
+        rule %r(/[*]), Comment::Multiline, :nested_comment
         rule %r([*]/), Comment::Multiline, :pop!
         rule %r([^*/]+)m, Comment::Multiline
-        rule /./, Comment::Multiline
       end
 
       state :root do
         mixin :whitespace
+        mixin :comments
 
         rule /[\-+]?0[xX]\h+/, Num::Hex
 
@@ -87,8 +75,6 @@ module Rouge
 
         # symbols (backslash notation)
         rule /\\\w+/, Str::Other
-
-        rule /\/\/.*$/, Comment::Single
 
         # symbol arg
         rule /[A-Za-z_]\w*:/, Name::Label
@@ -122,7 +108,6 @@ module Rouge
 
         # treat curry argument as a special operator
         rule /_/, Name::Builtin
-
       end
     end
   end

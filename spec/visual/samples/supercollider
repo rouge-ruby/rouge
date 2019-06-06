@@ -149,3 +149,18 @@ $\t;
 $\0;
 $\&;
 $\\;
+
+// curry argument vs underscore in name
+[1, 2, 3].do(_.postln);
+[1, 2, 3].collect(_ + _);
+variable_name.function_name(Class_Name);
+
+// comments
+/* abc */ notComment;
+/* /* */ comment */ notComment;
+/* /* * */ comment */ notComment;
+/* /*/ comment */ comment */ notComment;
+/* /**/ comment */ notComment;
+// /*
+notComment;
+// */

@@ -135,8 +135,7 @@ module Rouge
 
         rule %r(</#{XPath.qName}(\s*)>) do
           token Name::Tag
-          pop! # pop self
-          pop! # pop tag_start
+          pop! 2 # pop self and tag_start
         end
       end
     end

@@ -365,8 +365,10 @@ module Rouge
     end
 
     def bool_option(name, &default)
-      if @options.key?(name.to_s)
-        as_bool(@options[name.to_s])
+      name_str = name == :debug ? "debug" : name.to_s
+
+      if @options.key?(name_str)
+        as_bool(@options[name_str])
       else
         default ? default.call : false
       end

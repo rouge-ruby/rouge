@@ -54,7 +54,7 @@ module Rouge
         end
 
         rule /(namespace)(\s+)(#{XPath.ncName})/ do
-          groups Keyword, Text, Name::Namespace
+          groups Keyword, Text::Whitespace, Name::Namespace
         end
 
         rule /\b(#{XQuery.keywords})\b/, Keyword
@@ -63,20 +63,20 @@ module Rouge
 
         rule /(\(#)(\s*)(#{XPath.eqName})/ do
           push :pragma
-          groups Comment::Preproc, Text, Name::Tag
+          groups Comment::Preproc, Text::Whitespace, Name::Tag
         end
 
         rule /``\[/, Str, :str_constructor
       end
 
       state :annotation do
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, :comment
         rule XPath.eqName, Keyword::Declaration, :pop!
       end
 
       state :pragma do
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, :comment
         rule /#\)/, Comment::Preproc, :pop!
         rule /./, Comment::Preproc
@@ -97,7 +97,7 @@ module Rouge
       end
 
       state :start_tag do
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule /([\w.:-]+\s*=)(")/m do
           push :quot_attr
           groups Name::Attribute, Str
@@ -125,7 +125,7 @@ module Rouge
       end
 
       state :tag_content do
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         mixin :tags
 
         rule /({{|}})/, Text

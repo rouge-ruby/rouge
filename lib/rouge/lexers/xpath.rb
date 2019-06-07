@@ -105,36 +105,36 @@ module Rouge
 
         # Functions
         rule /(function)(\s*)(#{XPath.openParen})/ do # function declaration
-          groups Keyword, Text, Punctuation
+          groups Keyword, Text::Whitespace, Punctuation
         end
         rule /(map|array|empty-sequence)/, Keyword # constructors
         rule /(#{XPath.kindTest})(\s*)(#{XPath.openParen})/ do  # kindtest
           push :kindtest
-          groups Keyword, Text, Punctuation
+          groups Keyword, Text::Whitespace, Punctuation
         end
         rule /(#{XPath.kindTestForPi})(\s*)(#{XPath.openParen})/ do # processing instruction kindtest
           push :kindtestforpi
-          groups Keyword, Text, Punctuation
+          groups Keyword, Text::Whitespace, Punctuation
         end
         rule /(#{XPath.eqName})(\s*)(#{XPath.openParen})/ do # function call
-          groups Name::Function, Text, Punctuation
+          groups Name::Function, Text::Whitespace, Punctuation
         end
         rule /(#{XPath.eqName})(\s*)(#)(\s*)(\d+)/ do # namedFunctionRef
-          groups Name::Function, Text, Name::Function, Text, Name::Function
+          groups Name::Function, Text::Whitespace, Name::Function, Text::Whitespace, Name::Function
         end
 
         # Type commands
         rule /(cast|castable)(\s+)(as)/ do
           goto :singletype
-          groups Keyword, Text, Keyword
+          groups Keyword, Text::Whitespace, Keyword
         end
         rule /(treat)(\s+)(as)/ do
           goto :itemtype
-          groups Keyword, Text, Keyword
+          groups Keyword, Text::Whitespace, Keyword
         end
         rule /(instance)(\s+)(of)/ do
           goto :itemtype
-          groups Keyword, Text, Keyword
+          groups Keyword, Text::Whitespace, Keyword
         end
         rule /\b(as)\b/ do
           token Keyword
@@ -144,24 +144,24 @@ module Rouge
         # Paths
         rule /\.\.|\.|\*/, Operator
         rule /(#{XPath.ncName})(\s*)(:)(\s*)(\*)/ do
-          groups Name::Tag, Text, Punctuation, Text, Keyword::Reserved
+          groups Name::Tag, Text::Whitespace, Punctuation, Text::Whitespace, Keyword::Reserved
         end
         rule /(\*)(\s*)(:)(\s*)(#{XPath.ncName})/ do
-          groups Keyword::Reserved, Text, Punctuation, Text, Name::Tag
+          groups Keyword::Reserved, Text::Whitespace, Punctuation, Text::Whitespace, Name::Tag
         end
         rule /(#{XPath.axes})(\s*)(::)/ do
-          groups Keyword, Text, Operator
+          groups Keyword, Text::Whitespace, Operator
         end
         rule /@/, Name::Attribute, :attrname
         rule XPath.eqName, Name::Tag
 
         # Whitespace
-        rule /(\s+)/m, Text
+        rule /(\s+)/m, Text::Whitespace
       end
 
       state :singletype do
         # Whitespace and comments
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, Comment, :comment
 
         # Type name
@@ -173,41 +173,41 @@ module Rouge
 
       state :itemtype do
         # Whitespace and comments
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, Comment, :comment
 
         # Type tests
         rule /(#{XPath.kindTest})(\s*)(#{XPath.openParen})/ do
-          groups Keyword::Type, Text, Punctuation
+          groups Keyword::Type, Text::Whitespace, Punctuation
           # go to kindtest then occurrenceindicator
           goto :occurrenceindicator
           push :kindtest
         end
         rule /(#{XPath.kindTestForPi})(\s*)(#{XPath.openParen})/ do
-          groups Keyword::Type, Text, Punctuation
+          groups Keyword::Type, Text::Whitespace, Punctuation
           # go to kindtestforpi then occurrenceindicator
           goto :occurrenceindicator
           push :kindtestforpi
         end
         rule /(item)(\s*)(#{XPath.openParen})(\s*)(\))/ do
           goto :occurrenceindicator
-          groups Keyword::Type, Text, Punctuation, Text, Punctuation
+          groups Keyword::Type, Text::Whitespace, Punctuation, Text::Whitespace, Punctuation
         end
         rule /(#{XPath.constructorTypes})(\s*)(#{XPath.openParen})/ do
-          groups Keyword::Type, Text, Punctuation
+          groups Keyword::Type, Text::Whitespace, Punctuation
         end
 
         # Type commands
         rule /(cast|castable)(\s+)(as)/ do
-          groups Keyword, Text, Keyword
+          groups Keyword, Text::Whitespace, Keyword
           goto :singletype
         end
         rule /(treat)(\s+)(as)/ do
-          groups Keyword, Text, Keyword
+          groups Keyword, Text::Whitespace, Keyword
           goto :itemtype
         end
         rule /(instance)(\s+)(of)/ do
-          groups Keyword, Text, Keyword
+          groups Keyword, Text::Whitespace, Keyword
           goto :itemtype
         end
         rule /\b(as)\b/, Keyword
@@ -240,7 +240,7 @@ module Rouge
       # For pseudo-parameters for the KindTest productions
       state :kindtest do
         # Whitespace and comments
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, Comment, :comment
 
         # Pseudo-parameters:
@@ -248,7 +248,7 @@ module Rouge
         rule /,/, Punctuation
         rule /(element|schema-element)(\s*)(#{XPath.openParen})/ do
           push :kindtest
-          groups Keyword::Type, Text, Punctuation
+          groups Keyword::Type, Text::Whitespace, Punctuation
         end
         rule XPath.eqName, Name::Tag
 
@@ -259,7 +259,7 @@ module Rouge
       # Similar to :kindtest, but recognizes NCNames instead of EQNames
       state :kindtestforpi do
         # Whitespace and comments
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, Comment, :comment
 
         # Pseudo-parameters
@@ -272,7 +272,7 @@ module Rouge
 
       state :occurrenceindicator do
         # Whitespace and comments
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, Comment, :comment
 
         # Occurrence indicator
@@ -289,12 +289,12 @@ module Rouge
 
       state :varname do
         # Whitespace and comments
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, Comment, :comment
 
         # Function call
         rule /(#{XPath.eqName})(\s*)(#{XPath.openParen})/ do
-          groups Name::Variable, Text, Punctuation
+          groups Name::Variable, Text::Whitespace, Punctuation
           pop!
         end
 
@@ -304,7 +304,7 @@ module Rouge
 
       state :attrname do
         # Whitespace and comments
-        rule /\s+/m, Text
+        rule /\s+/m, Text::Whitespace
         rule XPath.commentStart, Comment, :comment
 
         # Attribute name

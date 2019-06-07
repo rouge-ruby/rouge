@@ -62,8 +62,8 @@ module Rouge
         rule /%/, Keyword::Declaration, :annotation
 
         rule /(\(#)(\s*)(#{XPath.eqName})/ do
-          push :pragma
           groups Comment::Preproc, Text::Whitespace, Name::Tag
+          push :pragma
         end
 
         rule /``\[/, Str, :str_constructor
@@ -99,12 +99,12 @@ module Rouge
       state :start_tag do
         rule /\s+/m, Text::Whitespace
         rule /([\w.:-]+\s*=)(")/m do
-          push :quot_attr
           groups Name::Attribute, Str
+          push :quot_attr
         end
         rule /([\w.:-]+\s*=)(')/m do
-          push :apos_attr
           groups Name::Attribute, Str
+          push :apos_attr
         end
         rule />/, Name::Tag, :tag_content
         rule %r(/>), Name::Tag, :pop!

@@ -109,12 +109,12 @@ module Rouge
         end
         rule /(map|array|empty-sequence)/, Keyword # constructors
         rule /(#{XPath.kindTest})(\s*)(#{XPath.openParen})/ do  # kindtest
-          push :kindtest
           groups Keyword, Text::Whitespace, Punctuation
+          push :kindtest
         end
         rule /(#{XPath.kindTestForPi})(\s*)(#{XPath.openParen})/ do # processing instruction kindtest
-          push :kindtestforpi
           groups Keyword, Text::Whitespace, Punctuation
+          push :kindtestforpi
         end
         rule /(#{XPath.eqName})(\s*)(#{XPath.openParen})/ do # function call
           groups Name::Function, Text::Whitespace, Punctuation
@@ -125,16 +125,16 @@ module Rouge
 
         # Type commands
         rule /(cast|castable)(\s+)(as)/ do
-          goto :singletype
           groups Keyword, Text::Whitespace, Keyword
+          goto :singletype
         end
         rule /(treat)(\s+)(as)/ do
-          goto :itemtype
           groups Keyword, Text::Whitespace, Keyword
+          goto :itemtype
         end
         rule /(instance)(\s+)(of)/ do
-          goto :itemtype
           groups Keyword, Text::Whitespace, Keyword
+          goto :itemtype
         end
         rule /\b(as)\b/ do
           token Keyword
@@ -190,8 +190,8 @@ module Rouge
           push :kindtestforpi
         end
         rule /(item)(\s*)(#{XPath.openParen})(\s*)(\))/ do
-          goto :occurrenceindicator
           groups Keyword::Type, Text::Whitespace, Punctuation, Text::Whitespace, Punctuation
+          goto :occurrenceindicator
         end
         rule /(#{XPath.constructorTypes})(\s*)(#{XPath.openParen})/ do
           groups Keyword::Type, Text::Whitespace, Punctuation
@@ -247,8 +247,8 @@ module Rouge
         rule /[?*]/, Operator
         rule /,/, Punctuation
         rule /(element|schema-element)(\s*)(#{XPath.openParen})/ do
-          push :kindtest
           groups Keyword::Type, Text::Whitespace, Punctuation
+          push :kindtest
         end
         rule XPath.eqName, Name::Tag
 

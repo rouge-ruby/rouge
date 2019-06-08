@@ -310,7 +310,7 @@ module Rouge
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
 
-      @debug = Lexer.debug_enabled? && bool_option(:debug)
+      @debug = Lexer.debug_enabled? && bool_option('debug')
     end
 
     def as_bool(val)
@@ -365,7 +365,7 @@ module Rouge
     end
 
     def bool_option(name, &default)
-      name_str = name == :debug ? "debug" : name.to_s
+      name_str = name.to_s
 
       if @options.key?(name_str)
         as_bool(@options[name_str])

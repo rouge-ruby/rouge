@@ -31,6 +31,19 @@ sub substitutionOperator
   s!\)!\\\)!g;
 }
 
+# arbitrary delimiters
+my $re_1 = m,This should match,;
+my $re_2 = m aSo should thisa;
+
+# Keys in hashes aren't match as regular expressions
+
+my %countries =  ( England => 'English',
+                   France => 'French',
+                   Spain => 'Spanish',
+                   China => 'Chinese',
+                   Germany => 'German',
+                   Mozambique => 'Mozambican');
+
 use strict;
 use warnings;
 

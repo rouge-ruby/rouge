@@ -93,9 +93,10 @@ module Rouge
         rule %r(m?/(\\\\|\\/|[^/\n])*/[msixpodualngc]*), re_tok
         rule %r(m(?=[/!\\{<\[\(@%\$])), re_tok, :balanced_regex
 
-        # Perl allows any non-whitespace character to delimit
-        # a regex when `m` is used.
-        rule %r(m(\S).*\1[msixpodualngc]*), re_tok
+        # arbitrary non-whitespace delimiters
+        rule %r(m\s*([^\w\s])((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
+        rule %r(m\s+(\w)((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
+
         rule %r(((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[msixpodualngc]*),
           re_tok, :balanced_regex
 

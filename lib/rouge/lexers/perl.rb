@@ -179,21 +179,21 @@ module Rouge
       end
 
       state :sq do
-        rule /\\[']/, Str::Single
+        rule /\\[']/, Str::Escape
         rule /[^\\']+/, Str::Single
         rule /'/, Punctuation, :pop!
       end
 
       state :dq do
         mixin :string_intp
-        rule /\\[\\tnr"]/, Str::Double
+        rule /\\[\\tnr"]/, Str::Escape
         rule /[^\\"]+?/, Str::Double
         rule /"/, Punctuation, :pop!
       end
 
       state :bq do
         mixin :string_intp
-        rule /\\[\\tnr`]/, Str::Backtick
+        rule /\\[\\tnr`]/, Str::Escape
         rule /[^\\`]+?/, Str::Backtick
         rule /`/, Punctuation, :pop!
       end

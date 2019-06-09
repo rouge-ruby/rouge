@@ -150,6 +150,12 @@ $p =~ s%
   %bar%x;
 print $p, "\n";
 
+my $str1 = "This is a ${ string } with fancy interpolation."
+my $cmd1 = `So is @{ this } one.`
+my $str2 = "This is a $string with plain interpolation."
+my $cmd2 = `So is @this one.`
+my $str3 = 'A boring $string.'
+
 ###### perl_misc ########
 
 # from http://gist.github.com/485595

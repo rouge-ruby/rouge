@@ -120,9 +120,9 @@ module Rouge
         rule /\d+(_\d*)*e[+-]?\d+(_\d*)*/i, Num::Float
         rule /\d+(_\d+)*/, Num::Integer
 
-        rule /'(\\\\|\\'|[^'])*'/, Str
-        rule /"(\\\\|\\"|[^"])*"/, Str
-        rule /`(\\\\|\\`|[^`])*`/, Str::Backtick
+        rule /'/, Punctuation, :sq
+        rule /"/, Punctuation, :dq
+        rule /`/, Punctuation, :bq
         rule /<([^\s>]+)>/, re_tok
         rule /(q|qq|qw|qr|qx)\{/, Str::Other, :cb_string
         rule /(q|qq|qw|qr|qx)\(/, Str::Other, :rb_string
@@ -178,6 +178,26 @@ module Rouge
         rule /;/, Punctuation, :pop!
       end
 
+      state :sq do
+        rule /\\[']/, Str::Single
+        rule /[^\\']+/, Str::Single
+        rule /'/, Punctuation, :pop!
+      end
+
+      state :dq do
+        mixin :string_intp
+        rule /\\[\\tnr"]/, Str::Double
+        rule /[^\\"]+?/, Str::Double
+        rule /"/, Punctuation, :pop!
+      end
+
+      state :bq do
+        mixin :string_intp
+        rule /\\[\\tnr`]/, Str::Backtick
+        rule /[^\\`]+?/, Str::Backtick
+        rule /`/, Punctuation, :pop!
+      end
+
       [[:cb, '\{', '\}'],
        [:rb, '\(', '\)'],
        [:sb, '\[', '\]'],
@@ -190,6 +210,17 @@ module Rouge
           rule /#{close}/, tok, :pop!
           rule /[^#{open}#{close}\\]+/, tok
         end
+      end
+
+      state :in_interp do
+        rule /}/, Str::Interpol, :pop!
+        rule /\s+/, Text
+        rule /[a-z_]\w*/i, Str::Interpol
+      end
+
+      state :string_intp do
+        rule /[$@][{]/, Str::Interpol, :in_interp
+        rule /[$@][a-z_]\w*/i, Str::Interpol
       end
 
       state :end_part do

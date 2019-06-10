@@ -29,6 +29,8 @@ module Rouge
       end
 
       state :mason_tags do
+        rule /\s+/, Text::Whitespace
+
         rule /<%(#{textblocks.join('|')})>/i, Keyword::Constant, :text_block
 
         rule /<%(#{perlblocks.join('|')})>/i, Keyword::Constant, :perl_block
@@ -55,11 +57,18 @@ module Rouge
         # start of component call
         rule /<%/, Keyword::Constant, :component_call
 
+         # start of component with content
+        rule /<&\|/ do
+          token Keyword::Constant
+          push :component_with_content
+          push :component_sub
+        end
+
         # start of component substitution
         rule /<&/, Keyword::Constant, :component_sub
 
         # fallback to HTML until a mason tag is encountered
-        rule(/(.+?)(?=(<&|<%|<\/%|^%|^#))/m) { delegate parent }
+        rule(/(.+?)(?=(<\/?&|<\/?%|^%|^#))/m) { delegate parent }
 
         # if we get here, there's no more mason tags, so we parse the rest of the doc as HTML
         rule(/.+/m) { delegate parent }
@@ -86,6 +95,15 @@ module Rouge
       state :component_block do
         rule /<\/%(#{components.join('|')})>/i, Keyword::Constant, :pop!
         
+        mixin :mason_tags
+      end
+
+      state :component_with_content do
+        rule /<\/&>/ do 
+          token Keyword::Constant
+          pop!
+        end
+
         mixin :mason_tags
       end
 

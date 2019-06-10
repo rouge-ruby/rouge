@@ -148,3 +148,52 @@ author => 'maria ines parnisari'
 # Random Perl blocks
 <%perl>my $hello = "world";</%perl>
 <%perl> } </%perl>
+
+# Components with content (https://masonbook.houseabsolute.com/book/chapter-5.html)
+<&| .top_menu_filter &>
+   <& SELF:top_menu, %ARGS &>
+</&>
+
+<&| .uc &>
+  I am in <% $m->current_comp->name %>
+</&>
+
+<&| .ucfirst &>
+  <&| .reverse &>
+I am in <% $m->current_comp->name %>
+  </&>
+</&>
+
+<table>
+  <tr>
+  <th>Name</th>
+  <th>Age</th>
+  </tr>
+<&| 'query', query => 'SELECT name, age FROM User' &>
+  <tr>
+  <td>%name</td>
+  <td>%age</td>
+  </tr>
+</&>
+</table>
+
+
+<&| /loop, items => ['one', 'two', 'three'] &>
+<% $item %>
+</&>
+
+  <&| /loop, items => ['one', 'two', 'three'] &>
+<% $item %>
+</&>
+
+<table>
+<tr><th>Part Number</th><th>Quantity</th><th>Price</th><th>Total</th></tr>
+<&| /query/order_items:exec, bind => [$OrderID] &>
+    <tr>
+        <td><% $_->{PARTNUM} %></td>
+        <td><% $_->{QUANTITY} %></td>
+        <td><% $_->{PRICE} %></td>
+        <td><% $_->{QUANTITY} * $_->{PRICE} %></td>
+    </tr>
+</&>
+</table>

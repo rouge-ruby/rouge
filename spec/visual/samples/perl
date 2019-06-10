@@ -31,6 +31,19 @@ sub substitutionOperator
   s!\)!\\\)!g;
 }
 
+# arbitrary delimiters
+my $re_1 = m,This should match,;
+my $re_2 = m aSo should thisa;
+
+# Keys in hashes aren't match as regular expressions
+
+my %countries =  ( england => 'English',
+                   france => 'French',
+                   spain => 'Spanish',
+                   china => 'Chinese',
+                   germany => 'German',
+                   mozambique => 'Mozambican');
+
 use strict;
 use warnings;
 
@@ -149,6 +162,12 @@ $p =~ s%
   foo
   %bar%x;
 print $p, "\n";
+
+my $str1 = "This is a ${ string } with fancy interpolation."
+my $cmd1 = `So is @{ this } one.`
+my $str2 = "This is a $string with plain interpolation."
+my $cmd2 = `So is @this one.`
+my $str3 = 'A boring $string.'
 
 ###### perl_misc ########
 

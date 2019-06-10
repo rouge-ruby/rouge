@@ -35,6 +35,7 @@ class VisualTestApp < Sinatra::Application
     reload_source!
 
     Rouge::Lexer.enable_debug!
+    Rouge::Formatter.enable_escape! if params[:escape]
 
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class

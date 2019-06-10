@@ -112,6 +112,11 @@ module Rouge
       end
 
       state :statement do
+        rule /(raw|verbatim)(\s+)(\%\})/ do
+          groups Keyword, Text, Comment::Preproc
+          goto :raw
+        end
+
         rule /(\w+\.?)/ do |m|
           if self.class.keywords.include?(m[0])
             groups Keyword
@@ -132,6 +137,15 @@ module Rouge
         mixin :text
 
         rule /\%\}/, Comment::Preproc, :pop!
+      end
+
+      state :raw do
+        rule %r{(\{\%)(\s+)(endverbatim|endraw)(\s+)(\%\})} do
+          groups Comment::Preproc, Text, Keyword, Text, Comment::Preproc
+          pop!
+        end
+
+        rule /(.+?)/m, Text
       end
     end
   end

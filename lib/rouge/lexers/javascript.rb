@@ -197,25 +197,21 @@ module Rouge
         rule /0b[01][01_]*/i, Num::Bin
         rule /[0-9]+/, Num::Integer
 
-        rule /"/, Str::Double, :dq
-        rule /'/, Str::Single, :sq
+        rule /"/, Str::Delimiter, :dq
+        rule /'/, Str::Delimiter, :sq
         rule /:/, Punctuation
       end
 
       state :dq do
+        rule /\\[\\nrt"]?/, Str::Escape
         rule /[^\\"]+/, Str::Double
-        rule /\\[^nrt]/, Str::Escape
-        rule /\\n/, Str::Escape
-        rule /\\r/, Str::Escape
-        rule /\\t/, Str::Escape
-        rule /\\"/, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule /"/, Str::Delimiter, :pop!
       end
 
       state :sq do
+        rule /\\[\\nrt']?/, Str::Escape
         rule /[^\\']+/, Str::Single
-        rule /\\'/, Str::Escape
-        rule /'/, Str::Single, :pop!
+        rule /'/, Str::Delimiter, :pop!
       end
 
       # braced parts that aren't object literals

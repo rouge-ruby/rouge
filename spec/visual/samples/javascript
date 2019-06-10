@@ -16,7 +16,8 @@ var foo = {
   c: "\\test",
   d: "\\nest",
   e: "\\",
-  f: "\\"
+  f: "Using \\ in a string",
+  g: "\error"
 };
 
 switch(test) {

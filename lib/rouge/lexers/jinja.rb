@@ -31,10 +31,6 @@ module Rouge
         @@pseudo_keywords ||= %w(true false none True False None)
       end
 
-      def self.raw_keywords
-        @@raw_keywords ||= %w(raw verbatim)
-      end
-
       def self.word_operators
         @@word_operators ||= %w(is in and or not)
       end

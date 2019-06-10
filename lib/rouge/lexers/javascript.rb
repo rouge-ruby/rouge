@@ -204,10 +204,10 @@ module Rouge
 
       state :dq do
         rule /[^\\"]+/, Str::Double
+        rule /\\[^nrt]/, Str::Escape
         rule /\\n/, Str::Escape
-        rule /\\t/, Str::Escape
         rule /\\r/, Str::Escape
-        rule /\\/, Str::Escape
+        rule /\\t/, Str::Escape
         rule /\\"/, Str::Escape
         rule /"/, Str::Double, :pop!
       end

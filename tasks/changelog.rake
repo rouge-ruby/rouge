@@ -25,13 +25,9 @@ module Rouge
       end
 
       def sort_versions(a, b)
-        if a[0] == b[0] && a[1] == b[1]
-          a[2] <=> b[2]
-        elsif a[0] == b[0]
-          a[1] <=> b[1]
-        else
-          a[0] <=> b[0]
-        end
+        return a[2] <=> b[2] if a[0] == b[0] && a[1] == b[1]
+        return a[1] <=> b[1] if a[0] == b[0]
+        return a[0] <=> b[0]
       end
       
       class Log 
@@ -63,7 +59,7 @@ module Rouge
     end
 
     def self.link_line(remote, author)
-      "([#\\1](https://#{remote}/pr/\\1/) by #{author})"
+      "([#\\1](https://#{remote}/pull/\\1/) by #{author})"
     end
 
     def self.message_line(message)
@@ -71,7 +67,7 @@ module Rouge
     end
     
     def self.version_line(version)
-      "## version #{version}: (#{Time.now.strftime("%Y/%m/%d")})\n\n"
+      "## version #{version}: #{Time.now.strftime("%Y/%m/%d")}\n\n"
     end
   end
 end

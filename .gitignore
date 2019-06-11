@@ -12,9 +12,7 @@ Gemfile.lock
 
 # tmp
 /tmp
+rouge-memory.tmp
 
 # IntelliJ IDEA / RubyMine
 .idea/
-
-# Vim
-*.swp

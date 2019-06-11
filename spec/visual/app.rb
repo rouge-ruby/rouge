@@ -57,6 +57,7 @@ class VisualTestApp < Sinatra::Application
 
     if params[:juxtaposed]
       @raw = Rouge.highlight(@sample, 'plaintext', @formatter)
+      @comment_color = @theme.class.get_style(Rouge::Token::Tokens::Comment).fg
       erb :juxtaposed, layout: nil
     else
       erb :lexer

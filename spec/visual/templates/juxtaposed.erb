@@ -11,7 +11,7 @@
     html { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif }
     body { margin: 0 }
     main { position: relative; padding: 8px 0 }
-    h2   { margin-top: 0 }
+    h2   { margin: 0 }
 
     section {
       float: left;
@@ -36,19 +36,31 @@
       float: left;
       padding: 8px 12px;
       width: 49.575%;
-      border: 1px dotted
+      border: 1px dotted <%= @comment_color %>
     }
     .codeviewer:not(:first-of-type) { margin-left: 4px }
     .codeviewer:not(:last-of-type) { margin-right: 4px }
 
-    #page-header, #page-footer { padding: 15px; text-align: center }
+    .codeviewer header, .legend header {
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      color: <%= @comment_color %>;
+      border-bottom: 1px dotted
+    }
+    .legend header { padding-top: 8px }
+
+    #page-header, #page-footer {
+      padding: 15px;
+      text-align: center;
+      color: <%= @comment_color %>
+    }
     #page-header {
       text-transform: capitalize;
       border-bottom: 1px dotted
     }
     #page-header h1 {
-      font-size: 1.5em;
       margin: 0.25em;
+      font-size: 1.5em;
     }
     #page-footer {
       height: 60px;
@@ -68,17 +80,17 @@
   <main>
     <section>
       <div class="codeviewer">
-        <h2>Raw</h2>
+        <header><h2>Raw</h2></header>
         <%= @raw %>
       </div>
       <div class="codeviewer">
-        <h2>Highlighted</h2>
+        <header><h2>Highlighted</h2></header>
         <%= @highlighted %>
       </div>
     </section>
     <aside>
       <div class="legend">
-        <h2>Legend</h2>
+        <header><h2>Legend</h2></header>
         <pre class="codehilite">
 <% Rouge::Token.each_token do |token|
   %><span class="<%= token.shortname %>"><%= token.qualname %></span>

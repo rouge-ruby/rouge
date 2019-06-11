@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @title %></title>
+  <style type="text/css">
+    <%= @theme.render %>
+    <%= @theme.render_base('body') %>
+    <%= @theme.render_base('a') %>
+
+    * { box-sizing: border-box }
+    html { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif }
+    body { margin: 0 }
+    main { position: relative; padding: 8px 0 }
+    h2   { margin-top: 0 }
+
+    section {
+      float: left;
+      width: calc(100% - 210px);
+      padding: 8px;
+      padding-right: 4px;
+      overflow-y: auto;
+    }
+    aside {
+      width: 200px;
+      float: right;
+      padding: 8px 8px 8px 0
+    }
+    pre { margin: 0 }
+
+    .codehilite {
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+    .legend .codehilite { font-size: 12px }
+    .codeviewer {
+      float: left;
+      padding: 8px 12px;
+      width: 49.575%;
+      border: 1px dotted
+    }
+    .codeviewer:not(:first-of-type) { margin-left: 4px }
+    .codeviewer:not(:last-of-type) { margin-right: 4px }
+
+    #page-header, #page-footer { padding: 15px; text-align: center }
+    #page-header {
+      text-transform: capitalize;
+      border-bottom: 1px dotted
+    }
+    #page-header h1 {
+      font-size: 1.5em;
+      margin: 0.25em;
+    }
+    #page-footer {
+      height: 60px;
+      border-top: 1px dotted
+    }
+    .clearfix {
+      clear: both;
+      display: table;
+      content: "";
+    }
+  </style>
+</head>
+<body>
+  <header id="page-header">
+    <h1><%= @lexer.class.tag %> Lexer Test</h1>
+  </header>
+  <main>
+    <section>
+      <div class="codeviewer">
+        <h2>Raw</h2>
+        <%= @raw %>
+      </div>
+      <div class="codeviewer">
+        <h2>Highlighted</h2>
+        <%= @highlighted %>
+      </div>
+    </section>
+    <aside>
+      <div class="legend">
+        <h2>Legend</h2>
+        <pre class="codehilite">
+<% Rouge::Token.each_token do |token|
+  %><span class="<%= token.shortname %>"><%= token.qualname %></span>
+<% end %>
+        </pre>
+      </div>
+    </aside>
+    <div class="clearfix"></div>
+  </main>
+  <footer id="page-footer">
+    <small>Rendered with theme
+      <strong style="text-transform: capitalize">
+        <%= @theme.class.name.gsub(/_/, ' ') %>
+      </strong>
+    </small>
+  </footer>
+</body>
+</html>

@@ -55,7 +55,12 @@ class VisualTestApp < Sinatra::Application
     @title = "#{@lexer.class.tag} | Visual Test"
     @highlighted = Rouge.highlight(@sample, @lexer, @formatter)
 
-    erb :lexer
+    if params[:juxtaposed]
+      @raw = Rouge.highlight(@sample, 'plaintext', @formatter)
+      erb :juxtaposed, layout: nil
+    else
+      erb :lexer
+    end
   end
 
 

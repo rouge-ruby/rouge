@@ -3,8 +3,6 @@ require 'git'
 module Rouge
   module Tasks
     class Git
-      attr_reader :remote
-
       def initialize(dir, remote)
         @repo = ::Git.open(dir)
         @remote = remote

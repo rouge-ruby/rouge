@@ -1,7 +1,8 @@
-# ChangeLog
+# Changelog
 
-This log summarizes the changes in each released version of Rouge. Rouge follows [Semantic Versioning
-2.0.0](https://semver.org/spec/v2.0.0.html).
+This log summarizes the changes in each released version of Rouge.
+
+Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
 ## version 3.3.0: 2018/10/01
 

@@ -26,6 +26,7 @@ group :development do
   # docs
   gem 'yard'
   gem 'github-markup'
+  gem 'git'
 
   # for visual tests
   if RUBY_VERSION < '2.2.0'

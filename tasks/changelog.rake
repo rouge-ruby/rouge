@@ -14,14 +14,14 @@ module Rouge
       end
       
       def prev_version
-        @prev_version ||= @repo.
-          tags.
-          select { |t| t.name.match?(/^v\d+\.\d+\.\d$/) }.
-          map { |t| t.name.slice(1..-1).split(".").map(&:to_i) }.
-          sort { |a,b| sort_versions(a, b) }.
-          last.
-          join(".").
-          prepend("v")
+        @prev_version ||= @repo
+          .tags
+          .select { |t| t.name.match?(/^v\d+\.\d+\.\d$/) }
+          .map { |t| t.name.slice(1..-1).split(".").map(&:to_i) }
+          .sort { |a,b| sort_versions(a, b) }
+          .last
+          .join(".")
+          .prepend("v")
       end
 
       def sort_versions(a, b)

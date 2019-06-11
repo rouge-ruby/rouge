@@ -1,173 +1,174 @@
-# ChangeLog
+# Changelog
 
-This log summarizes the changes in each released version of rouge. The versioning scheme
-we use is semver, although we will often release new lexers in minor versions, as a
-practical matter.
+This log summarizes the changes in each released version of Rouge.
 
-## version 3.3.0: (2018/10/01)
+Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
-https://github.com/jneen/rouge/compare/v3.2.1...v3.3.0
+## version 3.3.0: 2018-10-01
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.2.1...v3.3.0)
 
 > **Release Highlight**: Due to #883 with the introduction of frozen string literals,
   Rouge memory usage and total objects dropped quite dramatically. See
-  [#883](https://github.com/jneen/rouge/pull/883) for more details. Thanks @ashmaroli
+  [#883](https://github.com/rouge-ruby/rouge/pull/883) for more details. Thanks @ashmaroli
   for this PR.
 
 * General
-  * Add frozen_string_literal ([#883](https://github.com/jneen/rouge/pull/883) ashmaroli)
+  * Add frozen_string_literal ([#883](https://github.com/rouge-ruby/rouge/pull/883) ashmaroli)
 * Mathematica Lexer (NEW)
-  * Support for Mathematic/Wolfram ([#854](https://github.com/jneen/rouge/pull/854) by halirutan)
+  * Support for Mathematic/Wolfram ([#854](https://github.com/rouge-ruby/rouge/pull/854) by halirutan)
 * Motorola 68k Lexer (NEW)
-  * Add m68k assembly lexer ([#909](https://github.com/jneen/rouge/pull/909) by nguillaumin)
+  * Add m68k assembly lexer ([#909](https://github.com/rouge-ruby/rouge/pull/909) by nguillaumin)
 * SQF Lexer (NEW)
-  * Add SQF Lexer ([#761](https://github.com/jneen/rouge/pull/761) by BaerMitUmlaut)
-  * Minor changes to SQF ([#970](https://github.com/jneen/rouge/pull/970) by dblessing)
+  * Add SQF Lexer ([#761](https://github.com/rouge-ruby/rouge/pull/761) by BaerMitUmlaut)
+  * Minor changes to SQF ([#970](https://github.com/rouge-ruby/rouge/pull/970) by dblessing)
 * JSP Lexer (NEW)
-  * Add Java Server Pages lexer ([#915](https://github.com/jneen/rouge/pull/915) by miparnisari)
+  * Add Java Server Pages lexer ([#915](https://github.com/rouge-ruby/rouge/pull/915) by miparnisari)
 * Elixir Lexer
-  * Add `defstruct` and `defguardp` ([#960](https://github.com/jneen/rouge/pull/960) by bjfish)
+  * Add `defstruct` and `defguardp` ([#960](https://github.com/rouge-ruby/rouge/pull/960) by bjfish)
 * F# / FSharp Lexer
-  * Add `.fsi` extension ([#1002](https://github.com/jneen/rouge/pull/1002) by adam-becker)
+  * Add `.fsi` extension ([#1002](https://github.com/rouge-ruby/rouge/pull/1002) by adam-becker)
 * Kotlin Lexer
-  * Recognise annotations and map to decorator ([#995](https://github.com/jneen/rouge/pull/995) by lordcodes)
-  * Function names ([#996](https://github.com/jneen/rouge/pull/996) by lordcodes)
-  * Recognizing function parameters and return type ([#999](https://github.com/jneen/rouge/pull/999) by lordcodes)
-  * Recognize destructuring assignment ([#1001](https://github.com/jneen/rouge/pull/1001) by lordcodes)
+  * Recognise annotations and map to decorator ([#995](https://github.com/rouge-ruby/rouge/pull/995) by lordcodes)
+  * Function names ([#996](https://github.com/rouge-ruby/rouge/pull/996) by lordcodes)
+  * Recognizing function parameters and return type ([#999](https://github.com/rouge-ruby/rouge/pull/999) by lordcodes)
+  * Recognize destructuring assignment ([#1001](https://github.com/rouge-ruby/rouge/pull/1001) by lordcodes)
 * Objective-C Lexer
-  * Add `objectivec` as tag/alias ([#951](https://github.com/jneen/rouge/pull/951) by revolter)
+  * Add `objectivec` as tag/alias ([#951](https://github.com/rouge-ruby/rouge/pull/951) by revolter)
 * Prolog Lexer
-  * Add % as single-line comment ([#898](https://github.com/jneen/rouge/pull/898) by jamesnvc)
+  * Add % as single-line comment ([#898](https://github.com/rouge-ruby/rouge/pull/898) by jamesnvc)
 * Puppet Lexer
-  * Add = as Operator in Puppet lexer ([#980](https://github.com/jneen/rouge/pull/980) by alexharv074)
+  * Add = as Operator in Puppet lexer ([#980](https://github.com/rouge-ruby/rouge/pull/980) by alexharv074)
 * Python Lexer
-  * Improve #-style comments ([#959](https://github.com/jneen/rouge/pull/959) by 1orenz0)
-  * Improvements for builtins, literals and operators ([#940](https://github.com/jneen/rouge/pull/940) by aldanor)
+  * Improve #-style comments ([#959](https://github.com/rouge-ruby/rouge/pull/959) by 1orenz0)
+  * Improvements for builtins, literals and operators ([#940](https://github.com/rouge-ruby/rouge/pull/940) by aldanor)
 * Ruby Lexer
-  * Add `Dangerfile` as Ruby filename ([#1004](https://github.com/jneen/rouge/pull/1004) by leipert)
+  * Add `Dangerfile` as Ruby filename ([#1004](https://github.com/rouge-ruby/rouge/pull/1004) by leipert)
 * Rust Lexer
-  * Add additional aliases for Rust ([#988](https://github.com/jneen/rouge/pull/988) by LegNeato)
+  * Add additional aliases for Rust ([#988](https://github.com/rouge-ruby/rouge/pull/988) by LegNeato)
 * Swift Lexer
-  * Add `convenience` method ([#950](https://github.com/jneen/rouge/pull/950) by damian-rzeszot)
+  * Add `convenience` method ([#950](https://github.com/rouge-ruby/rouge/pull/950) by damian-rzeszot)
 
-## version 3.2.1: (2018/08/16)
+## version 3.2.1: 2018-08-16
 
-https://github.com/jneen/rouge/compare/v3.2.0...v3.2.1
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.2.0...v3.2.1)
 
 * Perl Lexer
-  * Allow any non-whitespace character to delimit regexes ([#974](https://github.com/jneen/rouge/pull/974) by dblessing)
+  * Allow any non-whitespace character to delimit regexes ([#974](https://github.com/rouge-ruby/rouge/pull/974) by dblessing)
     * Details: In specific cases where a previously unsupported regex delimiter was
       used, a later rule could cause a backtrack in the regex system.
       This resulted in Rouge hanging for an unspecified amount of time.
 
-## version 3.2.0: (2018/08/02)
+## version 3.2.0: 2018-08-02
 
-https://github.com/jneen/rouge/compare/v3.1.1...v3.2.0
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.1.1...v3.2.0)
 
 * General
-  * Load pastie theme ([#809](https://github.com/jneen/rouge/pull/809) by rramsden)
-  * Fix build failures ([#892](https://github.com/jneen/rouge/pull/892) by olleolleolle)
-  * Update CLI style help text ([#923](https://github.com/jneen/rouge/pull/923) by nixpulvis)
-  * Fix HTMLLinewise formatter documentation in README.md ([#910](https://github.com/jneen/rouge/pull/910) by rohitpaulk)
-* Terraform Lexer (NEW - [#917](https://github.com/jneen/rouge/pull/917) by lowjoel)
-* Crystal Lexer (NEW - [#441](https://github.com/jneen/rouge/pull/441) by splattael)
+  * Load pastie theme ([#809](https://github.com/rouge-ruby/rouge/pull/809) by rramsden)
+  * Fix build failures ([#892](https://github.com/rouge-ruby/rouge/pull/892) by olleolleolle)
+  * Update CLI style help text ([#923](https://github.com/rouge-ruby/rouge/pull/923) by nixpulvis)
+  * Fix HTMLLinewise formatter documentation in README.md ([#910](https://github.com/rouge-ruby/rouge/pull/910) by rohitpaulk)
+* Terraform Lexer (NEW - [#917](https://github.com/rouge-ruby/rouge/pull/917) by lowjoel)
+* Crystal Lexer (NEW - [#441](https://github.com/rouge-ruby/rouge/pull/441) by splattael)
 * Scheme Lexer
-  * Allow square brackets ([#849](https://github.com/jneen/rouge/pull/849) by EFanZh)
+  * Allow square brackets ([#849](https://github.com/rouge-ruby/rouge/pull/849) by EFanZh)
 * Haskell Lexer
-  * Support for Quasiquotations ([#868](https://github.com/jneen/rouge/pull/868) by enolan)
+  * Support for Quasiquotations ([#868](https://github.com/rouge-ruby/rouge/pull/868) by enolan)
 * Java Lexer
-  * Support for Java 10 `var` keyword ([#888](https://github.com/jneen/rouge/pull/888) by lc-soft)
+  * Support for Java 10 `var` keyword ([#888](https://github.com/rouge-ruby/rouge/pull/888) by lc-soft)
 * VHDL Lexer
-  * Fix `time_vector` keyword typo ([#911](https://github.com/jneen/rouge/pull/911) by ttobsen)
+  * Fix `time_vector` keyword typo ([#911](https://github.com/rouge-ruby/rouge/pull/911) by ttobsen)
 * Perl Lexer
-  * Recognize `.t` as valid file extension ([#918](https://github.com/jneen/rouge/pull/918) by miparnisari)
+  * Recognize `.t` as valid file extension ([#918](https://github.com/rouge-ruby/rouge/pull/918) by miparnisari)
 * Nix Lexer
-  * Improved escaping sequences for indented strings ([#926](https://github.com/jneen/rouge/pull/926) by veprbl)
+  * Improved escaping sequences for indented strings ([#926](https://github.com/rouge-ruby/rouge/pull/926) by veprbl)
 * Fortran Lexer
-  * Recognize `.f` as valid file extension ([#931](https://github.com/jneen/rouge/pull/931) by veprbl)
+  * Recognize `.f` as valid file extension ([#931](https://github.com/rouge-ruby/rouge/pull/931) by veprbl)
 * Igor Pro Lexer
-  * Update functions and operations for Igor Pro 8 ([#921](https://github.com/jneen/rouge/pull/921) by t-b)
+  * Update functions and operations for Igor Pro 8 ([#921](https://github.com/rouge-ruby/rouge/pull/921) by t-b)
 * Julia Lexer
-  * Various improvements and fixes ([#912](https://github.com/jneen/rouge/pull/912) by ararslan)
+  * Various improvements and fixes ([#912](https://github.com/rouge-ruby/rouge/pull/912) by ararslan)
 * Kotlin Lexer
-  * Recognize `.kts` as valid file extension ([#908](https://github.com/jneen/rouge/pull/908) by mkobit)
+  * Recognize `.kts` as valid file extension ([#908](https://github.com/rouge-ruby/rouge/pull/908) by mkobit)
 * CSS Lexer
-  * Minor fixes ([#916](https://github.com/jneen/rouge/pull/916) by miparnisari)
+  * Minor fixes ([#916](https://github.com/rouge-ruby/rouge/pull/916) by miparnisari)
 * HTML Lexer
-  * Minor fixes ([#916](https://github.com/jneen/rouge/pull/916) by miparnisari)
+  * Minor fixes ([#916](https://github.com/rouge-ruby/rouge/pull/916) by miparnisari)
 * Javascript Lexer
-  * Minor fixes ([#916](https://github.com/jneen/rouge/pull/916) by miparnisari)
+  * Minor fixes ([#916](https://github.com/rouge-ruby/rouge/pull/916) by miparnisari)
 * Markdown Lexer
-  * Images may not have alt text ([#904](https://github.com/jneen/rouge/pull/904) by Himura2la)
+  * Images may not have alt text ([#904](https://github.com/rouge-ruby/rouge/pull/904) by Himura2la)
 * ERB Lexer
-  * Fix greedy comment matching ([#902](https://github.com/jneen/rouge/pull/902) by ananace)
+  * Fix greedy comment matching ([#902](https://github.com/rouge-ruby/rouge/pull/902) by ananace)
 
-## version 3.1.1: 2018/01/31
+## version 3.1.1: 2018-01-31
 
-https://github.com/jneen/rouge/compare/v3.1.0...v3.1.1
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.1.0...v3.1.1)
 
 * Perl
-  * [Fix \#851: error on modulo operato in Perl by miparnisari · Pull Request \#853 · jneen/rouge](https://github.com/jneen/rouge/pull/853)
+  * [Fix \#851: error on modulo operato in Perl by miparnisari · Pull Request \#853 · rouge-ruby/rouge](https://github.com/rouge-ruby/rouge/pull/853)
 * JavaScript
-  * [Detect \*\.mjs files as being JavaScript by Kovensky · Pull Request \#866 · jneen/rouge](https://github.com/jneen/rouge/pull/866)
+  * [Detect \*\.mjs files as being JavaScript by Kovensky · Pull Request \#866 · rouge-ruby/rouge](https://github.com/rouge-ruby/rouge/pull/866)
 * Swift
-  [\[Swift\] Undo parsing function calls with trailing closure by dan\-zheng · Pull Request \#862 · jneen/rouge](https://github.com/jneen/rouge/pull/862)
+  [\[Swift\] Undo parsing function calls with trailing closure by dan\-zheng · Pull Request \#862 · rouge-ruby/rouge](https://github.com/rouge-ruby/rouge/pull/862)
 * Vue
-  * [Fix load SCSS in Vue by purecaptain · Pull Request \#842 · jneen/rouge](https://github.com/jneen/rouge/pull/842)
+  * [Fix load SCSS in Vue by purecaptain · Pull Request \#842 · rouge-ruby/rouge](https://github.com/rouge-ruby/rouge/pull/842)
 
-## version 3.1.0: 2017/12/21
+## version 3.1.0: 2017-12-21
 
 Thanks a lot for contributions; not only for the code, but also for the issues and review comments, which are vitally helpful.
 
-https://github.com/jneen/rouge/compare/v3.0.0...v3.1.0
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.0.0...v3.1.0)
+
 * gemspec
-  * Add source code and changelog links to gemspec [#785](https://github.com/jneen/rouge/pull/785) by @timrogers
+  * Add source code and changelog links to gemspec [#785](https://github.com/rouge-ruby/rouge/pull/785) by @timrogers
 * General
-  * Fix #796: comments not followed by a newline are not highlighted [#797](https://github.com/jneen/rouge/pull/797) by @tyxchen
+  * Fix #796: comments not followed by a newline are not highlighted [#797](https://github.com/rouge-ruby/rouge/pull/797) by @tyxchen
 * Elem
-  * Add Elm language support [#744](https://github.com/jneen/rouge/pull/744) by @dmitryrogozhny
+  * Add Elm language support [#744](https://github.com/rouge-ruby/rouge/pull/744) by @dmitryrogozhny
 * Ruby
-  * Add the .erb file extension to ruby highlighting [#713](https://github.com/jneen/rouge/pull/713) by @jstumbaugh
+  * Add the .erb file extension to ruby highlighting [#713](https://github.com/rouge-ruby/rouge/pull/713) by @jstumbaugh
 * Hack
-  * Add basic Hack support [#712](https://github.com/jneen/rouge/pull/712) by @fredemmott
+  * Add basic Hack support [#712](https://github.com/rouge-ruby/rouge/pull/712) by @fredemmott
 * F#
-  * Allow double backtick F# identifiers [#793](https://github.com/jneen/rouge/pull/793) by @nickbabcock
+  * Allow double backtick F# identifiers [#793](https://github.com/rouge-ruby/rouge/pull/793) by @nickbabcock
 * Swift
-  * Swift support for backticks and keypath syntax  [#794](https://github.com/jneen/rouge/pull/794) by @johnfairh
-  * [Swift] Tuple destructuring, function call with lambda argument [#837](https://github.com/jneen/rouge/pull/837) by @dan-zheng
+  * Swift support for backticks and keypath syntax  [#794](https://github.com/rouge-ruby/rouge/pull/794) by @johnfairh
+  * [Swift] Tuple destructuring, function call with lambda argument [#837](https://github.com/rouge-ruby/rouge/pull/837) by @dan-zheng
 * Python
-  * Add async and await keywords to Python lexer [#799](https://github.com/jneen/rouge/pull/799) by @BigChief45
+  * Add async and await keywords to Python lexer [#799](https://github.com/rouge-ruby/rouge/pull/799) by @BigChief45
 * Shell
-  * Add missing shell commands and missing GNU coreutils executables [#798](https://github.com/jneen/rouge/pull/798) by @kernhanda
+  * Add missing shell commands and missing GNU coreutils executables [#798](https://github.com/rouge-ruby/rouge/pull/798) by @kernhanda
 * PowerShell
-  * Add JEA file extensions to powershell [#807](https://github.com/jneen/rouge/pull/807) by @michaeltlombardi
+  * Add JEA file extensions to powershell [#807](https://github.com/rouge-ruby/rouge/pull/807) by @michaeltlombardi
 * SASS / SCSS
-  * Don't treat `[` as a part of an attribute name in SCSS [#839](https://github.com/jneen/rouge/pull/839) by @hibariya
+  * Don't treat `[` as a part of an attribute name in SCSS [#839](https://github.com/rouge-ruby/rouge/pull/839) by @hibariya
 * Haskell
-  * Don't treat `error` specially in Haskell [#834](https://github.com/jneen/rouge/pull/834) by @enolan
+  * Don't treat `error` specially in Haskell [#834](https://github.com/rouge-ruby/rouge/pull/834) by @enolan
 * Rust
-  * Rust: highlight the "where" keyword [#823](https://github.com/jneen/rouge/pull/823) by @lvillani
+  * Rust: highlight the "where" keyword [#823](https://github.com/rouge-ruby/rouge/pull/823) by @lvillani
 
-## version 3.0.0: 2017/09/21
+## version 3.0.0: 2017-09-21
 
-https://github.com/jneen/rouge/compare/v2.2.1...v3.0.0
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v2.2.1...v3.0.0)
 
 There is no breaking change in the public API, but internals' is changed.
 
 * general:
   * dropped support for Ruby 1.9, requireing Ruby v2.0.0 (#775 by gfx)
   * [Internal API changes] refactored disaambiguators to removes the use of analyze_text's numeric score interface (#763 by jneen)
-    * See https://github.com/jneen/rouge/pull/763 for details
+    * See https://github.com/rouge-ruby/rouge/pull/763 for details
   * added `rouge guess $file` sub-command to test guessers (#773 by gfx)
-  * added `Rouge::Lexe.guess { fallback }` interface (#777 by gfx)
+  * added `Rouge::Lexer.guess { fallback }` interface (#777 by gfx)
   * removes BOM and normalizes newlines in input sources before lexing (#776 by gfx)
 * kotlin:
   * fix errors in generic functions (#782 by gfx; thanks to @rongi for reporting it)
 * haskell:
   * fix escapes in char literals (#780 by gfx; thanks to @Tosainu for reporting it)
 
-## version 2.2.1: 2017/08/22
+## version 2.2.1: 2017-08-22
 
-https://github.com/jneen/rouge/compare/v2.2.0...v2.2.1
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v2.2.0...v2.2.1)
 
 * powershell:
   * Adding PowerShell builtin commands for version 5 (#757 thanks JacodeWeerd)
@@ -176,7 +177,7 @@ https://github.com/jneen/rouge/compare/v2.2.0...v2.2.1
 
 ## version 2.2.0: 2017-08-09
 
-https://github.com/jneen/rouge/compare/v2.1.1...v2.2.0
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v2.1.1...v2.2.0)
 
 * rougify:
   * trap PIPE only when platform supports it (#700 thanks @maverickwoo)
@@ -227,10 +228,8 @@ https://github.com/jneen/rouge/compare/v2.1.1...v2.2.0
     - fixes for operators vs punctuation
     - fix polymorphic variants, support local open expressions, fix keywords
         (#643 thanks @emillon!)
-
   * thankful-eyes theme:
     - bold operators, to distinguish between punctuation
-
   * rust:
     - add support for range operators and type variables (#591 thanks @whitequark!)
     - support rustdoc hidden lines that start with # (#652 thanks @seanmonstar!)
@@ -661,7 +660,7 @@ https://github.com/jneen/rouge/compare/v2.1.1...v2.2.0
   * Updated PHP builtins
   * CLI now responds to `rougify --version`
 
-[#114]: https://github.com/jneen/rouge/pull/114
+[#114]: https://github.com/rouge-ruby/rouge/pull/114
 
 ## version 1.1.0: 2013-11-04
 
@@ -725,7 +724,7 @@ https://github.com/jneen/rouge/compare/v2.1.1...v2.2.0
   * Tokens are now constants, rather than strings.  This only affects
     you if you've written a custom lexer, formatter, or theme.
 
-[perf-0.5]: https://github.com/jneen/rouge/pull/41#issuecomment-23561787
+[perf-0.5]: https://github.com/rouge-ruby/rouge/pull/41#issuecomment-23561787
 
 ## version 0.4.0: 2013-08-14
 

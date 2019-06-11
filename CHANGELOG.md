@@ -4,7 +4,7 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
-## version 3.3.0: 2018/10/01
+## version 3.3.0: 2018-10-01
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.2.1...v3.3.0)
 
@@ -49,7 +49,7 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 * Swift Lexer
   * Add `convenience` method ([#950](https://github.com/rouge-ruby/rouge/pull/950) by damian-rzeszot)
 
-## version 3.2.1: 2018/08/16
+## version 3.2.1: 2018-08-16
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.2.0...v3.2.1)
 
@@ -59,7 +59,7 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
       used, a later rule could cause a backtrack in the regex system.
       This resulted in Rouge hanging for an unspecified amount of time.
 
-## version 3.2.0: 2018/08/02
+## version 3.2.0: 2018-08-02
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.1.1...v3.2.0)
 
@@ -101,7 +101,7 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 * ERB Lexer
   * Fix greedy comment matching ([#902](https://github.com/rouge-ruby/rouge/pull/902) by ananace)
 
-## version 3.1.1: 2018/01/31
+## version 3.1.1: 2018-01-31
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.1.0...v3.1.1)
 
@@ -114,7 +114,7 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 * Vue
   * [Fix load SCSS in Vue by purecaptain · Pull Request \#842 · rouge-ruby/rouge](https://github.com/rouge-ruby/rouge/pull/842)
 
-## version 3.1.0: 2017/12/21
+## version 3.1.0: 2017-12-21
 
 Thanks a lot for contributions; not only for the code, but also for the issues and review comments, which are vitally helpful.
 
@@ -148,7 +148,7 @@ Thanks a lot for contributions; not only for the code, but also for the issues a
 * Rust
   * Rust: highlight the "where" keyword [#823](https://github.com/rouge-ruby/rouge/pull/823) by @lvillani
 
-## version 3.0.0: 2017/09/21
+## version 3.0.0: 2017-09-21
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v2.2.1...v3.0.0)
 
@@ -166,7 +166,7 @@ There is no breaking change in the public API, but internals' is changed.
 * haskell:
   * fix escapes in char literals (#780 by gfx; thanks to @Tosainu for reporting it)
 
-## version 2.2.1: 2017/08/22
+## version 2.2.1: 2017-08-22
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v2.2.0...v2.2.1)
 
@@ -228,10 +228,8 @@ There is no breaking change in the public API, but internals' is changed.
     - fixes for operators vs punctuation
     - fix polymorphic variants, support local open expressions, fix keywords
         (#643 thanks @emillon!)
-
   * thankful-eyes theme:
     - bold operators, to distinguish between punctuation
-
   * rust:
     - add support for range operators and type variables (#591 thanks @whitequark!)
     - support rustdoc hidden lines that start with # (#652 thanks @seanmonstar!)

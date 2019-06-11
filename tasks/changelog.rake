@@ -67,7 +67,7 @@ module Rouge
     end
     
     def self.version_line(version)
-      "## version #{version}: #{Time.now.strftime("%Y/%m/%d")}\n\n"
+      "## version #{version}: #{Time.now.strftime("%Y-%m-%d")}\n\n"
     end
   end
 end

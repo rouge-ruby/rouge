@@ -20,13 +20,15 @@ if RUBY_VERSION >= '2.3.0'
   gem 'memory_profiler', :require => false
 end
 
+# Needed for a Rake task
+gem 'git'
+
 group :development do
   gem 'pry'
 
   # docs
   gem 'yard'
   gem 'github-markup'
-  gem 'git'
 
   # for visual tests
   if RUBY_VERSION < '2.2.0'

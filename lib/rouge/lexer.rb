@@ -418,7 +418,7 @@ module Rouge
     # Given a string, yield [token, chunk] pairs.  If no block is given,
     # an enumerator is returned.
     def lex(string, opts=nil, &b)
-      if opts
+      if opts && opts[:continue]
         warn 'the :continue option to Formatter#lex is deprecated, use #continue_lex instead.'
         return continue_lex(string, &b)
       end

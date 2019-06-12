@@ -7,11 +7,7 @@ module Rouge
       desc "SAS (Statistical Analysis Software)"
       tag 'sas'
       filenames '*.sas'
-      mimetypes *%w(
-        application/x-sas
-        application/x-stat-sas
-        application/x-sas-syntax
-      )
+      mimetypes 'application/x-sas', 'application/x-stat-sas', 'application/x-sas-syntax'
 
       def self.data_step_statements
         # from Data step statements - SAS 9.4 Statements reference
@@ -473,8 +469,6 @@ module Rouge
         rule /.*/, Text # Fallback for anything we haven't matched so far
       end
 
-
-
       state :root do
         mixin :basics
 
@@ -561,7 +555,6 @@ module Rouge
 
          mixin :basics2
       end
-
 
     end #class SAS
   end #module Lexers

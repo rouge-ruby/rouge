@@ -3,7 +3,7 @@ data population;
 /* 
 The first 10 lines of 2017 population data. Source: World Bank
 https://data.worldbank.org/indicator/sp.pop.totl
-Licence: CC BY-4.0
+Used under licence: CC BY-4.0 https://creativecommons.org/licenses/by/4.0
 
 To demonstrate reading data in-line using datalines.
 */
@@ -69,3 +69,11 @@ run;
 %mend;
 
 %my_macro(20);
+
+* Hexadecimal and scientific format;
+data my_hex;
+    hex1 = 1ax;
+    hex2 = 0bx; *SAS requires that hex numbers start with a digit;
+    sci1 = 3.2e5;
+    sci2 = 7E-4;
+run;

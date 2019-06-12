@@ -419,7 +419,7 @@ module Rouge
     # an enumerator is returned.
     def lex(string, opts=nil, &b)
       warn 'The use of opts with Lexer.lex is deprecated' unless opts.nil?
-      return enum_for(:lex, string) unless block_given?
+      return enum_for(:lex, string, opts) unless block_given?
 
       if opts && opts[:continue]
         warn 'Use #continue_lex instead'

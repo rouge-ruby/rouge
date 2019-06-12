@@ -38,12 +38,8 @@ describe Rouge::Formatters::HTML do
     let(:output) { subject.format(tokens) }
 
     it 'should format token stream' do
-      out, err  = capture_io do
-        assert { output == '<span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"description"</span> <span class="na">content=</span><span class="s">"foo"</span><span class="nt">&gt;</span>
+      assert { output == '<span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"description"</span> <span class="na">content=</span><span class="s">"foo"</span><span class="nt">&gt;</span>
 <span class="nt">&lt;script&gt;</span><span class="nx">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">bar</span><span class="dl">"</span><span class="p">)</span><span class="nt">&lt;/script&gt;</span>' }
-      end
-
-      assert_match %r%deprecated%, err
     end
   end
 

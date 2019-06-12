@@ -16,7 +16,7 @@ module Rouge
         rule /;.*\n/, Comment
         rule /\$[A-Za-z_][0-9A-Za-z_]*\.?/, Name::Namespace, :afterlabel # variable substitution or macro argument
         rule /([0-9A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Label, :afterlabel
-        end
+      end
 
       state :afterlabel do
         rule /\n/, Text, :root

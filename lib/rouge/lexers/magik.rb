@@ -86,8 +86,8 @@ module Rouge
       end
 
       state :root do
-        rule /##(.*)?\n?/, Comment::Doc
-        rule /#(.*)?\n?/, Comment::Single
+        rule /##(.*)?/, Comment::Doc
+        rule /#(.*)?/, Comment::Single
 
         rule /(_method)(\s+)/ do
           groups Keyword, Text::Whitespace

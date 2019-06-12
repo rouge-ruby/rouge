@@ -10,7 +10,8 @@ module Rouge
       filenames '*.magik'
       mimetypes 'text/x-magik', 'application/x-magik'
 
-      keywords = %w(
+      def self.keywords
+        @keywords ||= %w(
            _package
            _pragma
            _block _endblock
@@ -33,26 +34,56 @@ module Rouge
            _is _isnt _not _and _or _xor _cf _andif _orif
            _div _mod
         )
+      end
 
-      string_double = /"[^"\n]*"/
-      string_single = /'[^'\n]*'/
+      def self.string_double
+        @string_double ||= /"[^"\n]*?"/
+      end
+      def self.string_single
+        @string_single ||= /'[^'\n]*?'/
+      end
 
-      digits = /[0-9]+/
-      hex_digits = /[0-9a-f]+/i
-      radix = /r#{hex_digits}/i
-      exponent = /(e|&)[+-]?#{digits}/i
-      decimal = /\.#{digits}/
-      number = /#{digits}(#{radix}|#{exponent}|#{decimal})*/
+      def self.digits
+        @digits ||= /[0-9]+/
+      end
+      def self.radix
+        @radix ||= /r[0-9a-z]/i
+      end
+      def self.exponent
+        @exponent ||= /(e|&)[+-]?#{Magik.digits}/i
+      end
+      def self.decimal
+        @decimal ||= /\.#{Magik.digits}/
+      end
+      def self.number
+        @number = /#{Magik.digits}(#{Magik.radix}|#{Magik.exponent}|#{Magik.decimal})*/
+      end
 
-      character = /%u[0-9a-z]{4}|%[^\s]+/i
+      def self.character
+        @character ||= /%u[0-9a-z]{4}|%[^\s]+/i
+      end
 
-      simple_identifier = /(?>(?:[a-z0-9_!?]|\\.)+)/i
-      piped_identifier = /\|[^\|\n]*\|/
-      identifier = /(?:#{simple_identifier}|#{piped_identifier})+/i
-      package_identifier = /#{identifier}:#{identifier}/
-      symbol = /:#{identifier}/i
-      global_ref = /@[\s]*#{identifier}:#{identifier}/
-      label = /@[\s]*#{identifier}/
+      def self.simple_identifier
+        @simple_identifier ||= /(?>(?:[a-z0-9_!?]|\\.)+)/i
+      end
+      def self.piped_identifier
+        @piped_identifier ||= /\|[^\|\n]*\|/
+      end
+      def self.identifier
+        @identifier ||= /(?:#{Magik.simple_identifier}|#{Magik.piped_identifier})+/i
+      end
+      def self.package_identifier
+        @package_identifier ||= /#{Magik.identifier}:#{Magik.identifier}/
+      end
+      def self.symbol
+        @symbol ||= /:#{Magik.identifier}/i
+      end
+      def self.global_ref
+        @global_ref ||= /@[\s]*#{Magik.identifier}:#{Magik.identifier}/
+      end
+      def self.label
+        @label = /@[\s]*#{Magik.identifier}/
+      end
 
       state :root do
         rule /##(.*)?\n?/, Comment::Doc
@@ -63,17 +94,17 @@ module Rouge
           push :method_name
         end
 
-        rule /(?:#{keywords.join('|')})\b/, Keyword
+        rule /(?:#{Magik.keywords.join('|')})\b/, Keyword
 
-        rule string_double, Literal::String
-        rule string_single, Literal::String
-        rule symbol, Str::Symbol
-        rule global_ref, Name::Label
-        rule label, Name::Label
-        rule character, Literal::String::Char
-        rule number, Literal::Number
-        rule package_identifier, Name
-        rule identifier, Name
+        rule Magik.string_double, Literal::String
+        rule Magik.string_single, Literal::String
+        rule Magik.symbol, Str::Symbol
+        rule Magik.global_ref, Name::Label
+        rule Magik.label, Name::Label
+        rule Magik.character, Literal::String::Char
+        rule Magik.number, Literal::Number
+        rule Magik.package_identifier, Name
+        rule Magik.identifier, Name
 
         rule /[\[\]{}()\.,;]/, Punctuation
         rule /\$/, Punctuation
@@ -85,7 +116,7 @@ module Rouge
       end
 
       state :method_name do
-        rule /(#{identifier})(\.)(#{identifier})/ do
+        rule /(#{Magik.identifier})(\.)(#{Magik.identifier})/ do
           groups Name::Class, Punctuation, Name::Function
           pop!
         end

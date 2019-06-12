@@ -7,7 +7,6 @@ module Rouge
       title "Magik"
       desc "Smallworld Magik"
       tag 'magik'
-      aliases 'magik'
       filenames '*.magik'
       mimetypes 'text/x-magik', 'application/x-magik'
 

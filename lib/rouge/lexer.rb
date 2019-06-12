@@ -417,16 +417,21 @@ module Rouge
 
     # Given a string, yield [token, chunk] pairs.  If no block is given,
     # an enumerator is returned.
-    def lex(string, opts=nil, &b)
-      if opts
-        warn 'the :continue option to Formatter#lex is deprecated, use #continue_lex instead.'
-        return continue_lex(string, &b)
+    #
+    # @option opts :continue
+    #   Continue the lex from the previous state (i.e. don't call #reset!)
+    #
+    # @note The use of `opts` has been deprecated. A warning is issued if run
+    #   with `$VERBOSE` set to true.
+    def lex(string, opts={}, &b)
+      unless opts.nil?
+        warn 'The use of opts with Lexer.lex is deprecated' if $VERBOSE
       end
 
-      return enum_for(:lex, string) unless block_given?
+      return enum_for(:lex, string, opts) unless block_given?
 
       Lexer.assert_utf8!(string)
-      reset!
+      reset! unless opts[:continue]
 
       continue_lex(string, &b)
     end

@@ -12,7 +12,7 @@ module Rouge
       mimetypes 'text/x-python', 'application/x-python'
 
       def self.detect?(text)
-        return true if text.shebang?(/pythonw?(?:[23](?:\.\d+)?)?$/)
+        return true if text.shebang?(/pythonw?(?:[23](?:\.\d+)?)?/)
       end
 
       def self.keywords

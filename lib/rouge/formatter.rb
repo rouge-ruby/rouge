@@ -29,7 +29,7 @@ module Rouge
     end
 
     def self.escape_enabled?
-      !!(@escape_enabled || Thread.current[:'rouge/with-escape'])
+      !!(((defined? @escape_enabled) && @escape_enabled) || Thread.current[:'rouge/with-escape'])
     end
 
     def self.enable_escape!

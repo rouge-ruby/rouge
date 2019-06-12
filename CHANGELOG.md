@@ -4,9 +4,18 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.4.1: 2019-06-13
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.4.0...v3.4.1)
+
+* General
+  - Restore support for opts to Lexer.lex ([#1178](https://github.com/rouge-ruby/rouge/pull/1178/) by Michael Camilleri)
+  - Use predefined string in bool_option ([#1159](https://github.com/rouge-ruby/rouge/pull/1159/) by Ashwin Maroli)
+  - Expand list of files ignored by Git ([#1157](https://github.com/rouge-ruby/rouge/pull/1157/) by Michael Camilleri)
+
 ## version 3.4.0: 2019-06-12
 
-[Comparison against the previous version](https://github.com/rouge-ruby/rouge/compare/v3.3.0...v3.4.0).
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.3.0...v3.4.0).
 
 * General
   - Add Rake task for generating changelog entries ([#1167](https://github.com/rouge-ruby/rouge/pull/1167/) by Michael Camilleri)

@@ -196,7 +196,7 @@ module Rouge
       end
 
       def disable_debug!
-        remove_instance_variable :@debug_enabled
+        remove_instance_variable :@debug_enabled if defined? @debug_enabled
       end
 
       def debug_enabled?

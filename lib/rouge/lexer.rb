@@ -418,12 +418,13 @@ module Rouge
     # Given a string, yield [token, chunk] pairs.  If no block is given,
     # an enumerator is returned.
     def lex(string, opts=nil, &b)
+      warn 'The use of opts with Lexer.lex is deprecated' unless opts.nil?
+      return enum_for(:lex, string) unless block_given?
+
       if opts && opts[:continue]
-        warn 'the :continue option to Formatter#lex is deprecated, use #continue_lex instead.'
+        warn 'Use #continue_lex instead'
         return continue_lex(string, &b)
       end
-
-      return enum_for(:lex, string) unless block_given?
 
       Lexer.assert_utf8!(string)
       reset!

@@ -26,53 +26,53 @@ module Rouge
       palette :lightgray => '#BBBBBB'
       palette :darkgray  => '#999999'
 
-      style Text, :fg => :dark, :bg => :eggshell
-      style Generic::Lineno, :fg => :eggshell, :bg => :dark
+      style Text,                         :fg => :dark, :bg => :eggshell
+      style Generic::Lineno,              :fg => :eggshell, :bg => :dark
 
-      # style Generic::Prompt, :fg => :chilly, :bold => true
+      # style Generic::Prompt,            :fg => :chilly, :bold => true
 
-      style Comment, :fg => :dragon, :italic => true
-      style Comment::Preproc, :fg => :chocolate, :bold => true, :italic => true
-      style Error, :fg => :eggshell, :bg => :cherry
-      style Generic::Error, :fg => :cherry, :italic => true, :bold => true
-      style Keyword, :fg => :royal, :bold => true
-      style Operator, :fg => :grape, :bold => true
-      style Punctuation, :fg => :grape
-      style Generic::Deleted, :fg => :cherry
-      style Generic::Inserted, :fg => :forest
-      style Generic::Emph, :italic => true
-      style Generic::Strong, :bold => true
-      style Generic::Traceback, :fg => :black, :bg => :lavender
-      style Keyword::Constant, :fg => :forest, :bold => true
+      style Comment,                      :fg => :dragon, :italic => true
+      style Comment::Preproc,             :fg => :chocolate, :bold => true, :italic => true
+      style Error,                        :fg => :eggshell, :bg => :cherry
+      style Generic::Error,               :fg => :cherry, :italic => true, :bold => true
+      style Keyword,                      :fg => :royal, :bold => true
+      style Operator,                     :fg => :grape, :bold => true
+      style Punctuation,                  :fg => :grape
+      style Generic::Deleted,             :fg => :cherry
+      style Generic::Inserted,            :fg => :forest
+      style Generic::Emph,                :italic => true
+      style Generic::Strong,              :bold => true
+      style Generic::Traceback,           :fg => :black, :bg => :lavender
+      style Keyword::Constant,            :fg => :forest, :bold => true
       style Keyword::Namespace,
             Keyword::Pseudo,
             Keyword::Reserved,
             Generic::Heading,
-            Generic::Subheading, :fg => :forest, :bold => true
+            Generic::Subheading,          :fg => :forest, :bold => true
       style Keyword::Type,
             Name::Constant,
             Name::Class,
             Name::Decorator,
             Name::Namespace,
             Name::Builtin::Pseudo,
-            Name::Exception, :fg => :chocolate, :bold => true
+            Name::Exception,              :fg => :chocolate, :bold => true
       style Name::Label,
-            Name::Tag, :fg => :purple, :bold => true
+            Name::Tag,                    :fg => :purple, :bold => true
       style Literal::Number,
-            Literal::Date, :fg => :forest, :bold => true
-      style Literal::String::Symbol, :fg => :forest
-      style Literal::String, :fg => :wine, :bold => true
+            Literal::Date,                :fg => :forest, :bold => true
+      style Literal::String::Symbol,      :fg => :forest
+      style Literal::String,              :fg => :wine, :bold => true
       style Literal::String::Escape,
             Literal::String::Char,
-            Literal::String::Interpol, :fg => :purple, :bold => true
-      style Name::Builtin, :bold => true
-      style Name::Entity, :fg => :darkgray, :bold => true
+            Literal::String::Interpol,    :fg => :purple, :bold => true
+      style Name::Builtin,                :bold => true
+      style Name::Entity,                 :fg => :darkgray, :bold => true
       style Text::Whitespace,
-            Generic::Output, :fg => :lightgray
+            Generic::Output,              :fg => :lightgray
       style Name::Function,
             Name::Property,
-            Name::Attribute, :fg => :candy
-      style Name::Variable, :fg => :candy, :bold => true
+            Name::Attribute,              :fg => :candy
+      style Name::Variable,               :fg => :candy, :bold => true
     end
   end
 end

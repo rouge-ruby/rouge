@@ -40,9 +40,3 @@ Lint/UnneededSplatExpansion:
 
 Lint/IneffectiveAccessModifier:
   Enabled: false
-
-Lint/AmbiguousRegexpLiteral:
-  Enabled: true
-
-Lint/AmbiguousOperator:
-  Enabled: true

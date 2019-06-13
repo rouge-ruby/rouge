@@ -113,7 +113,7 @@ module Rouge
           @continue = false
           push :continue_id
         end
-        rule %r/\/\\/, Operator
+        rule %r(/\\), Operator
         rule %r/\\\//, Operator
         rule operator do |m|
           match = m[0]

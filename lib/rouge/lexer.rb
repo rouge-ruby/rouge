@@ -423,15 +423,22 @@ module Rouge
     #
     # @note The use of `opts` has been deprecated. A warning is issued if run
     #   with `$VERBOSE` set to true.
-    def lex(string, opts={}, &b)
-      unless opts.nil?
-        warn 'The use of opts with Lexer.lex is deprecated' if $VERBOSE
+    def lex(string, opts=nil, &b)
+      if opts
+        if opts.empty?
+          warn 'the use of options with Lexer#lex is deprecated' if $VERBOSE
+        elsif opts.size == 1 && opts[:continue]
+          warn '`lex :continue => true` is deprecated, please use #continue_lex instead'
+          return continue_lex(string, &b)
+        else
+          raise ArgumentError.new("invalid options for Lexer#lex: #{opts.inspect}")
+        end
       end
 
-      return enum_for(:lex, string, opts) unless block_given?
+      return enum_for(:lex, string) unless block_given?
 
       Lexer.assert_utf8!(string)
-      reset! unless opts[:continue]
+      reset!
 
       continue_lex(string, &b)
     end

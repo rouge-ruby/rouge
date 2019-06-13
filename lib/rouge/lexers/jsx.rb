@@ -29,7 +29,7 @@ module Rouge
       start { @html = HTML.new(options) }
 
       state :jsx_tags do
-        rule /</, Punctuation, :jsx_element
+        rule %r/</, Punctuation, :jsx_element
       end
 
       state :jsx_internal do
@@ -38,12 +38,12 @@ module Rouge
           goto :jsx_end_tag
         end
 
-        rule /{/ do
+        rule %r/{/ do
           token Str::Interpol
           start_embed!
         end
 
-        rule /[^<>{]+/ do
+        rule %r/[^<>{]+/ do
           delegate @html
         end
 
@@ -56,29 +56,29 @@ module Rouge
 
       state :jsx_tag do
         mixin :comments_and_whitespace
-        rule /#{id}/ do |m|
+        rule %r/#{id}/ do |m|
           token tag_token(m[0])
         end
 
-        rule /[.]/, Punctuation
+        rule %r/[.]/, Punctuation
       end
 
       state :jsx_end_tag do
         mixin :jsx_tag
-        rule />/, Punctuation, :pop!
+        rule %r/>/, Punctuation, :pop!
       end
 
       state :jsx_element do
-        rule /#{id}=/, Name::Attribute, :jsx_attribute
+        rule %r/#{id}=/, Name::Attribute, :jsx_attribute
         mixin :jsx_tag
-        rule />/ do token Punctuation; goto :jsx_internal end
+        rule %r/>/ do token Punctuation; goto :jsx_internal end
         rule %r(/>), Punctuation, :pop!
       end
 
       state :jsx_attribute do
-        rule /"(\\[\\"]|[^"])*"/, Str::Double, :pop!
-        rule /'(\\[\\']|[^'])*'/, Str::Single, :pop!
-        rule /{/ do
+        rule %r/"(\\[\\"]|[^"])*"/, Str::Double, :pop!
+        rule %r/'(\\[\\']|[^'])*'/, Str::Single, :pop!
+        rule %r/{/ do
           token Str::Interpol
           pop!
           start_embed!
@@ -86,15 +86,15 @@ module Rouge
       end
 
       state :jsx_embed_root do
-        rule /[.][.][.]/, Punctuation
-        rule /}/, Str::Interpol, :pop!
+        rule %r/[.][.][.]/, Punctuation
+        rule %r/}/, Str::Interpol, :pop!
         mixin :jsx_embed
       end
 
       state :jsx_embed do
-        rule /{/ do delegate @embed; push :jsx_embed end
-        rule /}/ do delegate @embed; pop! end
-        rule /[^{}]+/ do
+        rule %r/{/ do delegate @embed; push :jsx_embed end
+        rule %r/}/ do delegate @embed; pop! end
+        rule %r/[^{}]+/ do
           delegate @embed
         end
       end

@@ -8,30 +8,30 @@ module Rouge
       id = /[\w-]+/
 
       state :content_common do
-        rule /@for\b/, Keyword, :for
-        rule /@(debug|warn|if|each|while|else|return|media)/, Keyword, :value
+        rule %r/@for\b/, Keyword, :for
+        rule %r/@(debug|warn|if|each|while|else|return|media)/, Keyword, :value
 
-        rule /(@mixin)(\s+)(#{id})/ do
+        rule %r/(@mixin)(\s+)(#{id})/ do
           groups Keyword, Text, Name::Function
           push :value
         end
 
-        rule /(@function)(\s+)(#{id})/ do
+        rule %r/(@function)(\s+)(#{id})/ do
           groups Keyword, Text, Name::Function
           push :value
         end
 
-        rule /@extend\b/, Keyword, :selector
+        rule %r/@extend\b/, Keyword, :selector
 
-        rule /(@include)(\s+)(#{id})/ do
+        rule %r/(@include)(\s+)(#{id})/ do
           groups Keyword, Text, Name::Decorator
           push :value
         end
 
-        rule /@#{id}/, Keyword, :selector
+        rule %r/@#{id}/, Keyword, :selector
 
         # $variable: assignment
-        rule /([$]#{id})([ \t]*)(:)/ do
+        rule %r/([$]#{id})([ \t]*)(:)/ do
           groups Name::Variable, Text, Punctuation
           push :value
         end
@@ -39,26 +39,26 @@ module Rouge
 
       state :value do
         mixin :end_section
-        rule /[ \t]+/, Text
-        rule /[$]#{id}/, Name::Variable
-        rule /url[(]/, Str::Other, :string_url
-        rule /#{id}(?=\s*[(])/, Name::Function
-        rule /%#{id}/, Name::Decorator
+        rule %r/[ \t]+/, Text
+        rule %r/[$]#{id}/, Name::Variable
+        rule %r/url[(]/, Str::Other, :string_url
+        rule %r/#{id}(?=\s*[(])/, Name::Function
+        rule %r/%#{id}/, Name::Decorator
 
         # named literals
-        rule /(true|false)\b/, Name::Builtin::Pseudo
-        rule /(and|or|not)\b/, Operator::Word
+        rule %r/(true|false)\b/, Name::Builtin::Pseudo
+        rule %r/(and|or|not)\b/, Operator::Word
 
         # colors and numbers
-        rule /#[a-z0-9]{1,6}/i, Num::Hex
-        rule /-?\d+(%|[a-z]+)?/, Num
-        rule /-?\d*\.\d+(%|[a-z]+)?/, Num::Integer
+        rule %r/#[a-z0-9]{1,6}/i, Num::Hex
+        rule %r/-?\d+(%|[a-z]+)?/, Num
+        rule %r/-?\d*\.\d+(%|[a-z]+)?/, Num::Integer
 
         mixin :has_strings
         mixin :has_interp
 
-        rule /[~^*!&%<>\|+=@:,.\/?-]+/, Operator
-        rule /[\[\]()]+/, Punctuation
+        rule %r/[~^*!&%<>\|+=@:,.\/?-]+/, Operator
+        rule %r/[\[\]()]+/, Punctuation
         rule %r(/[*]), Comment::Multiline, :inline_comment
         rule %r(//[^\n]*), Comment::Single
 
@@ -75,16 +75,16 @@ module Rouge
       end
 
       state :has_interp do
-        rule /[#][{]/, Str::Interpol, :interpolation
+        rule %r/[#][{]/, Str::Interpol, :interpolation
       end
 
       state :has_strings do
-        rule /"/, Str::Double, :dq
-        rule /'/, Str::Single, :sq
+        rule %r/"/, Str::Double, :dq
+        rule %r/'/, Str::Single, :sq
       end
 
       state :interpolation do
-        rule /}/, Str::Interpol, :pop!
+        rule %r/}/, Str::Interpol, :pop!
         mixin :value
       end
 
@@ -93,31 +93,31 @@ module Rouge
 
         mixin :has_strings
         mixin :has_interp
-        rule /[ \t]+/, Text
-        rule /:/, Name::Decorator, :pseudo_class
-        rule /[.]/, Name::Class, :class
-        rule /#/, Name::Namespace, :id
-        rule /%/, Name::Variable, :placeholder
+        rule %r/[ \t]+/, Text
+        rule %r/:/, Name::Decorator, :pseudo_class
+        rule %r/[.]/, Name::Class, :class
+        rule %r/#/, Name::Namespace, :id
+        rule %r/%/, Name::Variable, :placeholder
         rule id, Name::Tag
-        rule /&/, Keyword
-        rule /[~^*!&\[\]()<>\|+=@:;,.\/?-]/, Operator
+        rule %r/&/, Keyword
+        rule %r/[~^*!&\[\]()<>\|+=@:;,.\/?-]/, Operator
       end
 
       state :dq do
-        rule /"/, Str::Double, :pop!
+        rule %r/"/, Str::Double, :pop!
         mixin :has_interp
-        rule /(\\.|#(?![{])|[^\n"#])+/, Str::Double
+        rule %r/(\\.|#(?![{])|[^\n"#])+/, Str::Double
       end
 
       state :sq do
-        rule /'/, Str::Single, :pop!
+        rule %r/'/, Str::Single, :pop!
         mixin :has_interp
-        rule /(\\.|#(?![{])|[^\n'#])+/, Str::Single
+        rule %r/(\\.|#(?![{])|[^\n'#])+/, Str::Single
       end
 
       state :string_url do
-        rule /[)]/, Str::Other, :pop!
-        rule /(\\.|#(?![{])|[^\n)#])+/, Str::Other
+        rule %r/[)]/, Str::Other, :pop!
+        rule %r/(\\.|#(?![{])|[^\n)#])+/, Str::Other
         mixin :has_interp
       end
 
@@ -147,7 +147,7 @@ module Rouge
       end
 
       state :for do
-        rule /(from|to|through)/, Operator::Word
+        rule %r/(from|to|through)/, Operator::Word
         mixin :value
       end
 
@@ -165,14 +165,14 @@ module Rouge
       state :attribute do
         mixin :attr_common
 
-        rule /([ \t]*)(:)/ do
+        rule %r/([ \t]*)(:)/ do
           groups Text, Punctuation
           push :value
         end
       end
 
       state :inline_comment do
-        rule /(\\#|#(?=[^\n{])|\*(?=[^\n\/])|[^\n#*])+/, Comment::Multiline
+        rule %r/(\\#|#(?=[^\n{])|\*(?=[^\n\/])|[^\n#*])+/, Comment::Multiline
         mixin :has_interp
         rule %r([*]/), Comment::Multiline, :pop!
       end

@@ -68,7 +68,7 @@ module Rouge
           push :property
         end
         rule %r/\bfun\b/, Keyword
-        rule /\b(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/\b(?:#{keywords.join('|')})\b/, Keyword
         rule %r'^\s*\[.*?\]', Name::Attribute
         rule %r'[^\S\n]+', Text
         rule %r'\\\n', Text # line continuation
@@ -85,12 +85,12 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
-        rule /@#{id}/, Name::Decorator
+        rule %r/@#{id}/, Name::Decorator
         rule id, Name
       end
 
       state :package do
-        rule /\S+/, Name::Namespace, :pop!
+        rule %r/\S+/, Name::Namespace, :pop!
       end
 
       state :class do

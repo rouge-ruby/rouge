@@ -40,7 +40,7 @@ module Rouge
 
       state :root do
         rule %r(#!(.*?)$), Comment::Preproc # shebang
-        rule //, Text, :main
+        rule %r//, Text, :main
       end
 
       state :base do

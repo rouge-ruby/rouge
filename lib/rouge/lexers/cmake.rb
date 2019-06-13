@@ -125,23 +125,23 @@ module Rouge
       ]
 
       state :default do
-        rule /\r\n?|\n/ do
+        rule %r/\r\n?|\n/ do
           token STATES_MAP[state.name.to_sym]
         end
-        rule /./ do
+        rule %r/./ do
           token STATES_MAP[state.name.to_sym]
         end
       end
 
       state :variable_interpolation do
-        rule /\$\{/ do
+        rule %r/\$\{/ do
           token Str::Interpol
           push :variable_reference
         end
       end
 
       state :bracket_close do
-        rule /\]=*\]/ do |m|
+        rule %r/\]=*\]/ do |m|
           token STATES_MAP[state.name.to_sym]
           goto :root if m[0].length == @bracket_len
         end
@@ -150,27 +150,27 @@ module Rouge
       state :root do
         mixin :variable_interpolation
 
-        rule /#{SPACE}/, Text
-        rule /[()]/, Punctuation
+        rule %r/#{SPACE}/, Text
+        rule %r/[()]/, Punctuation
 
-        rule /##{BRACKET_OPEN}/ do |m|
+        rule %r/##{BRACKET_OPEN}/ do |m|
           token Comment::Multiline
           @bracket_len = m[0].length - 1 # decount '#'
           goto :bracket_comment
         end
-        rule /#{BRACKET_OPEN}/ do |m|
+        rule %r/#{BRACKET_OPEN}/ do |m|
           token Str::Double
           @bracket_len = m[0].length
           goto :bracket_string
         end
 
-        rule /"/, Str::Double, :quoted_argument
+        rule %r/"/, Str::Double, :quoted_argument
 
-        rule /([A-Za-z_][A-Za-z0-9_]*)(#{SPACE}*)(\()/ do |m|
+        rule %r/([A-Za-z_][A-Za-z0-9_]*)(#{SPACE}*)(\()/ do |m|
           groups BUILTIN_COMMANDS.include?(m[1]) ? Name::Builtin : Name::Function, Text, Punctuation
         end
 
-        rule /#.*/, Comment::Single
+        rule %r/#.*/, Comment::Single
 
         mixin :default
       end
@@ -189,7 +189,7 @@ module Rouge
       state :variable_reference do
         mixin :variable_interpolation
 
-        rule /}/, Str::Interpol, :pop!
+        rule %r/}/, Str::Interpol, :pop!
 
         mixin :default
       end
@@ -197,8 +197,8 @@ module Rouge
       state :quoted_argument do
         mixin :variable_interpolation
 
-        rule /"/, Str::Double, :root
-        rule /\\[()#" \\$@^trn;]/, Str::Escape
+        rule %r/"/, Str::Double, :root
+        rule %r/\\[()#" \\$@^trn;]/, Str::Escape
 
         mixin :default
       end

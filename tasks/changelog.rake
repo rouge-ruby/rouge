@@ -55,7 +55,7 @@ module Rouge
     end
     
     def self.comparison_line(remote, previous, current)
-      "[Comparison against the previous version](https://#{remote}/compare/#{previous}...#{current})\n\n"
+      "[Comparison with the previous version](https://#{remote}/compare/#{previous}...#{current})\n\n"
     end
 
     def self.link_line(remote, author)
@@ -63,7 +63,7 @@ module Rouge
     end
 
     def self.message_line(message)
-      "   - #{message}\n"
+      "  - #{message}\n"
     end
     
     def self.version_line(version)

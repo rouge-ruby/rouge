@@ -6,25 +6,25 @@ module Rouge
     class Magritte < CSSTheme
       name 'magritte'
 
-      palette :dragon => '#006c6c'
-      palette :black => '#000000'
-      palette :forest => '#007500'
-      palette :candy => '#ff0089'
-      palette :wine => '#7c0000'
-      palette :grape => '#4c48fe'
-      palette :dark => '#000707'
-      palette :cherry => '#f22700'
-      palette :white => '#ffffff'
-      palette :royal => '#19003a'
+      palette :dragon    => '#006c6c'
+      palette :black     => '#000000'
+      palette :forest    => '#007500'
+      palette :candy     => '#ff0089'
+      palette :wine      => '#7c0000'
+      palette :grape     => '#4c48fe'
+      palette :dark      => '#000707'
+      palette :cherry    => '#f22700'
+      palette :white     => '#ffffff'
+      palette :royal     => '#19003a'
 
-      palette :purple => '#840084'
+      palette :purple    => '#840084'
       palette :chocolate => '#920241'
-      palette :lavender => '#d8d9ff'
-      palette :eggshell => '#f3ffff'
-      palette :yellow => '#ffff3f'
+      palette :lavender  => '#d8d9ff'
+      palette :eggshell  => '#f3ffff'
+      palette :yellow    => '#ffff3f'
 
-      palette :lightgray      => '#BBBBBB'
-      palette :darkgray       => '#999999'
+      palette :lightgray => '#BBBBBB'
+      palette :darkgray  => '#999999'
 
       style Text, :fg => :dark, :bg => :eggshell
       style Generic::Lineno, :fg => :eggshell, :bg => :dark

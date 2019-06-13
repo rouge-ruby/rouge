@@ -83,6 +83,10 @@ module Rouge
       self.class.get_style(token)
     end
 
+    def name
+      self.class.name
+    end
+
     class << self
       def style(*tokens)
         style = tokens.last.is_a?(Hash) ? tokens.pop : {}

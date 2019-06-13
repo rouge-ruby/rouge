@@ -299,6 +299,7 @@ module Rouge
         when 'html-inline' then Formatters::HTMLInline.new(theme)
         when 'html-table' then Formatters::HTMLTable.new(Formatters::HTML.new)
         when 'null', 'raw', 'tokens' then Formatters::Null.new
+        when 'tex' then Formatters::Tex.new
         else
           error! "unknown formatter preset #{opts[:formatter]}"
         end
@@ -334,18 +335,30 @@ module Rouge
         yield %|respectively. Theme defaults to thankful_eyes.|
         yield %||
         yield %|options:|
-        yield %|  --scope	(default: .highlight) a css selector to scope by|
+        yield %|  --scope     	(default: .highlight) a css selector to scope by|
+        yield %|  --tex       	(default: false) render as TeX|
+        yield %|  --tex-prefix	(default: RG) a command prefix for TeX|
+        yield %|              	implies --tex if specified|
         yield %||
         yield %|available themes:|
         yield %|  #{Theme.registry.keys.sort.join(', ')}|
       end
 
       def self.parse(argv)
-        opts = { :theme_name => 'thankful_eyes' }
+        opts = {
+          :theme_name => 'thankful_eyes',
+          :tex => false,
+          :tex_prefix => 'RG'
+        }
 
         until argv.empty?
           arg = argv.shift
           case arg
+          when '--tex'
+            opts[:tex] = true
+          when '--tex-prefix'
+            opts[:tex] = true
+            opts[:tex_prefix] = argv.shift
           when /--(\w+)/
             opts[$1.tr('-', '_').to_sym] = argv.shift
           else
@@ -362,6 +375,10 @@ module Rouge
           or error! "unknown theme: #{theme_name}"
 
         @theme = theme_class.new(opts)
+        if opts[:tex]
+          tex_prefix = opts[:tex_prefix]
+          @theme = TexThemeRenderer.new(@theme, prefix: tex_prefix)
+        end
       end
 
       def run

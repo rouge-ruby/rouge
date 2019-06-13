@@ -185,4 +185,16 @@ describe Rouge::Lexer do
     refute { NonDetectableLexer.methods(false).include?(:detect?) }
     refute { NonDetectableLexer.detectable? }
   end
+
+  it 'extends options with #with' do
+    php = Rouge::Lexers::PHP.new
+
+    assert { php.instance_variable_get(:@start_inline) == :guess }
+
+    inline_php = php.with(start_inline: true)
+    assert { inline_php.is_a?(Rouge::Lexers::PHP) }
+    assert { inline_php != php }
+    assert { php.instance_variable_get(:@start_inline) == :guess }
+    assert { inline_php.instance_variable_get(:@start_inline) == true }
+  end
 end

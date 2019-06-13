@@ -313,6 +313,12 @@ module Rouge
       @debug = Lexer.debug_enabled? && bool_option('debug')
     end
 
+    def with(opts={})
+      new_options = @options.dup
+      opts.each { |k, v| new_options[k.to_s] = v }
+      self.class.new(new_options)
+    end
+
     def as_bool(val)
       case val
       when nil, false, 0, '0', 'off'

@@ -204,4 +204,16 @@ describe Rouge::Lexer do
     assert_equal false, option_lexer.new({bool_opt: 'false'}).instance_variable_get(:@bool_opt)
     assert_equal false, option_lexer.new({bool_opt: 'off'}).instance_variable_get(:@bool_opt)
   end
+
+  it 'extends options with #with' do
+    php = Rouge::Lexers::PHP.new
+
+    assert { php.instance_variable_get(:@start_inline) == :guess }
+
+    inline_php = php.with(start_inline: true)
+    assert { inline_php.is_a?(Rouge::Lexers::PHP) }
+    assert { inline_php != php }
+    assert { php.instance_variable_get(:@start_inline) == :guess }
+    assert { inline_php.instance_variable_get(:@start_inline) == true }
+  end
 end

@@ -17,11 +17,11 @@ module Rouge
 
       state :comment do
         rule %r/#.*$/, Comment
-        rule %r/\/\*/, Comment, :multiline_comment
+        rule %r(/\*), Comment, :multiline_comment
       end
 
       state :multiline_comment do
-        rule %r/\*\//, Comment, :pop!
+        rule %r(\*/), Comment, :pop!
         rule %r/./, Comment
       end
 

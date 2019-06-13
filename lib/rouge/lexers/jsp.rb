@@ -31,7 +31,7 @@ module Rouge
         rule %r/<[a-zA-Z]*:[a-zA-Z]*\s*/, Name::Tag, :jsp_tag
 
         # end of tag, e.g. </c:if>
-        rule %r/<\/[a-zA-Z]*:[a-zA-Z]*>/, Name::Tag
+        rule %r(</[a-zA-Z]*:[a-zA-Z]*>), Name::Tag
 
         rule %r/<%[!=]?/, Name::Tag, :jsp_expression2
 
@@ -52,7 +52,7 @@ module Rouge
       end
 
       state :jsp_directive2 do
-        rule %r/(\/>)/, Name::Tag, :pop!
+        rule %r!(/>)!, Name::Tag, :pop!
         mixin :attributes
         rule(/(.+?)(?=\/>)/m) { delegate parent }
       end

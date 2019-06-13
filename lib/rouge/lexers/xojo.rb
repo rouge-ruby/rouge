@@ -37,7 +37,7 @@ module Rouge
         rule %r/\s+/, Text::Whitespace
 
         rule %r/rem\b.*?$/i, Comment::Single
-        rule %r/\/\/.*$/, Comment::Single
+        rule %r(//.*$), Comment::Single
         rule %r/\#tag Note.*\#tag EndNote/m, Comment::Preproc
         rule %r/\s*[#].*$/x, Comment::Preproc
 

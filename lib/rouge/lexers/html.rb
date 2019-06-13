@@ -44,7 +44,7 @@ module Rouge
           push :tag
         end
 
-        rule %r/<\//, Name::Tag, :tag_end
+        rule %r(</), Name::Tag, :tag_end
         rule %r/</, Name::Tag, :tag_start
 
         rule %r(<\s*[a-zA-Z0-9:-]+), Name::Tag, :tag # opening tags

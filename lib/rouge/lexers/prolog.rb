@@ -15,7 +15,7 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/^#.*/, Comment::Single
         rule %r/%.*/, Comment::Single
-        rule %r/\/\*/, Comment::Multiline, :nested_comment
+        rule %r(/\*), Comment::Multiline, :nested_comment
 
         rule %r/[\[\](){}|.,;!]/, Punctuation
         rule %r/:-|-->/, Punctuation
@@ -52,9 +52,9 @@ module Rouge
       end
 
       state :nested_comment do
-        rule %r/\/\*/, Comment::Multiline, :push
+        rule %r(/\*), Comment::Multiline, :push
         rule %r/\s*\*[^*\/]+/, Comment::Multiline
-        rule %r/\*\//, Comment::Multiline, :pop!
+        rule %r(\*/), Comment::Multiline, :pop!
       end
     end
   end

@@ -85,7 +85,7 @@ module Rouge
       state :regex_group do
         # specially highlight / in a group to indicate that it doesn't
         # close the regex
-        rule %r/\//, Str::Escape
+        rule %r(/), Str::Escape
 
         rule %r([^/]\n) do
           token Error

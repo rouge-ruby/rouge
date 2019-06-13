@@ -62,7 +62,7 @@ module Rouge
       state :root do
         rule %r/\n/, Text
         rule %r/[^\S\n]+/, Text
-        rule %r/\/\/.*$/, Comment::Single
+        rule %r(//.*$), Comment::Single
         rule %r/[\[\]:(),;]/, Punctuation
         rule %r/(?<=[^\wа-яё]|^)\&.*$/, Keyword::Declaration
         rule %r/[-+\/=<>*%=<>.?&]/, Operator

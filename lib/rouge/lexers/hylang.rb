@@ -54,22 +54,22 @@ module Rouge
       end
 
       state :root do
-        rule /;.*?$/, Comment::Single
-        rule /\s+/m, Text::Whitespace
+        rule %r/;.*?$/, Comment::Single
+        rule %r/\s+/m, Text::Whitespace
 
-        rule /-?\d+\.\d+/, Num::Float
-        rule /-?\d+/, Num::Integer
-        rule /0x-?[0-9a-fA-F]+/, Num::Hex
+        rule %r/-?\d+\.\d+/, Num::Float
+        rule %r/-?\d+/, Num::Integer
+        rule %r/0x-?[0-9a-fA-F]+/, Num::Hex
 
-        rule /"(\\.|[^"])*"/, Str
-        rule /'#{keyword}/, Str::Symbol
-        rule /::?#{keyword}/, Name::Constant
-        rule /\\(.|[a-z]+)/i, Str::Char
+        rule %r/"(\\.|[^"])*"/, Str
+        rule %r/'#{keyword}/, Str::Symbol
+        rule %r/::?#{keyword}/, Name::Constant
+        rule %r/\\(.|[a-z]+)/i, Str::Char
 
 
-        rule /~@|[`\'#^~&@]/, Operator
+        rule %r/~@|[`\'#^~&@]/, Operator
 
-        rule /(\()(\s*)(#{identifier})/m do |m|
+        rule %r/(\()(\s*)(#{identifier})/m do |m|
           token Punctuation, m[1]
           token Text::Whitespace, m[2]
           token(name_token(m[3]) || Name::Function, m[3])
@@ -80,13 +80,13 @@ module Rouge
         end
 
         # vectors
-        rule /[\[\]]/, Punctuation
+        rule %r/[\[\]]/, Punctuation
 
         # maps
-        rule /[{}]/, Punctuation
+        rule %r/[{}]/, Punctuation
 
         # parentheses
-        rule /[()]/, Punctuation
+        rule %r/[()]/, Punctuation
       end
     end
   end

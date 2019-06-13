@@ -35,7 +35,7 @@ module Rouge
       end
 
       state :whitespace do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
       end
 
       state :comments do
@@ -50,43 +50,43 @@ module Rouge
         rule %r(/[*]), Comment::Multiline, :nested_comment
         rule %r([*]/), Comment::Multiline, :pop!
         rule %r([^*/]+)m, Comment::Multiline
-        rule /./, Comment::Multiline
+        rule %r/./, Comment::Multiline
       end
 
       state :root do
         mixin :whitespace
         mixin :comments
 
-        rule /[\-+]?0[xX]\h+/, Num::Hex
+        rule %r/[\-+]?0[xX]\h+/, Num::Hex
 
         # radix float
-        rule /[\-+]?\d+r[0-9a-zA-Z]*(\.[0-9A-Z]*)?/, Num::Float
+        rule %r/[\-+]?\d+r[0-9a-zA-Z]*(\.[0-9A-Z]*)?/, Num::Float
 
         # normal float
-        rule /[\-+]?((\d+(\.\d+)?([eE][\-+]?\d+)?(pi)?)|pi)/, Num::Float
+        rule %r/[\-+]?((\d+(\.\d+)?([eE][\-+]?\d+)?(pi)?)|pi)/, Num::Float
 
-        rule /[\-+]?\d+/, Num::Integer
+        rule %r/[\-+]?\d+/, Num::Integer
 
-        rule /\$(\\.|.)/, Str::Char
+        rule %r/\$(\\.|.)/, Str::Char
 
-        rule /"([^\\"]|\\.)*"/, Str
+        rule %r/"([^\\"]|\\.)*"/, Str
 
         # symbols (single-quote notation)
-        rule /'([^\\']|\\.)*'/, Str::Other
+        rule %r/'([^\\']|\\.)*'/, Str::Other
 
         # symbols (backslash notation)
-        rule /\\\w+/, Str::Other
+        rule %r/\\\w+/, Str::Other
 
         # symbol arg
-        rule /[A-Za-z_]\w*:/, Name::Label
+        rule %r/[A-Za-z_]\w*:/, Name::Label
 
-        rule /[A-Z]\w*/, Name::Class
+        rule %r/[A-Z]\w*/, Name::Class
 
         # primitive
-        rule /_\w+/, Name::Function
+        rule %r/_\w+/, Name::Function
 
         # main identifiers section
-        rule /[a-z]\w*/ do |m|
+        rule %r/[a-z]\w*/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           elsif self.class.constants.include? m[0]
@@ -99,16 +99,16 @@ module Rouge
         end
 
         # environment variables
-        rule /~\w+/, Name::Variable::Global
+        rule %r/~\w+/, Name::Variable::Global
 
-        rule /[\{\}()\[\];,\.]/, Punctuation
+        rule %r/[\{\}()\[\];,\.]/, Punctuation
 
         # operators. treat # (array unpack) as an operator
-        rule /[\+\-\*\/&\|%<>=]+/, Operator
-        rule /[\^:#]/, Operator
+        rule %r/[\+\-\*\/&\|%<>=]+/, Operator
+        rule %r/[\^:#]/, Operator
 
         # treat curry argument as a special operator
-        rule /\b_\b/, Name::Builtin
+        rule %r/\b_\b/, Name::Builtin
       end
     end
   end

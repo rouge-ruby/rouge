@@ -30,19 +30,19 @@ module Rouge
       end
 
       state :whitespace do
-        rule /\#.*/, Comment
-        rule /\s+/m, Text
+        rule %r/\#.*/, Comment
+        rule %r/\s+/m, Text
       end
 
       state :root do
         mixin :whitespace
 
-        rule /(<\/?)(\w+)/ do |m|
+        rule %r/(<\/?)(\w+)/ do |m|
           groups Punctuation, name_for_token(m[2].downcase, :sections, Name::Label)
           push :section
         end
 
-        rule /\w+/ do |m|
+        rule %r/\w+/ do |m|
           token name_for_token(m[0].downcase, :directives, Name::Class)
           push :directive
         end
@@ -50,7 +50,7 @@ module Rouge
 
       state :section do
         # Match section arguments
-        rule /([^>]+)?(>(?:\r\n?|\n)?)/ do |m|
+        rule %r/([^>]+)?(>(?:\r\n?|\n)?)/ do |m|
           groups Literal::String::Regex, Punctuation
           pop!
         end
@@ -60,11 +60,11 @@ module Rouge
 
       state :directive do
         # Match value literals and other directive arguments
-        rule /\r\n?|\n/, Text, :pop!
+        rule %r/\r\n?|\n/, Text, :pop!
 
         mixin :whitespace
 
-        rule /\S+/ do |m|
+        rule %r/\S+/ do |m|
           token name_for_token(m[0], :values, Literal::String::Symbol)
         end
       end

@@ -167,35 +167,35 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
 
-        rule /(:|::|MACRO:|MEMO:|GENERIC:|HELP:)(\s+)(\S+)/m do
+        rule %r/(:|::|MACRO:|MEMO:|GENERIC:|HELP:)(\s+)(\S+)/m do
           groups Keyword, Text, Name::Function
         end
 
-        rule /(M:|HOOK:|GENERIC#)(\s+)(\S+)(\s+)(\S+)/m do
+        rule %r/(M:|HOOK:|GENERIC#)(\s+)(\S+)(\s+)(\S+)/m do
           groups Keyword, Text, Name::Class, Text, Name::Function
         end
 
-        rule /\((?=\s)/, Name::Function, :stack_effect
-        rule /;(?=\s)/, Keyword
+        rule %r/\((?=\s)/, Name::Function, :stack_effect
+        rule %r/;(?=\s)/, Keyword
 
-        rule /(USING:)((?:\s|\\\s)+)/m do
+        rule %r/(USING:)((?:\s|\\\s)+)/m do
           groups Keyword::Namespace, Text
           push :import
         end
 
-        rule /(IN:|USE:|UNUSE:|QUALIFIED:|QUALIFIED-WITH:)(\s+)(\S+)/m do
+        rule %r/(IN:|USE:|UNUSE:|QUALIFIED:|QUALIFIED-WITH:)(\s+)(\S+)/m do
           groups Keyword::Namespace, Text, Name::Namespace
         end
 
-        rule /(FROM:|EXCLUDE:)(\s+)(\S+)(\s+)(=>)/m do
+        rule %r/(FROM:|EXCLUDE:)(\s+)(\S+)(\s+)(=>)/m do
           groups Keyword::Namespace, Text, Name::Namespace, Text, Punctuation
         end
 
-        rule /(?:ALIAS|DEFER|FORGET|POSTPONE):/, Keyword::Namespace
+        rule %r/(?:ALIAS|DEFER|FORGET|POSTPONE):/, Keyword::Namespace
 
-        rule /(TUPLE:)(\s+)(\S+)(\s+)(<)(\s+)(\S+)/m do
+        rule %r/(TUPLE:)(\s+)(\S+)(\s+)(<)(\s+)(\S+)/m do
           groups(
             Keyword, Text,
             Name::Class, Text,
@@ -205,16 +205,16 @@ module Rouge
           push :slots
         end
 
-        rule /(TUPLE:)(\s+)(\S+)/m do
+        rule %r/(TUPLE:)(\s+)(\S+)/m do
           groups Keyword, Text, Name::Class
           push :slots
         end
 
-        rule /(UNION:|INTERSECTION:)(\s+)(\S+)/m do
+        rule %r/(UNION:|INTERSECTION:)(\s+)(\S+)/m do
           groups Keyword, Text, Name::Class
         end
 
-        rule /(PREDICATE:)(\s+)(\S+)(\s+)(<)(\s+)(\S+)/m do
+        rule %r/(PREDICATE:)(\s+)(\S+)(\s+)(<)(\s+)(\S+)/m do
           groups(
             Keyword, Text,
             Name::Class, Text,
@@ -223,7 +223,7 @@ module Rouge
           )
         end
 
-        rule /(C:)(\s+)(\S+)(\s+)(\S+)/m do
+        rule %r/(C:)(\s+)(\S+)(\s+)(\S+)/m do
           groups(
             Keyword, Text,
             Name::Function, Text,
@@ -236,38 +236,38 @@ module Rouge
            |ALIEN|TYPEDEF|FUNCTION|STRUCT):
         )x, Keyword
 
-        rule /(?:<PRIVATE|PRIVATE>)/, Keyword::Namespace
+        rule %r/(?:<PRIVATE|PRIVATE>)/, Keyword::Namespace
 
-        rule /(MAIN:)(\s+)(\S+)/ do
+        rule %r/(MAIN:)(\s+)(\S+)/ do
           groups Keyword::Namespace, Text, Name::Function
         end
 
         # strings
-        rule /"""\s+.*?\s+"""/, Str
-        rule /"(\\.|[^\\])*?"/, Str
-        rule /(CHAR:)(\s+)(\\[\\abfnrstv]*|\S)(?=\s)/, Str::Char
+        rule %r/"""\s+.*?\s+"""/, Str
+        rule %r/"(\\.|[^\\])*?"/, Str
+        rule %r/(CHAR:)(\s+)(\\[\\abfnrstv]*|\S)(?=\s)/, Str::Char
 
         # comments
-        rule /!\s+.*$/, Comment
-        rule /#!\s+.*$/, Comment
+        rule %r/!\s+.*$/, Comment
+        rule %r/#!\s+.*$/, Comment
 
         # booleans
-        rule /[tf](?=\s)/, Name::Constant
+        rule %r/[tf](?=\s)/, Name::Constant
 
         # numbers
-        rule /-?\d+\.\d+(?=\s)/, Num::Float
-        rule /-?\d+(?=\s)/, Num::Integer
+        rule %r/-?\d+\.\d+(?=\s)/, Num::Float
+        rule %r/-?\d+(?=\s)/, Num::Integer
 
-        rule /HEX:\s+[a-fA-F\d]+(?=\s)/m, Num::Hex
-        rule /BIN:\s+[01]+(?=\s)/, Num::Bin
-        rule /OCT:\s+[0-7]+(?=\s)/, Num::Oct
+        rule %r/HEX:\s+[a-fA-F\d]+(?=\s)/m, Num::Hex
+        rule %r/BIN:\s+[01]+(?=\s)/, Num::Bin
+        rule %r/OCT:\s+[0-7]+(?=\s)/, Num::Oct
 
         rule %r([-+/*=<>^](?=\s)), Operator
 
-        rule /(?:deprecated|final|foldable|flushable|inline|recursive)(?=\s)/,
+        rule %r/(?:deprecated|final|foldable|flushable|inline|recursive)(?=\s)/,
           Keyword
 
-        rule /\S+/ do |m|
+        rule %r/\S+/ do |m|
           name = m[0]
 
           if self.class.builtins.values.any? { |b| b.include? name }
@@ -279,24 +279,24 @@ module Rouge
       end
 
       state :stack_effect do
-        rule /\s+/, Text
-        rule /\(/, Name::Function, :stack_effect
-        rule /\)/, Name::Function, :pop!
+        rule %r/\s+/, Text
+        rule %r/\(/, Name::Function, :stack_effect
+        rule %r/\)/, Name::Function, :pop!
 
-        rule /--/, Name::Function
-        rule /\S+/, Name::Variable
+        rule %r/--/, Name::Function
+        rule %r/\S+/, Name::Variable
       end
 
       state :slots do
-        rule /\s+/, Text
-        rule /;(?=\s)/, Keyword, :pop!
-        rule /\S+/, Name::Variable
+        rule %r/\s+/, Text
+        rule %r/;(?=\s)/, Keyword, :pop!
+        rule %r/\S+/, Name::Variable
       end
 
       state :import do
-        rule /;(?=\s)/, Keyword, :pop!
-        rule /\s+/, Text
-        rule /\S+/, Name::Namespace
+        rule %r/;(?=\s)/, Keyword, :pop!
+        rule %r/\s+/, Text
+        rule %r/\S+/, Name::Namespace
       end
     end
   end

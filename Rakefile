@@ -8,7 +8,7 @@ require "rake/testtask"
 Rake::TestTask.new(:spec) do |t|
   t.libs << "lib"
   t.ruby_opts << "-r./spec/spec_helper"
-  t.warning = false # TODO: true
+  t.warning = true
   t.pattern = FileList['spec/**/*_spec.rb']
 end
 

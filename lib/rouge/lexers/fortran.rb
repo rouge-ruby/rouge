@@ -88,21 +88,21 @@ module Rouge
       end
 
       state :root do
-        rule /[\s\n]+/, Text::Whitespace
-        rule /!.*$/, Comment::Single
-        rule /^#.*$/, Comment::Preproc
+        rule %r/[\s]+/, Text::Whitespace
+        rule %r/!.*$/, Comment::Single
+        rule %r/^#.*$/, Comment::Preproc
 
-        rule /::|[()\/;,:&\[\]]/, Punctuation
+        rule %r/::|[()\/;,:&\[\]]/, Punctuation
 
         # TODO: This does not take into account line continuation.
-        rule /^(\s*)([0-9]+)\b/m do |m|
+        rule %r/^(\s*)([0-9]+)\b/m do |m|
           token Text::Whitespace, m[1]
           token Name::Label, m[2]
         end
 
         # Format statements are quite a strange beast.
         # Better process them in their own state.
-        rule /\b(FORMAT)(\s*)(\()/mi do |m|
+        rule %r/\b(FORMAT)(\s*)(\()/mi do |m|
           token Keyword, m[1]
           token Text::Whitespace, m[2]
           token Punctuation, m[3]
@@ -118,25 +118,25 @@ module Rouge
           (_#{kind_param})? # kind parameter
         )xi, Num::Float
 
-        rule /[+-]?\d+(_#{kind_param})?/i, Num::Integer
-        rule /B'[01]+'|B"[01]+"/i, Num::Bin
-        rule /O'[0-7]+'|O"[0-7]+"/i, Num::Oct
-        rule /Z'[0-9A-F]+'|Z"[0-9A-F]+"/i, Num::Hex
-        rule /(#{kind_param}_)?'/, Str::Single, :string_single
-        rule /(#{kind_param}_)?"/, Str::Double, :string_double
-        rule /[.](TRUE|FALSE)[.](_#{kind_param})?/i, Keyword::Constant
+        rule %r/[+-]?\d+(_#{kind_param})?/i, Num::Integer
+        rule %r/B'[01]+'|B"[01]+"/i, Num::Bin
+        rule %r/O'[0-7]+'|O"[0-7]+"/i, Num::Oct
+        rule %r/Z'[0-9A-F]+'|Z"[0-9A-F]+"/i, Num::Hex
+        rule %r/(#{kind_param}_)?'/, Str::Single, :string_single
+        rule %r/(#{kind_param}_)?"/, Str::Double, :string_double
+        rule %r/[.](TRUE|FALSE)[.](_#{kind_param})?/i, Keyword::Constant
 
         rule %r{\*\*|//|==|/=|<=|>=|=>|[-+*/<>=%]}, Operator
-        rule /\.(?:EQ|NE|LT|LE|GT|GE|NOT|AND|OR|EQV|NEQV|[A-Z]+)\./i, Operator::Word
+        rule %r/\.(?:EQ|NE|LT|LE|GT|GE|NOT|AND|OR|EQV|NEQV|[A-Z]+)\./i, Operator::Word
 
         # Special rules for two-word keywords and types.
         # Note: "doubleprecision" is covered by the normal keyword rule.
-        rule /double\s+precision\b/i, Keyword::Type
-        rule /go\s+to\b/i, Keyword
-        rule /sync\s+(all|images|memory)\b/i, Keyword
-        rule /error\s+stop\b/i, Keyword
+        rule %r/double\s+precision\b/i, Keyword::Type
+        rule %r/go\s+to\b/i, Keyword
+        rule %r/sync\s+(all|images|memory)\b/i, Keyword
+        rule %r/error\s+stop\b/i, Keyword
 
-        rule /#{name}/m do |m|
+        rule %r/#{name}/m do |m|
           match = m[0].downcase
           if self.class.keywords.include? match
             token Keyword
@@ -152,26 +152,26 @@ module Rouge
       end
 
       state :string_single do
-        rule /[^']+/, Str::Single
-        rule /''/, Str::Escape
-        rule /'/, Str::Single, :pop!
+        rule %r/[^']+/, Str::Single
+        rule %r/''/, Str::Escape
+        rule %r/'/, Str::Single, :pop!
       end
 
       state :string_double do
-        rule /[^"]+/, Str::Double
-        rule /""/, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule %r/[^"]+/, Str::Double
+        rule %r/""/, Str::Escape
+        rule %r/"/, Str::Double, :pop!
       end
 
       state :format_spec do
-        rule /'/, Str::Single, :string_single
-        rule /"/, Str::Double, :string_double
-        rule /\(/, Punctuation, :format_spec
-        rule /\)/, Punctuation, :pop!
-        rule /,/, Punctuation
-        rule /[\s\n]+/, Text::Whitespace
+        rule %r/'/, Str::Single, :string_single
+        rule %r/"/, Str::Double, :string_double
+        rule %r/\(/, Punctuation, :format_spec
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/,/, Punctuation
+        rule %r/[\s]+/, Text::Whitespace
         # Edit descriptors could be seen as a kind of "format literal".
-        rule /[^\s'"(),]+/, Literal
+        rule %r/[^\s'"(),]+/, Literal
       end
     end
   end

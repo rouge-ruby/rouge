@@ -89,15 +89,15 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text
-        rule /--.*/, Comment::Single
+        rule %r/\s+/m, Text
+        rule %r/--.*/, Comment::Single
         rule %r(/\*), Comment::Multiline, :multiline_comments
-        rule /\d+/, Num::Integer
-        rule /'/, Str::Single, :single_string
-        rule /"/, Name::Variable, :double_string
-        rule /`/, Name::Variable, :backtick
+        rule %r/\d+/, Num::Integer
+        rule %r/'/, Str::Single, :single_string
+        rule %r/"/, Name::Variable, :double_string
+        rule %r/`/, Name::Variable, :backtick
 
-        rule /\w[\w\d]*/ do |m|
+        rule %r/\w\w*/ do |m|
           if self.class.keywords.include? m[0].upcase
             token Keyword
           else
@@ -105,8 +105,8 @@ module Rouge
           end
         end
 
-        rule %r([+*/<>=~!@#%^&|?^-]), Operator
-        rule /[;:()\[\],.]/, Punctuation
+        rule %r([+*/<>=~!@#%&|?^-]), Operator
+        rule %r/[;:()\[\],.]/, Punctuation
       end
 
       state :multiline_comments do
@@ -117,24 +117,24 @@ module Rouge
       end
 
       state :backtick do
-        rule /\\./, Str::Escape
-        rule /``/, Str::Escape
-        rule /`/, Name::Variable, :pop!
-        rule /[^\\`]+/, Name::Variable
+        rule %r/\\./, Str::Escape
+        rule %r/``/, Str::Escape
+        rule %r/`/, Name::Variable, :pop!
+        rule %r/[^\\`]+/, Name::Variable
       end
 
       state :single_string do
-        rule /\\./, Str::Escape
-        rule /''/, Str::Escape
-        rule /'/, Str::Single, :pop!
-        rule /[^\\']+/, Str::Single
+        rule %r/\\./, Str::Escape
+        rule %r/''/, Str::Escape
+        rule %r/'/, Str::Single, :pop!
+        rule %r/[^\\']+/, Str::Single
       end
 
       state :double_string do
-        rule /\\./, Str::Escape
-        rule /""/, Str::Escape
-        rule /"/, Name::Variable, :pop!
-        rule /[^\\"]+/, Name::Variable
+        rule %r/\\./, Str::Escape
+        rule %r/""/, Str::Escape
+        rule %r/"/, Name::Variable, :pop!
+        rule %r/[^\\"]+/, Name::Variable
       end
     end
   end

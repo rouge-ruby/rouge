@@ -38,25 +38,15 @@ module Rouge
         registry[name.to_s]
       end
 
-      # Find a lexer, with fancy shiny features.
+      # Same as ::find_fancy, except instead of returning an instantiated
+      # lexer, returns a pair of [lexer_class, options], so that you can
+      # modify or provide additional options to the lexer.
       #
-      # * The string you pass can include CGI-style options
-      #
-      #     Lexer.find_fancy('erb?parent=tex')
-      #
-      # * You can pass the special name 'guess' so we guess for you,
-      #   and you can pass a second argument of the code to guess by
-      #
-      #     Lexer.find_fancy('guess', "#!/bin/bash\necho Hello, world")
-      #
-      # This is used in the Redcarpet plugin as well as Rouge's own
-      # markdown lexer for highlighting internal code blocks.
-      #
-      def find_fancy(str, code=nil, additional_options={})
-
+      # Rlease note: the lexer class might be nil!
+      def lookup_fancy(str, code=nil, additional_options={})
         if str && !str.include?('?') && str != 'guess'
           lexer_class = find(str)
-          return lexer_class && lexer_class.new(additional_options)
+          return [lexer_class, additional_options]
         end
 
         name, opts = str ? str.split('?', 2) : [nil, '']
@@ -80,6 +70,26 @@ module Rouge
         when String
           self.find(name)
         end
+
+        [lexer_class, opts]
+      end
+
+      # Find a lexer, with fancy shiny features.
+      #
+      # * The string you pass can include CGI-style options
+      #
+      #     Lexer.find_fancy('erb?parent=tex')
+      #
+      # * You can pass the special name 'guess' so we guess for you,
+      #   and you can pass a second argument of the code to guess by
+      #
+      #     Lexer.find_fancy('guess', "#!/bin/bash\necho Hello, world")
+      #
+      # This is used in the Redcarpet plugin as well as Rouge's own
+      # markdown lexer for highlighting internal code blocks.
+      #
+      def find_fancy(str, code=nil, additional_options={})
+        lexer_class, opts = lookup_fancy(str, code, additional_options)
 
         lexer_class && lexer_class.new(opts)
       end

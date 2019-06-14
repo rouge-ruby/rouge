@@ -217,19 +217,17 @@ some $emp in /emps/employee satisfies ($emp/bonus > 0.25 * $emp/salary) |
 $myaddress treat as element(*, USAddress) |
 (fn:root(self::node()) treat as document-node())/
 
-(: XPATH 3.0 :)
 (:   8. Functions and let :)
-let $f := function ($seq, $delim) { fn:fold-left($seq, "", fn:concat(?, $delim, ?)) },
-    $paf := $f(?, ".")
-return $paf(1 to 5) |
+let $f := function($a) { starts-with($a, "E") }
+    return local:filter(("Ethel", "Enid", "Gertrude"), $f) |
 
 collection()/(let $a := . return function() { $a }) |
 
-let $x := doc('a.xml')/*, $y := $x//*
+let $x := doc('a.xml')/*,
+    $y := $x//*,
+    $z := f(3, ?)
 return $y[@value gt $x/@min] |
 
-
-(: XPATH 3.1 :)
 (:   9. Maps :)
 let $m := map {
   "Monday" : true(),
@@ -248,4 +246,3 @@ return a |
 
 (:   11. Arrow operator :)
 $string => upper-case() => normalize-unicode() => tokenize("\s+") |
-

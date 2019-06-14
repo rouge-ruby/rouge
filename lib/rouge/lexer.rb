@@ -425,13 +425,15 @@ module Rouge
     #   with `$VERBOSE` set to true.
     def lex(string, opts=nil, &b)
       if opts
-        if opts.empty?
-          warn 'the use of options with Lexer#lex is deprecated' if $VERBOSE
-        elsif opts.size == 1 && opts[:continue]
+        if (opts.keys - [:continue]).size > 0
+          # improper use of options hash
+          warn('Improper use of Lexer#lex - this method does not receive options.' +
+               ' This will become an error in a future version.')
+        end
+
+        if opts[:continue]
           warn '`lex :continue => true` is deprecated, please use #continue_lex instead'
           return continue_lex(string, &b)
-        else
-          raise ArgumentError.new("invalid options for Lexer#lex: #{opts.inspect}")
         end
       end
 

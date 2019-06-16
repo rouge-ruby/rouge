@@ -20,3 +20,7 @@ matrix:
     - rvm   : *latest_ruby
       name  : Profile Memory Allocation
       script: bundle exec rake profile_memory
+    - rvm   : *latest_ruby
+      name  : Interpreter Warnings Test
+      env   : RUBY_WARNINGS_ENABLED=true
+      script: bundle exec rake

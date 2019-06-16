@@ -24,6 +24,8 @@ module Rouge
       types = %w(boolean byte char double float int long short var void)
 
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
+      const_name = /[A-Z][A-Z0-9_]*\b/
+      class_name = /[A-Z][a-zA-Z0-9]*\b/
 
       state :root do
         rule /[^\S\n]+/, Text
@@ -59,6 +61,8 @@ module Rouge
         end
 
         rule /#{id}:/, Name::Label
+        rule const_name, Name::Constant
+        rule class_name, Name::Class
         rule /\$?#{id}/, Name
         rule /[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
 

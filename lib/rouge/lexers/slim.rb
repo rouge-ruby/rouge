@@ -172,9 +172,9 @@ module Rouge
         # Need at top
         mixin :indented_block
 
-        rule(/,\s*\n/) { delegate ruby }
+        rule(/[,\\]\s*\n/) { delegate ruby }
         rule /[ ]\|[ \t]*\n/, Str::Escape
-        rule(/.*?(?=(,$| \|)?[ \t]*$)/) { delegate ruby }
+        rule(/.*?(?=([,\\]$| \|)?[ \t]*$)/) { delegate ruby }
       end
 
       state :filter_block do

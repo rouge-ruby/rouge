@@ -11,18 +11,42 @@ module Rouge
       title "Brainfuck"
       desc "The Brainfuck programming language"
 
+      start { push :bol }
+
+      state :bol do
+        rule /\s+/m, Text
+        rule /\[/, Comment::Multiline, :comment_multi
+        rule(//) { pop! }
+      end
+
       state :root do
-        # Single line comments (everything that's not a keyword)
-        rule /([^\[\]><\+\-\.,])+?/, Comment::Single
-        
-        # The starting loop-comment (it can be positioned anywhere)
-        rule /\[[^\[\]><\+\-\.,]*?\]/, Comment::Multiline
-      
-        # All keywords
-        rule /(>|<|\.|,|\[|\])/, Keyword
-        
-        # Plus (+) and minus (-) operators
-        rule /(\+|\-)/, Operator
+        rule /\]/, Error
+        rule /\[/, Punctuation, :loop
+
+        mixin :comment_single
+        mixin :commands
+      end
+
+      state :comment_multi do
+        rule /\[/, Comment::Multiline, :comment_multi
+        rule /\]/, Comment::Multiline, :pop!
+        rule /[^\[\]]+?/m, Comment::Multiline
+      end
+
+      state :comment_single do
+        rule /[^><+\-.,\[\]]+/, Comment::Single
+      end
+
+      state :loop do
+        rule /\[/, Punctuation, :loop
+        rule /\]/, Punctuation, :pop!
+        mixin :comment_single
+        mixin :commands
+      end
+
+      state :commands do
+        rule /[><]+/, Name::Builtin
+        rule /[+\-.,]+/, Name::Function
       end
     end
   end

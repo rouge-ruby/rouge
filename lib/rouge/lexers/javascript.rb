@@ -98,26 +98,23 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          for in of while do break return continue switch case default
-          if else throw try catch finally new delete typeof instanceof
-          void this yield import export from as async super this
+          as async await break case catch continue debugger default delete
+          do else export finally from for if import in instanceof new of
+          return super switch this throw try typeof void while yield
         )
       end
 
       def self.declarations
         @declarations ||= Set.new %w(
           var let const with function class
-          extends constructor get set
+          extends constructor get set static
         )
       end
 
       def self.reserved
         @reserved ||= Set.new %w(
-          abstract boolean byte char debugger double enum
-          final float goto implements int interface
-          long native package private protected public short static
-          synchronized throws transient volatile
-          eval arguments await
+          enum implements interface
+          package private protected public
         )
       end
 
@@ -200,22 +197,21 @@ module Rouge
         rule /0b[01][01_]*/i, Num::Bin
         rule /[0-9]+/, Num::Integer
 
-        rule /"/, Str::Double, :dq
-        rule /'/, Str::Single, :sq
+        rule /"/, Str::Delimiter, :dq
+        rule /'/, Str::Delimiter, :sq
         rule /:/, Punctuation
       end
 
       state :dq do
+        rule /\\[\\nrt"]?/, Str::Escape
         rule /[^\\"]+/, Str::Double
-        rule /\\n/, Str::Escape
-        rule /\\"/, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule /"/, Str::Delimiter, :pop!
       end
 
       state :sq do
+        rule /\\[\\nrt']?/, Str::Escape
         rule /[^\\']+/, Str::Single
-        rule /\\'/, Str::Escape
-        rule /'/, Str::Single, :pop!
+        rule /'/, Str::Delimiter, :pop!
       end
 
       # braced parts that aren't object literals

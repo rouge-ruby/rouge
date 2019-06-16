@@ -32,16 +32,33 @@ module Rouge
         rule /^#(?=[^#]).*?$/, Generic::Heading
         rule /^##*.*?$/, Generic::Subheading
 
-        rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?\n)(\2)/m do |m|
-          sublexer = Lexer.find_fancy(m[3].strip, m[4], @options)
+        rule /^([ \t]*)(```|~~~)([^\n]*\n)((.*?)(\2))?/m do |m|
+          name = m[3].strip
+          sublexer = Lexer.find_fancy(name.empty? ? "guess" : name, m[5], @options)
           sublexer ||= PlainText.new(@options.merge(:token => Str::Backtick))
           sublexer.reset!
 
           token Text, m[1]
           token Punctuation, m[2]
           token Name::Label, m[3]
-          delegate sublexer, m[4]
-          token Punctuation, m[5]
+          if m[5]
+            delegate sublexer, m[5]
+          end
+
+          if m[6]
+            token Punctuation, m[6]
+          else
+            push do
+              rule /^([ \t]*)(#{m[2]})/ do |mb|
+                pop!
+                token Text, mb[1]
+                token Punctuation, mb[2]
+              end
+              rule /^.*\n/ do |mb|
+                delegate sublexer, mb[1]
+              end
+            end
+          end
         end
 
         rule /\n\n((    |\t).*?\n|\n)+/, Str::Backtick

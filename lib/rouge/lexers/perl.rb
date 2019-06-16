@@ -93,9 +93,10 @@ module Rouge
         rule %r(m?/(\\\\|\\/|[^/\n])*/[msixpodualngc]*), re_tok
         rule %r(m(?=[/!\\{<\[\(@%\$])), re_tok, :balanced_regex
 
-        # Perl allows any non-whitespace character to delimit
-        # a regex when `m` is used.
-        rule %r(m(\S).*\1[msixpodualngc]*), re_tok
+        # arbitrary non-whitespace delimiters
+        rule %r(m\s*([^\w\s])((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
+        rule %r(m\s+(\w)((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
+
         rule %r(((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[msixpodualngc]*),
           re_tok, :balanced_regex
 
@@ -120,9 +121,9 @@ module Rouge
         rule /\d+(_\d*)*e[+-]?\d+(_\d*)*/i, Num::Float
         rule /\d+(_\d+)*/, Num::Integer
 
-        rule /'(\\\\|\\'|[^'])*'/, Str
-        rule /"(\\\\|\\"|[^"])*"/, Str
-        rule /`(\\\\|\\`|[^`])*`/, Str::Backtick
+        rule /'/, Punctuation, :sq
+        rule /"/, Punctuation, :dq
+        rule /`/, Punctuation, :bq
         rule /<([^\s>]+)>/, re_tok
         rule /(q|qq|qw|qr|qx)\{/, Str::Other, :cb_string
         rule /(q|qq|qw|qr|qx)\(/, Str::Other, :rb_string
@@ -178,6 +179,26 @@ module Rouge
         rule /;/, Punctuation, :pop!
       end
 
+      state :sq do
+        rule /\\[']/, Str::Escape
+        rule /[^\\']+/, Str::Single
+        rule /'/, Punctuation, :pop!
+      end
+
+      state :dq do
+        mixin :string_intp
+        rule /\\[\\tnr"]/, Str::Escape
+        rule /[^\\"]+?/, Str::Double
+        rule /"/, Punctuation, :pop!
+      end
+
+      state :bq do
+        mixin :string_intp
+        rule /\\[\\tnr`]/, Str::Escape
+        rule /[^\\`]+?/, Str::Backtick
+        rule /`/, Punctuation, :pop!
+      end
+
       [[:cb, '\{', '\}'],
        [:rb, '\(', '\)'],
        [:sb, '\[', '\]'],
@@ -190,6 +211,17 @@ module Rouge
           rule /#{close}/, tok, :pop!
           rule /[^#{open}#{close}\\]+/, tok
         end
+      end
+
+      state :in_interp do
+        rule /}/, Str::Interpol, :pop!
+        rule /\s+/, Text
+        rule /[a-z_]\w*/i, Str::Interpol
+      end
+
+      state :string_intp do
+        rule /[$@][{]/, Str::Interpol, :in_interp
+        rule /[$@][a-z_]\w*/i, Str::Interpol
       end
 
       state :end_part do

@@ -14,39 +14,39 @@ module Rouge
       start { push :bol }
 
       state :bol do
-        rule /\s+/m, Text
-        rule /\[/, Comment::Multiline, :comment_multi
+        rule %r/\s+/m, Text
+        rule %r/\[/, Comment::Multiline, :comment_multi
         rule(//) { pop! }
       end
 
       state :root do
-        rule /\]/, Error
-        rule /\[/, Punctuation, :loop
+        rule %r/\]/, Error
+        rule %r/\[/, Punctuation, :loop
 
         mixin :comment_single
         mixin :commands
       end
 
       state :comment_multi do
-        rule /\[/, Comment::Multiline, :comment_multi
-        rule /\]/, Comment::Multiline, :pop!
-        rule /[^\[\]]+?/m, Comment::Multiline
+        rule %r/\[/, Comment::Multiline, :comment_multi
+        rule %r/\]/, Comment::Multiline, :pop!
+        rule %r/[^\[\]]+?/m, Comment::Multiline
       end
 
       state :comment_single do
-        rule /[^><+\-.,\[\]]+/, Comment::Single
+        rule %r/[^><+\-.,\[\]]+/, Comment::Single
       end
 
       state :loop do
-        rule /\[/, Punctuation, :loop
-        rule /\]/, Punctuation, :pop!
+        rule %r/\[/, Punctuation, :loop
+        rule %r/\]/, Punctuation, :pop!
         mixin :comment_single
         mixin :commands
       end
 
       state :commands do
-        rule /[><]+/, Name::Builtin
-        rule /[+\-.,]+/, Name::Function
+        rule %r/[><]+/, Name::Builtin
+        rule %r/[+\-.,]+/, Name::Function
       end
     end
   end

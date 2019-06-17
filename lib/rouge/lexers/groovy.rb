@@ -44,7 +44,7 @@ module Rouge
       state :root do
         rule %r(^
           (\s*(?:\w[\w.\[\]]*\s+)+?) # return arguments
-          (\w[\w]*) # method name
+          (\w\w*) # method name
           (\s*) (\() # signature start
         )x do |m|
           delegate self.clone, m[1]
@@ -101,7 +101,7 @@ module Rouge
 
       state :class do
         rule %r/\s+/, Text
-        rule %r/\w[\w]*/, Name::Class, :pop!
+        rule %r/\w\w*/, Name::Class, :pop!
       end
 
       state :import do

@@ -207,7 +207,7 @@ module Rouge
         end
 
         # keywords, types and normal text
-        rule %r/\w[\w]*/ do |m|
+        rule %r/\w\w*/ do |m|
           if self.class.keywords.include? m[0].upcase
             token Keyword
           elsif self.class.types.include? m[0].downcase

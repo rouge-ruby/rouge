@@ -278,9 +278,9 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/\(/, Punctuation, :defexpr
         rule %r(
-          (?:([a-zA-Z_][\w]*)(\.))?
+          (?:([a-zA-Z_]\w*)(\.))?
           (
-            [a-zA-Z_][\w]*[!?]? |
+            [a-zA-Z_]\w*[!?]? |
             \*\*? | [-+]@? | [/%&\|^`~] | \[\]=? |
             <<? | >>? | <=>? | >= | ===?
           )

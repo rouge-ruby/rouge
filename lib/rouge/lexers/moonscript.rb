@@ -51,7 +51,7 @@ module Rouge
         rule %r((?i)0x[0-9a-f]*), Num::Hex
         rule %r(\d+), Num::Integer
         rule %r(@#{ident}*), Name::Variable::Instance
-        rule %r([A-Z][\w]*), Name::Class
+        rule %r([A-Z]\w*), Name::Class
         rule %r("?[^"]+":), Literal::String::Symbol
         rule %r(#{ident}:), Literal::String::Symbol
         rule %r(:#{ident}), Literal::String::Symbol

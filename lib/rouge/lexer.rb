@@ -213,7 +213,7 @@ module Rouge
       # @private
       def register(name, lexer)
         # reset an existing list of lexers
-        @all = nil if @all
+        @all = nil if defined?(@all)
         registry[name.to_s] = lexer
       end
 

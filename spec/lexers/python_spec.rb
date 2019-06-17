@@ -23,9 +23,11 @@ describe Rouge::Lexers::Python do
 
     it 'guesses by source' do
       assert_guess :source => '#!/usr/bin/env python'
-      assert_guess :source => '#!/usr/local/bin/python3'
       assert_guess :source => '#!/usr/bin/python2'
       assert_guess :source => '#!/usr/bin/python2.7'
+      assert_guess :source => '#!/usr/local/bin/python3'
+      assert_guess :source => '#!/usr/local/bin/python3.5'
+      assert_guess :source => '#!/usr/local/bin/python3.14'
       deny_guess   :source => '#!/usr/bin/env python4'
     end
   end

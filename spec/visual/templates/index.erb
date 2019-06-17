@@ -1,17 +1,19 @@
 <style type="text/css">
   main {
-    padding: 15px;
     column-count: 2;
     -webkit-column-count: 2;
     -moz-column-count: 2;
+    padding: 15px;
   }
   .preview {
-    margin-bottom: 15px;
-    padding: 15px;
-    color: <%= @comment_color %>;
     border: 1px dotted;
     break-inside: avoid-column;
     -webkit-column-break-inside: avoid;
+    color: <%= @comment_color %>;
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 15px;
+    width: 100%;
   }
 </style>
 

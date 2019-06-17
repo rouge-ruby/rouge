@@ -15,29 +15,29 @@ module Rouge
       ops = %r([-+*/\\~<>=|&!?,@%])
 
       state :root do
-        rule /(<)(\w+:)(.*?)(>)/ do
+        rule %r/(<)(\w+:)(.*?)(>)/ do
           groups Punctuation, Keyword, Text, Punctuation
         end
 
         # mixin :squeak_fileout
         mixin :whitespaces
         mixin :method_definition
-        rule /([|])([\w\s]*)([|])/ do
+        rule %r/([|])([\w\s]*)([|])/ do
           groups Punctuation, Name::Variable, Punctuation
         end
         mixin :objects
-        rule /\^|:=|_/, Operator
+        rule %r/\^|:=|_/, Operator
 
-        rule /[)}\]]/, Punctuation, :after_object
-        rule /[({\[!]/, Punctuation
+        rule %r/[)}\]]/, Punctuation, :after_object
+        rule %r/[({\[!]/, Punctuation
       end
 
       state :method_definition do
-        rule /([a-z]\w*:)(\s*)(\w+)/i do
+        rule %r/([a-z]\w*:)(\s*)(\w+)/i do
           groups Name::Function, Text, Name::Variable
         end
 
-        rule /^(\s*)(\b[a-z]\w*\b)(\s*)$/i do
+        rule %r/^(\s*)(\b[a-z]\w*\b)(\s*)$/i do
           groups Text, Name::Function, Text
         end
 
@@ -48,27 +48,27 @@ module Rouge
 
       state :block_variables do
         mixin :whitespaces
-        rule /(:)(\s*)(\w+)/ do
+        rule %r/(:)(\s*)(\w+)/ do
           groups Operator, Text, Name::Variable
         end
 
-        rule /[|]/, Punctuation, :pop!
+        rule %r/[|]/, Punctuation, :pop!
 
         rule(//) { pop! }
       end
 
       state :literals do
-        rule /'(''|.)*?'/m, Str, :after_object
-        rule /[$]./, Str::Char, :after_object
-        rule /#[(]/, Str::Symbol, :parenth
-        rule /(\d+r)?-?\d+(\.\d+)?(e-?\d+)?/,
+        rule %r/'(''|.)*?'/m, Str, :after_object
+        rule %r/[$]./, Str::Char, :after_object
+        rule %r/#[(]/, Str::Symbol, :parenth
+        rule %r/(\d+r)?-?\d+(\.\d+)?(e-?\d+)?/,
           Num, :after_object
-        rule /#("[^"]*"|#{ops}+|[\w:]+)/,
+        rule %r/#("[^"]*"|#{ops}+|[\w:]+)/,
           Str::Symbol, :after_object
       end
 
       state :parenth do
-        rule /[)]/ do
+        rule %r/[)]/ do
           token Str::Symbol
           goto :after_object
         end
@@ -77,39 +77,39 @@ module Rouge
       end
 
       state :inner_parenth do
-        rule /#[(]/, Str::Symbol, :inner_parenth
-        rule /[)]/, Str::Symbol, :pop!
+        rule %r/#[(]/, Str::Symbol, :inner_parenth
+        rule %r/[)]/, Str::Symbol, :pop!
         mixin :whitespaces
         mixin :literals
-        rule /(#{ops}|[\w:])+/, Str::Symbol
+        rule %r/(#{ops}|[\w:])+/, Str::Symbol
       end
 
       state :whitespaces do
-        rule /! !$/, Keyword # squeak chunk delimiter
-        rule /\s+/m, Text
-        rule /".*?"/m, Comment
+        rule %r/! !$/, Keyword # squeak chunk delimiter
+        rule %r/\s+/m, Text
+        rule %r/".*?"/m, Comment
       end
 
       state :objects do
-        rule /\[/, Punctuation, :block_variables
-        rule /(self|super|true|false|nil|thisContext)\b/,
+        rule %r/\[/, Punctuation, :block_variables
+        rule %r/(self|super|true|false|nil|thisContext)\b/,
           Name::Builtin::Pseudo, :after_object
-        rule /[A-Z]\w*(?!:)\b/, Name::Class, :after_object
-        rule /[a-z]\w*(?!:)\b/, Name::Variable, :after_object
+        rule %r/[A-Z]\w*(?!:)\b/, Name::Class, :after_object
+        rule %r/[a-z]\w*(?!:)\b/, Name::Variable, :after_object
         mixin :literals
       end
 
       state :after_object do
         mixin :whitespaces
-        rule /(ifTrue|ifFalse|whileTrue|whileFalse|timesRepeat):/,
+        rule %r/(ifTrue|ifFalse|whileTrue|whileFalse|timesRepeat):/,
           Name::Builtin, :pop!
-        rule /new(?!:)\b/, Name::Builtin
-        rule /:=|_/, Operator, :pop!
-        rule /[a-z]+\w*:/i, Name::Function, :pop!
-        rule /[a-z]+\w*/i, Name::Function
-        rule /#{ops}+/, Name::Function, :pop!
-        rule /[.]/, Punctuation, :pop!
-        rule /;/, Punctuation
+        rule %r/new(?!:)\b/, Name::Builtin
+        rule %r/:=|_/, Operator, :pop!
+        rule %r/[a-z]+\w*:/i, Name::Function, :pop!
+        rule %r/[a-z]+\w*/i, Name::Function
+        rule %r/#{ops}+/, Name::Function, :pop!
+        rule %r/[.]/, Punctuation, :pop!
+        rule %r/;/, Punctuation
         rule(//) { pop! }
       end
     end

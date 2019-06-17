@@ -41,30 +41,30 @@ module Rouge
       id = /[a-zA-Z][a-zA-Z0-9_]*/
 
       state :whitespace do
-        rule /\s+/, Text
-        rule /\n/, Text
+        rule %r/\s+/, Text
+        rule %r/\n/, Text
         # Find Comments (VHDL doesn't support multiline comments)
-        rule /--.*$/, Comment::Single
+        rule %r/--.*$/, Comment::Single
       end
 
       state :statements do
 
         # Find Numbers
-        rule /-?\d+/i, Num::Integer
-        rule /-?\d+[.]\d+/i, Num::Float
+        rule %r/-?\d+/i, Num::Integer
+        rule %r/-?\d+[.]\d+/i, Num::Float
 
         # Find Strings
-        rule /[box]?"[^"]*"/i, Str::Single
-        rule /'[^']?'/i, Str::Char
+        rule %r/[box]?"[^"]*"/i, Str::Single
+        rule %r/'[^']?'/i, Str::Char
 
         # Find Attributes
-        rule /'#{id}/i, Name::Attribute
+        rule %r/'#{id}/i, Name::Attribute
         
         # Punctuations
-        rule /[(),:;]/, Punctuation
+        rule %r/[(),:;]/, Punctuation
 
         # Boolean and NULL
-        rule /(?:true|false|null)\b/i, Name::Builtin
+        rule %r/(?:true|false|null)\b/i, Name::Builtin
 
         rule id do |m|
           match = m[0].downcase   #convert to lower case

@@ -17,57 +17,57 @@ module Rouge
       id_with_dots = /[$a-zA-Z_][a-zA-Z0-9_.]*/
 
       prepend :root do
-        rule /(#{id_with_dots})(\s*)({)/ do
+        rule %r/(#{id_with_dots})(\s*)({)/ do
           groups Keyword::Type, Text, Punctuation
           push :type_block
         end
-        rule /(#{id_with_dots})(\s+)(on)(\s+)(#{id_with_dots})(\s*)({)/ do
+        rule %r/(#{id_with_dots})(\s+)(on)(\s+)(#{id_with_dots})(\s*)({)/ do
           groups Keyword::Type, Text, Keyword, Text, Name::Label, Text, Punctuation
           push :type_block
         end
 
-        rule /[{]/, Punctuation, :push
+        rule %r/[{]/, Punctuation, :push
       end
 
       state :type_block do
-        rule /(id)(\s*)(:)(\s*)(#{id_with_dots})/ do
+        rule %r/(id)(\s*)(:)(\s*)(#{id_with_dots})/ do
           groups Name::Label, Text, Punctuation, Text, Keyword::Declaration
         end
 
-        rule /(#{id_with_dots})(\s*)(:)/ do
+        rule %r/(#{id_with_dots})(\s*)(:)/ do
           groups Name::Label, Text, Punctuation
           push :expr_start
         end
 
-        rule /(signal)(\s+)(#{id_with_dots})/ do
+        rule %r/(signal)(\s+)(#{id_with_dots})/ do
           groups Keyword::Declaration, Text, Name::Label
           push :signal
         end
 
-        rule /(property)(\s+)(#{id_with_dots})(\s+)(#{id_with_dots})(\s*)(:?)/ do
+        rule %r/(property)(\s+)(#{id_with_dots})(\s+)(#{id_with_dots})(\s*)(:?)/ do
           groups Keyword::Declaration, Text, Keyword::Type, Text, Name::Label, Text, Punctuation
           push :expr_start
         end
 
-        rule /[}]/, Punctuation, :pop!
+        rule %r/[}]/, Punctuation, :pop!
         mixin :root
       end
 
       state :signal do
         mixin :comments_and_whitespace
-        rule /\(/ do
+        rule %r/\(/ do
           token Punctuation
           goto :signal_args
         end
-        rule //, Text, :pop!
+        rule %r//, Text, :pop!
       end
 
       state :signal_args do
         mixin :comments_and_whitespace
-        rule /(#{id_with_dots})(\s+)(#{id_with_dots})(\s*)(,?)/ do
+        rule %r/(#{id_with_dots})(\s+)(#{id_with_dots})(\s*)(,?)/ do
           groups Keyword::Type, Text, Name, Text, Punctuation
         end
-        rule /\)/ , Punctuation, :pop!
+        rule %r/\)/ , Punctuation, :pop!
       end
     end
   end

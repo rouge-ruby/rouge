@@ -185,25 +185,25 @@ module Rouge
 
       state :root do
         mixin :basics
-        rule /{/, Punctuation, :stanza
-        rule /:[:]?#{identifier}/, Name::Decorator
-        rule /\.#{identifier}/, Name::Class
-        rule /##{identifier}/, Name::Function
-        rule /@#{identifier}/, Keyword, :at_rule
+        rule %r/{/, Punctuation, :stanza
+        rule %r/:[:]?#{identifier}/, Name::Decorator
+        rule %r/\.#{identifier}/, Name::Class
+        rule %r/##{identifier}/, Name::Function
+        rule %r/@#{identifier}/, Keyword, :at_rule
         rule identifier, Name::Tag
         rule %r([~^*!%&\[\]()<>|+=@:;,./?-]), Operator
-        rule /"(\\\\|\\"|[^"])*"/, Str::Single
-        rule /'(\\\\|\\'|[^'])*'/, Str::Double
+        rule %r/"(\\\\|\\"|[^"])*"/, Str::Single
+        rule %r/'(\\\\|\\'|[^'])*'/, Str::Double
       end
 
       state :value do
         mixin :basics
-        rule /url\(.*?\)/, Str::Other
-        rule /#[0-9a-f]{1,6}/i, Num # colors
-        rule /#{number}(?:%|(?:em|px|pt|pc|in|mm|cm|ex|rem|ch|vw|vh|vmin|vmax|dpi|dpcm|dppx|deg|grad|rad|turn|s|ms|Hz|kHz)\b)?/, Num
-        rule /[\[\]():\/.,]/, Punctuation
-        rule /"(\\\\|\\"|[^"])*"/, Str::Single
-        rule /'(\\\\|\\'|[^'])*'/, Str::Double
+        rule %r/url\(.*?\)/, Str::Other
+        rule %r/#[0-9a-f]{1,6}/i, Num # colors
+        rule %r/#{number}(?:%|(?:em|px|pt|pc|in|mm|cm|ex|rem|ch|vw|vh|vmin|vmax|dpi|dpcm|dppx|deg|grad|rad|turn|s|ms|Hz|kHz)\b)?/, Num
+        rule %r/[\[\]():\/.,]/, Punctuation
+        rule %r/"(\\\\|\\"|[^"])*"/, Str::Single
+        rule %r/'(\\\\|\\'|[^'])*'/, Str::Double
         rule(identifier) do |m|
           if self.class.constants.include? m[0]
             token Name::Constant
@@ -216,9 +216,9 @@ module Rouge
       end
 
       state :at_rule do
-        rule /{(?=\s*#{identifier}\s*:)/m, Punctuation, :at_stanza
-        rule /{/, Punctuation, :at_body
-        rule /;/, Punctuation, :pop!
+        rule %r/{(?=\s*#{identifier}\s*:)/m, Punctuation, :at_stanza
+        rule %r/{/, Punctuation, :at_body
+        rule %r/;/, Punctuation, :pop!
         mixin :value
       end
 
@@ -233,21 +233,21 @@ module Rouge
       end
 
       state :at_content do
-        rule /}/ do
+        rule %r/}/ do
           token Punctuation
           pop! 2
         end
       end
 
       state :basics do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         rule %r(/\*(?:.*?)\*/)m, Comment
       end
 
       state :stanza do
         mixin :basics
-        rule /}/, Punctuation, :pop!
-        rule /(#{identifier})(\s*)(:)/m do |m|
+        rule %r/}/, Punctuation, :pop!
+        rule %r/(#{identifier})(\s*)(:)/m do |m|
           name_tok = if self.class.attributes.include? m[1]
             Name::Label
           elsif self.class.vendor_prefixes.any? { |p| m[1].start_with?(p) }
@@ -263,10 +263,10 @@ module Rouge
       end
 
       state :stanza_value do
-        rule /;/, Punctuation, :pop!
+        rule %r/;/, Punctuation, :pop!
         rule(/(?=})/) { pop! }
-        rule /!\s*important\b/, Comment::Preproc
-        rule /^@.*?$/, Comment::Preproc
+        rule %r/!\s*important\b/, Comment::Preproc
+        rule %r/^@.*?$/, Comment::Preproc
         mixin :value
       end
     end

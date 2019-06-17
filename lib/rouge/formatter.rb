@@ -94,7 +94,7 @@ module Rouge
 
       out = []
       tokens.each do |tok, val|
-        val.scan /\n|[^\n]+/ do |s|
+        val.scan %r/\n|[^\n]+/ do |s|
           if s == "\n"
             yield out
             out = []

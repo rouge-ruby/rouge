@@ -41,25 +41,25 @@ module Rouge
 
       state :has_irb_output do
         rule %r(=>), Punctuation, :pop!
-        rule /.+?(\n|$)/, Generic::Output
+        rule %r/.+?(\n|$)/, Generic::Output
       end
 
       state :irb_error do
-        rule /.+?(\n|$)/, Generic::Error
+        rule %r/.+?(\n|$)/, Generic::Error
         mixin :has_irb_output
       end
 
       state :stdout do
-        rule /\w+?(Error|Exception):.+?(\n|$)/, Generic::Error, :irb_error
+        rule %r/\w+?(Error|Exception):.+?(\n|$)/, Generic::Error, :irb_error
         mixin :has_irb_output
       end
 
       prepend :root do
-        rule /#</, Keyword::Type, :irb_object
+        rule %r/#</, Keyword::Type, :irb_object
       end
 
       state :irb_object do
-        rule />/, Keyword::Type, :pop!
+        rule %r/>/, Keyword::Type, :pop!
         mixin :root
       end
     end

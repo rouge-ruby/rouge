@@ -16,19 +16,19 @@ module Rouge
       end
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(#.*?$), Comment::Single
         rule %r(/[*]), Comment::Multiline, :multiline_comment
       end
 
       state :primitives do
-        rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?([kKmMgG]b?)?/, Num::Float
-        rule /[0-9]+([kKmMgG]b?)?/, Num::Integer
+        rule %r/[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?([kKmMgG]b?)?/, Num::Float
+        rule %r/[0-9]+([kKmMgG]b?)?/, Num::Integer
 
-        rule /"/, Str::Double, :dq
-        rule /'/, Str::Single, :sq
-        rule /(<<-?)(\s*)(\'?)(\\?)(\w+)(\3)/ do |m|
+        rule %r/"/, Str::Double, :dq
+        rule %r/'/, Str::Single, :sq
+        rule %r/(<<-?)(\s*)(\'?)(\\?)(\w+)(\3)/ do |m|
           groups Operator, Text, Str::Heredoc, Str::Heredoc, Name::Constant, Str::Heredoc
           @heredocstr = Regexp.escape(m[5])
           push :heredoc
@@ -61,11 +61,11 @@ module Rouge
         mixin :comments_and_whitespace
         mixin :primitives
 
-        rule /\{/ do
+        rule %r/\{/ do
           token Punctuation
           push :hash
         end
-        rule /\[/ do
+        rule %r/\[/ do
           token Punctuation
           push :array
         end
@@ -93,13 +93,13 @@ module Rouge
       state :composite do
         mixin :comments_and_whitespace
 
-        rule /[{]/ do
+        rule %r/[{]/ do
           token Punctuation
           pop!
           push :hash
         end
 
-        rule /[\[]/ do
+        rule %r/[\[]/ do
           token Punctuation
           pop!
           push :array
@@ -107,14 +107,14 @@ module Rouge
 
         mixin :root
 
-        rule //, Text, :pop!
+        rule %r//, Text, :pop!
       end
 
       state :hash do
         mixin :comments_and_whitespace
 
-        rule /\=/, Punctuation
-        rule /\}/, Punctuation, :pop!
+        rule %r/\=/, Punctuation
+        rule %r/\}/, Punctuation, :pop!
 
         mixin :root
       end
@@ -122,32 +122,32 @@ module Rouge
       state :array do
         mixin :comments_and_whitespace
 
-        rule /,/, Punctuation
-        rule /\]/, Punctuation, :pop!
+        rule %r/,/, Punctuation
+        rule %r/\]/, Punctuation, :pop!
 
         mixin :root
       end
 
       state :dq do
-        rule /[^\\"]+/, Str::Double
-        rule /\\"/, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule %r/[^\\"]+/, Str::Double
+        rule %r/\\"/, Str::Escape
+        rule %r/"/, Str::Double, :pop!
       end
 
       state :sq do
-        rule /[^\\']+/, Str::Single
-        rule /\\'/, Str::Escape
-        rule /'/, Str::Single, :pop!
+        rule %r/[^\\']+/, Str::Single
+        rule %r/\\'/, Str::Escape
+        rule %r/'/, Str::Single, :pop!
       end
 
       state :heredoc do
-        rule /\n/, Str::Heredoc, :heredoc_nl
-        rule /[^$\n]+/, Str::Heredoc
-        rule /[$]/, Str::Heredoc
+        rule %r/\n/, Str::Heredoc, :heredoc_nl
+        rule %r/[^$\n]+/, Str::Heredoc
+        rule %r/[$]/, Str::Heredoc
       end
 
       state :heredoc_nl do
-        rule /\s*(\w+)\s*\n/ do |m|
+        rule %r/\s*(\w+)\s*\n/ do |m|
           if m[1] == @heredocstr
             token Name::Constant
             pop! 2

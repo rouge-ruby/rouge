@@ -13,10 +13,10 @@ module Rouge
       mimetypes 'text/x-scss'
 
       state :root do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
-        rule /@import\b/, Keyword, :value
+        rule %r/@import\b/, Keyword, :value
 
         mixin :content_common
 
@@ -27,7 +27,7 @@ module Rouge
       end
 
       state :end_section do
-        rule /\n/, Text
+        rule %r/\n/, Text
         rule(/[;{}]/) { token Punctuation; reset_stack }
       end
     end

@@ -19,77 +19,77 @@ module Rouge
       upper_id = /[A-Z][\w-]*/
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
-        rule /#.*?$/, Comment
+        rule %r/\s+/, Text
+        rule %r/#.*?$/, Comment
       end
 
       state :root do
         mixin :comments_and_whitespace
 
-        rule /@#{id}/, Keyword
+        rule %r/@#{id}/, Keyword
 
 
-        rule /(\\#{id})([{])/ do
+        rule %r/(\\#{id})([{])/ do
           groups Name::Function, Str
           push :nested_string
         end
 
-        rule /([+]#{id})([{])/ do
+        rule %r/([+]#{id})([{])/ do
           groups Name::Decorator, Str
           push :nested_string
         end
 
-        rule /\\#{id}/, Name::Function
-        rule /[+]#{id}/, Name::Decorator
+        rule %r/\\#{id}/, Name::Function
+        rule %r/[+]#{id}/, Name::Decorator
 
-        rule /"[{]/, Str, :dqi
-        rule /"/, Str, :dq
+        rule %r/"[{]/, Str, :dqi
+        rule %r/"/, Str, :dq
 
-        rule /'{/, Str, :nested_string
-        rule /'#{id}/, Str
+        rule %r/'{/, Str, :nested_string
+        rule %r/'#{id}/, Str
 
-        rule /[.]#{id}/, Name::Tag
-        rule /[$]#{id}?/, Name::Variable
-        rule /-#{id}:?/, Name::Label
-        rule /%#{id}/, Name::Function
-        rule /`#{id}/, Operator::Word
+        rule %r/[.]#{id}/, Name::Tag
+        rule %r/[$]#{id}?/, Name::Variable
+        rule %r/-#{id}:?/, Name::Label
+        rule %r/%#{id}/, Name::Function
+        rule %r/`#{id}/, Operator::Word
 
-        rule /[?~%._>,!\[\]:{}()=;\/-]/, Punctuation
+        rule %r/[?~%._>,!\[\]:{}()=;\/-]/, Punctuation
 
-        rule /[0-9]+([.][0-9]+)?/, Num
+        rule %r/[0-9]+([.][0-9]+)?/, Num
 
-        rule /#{id}/, Name
+        rule %r/#{id}/, Name
 
-        rule /</, Comment::Preproc, :angle_brackets
+        rule %r/</, Comment::Preproc, :angle_brackets
       end
 
       state :dq do
-        rule /[^\\"]+/, Str
-        rule /"/, Str, :pop!
-        rule /\\./, Str::Escape
+        rule %r/[^\\"]+/, Str
+        rule %r/"/, Str, :pop!
+        rule %r/\\./, Str::Escape
       end
 
       state :dqi do
-        rule /[$][(]/, Str::Interpol, :interp_root
-        rule /[{]/, Str, :dqi
-        rule /[}]/, Str, :pop!
-        rule /[^{}$]+/, Str
-        rule /./, Str
+        rule %r/[$][(]/, Str::Interpol, :interp_root
+        rule %r/[{]/, Str, :dqi
+        rule %r/[}]/, Str, :pop!
+        rule %r/[^{}$]+/, Str
+        rule %r/./, Str
       end
 
       state :interp_root do
-        rule /[)]/, Str::Interpol, :pop!
+        rule %r/[)]/, Str::Interpol, :pop!
         mixin :interp
       end
 
       state :interp do
-        rule /[(]/, Punctuation, :interp
-        rule /[)]/, Punctuation, :pop!
+        rule %r/[(]/, Punctuation, :interp
+        rule %r/[)]/, Punctuation, :pop!
         mixin :root
       end
 
       state :nested_string do
-        rule /\\./, Str::Escape
+        rule %r/\\./, Str::Escape
         rule(/{/) { token Str; push :nested_string }
         rule(/}/) { token Str; pop! }
         rule(/[^{}\\]+/) { token Str }
@@ -97,10 +97,10 @@ module Rouge
 
       state :angle_brackets do
         mixin :comments_and_whitespace
-        rule />/, Comment::Preproc, :pop!
-        rule /[*:]/, Punctuation
-        rule /#{upper_id}/, Keyword::Type
-        rule /#{id}/, Name::Variable
+        rule %r/>/, Comment::Preproc, :pop!
+        rule %r/[*:]/, Punctuation
+        rule %r/#{upper_id}/, Keyword::Type
+        rule %r/#{id}/, Name::Variable
       end
     end
   end

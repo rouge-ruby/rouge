@@ -59,13 +59,13 @@ module Rouge
         rule /include/, Name::Tag, :include
 
         # end of block
-        rule /(end(case|unless|if))(\s*)(%\})/ do
-          groups Keyword::Reserved, nil, Text::Whitespace, Punctuation
+        rule /(end(?:case|unless|if))(\s*)(%\})/ do
+          groups Keyword::Reserved, Text::Whitespace, Punctuation
           pop!
         end
 
-        rule /(end([^\s%]+))(\s*)(%\})/ do
-          groups Name::Tag, nil, Text::Whitespace, Punctuation
+        rule /(end(?:[^\s%]+))(\s*)(%\})/ do
+          groups Name::Tag, Text::Whitespace, Punctuation
           pop!
         end
 
@@ -128,8 +128,8 @@ module Rouge
 
         rule /([=!><]=?)/, Operator
 
-        rule /\b((!)|(not\b))/ do
-          groups nil, Operator, Operator::Word
+        rule /\b(?:(!)|(not\b))/ do
+          groups Operator, Operator::Word
         end
 
         rule /(contains)/, Operator::Word
@@ -145,8 +145,8 @@ module Rouge
       end
 
       state :operator do
-        rule /(\s*)((=|!|>|<)=?)(\s*)/ do
-          groups Text::Whitespace, Operator, nil, Text::Whitespace
+        rule /(\s*)((?:=|!|>|<)=?)(\s*)/ do
+          groups Text::Whitespace, Operator, Text::Whitespace
           pop!
         end
 
@@ -174,7 +174,7 @@ module Rouge
         end
 
         rule /(\{\{)(\s*)([^\s\}])(\s*)(\}\})/ do
-          groups Punctuation, Text::Whitespace, nil, Text::Whitespace, Punctuation
+          groups Punctuation, Text::Whitespace, Text, Text::Whitespace, Punctuation
         end
 
         mixin :number

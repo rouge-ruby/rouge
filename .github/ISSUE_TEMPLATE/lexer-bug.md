@@ -10,10 +10,10 @@ assignees: ''
 **Name of the lexer**
 The name of the lexer with the bug.
 
-**Online Example**
+**Online example**
 A link to an example on <http://rouge.jneen.net/>
 
-**Code Sample**
+**Code sample**
 A sample of the code that produces the bug.
 
 ```

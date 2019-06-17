@@ -22,5 +22,5 @@ matrix:
       script: bundle exec rake profile_memory
     - rvm   : *latest_ruby
       name  : Interpreter Warnings Test
-      env   : RUBY_WARNINGS_ENABLED=true
+      env   : RUBYOPT=-w
       script: bundle exec rake

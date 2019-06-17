@@ -19,50 +19,50 @@ module Rouge
       command = /\\([a-z]+|\s+|.)/i
 
       state :general do
-        rule /%.*$/, Comment
-        rule /[{}&_^]/, Punctuation
+        rule %r/%.*$/, Comment
+        rule %r/[{}&_^]/, Punctuation
       end
 
       state :root do
-        rule /\\\[/, Punctuation, :displaymath
-        rule /\\\(/, Punctuation, :inlinemath
-        rule /\$\$/, Punctuation, :displaymath
-        rule /\$/, Punctuation, :inlinemath
-        rule /\\(begin|end)\{.*?\}/, Name::Tag
+        rule %r/\\\[/, Punctuation, :displaymath
+        rule %r/\\\(/, Punctuation, :inlinemath
+        rule %r/\$\$/, Punctuation, :displaymath
+        rule %r/\$/, Punctuation, :inlinemath
+        rule %r/\\(begin|end)\{.*?\}/, Name::Tag
 
-        rule /(\\verb)\b(\S)(.*?)(\2)/ do |m|
+        rule %r/(\\verb)\b(\S)(.*?)(\2)/ do |m|
           groups Name::Builtin, Keyword::Pseudo, Str::Other, Keyword::Pseudo
         end
 
         rule command, Keyword, :command
         mixin :general
-        rule /[^\\$%&_^{}]+/, Text
+        rule %r/[^\\$%&_^{}]+/, Text
       end
 
       state :math do
         rule command, Name::Variable
         mixin :general
-        rule /[0-9]+/, Num
-        rule /[-=!+*\/()\[\]]/, Operator
-        rule /[^=!+*\/()\[\]\\$%&_^{}0-9-]+/, Name::Builtin
+        rule %r/[0-9]+/, Num
+        rule %r/[-=!+*\/()\[\]]/, Operator
+        rule %r/[^=!+*\/()\[\]\\$%&_^{}0-9-]+/, Name::Builtin
       end
 
       state :inlinemath do
-        rule /\\\)/, Punctuation, :pop!
-        rule /\$/, Punctuation, :pop!
+        rule %r/\\\)/, Punctuation, :pop!
+        rule %r/\$/, Punctuation, :pop!
         mixin :math
       end
 
       state :displaymath do
-        rule /\\\]/, Punctuation, :pop!
-        rule /\$\$/, Punctuation, :pop!
-        rule /\$/, Name::Builtin
+        rule %r/\\\]/, Punctuation, :pop!
+        rule %r/\$\$/, Punctuation, :pop!
+        rule %r/\$/, Name::Builtin
         mixin :math
       end
 
       state :command do
-        rule /\[.*?\]/, Name::Attribute
-        rule /\*/, Keyword
+        rule %r/\[.*?\]/, Name::Attribute
+        rule %r/\*/, Keyword
         rule(//) { pop! }
       end
     end

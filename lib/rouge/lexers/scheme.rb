@@ -61,33 +61,33 @@ module Rouge
 
       state :root do
         # comments
-        rule /;.*$/, Comment::Single
-        rule /\s+/m, Text
-        rule /-?\d+\.\d+/, Num::Float
-        rule /-?\d+/, Num::Integer
+        rule %r/;.*$/, Comment::Single
+        rule %r/\s+/m, Text
+        rule %r/-?\d+\.\d+/, Num::Float
+        rule %r/-?\d+/, Num::Integer
 
         # Racket infinitites
-        rule /[+-]inf[.][f0]/, Num
+        rule %r/[+-]inf[.][f0]/, Num
 
-        rule /#b[01]+/, Num::Bin
-        rule /#o[0-7]+/, Num::Oct
-        rule /#d[0-9]+/, Num::Integer
-        rule /#x[0-9a-f]+/i, Num::Hex
-        rule /#[ei][\d.]+/, Num::Other
+        rule %r/#b[01]+/, Num::Bin
+        rule %r/#o[0-7]+/, Num::Oct
+        rule %r/#d[0-9]+/, Num::Integer
+        rule %r/#x[0-9a-f]+/i, Num::Hex
+        rule %r/#[ei][\d.]+/, Num::Other
 
-        rule /"(\\\\|\\"|[^"])*"/, Str
-        rule /'#{id}/i, Str::Symbol
-        rule /#\\([()\/'"._!\$%& ?=+-]{1}|[a-z0-9]+)/i,
+        rule %r/"(\\\\|\\"|[^"])*"/, Str
+        rule %r/'#{id}/i, Str::Symbol
+        rule %r/#\\([()\/'"._!\$%& ?=+-]{1}|[a-z0-9]+)/i,
           Str::Char
-        rule /#t|#f/, Name::Constant
-        rule /(?:'|#|`|,@|,|\.)/, Operator
+        rule %r/#t|#f/, Name::Constant
+        rule %r/(?:'|#|`|,@|,|\.)/, Operator
 
-        rule /(['#])(\s*)(\()/m do
+        rule %r/(['#])(\s*)(\()/m do
           groups Str::Symbol, Text, Punctuation
         end
 
-        rule /\(|\[/, Punctuation, :command
-        rule /\)|\]/, Punctuation
+        rule %r/\(|\[/, Punctuation, :command
+        rule %r/\)|\]/, Punctuation
 
         rule id, Name::Variable
       end

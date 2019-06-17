@@ -47,7 +47,7 @@ module Rouge
       end
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(#.*?$), Comment::Single
       end
 
@@ -57,7 +57,7 @@ module Rouge
           token Str::Regex
           goto :regex
         end
-        rule //, Text, :pop!
+        rule %r//, Text, :pop!
       end
 
       state :regex do
@@ -68,14 +68,14 @@ module Rouge
 
         rule %r([^/]\n), Error, :pop!
 
-        rule /\n/, Error, :pop!
-        rule /\[\^/, Str::Escape, :regex_group
-        rule /\[/, Str::Escape, :regex_group
-        rule /\\./, Str::Escape
+        rule %r/\n/, Error, :pop!
+        rule %r/\[\^/, Str::Escape, :regex_group
+        rule %r/\[/, Str::Escape, :regex_group
+        rule %r/\\./, Str::Escape
         rule %r{[(][?][:=<!]}, Str::Escape
-        rule /[{][\d,]+[}]/, Str::Escape
-        rule /[()?]/, Str::Escape
-        rule /./, Str::Regex
+        rule %r/[{][\d,]+[}]/, Str::Escape
+        rule %r/[()?]/, Str::Escape
+        rule %r/./, Str::Regex
       end
 
       state :regex_end do
@@ -85,20 +85,20 @@ module Rouge
       state :regex_group do
         # specially highlight / in a group to indicate that it doesn't
         # close the regex
-        rule /\//, Str::Escape
+        rule %r(/), Str::Escape
 
         rule %r([^/]\n) do
           token Error
           pop! 2
         end
 
-        rule /\]/, Str::Escape, :pop!
-        rule /\\./, Str::Escape
-        rule /./, Str::Regex
+        rule %r/\]/, Str::Escape, :pop!
+        rule %r/\\./, Str::Escape
+        rule %r/./, Str::Regex
       end
 
       state :bad_regex do
-        rule /[^\n]+/, Error, :pop!
+        rule %r/[^\n]+/, Error, :pop!
       end
 
       state :root do
@@ -106,17 +106,17 @@ module Rouge
         rule %r((?<=\n)(?=\s|/)), Text, :expr_start
         rule %r([-<>+*/%\^!=]=?|in\b|\+\+|--|\|), Operator, :expr_start
         rule %r(&&|\|\||~!?), Operator, :expr_start
-        rule /[(\[,]/, Punctuation, :expr_start
-        rule /;/, Punctuation, :statement
-        rule /[)\].]/, Punctuation
+        rule %r/[(\[,]/, Punctuation, :expr_start
+        rule %r/;/, Punctuation, :statement
+        rule %r/[)\].]/, Punctuation
 
-        rule /[?]/ do
+        rule %r/[?]/ do
           token Punctuation
           push :ternary
           push :expr_start
         end
 
-        rule /[{}]/, Punctuation, :statement
+        rule %r/[{}]/, Punctuation, :statement
 
         rule id do |m|
           if self.class.keywords.include? m[0]
@@ -138,19 +138,19 @@ module Rouge
           end
         end
 
-        rule /[0-9]+\.[0-9]+/, Num::Float
-        rule /[0-9]+/, Num::Integer
-        rule /"(\\[\\"]|[^"])*"/, Str::Double
-        rule /:/, Punctuation
+        rule %r/[0-9]+\.[0-9]+/, Num::Float
+        rule %r/[0-9]+/, Num::Integer
+        rule %r/"(\\[\\"]|[^"])*"/, Str::Double
+        rule %r/:/, Punctuation
       end
 
       state :statement do
-        rule /[{}]/, Punctuation
+        rule %r/[{}]/, Punctuation
         mixin :expr_start
       end
 
       state :ternary do
-        rule /:/ do
+        rule %r/:/ do
           token Punctuation
           goto :expr_start
         end

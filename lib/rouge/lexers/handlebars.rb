@@ -18,10 +18,10 @@ module Rouge
         rule(/\\{+/) { delegate parent }
 
         # block comments
-        rule /{{!--/, Comment, :comment
-        rule /{{!.*?}}/, Comment
+        rule %r/{{!--/, Comment, :comment
+        rule %r/{{!.*?}}/, Comment
 
-        rule /{{{?/ do
+        rule %r/{{{?/ do
           token Keyword
           push :stache
           push :open_sym
@@ -42,20 +42,20 @@ module Rouge
       end
 
       state :stache do
-        rule /}}}?/, Keyword, :pop!
-        rule /\s+/m, Text
-        rule /[=]/, Operator
-        rule /[\[\]]/, Punctuation
-        rule /[.](?=[}\s])/, Name::Variable
-        rule /[.][.]/, Name::Variable
+        rule %r/}}}?/, Keyword, :pop!
+        rule %r/\s+/m, Text
+        rule %r/[=]/, Operator
+        rule %r/[\[\]]/, Punctuation
+        rule %r/[.](?=[}\s])/, Name::Variable
+        rule %r/[.][.]/, Name::Variable
         rule %r([/.]), Punctuation
-        rule /"(\\.|.)*?"/, Str::Double
-        rule /'(\\.|.)*?'/, Str::Single
-        rule /\d+(?=}\s)/, Num
-        rule /(true|false)(?=[}\s])/, Keyword::Constant
-        rule /else(?=[}\s])/, Keyword
-        rule /this(?=[}\s])/, Name::Builtin::Pseudo
-        rule /@#{id}/, Name::Attribute
+        rule %r/"(\\.|.)*?"/, Str::Double
+        rule %r/'(\\.|.)*?'/, Str::Single
+        rule %r/\d+(?=}\s)/, Num
+        rule %r/(true|false)(?=[}\s])/, Keyword::Constant
+        rule %r/else(?=[}\s])/, Keyword
+        rule %r/this(?=[}\s])/, Name::Builtin::Pseudo
+        rule %r/@#{id}/, Name::Attribute
         rule id, Name::Variable
       end
 
@@ -65,13 +65,13 @@ module Rouge
           goto :block_name
         end
 
-        rule /[>^&]/, Keyword
+        rule %r/[>^&]/, Keyword
 
         rule(//) { pop! }
       end
 
       state :block_name do
-        rule /if(?=[}\s])/, Keyword
+        rule %r/if(?=[}\s])/, Keyword
         rule id, Name::Namespace, :pop!
         rule(//) { pop! }
       end

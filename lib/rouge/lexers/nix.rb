@@ -11,34 +11,34 @@ module Rouge
       filenames '*.nix'
 
       state :whitespaces do
-        rule /^\s*\n\s*$/m, Text
-        rule /\s+/, Text
+        rule %r/^\s*\n\s*$/m, Text
+        rule %r/\s+/, Text
       end
 
       state :comment do
-        rule /#.*$/, Comment
-        rule /\/\*/, Comment, :multiline_comment
+        rule %r/#.*$/, Comment
+        rule %r(/\*), Comment, :multiline_comment
       end
 
       state :multiline_comment do
-        rule /\*\//, Comment, :pop!
-        rule /./, Comment
+        rule %r(\*/), Comment, :pop!
+        rule %r/./, Comment
       end
 
       state :number do
-        rule /[0-9]/, Num::Integer
+        rule %r/[0-9]/, Num::Integer
       end
 
       state :null do
-        rule /(null)/, Keyword::Constant
+        rule %r/(null)/, Keyword::Constant
       end
 
       state :boolean do
-        rule /(true|false)/, Keyword::Constant
+        rule %r/(true|false)/, Keyword::Constant
       end
 
       state :binding do
-        rule /[a-zA-Z_][a-zA-Z0-9-]*/, Name::Variable
+        rule %r/[a-zA-Z_][a-zA-Z0-9-]*/, Name::Variable
       end
 
       state :path do
@@ -49,86 +49,86 @@ module Rouge
         tilde = /~#{section}+/.source
         basic = /#{word}(\/#{word})+/.source
         url = /#{prefix}(\/?#{basic})/.source
-        rule /(#{root}|#{tilde}|#{basic}|#{url})/, Str::Other
+        rule %r/(#{root}|#{tilde}|#{basic}|#{url})/, Str::Other
       end
 
       state :string do
-        rule /"/, Str::Double, :double_quoted_string
-        rule /''/, Str::Double, :indented_string
+        rule %r/"/, Str::Double, :double_quoted_string
+        rule %r/''/, Str::Double, :indented_string
       end
 
       state :string_content do
-        rule /\\./, Str::Escape
-        rule /\$\$/, Str::Escape
-        rule /\${/, Str::Interpol, :string_interpolated_arg
+        rule %r/\\./, Str::Escape
+        rule %r/\$\$/, Str::Escape
+        rule %r/\${/, Str::Interpol, :string_interpolated_arg
       end
 
       state :indented_string_content do
-        rule /'''/, Str::Escape
-        rule /''\$/, Str::Escape
-        rule /\$\$/, Str::Escape
-        rule /''\\./, Str::Escape
-        rule /\${/, Str::Interpol, :string_interpolated_arg
+        rule %r/'''/, Str::Escape
+        rule %r/''\$/, Str::Escape
+        rule %r/\$\$/, Str::Escape
+        rule %r/''\\./, Str::Escape
+        rule %r/\${/, Str::Interpol, :string_interpolated_arg
       end
 
       state :string_interpolated_arg do
         mixin :expression
-        rule /}/, Str::Interpol, :pop!
+        rule %r/}/, Str::Interpol, :pop!
       end
 
       state :indented_string do
         mixin :indented_string_content
-        rule /''/, Str::Double, :pop!
-        rule /./, Str::Double
+        rule %r/''/, Str::Double, :pop!
+        rule %r/./, Str::Double
       end
 
       state :double_quoted_string do
         mixin :string_content
-        rule /"/, Str::Double, :pop!
-        rule /./, Str::Double
+        rule %r/"/, Str::Double, :pop!
+        rule %r/./, Str::Double
       end
 
       state :operator do
-        rule /(\.|\?|\+\+|\+|!=|!|\/\/|\=\=|&&|\|\||->|\/|\*|-|<|>|<=|=>)/, Operator
+        rule %r/(\.|\?|\+\+|\+|!=|!|\/\/|\=\=|&&|\|\||->|\/|\*|-|<|>|<=|=>)/, Operator
       end
 
       state :assignment do
-        rule /(=)/, Operator
-        rule /(@)/, Operator
+        rule %r/(=)/, Operator
+        rule %r/(@)/, Operator
       end
 
       state :accessor do
-        rule /(\$)/, Punctuation
+        rule %r/(\$)/, Punctuation
       end
 
       state :delimiter do
-        rule /(;|,|:)/, Punctuation
+        rule %r/(;|,|:)/, Punctuation
       end
 
       state :atom_content do
         mixin :expression
-        rule /\)/, Punctuation, :pop!
+        rule %r/\)/, Punctuation, :pop!
       end
 
       state :atom do
-        rule /\(/, Punctuation, :atom_content
+        rule %r/\(/, Punctuation, :atom_content
       end
 
       state :list do
-        rule /\[/, Punctuation, :list_content
+        rule %r/\[/, Punctuation, :list_content
       end
 
       state :list_content do
-        rule /\]/, Punctuation, :pop!
+        rule %r/\]/, Punctuation, :pop!
         mixin :expression
       end
 
       state :set do
-        rule /{/, Punctuation, :set_content
+        rule %r/{/, Punctuation, :set_content
       end
 
       state :set_content do
-        rule /}/, Punctuation, :pop!
+        rule %r/}/, Punctuation, :pop!
         mixin :expression
       end
       
@@ -161,22 +161,22 @@ module Rouge
 
       state :keywords_namespace do
         keywords = %w(with in inherit)
-        rule /(?:#{keywords.join('|')})\b/, Keyword::Namespace
+        rule %r/(?:#{keywords.join('|')})\b/, Keyword::Namespace
       end
 
       state :keywords_declaration do
         keywords = %w(let)
-        rule /(?:#{keywords.join('|')})\b/, Keyword::Declaration
+        rule %r/(?:#{keywords.join('|')})\b/, Keyword::Declaration
       end
 
       state :keywords_conditional do
         keywords = %w(if then else)
-        rule /(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/(?:#{keywords.join('|')})\b/, Keyword
       end
 
       state :keywords_reserved do
         keywords = %w(rec assert map)
-        rule /(?:#{keywords.join('|')})\b/, Keyword::Reserved
+        rule %r/(?:#{keywords.join('|')})\b/, Keyword::Reserved
       end
 
       state :keywords_builtin do
@@ -192,7 +192,7 @@ module Rouge
           throw
           toString
         )
-        rule /(?:#{keywords.join('|')})\b/, Keyword::Reserved
+        rule %r/(?:#{keywords.join('|')})\b/, Keyword::Reserved
       end
 
       state :ignore do

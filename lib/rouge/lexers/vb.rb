@@ -54,16 +54,16 @@ module Rouge
       upper_id = /[A-Z]\w*/
 
       state :whitespace do
-        rule /\s+/, Text
-        rule /\n/, Text, :bol
-        rule /rem\b.*?$/i, Comment::Single
+        rule %r/\s+/, Text
+        rule %r/\n/, Text, :bol
+        rule %r/rem\b.*?$/i, Comment::Single
         rule %r(%\{.*?%\})m, Comment::Multiline
-        rule /'.*$/, Comment::Single
+        rule %r/'.*$/, Comment::Single
       end
 
       state :bol do
-        rule /\s+/, Text
-        rule /<.*?>/, Name::Attribute
+        rule %r/\s+/, Text
+        rule %r/<.*?>/, Name::Attribute
         rule(//) { :pop! }
       end
 
@@ -80,15 +80,15 @@ module Rouge
           | [#]End \s+ Region
           | [#]ExternalChecksum
         )x, Comment::Preproc
-        rule /[.]/, Punctuation, :dotted
-        rule /[(){}!#,:]/, Punctuation
-        rule /Option\s+(Strict|Explicit|Compare)\s+(On|Off|Binary|Text)/,
+        rule %r/[.]/, Punctuation, :dotted
+        rule %r/[(){}!#,:]/, Punctuation
+        rule %r/Option\s+(Strict|Explicit|Compare)\s+(On|Off|Binary|Text)/,
           Keyword::Declaration
-        rule /End\b/, Keyword, :end
-        rule /(Dim|Const)\b/, Keyword, :dim
-        rule /(Function|Sub|Property)\b/, Keyword, :funcname
-        rule /(Class|Structure|Enum)\b/, Keyword, :classname
-        rule /(Module|Namespace|Imports)\b/, Keyword, :namespace
+        rule %r/End\b/, Keyword, :end
+        rule %r/(Dim|Const)\b/, Keyword, :dim
+        rule %r/(Function|Sub|Property)\b/, Keyword, :funcname
+        rule %r/(Class|Structure|Enum)\b/, Keyword, :classname
+        rule %r/(Module|Namespace|Imports)\b/, Keyword, :namespace
 
         rule upper_id do |m|
           match = m[0]
@@ -110,16 +110,16 @@ module Rouge
           Operator
         )
 
-        rule /"/, Str, :string
-        rule /#{id}[%&@!#\$]?/, Name
-        rule /#.*?#/, Literal::Date
+        rule %r/"/, Str, :string
+        rule %r/#{id}[%&@!#\$]?/, Name
+        rule %r/#.*?#/, Literal::Date
 
-        rule /(\d+\.\d*|\d*\.\d+)(f[+-]?\d+)?/i, Num::Float
-        rule /\d+([SILDFR]|US|UI|UL)?/, Num::Integer
-        rule /&H[0-9a-f]+([SILDFR]|US|UI|UL)?/, Num::Integer
-        rule /&O[0-7]+([SILDFR]|US|UI|UL)?/, Num::Integer
+        rule %r/(\d+\.\d*|\d*\.\d+)(f[+-]?\d+)?/i, Num::Float
+        rule %r/\d+([SILDFR]|US|UI|UL)?/, Num::Integer
+        rule %r/&H[0-9a-f]+([SILDFR]|US|UI|UL)?/, Num::Integer
+        rule %r/&O[0-7]+([SILDFR]|US|UI|UL)?/, Num::Integer
 
-        rule /_\n/, Keyword
+        rule %r/_\n/, Keyword
       end
 
       state :dotted do
@@ -128,9 +128,9 @@ module Rouge
       end
 
       state :string do
-        rule /""/, Str::Escape
-        rule /"C?/, Str, :pop!
-        rule /[^"]+/, Str
+        rule %r/""/, Str::Escape
+        rule %r/"C?/, Str, :pop!
+        rule %r/[^"]+/, Str
       end
 
       state :dim do
@@ -151,12 +151,12 @@ module Rouge
 
       state :namespace do
         mixin :whitespace
-        rule /#{id}([.]#{id})*/, Name::Namespace, :pop!
+        rule %r/#{id}([.]#{id})*/, Name::Namespace, :pop!
       end
 
       state :end do
         mixin :whitespace
-        rule /(Function|Sub|Property|Class|Structure|Enum|Module|Namespace)\b/,
+        rule %r/(Function|Sub|Property|Class|Structure|Enum|Module|Namespace)\b/,
           Keyword, :pop!
         rule(//) { pop! }
       end

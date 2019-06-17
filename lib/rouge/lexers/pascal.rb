@@ -40,7 +40,7 @@ module Rouge
 
       state :whitespace do
         # Spaces
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         # // Comments
         rule %r((//).*$\n?), Comment::Single
         # -- Comments
@@ -57,9 +57,9 @@ module Rouge
         rule %r{((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?}, Num
         rule %r{[~!@#\$%\^&\*\(\)\+`\-={}\[\]:;<>\?,\.\/\|\\]}, Punctuation
         rule %r{'([^']|'')*'}, Str
-        rule /(true|false|nil)\b/i, Name::Builtin
-        rule /\b(#{keywords.join('|')})\b/i, Keyword
-        rule /\b(#{keywords_type.join('|')})\b/i, Keyword::Type
+        rule %r/(true|false|nil)\b/i, Name::Builtin
+        rule %r/\b(#{keywords.join('|')})\b/i, Keyword
+        rule %r/\b(#{keywords_type.join('|')})\b/i, Keyword::Type
         rule id, Name
       end
     end

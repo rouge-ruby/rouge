@@ -57,23 +57,23 @@ module Rouge
       end
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(#.*?\n), Comment::Single
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
       end
 
       state :string do
-        rule /\\./, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule %r/\\./, Str::Escape
+        rule %r/"/, Str::Double, :pop!
         # Variables Extension (rfc5229)
-        rule /\${(?:[0-9][.0-9]*|[a-zA-Z_][.a-zA-Z0-9_]*)}/, Str::Interpol
-        rule /./, Str::Double
+        rule %r/\${(?:[0-9][.0-9]*|[a-zA-Z_][.a-zA-Z0-9_]*)}/, Str::Interpol
+        rule %r/./, Str::Double
       end
 
       state :root do
         mixin :comments_and_whitespace
 
-        rule /[\[\](),;{}]/, Punctuation
+        rule %r/[\[\](),;{}]/, Punctuation
 
         rule id do |m|
           if self.class.controls.include? m[0]
@@ -89,8 +89,8 @@ module Rouge
           end
         end
 
-        rule /"/, Str::Double, :string
-        rule /[0-9]+[KMG]/, Num::Integer
+        rule %r/"/, Str::Double, :string
+        rule %r/[0-9]+[KMG]/, Num::Integer
       end
     end
   end

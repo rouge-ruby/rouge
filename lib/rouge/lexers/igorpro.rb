@@ -521,7 +521,7 @@ module Rouge
       state :root do
         rule %r(//), Comment, :comments
 
-        rule /#{object}/ do |m|
+        rule %r/#{object}/ do |m|
           if m[0].downcase =~ /function/
             token Keyword::Declaration
             push :parse_function
@@ -567,22 +567,22 @@ module Rouge
 
       state :assignment do
         mixin :whitespace
-        rule /\"/, Literal::String::Double, :string1 #punctuation for string
+        rule %r/\"/, Literal::String::Double, :string1 #punctuation for string
         mixin :string2
-        rule /#{number_float}/, Literal::Number::Float, :pop!
-        rule /#{number_int}/, Literal::Number::Integer, :pop!
-        rule /[\(\[\{][^\)\]\}]+[\)\]\}]/, Generic, :pop!
-        rule /[^\s\/\(]+/, Generic, :pop!
+        rule %r/#{number_float}/, Literal::Number::Float, :pop!
+        rule %r/#{number_int}/, Literal::Number::Integer, :pop!
+        rule %r/[\(\[\{][^\)\]\}]+[\)\]\}]/, Generic, :pop!
+        rule %r/[^\s\/\(]+/, Generic, :pop!
         rule(//) { pop! }
       end
 
       state :parse_variables do
         mixin :whitespace
-        rule /[=]/, Punctuation, :assignment
+        rule %r/[=]/, Punctuation, :assignment
         rule object, Name::Variable
-        rule /[\[\]]/, Punctuation # optional variables in functions
-        rule /[,]/, Punctuation, :parse_variables
-        rule /\)/, Punctuation, :pop! # end of function
+        rule %r/[\[\]]/, Punctuation # optional variables in functions
+        rule %r/[,]/, Punctuation, :parse_variables
+        rule %r/\)/, Punctuation, :pop! # end of function
         rule %r([/][a-z]+)i, Keyword::Pseudo, :parse_variables
         rule(//) { pop! }
       end
@@ -591,15 +591,15 @@ module Rouge
         rule %r([/][a-z]+)i, Keyword::Pseudo # only one flag
         mixin :whitespace
         rule object, Name::Function
-        rule /[\(]/, Punctuation, :parse_variables
+        rule %r/[\(]/, Punctuation, :parse_variables
         rule(//) { pop! }
       end
 
       state :operationFlags do
-        rule /#{noLineBreak}/, Text
-        rule /[=]/, Punctuation, :assignment
+        rule %r/#{noLineBreak}/, Text
+        rule %r/[=]/, Punctuation, :assignment
         rule %r([/][a-z]+)i, Keyword::Pseudo, :operationFlags
-        rule /(as)(\s*)(#{object})/i do
+        rule %r/(as)(\s*)(#{object})/i do
           groups Keyword::Type, Text, Name::Label
         end
         rule(//) { pop! }
@@ -621,34 +621,34 @@ module Rouge
       end
 
       state :characters do
-        rule /\s/, Text
-        rule /#{operator}/, Operator
-        rule /#{punctuation}/, Punctuation
-        rule /\"/, Literal::String::Double, :string1 #punctuation for string
+        rule %r/\s/, Text
+        rule %r/#{operator}/, Operator
+        rule %r/#{punctuation}/, Punctuation
+        rule %r/\"/, Literal::String::Double, :string1 #punctuation for string
         mixin :string2
       end
 
       state :numbers do
-        rule /#{number_float}/, Literal::Number::Float
-        rule /#{number_hex}/, Literal::Number::Hex
-        rule /#{number_int}/, Literal::Number::Integer
+        rule %r/#{number_float}/, Literal::Number::Float
+        rule %r/#{number_hex}/, Literal::Number::Hex
+        rule %r/#{number_int}/, Literal::Number::Integer
       end
 
       state :whitespace do
-        rule /#{noLineBreak}/, Text
+        rule %r/#{noLineBreak}/, Text
       end
 
       state :string1 do
-        rule /%\w\b/, Literal::String::Other
-        rule /\\\\/, Literal::String::Escape
-        rule /\\\"/, Literal::String::Escape
-        rule /\\/, Literal::String::Escape
-        rule /[^"]/, Literal::String
-        rule /\"/, Literal::String::Double, :pop! #punctuation for string
+        rule %r/%\w\b/, Literal::String::Other
+        rule %r/\\\\/, Literal::String::Escape
+        rule %r/\\\"/, Literal::String::Escape
+        rule %r/\\/, Literal::String::Escape
+        rule %r/[^"]/, Literal::String
+        rule %r/\"/, Literal::String::Double, :pop! #punctuation for string
       end
 
       state :string2 do
-        rule /\'[^']*\'/, Literal::String::Single
+        rule %r/\'[^']*\'/, Literal::String::Single
       end
 
       state :comments do
@@ -656,7 +656,7 @@ module Rouge
           # doxygen comments
           groups Comment, Comment::Special
         end
-        rule /[^\r\n]/, Comment
+        rule %r/[^\r\n]/, Comment
         rule(//) { pop! }
       end
     end

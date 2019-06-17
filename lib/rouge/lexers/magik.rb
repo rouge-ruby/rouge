@@ -86,15 +86,15 @@ module Rouge
       end
 
       state :root do
-        rule /##(.*)?/, Comment::Doc
-        rule /#(.*)?/, Comment::Single
+        rule %r/##(.*)?/, Comment::Doc
+        rule %r/#(.*)?/, Comment::Single
 
-        rule /(_method)(\s+)/ do
+        rule %r/(_method)(\s+)/ do
           groups Keyword, Text::Whitespace
           push :method_name
         end
 
-        rule /(?:#{Magik.keywords.join('|')})\b/, Keyword
+        rule %r/(?:#{Magik.keywords.join('|')})\b/, Keyword
 
         rule Magik.string_double, Literal::String
         rule Magik.string_single, Literal::String
@@ -106,17 +106,17 @@ module Rouge
         rule Magik.package_identifier, Name
         rule Magik.identifier, Name
 
-        rule /[\[\]{}()\.,;]/, Punctuation
-        rule /\$/, Punctuation
-        rule /(<<|^<<)/, Operator
-        rule /(>>)/, Operator
-        rule /[-~+\/*%=&^<>]|!=/, Operator
+        rule %r/[\[\]{}()\.,;]/, Punctuation
+        rule %r/\$/, Punctuation
+        rule %r/(<<|^<<)/, Operator
+        rule %r/(>>)/, Operator
+        rule %r/[-~+\/*%=&^<>]|!=/, Operator
 
-        rule /[\s]+/, Text::Whitespace
+        rule %r/[\s]+/, Text::Whitespace
       end
 
       state :method_name do
-        rule /(#{Magik.identifier})(\.)(#{Magik.identifier})/ do
+        rule %r/(#{Magik.identifier})(\.)(#{Magik.identifier})/ do
           groups Name::Class, Punctuation, Name::Function
           pop!
         end

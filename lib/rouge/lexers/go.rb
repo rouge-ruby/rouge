@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -148,7 +149,7 @@ module Rouge
         rule(OPERATOR,              Operator)
         rule(SEPARATOR,             Punctuation)
         rule(IDENTIFIER,            Name)
-        rule(WHITE_SPACE,           Other)
+        rule(WHITE_SPACE,           Text)
       end
 
       state :root do

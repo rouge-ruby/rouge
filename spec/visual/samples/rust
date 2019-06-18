@@ -18,6 +18,11 @@ fn main() {
 
 let mut f = File::open("username.txt")?;
 
+println!("a\\");
+println!("a\n");
+println!("a\"b");
+println!("a\'");
+
 debug!("test %?", a.b);
 debug!("test %u", a.c);
 debug!("test %i", a.d);

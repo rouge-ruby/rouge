@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -81,7 +82,7 @@ module Rouge
 
       state :expr_bol do
         mixin :inline_whitespace
-        rule /`define/, Comment::Preproc, :macro
+        rule %r/`define/, Comment::Preproc, :macro
 
         rule(//) { pop! }
       end
@@ -89,47 +90,47 @@ module Rouge
       # :expr_bol is the same as :bol but without labels, since
       # labels can only appear at the beginning of a statement.
       state :bol do
-        rule /#{id}:(?!:)/, Name::Label
+        rule %r/#{id}:(?!:)/, Name::Label
         mixin :expr_bol
       end
 
       state :inline_whitespace do
-        rule /[ \t\r]+/, Text
-        rule /\\\n/, Text # line continuation
+        rule %r/[ \t\r]+/, Text
+        rule %r/\\\n/, Text # line continuation
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
       end
 
       state :whitespace do
-        rule /\n+/m, Text, :bol
+        rule %r/\n+/m, Text, :bol
         rule %r(//(\\.|.)*?\n), Comment::Single, :bol
         mixin :inline_whitespace
       end
 
       state :expr_whitespace do
-        rule /\n+/m, Text, :expr_bol
+        rule %r/\n+/m, Text, :expr_bol
         mixin :whitespace
       end
 
       state :string do
-        rule /"/, Str, :pop!
-        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
-        rule /[^\\"\n]+/, Str
-        rule /\\\n/, Str
-        rule /\\/, Str # stray backslash
+        rule %r/"/, Str, :pop!
+        rule %r/\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
+        rule %r/[^\\"\n]+/, Str
+        rule %r/\\\n/, Str
+        rule %r/\\/, Str # stray backslash
       end
 
       state :statement do
         mixin :whitespace
-        rule /L?"/, Str, :string
-        rule /([0-9_]+\.[0-9_]*|[0-9_]*\.[0-9_]+)(e[+-]?[0-9_]+)?/i, Num::Float
-        rule /[0-9_]+e[+-]?[0-9_]+/i, Num::Float
-        rule /[0-9]*'h[0-9a-fA-F_?]+/, Num::Hex
-        rule /[0-9]*'b?[01xz_?]+/, Num::Bin
-        rule /[0-9]*'d[0-9_?]+/, Num::Integer
-        rule /[0-9_]+[lu]*/i, Num::Integer
+        rule %r/L?"/, Str, :string
+        rule %r/([0-9_]+\.[0-9_]*|[0-9_]*\.[0-9_]+)(e[+-]?[0-9_]+)?/i, Num::Float
+        rule %r/[0-9_]+e[+-]?[0-9_]+/i, Num::Float
+        rule %r/[0-9]*'h[0-9a-fA-F_?]+/, Num::Hex
+        rule %r/[0-9]*'b?[01xz_?]+/, Num::Bin
+        rule %r/[0-9]*'d[0-9_?]+/, Num::Integer
+        rule %r/[0-9_]+[lu]*/i, Num::Integer
         rule %r([~!%^&*+-=\|?:<>/@{}]), Operator
-        rule /[()\[\],.$\#]/, Punctuation
-        rule /`(\w+)/, Comment::Preproc
+        rule %r/[()\[\],.$\#]/, Punctuation
+        rule %r/`(\w+)/, Comment::Preproc
 
         rule id do |m|
           name = m[0]
@@ -152,11 +153,11 @@ module Rouge
       end
 
       state :macro do
-        rule /\n/, Comment::Preproc, :pop!
+        rule %r/\n/, Comment::Preproc, :pop!
         mixin :inline_whitespace
-        rule /;/, Punctuation
-        rule /\=/, Operator
-        rule /(\w+)/, Text
+        rule %r/;/, Punctuation
+        rule %r/\=/, Operator
+        rule %r/(\w+)/, Text
       end
 
     end

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::Scala do
   let(:subject) { Rouge::Lexers::Scala.new }

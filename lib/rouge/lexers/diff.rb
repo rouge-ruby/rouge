@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rouge
   module Lexers
     class Diff < RegexLexer
@@ -17,14 +19,18 @@ module Rouge
 
       state :root do
         rule(/^ .*$\n?/, Text)
-        rule(/^---$\n?/, Text)
+        rule(/^---$\n?/, Punctuation)
+        rule(/^[+>]+.*$\n?/, Generic::Inserted)
         rule(/^\+.*$\n?/, Generic::Inserted)
-        rule(/^-+.*$\n?/, Generic::Deleted)
+        rule(/^[-<]+.*$\n?/, Generic::Deleted)
         rule(/^!.*$\n?/, Generic::Strong)
-        rule(/^@.*$\n?/, Generic::Subheading)
         rule(/^([Ii]ndex|diff).*$\n?/, Generic::Heading)
+        rule(/^(@@[^@]*@@)([^\n]*\n)/) do
+          groups Punctuation, Text
+        end
+        rule(/^\w.*$\n?/, Punctuation)
         rule(/^=.*$\n?/, Generic::Heading)
-        rule(/.*$\n?/, Text)
+        rule(/\s.*$\n?/, Text)
       end
     end
   end

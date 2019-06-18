@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -48,7 +49,7 @@ module Rouge
 
       prepend :root do
         # Offload C++ extensions, http://offload.codeplay.com/
-        rule /(?:__offload|__blockingoffload|__outer)\b/, Keyword::Pseudo
+        rule %r/(?:__offload|__blockingoffload|__outer)\b/, Keyword::Pseudo
       end
 
       # digits with optional inner quotes
@@ -56,21 +57,21 @@ module Rouge
       dq = /\d('?\d)*/
 
       prepend :statements do
-        rule /class\b/, Keyword, :classname
+        rule %r/class\b/, Keyword, :classname
         rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lu]*)?)i, Num::Float
         rule %r(#{dq}e[+-]?#{dq}[lu]*)i, Num::Float
-        rule /0x\h('?\h)*[lu]*/i, Num::Hex
-        rule /0[0-7]('?[0-7])*[lu]*/i, Num::Oct
-        rule /#{dq}[lu]*/i, Num::Integer
-        rule /\bnullptr\b/, Name::Builtin
-        rule /(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
+        rule %r/0x\h('?\h)*[lu]*/i, Num::Hex
+        rule %r/0[0-7]('?[0-7])*[lu]*/i, Num::Oct
+        rule %r/#{dq}[lu]*/i, Num::Integer
+        rule %r/\bnullptr\b/, Name::Builtin
+        rule %r/(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
       end
 
       state :classname do
         rule id, Name::Class, :pop!
 
         # template specification
-        rule /\s*(?=>)/m, Text, :pop!
+        rule %r/\s*(?=>)/m, Text, :pop!
         mixin :whitespace
       end
     end

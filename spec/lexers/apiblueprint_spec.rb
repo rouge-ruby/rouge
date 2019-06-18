@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::APIBlueprint do
   let(:subject) { Rouge::Lexers::APIBlueprint.new }
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -11,18 +12,18 @@ module Rouge
                 'application/hal+json'
 
       state :root do
-        rule /\s+/m, Text::Whitespace
-        rule /"/, Str::Double, :string
-        rule /(?:true|false|null)\b/, Keyword::Constant
-        rule /[{},:\[\]]/, Punctuation
-        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]?\d+)?/i, Num::Float
-        rule /-?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
+        rule %r/\s+/m, Text::Whitespace
+        rule %r/"/, Str::Double, :string
+        rule %r/(?:true|false|null)\b/, Keyword::Constant
+        rule %r/[{},:\[\]]/, Punctuation
+        rule %r/-?(?:0|[1-9]\d*)\.\d+(?:e[+-]?\d+)?/i, Num::Float
+        rule %r/-?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
       end
 
       state :string do
-        rule /[^\\"]+/, Str::Double
-        rule /\\./, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule %r/[^\\"]+/, Str::Double
+        rule %r/\\./, Str::Escape
+        rule %r/"/, Str::Double, :pop!
       end
     end
   end

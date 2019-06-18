@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -39,7 +40,7 @@ module Rouge
 
       state :root do
         rule %r(#!(.*?)$), Comment::Preproc # shebang
-        rule //, Text, :main
+        rule %r//, Text, :main
       end
 
       state :base do

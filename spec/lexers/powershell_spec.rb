@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::Powershell do
   let(:subject) { Rouge::Lexers::Powershell.new }

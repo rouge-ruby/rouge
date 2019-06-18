@@ -4,6 +4,26 @@
 describe Rouge::Lexer do
   include Support::Lexing
 
+  it 'finds a lexer using Lexer.find_fancy' do
+    assert { Rouge::Lexer.find_fancy('ruby').tag == 'ruby' }
+  end
+
+  it 'finds a lexer with options using Lexer.find_fancy' do
+    assert { Rouge::Lexer.find_fancy('ruby', nil, { option1: true }).options == { "option1" => true } }
+  end
+
+  it 'finds a lexer with embedded options using Lexer.find_fancy' do
+    assert { Rouge::Lexer.find_fancy('ruby?option1=true').options == { "option1" => "true" } }
+  end
+
+  it 'finds a lexer using Lexer.find_fancy and a block' do
+    lexer = Rouge::Lexer.find_fancy('ruby') do |lexer_class, opts|
+      lexer_class.new(opts)
+    end
+
+    assert { lexer.tag == 'ruby' }
+  end
+
   it 'guesses the lexer with Lexer.guess' do
     assert { Rouge::Lexer.guess(filename: 'foo.rb').tag == 'ruby' }
   end

@@ -43,7 +43,7 @@ module Rouge
       # modify or provide additional options to the lexer.
       #
       # Rlease note: the lexer class might be nil!
-      def lookup_fancy(str, code=nil, additional_options={})
+      def find_fancy_class(str, code=nil, additional_options={})
         if str && !str.include?('?') && str != 'guess'
           lexer_class = find(str)
           return [lexer_class, additional_options]
@@ -88,10 +88,14 @@ module Rouge
       # This is used in the Redcarpet plugin as well as Rouge's own
       # markdown lexer for highlighting internal code blocks.
       #
-      def find_fancy(str, code=nil, additional_options={})
-        lexer_class, opts = lookup_fancy(str, code, additional_options)
+      def find_fancy(str, code=nil, additional_options={}, &b)
+        lexer_class, opts = find_fancy_class(str, code, additional_options)
 
-        lexer_class && lexer_class.new(opts)
+        if block_given?
+          yield lexer_class, opts
+        else
+          lexer_class && lexer_class.new(opts)
+        end
       end
 
       # Specify or get this lexer's title. Meant to be human-readable.

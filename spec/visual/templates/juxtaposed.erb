@@ -1,111 +1,69 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title><%= @title %></title>
-  <style type="text/css">
-    <%= @theme.render %>
-    <%= @theme.render_base('body') %>
-    <%= @theme.render_base('a') %>
+<style type="text/css">
+  main {
+    display: inline-block;
+    margin-right: -215px;
+    margin-bottom: -5px;
+    padding: 8px 215px 8px 0;
+    width: 100%;
+  }
+  section {
+    float: left;
+    padding: 8px;
+    padding-right: 4px;
+    overflow-y: auto;
+  }
+  pre { margin: 0 }
 
-    * { box-sizing: border-box }
-    html { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif }
-    body { margin: 0 }
-    main { position: relative; padding: 8px 0 }
-    h2   { margin: 0 }
+  .legend {
+    float: right;
+    padding: 16px 8px 8px 0;
+    width: 215px;
+  }
+  .legend header { padding-top: 8px }
+  .codehilite {
+    overflow-x: auto;
+    border-radius: 5px;
+  }
+  .legend .codehilite { font-size: 13px }
+  .codeviewer {
+    float: left;
+    padding: 8px 12px;
+    width: 49%;
+    border: 1px dotted <%= @comment_color %>
+  }
+  .codeviewer:not(:first-of-type) { margin-left: 4px }
+  .codeviewer:not(:last-of-type) { margin-right: 4px }
 
-    section {
-      float: left;
-      width: calc(100% - 210px);
-      padding: 8px;
-      padding-right: 4px;
-      overflow-y: auto;
-    }
-    aside {
-      width: 200px;
-      float: right;
-      padding: 8px 8px 8px 0
-    }
-    pre { margin: 0 }
+  .codeviewer header, .legend header {
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    color: <%= @comment_color %>;
+    border-bottom: 1px dotted
+  }
+</style>
 
-    .codehilite {
-      overflow-x: auto;
-      border-radius: 5px;
-    }
-    .legend .codehilite { font-size: 12px }
-    .codeviewer {
-      float: left;
-      padding: 8px 12px;
-      width: 49.575%;
-      border: 1px dotted <%= @comment_color %>
-    }
-    .codeviewer:not(:first-of-type) { margin-left: 4px }
-    .codeviewer:not(:last-of-type) { margin-right: 4px }
+<header id="page-header">
+  <h1><%= @lexer.class.tag %> lexer visual test</h1>
+</header>
 
-    .codeviewer header, .legend header {
-      margin-bottom: 20px;
-      padding-bottom: 8px;
-      color: <%= @comment_color %>;
-      border-bottom: 1px dotted
-    }
-    .legend header { padding-top: 8px }
+<main>
+  <section>
+    <div class="codeviewer">
+      <header class="section-header"><h2>Raw</h2></header>
+      <%= @raw %>
+    </div>
+    <div class="codeviewer">
+      <header class="section-header"><h2>Highlighted</h2></header>
+      <%= @highlighted %>
+    </div>
+  </section>
+</main>
 
-    #page-header, #page-footer {
-      padding: 15px;
-      text-align: center;
-      color: <%= @comment_color %>
-    }
-    #page-header {
-      text-transform: capitalize;
-      border-bottom: 1px dotted
-    }
-    #page-header h1 {
-      margin: 0.25em;
-      font-size: 1.5em;
-    }
-    #page-footer {
-      height: 60px;
-      border-top: 1px dotted
-    }
-    .clearfix {
-      clear: both;
-      display: table;
-      content: "";
-    }
-  </style>
-</head>
-<body>
-  <header id="page-header">
-    <h1><%= @lexer.class.tag %> Lexer Test</h1>
-  </header>
-  <main>
-    <section>
-      <div class="codeviewer">
-        <header><h2>Raw</h2></header>
-        <%= @raw %>
-      </div>
-      <div class="codeviewer">
-        <header><h2>Highlighted</h2></header>
-        <%= @highlighted %>
-      </div>
-    </section>
-    <aside>
-      <div class="legend">
-        <header><h2>Legend</h2></header>
-        <pre class="codehilite">
+<aside class="legend">
+  <header class="section-header"><h2>Legend</h2></header>
+  <pre class="codehilite">
 <% Rouge::Token.each_token do |token|
   %><span class="<%= token.shortname %>"><%= token.qualname %></span>
 <% end %>
-        </pre>
-      </div>
-    </aside>
-    <div class="clearfix"></div>
-  </main>
-  <footer id="page-footer">
-    <small>Rendered with theme
-      <strong style="text-transform: capitalize">
-        <%= @theme.class.name.gsub(/_/, ' ') %>
-      </strong>
-    </small>
-  </footer>
-</body>
-</html>
+  </pre>
+</aside>

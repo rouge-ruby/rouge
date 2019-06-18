@@ -13,7 +13,7 @@ module Rouge
       mimetypes 'application/x-actionscript'
 
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
       end
@@ -26,9 +26,9 @@ module Rouge
           goto :regex
         end
 
-        rule /[{]/, Punctuation, :object
+        rule %r/[{]/, Punctuation, :object
 
-        rule //, Text, :pop!
+        rule %r//, Text, :pop!
       end
 
       state :regex do
@@ -39,38 +39,38 @@ module Rouge
 
         rule %r([^/]\n), Error, :pop!
 
-        rule /\n/, Error, :pop!
-        rule /\[\^/, Str::Escape, :regex_group
-        rule /\[/, Str::Escape, :regex_group
-        rule /\\./, Str::Escape
+        rule %r/\n/, Error, :pop!
+        rule %r/\[\^/, Str::Escape, :regex_group
+        rule %r/\[/, Str::Escape, :regex_group
+        rule %r/\\./, Str::Escape
         rule %r{[(][?][:=<!]}, Str::Escape
-        rule /[{][\d,]+[}]/, Str::Escape
-        rule /[()?]/, Str::Escape
-        rule /./, Str::Regex
+        rule %r/[{][\d,]+[}]/, Str::Escape
+        rule %r/[()?]/, Str::Escape
+        rule %r/./, Str::Regex
       end
 
       state :regex_end do
-        rule /[gim]+/, Str::Regex, :pop!
+        rule %r/[gim]+/, Str::Regex, :pop!
         rule(//) { pop! }
       end
 
       state :regex_group do
         # specially highlight / in a group to indicate that it doesn't
         # close the regex
-        rule /\//, Str::Escape
+        rule %r(/), Str::Escape
 
         rule %r([^/]\n) do
           token Error
           pop! 2
         end
 
-        rule /\]/, Str::Escape, :pop!
-        rule /\\./, Str::Escape
-        rule /./, Str::Regex
+        rule %r/\]/, Str::Escape, :pop!
+        rule %r/\\./, Str::Escape
+        rule %r/./, Str::Regex
       end
 
       state :bad_regex do
-        rule /[^\n]+/, Error, :pop!
+        rule %r/[^\n]+/, Error, :pop!
       end
 
       def self.keywords
@@ -109,25 +109,25 @@ module Rouge
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
-        rule /\A\s*#!.*?\n/m, Comment::Preproc, :statement
-        rule /\n/, Text, :statement
+        rule %r/\A\s*#!.*?\n/m, Comment::Preproc, :statement
+        rule %r/\n/, Text, :statement
         rule %r((?<=\n)(?=\s|/|<!--)), Text, :expr_start
         mixin :comments_and_whitespace
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
                | !== )x,
           Operator, :expr_start
         rule %r([:-<>+*%&|\^/!=]=?), Operator, :expr_start
-        rule /[(\[,]/, Punctuation, :expr_start
-        rule /;/, Punctuation, :statement
-        rule /[)\].]/, Punctuation
+        rule %r/[(\[,]/, Punctuation, :expr_start
+        rule %r/;/, Punctuation, :statement
+        rule %r/[)\].]/, Punctuation
 
-        rule /[?]/ do
+        rule %r/[?]/ do
           token Punctuation
           push :ternary
           push :expr_start
         end
 
-        rule /[{}]/, Punctuation, :statement
+        rule %r/[{}]/, Punctuation, :statement
 
         rule id do |m|
           if self.class.keywords.include? m[0]
@@ -147,20 +147,20 @@ module Rouge
           end
         end
 
-        rule /\-?[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
-        rule /0x[0-9a-fA-F]+/, Num::Hex
-        rule /\-?[0-9]+/, Num::Integer
-        rule /"(\\\\|\\"|[^"])*"/, Str::Double
-        rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule %r/\-?[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
+        rule %r/0x[0-9a-fA-F]+/, Num::Hex
+        rule %r/\-?[0-9]+/, Num::Integer
+        rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
+        rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
       end
 
       # braced parts that aren't object literals
       state :statement do
-        rule /(#{id})(\s*)(:)/ do
+        rule %r/(#{id})(\s*)(:)/ do
           groups Name::Label, Text, Punctuation
         end
 
-        rule /[{}]/, Punctuation
+        rule %r/[{}]/, Punctuation
 
         mixin :expr_start
       end
@@ -168,23 +168,23 @@ module Rouge
       # object literals
       state :object do
         mixin :comments_and_whitespace
-        rule /[}]/ do
+        rule %r/[}]/ do
           token Punctuation
           goto :statement
         end
 
-        rule /(#{id})(\s*)(:)/ do
+        rule %r/(#{id})(\s*)(:)/ do
           groups Name::Attribute, Text, Punctuation
           push :expr_start
         end
 
-        rule /:/, Punctuation
+        rule %r/:/, Punctuation
         mixin :root
       end
 
       # ternary expressions, where <id>: is not a label!
       state :ternary do
-        rule /:/ do
+        rule %r/:/ do
           token Punctuation
           goto :expr_start
         end

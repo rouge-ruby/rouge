@@ -10,67 +10,67 @@ module Rouge
       filenames '*.liquid'
 
       state :root do
-        rule /[^\{]+/, Text
+        rule %r/[^\{]+/, Text
 
-        rule /(\{%)(\s*)/ do
+        rule %r/(\{%)(\s*)/ do
           groups Punctuation, Text::Whitespace
           push :tag_or_block
         end
 
-        rule /(\{\{)(\s*)/ do
+        rule %r/(\{\{)(\s*)/ do
           groups Punctuation, Text::Whitespace
           push :output
         end
 
-        rule /\{/, Text
+        rule %r/\{/, Text
       end
 
       state :tag_or_block do
         # builtin logic blocks
-        rule /(if|unless|elsif|case)(?=\s+)/, Keyword::Reserved, :condition
+        rule %r/(if|unless|elsif|case)(?=\s+)/, Keyword::Reserved, :condition
 
-        rule /(when)(\s+)/ do
+        rule %r/(when)(\s+)/ do
           groups Keyword::Reserved, Text::Whitespace
           push :when
         end
 
-        rule /(else)(\s*)(%\})/ do
+        rule %r/(else)(\s*)(%\})/ do
           groups Keyword::Reserved, Text::Whitespace, Punctuation
           pop!
         end
 
         # other builtin blocks
-        rule /(capture)(\s+)([^\s%]+)(\s*)(%\})/ do
+        rule %r/(capture)(\s+)([^\s%]+)(\s*)(%\})/ do
           groups Name::Tag, Text::Whitespace, Name::Attribute, Text::Whitespace, Punctuation
           pop!
         end
 
-        rule /(comment)(\s*)(%\})/ do
+        rule %r/(comment)(\s*)(%\})/ do
           groups Name::Tag, Text::Whitespace, Punctuation
           push :comment
         end
 
-        rule /(raw)(\s*)(%\})/ do
+        rule %r/(raw)(\s*)(%\})/ do
           groups Name::Tag, Text::Whitespace, Punctuation
           push :raw
         end
 
-        rule /assign/, Name::Tag, :assign
-        rule /include/, Name::Tag, :include
+        rule %r/assign/, Name::Tag, :assign
+        rule %r/include/, Name::Tag, :include
 
         # end of block
-        rule /(end(case|unless|if))(\s*)(%\})/ do
+        rule %r/(end(case|unless|if))(\s*)(%\})/ do
           groups Keyword::Reserved, nil, Text::Whitespace, Punctuation
           pop!
         end
 
-        rule /(end([^\s%]+))(\s*)(%\})/ do
+        rule %r/(end([^\s%]+))(\s*)(%\})/ do
           groups Name::Tag, nil, Text::Whitespace, Punctuation
           pop!
         end
 
         # builtin tags
-        rule /(cycle)(\s+)(([^\s:]*)(:))?(\s*)/ do |m|
+        rule %r/(cycle)(\s+)(([^\s:]*)(:))?(\s*)/ do |m|
           token Name::Tag, m[1]
           token Text::Whitespace, m[2]
 
@@ -89,7 +89,7 @@ module Rouge
         end
 
         # other tags or blocks
-        rule /([^\s%]+)(\s*)/ do
+        rule %r/([^\s%]+)(\s*)/ do
           groups Name::Tag, Text::Whitespace
           push :tag_markup
         end
@@ -99,8 +99,8 @@ module Rouge
         mixin :whitespace
         mixin :generic
 
-        rule /\}\}/, Punctuation, :pop!
-        rule /\|/, Punctuation, :filters
+        rule %r/\}\}/, Punctuation, :pop!
+        rule %r/\|/, Punctuation, :filters
       end
 
       state :filters do
@@ -108,14 +108,14 @@ module Rouge
 
         rule(/\}\}/) { token Punctuation; reset_stack }
 
-        rule /([^\s\|:]+)(:?)(\s*)/ do
+        rule %r/([^\s\|:]+)(:?)(\s*)/ do
           groups Name::Function, Punctuation, Text::Whitespace
           push :filter_markup
         end
       end
 
       state :filter_markup do
-        rule /\|/, Punctuation, :pop!
+        rule %r/\|/, Punctuation, :pop!
 
         mixin :end_of_tag
         mixin :end_of_block
@@ -126,13 +126,13 @@ module Rouge
         mixin :end_of_block
         mixin :whitespace
 
-        rule /([=!><]=?)/, Operator
+        rule %r/([=!><]=?)/, Operator
 
-        rule /\b((!)|(not\b))/ do
+        rule %r/\b((!)|(not\b))/ do
           groups nil, Operator, Operator::Word
         end
 
-        rule /(contains)/, Operator::Word
+        rule %r/(contains)/, Operator::Word
 
         mixin :generic
         mixin :whitespace
@@ -145,12 +145,12 @@ module Rouge
       end
 
       state :operator do
-        rule /(\s*)((=|!|>|<)=?)(\s*)/ do
+        rule %r/(\s*)((=|!|>|<)=?)(\s*)/ do
           groups Text::Whitespace, Operator, nil, Text::Whitespace
           pop!
         end
 
-        rule /(\s*)(\bcontains\b)(\s*)/ do
+        rule %r/(\s*)(\bcontains\b)(\s*)/ do
           groups Text::Whitespace, Operator::Word, Text::Whitespace
           pop!
         end
@@ -169,29 +169,29 @@ module Rouge
         mixin :whitespace
         mixin :string
 
-        rule /([^\s=:]+)(\s*)(=|:)/ do
+        rule %r/([^\s=:]+)(\s*)(=|:)/ do
           groups Name::Attribute, Text::Whitespace, Operator
         end
 
-        rule /(\{\{)(\s*)([^\s\}])(\s*)(\}\})/ do
+        rule %r/(\{\{)(\s*)([^\s\}])(\s*)(\}\})/ do
           groups Punctuation, Text::Whitespace, nil, Text::Whitespace, Punctuation
         end
 
         mixin :number
         mixin :keyword
 
-        rule /,/, Punctuation
+        rule %r/,/, Punctuation
       end
 
       state :default_param_markup do
         mixin :param_markup
-        rule /./, Text
+        rule %r/./, Text
       end
 
       state :variable_param_markup do
         mixin :param_markup
         mixin :variable
-        rule /./, Text
+        rule %r/./, Text
       end
 
       state :tag_markup do
@@ -206,27 +206,27 @@ module Rouge
 
       # states for different values types
       state :keyword do
-        rule /\b(false|true)\b/, Keyword::Constant
+        rule %r/\b(false|true)\b/, Keyword::Constant
       end
 
       state :variable do
-        rule /\.(?=\w)/, Punctuation
-        rule /[a-zA-Z_]\w*\??/, Name::Variable
+        rule %r/\.(?=\w)/, Punctuation
+        rule %r/[a-zA-Z_]\w*\??/, Name::Variable
       end
 
       state :string do
-        rule /'[^']*'/, Str::Single
-        rule /"[^"]*"/, Str::Double
+        rule %r/'[^']*'/, Str::Single
+        rule %r/"[^"]*"/, Str::Double
       end
 
       state :number do
-        rule /\d+\.\d+/, Num::Float
-        rule /\d+/, Num::Integer
+        rule %r/\d+\.\d+/, Num::Float
+        rule %r/\d+/, Num::Integer
       end
 
       state :array_index do
-        rule /\[/, Punctuation
-        rule /\]/, Punctuation
+        rule %r/\[/, Punctuation
+        rule %r/\]/, Punctuation
       end
 
       state :generic do
@@ -238,38 +238,38 @@ module Rouge
       end
 
       state :whitespace do
-        rule /[ \t]+/, Text::Whitespace
+        rule %r/[ \t]+/, Text::Whitespace
       end
 
       state :comment do
-        rule /(\{%)(\s*)(endcomment)(\s*)(%\})/ do
+        rule %r/(\{%)(\s*)(endcomment)(\s*)(%\})/ do
           groups Punctuation, Text::Whitespace, Name::Tag, Text::Whitespace, Punctuation
           reset_stack
         end
 
-        rule /./, Comment
+        rule %r/./, Comment
       end
 
       state :raw do
-        rule /[^\{]+/, Text
+        rule %r/[^\{]+/, Text
 
-        rule /(\{%)(\s*)(endraw)(\s*)(%\})/ do
+        rule %r/(\{%)(\s*)(endraw)(\s*)(%\})/ do
           groups Punctuation, Text::Whitespace, Name::Tag, Text::Whitespace, Punctuation
           reset_stack
         end
 
-        rule /\{/, Text
+        rule %r/\{/, Text
       end
 
       state :assign do
         mixin :whitespace
         mixin :end_of_block
 
-        rule /(\s*)(=)(\s*)/ do
+        rule %r/(\s*)(=)(\s*)/ do
           groups Text::Whitespace, Operator, Text::Whitespace
         end
 
-        rule /\|/, Punctuation, :filters
+        rule %r/\|/, Punctuation, :filters
 
         mixin :generic
       end
@@ -277,7 +277,7 @@ module Rouge
       state :include do
         mixin :whitespace
 
-        rule /([^\.]+)(\.)(html|liquid)/ do
+        rule %r/([^\.]+)(\.)(html|liquid)/ do
           groups Name::Attribute, Punctuation, Name::Attribute
         end
 

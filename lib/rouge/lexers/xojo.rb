@@ -34,26 +34,26 @@ module Rouge
         )
 
       state :root do
-        rule /\s+/, Text::Whitespace
+        rule %r/\s+/, Text::Whitespace
 
-        rule /rem\b.*?$/i, Comment::Single
-        rule /\/\/.*$/, Comment::Single
-        rule /\#tag Note.*\#tag EndNote/m, Comment::Preproc
-        rule /\s*[#].*$/x, Comment::Preproc
+        rule %r/rem\b.*?$/i, Comment::Single
+        rule %r(//.*$), Comment::Single
+        rule %r/\#tag Note.*\#tag EndNote/m, Comment::Preproc
+        rule %r/\s*[#].*$/x, Comment::Preproc
 
-        rule /".*?"/, Literal::String::Double
-        rule /[(){}!#,:]/, Punctuation
+        rule %r/".*?"/, Literal::String::Double
+        rule %r/[(){}!#,:]/, Punctuation
 
-        rule /\b(?:#{keywords.join('|')})\b/i, Keyword
-        rule /\b(?:#{keywords_type.join('|')})\b/i, Keyword::Declaration
+        rule %r/\b(?:#{keywords.join('|')})\b/i, Keyword
+        rule %r/\b(?:#{keywords_type.join('|')})\b/i, Keyword::Declaration
 
-        rule /\b(?:#{operator_words.join('|')})\b/i, Operator
-        rule /[+-]?(\d+\.\d*|\d*\.\d+)/i, Literal::Number::Float
-        rule /[+-]?\d+/, Literal::Number::Integer
-        rule /&[CH][0-9a-f]+/i, Literal::Number::Hex
-        rule /&O[0-7]+/i, Literal::Number::Oct
+        rule %r/\b(?:#{operator_words.join('|')})\b/i, Operator
+        rule %r/[+-]?(\d+\.\d*|\d*\.\d+)/i, Literal::Number::Float
+        rule %r/[+-]?\d+/, Literal::Number::Integer
+        rule %r/&[CH][0-9a-f]+/i, Literal::Number::Hex
+        rule %r/&O[0-7]+/i, Literal::Number::Oct
 
-        rule /\b[\w\.]+\b/i, Text
+        rule %r/\b[\w\.]+\b/i, Text
         rule(%r(<=|>=|<>|[=><\+\-\*\/\\]), Operator)
       end
     end

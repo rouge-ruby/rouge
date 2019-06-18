@@ -37,30 +37,30 @@ module Rouge
 
       state :root do
         mixin :comments_and_whitespace
-        rule /(?:#{operators.join('|')}|does not contain|greater than(?: or equal to)?|less than(?: or equal to)?)\b/i, Operator, :expr_start
+        rule %r/(?:#{operators.join('|')}|does not contain|greater than(?: or equal to)?|less than(?: or equal to)?)\b/i, Operator, :expr_start
         rule %r([-<>+*%&|\^/!=]=?), Operator, :expr_start
 
-        rule /[(\[,]/, Punctuation, :expr_start
-        rule /;/, Punctuation, :statement
-        rule /[)\].]/, Punctuation
+        rule %r/[(\[,]/, Punctuation, :expr_start
+        rule %r/;/, Punctuation, :statement
+        rule %r/[)\].]/, Punctuation
 
-        rule /[?]/ do
+        rule %r/[?]/ do
           token Punctuation
           push :ternary
           push :expr_start
         end
 
-        rule /[{}]/, Punctuation, :statement
+        rule %r/[{}]/, Punctuation, :statement
 
-        rule /(?:#{constants.join('|')})\b/, Name::Constant
-        rule /(?:true|false|null)\b/, Keyword::Constant
-        rule /import\b/, Keyword::Namespace, :import
-        rule /(#{dotted_id})(\s*)(:)(\s*)/ do
+        rule %r/(?:#{constants.join('|')})\b/, Name::Constant
+        rule %r/(?:true|false|null)\b/, Keyword::Constant
+        rule %r/import\b/, Keyword::Namespace, :import
+        rule %r/(#{dotted_id})(\s*)(:)(\s*)/ do
           groups Name, Text, Punctuation, Text
           push :expr_start
         end
 
-        rule /([A-Za-z_$][\w.]*)(\s*)(\()/ do |m|
+        rule %r/([A-Za-z_$][\w.]*)(\s*)(\()/ do |m|
           if self.class.keywords.include? m[1]
             token Keyword, m[1]
             token Text, m[2]
@@ -87,17 +87,17 @@ module Rouge
           end
         end
 
-        rule /[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
-        rule /0x[0-9a-fA-F]+/, Num::Hex
-        rule /[0-9]+/, Num::Integer
-        rule /"(\\\\|\\"|[^"])*"/, Str::Double
-        rule /'(\\\\|\\'|[^'])*'/, Str::Single
+        rule %r/[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
+        rule %r/0x[0-9a-fA-F]+/, Num::Hex
+        rule %r/[0-9]+/, Num::Integer
+        rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
+        rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
 
       end
 
       # same as java, broken out
       state :comments_and_whitespace do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
       end
@@ -105,14 +105,14 @@ module Rouge
       state :expr_start do
         mixin :comments_and_whitespace
 
-        rule /[{]/, Punctuation, :object
+        rule %r/[{]/, Punctuation, :object
 
-        rule //, Text, :pop!
+        rule %r//, Text, :pop!
       end
 
       state :statement do
 
-        rule /[{}]/, Punctuation
+        rule %r/[{}]/, Punctuation
 
         mixin :expr_start
       end
@@ -120,23 +120,23 @@ module Rouge
       # object literals
       state :object do
         mixin :comments_and_whitespace
-        rule /[}]/ do
+        rule %r/[}]/ do
           token Punctuation
           push :expr_start
         end
 
-        rule /(#{dotted_id})(\s*)(:)/ do
+        rule %r/(#{dotted_id})(\s*)(:)/ do
           groups Name::Other, Text, Punctuation
           push :expr_start
         end
 
-        rule /:/, Punctuation
+        rule %r/:/, Punctuation
         mixin :root
       end
 
       # ternary expressions, where <dotted_id>: is not a label!
       state :ternary do
-        rule /:/ do
+        rule %r/:/ do
           token Punctuation
           goto :expr_start
         end
@@ -145,8 +145,8 @@ module Rouge
       end
 
       state :import do
-        rule /\s+/m, Text
-        rule /[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
+        rule %r/\s+/m, Text
+        rule %r/[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
       end
 
     end

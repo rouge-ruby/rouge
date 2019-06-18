@@ -13,72 +13,72 @@ module Rouge
 
       state :root do
         # A TAP version may be specified.
-        rule /^TAP version \d+\n/, Name::Namespace
+        rule %r/^TAP version \d+\n/, Name::Namespace
 
         # Specify a plan with a plan line.
-        rule /^1\.\.\d+/, Keyword::Declaration, :plan
+        rule %r/^1\.\.\d+/, Keyword::Declaration, :plan
 
         # A test failure
-        rule /^(not ok)([^\S\n]*)(\d*)/ do
+        rule %r/^(not ok)([^\S\n]*)(\d*)/ do
           groups Generic::Error, Text, Literal::Number::Integer
           push :test
         end
 
         # A test success
-        rule /^(ok)([^\S\n]*)(\d*)/ do
+        rule %r/^(ok)([^\S\n]*)(\d*)/ do
           groups Keyword::Reserved, Text, Literal::Number::Integer
           push :test
         end
 
         # Diagnostics start with a hash.
-        rule /^#.*\n/, Comment
+        rule %r/^#.*\n/, Comment
 
         # TAP's version of an abort statement.
-        rule /^Bail out!.*\n/, Generic::Error
+        rule %r/^Bail out!.*\n/, Generic::Error
 
         # # TAP ignores any unrecognized lines.
-        rule /^.*\n/, Text
+        rule %r/^.*\n/, Text
       end
 
       state :plan do
         # Consume whitespace (but not newline).
-        rule /[^\S\n]+/, Text
+        rule %r/[^\S\n]+/, Text
 
         # A plan may have a directive with it.
-        rule /#/, Comment, :directive
+        rule %r/#/, Comment, :directive
 
         # Or it could just end.
-        rule /\n/, Comment, :pop!
+        rule %r/\n/, Comment, :pop!
 
         # Anything else is wrong.
-        rule /.*\n/, Generic::Error, :pop!
+        rule %r/.*\n/, Generic::Error, :pop!
       end
 
       state :test do
         # Consume whitespace (but not newline).
-        rule /[^\S\n]+/, Text
+        rule %r/[^\S\n]+/, Text
 
         # A test may have a directive with it.
-        rule /#/, Comment, :directive
+        rule %r/#/, Comment, :directive
 
-        rule /\S+/, Text
+        rule %r/\S+/, Text
 
-        rule /\n/, Text, :pop!
+        rule %r/\n/, Text, :pop!
       end
 
       state :directive do
         # Consume whitespace (but not newline).
-        rule /[^\S\n]+/, Comment
+        rule %r/[^\S\n]+/, Comment
 
         # Extract todo items.
-        rule /(?i)\bTODO\b/, Comment::Preproc
+        rule %r/(?i)\bTODO\b/, Comment::Preproc
 
         # Extract skip items.
-        rule /(?i)\bSKIP\S*/, Comment::Preproc
+        rule %r/(?i)\bSKIP\S*/, Comment::Preproc
 
-        rule /\S+/, Comment
+        rule %r/\S+/, Comment
 
-        rule /\n/ do
+        rule %r/\n/ do
           token Comment
           pop! 2
         end

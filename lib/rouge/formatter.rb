@@ -29,7 +29,7 @@ module Rouge
     end
 
     def self.escape_enabled?
-      !!(@escape_enabled || Thread.current[:'rouge/with-escape'])
+      !!(((defined? @escape_enabled) && @escape_enabled) || Thread.current[:'rouge/with-escape'])
     end
 
     def self.enable_escape!
@@ -94,7 +94,7 @@ module Rouge
 
       out = []
       tokens.each do |tok, val|
-        val.scan /\n|[^\n]+/ do |s|
+        val.scan %r/\n|[^\n]+/ do |s|
           if s == "\n"
             yield out
             out = []

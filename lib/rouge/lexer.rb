@@ -196,7 +196,7 @@ module Rouge
       end
 
       def disable_debug!
-        remove_instance_variable :@debug_enabled
+        remove_instance_variable :@debug_enabled if defined? @debug_enabled
       end
 
       def debug_enabled?
@@ -213,7 +213,7 @@ module Rouge
       # @private
       def register(name, lexer)
         # reset an existing list of lexers
-        @all = nil if @all
+        @all = nil if defined?(@all)
         registry[name.to_s] = lexer
       end
 
@@ -310,7 +310,7 @@ module Rouge
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
 
-      @debug = Lexer.debug_enabled? && bool_option(:debug)
+      @debug = Lexer.debug_enabled? && bool_option('debug')
     end
 
     def as_bool(val)
@@ -365,8 +365,10 @@ module Rouge
     end
 
     def bool_option(name, &default)
-      if @options.key?(name.to_s)
-        as_bool(@options[name.to_s])
+      name_str = name.to_s
+
+      if @options.key?(name_str)
+        as_bool(@options[name_str])
       else
         default ? default.call : false
       end
@@ -415,16 +417,21 @@ module Rouge
 
     # Given a string, yield [token, chunk] pairs.  If no block is given,
     # an enumerator is returned.
-    def lex(string, opts=nil, &b)
-      if opts
-        warn 'the :continue option to Formatter#lex is deprecated, use #continue_lex instead.'
-        return continue_lex(string, &b)
+    #
+    # @option opts :continue
+    #   Continue the lex from the previous state (i.e. don't call #reset!)
+    #
+    # @note The use of `opts` has been deprecated. A warning is issued if run
+    #   with `$VERBOSE` set to true.
+    def lex(string, opts={}, &b)
+      unless opts.nil?
+        warn 'The use of opts with Lexer.lex is deprecated' if $VERBOSE
       end
 
-      return enum_for(:lex, string) unless block_given?
+      return enum_for(:lex, string, opts) unless block_given?
 
       Lexer.assert_utf8!(string)
-      reset!
+      reset! unless opts[:continue]
 
       continue_lex(string, &b)
     end

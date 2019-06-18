@@ -27,15 +27,15 @@ module Rouge
 
       state :tag_or_block do
         # builtin logic blocks
-        rule %r/(if|unless|elsif|case)(?=\s+)/, Keyword::Reserved, :condition
+        rule %r/(if|unless|elsif|case)(?=\s+)/, Name::Tag, :condition
 
         rule %r/(when)(\s+)/ do
-          groups Keyword::Reserved, Text::Whitespace
+          groups Name::Tag, Text::Whitespace
           push :when
         end
 
         rule %r/(else)(\s*)(%\})/ do
-          groups Keyword::Reserved, Text::Whitespace, Punctuation
+          groups Name::Tag, Text::Whitespace, Punctuation
           pop!
         end
 
@@ -58,9 +58,9 @@ module Rouge
         rule %r/assign/, Name::Tag, :assign
         rule %r/include/, Name::Tag, :include
 
-        # end of block
+        # end of control-flow block
         rule %r/(end(case|unless|if))(\s*)(%\})/ do
-          groups Keyword::Reserved, nil, Text::Whitespace, Punctuation
+          groups Name::Tag, nil, Text::Whitespace, Punctuation
           pop!
         end
 
@@ -86,6 +86,38 @@ module Rouge
           token Text::Whitespace, m[6]
 
           push :variable_tag_markup
+        end
+
+        # iteration
+        rule %r/
+          (for)(\s+)
+          ([\w-]+)(\s+)
+          (in)(\s+)
+          (
+            (?:
+              (?:"[^"]*"|'[^']*') |
+              (?:
+                [^\s,\|'"] |
+                (?:"[^"]*"|'[^']*')
+              )+
+            )+
+          )
+          (\s)*(reversed)?
+        /x do |m|
+          groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace,
+                 Keyword::Reserved, Text::Whitespace
+
+          token_class = case m[7]
+                        when %r/'[^']*'/ then Str::Single
+                        when %r/"[^"]*"/ then Str::Double
+                        else
+                          Name::Variable
+                        end
+          token token_class, m[7]
+
+          token Text::Whitespace, m[8]
+          token Name::Attribute,  m[9]
+          push :tag_markup
         end
 
         # other tags or blocks

@@ -27,15 +27,15 @@ module Rouge
 
       state :tag_or_block do
         # builtin logic blocks
-        rule %r/(if|unless|elsif|case)(?=\s+)/, Name::Tag, :condition
+        rule %r/(if|unless|elsif|case)(?=\s+)/, Keyword::Reserved, :condition
 
         rule %r/(when)(\s+)/ do
-          groups Name::Tag, Text::Whitespace
+          groups Keyword::Reserved, Text::Whitespace
           push :when
         end
 
         rule %r/(else)(\s*)(%\})/ do
-          groups Name::Tag, Text::Whitespace, Punctuation
+          groups Keyword::Reserved, Text::Whitespace, Punctuation
           pop!
         end
 
@@ -58,9 +58,9 @@ module Rouge
         rule %r/assign/, Name::Tag, :assign
         rule %r/include/, Name::Tag, :include
 
-        # end of control-flow block
+        # end of block
         rule %r/(end(case|unless|if))(\s*)(%\})/ do
-          groups Name::Tag, nil, Text::Whitespace, Punctuation
+          groups Keyword::Reserved, nil, Text::Whitespace, Punctuation
           pop!
         end
 

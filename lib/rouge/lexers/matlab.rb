@@ -24,20 +24,20 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text # Whitespace
+        rule %r/\s+/m, Text # Whitespace
         rule %r([{]%.*?%[}])m, Comment::Multiline
-        rule /%.*$/, Comment::Single
-        rule /([.][.][.])(.*?)$/ do
+        rule %r/%.*$/, Comment::Single
+        rule %r/([.][.][.])(.*?)$/ do
           groups(Keyword, Comment)
         end
 
-        rule /^(!)(.*?)(?=%|$)/ do |m|
+        rule %r/^(!)(.*?)(?=%|$)/ do |m|
           token Keyword, m[1]
           delegate Shell, m[2]
         end
 
 
-        rule /[a-zA-Z][_a-zA-Z0-9]*/m do |m|
+        rule %r/[a-zA-Z][_a-zA-Z0-9]*/m do |m|
           match = m[0]
           if self.class.keywords.include? match
             token Keyword
@@ -50,22 +50,29 @@ module Rouge
 
         rule %r{[(){};:,\/\\\]\[]}, Punctuation
 
-        rule /~=|==|<<|>>|[-~+\/*%=<>&^|.@]/, Operator
+        rule %r/~=|==|<<|>>|[-~+\/*%=<>&^|.@]/, Operator
 
 
-        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
-        rule /\d+e[+-]?[0-9]+/i, Num::Float
-        rule /\d+L/, Num::Integer::Long
-        rule /\d+/, Num::Integer
+        rule %r/(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
+        rule %r/\d+e[+-]?[0-9]+/i, Num::Float
+        rule %r/\d+L/, Num::Integer::Long
+        rule %r/\d+/, Num::Integer
 
-        rule /'(?=(.*'))/, Str::Single, :string
-        rule /'/, Operator
+        rule %r/'(?=(.*'))/, Str::Single, :chararray
+        rule %r/"(?=(.*"))/, Str::Double, :string
+        rule %r/'/, Operator
+      end
+
+      state :chararray do
+        rule %r/[^']+/, Str::Single
+        rule %r/''/, Str::Escape
+        rule %r/'/, Str::Single, :pop!
       end
 
       state :string do
-        rule /[^']+/, Str::Single
-        rule /''/, Str::Escape
-        rule /'/, Str::Single, :pop!
+        rule %r/[^"]+/, Str::Double
+        rule %r/""/, Str::Escape
+        rule %r/"/, Str::Double, :pop!
       end
     end
   end

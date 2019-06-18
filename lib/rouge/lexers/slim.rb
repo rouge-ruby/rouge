@@ -45,22 +45,22 @@ module Rouge
       start { ruby.reset!; html.reset! }
 
       state :root do
-        rule /\s*\n/, Text
+        rule %r/\s*\n/, Text
         rule(/\s*/) { |m| token Text; indentation(m[0]) }
       end
 
       state :content do
         mixin :css
 
-        rule /\/#{dot}*/, Comment, :indented_block
+        rule %r/\/#{dot}*/, Comment, :indented_block
 
-        rule /(doctype)(\s+)(.*)/ do
+        rule %r/(doctype)(\s+)(.*)/ do
           groups Name::Namespace, Text::Whitespace, Text
           pop!
         end
 
         # filters, shamelessly ripped from HAML
-        rule /(\w*):\s*\n/ do |m|
+        rule %r/(\w*):\s*\n/ do |m|
           token Name::Decorator
           pop!
           starts_block :filter_block
@@ -81,29 +81,29 @@ module Rouge
           goto :plain_block
         end
 
-        rule /-|==|=/, Punctuation, :ruby_line
+        rule %r/-|==|=/, Punctuation, :ruby_line
 
         # Dynamic tags
-        rule /(\*)(#{ruby_chars}+\(.*?\))/ do |m|
+        rule %r/(\*)(#{ruby_chars}+\(.*?\))/ do |m|
           token Punctuation, m[1]
           delegate ruby, m[2]
           push :tag
         end
 
-        rule /(\*)(#{ruby_chars}+)/ do |m|
+        rule %r/(\*)(#{ruby_chars}+)/ do |m|
           token Punctuation, m[1]
           delegate ruby, m[2]
           push :tag
         end
 
-        #rule /<\w+(?=.*>)/, Keyword::Constant, :tag # Maybe do this, look ahead and stuff
+        #rule %r/<\w+(?=.*>)/, Keyword::Constant, :tag # Maybe do this, look ahead and stuff
         rule %r((</?[\w\s\=\'\"]+?/?>)) do |m| # Dirty html
           delegate html, m[1]
           pop!
         end
 
         # Ordinary slim tags
-        rule /\w+/, Name::Tag, :tag
+        rule %r/\w+/, Name::Tag, :tag
 
       end
 
@@ -113,24 +113,24 @@ module Rouge
         mixin :interpolation
 
         # Whitespace control
-        rule /[<>]/, Punctuation
+        rule %r/[<>]/, Punctuation
 
         # Trim whitespace
-        rule /\s+?/, Text::Whitespace
+        rule %r/\s+?/, Text::Whitespace
 
         # Splats, these two might be mergable?
-        rule /(\*)(#{ruby_chars}+)/ do |m|
+        rule %r/(\*)(#{ruby_chars}+)/ do |m|
           token Punctuation, m[1]
           delegate ruby, m[2]
         end
 
-        rule /(\*)(\{#{dot}+?\})/ do |m|
+        rule %r/(\*)(\{#{dot}+?\})/ do |m|
           token Punctuation, m[1]
           delegate ruby, m[2]
         end
 
         # Attributes
-        rule /([\w\-]+)(\s*)(\=)/ do |m|
+        rule %r/([\w\-]+)(\s*)(\=)/ do |m|
           token Name::Attribute, m[1]
           token Text::Whitespace, m[2]
           token Punctuation, m[3]
@@ -138,7 +138,7 @@ module Rouge
         end
 
         # Ruby value
-        rule /(\=)(#{dot}+)/ do |m|
+        rule %r/(\=)(#{dot}+)/ do |m|
           token Punctuation, m[1]
           #token Keyword::Constant, m[2]
           delegate ruby, m[2]
@@ -147,9 +147,9 @@ module Rouge
         # HTML Entities
         rule(/&\S*?;/, Name::Entity)
 
-        rule /#{dot}+?/, Text
+        rule %r/#{dot}+?/, Text
 
-        rule /\s*\n/, Text::Whitespace, :pop!
+        rule %r/\s*\n/, Text::Whitespace, :pop!
       end
 
       state :css do
@@ -165,20 +165,20 @@ module Rouge
         rule(/(#{ruby_chars}+\(.*?\))/) { |m| delegate ruby, m[1]; pop! }
         rule(/(#{ruby_chars}+)/) { |m| delegate ruby, m[1]; pop! }
 
-        rule /\s+/, Text::Whitespace
+        rule %r/\s+/, Text::Whitespace
       end
 
       state :ruby_line do
         # Need at top
         mixin :indented_block
 
-        rule(/,\s*\n/) { delegate ruby }
-        rule /[ ]\|[ \t]*\n/, Str::Escape
-        rule(/.*?(?=(,$| \|)?[ \t]*$)/) { delegate ruby }
+        rule(/[,\\]\s*\n/) { delegate ruby }
+        rule %r/[ ]\|[ \t]*\n/, Str::Escape
+        rule(/.*?(?=([,\\]$| \|)?[ \t]*$)/) { delegate ruby }
       end
 
       state :filter_block do
-        rule /([^#\n]|#[^{\n]|(\\\\)*\\#\{)+/ do
+        rule %r/([^#\n]|#[^{\n]|(\\\\)*\\#\{)+/ do
           if @filter_lexer
             delegate @filter_lexer
           else
@@ -200,18 +200,18 @@ module Rouge
         # HTML Entities
         rule(/&\S*?;/, Name::Entity)
 
-        #rule /([^#\n]|#[^{\n]|(\\\\)*\\#\{)+/ do
-        rule /#{dot}+?/, Text
+        #rule %r/([^#\n]|#[^{\n]|(\\\\)*\\#\{)+/ do
+        rule %r/#{dot}+?/, Text
 
         mixin :indented_block
       end
 
       state :interpolation do
-        rule /#[{]/, Str::Interpol, :ruby_interp
+        rule %r/#[{]/, Str::Interpol, :ruby_interp
       end
 
       state :ruby_interp do
-        rule /[}]/, Str::Interpol, :pop!
+        rule %r/[}]/, Str::Interpol, :pop!
         mixin :ruby_interp_inner
       end
 

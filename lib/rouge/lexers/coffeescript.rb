@@ -18,9 +18,17 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          for in of while break return continue switch when then if else
-          throw try catch finally new delete typeof instanceof super
-          extends this class by
+          for by while until loop break continue return
+          switch when then if else do yield throw try catch finally await
+          new delete typeof instanceof super extends this class
+          import export debugger
+        )
+      end
+
+      def self.reserved
+        @reserved ||= Set.new %w(
+          case function var void with const let enum
+          native implements interface package private protected public static
         )
       end
 
@@ -42,9 +50,9 @@ module Rouge
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
 
       state :comments_and_whitespace do
-        rule /\s+/m, Text
-        rule /###\s*\n.*?###/m, Comment::Multiline
-        rule /#.*$/, Comment::Single
+        rule %r/\s+/m, Text
+        rule %r/###[^#].*?###/m, Comment::Multiline
+        rule %r/#.*$/, Comment::Single
       end
 
       state :multiline_regex do
@@ -77,25 +85,25 @@ module Rouge
         rule(%r(^(?=\s|/|<!--))) { push :slash_starts_regex }
         mixin :comments_and_whitespace
         rule %r(
-          [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|[?]|:|=|
-          [|][|]|\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&|^/])=?
+          [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\bin\b|\bof\b|
+          [?]|:|=|[|][|]|\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&|^/])=?
         )x, Operator, :slash_starts_regex
 
-        rule /[-=]>/, Name::Function
+        rule %r/[-=]>/, Name::Function
 
-        rule /(@)([ \t]*)(#{id})/ do
+        rule %r/(@)([ \t]*)(#{id})/ do
           groups Name::Variable::Instance, Text, Name::Attribute
           push :slash_starts_regex
         end
 
-        rule /([.])([ \t]*)(#{id})/ do
+        rule %r/([.])([ \t]*)(#{id})/ do
           groups Punctuation, Text, Name::Attribute
           push :slash_starts_regex
         end
 
-        rule /#{id}(?=\s*:)/, Name::Attribute, :slash_starts_regex
+        rule %r/#{id}(?=\s*:)/, Name::Attribute, :slash_starts_regex
 
-        rule /#{id}/ do |m|
+        rule %r/#{id}/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           elsif self.class.constants.include? m[0]
@@ -109,65 +117,65 @@ module Rouge
           push :slash_starts_regex
         end
 
-        rule /[{(\[;,]/, Punctuation, :slash_starts_regex
-        rule /[})\].]/, Punctuation
+        rule %r/[{(\[;,]/, Punctuation, :slash_starts_regex
+        rule %r/[})\].]/, Punctuation
 
-        rule /\d+[.]\d+([eE]\d+)?[fd]?/, Num::Float
-        rule /0x[0-9a-fA-F]+/, Num::Hex
-        rule /\d+/, Num::Integer
-        rule /"""/, Str, :tdqs
-        rule /'''/, Str, :tsqs
-        rule /"/, Str, :dqs
-        rule /'/, Str, :sqs
+        rule %r/\d+[.]\d+([eE]\d+)?[fd]?/, Num::Float
+        rule %r/0x[0-9a-fA-F]+/, Num::Hex
+        rule %r/\d+/, Num::Integer
+        rule %r/"""/, Str, :tdqs
+        rule %r/'''/, Str, :tsqs
+        rule %r/"/, Str, :dqs
+        rule %r/'/, Str, :sqs
       end
 
       state :strings do
         # all coffeescript strings are multi-line
-        rule /[^#\\'"]+/m, Str
+        rule %r/[^#\\'"]+/m, Str
 
-        rule /\\./, Str::Escape
-        rule /#/, Str
+        rule %r/\\./, Str::Escape
+        rule %r/#/, Str
       end
 
       state :double_strings do
-        rule /'/, Str
+        rule %r/'/, Str
         mixin :has_interpolation
         mixin :strings
       end
 
       state :single_strings do
-        rule /"/, Str
+        rule %r/"/, Str
         mixin :strings
       end
 
       state :interpolation do
-        rule /}/, Str::Interpol, :pop!
+        rule %r/}/, Str::Interpol, :pop!
         mixin :root
       end
 
       state :has_interpolation do
-        rule /[#][{]/, Str::Interpol, :interpolation
+        rule %r/[#][{]/, Str::Interpol, :interpolation
       end
 
       state :dqs do
-        rule /"/, Str, :pop!
+        rule %r/"/, Str, :pop!
         mixin :double_strings
       end
 
       state :tdqs do
-        rule /"""/, Str, :pop!
-        rule /"/, Str
+        rule %r/"""/, Str, :pop!
+        rule %r/"/, Str
         mixin :double_strings
       end
 
       state :sqs do
-        rule /'/, Str, :pop!
+        rule %r/'/, Str, :pop!
         mixin :single_strings
       end
 
       state :tsqs do
-        rule /'''/, Str, :pop!
-        rule /'/, Str
+        rule %r/'''/, Str, :pop!
+        rule %r/'/, Str
         mixin :single_strings
       end
     end

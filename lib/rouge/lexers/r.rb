@@ -49,27 +49,27 @@ module Rouge
       end
 
       state :root do
-        rule /#'.*?$/, Comment::Doc
-        rule /#.*?$/, Comment::Single
-        rule /\s+/m, Text::Whitespace
+        rule %r/#'.*?$/, Comment::Doc
+        rule %r/#.*?$/, Comment::Single
+        rule %r/\s+/m, Text::Whitespace
 
-        rule /`[^`]+?`/, Name
-        rule /'(\\.|.)*?'/m, Str::Single
-        rule /"(\\.|.)*?"/m, Str::Double
+        rule %r/`[^`]+?`/, Name
+        rule %r/'(\\.|.)*?'/m, Str::Single
+        rule %r/"(\\.|.)*?"/m, Str::Double
 
-        rule /%[^%]*?%/, Operator
+        rule %r/%[^%]*?%/, Operator
 
-        rule /0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
-        rule /[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/,
+        rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
+        rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/,
           Num
 
         # Only recognize built-in functions when they are actually used as a
         # function call, i.e. followed by an opening parenthesis.
         # `Name::Builtin` would be more logical, but is usually not
         # highlighted specifically; thus use `Name::Function`.
-        rule /\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
+        rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 
-        rule /[a-zA-Z.]([a-zA-Z_][\w.]*)?/ do |m|
+        rule %r/[a-zA-Z.]([a-zA-Z_][\w.]*)?/ do |m|
           if KEYWORDS.include? m[0]
             token Keyword
           elsif KEYWORD_CONSTANTS.include? m[0]
@@ -81,7 +81,7 @@ module Rouge
           end
         end
 
-        rule /[\[\]{}();,]/, Punctuation
+        rule %r/[\[\]{}();,]/, Punctuation
 
         rule %r([-<>?*+^/!=~$@:%&|]), Operator
       end

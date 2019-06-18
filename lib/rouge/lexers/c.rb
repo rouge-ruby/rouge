@@ -65,8 +65,8 @@ module Rouge
       state :expr_bol do
         mixin :inline_whitespace
 
-        rule /#if\s0/, Comment, :if_0
-        rule /#/, Comment::Preproc, :macro
+        rule %r/#if\s0/, Comment, :if_0
+        rule %r/#/, Comment::Preproc, :macro
 
         rule(//) { pop! }
       end
@@ -74,41 +74,41 @@ module Rouge
       # :expr_bol is the same as :bol but without labels, since
       # labels can only appear at the beginning of a statement.
       state :bol do
-        rule /#{id}:(?!:)/, Name::Label
+        rule %r/#{id}:(?!:)/, Name::Label
         mixin :expr_bol
       end
 
       state :inline_whitespace do
-        rule /[ \t\r]+/, Text
-        rule /\\\n/, Text # line continuation
+        rule %r/[ \t\r]+/, Text
+        rule %r/\\\n/, Text # line continuation
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
       end
 
       state :whitespace do
-        rule /\n+/m, Text, :bol
+        rule %r/\n+/m, Text, :bol
         rule %r(//(\\.|.)*?$), Comment::Single, :bol
         mixin :inline_whitespace
       end
 
       state :expr_whitespace do
-        rule /\n+/m, Text, :expr_bol
+        rule %r/\n+/m, Text, :expr_bol
         mixin :whitespace
       end
 
       state :statements do
         mixin :whitespace
-        rule /(u8|u|U|L)?"/, Str, :string
+        rule %r/(u8|u|U|L)?"/, Str, :string
         rule %r((u8|u|U|L)?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
         rule %r((\d+[.]\d*|[.]?\d+)e[+-]?\d+[lu]*)i, Num::Float
         rule %r(\d+e[+-]?\d+[lu]*)i, Num::Float
-        rule /0x[0-9a-f]+[lu]*/i, Num::Hex
-        rule /0[0-7]+[lu]*/i, Num::Oct
-        rule /\d+[lu]*/i, Num::Integer
+        rule %r/0x[0-9a-f]+[lu]*/i, Num::Hex
+        rule %r/0[0-7]+[lu]*/i, Num::Oct
+        rule %r/\d+[lu]*/i, Num::Integer
         rule %r(\*/), Error
         rule %r([~!%^&*+=\|?:<>/-]), Operator
-        rule /[()\[\],.]/, Punctuation
-        rule /\bcase\b/, Keyword, :case
-        rule /(?:true|false|NULL)\b/, Name::Builtin
+        rule %r/[()\[\],.;]/, Punctuation
+        rule %r/\bcase\b/, Keyword, :case
+        rule %r/(?:true|false|NULL)\b/, Name::Builtin
         rule id do |m|
           name = m[0]
 
@@ -127,19 +127,17 @@ module Rouge
       end
 
       state :case do
-        rule /:/, Punctuation, :pop!
+        rule %r/:/, Punctuation, :pop!
         mixin :statements
       end
 
       state :root do
         mixin :expr_whitespace
-
-        # functions
         rule %r(
           ([\w*\s]+?[\s*]) # return arguments
           (#{id})          # function name
           (\s*\([^;]*?\))  # signature
-          (#{ws})({)         # open brace
+          (#{ws}?)({|;)    # open brace or semicolon
         )mx do |m|
           # TODO: do this better.
           recurse m[1]
@@ -147,66 +145,45 @@ module Rouge
           recurse m[3]
           recurse m[4]
           token Punctuation, m[5]
-          push :function
+          if m[5] == ?{
+            push :function
+          end
         end
-
-        # function declarations
-        rule %r(
-          ([\w*\s]+?[\s*]) # return arguments
-          (#{id})          # function name
-          (\s*\([^;]*?\))  # signature
-          (#{ws})(;)       # semicolon
-        )mx do |m|
-          # TODO: do this better.
-          recurse m[1]
-          token Name::Function, m[2]
-          recurse m[3]
-          recurse m[4]
-          token Punctuation, m[5]
-          push :statement
-        end
-
-        rule(//) { push :statement }
-      end
-
-      state :statement do
-        rule /;/, Punctuation, :pop!
-        mixin :expr_whitespace
+        rule %r/\{/, Punctuation, :function
         mixin :statements
-        rule /[{}]/, Punctuation
       end
 
       state :function do
         mixin :whitespace
         mixin :statements
-        rule /;/, Punctuation
-        rule /{/, Punctuation, :function
-        rule /}/, Punctuation, :pop!
+        rule %r/;/, Punctuation
+        rule %r/{/, Punctuation, :function
+        rule %r/}/, Punctuation, :pop!
       end
 
       state :string do
-        rule /"/, Str, :pop!
-        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
-        rule /[^\\"\n]+/, Str
-        rule /\\\n/, Str
-        rule /\\/, Str # stray backslash
+        rule %r/"/, Str, :pop!
+        rule %r/\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
+        rule %r/[^\\"\n]+/, Str
+        rule %r/\\\n/, Str
+        rule %r/\\/, Str # stray backslash
       end
 
       state :macro do
         # NB: pop! goes back to :bol
-        rule /\n/, Comment::Preproc, :pop!
+        rule %r/\n/, Comment::Preproc, :pop!
         rule %r([^/\n\\]+), Comment::Preproc
-        rule /\\./m, Comment::Preproc
+        rule %r/\\./m, Comment::Preproc
         mixin :inline_whitespace
         rule %r(/), Comment::Preproc
       end
 
       state :if_0 do
         # NB: no \b here, to cover #ifdef and #ifndef
-        rule /^\s*#if/, Comment, :if_0
-        rule /^\s*#\s*el(?:se|if)/, Comment, :pop!
-        rule /^\s*#\s*endif\b.*?(?<!\\)\n/m, Comment, :pop!
-        rule /.*?\n/, Comment
+        rule %r/^\s*#if/, Comment, :if_0
+        rule %r/^\s*#\s*el(?:se|if)/, Comment, :pop!
+        rule %r/^\s*#\s*endif\b.*?(?<!\\)\n/m, Comment, :pop!
+        rule %r/.*?\n/, Comment
       end
     end
   end

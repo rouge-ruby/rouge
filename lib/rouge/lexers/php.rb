@@ -91,49 +91,49 @@ module Rouge
       end
 
       state :template do
-        rule /<\?(php|=)?/, Comment::Preproc, :php
+        rule %r/<\?(php|=)?/, Comment::Preproc, :php
         rule(/.*?(?=<\?)|.*/m) { delegate parent }
       end
 
       state :php do
-        rule /\?>/, Comment::Preproc, :pop!
+        rule %r/\?>/, Comment::Preproc, :pop!
         # heredocs
-        rule /<<<('?)(#{id})\1\n.*?\n\2;?\n/im, Str::Heredoc
-        rule /\s+/, Text
-        rule /#.*?$/, Comment::Single
+        rule %r/<<<('?)(#{id})\1\n.*?\n\2;?\n/im, Str::Heredoc
+        rule %r/\s+/, Text
+        rule %r/#.*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single
         # empty comment, otherwise seen as the start of a docstring
         rule %r(/\*\*/), Comment::Multiline
         rule %r(/\*\*.*?\*/)m, Str::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule /(->|::)(\s*)(#{id})/ do
+        rule %r/(->|::)(\s*)(#{id})/ do
           groups Operator, Text, Name::Attribute
         end
 
-        rule /[~!%^&*+=\|:.<>\/?@-]+/, Operator
-        rule /[\[\]{}();,]/, Punctuation
-        rule /class\b/, Keyword, :classname
+        rule %r/[~!%^&*+=\|:.<>\/?@-]+/, Operator
+        rule %r/[\[\]{}();,]/, Punctuation
+        rule %r/class\b/, Keyword, :classname
         # anonymous functions
-        rule /(function)(\s*)(?=\()/ do
+        rule %r/(function)(\s*)(?=\()/ do
           groups Keyword, Text
         end
 
         # named functions
-        rule /(function)(\s+)(&?)(\s*)/ do
+        rule %r/(function)(\s+)(&?)(\s*)/ do
           groups Keyword, Text, Operator, Text
           push :funcname
         end
 
-        rule /(const)(\s+)(#{id})/i do
+        rule %r/(const)(\s+)(#{id})/i do
           groups Keyword, Text, Name::Constant
         end
 
-        rule /(true|false|null)\b/, Keyword::Constant
-        rule /\$\{\$+#{id}\}/i, Name::Variable
-        rule /\$+#{id}/i, Name::Variable
+        rule %r/(true|false|null)\b/, Keyword::Constant
+        rule %r/\$\{\$+#{id}\}/i, Name::Variable
+        rule %r/\$+#{id}/i, Name::Variable
 
         # may be intercepted for builtin highlighting
-        rule /\\?#{nsid}/i do |m|
+        rule %r/\\?#{nsid}/i do |m|
           name = m[0]
 
           if self.class.keywords.include? name
@@ -145,48 +145,48 @@ module Rouge
           end
         end
 
-        rule /(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, Num::Float
-        rule /\d+e[+-]?\d+/i, Num::Float
-        rule /0[0-7]+/, Num::Oct
-        rule /0x[a-f0-9]+/i, Num::Hex
-        rule /\d+/, Num::Integer
-        rule /'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
-        rule /`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
-        rule /"/, Str::Double, :string
+        rule %r/(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, Num::Float
+        rule %r/\d+e[+-]?\d+/i, Num::Float
+        rule %r/0[0-7]+/, Num::Oct
+        rule %r/0x[a-f0-9]+/i, Num::Hex
+        rule %r/\d+/, Num::Integer
+        rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
+        rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
+        rule %r/"/, Str::Double, :string
       end
 
       state :classname do
-        rule /\s+/, Text
-        rule /#{nsid}/, Name::Class, :pop!
+        rule %r/\s+/, Text
+        rule %r/#{nsid}/, Name::Class, :pop!
       end
 
       state :funcname do
-        rule /#{id}/, Name::Function, :pop!
+        rule %r/#{id}/, Name::Function, :pop!
       end
 
       state :string do
-        rule /"/, Str::Double, :pop!
-        rule /[^\\{$"]+/, Str::Double
-        rule /\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
+        rule %r/"/, Str::Double, :pop!
+        rule %r/[^\\{$"]+/, Str::Double
+        rule %r/\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
           Str::Escape
-        rule /\$#{id}(\[\S+\]|->#{id})?/, Name::Variable
+        rule %r/\$#{id}(\[\S+\]|->#{id})?/, Name::Variable
 
-        rule /\{\$\{/, Str::Interpol, :interp_double
-        rule /\{(?=\$)/, Str::Interpol, :interp_single
-        rule /(\{)(\S+)(\})/ do
+        rule %r/\{\$\{/, Str::Interpol, :interp_double
+        rule %r/\{(?=\$)/, Str::Interpol, :interp_single
+        rule %r/(\{)(\S+)(\})/ do
           groups Str::Interpol, Name::Variable, Str::Interpol
         end
 
-        rule /[${\\]+/, Str::Double
+        rule %r/[${\\]+/, Str::Double
       end
 
       state :interp_double do
-        rule /\}\}/, Str::Interpol, :pop!
+        rule %r/\}\}/, Str::Interpol, :pop!
         mixin :php
       end
 
       state :interp_single do
-        rule /\}/, Str::Interpol, :pop!
+        rule %r/\}/, Str::Interpol, :pop!
         mixin :php
       end
     end

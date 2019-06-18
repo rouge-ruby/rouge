@@ -80,8 +80,9 @@ module Rouge
         token :Whitespace, 'w'
       end
 
-      token :Error, 'err'
-      token :Other, 'x'
+      token :Escape, 'esc'
+      token :Error,  'err'
+      token :Other,  'x'
 
       token :Keyword, 'k' do
         token :Constant,    'kc'
@@ -103,7 +104,9 @@ module Rouge
         token :Decorator,    'nd'
         token :Entity,       'ni'
         token :Exception,    'ne'
-        token :Function,     'nf'
+        token :Function,     'nf' do
+          token :Magic,      'fm'
+        end
         token :Property,     'py'
         token :Label,        'nl'
         token :Namespace,    'nn'
@@ -113,34 +116,37 @@ module Rouge
           token :Class,      'vc'
           token :Global,     'vg'
           token :Instance,   'vi'
+          token :Magic,      'vm'
         end
       end
 
       token :Literal,      'l' do
         token :Date,       'ld'
 
-        token :String,     's' do
-          token :Backtick, 'sb'
-          token :Char,     'sc'
-          token :Doc,      'sd'
-          token :Double,   's2'
-          token :Escape,   'se'
-          token :Heredoc,  'sh'
-          token :Interpol, 'si'
-          token :Other,    'sx'
-          token :Regex,    'sr'
-          token :Single,   's1'
-          token :Symbol,   'ss'
+        token :String,      's' do
+          token :Affix,     'sa'
+          token :Backtick,  'sb'
+          token :Char,      'sc'
+          token :Delimiter, 'dl'
+          token :Doc,       'sd'
+          token :Double,    's2'
+          token :Escape,    'se'
+          token :Heredoc,   'sh'
+          token :Interpol,  'si'
+          token :Other,     'sx'
+          token :Regex,     'sr'
+          token :Single,    's1'
+          token :Symbol,    'ss'
         end
 
         token :Number,     'm' do
+          token :Bin,      'mb'
           token :Float,    'mf'
           token :Hex,      'mh'
           token :Integer,  'mi' do
             token :Long,   'il'
           end
           token :Oct,      'mo'
-          token :Bin,      'mb'
           token :Other,    'mx'
         end
       end
@@ -153,12 +159,14 @@ module Rouge
         token :Indicator, 'pi'
       end
 
-      token :Comment,     'c' do
-        token :Doc,       'cd'
-        token :Multiline, 'cm'
-        token :Preproc,   'cp'
-        token :Single,    'c1'
-        token :Special,   'cs'
+      token :Comment,       'c' do
+        token :Hashbang,    'ch'
+        token :Doc,         'cd'
+        token :Multiline,   'cm'
+        token :Preproc,     'cp'
+        token :PreprocFile, 'cpf'
+        token :Single,      'c1'
+        token :Special,     'cs'
       end
 
       token :Generic,      'g' do

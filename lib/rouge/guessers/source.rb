@@ -22,7 +22,7 @@ module Rouge
         source_text = TextAnalyzer.new(source_text)
 
         collect_best(lexers) do |lexer|
-          next unless lexer.methods(false).include? :detect?
+          next unless lexer.detectable?
           lexer.detect?(source_text) ? 1 : nil
         end
       end

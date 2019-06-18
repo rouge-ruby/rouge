@@ -94,15 +94,8 @@ module Rouge
           ([\w-]+)(\s+)
           (in)(\s+)
           (
-            (?:
-              (?:"[^"]*"|'[^']*') |
-              (?:
-                [^\s,\|'"] |
-                (?:"[^"]*"|'[^']*')
-              )+
-            )+
-          )
-          (\s)*(reversed)?
+            (?: [^\s,\|'"] | (?:"[^"]*"|'[^']*') )+
+          )(\s*)
         /x do |m|
           groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace,
                  Keyword::Reserved, Text::Whitespace
@@ -114,9 +107,7 @@ module Rouge
                           Name::Variable
                         end
           token token_class, m[7]
-
           token Text::Whitespace, m[8]
-          token Name::Attribute,  m[9]
           push :tag_markup
         end
 

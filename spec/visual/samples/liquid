@@ -95,7 +95,7 @@ Some other {{ output }}!
   {% endif %}
 {% endfor %}
 
-{% for item in array limit:2 %}
+{% for item in array limit:2 reversed %}
   {{ item }}
 {% endfor %}
 

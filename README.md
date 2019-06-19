@@ -124,6 +124,13 @@ Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a dif
 
 ## Contributing
 
+### Bug reports
+
+Rouge uses GitHub issues to report bugs. You can [choose][issue-chooser] from one of our templates or create a custom issue. Issues that have not been active for a year are automatically closed by GitHub's [Probot][].
+
+[issue-chooser]: https://github.com/rouge-ruby/rouge/issues/new/choose "Issue Template Chooser"
+[Probot]: https://probot.github.io "GitHub's Probot"
+
 ### Installing Ruby
 
 If you're here to implement a lexer for your awesome language, there's a good chance you don't already have a ruby development environment set up.  Follow the [instructions on the wiki](https://github.com/rouge-ruby/rouge/wiki/Setting-up-Ruby) to get up and running.  If you have trouble getting set up, let me know - I'm always happy to help.

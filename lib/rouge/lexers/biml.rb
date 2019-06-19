@@ -26,16 +26,16 @@ module Rouge
       end
 
       state :directive_as_csharp do
-        rule /\s*#>\s*/m, Name::Tag, :pop!
+        rule %r/\s*#>\s*/m, Name::Tag, :pop!
         rule %r(.*?(?=\s*#>\s*))m do
           delegate CSharp
         end
       end
 
       state :directive_tag do
-        rule /\s+/m, Text
-        rule /[\w.:-]+\s*=/m, Name::Attribute, :attr
-        rule /[\w]+\s*/m, Name::Attribute
+        rule %r/\s+/m, Text
+        rule %r/[\w.:-]+\s*=/m, Name::Attribute, :attr
+        rule %r/\w+\s*/m, Name::Attribute
         rule %r(/?\s*#>), Name::Tag, :pop!
       end
     end

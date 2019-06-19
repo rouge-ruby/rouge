@@ -9,7 +9,7 @@ module Rouge
       title 'powershell'
       desc 'powershell'
       tag 'powershell'
-      aliases 'posh'
+      aliases 'posh', 'microsoftshell', 'msshell'
       filenames '*.ps1', '*.psm1', '*.psd1', '*.psrc', '*.pssc'
       mimetypes 'text/x-powershell'
 
@@ -630,49 +630,49 @@ module Rouge
 
       # Override from Shell
       state :interp do
-        rule /`$/, Str::Escape # line continuation
-        rule /`./, Str::Escape
-        rule /\$\(\(/, Keyword, :math
-        rule /\$\(/, Keyword, :paren
-        rule /\${#?/, Keyword, :curly
-        rule /\$#?(\w+|.)/, Name::Variable
+        rule %r/`$/, Str::Escape # line continuation
+        rule %r/`./, Str::Escape
+        rule %r/\$\(\(/, Keyword, :math
+        rule %r/\$\(/, Keyword, :paren
+        rule %r/\${#?/, Keyword, :curly
+        rule %r/\$#?(\w+|.)/, Name::Variable
       end
 
       # Override from Shell
       state :double_quotes do
         # NB: "abc$" is literally the string abc$.
         # Here we prevent :interp from interpreting $" as a variable.
-        rule /(?:\$#?)?"/, Str::Double, :pop!
+        rule %r/(?:\$#?)?"/, Str::Double, :pop!
         mixin :interp
-        rule /[^"`$]+/, Str::Double
+        rule %r/[^"`$]+/, Str::Double
       end
 
       # Override from Shell
       state :data do
-        rule /\s+/, Text
-        rule /\$?"/, Str::Double, :double_quotes
-        rule /\$'/, Str::Single, :ansi_string
+        rule %r/\s+/, Text
+        rule %r/\$?"/, Str::Double, :double_quotes
+        rule %r/\$'/, Str::Single, :ansi_string
 
-        rule /'/, Str::Single, :single_quotes
+        rule %r/'/, Str::Single, :single_quotes
 
-        rule /\*/, Keyword
+        rule %r/\*/, Keyword
 
-        rule /;/, Text
-        rule /[^=\*\s{}()$"'`<]+/, Text
-        rule /\d+(?= |\Z)/, Num
-        rule /</, Text
+        rule %r/;/, Text
+        rule %r/[^=\*\s{}()$"'`<]+/, Text
+        rule %r/\d+(?= |\Z)/, Num
+        rule %r/</, Text
         mixin :interp
       end
 
       prepend :basic do
         rule %r(<#[\s,\S]*?#>)m, Comment::Multiline
-        rule /#.*$/, Comment::Single
-        rule /\b(#{OPERATORS})\s*\b/i, Operator
-        rule /\b(#{ATTRIBUTES})\s*\b/i, Name::Attribute
-        rule /\b(#{KEYWORDS})\s*\b/i, Keyword
-        rule /\b(#{KEYWORDS_TYPE})\s*\b/i, Keyword::Type
-        rule /\bcase\b/, Keyword, :case
-        rule /\b(#{BUILTINS})\s*\b(?!\.)/i, Name::Builtin
+        rule %r/#.*$/, Comment::Single
+        rule %r/\b(#{OPERATORS})\s*\b/i, Operator
+        rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Attribute
+        rule %r/\b(#{KEYWORDS})\s*\b/i, Keyword
+        rule %r/\b(#{KEYWORDS_TYPE})\s*\b/i, Keyword::Type
+        rule %r/\bcase\b/, Keyword, :case
+        rule %r/\b(#{BUILTINS})\s*\b(?!\.)/i, Name::Builtin
       end
     end
   end

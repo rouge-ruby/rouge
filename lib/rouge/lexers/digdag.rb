@@ -60,7 +60,7 @@ module Rouge
       ))
 
       prepend :block_nodes do
-        rule /(#{KEYWORD_PATTERN})(:)(?=\s|$)/ do |m|
+        rule %r/(#{KEYWORD_PATTERN})(:)(?=\s|$)/ do |m|
           groups Keyword::Reserved, Punctuation::Indicator
           set_indent m[0], :implicit => true
         end

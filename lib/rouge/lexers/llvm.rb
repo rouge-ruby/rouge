@@ -15,21 +15,21 @@ module Rouge
       identifier = /([-a-zA-Z$._][-a-zA-Z$._0-9]*|#{string})/
 
       state :basic do
-        rule /;.*?$/, Comment::Single
-        rule /\s+/, Text
+        rule %r/;.*?$/, Comment::Single
+        rule %r/\s+/, Text
 
-        rule /#{identifier}\s*:/, Name::Label
+        rule %r/#{identifier}\s*:/, Name::Label
 
-        rule /@(#{identifier}|\d+)/, Name::Variable::Global
-        rule /(%|!)#{identifier}/, Name::Variable
-        rule /(%|!)\d+/, Name::Variable
+        rule %r/@(#{identifier}|\d+)/, Name::Variable::Global
+        rule %r/(%|!)#{identifier}/, Name::Variable
+        rule %r/(%|!)\d+/, Name::Variable
 
-        rule /c?#{string}/, Str
+        rule %r/c?#{string}/, Str
 
-        rule /0[xX][a-fA-F0-9]+/, Num
-        rule /-?\d+(?:[.]\d+)?(?:[eE][-+]?\d+(?:[.]\d+)?)?/, Num
+        rule %r/0[xX][a-fA-F0-9]+/, Num
+        rule %r/-?\d+(?:[.]\d+)?(?:[eE][-+]?\d+(?:[.]\d+)?)?/, Num
 
-        rule /[=<>{}\[\]()*.,!]|x/, Punctuation
+        rule %r/[=<>{}\[\]()*.,!]|x/, Punctuation
       end
 
       builtin_types = %w(
@@ -37,8 +37,8 @@ module Rouge
       )
 
       state :types do
-        rule /i[1-9]\d*/, Keyword::Type
-        rule /#{builtin_types.join('|')}/, Keyword::Type
+        rule %r/i[1-9]\d*/, Keyword::Type
+        rule %r/#{builtin_types.join('|')}/, Keyword::Type
       end
 
       builtin_keywords = %w(
@@ -67,8 +67,8 @@ module Rouge
       )
 
       state :keywords do
-        rule /#{builtin_instructions.join('|')}/, Keyword
-        rule /#{builtin_keywords.join('|')}/, Keyword
+        rule %r/#{builtin_instructions.join('|')}/, Keyword
+        rule %r/#{builtin_keywords.join('|')}/, Keyword
       end
 
       state :root do

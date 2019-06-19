@@ -19,9 +19,9 @@ module Rouge
         external false final finally for fun get if import in infix
         inline inner interface internal is lateinit noinline null
         object open operator out override package private protected
-        public reified return sealed set super tailrec this throw
-        true try typealias typeof val var vararg when where while
-        yield
+        public reified return sealed set super suspend tailrec this
+        throw true try typealias typeof val var vararg when where
+        while yield
       )
 
       name = %r'@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
@@ -68,12 +68,13 @@ module Rouge
           push :property
         end
         rule %r/\bfun\b/, Keyword
-        rule /\b(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/\b(?:#{keywords.join('|')})\b/, Keyword
         rule %r'^\s*\[.*?\]', Name::Attribute
         rule %r'[^\S\n]+', Text
         rule %r'\\\n', Text # line continuation
         rule %r'//.*?$', Comment::Single
-        rule %r'/[*].*?[*]/'m, Comment::Multiline
+        rule %r'/[*].*[*]/', Comment::Multiline # single line block comment
+        rule %r'/[*].*', Comment::Multiline, :comment # multiline block comment
         rule %r'\n', Text
         rule %r'::|!!|\?[:.]', Operator
         rule %r"(\.\.)", Operator
@@ -84,12 +85,12 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
-        rule /@#{id}/, Name::Decorator
+        rule %r/@#{id}/, Name::Decorator
         rule id, Name
       end
 
       state :package do
-        rule /\S+/, Name::Namespace, :pop!
+        rule %r/\S+/, Name::Namespace, :pop!
       end
 
       state :class do
@@ -121,6 +122,12 @@ module Rouge
         rule %r'(\))', Punctuation, :pop!
         rule %r'(\s+)', Text
         rule id, Name::Property
+      end
+
+      state :comment do
+        rule %r'\s*/[*].*', Comment::Multiline, :comment
+        rule %r'.*[*]/', Comment::Multiline, :pop!
+        rule %r'.*', Comment::Multiline
       end
     end
   end

@@ -12,7 +12,7 @@ module Rouge
       mimetypes 'text/x-python', 'application/x-python'
 
       def self.detect?(text)
-        return true if text.shebang?(/pythonw?(3|2(\.\d)?)?/)
+        return true if text.shebang?(/pythonw?(?:[23](?:\.\d+)?)?/)
       end
 
       def self.keywords
@@ -69,23 +69,23 @@ module Rouge
       identifier =        /[a-z_][a-z0-9_]*/i
       dotted_identifier = /[a-z_.][a-z0-9_.]*/i
       state :root do
-        rule /\n+/m, Text
-        rule /^(:)(\s*)([ru]{,2}""".*?""")/mi do
+        rule %r/\n+/m, Text
+        rule %r/^(:)(\s*)([ru]{,2}""".*?""")/mi do
           groups Punctuation, Text, Str::Doc
         end
 
-        rule /[^\S\n]+/, Text
+        rule %r/[^\S\n]+/, Text
         rule %r(#(.*)?\n?), Comment::Single
-        rule /[\[\]{}:(),;]/, Punctuation
-        rule /\\\n/, Text
-        rule /\\/, Text
+        rule %r/[\[\]{}:(),;]/, Punctuation
+        rule %r/\\\n/, Text
+        rule %r/\\/, Text
 
-        rule /(in|is|and|or|not)\b/, Operator::Word
-        rule /(<<|>>|\/\/|\*\*)=?/, Operator
-        rule /[-~+\/*%=<>&^|@]=?|!=/, Operator
-        rule /\.(?![0-9])/, Operator  # so it doesn't match float literals
+        rule %r/(in|is|and|or|not)\b/, Operator::Word
+        rule %r/(<<|>>|\/\/|\*\*)=?/, Operator
+        rule %r/[-~+\/*%=<>&^|@]=?|!=/, Operator
+        rule %r/\.(?![0-9])/, Operator  # so it doesn't match float literals
 
-        rule /(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do
+        rule %r/(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do
           groups Keyword::Namespace,
                  Text,
                  Name::Namespace,
@@ -93,35 +93,35 @@ module Rouge
                  Keyword::Namespace
         end
 
-        rule /(import)(\s+)(#{dotted_identifier})/ do
+        rule %r/(import)(\s+)(#{dotted_identifier})/ do
           groups Keyword::Namespace, Text, Name::Namespace
         end
 
-        rule /(def)((?:\s|\\\s)+)/ do
+        rule %r/(def)((?:\s|\\\s)+)/ do
           groups Keyword, Text
           push :funcname
         end
 
-        rule /(class)((?:\s|\\\s)+)/ do
+        rule %r/(class)((?:\s|\\\s)+)/ do
           groups Keyword, Text
           push :classname
         end
 
         # TODO: not in python 3
-        rule /`.*?`/, Str::Backtick
-        rule /(?:r|ur|ru)"""/i, Str, :raw_tdqs
-        rule /(?:r|ur|ru)'''/i, Str, :raw_tsqs
-        rule /(?:r|ur|ru)"/i,   Str, :raw_dqs
-        rule /(?:r|ur|ru)'/i,   Str, :raw_sqs
-        rule /u?"""/i,          Str, :tdqs
-        rule /u?'''/i,          Str, :tsqs
-        rule /u?"/i,            Str, :dqs
-        rule /u?'/i,            Str, :sqs
+        rule %r/`.*?`/, Str::Backtick
+        rule %r/(?:r|ur|ru)"""/i, Str, :raw_tdqs
+        rule %r/(?:r|ur|ru)'''/i, Str, :raw_tsqs
+        rule %r/(?:r|ur|ru)"/i,   Str, :raw_dqs
+        rule %r/(?:r|ur|ru)'/i,   Str, :raw_sqs
+        rule %r/u?"""/i,          Str, :tdqs
+        rule %r/u?'''/i,          Str, :tsqs
+        rule %r/u?"/i,            Str, :dqs
+        rule %r/u?'/i,            Str, :sqs
 
-        rule /@#{dotted_identifier}/i, Name::Decorator
+        rule %r/@#{dotted_identifier}/i, Name::Decorator
 
         # using negative lookbehind so we don't match property names
-        rule /(?<!\.)#{identifier}/ do |m|
+        rule %r/(?<!\.)#{identifier}/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           elsif self.class.exceptions.include? m[0]
@@ -140,15 +140,15 @@ module Rouge
         digits = /[0-9](_?[0-9])*/
         decimal = /((#{digits})?\.#{digits}|#{digits}\.)/
         exponent = /e[+-]?#{digits}/i
-        rule /#{decimal}(#{exponent})?j?/i, Num::Float
-        rule /#{digits}#{exponent}j?/i, Num::Float
-        rule /#{digits}j/i, Num::Float
+        rule %r/#{decimal}(#{exponent})?j?/i, Num::Float
+        rule %r/#{digits}#{exponent}j?/i, Num::Float
+        rule %r/#{digits}j/i, Num::Float
 
-        rule /0b(_?[0-1])+/i, Num::Bin
-        rule /0o(_?[0-7])+/i, Num::Oct
-        rule /0x(_?[a-f0-9])+/i, Num::Hex
-        rule /\d+L/, Num::Integer::Long
-        rule /([1-9](_?[0-9])*|0(_?0)*)/, Num::Integer
+        rule %r/0b(_?[0-1])+/i, Num::Bin
+        rule %r/0o(_?[0-7])+/i, Num::Oct
+        rule %r/0x(_?[a-f0-9])+/i, Num::Hex
+        rule %r/\d+L/, Num::Integer::Long
+        rule %r/([1-9](_?[0-9])*|0(_?0)*)/, Num::Integer
       end
 
       state :funcname do
@@ -160,11 +160,11 @@ module Rouge
       end
 
       state :raise do
-        rule /from\b/, Keyword
-        rule /raise\b/, Keyword
-        rule /yield\b/, Keyword
-        rule /\n/, Text, :pop!
-        rule /;/, Punctuation, :pop!
+        rule %r/from\b/, Keyword
+        rule %r/raise\b/, Keyword
+        rule %r/yield\b/, Keyword
+        rule %r/\n/, Text, :pop!
+        rule %r/;/, Punctuation, :pop!
         mixin :root
       end
 
@@ -173,21 +173,21 @@ module Rouge
       end
 
       state :strings do
-        rule /%(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
+        rule %r/%(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
       end
 
       state :strings_double do
-        rule /[^\\"%\n]+/, Str
+        rule %r/[^\\"%\n]+/, Str
         mixin :strings
       end
 
       state :strings_single do
-        rule /[^\\'%\n]+/, Str
+        rule %r/[^\\'%\n]+/, Str
         mixin :strings
       end
 
       state :nl do
-        rule /\n/, Str
+        rule %r/\n/, Str
       end
 
       state :escape do
@@ -204,32 +204,32 @@ module Rouge
       end
 
       state :raw_escape do
-        rule /\\./, Str
+        rule %r/\\./, Str
       end
 
       state :dqs do
-        rule /"/, Str, :pop!
+        rule %r/"/, Str, :pop!
         mixin :escape
         mixin :strings_double
       end
 
       state :sqs do
-        rule /'/, Str, :pop!
+        rule %r/'/, Str, :pop!
         mixin :escape
         mixin :strings_single
       end
 
       state :tdqs do
-        rule /"""/, Str, :pop!
-        rule /"/, Str
+        rule %r/"""/, Str, :pop!
+        rule %r/"/, Str
         mixin :escape
         mixin :strings_double
         mixin :nl
       end
 
       state :tsqs do
-        rule /'''/, Str, :pop!
-        rule /'/, Str
+        rule %r/'''/, Str, :pop!
+        rule %r/'/, Str
         mixin :escape
         mixin :strings_single
         mixin :nl

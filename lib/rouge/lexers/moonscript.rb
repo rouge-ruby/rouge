@@ -40,18 +40,18 @@ module Rouge
 
       state :root do
         rule %r(#!(.*?)$), Comment::Preproc # shebang
-        rule //, Text, :main
+        rule %r//, Text, :main
       end
 
       state :base do
-        ident = '(?:[\w_][\w\d_]*)'
+        ident = '(?:\w\w*)'
 
         rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
         rule %r((?i)\d+e[+-]?\d+), Num::Float
         rule %r((?i)0x[0-9a-f]*), Num::Hex
         rule %r(\d+), Num::Integer
         rule %r(@#{ident}*), Name::Variable::Instance
-        rule %r([A-Z][\w\d_]*), Name::Class
+        rule %r([A-Z]\w*), Name::Class
         rule %r("?[^"]+":), Literal::String::Symbol
         rule %r(#{ident}:), Literal::String::Symbol
         rule %r(:#{ident}), Literal::String::Symbol

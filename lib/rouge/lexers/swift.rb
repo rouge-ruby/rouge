@@ -20,6 +20,8 @@ module Rouge
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
         associativity didSet get infix inout mutating none nonmutating operator override postfix precedence prefix set unowned weak willSet throws rethrows precedencegroup
+
+        #available #colorLiteral #column #else #elseif #endif #error #file #fileLiteral #function #if #imageLiteral #line #selector #sourceLocation #warning
       )
 
       declarations = Set.new %w(
@@ -34,7 +36,7 @@ module Rouge
 
       # beginning of line
       state :bol do
-        rule /#.*/, Comment::Preproc
+        rule %r/#.*/, Comment::Preproc
 
         mixin :inline_whitespace
 
@@ -42,12 +44,12 @@ module Rouge
       end
 
       state :inline_whitespace do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         mixin :has_comments
       end
 
       state :whitespace do
-        rule /\n+/m, Text, :bol
+        rule %r/\n+/m, Text, :bol
         rule %r(\/\/.*?$), Comment::Single, :bol
         mixin :inline_whitespace
       end
@@ -60,27 +62,27 @@ module Rouge
         mixin :has_comments
         rule %r([*]/), Comment::Multiline, :pop!
         rule %r([^*/]+)m, Comment::Multiline
-        rule /./, Comment::Multiline
+        rule %r/./, Comment::Multiline
       end
 
       state :root do
         mixin :whitespace
-        rule /\$(([1-9]\d*)?\d)/, Name::Variable
+        rule %r/\$(([1-9]\d*)?\d)/, Name::Variable
 
         rule %r{[()\[\]{}:;,?\\]}, Punctuation
         rule %r([-/=+*%<>!&|^.~]+), Operator
-        rule /@?"/, Str, :dq
-        rule /'(\\.|.)'/, Str::Char
-        rule /(\d+\*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
-        rule /\d+e[+-]?[0-9]+/i, Num::Float
-        rule /0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
-        rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
-        rule /0b[01]+(?:_[01]+)*/, Num::Bin
+        rule %r/@?"/, Str, :dq
+        rule %r/'(\\.|.)'/, Str::Char
+        rule %r/(\d+(?:_\d+)*\*|(?:\d+(?:_\d+)*)*\.\d+(?:_\d)*)(e[+-]?\d+(?:_\d)*)?/i, Num::Float
+        rule %r/\d+e[+-]?[0-9]+/i, Num::Float
+        rule %r/0o?[0-7]+(?:_[0-7]+)*/, Num::Oct
+        rule %r/0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*((\.[0-9A-F]+(?:_[0-9A-F]+)*)?p[+-]?\d+)?/, Num::Hex
+        rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
-        rule /@#{id}(\([^)]+\))?/, Keyword::Declaration
+        rule %r/@#{id}(\([^)]+\))?/, Keyword::Declaration
 
-        rule /(private|internal)(\([ ]*)(\w+)([ ]*\))/ do |m|
+        rule %r/(private|internal)(\([ ]*)(\w+)([ ]*\))/ do |m|
           if m[3] == 'set'
             token Keyword::Declaration
           else
@@ -88,7 +90,7 @@ module Rouge
           end
         end
 
-        rule /(unowned\([ ]*)(\w+)([ ]*\))/ do |m|
+        rule %r/(unowned\([ ]*)(\w+)([ ]*\))/ do |m|
           if m[2] == 'safe' || m[2] == 'unsafe'
             token Keyword::Declaration
           else
@@ -96,24 +98,24 @@ module Rouge
           end
         end
         
-        rule /#available\([^)]+\)/, Keyword::Declaration
+        rule %r/#available\([^)]+\)/, Keyword::Declaration
         
-        rule /(#(?:selector|keyPath)\()([^)]+?(?:[(].*?[)])?)(\))/ do
+        rule %r/(#(?:selector|keyPath)\()([^)]+?(?:[(].*?[)])?)(\))/ do
           groups Keyword::Declaration, Name::Function, Keyword::Declaration
         end
         
-        rule /#(line|file|column|function|dsohandle)/, Keyword::Declaration
+        rule %r/#(line|file|column|function|dsohandle)/, Keyword::Declaration
 
-        rule /(let|var)\b(\s*)(#{id})/ do
+        rule %r/(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
         end
 
-        rule /(let|var)\b(\s*)([(])/ do
+        rule %r/(let|var)\b(\s*)([(])/ do
           groups Keyword, Text, Punctuation
           push :tuple
         end
 
-        rule /(?!\b(if|while|for|private|internal|unowned|switch|case)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
+        rule %r/(?!\b(if|while|for|private|internal|unowned|switch|case)\b)\b#{id}(?=(\?|!)?\s*[(])/ do |m|
           if m[0] =~ /^[[:upper:]]/
             token Keyword::Type
           else
@@ -121,10 +123,10 @@ module Rouge
           end
         end
         
-        rule /as[?!]?(?=\s)/, Keyword
-        rule /try[!]?(?=\s)/, Keyword
+        rule %r/as[?!]?(?=\s)/, Keyword
+        rule %r/try[!]?(?=\s)/, Keyword
 
-        rule /(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
+        rule %r/(#?(?!default)(?![[:upper:]])#{id})(\s*)(:)/ do
           groups Name::Variable, Text, Punctuation
         end
 
@@ -142,39 +144,40 @@ module Rouge
           end
         end
 
-        rule /(`)(#{id})(`)/ do
+        rule %r/(`)(#{id})(`)/ do
           groups Punctuation, Name::Variable, Punctuation
         end
       end
 
       state :tuple do
-        rule /(#{id})/, Name::Variable
-        rule /(`)(#{id})(`)/ do
+        rule %r/(#{id})/, Name::Variable
+        rule %r/(`)(#{id})(`)/ do
             groups Punctuation, Name::Variable, Punctuation
         end
-        rule /,/, Punctuation
-        rule /[(]/, Punctuation, :push
-        rule /[)]/, Punctuation, :pop!
+        rule %r/,/, Punctuation
+        rule %r/[(]/, Punctuation, :push
+        rule %r/[)]/, Punctuation, :pop!
         mixin :inline_whitespace
       end
 
       state :dq do
-        rule /\\[\\0tnr'"]/, Str::Escape
-        rule /\\[(]/, Str::Escape, :interp
-        rule /\\u\{\h{1,8}\}/, Str::Escape
-        rule /[^\\"]+/, Str
-        rule /"/, Str, :pop!
+        rule %r/\\[\\0tnr'"]/, Str::Escape
+        rule %r/\\[(]/, Str::Escape, :interp
+        rule %r/\\u\{\h{1,8}\}/, Str::Escape
+        rule %r/[^\\"]+/, Str
+        rule %r/"""/, Str, :pop!
+        rule %r/"/, Str, :pop!
       end
 
       state :interp do
-        rule /[(]/, Punctuation, :interp_inner
-        rule /[)]/, Str::Escape, :pop!
+        rule %r/[(]/, Punctuation, :interp_inner
+        rule %r/[)]/, Str::Escape, :pop!
         mixin :root
       end
 
       state :interp_inner do
-        rule /[(]/, Punctuation, :push
-        rule /[)]/, Punctuation, :pop!
+        rule %r/[(]/, Punctuation, :push
+        rule %r/[)]/, Punctuation, :pop!
         mixin :root
       end
     end

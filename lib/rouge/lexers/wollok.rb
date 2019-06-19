@@ -7,7 +7,7 @@ module Rouge
       title 'Wollok'
       desc 'Wollok lang'
       tag 'wollok'
-      filenames *%w(*.wlk *.wtest *.wpgm)
+      filenames '*.wlk', '*.wtest', '*.wpgm'
 
       keywords = %w(new super return if else var const override constructor)
 
@@ -17,23 +17,23 @@ module Rouge
       entities = []
 
       state :whitespaces_and_comments do
-        rule /\s+/m, Text::Whitespace
-        rule /$+/m, Text::Whitespace
+        rule %r/\s+/m, Text::Whitespace
+        rule %r/$+/m, Text::Whitespace
         rule %r(//.*$), Comment::Single
         rule %r(/\*(.|\s)*?\*/)m, Comment::Multiline
       end
 
       state :root do
         mixin :whitespaces_and_comments
-        rule /(import)(.+$)/ do
+        rule %r/(import)(.+$)/ do
           groups Keyword::Reserved, Text
         end
-        rule /(class|object|mixin)/, Keyword::Reserved, :foo
-        rule /test|program/, Keyword::Reserved #, :chunk_naming
-        rule /(package)(\s+)(#{entity_name})/ do
+        rule %r/(class|object|mixin)/, Keyword::Reserved, :foo
+        rule %r/test|program/, Keyword::Reserved #, :chunk_naming
+        rule %r/(package)(\s+)(#{entity_name})/ do
           groups Keyword::Reserved, Text::Whitespace, Name::Class
         end
-        rule /{|}/, Text
+        rule %r/{|}/, Text
         mixin :keywords
         mixin :symbols
         mixin :objects
@@ -41,13 +41,13 @@ module Rouge
 
       state :foo do
         mixin :whitespaces_and_comments
-        rule /inherits|mixed|with|and/, Keyword::Reserved
-        rule /#{entity_name}(?=\s*{)/ do |m|
+        rule %r/inherits|mixed|with|and/, Keyword::Reserved
+        rule %r/#{entity_name}(?=\s*{)/ do |m|
           token Name::Class
           entities << m[0]
           pop!
         end
-        rule /#{entity_name}/ do |m|
+        rule %r/#{entity_name}/ do |m|
           token Name::Class
           entities << m[0]
         end
@@ -58,9 +58,9 @@ module Rouge
           /#{expressions.map { |keyword| "#{keyword}\\b" }.join('|')}/
         end
 
-        rule /self\b/, Name::Builtin::Pseudo
+        rule %r/self\b/, Name::Builtin::Pseudo
         rule any(keywords), Keyword::Reserved
-        rule /(method)(\s+)(#{variable_naming})/ do
+        rule %r/(method)(\s+)(#{variable_naming})/ do
           groups Keyword::Reserved, Text::Whitespace, Text
         end
       end
@@ -74,30 +74,30 @@ module Rouge
             token Keyword::Variable
           end
         end
-        rule /\.#{entity_name}/, Text
+        rule %r/\.#{entity_name}/, Text
         mixin :literals
       end
 
       state :literals do
         mixin :whitespaces_and_comments
-        rule /[0-9]+\.?[0-9]*/, Literal::Number
-        rule /"[^"]*"/m, Literal::String
-        rule /\[|\#{/, Punctuation, :lists
+        rule %r/[0-9]+\.?[0-9]*/, Literal::Number
+        rule %r/"[^"]*"/m, Literal::String
+        rule %r/\[|\#{/, Punctuation, :lists
       end
 
       state :lists do
-        rule /,/, Punctuation
-        rule /]|}/, Punctuation, :pop!
+        rule %r/,/, Punctuation
+        rule %r/]|}/, Punctuation, :pop!
         mixin :objects
       end
 
       state :symbols do
-        rule /\+\+|--|\+=|-=|\*\*|!/, Operator
-        rule /\+|-|\*|\/|%/, Operator
-        rule /<=|=>|===|==|<|>/, Operator
-        rule /and\b|or\b|not\b/, Operator
-        rule /\(|\)|=/, Text
-        rule /,/, Punctuation
+        rule %r/\+\+|--|\+=|-=|\*\*|!/, Operator
+        rule %r/\+|-|\*|\/|%/, Operator
+        rule %r/<=|=>|===|==|<|>/, Operator
+        rule %r/and\b|or\b|not\b/, Operator
+        rule %r/\(|\)|=/, Text
+        rule %r/,/, Punctuation
       end
     end
   end

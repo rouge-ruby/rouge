@@ -17,15 +17,15 @@ module Rouge
 
       class Regex < RegexLexer
         state :root do
-          rule /\\./, Str::Escape
-          rule /\[/, Punctuation, :brackets
-          rule /[$^.*]/, Operator
-          rule /[()]/, Punctuation
-          rule /./, Str::Regex
+          rule %r/\\./, Str::Escape
+          rule %r/\[/, Punctuation, :brackets
+          rule %r/[$^.*]/, Operator
+          rule %r/[()]/, Punctuation
+          rule %r/./, Str::Regex
         end
 
         state :brackets do
-          rule /\^/ do
+          rule %r/\^/ do
             token Punctuation
             goto :brackets_int
           end
@@ -35,17 +35,17 @@ module Rouge
 
         state :brackets_int do
           # ranges
-          rule /.-./, Name::Variable
-          rule /\]/, Punctuation, :pop!
-          rule /./, Str::Regex
+          rule %r/.-./, Name::Variable
+          rule %r/\]/, Punctuation, :pop!
+          rule %r/./, Str::Regex
         end
       end
 
       class Replacement < RegexLexer
         state :root do
-          rule /\\./m, Str::Escape
-          rule /&/, Operator
-          rule /[^\\&]+/m, Text
+          rule %r/\\./m, Str::Escape
+          rule %r/&/, Operator
+          rule %r/[^\\&]+/m, Text
         end
       end
 
@@ -60,7 +60,7 @@ module Rouge
       start { regex.reset!; replacement.reset! }
 
       state :whitespace do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         rule(/#.*?\n/) { token Comment; reset_stack }
         rule(/\n/) { token Text; reset_stack }
         rule(/;/) { token Punctuation; reset_stack }
@@ -76,7 +76,7 @@ module Rouge
         mixin :whitespace
 
         # subst and transliteration
-        rule /(s)(.)(#{edot}*?)(\2)(#{edot}*?)(\2)/m do |m|
+        rule %r/(s)(.)(#{edot}*?)(\2)(#{edot}*?)(\2)/m do |m|
           token Keyword, m[1]
           token Punctuation, m[2]
           delegate regex, m[3]
@@ -88,7 +88,7 @@ module Rouge
           goto :flags
         end
 
-        rule /(y)(.)(#{edot}*?)(\2)(#{edot}*?)(\2)/m do |m|
+        rule %r/(y)(.)(#{edot}*?)(\2)(#{edot}*?)(\2)/m do |m|
           token Keyword, m[1]
           token Punctuation, m[2]
           delegate replacement, m[3]
@@ -100,29 +100,29 @@ module Rouge
         end
 
         # commands that take a text segment as an argument
-        rule /([aic])(\s*)/ do
+        rule %r/([aic])(\s*)/ do
           groups Keyword, Text; goto :text
         end
 
-        rule /[pd]/, Keyword
+        rule %r/[pd]/, Keyword
 
         # commands that take a number argument
-        rule /([qQl])(\s+)(\d+)/i do
+        rule %r/([qQl])(\s+)(\d+)/i do
           groups Keyword, Text, Num
           pop!
         end
 
         # no-argument commands
-        rule /[={}dDgGhHlnpPqx]/, Keyword, :pop!
+        rule %r/[={}dDgGhHlnpPqx]/, Keyword, :pop!
 
         # commands that take a filename argument
-        rule /([rRwW])(\s+)(\S+)/ do
+        rule %r/([rRwW])(\s+)(\S+)/ do
           groups Keyword, Text, Name
           pop!
         end
 
         # commands that take a label argument
-        rule /([:btT])(\s+)(\S+)/ do
+        rule %r/([:btT])(\s+)(\S+)/ do
           groups Keyword, Text, Name::Label
           pop!
         end
@@ -133,8 +133,8 @@ module Rouge
 
         ### address ranges ###
         addr_tok = Keyword::Namespace
-        rule /\d+/, addr_tok
-        rule /[$,~+!]/, addr_tok
+        rule %r/\d+/, addr_tok
+        rule %r/[$,~+!]/, addr_tok
 
         rule %r((/)((?:\\.|.)*?)(/)) do |m|
           token addr_tok, m[1]; delegate regex, m[2]; token addr_tok, m[3]
@@ -151,18 +151,18 @@ module Rouge
       end
 
       state :text do
-        rule /[^\\\n]+/, Str
-        rule /\\\n/, Str::Escape
-        rule /\\/, Str
-        rule /\n/, Text, :pop!
+        rule %r/[^\\\n]+/, Str
+        rule %r/\\\n/, Str::Escape
+        rule %r/\\/, Str
+        rule %r/\n/, Text, :pop!
       end
 
       state :flags do
-        rule /[gp]+/, Keyword, :pop!
+        rule %r/[gp]+/, Keyword, :pop!
 
         # writing to a file with the subst command.
         # who'da thunk...?
-        rule /([wW])(\s+)(\S+)/ do
+        rule %r/([wW])(\s+)(\S+)/ do
           token Keyword; token Text; token Name
         end
 

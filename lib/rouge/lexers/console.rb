@@ -118,7 +118,7 @@ module Rouge
           $' =~ /\A\s*/
           yield Text, $& unless $&.empty?
 
-          lang_lexer.lex($', continue: true, &output)
+          lang_lexer.continue_lex($', &output)
         elsif comment_regex =~ input[0].strip
           puts "console: matched comment #{input[0].inspect}" if @debug
           output_lexer.reset!
@@ -129,7 +129,7 @@ module Rouge
           puts "console: matched output #{input[0].inspect}" if @debug
           lang_lexer.reset!
 
-          output_lexer.lex(input[0], continue: true, &output)
+          output_lexer.continue_lex(input[0], &output)
         end
       end
     end

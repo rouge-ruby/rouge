@@ -86,7 +86,7 @@ module Rouge
         rule %r([a-zA-Z_]\w*:), Name::Label
         rule %r((\\I[a-z]|[A-Z])\w*), Name::Decorator
         rule %r([a-zA-Z_]\w*), Name
-        rule %r([~^*!%&\[\](){}<>|+=:;,./?-`]), Operator
+        rule %r([~^*!%&\[\](){}<>|+=:;,./?`-]), Operator
         rule %r(\d{1,3}(_\d{3})+\.\d{1,3}(_\d{3})+[kMGTPmunpf]?), Literal::Number::Float
         rule %r(\d{1,3}(_\d{3})+\.[0-9]+([eE][+-]?[0-9]+)?[kMGTPmunpf]?),
           Literal::Number::Float

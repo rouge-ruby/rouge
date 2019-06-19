@@ -101,84 +101,84 @@ module Rouge
       )
 
       state :root do
-        rule /(\s+)(#.*?$)/ do
+        rule %r/(\s+)(#.*?$)/ do
           groups Text, Comment::Single
         end
 
-        rule /^#.*?$/,         Comment::Single
-        rule /;[^\n]*/,        Comment::Single
-        rule /\s+/,            Text
+        rule %r/^#.*?$/,         Comment::Single
+        rule %r/;[^\n]*/,        Comment::Single
+        rule %r/\s+/,            Text
 
-        rule /(\bprocedure)(\s+)/ do
+        rule %r/(\bprocedure)(\s+)/ do
           groups Keyword, Text
           push :procedure_definition
         end
 
-        rule /(\bcall)(\s+)/ do
+        rule %r/(\bcall)(\s+)/ do
           groups Keyword, Text
           push :procedure_call
         end
 
-        rule /@/,              Name::Function, :procedure_call
+        rule %r/@/,              Name::Function, :procedure_call
 
         mixin :function_call
 
-        rule /\b(?:select all)\b/, Keyword
-        rule /\b(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/\b(?:select all)\b/, Keyword
+        rule %r/\b(?:#{keywords.join('|')})\b/, Keyword
 
-        rule /(\bform\b)(\s+)([^\n]+)/ do
+        rule %r/(\bform\b)(\s+)([^\n]+)/ do
           groups Keyword, Text, Literal::String
           push :old_form
         end
 
-        rule /(print(?:line|tab)?|echo|exit|asserterror|pause|send(?:praat|socket)|include|execute|system(?:_nocheck)?)(\s+)/ do
+        rule %r/(print(?:line|tab)?|echo|exit|asserterror|pause|send(?:praat|socket)|include|execute|system(?:_nocheck)?)(\s+)/ do
           groups Keyword, Text
           push :string_unquoted
         end
 
-        rule /(goto|label)(\s+)(\w+)/ do
+        rule %r/(goto|label)(\s+)(\w+)/ do
           groups Keyword, Text, Name::Label
         end
 
         mixin :variable_name
         mixin :number
 
-        rule /"/, Literal::String, :string
+        rule %r/"/, Literal::String, :string
 
-        rule /\b(?:#{objects.join('|')})(?=\s+\S+\n)/, Name::Class, :string_unquoted
+        rule %r/\b(?:#{objects.join('|')})(?=\s+\S+\n)/, Name::Class, :string_unquoted
 
-        rule /\b(?=[A-Z])/, Text, :command
-        rule /(\.{3}|[)(,\$])/, Punctuation
+        rule %r/\b(?=[A-Z])/, Text, :command
+        rule %r/(\.{3}|[)(,\$])/, Punctuation
       end
 
       state :command do
-        rule /( ?([^\s:\.'])+ ?)/, Keyword
+        rule %r/( ?([^\s:\.'])+ ?)/, Keyword
         mixin :string_interpolated
 
-        rule /\.{3}/ do
+        rule %r/\.{3}/ do
           token Keyword
           pop!
           push :old_arguments
         end
 
-        rule /:/ do
+        rule %r/:/ do
           token Keyword
           pop!
           push :comma_list
         end
 
-        rule /[\s]/,    Text, :pop!
+        rule %r/[\s]/,    Text, :pop!
       end
 
       state :procedure_call do
         mixin :string_interpolated
 
-        rule /(:|\s*\()/, Punctuation, :pop!
+        rule %r/(:|\s*\()/, Punctuation, :pop!
 
-        rule /'/,            Name::Function
-        rule /[^:\('\s]+/, Name::Function
+        rule %r/'/,            Name::Function
+        rule %r/[^:\('\s]+/, Name::Function
 
-        rule /(?=\s+)/ do
+        rule %r/(?=\s+)/ do
           token Text
           pop!
           push :old_arguments
@@ -186,23 +186,23 @@ module Rouge
       end
 
       state :procedure_definition do
-        rule /(:|\s*\()/, Punctuation, :pop!
+        rule %r/(:|\s*\()/, Punctuation, :pop!
 
-        rule /[^:\(\s]+/, Name::Function
+        rule %r/[^:\(\s]+/, Name::Function
 
-        rule /(\s+)/, Text, :pop!
+        rule %r/(\s+)/, Text, :pop!
       end
 
       state :function_call do
-        rule /\b(#{functions_string.join('|')})\$(?=\s*[:(])/, Name::Function, :function
-        rule /\b(#{functions_array.join('|')})#(?=\s*[:(])/,   Name::Function, :function
-        rule /\b(#{functions_numeric.join('|')})(?=\s*[:(])/,  Name::Function, :function
+        rule %r/\b(#{functions_string.join('|')})\$(?=\s*[:(])/, Name::Function, :function
+        rule %r/\b(#{functions_array.join('|')})#(?=\s*[:(])/,   Name::Function, :function
+        rule %r/\b(#{functions_numeric.join('|')})(?=\s*[:(])/,  Name::Function, :function
       end
 
       state :function do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
 
-        rule /(?::|\s*\()/ do
+        rule %r/(?::|\s*\()/ do
           token Text
           pop!
           push :comma_list
@@ -210,140 +210,140 @@ module Rouge
       end
 
       state :comma_list do
-        rule /(\s*\n\s*)(\.{3})/ do
+        rule %r/(\s*\n\s*)(\.{3})/ do
           groups Text, Punctuation
         end
 
-        rule /\s*[\])\n]/, Text, :pop!
+        rule %r/\s*[\])\n]/, Text, :pop!
 
-        rule /\s+/, Text
-        rule /"/,   Literal::String, :string
-        rule /\b(if|then|else|fi|endif)\b/, Keyword
+        rule %r/\s+/, Text
+        rule %r/"/,   Literal::String, :string
+        rule %r/\b(if|then|else|fi|endif)\b/, Keyword
 
         mixin :function_call
         mixin :variable_name
         mixin :operator
         mixin :number
 
-        rule /[()]/, Text
-        rule /,/, Punctuation
+        rule %r/[()]/, Text
+        rule %r/,/, Punctuation
       end
 
       state :old_arguments do
-        rule /\n/, Text, :pop!
+        rule %r/\n/, Text, :pop!
 
         mixin :variable_name
         mixin :operator
         mixin :number
 
-        rule /"/, Literal::String, :string
-        rule /[^\n]/, Text
+        rule %r/"/, Literal::String, :string
+        rule %r/[^\n]/, Text
       end
 
       state :number do
-        rule /\n/, Text, :pop!
-        rule /\b\d+(\.\d*)?([eE][-+]?\d+)?%?/, Literal::Number
+        rule %r/\n/, Text, :pop!
+        rule %r/\b\d+(\.\d*)?([eE][-+]?\d+)?%?/, Literal::Number
       end
 
       state :variable_name do
         mixin :operator
         mixin :number
 
-        rule /\b(?:#{variables_string.join('|')})\$/,  Name::Builtin
-        rule /\b(?:#{variables_numeric.join('|')})(?!\$)\b/, Name::Builtin
+        rule %r/\b(?:#{variables_string.join('|')})\$/,  Name::Builtin
+        rule %r/\b(?:#{variables_numeric.join('|')})(?!\$)\b/, Name::Builtin
 
-        rule /\b(Object|#{objects.join('|')})_/ do
+        rule %r/\b(Object|#{objects.join('|')})_/ do
           token Name::Builtin
           push :object_reference
         end
 
-        rule /\.?[a-z][a-zA-Z0-9_.]*(\$|#)?/, Text
-        rule /[\[\]]/, Text, :comma_list
+        rule %r/\.?[a-z][a-zA-Z0-9_.]*(\$|#)?/, Text
+        rule %r/[\[\]]/, Text, :comma_list
         mixin :string_interpolated
       end
 
       state :object_reference do
         mixin :string_interpolated
-        rule /([a-z][a-zA-Z0-9_]*|\d+)/, Name::Builtin
+        rule %r/([a-z][a-zA-Z0-9_]*|\d+)/, Name::Builtin
 
-        rule /\.(#{object_attributes.join('|')})\b/, Name::Builtin, :pop!
+        rule %r/\.(#{object_attributes.join('|')})\b/, Name::Builtin, :pop!
 
-        rule /\$/, Name::Builtin
-        rule /\[/, Text, :pop!
+        rule %r/\$/, Name::Builtin
+        rule %r/\[/, Text, :pop!
       end
 
       state :operator do
         # This rule incorrectly matches === or +++++, which are not operators
-        rule /([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/,       Operator
-        rule /(?<![\w.])(and|or|not|div|mod)(?![\w.])/, Operator::Word
+        rule %r/([+\/*<>=!-]=?|[&*|][&*|]?|\^|<>)/,       Operator
+        rule %r/(?<![\w.])(and|or|not|div|mod)(?![\w.])/, Operator::Word
       end
 
       state :string_interpolated do
-        rule /'[\._a-z][^\[\]'":]*(\[([\d,]+|"[\w\d,]+")\])?(:[0-9]+)?'/, Literal::String::Interpol
+        rule %r/'[\._a-z][^\[\]'":]*(\[([\d,]+|"[\w,]+")\])?(:[0-9]+)?'/, Literal::String::Interpol
       end
 
       state :string_unquoted do
-        rule /\n\s*\.{3}/, Punctuation
-        rule /\n/,         Text, :pop!
-        rule /\s/,         Text
+        rule %r/\n\s*\.{3}/, Punctuation
+        rule %r/\n/,         Text, :pop!
+        rule %r/\s/,         Text
 
         mixin :string_interpolated
 
-        rule /'/,          Literal::String
-        rule /[^'\n]+/,    Literal::String
+        rule %r/'/,          Literal::String
+        rule %r/[^'\n]+/,    Literal::String
       end
 
       state :string do
-        rule /\n\s*\.{3}/, Punctuation
-        rule /"/,          Literal::String,           :pop!
+        rule %r/\n\s*\.{3}/, Punctuation
+        rule %r/"/,          Literal::String,           :pop!
 
         mixin :string_interpolated
 
-        rule /'/,          Literal::String
-        rule /[^'"\n]+/,   Literal::String
+        rule %r/'/,          Literal::String
+        rule %r/[^'"\n]+/,   Literal::String
       end
 
       state :old_form do
-        rule /(\s+)(#.*?$)/ do
+        rule %r/(\s+)(#.*?$)/ do
           groups Text, Comment::Single
         end
 
-        rule /\s+/, Text
+        rule %r/\s+/, Text
 
-        rule /(optionmenu|choice)([ \t]+\S+:[ \t]+)/ do
+        rule %r/(optionmenu|choice)([ \t]+\S+:[ \t]+)/ do
           groups Keyword, Text
           push :number
         end
 
-        rule /(option|button)([ \t]+)/ do
+        rule %r/(option|button)([ \t]+)/ do
           groups Keyword, Text
           push :string_unquoted
         end
 
-        rule /(sentence|text)([ \t]+\S+)/ do
+        rule %r/(sentence|text)([ \t]+\S+)/ do
           groups Keyword, Text
           push :string_unquoted
         end
 
-        rule /(word)([ \t]+\S+[ \t]*)(\S+)?([ \t]+.*)?/ do
+        rule %r/(word)([ \t]+\S+[ \t]*)(\S+)?([ \t]+.*)?/ do
           groups Keyword, Text, Literal::String, Text
         end
 
-        rule /(boolean)(\s+\S+\s*)(0|1|"?(?:yes|no)"?)/ do
+        rule %r/(boolean)(\s+\S+\s*)(0|1|"?(?:yes|no)"?)/ do
           groups Keyword, Text, Name::Variable
         end
 
-        rule /(real|natural|positive|integer)([ \t]+\S+[ \t]*)([+-]?)/ do
+        rule %r/(real|natural|positive|integer)([ \t]+\S+[ \t]*)([+-]?)/ do
           groups Keyword, Text, Operator
           push :number
         end
 
-        rule /(comment)(\s+)/ do
+        rule %r/(comment)(\s+)/ do
           groups Keyword, Text
           push :string_unquoted
         end
 
-        rule /\bendform\b/, Keyword, :pop!
+        rule %r/\bendform\b/, Keyword, :pop!
       end
 
     end

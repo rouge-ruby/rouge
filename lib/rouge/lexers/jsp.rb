@@ -19,21 +19,21 @@ module Rouge
      
       state :root do
 
-        rule /<%--/, Comment, :jsp_comment
+        rule %r/<%--/, Comment, :jsp_comment
 
-        rule /<%@\s*(#{directives.join('|')})\s*/, Name::Tag, :jsp_directive
+        rule %r/<%@\s*(#{directives.join('|')})\s*/, Name::Tag, :jsp_directive
 
-        rule /<jsp:directive\.(#{directives.join('|')})/, Name::Tag, :jsp_directive2
+        rule %r/<jsp:directive\.(#{directives.join('|')})/, Name::Tag, :jsp_directive2
 
-        rule /<jsp:(#{actions.join('|')})>/, Name::Tag, :jsp_expression
+        rule %r/<jsp:(#{actions.join('|')})>/, Name::Tag, :jsp_expression
 
         # start of tag, e.g. <c:if>
-        rule /<[a-zA-Z]*:[a-zA-Z]*\s*/, Name::Tag, :jsp_tag
+        rule %r/<[a-zA-Z]*:[a-zA-Z]*\s*/, Name::Tag, :jsp_tag
 
         # end of tag, e.g. </c:if>
-        rule /<\/[a-zA-Z]*:[a-zA-Z]*>/, Name::Tag
+        rule %r(</[a-zA-Z]*:[a-zA-Z]*>), Name::Tag
 
-        rule /<%[!=]?/, Name::Tag, :jsp_expression2
+        rule %r/<%[!=]?/, Name::Tag, :jsp_expression2
 
         # fallback to HTML
         rule(/(.+?)(?=(<%|<\/?[a-zA-Z]*:))/m) { delegate parent }
@@ -41,78 +41,78 @@ module Rouge
       end
 
       state :jsp_comment do
-        rule /(--%>)/, Comment, :pop!
-        rule /./m, Comment
+        rule %r/(--%>)/, Comment, :pop!
+        rule %r/./m, Comment
       end
 
       state :jsp_directive do
-        rule /(%>)/, Name::Tag, :pop!
+        rule %r/(%>)/, Name::Tag, :pop!
         mixin :attributes
         rule(/(.+?)(?=%>)/m) { delegate parent }
       end
 
       state :jsp_directive2 do
-        rule /(\/>)/, Name::Tag, :pop!
+        rule %r!(/>)!, Name::Tag, :pop!
         mixin :attributes
         rule(/(.+?)(?=\/>)/m) { delegate parent }
       end
 
       state :jsp_expression do
-        rule /<\/jsp:(#{actions.join('|')})>/, Name::Tag, :pop!
+        rule %r/<\/jsp:(#{actions.join('|')})>/, Name::Tag, :pop!
         mixin :attributes
         rule(/[^<\/]+/) { delegate @java }
       end
 
       state :jsp_expression2 do
-        rule /%>/, Name::Tag, :pop!
+        rule %r/%>/, Name::Tag, :pop!
         rule(/[^%>]+/) { delegate @java }
       end
 
       state :jsp_tag do
-        rule /\/?>/, Name::Tag, :pop!
+        rule %r/\/?>/, Name::Tag, :pop!
         mixin :attributes
         rule(/(.+?)(?=\/?>)/m) { delegate parent }
       end
 
       state :attributes do
-        rule /\s*[a-zA-Z0-9_:-]+\s*=\s*/m, Name::Attribute, :attr
+        rule %r/\s*[a-zA-Z0-9_:-]+\s*=\s*/m, Name::Attribute, :attr
       end
 
       state :attr do
-        rule /"/ do
+        rule %r/"/ do
           token Str
           goto :double_quotes
         end
 
-        rule /'/ do
+        rule %r/'/ do
           token Str
           goto :single_quotes
         end
 
-        rule /[^\s>]+/, Str, :pop!
+        rule %r/[^\s>]+/, Str, :pop!
       end
 
       state :double_quotes do
-        rule /"/, Str, :pop!
-        rule /\$\{/, Str::Interpol, :jsp_interp
-        rule /[^"]+/, Str
+        rule %r/"/, Str, :pop!
+        rule %r/\$\{/, Str::Interpol, :jsp_interp
+        rule %r/[^"]+/, Str
       end
 
       state :single_quotes do
-        rule /'/, Str, :pop!
-        rule /\$\{/, Str::Interpol, :jsp_interp
-        rule /[^']+/, Str
+        rule %r/'/, Str, :pop!
+        rule %r/\$\{/, Str::Interpol, :jsp_interp
+        rule %r/[^']+/, Str
       end
 
       state :jsp_interp do
-        rule /\}/, Str::Interpol, :pop!
-        rule /'/, Literal, :jsp_interp_literal_start 
+        rule %r/\}/, Str::Interpol, :pop!
+        rule %r/'/, Literal, :jsp_interp_literal_start 
         rule(/[^'\}]+/) { delegate @java }
       end
 
       state :jsp_interp_literal_start do
-        rule /'/, Literal, :pop!
-        rule /[^']*/, Literal
+        rule %r/'/, Literal, :pop!
+        rule %r/[^']*/, Literal
       end
 
     end

@@ -39,15 +39,15 @@ module Rouge
       qualname = /(::)?(#{id}::)*\w+/
 
       state :whitespace do
-        rule /\s+/m, Text
-        rule /#.*?\n/, Comment
+        rule %r/\s+/m, Text
+        rule %r/#.*?\n/, Comment
       end
 
       state :root do
         mixin :whitespace
 
-        rule /[$]#{qualname}/, Name::Variable
-        rule /(#{id})(?=\s*[=+]>)/m do |m|
+        rule %r/[$]#{qualname}/, Name::Variable
+        rule %r/(#{id})(?=\s*[=+]>)/m do |m|
           if self.class.metaparameters.include? m[0]
             token Keyword::Pseudo
           else
@@ -55,31 +55,31 @@ module Rouge
           end
         end
 
-        rule /(#{qualname})(?=\s*[(])/m, Name::Function
+        rule %r/(#{qualname})(?=\s*[(])/m, Name::Function
         rule cap_id, Name::Class
 
-        rule /[+=|~-]>|<[|~-]/, Punctuation
-        rule /[:}();\[\]]/, Punctuation
+        rule %r/[+=|~-]>|<[|~-]/, Punctuation
+        rule %r/[:}();\[\]]/, Punctuation
 
         # HACK for case statements and selectors
-        rule /{/, Punctuation, :regex_allowed
-        rule /,/, Punctuation, :regex_allowed
+        rule %r/{/, Punctuation, :regex_allowed
+        rule %r/,/, Punctuation, :regex_allowed
 
-        rule /(in|and|or)\b/, Operator::Word
-        rule /[=!<>]=/, Operator
-        rule /[=!]~/, Operator, :regex_allowed
+        rule %r/(in|and|or)\b/, Operator::Word
+        rule %r/[=!<>]=/, Operator
+        rule %r/[=!]~/, Operator, :regex_allowed
         rule %r([=<>!+*/-]), Operator
 
-        rule /(class|include)(\s*)(#{qualname})/ do
+        rule %r/(class|include)(\s*)(#{qualname})/ do
           groups Keyword, Text, Name::Class
         end
 
-        rule /node\b/, Keyword, :regex_allowed
+        rule %r/node\b/, Keyword, :regex_allowed
 
-        rule /'(\\[\\']|[^'])*'/m, Str::Single
-        rule /"/, Str::Double, :dquotes
+        rule %r/'(\\[\\']|[^'])*'/m, Str::Single
+        rule %r/"/, Str::Double, :dquotes
 
-        rule /\d+([.]\d+)?(e[+-]\d+)?/, Num
+        rule %r/\d+([.]\d+)?(e[+-]\d+)?/, Num
 
         # a valid regex.  TODO: regexes are only allowed
         # in certain places in puppet.
@@ -103,26 +103,26 @@ module Rouge
 
       state :regex do
         rule %r(/), Str::Regex, :pop!
-        rule /\\./, Str::Escape
-        rule /[(){}]/, Str::Interpol
-        rule /\[/, Str::Interpol, :regex_class
-        rule /./, Str::Regex
+        rule %r/\\./, Str::Escape
+        rule %r/[(){}]/, Str::Interpol
+        rule %r/\[/, Str::Interpol, :regex_class
+        rule %r/./, Str::Regex
       end
 
       state :regex_class do
-        rule /\]/, Str::Interpol, :pop!
-        rule /(?<!\[)-(?=\])/, Str::Regex
-        rule /-/, Str::Interpol
-        rule /\\./, Str::Escape
-        rule /[^\\\]-]+/, Str::Regex
+        rule %r/\]/, Str::Interpol, :pop!
+        rule %r/(?<!\[)-(?=\])/, Str::Regex
+        rule %r/-/, Str::Interpol
+        rule %r/\\./, Str::Escape
+        rule %r/[^\\\]-]+/, Str::Regex
       end
 
       state :dquotes do
-        rule /"/, Str::Double, :pop!
-        rule /[^$\\"]+/m, Str::Double
-        rule /\\./m, Str::Escape
-        rule /[$]#{qualname}/, Name::Variable
-        rule /[$][{]#{qualname}[}]/, Name::Variable
+        rule %r/"/, Str::Double, :pop!
+        rule %r/[^$\\"]+/m, Str::Double
+        rule %r/\\./m, Str::Escape
+        rule %r/[$]#{qualname}/, Name::Variable
+        rule %r/[$][{]#{qualname}[}]/, Name::Variable
       end
     end
   end

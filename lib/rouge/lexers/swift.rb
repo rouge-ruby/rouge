@@ -73,7 +73,7 @@ module Rouge
         rule %r([-/=+*%<>!&|^.~]+), Operator
         rule /@?"/, Str, :dq
         rule /'(\\.|.)'/, Str::Char
-        rule /(\d+\*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
+        rule /(\d+(?:_\d+)*\*|(?:\d+(?:_\d+)*)*\.\d+(?:_\d)*)(e[+-]?\d+(?:_\d)*)?/i, Num::Float
         rule /\d+e[+-]?[0-9]+/i, Num::Float
         rule /0o?[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule /0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*((\.[0-9A-F]+(?:_[0-9A-F]+)*)?p[+-]?\d+)?/, Num::Hex

@@ -352,10 +352,9 @@ module Rouge
         @keywords_type ||= Set.new %w(
           BLOB CHARACTER CHAR CLOB COM-HANDLE DATE DATETIME DATETIME-TZ DECIMAL
           DEC HANDLE INT64 INTEGER INT LOGICAL LONGCHAR MEMPTR RAW RECID ROWID
-          WIDGET-HANDLE          
+          WIDGET-HANDLE
         )
       end
-
 
       state :root do
         rule %r(\s+), Text
@@ -366,7 +365,7 @@ module Rouge
 
         rule %r(//[^\n]*), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
-        
+
         rule %r/(\{?&)(\S+)/ do |m|
           groups Comment::Preproc, Name::Other
           push :preproc
@@ -376,14 +375,14 @@ module Rouge
         rule %r('(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
 
         mixin :numbers
-        
+
         rule %r(\*/), Error
 
         rule %r([~!%^*+=\|?:<>/-]), Operator
         rule %r/[()\[\],]/, Punctuation
-        
+
         rule %r/(?:TRUE|FALSE|NULL)\b/i, Keyword::Constant
-        
+
         rule id do |m|
           name = m[0].upcase
 
@@ -413,16 +412,16 @@ module Rouge
       end
 
       state :preproc do
-        rule %r/\n/, Text, :pop! 
+        rule %r/\n/, Text, :pop!
         rule %r/\s+/, Text
-        
+
         rule %r/({?&)(\S+)/ do |m|
-          groups Comment::Preproc, Name::Other 
+          groups Comment::Preproc, Name::Other
         end
 
         rule %r/"/, Str, :string
         mixin :numbers
-        
+
         rule %r/\S+/, Name
       end
     end

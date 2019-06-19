@@ -372,8 +372,8 @@ module Rouge
           push :preproc
         end
 
-        rule %r/(u8|u|U|L)?"/, Str, :string
-        rule %r((u8|u|U|L)?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
+        rule %r/"/, Str, :string
+        rule %r('(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
 
         mixin :numbers
         

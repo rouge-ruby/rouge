@@ -44,12 +44,31 @@
 <body>
   <%= yield %>
   <footer id="page-footer">
-    <small>Rendered with theme
-      <strong style="text-transform: capitalize">
-        <%= @theme.class.name.gsub(/_/, ' ') %>
-      </strong>
-    </small>
+    <small>Rendered with theme:</small>
+    <select id="theme-selector" onchange="switchTheme()">
+      <% Rouge::Theme.registry.each_key do |name|
+        %><option value="<%= name %>"<% if @theme.class.name == name %> selected<% end %>><%= name %></option>
+      <% end %>
+    </select>
   </footer>
+
+  <script>
+    function switchTheme() {
+      var x, y, z;
+      x = document.getElementById("theme-selector").value;
+      y = location.href;
+
+      if (y.includes('theme=')) {
+        z = y.replace(/theme=.*/, 'theme=' + x);
+      } else if (y.includes('?')) {
+        z = y + '&theme=' + x;
+      } else {
+        z = y + '?theme=' + x;
+      }
+
+      location.assign(z);
+    }
+  </script>
 </body>
 
 </html>

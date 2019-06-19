@@ -11,34 +11,6 @@ module Rouge
       title "Ceylon"
       desc 'Say more, more clearly.'
 
-      keywords = %w(
-        break case catch continue else finally for in
-        if return switch this throw try while is exists dynamic
-        nonempty then outer assert let
-      )
-      
-      keywords_declaration = %w(
-        abstracts extends satisfies super given of out assign
-      )
-      
-      keywords_type = %w(
-        function value void new
-      )
-      
-      keywords_namespace = %w(
-        assembly module package
-      )
-      
-      keywords_constant = %w(
-        true false null
-      )
-
-      annotations = %w(
-        shared abstract formal default actual variable deprecated small
-        late literal doc by see throws optional license tagged final native
-        annotation sealed
-      )
-
       state :whitespace do
         rule %r([^\S\n]+), Text
         rule %r(//.*?\n), Comment::Single

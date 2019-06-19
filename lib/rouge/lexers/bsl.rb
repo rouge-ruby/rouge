@@ -69,7 +69,7 @@ module Rouge
         rule %r/(?<=[^\wа-яё]|^)\#.*$/, Keyword::Declaration
         rule KEYWORDS, Keyword
         rule BUILTINS, Name::Builtin
-        rule %r/[\wа-яё_][\wа-яё0-9_]*/i, Name::Variable
+        rule %r/[\wа-яё][\wа-яё]*/i, Name::Variable
 
         #literals
         rule %r/\b((\h{8}-(\h{4}-){3}\h{12})|\d+\.?\d*)\b/, Literal::Number

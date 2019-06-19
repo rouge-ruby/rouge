@@ -11,16 +11,6 @@ module Rouge
       filenames '*.make', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile'
       mimetypes 'text/x-makefile'
 
-      bsd_special = %w(
-        include undef error warning if else elif endif for endfor
-      )
-
-      gnu_special = %w(
-        ifeq ifneq ifdef ifndef else endif include -include define endef :
-      )
-
-      line = /(?:\\.|\\\n|[^\\\n])*/m
-
       def initialize(opts={})
         super
         @shell = Shell.new(opts)

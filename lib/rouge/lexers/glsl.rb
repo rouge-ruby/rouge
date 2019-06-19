@@ -17,10 +17,6 @@ module Rouge
       title "GLSL"
       desc "The GLSL shader language"
 
-      # optional comment or whitespace
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
-      id = /[a-zA-Z_][a-zA-Z0-9_]*/
-
       def self.keywords
         @keywords ||= Set.new %w(
           attribute const uniform varying

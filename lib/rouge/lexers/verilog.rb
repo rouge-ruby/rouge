@@ -10,8 +10,6 @@ module Rouge
       filenames '*.v', '*.sv', '*.svh'
       mimetypes 'text/x-verilog', 'text/x-systemverilog'
 
-      # optional comment or whitespace
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       def self.keywords
@@ -128,8 +126,8 @@ module Rouge
         rule %r/[0-9]*'b?[01xz_?]+/, Num::Bin
         rule %r/[0-9]*'d[0-9_?]+/, Num::Integer
         rule %r/[0-9_]+[lu]*/i, Num::Integer
-        rule %r([~!%^&*+-=\|?:<>/@{}]), Operator
-        rule %r/[()\[\],.$\#]/, Punctuation
+        rule %r([-~!%^&*+=\|?:<>/@{}]), Operator
+        rule %r/[()\[\],.$\#;]/, Punctuation
         rule %r/`(\w+)/, Comment::Preproc
 
         rule id do |m|

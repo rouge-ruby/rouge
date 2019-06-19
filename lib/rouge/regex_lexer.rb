@@ -183,18 +183,18 @@ module Rouge
     # Define a new state for this lexer with the given name.
     # The block will be evaluated in the context of a {StateDSL}.
     def self.state(name, &b)
-      name = name.to_s
+      name = name.to_sym
       state_definitions[name] = StateDSL.new(name, &b)
     end
 
     def self.prepend(name, &b)
-      name = name.to_s
+      name = name.to_sym
       dsl = state_definitions[name] or raise "no such state #{name.inspect}"
       replace_state(name, dsl.prepended(&b))
     end
 
     def self.append(name, &b)
-      name = name.to_s
+      name = name.to_sym
       dsl = state_definitions[name] or raise "no such state #{name.inspect}"
       replace_state(name, dsl.appended(&b))
     end
@@ -204,7 +204,7 @@ module Rouge
       return name if name.is_a? State
 
       states[name.to_sym] ||= begin
-        defn = state_definitions[name.to_s] or raise "unknown state: #{name.inspect}"
+        defn = state_definitions[name.to_sym] or raise "unknown state: #{name.inspect}"
         defn.to_state(self)
       end
     end
@@ -352,10 +352,10 @@ module Rouge
       end
     end
 
-    # Delegate the lex to another lexer.  The #lex method will be called
-    # with `:continue` set to true, so that #reset! will not be called.
-    # In this way, a single lexer can be repeatedly delegated to while
-    # maintaining its own internal state stack.
+    # Delegate the lex to another lexer. We use the `continue_lex` method
+    # so that #reset! will not be called.  In this way, a single lexer
+    # can be repeatedly delegated to while maintaining its own internal
+    # state stack.
     #
     # @param [#lex] lexer
     #   The lexer or lexer class to delegate to
@@ -365,7 +365,7 @@ module Rouge
       puts "    delegating to #{lexer.inspect}" if @debug
       text ||= @current_stream[0]
 
-      lexer.lex(text, :continue => true) do |tok, val|
+      lexer.continue_lex(text) do |tok, val|
         puts "    delegated token: #{tok.inspect}, #{val.inspect}" if @debug
         yield_token(tok, val)
       end
@@ -421,15 +421,15 @@ module Rouge
 
     # Check if `state_name` is in the state stack.
     def in_state?(state_name)
-      state_name = state_name.to_s
+      state_name = state_name.to_sym
       stack.any? do |state|
-        state.name == state_name.to_s
+        state.name == state_name.to_sym
       end
     end
 
     # Check if `state_name` is the state on top of the state stack.
     def state?(state_name)
-      state_name.to_s == state.name
+      state_name.to_sym == state.name
     end
 
   private

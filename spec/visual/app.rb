@@ -35,10 +35,12 @@ class VisualTestApp < Sinatra::Application
     reload_source!
 
     Rouge::Lexer.enable_debug!
+    Rouge::Formatter.enable_escape! if params[:escape]
 
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
     @theme = theme_class.new(scope: '.codehilite')
+    @comment_color = @theme.class.get_style(Rouge::Token::Tokens::Comment).fg
 
     formatter_opts = { :line_numbers => params[:line_numbers] }
     formatter_opts[:inline_theme] = @theme if params[:inline]
@@ -52,6 +54,7 @@ class VisualTestApp < Sinatra::Application
     @sample = File.read(SAMPLES.join(@lexer.class.tag), encoding: 'utf-8')
 
     @title = "#{@lexer.class.tag} | Visual Test"
+    @raw = Rouge.highlight(@sample, 'plaintext', @formatter)
     @highlighted = Rouge.highlight(@sample, @lexer, @formatter)
 
     erb :lexer

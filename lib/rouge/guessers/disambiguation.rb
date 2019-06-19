@@ -101,6 +101,19 @@ module Rouge
 
         Cpp
       end
+
+      disambiguate '*.plist' do
+        next XML if matches?(/\A<\?xml\b/)
+
+        Plist
+      end
+
+      disambiguate '*.sc' do
+        next Python if matches?(/^#/)
+        next SuperCollider if matches?(/(?:^~|;$)/)
+
+        next Python
+      end
     end
   end
 end

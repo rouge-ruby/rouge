@@ -23,8 +23,8 @@ describe Rouge::Lexer do
   it 'makes a simple lexer' do
     a_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
-        rule /a/, 'A'
-        rule /b/, 'B'
+        rule %r/a/, 'A'
+        rule %r/b/, 'B'
       end
     end
 
@@ -41,13 +41,13 @@ describe Rouge::Lexer do
   it 'pushes and pops states' do
     a_lexer = Class.new(Rouge::RegexLexer) do
       state :brace do
-        rule /b/, 'B'
-        rule /}/, 'Brace', :pop!
+        rule %r/b/, 'B'
+        rule %r/}/, 'Brace', :pop!
       end
 
       state :root do
-        rule /{/, 'Brace', :brace
-        rule /a/, 'A'
+        rule %r/{/, 'Brace', :brace
+        rule %r/a/, 'A'
       end
     end
 
@@ -69,7 +69,7 @@ describe Rouge::Lexer do
   it 'does callbacks and grouping' do
     callback_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
-        rule /(a)(b)/ do |s|
+        rule %r/(a)(b)/ do |s|
           groups('A', 'B')
         end
       end
@@ -85,16 +85,16 @@ describe Rouge::Lexer do
   it 'pops from the callback' do
     callback_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
-        rule /a/, 'A', :a
-        rule /d/, 'D'
+        rule %r/a/, 'A', :a
+        rule %r/d/, 'D'
       end
 
       state :a do
-        rule /b/, 'B', :b
+        rule %r/b/, 'B', :b
       end
 
       state :b do
-        rule /c/ do |ss|
+        rule %r/c/ do |ss|
           token 'C'
           pop!; pop! # go back to the root
         end
@@ -111,12 +111,12 @@ describe Rouge::Lexer do
       end
 
       state :root do
-        rule /\d+/ do |ss|
+        rule %r/\d+/ do |ss|
           token 'digit'
           @count = ss[0].to_i
         end
 
-        rule /\+/ do |ss|
+        rule %r/\+/ do |ss|
           incr
           token(@count <= 5 ? 'lt' : 'gt')
         end
@@ -131,8 +131,8 @@ describe Rouge::Lexer do
   it 'delegates' do
     class MasterLexer < Rouge::RegexLexer
       state :root do
-        rule /a/, 'A'
-        rule /{(.*?)}/ do |m|
+        rule %r/a/, 'A'
+        rule %r/{(.*?)}/ do |m|
           token 'brace', '{'
           delegate BracesLexer.new, m[1]
           token 'brace', '}'
@@ -142,7 +142,7 @@ describe Rouge::Lexer do
 
     class BracesLexer < Rouge::RegexLexer
       state :root do
-        rule /b/, 'B'
+        rule %r/b/, 'B'
       end
     end
 
@@ -152,8 +152,8 @@ describe Rouge::Lexer do
   it 'detects the beginnings of lines with ^ rules' do
     class MyLexer < Rouge::RegexLexer
       state :root do
-        rule /^a/, 'start'
-        rule /a/, 'not-start'
+        rule %r/^a/, 'start'
+        rule %r/a/, 'not-start'
       end
     end
 
@@ -161,5 +161,28 @@ describe Rouge::Lexer do
     assert_has_token('start', "\na", MyLexer)
     deny_has_token('not-start', 'a', MyLexer)
     assert_has_token('not-start', 'aa', MyLexer)
+  end
+
+  it 'is undetectable by default' do
+    UndetectableLexer = Class.new(Rouge::Lexer)
+
+    refute { UndetectableLexer.methods(false).include?(:detect?) }
+    refute { UndetectableLexer.detectable? }
+  end
+
+  it 'can only be detectable within current scope' do
+    class DetectableLexer < Rouge::Lexer
+      def self.detect?
+        text.shebang?('foobar')
+      end
+    end
+
+    assert { DetectableLexer.methods(false).include?(:detect?) }
+    assert { DetectableLexer.detectable? }
+
+    NonDetectableLexer = Class.new(DetectableLexer)
+
+    refute { NonDetectableLexer.methods(false).include?(:detect?) }
+    refute { NonDetectableLexer.detectable? }
   end
 end

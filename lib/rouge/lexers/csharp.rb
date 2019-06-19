@@ -43,59 +43,58 @@ module Rouge
       )
 
       state :whitespace do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
       end
 
       state :nest do
-        rule /{/, Punctuation, :nest
-        rule /}/, Punctuation, :pop!
+        rule %r/{/, Punctuation, :nest
+        rule %r/}/, Punctuation, :pop!
         mixin :root
       end
 
       state :splice_string do
-        rule /\\./, Str
-        rule /{/, Punctuation, :nest
-        rule /"|\n/, Str, :pop!
-        rule /./, Str
+        rule %r/\\./, Str
+        rule %r/{/, Punctuation, :nest
+        rule %r/"|\n/, Str, :pop!
+        rule %r/./, Str
       end
 
       state :splice_literal do
-        rule /""/, Str
-        rule /{/, Punctuation, :nest
-        rule /"/, Str, :pop!
-        rule /./, Str
+        rule %r/""/, Str
+        rule %r/{/, Punctuation, :nest
+        rule %r/"/, Str, :pop!
+        rule %r/./, Str
       end
 
       state :root do
         mixin :whitespace
 
-        rule /^\s*\[.*?\]/, Name::Attribute
-        rule /[$]\s*"/, Str, :splice_string
-        rule /[$]@\s*"/, Str, :splice_literal
+        rule %r/[$]\s*"/, Str, :splice_string
+        rule %r/[$]@\s*"/, Str, :splice_literal
 
-        rule /(<\[)\s*(#{id}:)?/, Keyword
-        rule /\]>/, Keyword
+        rule %r/(<\[)\s*(#{id}:)?/, Keyword
+        rule %r/\]>/, Keyword
 
-        rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
-        rule /@"(""|[^"])*"/m, Str
-        rule /"(\\.|.)*?["\n]/, Str
-        rule /'(\\.|.)'/, Str::Char
-        rule /0x[0-9a-f]+[lu]?/i, Num
+        rule %r/[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
+        rule %r/@"(""|[^"])*"/m, Str
+        rule %r/"(\\.|.)*?["\n]/, Str
+        rule %r/'(\\.|.)'/, Str::Char
+        rule %r/0x[0-9a-f]+[lu]?/i, Num
         rule %r(
           [0-9]
           ([.][0-9]*)? # decimal
           (e[+-][0-9]+)? # exponent
           [fldu]? # type
         )ix, Num
-        rule /\b(?:class|struct|interface)\b/, Keyword, :class
-        rule /\b(?:namespace|using)\b/, Keyword, :namespace
-        rule /^#[ \t]*(#{cpp_keywords.join('|')})\b.*?\n/,
+        rule %r/\b(?:class|struct|interface)\b/, Keyword, :class
+        rule %r/\b(?:namespace|using)\b/, Keyword, :namespace
+        rule %r/^#[ \t]*(#{cpp_keywords.join('|')})\b.*?\n/,
           Comment::Preproc
-        rule /\b(#{keywords.join('|')})\b/, Keyword
-        rule /\b(#{keywords_type.join('|')})\b/, Keyword::Type
-        rule /#{id}(?=\s*[(])/, Name::Function
+        rule %r/\b(#{keywords.join('|')})\b/, Keyword
+        rule %r/\b(#{keywords_type.join('|')})\b/, Keyword::Type
+        rule %r/#{id}(?=\s*[(])/, Name::Function
         rule id, Name
       end
 
@@ -106,8 +105,8 @@ module Rouge
 
       state :namespace do
         mixin :whitespace
-        rule /(?=[(])/, Text, :pop!
-        rule /(#{id}|[.])+/, Name::Namespace, :pop!
+        rule %r/(?=[(])/, Text, :pop!
+        rule %r/(#{id}|[.])+/, Name::Namespace, :pop!
       end
 
     end

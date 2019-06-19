@@ -7,7 +7,7 @@ module Rouge
       title 'Jsonnet'
       desc 'An elegant, formally-specified config language for JSON'
       tag 'jsonnet'
-      filenames '*.jsonnet'
+      filenames '*.jsonnet', '*.libsonnet'
       mimetypes 'text/x-jsonnet'
 
       def self.keywords
@@ -93,21 +93,21 @@ module Rouge
       identifier = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(#.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
 
-        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float
-        rule /-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, Num::Integer
+        rule %r/-?(?:0|[1-9]\d*)\.\d+(?:e[+-]\d+)?/i, Num::Float
+        rule %r/-?(?:0|[1-9]\d*)(?:e[+-]\d+)?/i, Num::Integer
 
-        rule /[{}:\.,;+\[\]=%\(\)]/, Punctuation
+        rule %r/[{}:\.,;+\[\]=%\(\)]/, Punctuation
 
-        rule /"/, Str, :string_double
-        rule /'/, Str, :string_single
-        rule /\|\|\|/, Str, :string_block
+        rule %r/"/, Str, :string_double
+        rule %r/'/, Str, :string_single
+        rule %r/\|\|\|/, Str, :string_block
 
-        rule /\$/, Keyword
+        rule %r/\$/, Keyword
 
         rule identifier do |m|
           if self.class.keywords.include? m[0]
@@ -125,27 +125,27 @@ module Rouge
       end
 
       state :string do
-        rule /\\([\\\/bfnrt]|(u[0-9a-fA-F]{4}))/, Str::Escape
+        rule %r/\\([\\\/bfnrt]|(u[0-9a-fA-F]{4}))/, Str::Escape
       end
 
       state :string_double do
         mixin :string
-        rule /\\"/, Str::Escape
-        rule /"/, Str, :pop!
-        rule /[^\\"]+/, Str
+        rule %r/\\"/, Str::Escape
+        rule %r/"/, Str, :pop!
+        rule %r/[^\\"]+/, Str
       end
 
       state :string_single do
         mixin :string
-        rule /\\'/, Str::Escape
-        rule /'/, Str, :pop!
-        rule /[^\\']+/, Str
+        rule %r/\\'/, Str::Escape
+        rule %r/'/, Str, :pop!
+        rule %r/[^\\']+/, Str
       end
 
       state :string_block do
         mixin :string
-        rule /\|\|\|/, Str, :pop!
-        rule /.*/, Str
+        rule %r/\|\|\|/, Str, :pop!
+        rule %r/.*/, Str
       end
     end
   end

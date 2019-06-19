@@ -30,6 +30,14 @@ String
   val constant = true
 
   import more.stuff._
+
+  def methodChaining(s: String): String = {
+    val n = s.length.toInt
+    s.foreach(print)
+    s
+      .take(n)
+      .toLowerCase
+  }
 }
 
 abstract case class Foo[+A, B <: List[A]](a: A) {

@@ -30,8 +30,8 @@ module Rouge
       state :root do
         rule %r(^
           (\s*(?:[a-zA-Z_][a-zA-Z\d_.\[\]]*\s+)+?) # return arguments
-          ([a-zA-Z_][\w]*)                          # method name
-          (\s*)(\()                                 # signature start
+          ([a-zA-Z_]\w*)                           # method name
+          (\s*)(\()                                # signature start
         )mx do |m|
           # TODO: do this better, this shouldn't need a delegation
           delegate Dart, m[1]
@@ -40,65 +40,65 @@ module Rouge
           token Punctuation, m[4]
         end
 
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule /"/, Str, :dqs
-        rule /'/, Str, :sqs
-        rule /r"[^"]*"/, Str::Other
-        rule /r'[^']*'/, Str::Other
-        rule /##{id}*/i, Str::Symbol
-        rule /@#{id}/, Name::Decorator
-        rule /(?:#{keywords.join('|')})\b/, Keyword
-        rule /(?:#{declarations.join('|')})\b/, Keyword::Declaration
-        rule /(?:#{types.join('|')})\b/, Keyword::Type
-        rule /(?:true|false|null)\b/, Keyword::Constant
-        rule /(?:class|interface)\b/, Keyword::Declaration, :class
-        rule /(?:#{imports.join('|')})\b/, Keyword::Namespace, :import
-        rule /(\.)(#{id})/ do
+        rule %r/"/, Str, :dqs
+        rule %r/'/, Str, :sqs
+        rule %r/r"[^"]*"/, Str::Other
+        rule %r/r'[^']*'/, Str::Other
+        rule %r/##{id}*/i, Str::Symbol
+        rule %r/@#{id}/, Name::Decorator
+        rule %r/(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
+        rule %r/(?:#{types.join('|')})\b/, Keyword::Type
+        rule %r/(?:true|false|null)\b/, Keyword::Constant
+        rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
+        rule %r/(?:#{imports.join('|')})\b/, Keyword::Namespace, :import
+        rule %r/(\.)(#{id})/ do
           groups Operator, Name::Attribute
         end
 
-        rule /#{id}:/, Name::Label
-        rule /\$?#{id}/, Name
-        rule /[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
-        rule /\d*\.\d+([eE]\-?\d+)?/, Num::Float
-        rule /0x[\da-fA-F]+/, Num::Hex
-        rule /\d+L?/, Num::Integer
-        rule /\n/, Text
+        rule %r/#{id}:/, Name::Label
+        rule %r/\$?#{id}/, Name
+        rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
+        rule %r/\d*\.\d+([eE]\-?\d+)?/, Num::Float
+        rule %r/0x[\da-fA-F]+/, Num::Hex
+        rule %r/\d+L?/, Num::Integer
+        rule %r/\n/, Text
       end
 
       state :class do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         rule id, Name::Class, :pop!
       end
 
       state :dqs do
-        rule /"/, Str, :pop!
-        rule /[^\\\$"]+/, Str
+        rule %r/"/, Str, :pop!
+        rule %r/[^\\\$"]+/, Str
         mixin :string
       end
 
       state :sqs do
-        rule /'/, Str, :pop!
-        rule /[^\\\$']+/, Str
+        rule %r/'/, Str, :pop!
+        rule %r/[^\\\$']+/, Str
         mixin :string
       end
 
       state :import do
-        rule /;/, Operator, :pop!
-        rule /(?:show|hide)\b/, Keyword::Declaration
+        rule %r/;/, Operator, :pop!
+        rule %r/(?:show|hide)\b/, Keyword::Declaration
         mixin :root
       end
 
       state :string do
         mixin :interpolation
-        rule /\\[nrt\"\'\\]/, Str::Escape
+        rule %r/\\[nrt\"\'\\]/, Str::Escape
       end
 
       state :interpolation do
-        rule /\$#{id}/, Str::Interpol
-        rule /\$\{[^\}]+\}/, Str::Interpol
+        rule %r/\$#{id}/, Str::Interpol
+        rule %r/\$\{[^\}]+\}/, Str::Interpol
       end
     end
   end

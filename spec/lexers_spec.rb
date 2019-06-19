@@ -23,6 +23,9 @@ describe Rouge::Lexers do
           out_buf << value
         end
 
+        # Escape is allowed to drop characters from its input
+        next if lexer_class == Rouge::Lexers::Escape
+
         if out_buf != sample
           out_file = "tmp/mismatch.#{subject.tag}"
           puts "mismatch with #{samples_dir.join(lexer_class.tag)}! logged to #{out_file}"

@@ -29,53 +29,53 @@ module Rouge
       start { @shell.reset! }
 
       state :root do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
 
-        rule /#.*?\n/, Comment
+        rule %r/#.*?\n/, Comment
 
-        rule /(export)(\s+)(?=[a-zA-Z0-9_\${}\t -]+\n)/ do
+        rule %r/(export)(\s+)(?=[a-zA-Z0-9_\${}\t -]+\n)/ do
           groups Keyword, Text
           push :export
         end
 
-        rule /export\s+/, Keyword
+        rule %r/export\s+/, Keyword
 
         # assignment
-        rule /([a-zA-Z0-9_${}.-]+)(\s*)([!?:+]?=)/m do |m|
+        rule %r/([a-zA-Z0-9_${}.-]+)(\s*)([!?:+]?=)/m do |m|
           token Name::Variable, m[1]
           token Text, m[2]
           token Operator, m[3]
           push :shell_line
         end
 
-        rule /"(\\\\|\\.|[^"\\])*"/, Str::Double
-        rule /'(\\\\|\\.|[^'\\])*'/, Str::Single
-        rule /([^\n:]+)(:+)([ \t]*)/ do
+        rule %r/"(\\\\|\\.|[^"\\])*"/, Str::Double
+        rule %r/'(\\\\|\\.|[^'\\])*'/, Str::Single
+        rule %r/([^\n:]+)(:+)([ \t]*)/ do
           groups Name::Label, Operator, Text
           push :block_header
         end
       end
 
       state :export do
-        rule /[\w\${}-]/, Name::Variable
-        rule /\n/, Text, :pop!
-        rule /\s+/, Text
+        rule %r/[\w\${}-]/, Name::Variable
+        rule %r/\n/, Text, :pop!
+        rule %r/\s+/, Text
       end
 
       state :block_header do
-        rule /[^,\\\n#]+/, Name::Function
-        rule /,/, Punctuation
-        rule /#.*?/, Comment
-        rule /\\\n/, Text
-        rule /\\./, Text
-        rule /\n/ do
+        rule %r/[^,\\\n#]+/, Name::Function
+        rule %r/,/, Punctuation
+        rule %r/#.*?/, Comment
+        rule %r/\\\n/, Text
+        rule %r/\\./, Text
+        rule %r/\n/ do
           token Text
           goto :block_body
         end
       end
 
       state :block_body do
-        rule /(\t[\t ]*)([@-]?)/ do |m|
+        rule %r/(\t[\t ]*)([@-]?)/ do |m|
           groups Text, Punctuation
           push :shell_line
         end
@@ -85,9 +85,9 @@ module Rouge
 
       state :shell do
         # macro interpolation
-        rule /\$\(\s*[a-z_]\w*\s*\)/i, Name::Variable
+        rule %r/\$\(\s*[a-z_]\w*\s*\)/i, Name::Variable
         # $(shell ...)
-        rule /(\$\()(\s*)(shell)(\s+)/m do
+        rule %r/(\$\()(\s*)(shell)(\s+)/m do
           groups Name::Function, Text, Name::Builtin, Text
           push :shell_expr
         end
@@ -100,12 +100,12 @@ module Rouge
 
       state :shell_expr do
         rule(/\(/) { delegate @shell; push }
-        rule /\)/, Name::Variable, :pop!
+        rule %r/\)/, Name::Variable, :pop!
         mixin :shell
       end
 
       state :shell_line do
-        rule /\n/, Text, :pop!
+        rule %r/\n/, Text, :pop!
         mixin :shell
       end
     end

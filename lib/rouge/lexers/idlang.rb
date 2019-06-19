@@ -209,17 +209,17 @@ module Rouge
       end
 
       state :root do
-        rule /[\s\n]+/, Text::Whitespace
+        rule %r/\s+/, Text::Whitespace
         # Normal comments
-        rule /;.*$/, Comment::Single
-        rule /\,\s*\,/, Error
-        rule /\!#{name}/, Name::Variable::Global
+        rule %r/;.*$/, Comment::Single
+        rule %r/\,\s*\,/, Error
+        rule %r/\!#{name}/, Name::Variable::Global
 
-        rule /[(),:\&\$]/, Punctuation
+        rule %r/[(),:\&\$]/, Punctuation
 
         ## Format statements are quite a strange beast.
         ## Better process them in their own state.
-        #rule /\b(FORMAT)(\s*)(\()/mi do |m|
+        #rule %r/\b(FORMAT)(\s*)(\()/mi do |m|
         #  token Keyword, m[1]
         #  token Text::Whitespace, m[2]
         #  token Punctuation, m[3]
@@ -235,25 +235,25 @@ module Rouge
           (_#{kind_param})? # kind parameter
         )xi, Num::Float
 
-        rule /\d+(B|S|U|US|LL|L|ULL|UL)?/i, Num::Integer
-        rule /"[0-7]+(B|O|U|ULL|UL|LL|L)?/i, Num::Oct
-        rule /'[0-9A-F]+'X(B|S|US|ULL|UL|U|LL|L)?/i, Num::Hex
-        rule /(#{kind_param}_)?'/, Str::Single, :string_single
-        rule /(#{kind_param}_)?"/, Str::Double, :string_double
+        rule %r/\d+(B|S|U|US|LL|L|ULL|UL)?/i, Num::Integer
+        rule %r/"[0-7]+(B|O|U|ULL|UL|LL|L)?/i, Num::Oct
+        rule %r/'[0-9A-F]+'X(B|S|US|ULL|UL|U|LL|L)?/i, Num::Hex
+        rule %r/(#{kind_param}_)?'/, Str::Single, :string_single
+        rule %r/(#{kind_param}_)?"/, Str::Double, :string_double
 
         rule %r{\#\#|\#|\&\&|\|\||/=|<=|>=|->|\@|\?|[-+*/<=~^{}]}, Operator
         # Structures and the like
-        rule /(#{name})(\.)([^\s,]*)/i do |m|
+        rule %r/(#{name})(\.)([^\s,]*)/i do |m|
           groups Name, Operator, Name
           #delegate IDLang, m[3]
         end
 
-        rule /(function|pro)((?:\s|\$\s)+)/i do
+        rule %r/(function|pro)((?:\s|\$\s)+)/i do
           groups Keyword, Text::Whitespace
           push :funcname
         end
 
-        rule /#{name}/m do |m|
+        rule %r/#{name}/m do |m|
           match = m[0].upcase
           if self.class.keywords.include? match
             token Keyword
@@ -275,37 +275,37 @@ module Rouge
       end
 
       state :funcname do
-        rule /#{name}/, Name::Function
+        rule %r/#{name}/, Name::Function
 
-        rule /\s+/, Text::Whitespace
-        rule /(:+|\$)/, Operator
-        rule /;.*/, Comment::Single
+        rule %r/\s+/, Text::Whitespace
+        rule %r/(:+|\$)/, Operator
+        rule %r/;.*/, Comment::Single
 
         # Be done with this state if we hit EOL or comma
-        rule /$/, Text::Whitespace, :pop!
-        rule /,/, Operator, :pop!
+        rule %r/$/, Text::Whitespace, :pop!
+        rule %r/,/, Operator, :pop!
       end
 
       state :string_single do
-        rule /[^']+/, Str::Single
-        rule /''/, Str::Escape
-        rule /'/, Str::Single, :pop!
+        rule %r/[^']+/, Str::Single
+        rule %r/''/, Str::Escape
+        rule %r/'/, Str::Single, :pop!
       end
 
       state :string_double do
-        rule /[^"]+/, Str::Double
-        rule /"/, Str::Double, :pop!
+        rule %r/[^"]+/, Str::Double
+        rule %r/"/, Str::Double, :pop!
       end
 
       state :format_spec do
-        rule /'/, Str::Single, :string_single
-        rule /"/, Str::Double, :string_double
-        rule /\(/, Punctuation, :format_spec
-        rule /\)/, Punctuation, :pop!
-        rule /,/, Punctuation
-        rule /[\s\n]+/, Text::Whitespace
+        rule %r/'/, Str::Single, :string_single
+        rule %r/"/, Str::Double, :string_double
+        rule %r/\(/, Punctuation, :format_spec
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/,/, Punctuation
+        rule %r/\s+/, Text::Whitespace
         # Edit descriptors could be seen as a kind of "format literal".
-        rule /[^\s'"(),]+/, Literal
+        rule %r/[^\s'"(),]+/, Literal
       end
     end
   end

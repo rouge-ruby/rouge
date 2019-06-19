@@ -24,44 +24,61 @@ module Rouge
         # YAML frontmatter
         rule(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m) { delegate YAML }
 
-        rule /\\./, Str::Escape
+        rule %r/\\./, Str::Escape
 
-        rule /^[\S ]+\n(?:---*)\n/, Generic::Heading
-        rule /^[\S ]+\n(?:===*)\n/, Generic::Subheading
+        rule %r/^[\S ]+\n(?:---*)\n/, Generic::Heading
+        rule %r/^[\S ]+\n(?:===*)\n/, Generic::Subheading
 
-        rule /^#(?=[^#]).*?$/, Generic::Heading
-        rule /^##*.*?$/, Generic::Subheading
+        rule %r/^#(?=[^#]).*?$/, Generic::Heading
+        rule %r/^##*.*?$/, Generic::Subheading
 
-        rule /(\n[ \t]*)(```|~~~)(.*?)(\n.*?\n)(\2)/m do |m|
-          sublexer = Lexer.find_fancy(m[3].strip, m[4], @options)
+        rule %r/^([ \t]*)(```|~~~)([^\n]*\n)((.*?)(\2))?/m do |m|
+          name = m[3].strip
+          sublexer = Lexer.find_fancy(name.empty? ? "guess" : name, m[5], @options)
           sublexer ||= PlainText.new(@options.merge(:token => Str::Backtick))
           sublexer.reset!
 
           token Text, m[1]
           token Punctuation, m[2]
           token Name::Label, m[3]
-          delegate sublexer, m[4]
-          token Punctuation, m[5]
+          if m[5]
+            delegate sublexer, m[5]
+          end
+
+          if m[6]
+            token Punctuation, m[6]
+          else
+            push do
+              rule %r/^([ \t]*)(#{m[2]})/ do |mb|
+                pop!
+                token Text, mb[1]
+                token Punctuation, mb[2]
+              end
+              rule %r/^.*\n/ do |mb|
+                delegate sublexer, mb[1]
+              end
+            end
+          end
         end
 
-        rule /\n\n((    |\t).*?\n|\n)+/, Str::Backtick
+        rule %r/\n\n((    |\t).*?\n|\n)+/, Str::Backtick
 
-        rule /(`+)(?:#{edot}|\n)+?\1/, Str::Backtick
+        rule %r/(`+)(?:#{edot}|\n)+?\1/, Str::Backtick
 
         # various uses of * are in order of precedence
 
         # line breaks
-        rule /^(\s*[*]){3,}\s*$/, Punctuation
-        rule /^(\s*[-]){3,}\s*$/, Punctuation
+        rule %r/^(\s*[*]){3,}\s*$/, Punctuation
+        rule %r/^(\s*[-]){3,}\s*$/, Punctuation
 
         # bulleted lists
-        rule /^\s*[*+-](?=\s)/, Punctuation
+        rule %r/^\s*[*+-](?=\s)/, Punctuation
 
         # numbered lists
-        rule /^\s*\d+\./, Punctuation
+        rule %r/^\s*\d+\./, Punctuation
 
         # blockquotes
-        rule /^\s*>.*?$/, Generic::Traceback
+        rule %r/^\s*>.*?$/, Generic::Traceback
 
         # link references
         # [foo]: bar "baz"
@@ -77,77 +94,77 @@ module Rouge
         end
 
         # links and images
-        rule /(!?\[)(#{edot}*?)(\])/ do
+        rule %r/(!?\[)(#{edot}*?)(\])/ do
           groups Punctuation, Name::Variable, Punctuation
           push :link
         end
 
-        rule /[*][*]#{edot}*?[*][*]/, Generic::Strong
-        rule /__#{edot}*?__/, Generic::Strong
+        rule %r/[*][*]#{edot}*?[*][*]/, Generic::Strong
+        rule %r/__#{edot}*?__/, Generic::Strong
 
-        rule /[*]#{edot}*?[*]/, Generic::Emph
-        rule /_#{edot}*?_/, Generic::Emph
+        rule %r/[*]#{edot}*?[*]/, Generic::Emph
+        rule %r/_#{edot}*?_/, Generic::Emph
 
         # Automatic links
-        rule /<.*?@.+[.].+>/, Name::Variable
+        rule %r/<.*?@.+[.].+>/, Name::Variable
         rule %r[<(https?|mailto|ftp)://#{edot}*?>], Name::Variable
 
 
-        rule /[^\\`\[*\n&<]+/, Text
+        rule %r/[^\\`\[*\n&<]+/, Text
 
         # inline html
         rule(/&\S*;/) { delegate html }
         rule(/<#{edot}*?>/) { delegate html }
-        rule /[&<]/, Text
+        rule %r/[&<]/, Text
 
-        rule /\n/, Text
+        rule %r/\n/, Text
       end
 
       state :link do
-        rule /(\[)(#{edot}*?)(\])/ do
+        rule %r/(\[)(#{edot}*?)(\])/ do
           groups Punctuation, Str::Symbol, Punctuation
           pop!
         end
 
-        rule /[(]/ do
+        rule %r/[(]/ do
           token Punctuation
           push :inline_title
           push :inline_url
         end
 
-        rule /[ \t]+/, Text
+        rule %r/[ \t]+/, Text
 
         rule(//) { pop! }
       end
 
       state :url do
-        rule /[ \t]+/, Text
+        rule %r/[ \t]+/, Text
 
         # the url
-        rule /(<)(#{edot}*?)(>)/ do
+        rule %r/(<)(#{edot}*?)(>)/ do
           groups Name::Tag, Str::Other, Name::Tag
           pop!
         end
 
-        rule /\S+/, Str::Other, :pop!
+        rule %r/\S+/, Str::Other, :pop!
       end
 
       state :title do
-        rule /"#{edot}*?"/, Name::Namespace
-        rule /'#{edot}*?'/, Name::Namespace
-        rule /[(]#{edot}*?[)]/, Name::Namespace
-        rule /\s*(?=["'()])/, Text
+        rule %r/"#{edot}*?"/, Name::Namespace
+        rule %r/'#{edot}*?'/, Name::Namespace
+        rule %r/[(]#{edot}*?[)]/, Name::Namespace
+        rule %r/\s*(?=["'()])/, Text
         rule(//) { pop! }
       end
 
       state :inline_title do
-        rule /[)]/, Punctuation, :pop!
+        rule %r/[)]/, Punctuation, :pop!
         mixin :title
       end
 
       state :inline_url do
-        rule /[^<\s)]+/, Str::Other, :pop!
-        rule /\s+/m, Text
+        rule %r/[^<\s)]+/, Str::Other, :pop!
+        rule %r/\s+/m, Text
         mixin :url
       end
     end

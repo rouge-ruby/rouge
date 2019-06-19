@@ -156,6 +156,12 @@ We have [a guide][lexer-dev-doc] on lexer development in the documentation but y
 
 Please don't submit lexers that are largely copy-pasted from other files.
 
+## Versioning
+
+Rouge uses [Semantic Versioning 2.0.0][sv2].
+
+[sv2]: http://semver.org/
+
 ## Tips
 
 I don't get paid to maintain rouge. If you've found this software useful, consider dropping a tip in the [bucket](http://cash.me/$jneen).

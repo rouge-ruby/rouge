@@ -381,6 +381,11 @@ enum HTMLFragment {
     text(~str),
 }
 
+fn int_literals_delimiter() {
+    let billion = 1000_000_000;
+    let red_color = 0xff_60_60;
+}
+
 // Some hidden lines by starting with hash
 # extern crate core;
 # use core::str;

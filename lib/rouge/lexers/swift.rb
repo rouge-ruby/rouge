@@ -20,6 +20,8 @@ module Rouge
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
         associativity didSet get infix inout mutating none nonmutating operator override postfix precedence prefix set unowned weak willSet throws rethrows precedencegroup
+
+        #available #colorLiteral #column #else #elseif #endif #error #file #fileLiteral #function #if #imageLiteral #line #selector #sourceLocation #warning
       )
 
       declarations = Set.new %w(
@@ -71,10 +73,10 @@ module Rouge
         rule %r([-/=+*%<>!&|^.~]+), Operator
         rule %r/@?"/, Str, :dq
         rule %r/'(\\.|.)'/, Str::Char
-        rule %r/(\d+\*|\d*\.\d+)(e[+-]?[0-9]+)?/i, Num::Float
+        rule %r/(\d+(?:_\d+)*\*|(?:\d+(?:_\d+)*)*\.\d+(?:_\d)*)(e[+-]?\d+(?:_\d)*)?/i, Num::Float
         rule %r/\d+e[+-]?[0-9]+/i, Num::Float
-        rule %r/0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
-        rule %r/0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
+        rule %r/0o?[0-7]+(?:_[0-7]+)*/, Num::Oct
+        rule %r/0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*((\.[0-9A-F]+(?:_[0-9A-F]+)*)?p[+-]?\d+)?/, Num::Hex
         rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
@@ -163,6 +165,7 @@ module Rouge
         rule %r/\\[(]/, Str::Escape, :interp
         rule %r/\\u\{\h{1,8}\}/, Str::Escape
         rule %r/[^\\"]+/, Str
+        rule %r/"""/, Str, :pop!
         rule %r/"/, Str, :pop!
       end
 

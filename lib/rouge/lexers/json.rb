@@ -9,7 +9,8 @@ module Rouge
       tag 'json'
       filenames '*.json'
       mimetypes 'application/json', 'application/vnd.api+json',
-                'application/hal+json'
+                'application/hal+json', 'application/problem+json',
+                'application/schema+json'
 
       state :root do
         rule %r/\s+/m, Text::Whitespace

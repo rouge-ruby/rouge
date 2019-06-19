@@ -97,7 +97,7 @@ module Rouge
         rule %r/"/, Name::Variable, :double_string
         rule %r/`/, Name::Variable, :backtick
 
-        rule %r/\w[\w\d]*/ do |m|
+        rule %r/\w\w*/ do |m|
           if self.class.keywords.include? m[0].upcase
             token Keyword
           else
@@ -105,7 +105,7 @@ module Rouge
           end
         end
 
-        rule %r([+*/<>=~!@#%^&|?^-]), Operator
+        rule %r([+*/<>=~!@#%&|?^-]), Operator
         rule %r/[;:()\[\],.]/, Punctuation
       end
 

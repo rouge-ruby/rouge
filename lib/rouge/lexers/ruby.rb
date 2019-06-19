@@ -57,7 +57,9 @@ module Rouge
           token toktype
 
           push do
-            rule %r/\\[##{open}#{close}\\]/, Str::Escape
+            uniq_chars = "#{open}#{close}".squeeze
+            uniq_chars = '' if open == close && open == "\\#"
+            rule %r/\\[##{uniq_chars}\\]/, Str::Escape
             # nesting rules only with asymmetric delimiters
             if open != close
               rule %r/#{open}/ do
@@ -74,7 +76,7 @@ module Rouge
               rule %r/[\\#]/, toktype
             end
 
-            rule %r/[^##{open}#{close}\\]+/m, toktype
+            rule %r/[^##{uniq_chars}\\]+/m, toktype
           end
         end
       end

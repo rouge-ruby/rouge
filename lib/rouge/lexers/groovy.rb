@@ -43,8 +43,8 @@ module Rouge
 
       state :root do
         rule %r(^
-          (\s*(?:\w[\w\d.\[\]]*\s+)+?) # return arguments
-          (\w[\w\d]*) # method name
+          (\s*(?:\w[\w.\[\]]*\s+)+?) # return arguments
+          (\w\w*) # method name
           (\s*) (\() # signature start
         )x do |m|
           delegate self.clone, m[1]
@@ -57,7 +57,7 @@ module Rouge
         rule %r/[^\S\n]+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
-        rule %r/@\w[\w\d.]*/, Name::Decorator
+        rule %r/@\w[\w.]*/, Name::Decorator
         rule %r/(class|interface|trait)\b/,  Keyword::Declaration, :class
         rule %r/package\b/, Keyword::Namespace, :import
         rule %r/import\b/, Keyword::Namespace, :import
@@ -101,12 +101,12 @@ module Rouge
 
       state :class do
         rule %r/\s+/, Text
-        rule %r/\w[\w\d]*/, Name::Class, :pop!
+        rule %r/\w\w*/, Name::Class, :pop!
       end
 
       state :import do
         rule %r/\s+/, Text
-        rule %r/[\w\d.]+[*]?/, Name::Namespace, :pop!
+        rule %r/[\w.]+[*]?/, Name::Namespace, :pop!
       end
     end
   end

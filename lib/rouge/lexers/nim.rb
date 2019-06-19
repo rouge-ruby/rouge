@@ -112,7 +112,7 @@ module Rouge
              Punctuation)
 
         # Strings
-        rule(/(?:[\w]+)"/,Str, :rdqs)
+        rule(/(?:\w+)"/,Str, :rdqs)
         rule(/"""/,       Str, :tdqs)
         rule(/"/,         Str, :dqs)
 

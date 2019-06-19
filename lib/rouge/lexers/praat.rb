@@ -279,7 +279,7 @@ module Rouge
       end
 
       state :string_interpolated do
-        rule %r/'[\._a-z][^\[\]'":]*(\[([\d,]+|"[\w\d,]+")\])?(:[0-9]+)?'/, Literal::String::Interpol
+        rule %r/'[\._a-z][^\[\]'":]*(\[([\d,]+|"[\w,]+")\])?(:[0-9]+)?'/, Literal::String::Interpol
       end
 
       state :string_unquoted do

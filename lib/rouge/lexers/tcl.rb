@@ -39,7 +39,7 @@ module Rouge
       CLOSE = %w| \) \] \} |
       ALL = OPEN + CLOSE
       END_LINE = CLOSE + %w(; \n)
-      END_WORD = END_LINE + %w(\s)
+      END_WORD = END_LINE + %w(\r \t \v)
 
       CHARS =     lambda { |list| Regexp.new %/[#{list.join}]/  }
       NOT_CHARS = lambda { |list| Regexp.new %/[^#{list.join}]/ }

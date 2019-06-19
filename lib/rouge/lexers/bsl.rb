@@ -65,7 +65,7 @@ module Rouge
         rule %r(//.*$), Comment::Single
         rule %r/[\[\]:(),;]/, Punctuation
         rule %r/(?<=[^\wа-яё]|^)\&.*$/, Keyword::Declaration
-        rule %r/[-+\/=<>*%=<>.?&]/, Operator
+        rule %r/[-+\/*%=<>.?&]/, Operator
         rule %r/(?<=[^\wа-яё]|^)\#.*$/, Keyword::Declaration
         rule KEYWORDS, Keyword
         rule BUILTINS, Name::Builtin

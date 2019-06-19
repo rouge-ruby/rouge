@@ -11,13 +11,13 @@ module Rouge
       filenames '*.toml'
       mimetypes 'text/x-toml'
 
-      identifier = /[\w.\S]+/
+      identifier = /\S+/
 
       state :basic do
         rule %r/\s+/, Text
         rule %r/#.*?$/, Comment
         rule %r/(true|false)/, Keyword::Constant
-        rule %r/(?<!=)\s*\[[\w\d\S]+\]/, Name::Namespace
+        rule %r/(?<!=)\s*\[[\S]+\]/, Name::Namespace
 
         rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
 
@@ -56,7 +56,7 @@ module Rouge
       end
 
       state :esc_str do
-        rule %r/\\[0t\tn\n "\\ r]/, Str::Escape
+        rule %r/\\[0t\tn\n "\\r]/, Str::Escape
       end
 
       state :array do

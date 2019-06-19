@@ -83,7 +83,7 @@ module Rouge
       end
 
       state :inline_whitespace do
-        rule %r/[\s\t\r]+/, Text
+        rule %r/\s+/, Text
       end
 
       state :whitespace do

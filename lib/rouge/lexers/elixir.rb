@@ -35,7 +35,7 @@ module Rouge
         rule %r/:"/, Str::Symbol, :interpoling_symbol
         rule %r/\b(nil|true|false)\b(?![?!])|\b[A-Z]\w*\b/, Name::Constant
         rule %r/\b(__(FILE|LINE|MODULE|MAIN|FUNCTION)__)\b(?![?!])/, Name::Builtin::Pseudo
-        rule %r/[a-zA-Z_!][\w_]*[!\?]?/, Name
+        rule %r/[a-zA-Z_!]\w*[!\?]?/, Name
         rule %r{::|[%(){};,/\|:\\\[\]]}, Punctuation
         rule %r/@[a-zA-Z_]\w*|&\d/, Name::Variable
         rule %r{\b(0[xX][0-9A-Fa-f]+|\d(_?\d)*(\.(?![^\d\s])
@@ -117,7 +117,8 @@ module Rouge
               rule %r/[\\#]/, toktype
             end
 
-            rule %r/[^##{open}#{close}\\]+/m, toktype
+            uniq_chars = "#{open}#{close}".squeeze
+            rule %r/[^##{uniq_chars}\\]+/m, toktype
           end
         end
       end

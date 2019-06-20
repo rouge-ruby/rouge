@@ -29,7 +29,7 @@ module Rouge
       end
 
       def self.builtins
-        load Pathname.new(__FILE__).dirname.join('php/builtins.rb')
+        load File.join(__dir__, 'php/builtins.rb')
         self.builtins
       end
 

@@ -11,7 +11,7 @@ end
 desc "tests the similarity with existing lexers"
 task :similarity, [:language] do |t, args|
   require 'rouge'
-  require "#{File.dirname(File.dirname(__FILE__))}/spec/support/similarity.rb"
+  require "#{File.dirname(__dir__)}/spec/support/similarity.rb"
 
   language = args.language
 
@@ -23,5 +23,4 @@ task :similarity, [:language] do |t, args|
       test_similarity lexer_class if lexer_class < Rouge::RegexLexer
     end
   end
-
 end

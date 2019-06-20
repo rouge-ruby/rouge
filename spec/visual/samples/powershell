@@ -59,3 +59,6 @@ try {
 } catch {
     write-output "something else"
 }
+
+# Unapproved verb
+Get-Process | Tee-Object -FilePath "C:\Test1\testfile2.txt"

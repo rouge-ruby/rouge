@@ -53,3 +53,11 @@ index ab1701b..155fa52 100644
      token 'Name.Attribute',              'na'
      token 'Name.Builtin',                'nb'
      token 'Name.Builtin.Pseudo',         'bp'
+
+$ diff a b
+1a2
+> Added line
+3c4
+< diff
+---
+> Line before was removed

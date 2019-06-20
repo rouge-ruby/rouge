@@ -40,11 +40,3 @@ Lint/UnneededSplatExpansion:
 
 Lint/IneffectiveAccessModifier:
   Enabled: false
-
-# TODO: enable it in a future because `ruby -w` warns it
-Lint/AmbiguousRegexpLiteral:
-  Enabled: false
-
-# TODO: enable it in a future because `ruby -w` warns it
-Lint/AmbiguousOperator:
-  Enabled: false

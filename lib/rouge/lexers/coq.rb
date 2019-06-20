@@ -90,8 +90,8 @@ module Rouge
       set_options = /(Set|Unset)(\s+)(Universe|Printing|Implicit|Strict)(\s+)(Polymorphism|All|Notations|Arguments|Universes|Implicit)(\s*)\./m
 
       state :root do
-        rule /[(][*](?![)])/, Comment, :comment
-        rule /\s+/m, Text::Whitespace
+        rule %r/[(][*](?![)])/, Comment, :comment
+        rule %r/\s+/m, Text::Whitespace
         rule module_type do |m|
           token Keyword , 'Module'
           token Text::Whitespace , m[1]
@@ -113,8 +113,8 @@ module Rouge
           @continue = false
           push :continue_id
         end
-        rule /\/\\/, Operator
-        rule /\\\//, Operator
+        rule %r(/\\), Operator
+        rule %r/\\\//, Operator
         rule operator do |m|
           match = m[0]
           if self.class.keyopts.include? match
@@ -124,31 +124,31 @@ module Rouge
           end
         end
 
-        rule /-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
-        rule /\d[\d_]*/, Num::Integer
+        rule %r/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
+        rule %r/\d[\d_]*/, Num::Integer
 
-        rule /'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char
-        rule /'/, Keyword
-        rule /"/, Str::Double, :string
-        rule /[~?]#{id}/, Name::Variable
+        rule %r/'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char
+        rule %r/'/, Keyword
+        rule %r/"/, Str::Double, :string
+        rule %r/[~?]#{id}/, Name::Variable
       end
 
       state :comment do
-        rule /[^(*)]+/, Comment
+        rule %r/[^(*)]+/, Comment
         rule(/[(][*]/) { token Comment; push }
-        rule /[*][)]/, Comment, :pop!
-        rule /[(*)]/, Comment
+        rule %r/[*][)]/, Comment, :pop!
+        rule %r/[(*)]/, Comment
       end
 
       state :string do
-        rule /[^\\"]+/, Str::Double
+        rule %r/(?:\\")+|[^"]/, Str::Double
         mixin :escape_sequence
-        rule /\\\n/, Str::Double
-        rule /"/, Str::Double, :pop!
+        rule %r/\\\n/, Str::Double
+        rule %r/"/, Str::Double, :pop!
       end
 
       state :escape_sequence do
-        rule /\\[\\"'ntbr]/, Str::Escape
+        rule %r/\\[\\"'ntbr]/, Str::Escape
       end
 
       state :continue_id do
@@ -171,7 +171,7 @@ module Rouge
           @continue = false
           pop!
         end
-        rule // do
+        rule %r// do
           if @continue
             token Name::Constant , @name
           else

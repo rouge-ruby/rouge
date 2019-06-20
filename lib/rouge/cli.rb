@@ -186,6 +186,11 @@ module Rouge
         yield %[]
         yield %[--require|-r <filename>     require a filename or library before]
         yield %[                            highlighting]
+        yield %[]
+        yield %[--escape                    allow the use of escapes between <! and !>]
+        yield %[]
+        yield %[--escape-with <l> <r>       allow the use of escapes between custom]
+        yield %[                            delimiters. implies --escape]
       end
 
       def self.parse(argv)
@@ -218,6 +223,10 @@ module Rouge
             opts[:css_class] = argv.shift
           when '--lexer-opts', '-L'
             opts[:lexer_opts] = parse_cgi(argv.shift)
+          when '--escape'
+            opts[:escape] = ['<!', '!>']
+          when '--escape-with'
+            opts[:escape] = [argv.shift, argv.shift]
           when /^--/
             error! "unknown option #{arg.inspect}"
           else
@@ -244,11 +253,23 @@ module Rouge
         )
       end
 
-      def lexer
-        @lexer ||= lexer_class.new(@lexer_opts)
+      def raw_lexer
+        lexer_class.new(@lexer_opts)
       end
 
-      attr_reader :input_file, :lexer_name, :mimetype, :formatter
+      def escape_lexer
+        Rouge::Lexers::Escape.new(
+          start: @escape[0],
+          end: @escape[1],
+          lang: raw_lexer,
+        )
+      end
+
+      def lexer
+        @lexer ||= @escape ? escape_lexer : raw_lexer
+      end
+
+      attr_reader :input_file, :lexer_name, :mimetype, :formatter, :escape
 
       def initialize(opts={})
         Rouge::Lexer.enable_debug!
@@ -281,9 +302,12 @@ module Rouge
         else
           error! "unknown formatter preset #{opts[:formatter]}"
         end
+
+        @escape = opts[:escape]
       end
 
       def run
+        Formatter.enable_escape! if @escape
         formatter.format(lexer.lex(input), &method(:print))
       end
 

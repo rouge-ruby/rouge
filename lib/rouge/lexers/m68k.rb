@@ -83,11 +83,11 @@ module Rouge
       end
 
       state :inline_whitespace do
-        rule /[\s\t\r]+/, Text
+        rule %r/\s+/, Text
       end
 
       state :whitespace do
-        rule /\n+/m, Text, :expr_bol
+        rule %r/\n+/m, Text, :expr_bol
         rule %r(^\*(\\.|.)*?\n), Comment::Single, :expr_bol
         rule %r(;(\\.|.)*?\n), Comment::Single, :expr_bol
         mixin :inline_whitespace
@@ -99,19 +99,19 @@ module Rouge
 
       state :statements do
         mixin :whitespace
-        rule /"/, Str, :string
-        rule /#/, Name::Decorator
-        rule /^\.?[a-zA-Z0-9_]+:?/, Name::Label
-        rule /\.[bswl]\s/i, Name::Decorator
+        rule %r/"/, Str, :string
+        rule %r/#/, Name::Decorator
+        rule %r/^\.?[a-zA-Z0-9_]+:?/, Name::Label
+        rule %r/\.[bswl]\s/i, Name::Decorator
         rule %r('(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
-        rule /\$[0-9a-f]+/i, Num::Hex
-        rule /@[0-8]+/i, Num::Oct
-        rule /%[01]+/i, Num::Bin
-        rule /\d+/i, Num::Integer
+        rule %r/\$[0-9a-f]+/i, Num::Hex
+        rule %r/@[0-8]+/i, Num::Oct
+        rule %r/%[01]+/i, Num::Bin
+        rule %r/\d+/i, Num::Integer
         rule %r([*~&+=\|?:<>/-]), Operator
-        rule /\\./, Comment::Preproc
-        rule /[(),.]/, Punctuation
-        rule /\[[a-zA-Z0-9]*\]/, Punctuation
+        rule %r/\\./, Comment::Preproc
+        rule %r/[(),.]/, Punctuation
+        rule %r/\[[a-zA-Z0-9]*\]/, Punctuation
 
         rule id do |m|
           name = m[0]
@@ -133,11 +133,11 @@ module Rouge
       end
 
       state :string do
-        rule /"/, Str, :pop!
-        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
-        rule /[^\\"\n]+/, Str
-        rule /\\\n/, Str
-        rule /\\/, Str # stray backslash
+        rule %r/"/, Str, :pop!
+        rule %r/\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
+        rule %r/[^\\"\n]+/, Str
+        rule %r/\\\n/, Str
+        rule %r/\\/, Str # stray backslash
       end
     end
   end

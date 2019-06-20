@@ -1,5 +1,8 @@
 #nil (commented (form ftw))
 
+; Unmatched closing parenthesis
+)
+
 ;;;; TYPEP und Verwandtes
 ;;;; Michael Stoll, 21. 10. 1988
 ;;;; Bruno Haible, 10.6.1989

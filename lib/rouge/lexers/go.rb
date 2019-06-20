@@ -14,7 +14,7 @@ module Rouge
 
       # Characters
 
-      WHITE_SPACE            = /[\s\t\r\n]+/
+      WHITE_SPACE            = /\s+/
 
       NEWLINE                = /\n/
       UNICODE_CHAR           = /[^\n]/
@@ -149,7 +149,7 @@ module Rouge
         rule(OPERATOR,              Operator)
         rule(SEPARATOR,             Punctuation)
         rule(IDENTIFIER,            Name)
-        rule(WHITE_SPACE,           Other)
+        rule(WHITE_SPACE,           Text)
       end
 
       state :root do

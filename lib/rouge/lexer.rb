@@ -23,6 +23,14 @@ module Rouge
         new(opts).lex(stream, &b)
       end
 
+      # In case #continue_lex is called statically, we simply
+      # begin a new lex from the beginning, since there is no state.
+      #
+      # @see #continue_lex
+      def continue_lex(*a, &b)
+        lex(*a, &b)
+      end
+
       # Given a name in string, return the correct lexer class.
       # @param [String] name
       # @return [Class<Rouge::Lexer>,nil]
@@ -118,7 +126,7 @@ module Rouge
 
       # @return a list of all lexers.
       def all
-        registry.values.uniq
+        @all ||= registry.values.uniq
       end
 
       # Guess which lexer to use based on a hash of info.
@@ -188,16 +196,24 @@ module Rouge
       end
 
       def disable_debug!
-        @debug_enabled = false
+        remove_instance_variable :@debug_enabled if defined? @debug_enabled
       end
 
       def debug_enabled?
-        !!@debug_enabled
+        (defined? @debug_enabled) ? true : false
+      end
+
+      # Determine if a lexer has a method named +:detect?+ defined in its
+      # singleton class.
+      def detectable?
+        @detectable ||= methods(false).include?(:detect?)
       end
 
     protected
       # @private
       def register(name, lexer)
+        # reset an existing list of lexers
+        @all = nil if defined?(@all)
         registry[name.to_s] = lexer
       end
 
@@ -236,6 +252,13 @@ module Rouge
 
       # Specify a list of filename globs associated with this lexer.
       #
+      # If a filename glob is associated with more than one lexer, this can
+      # cause a Guesser::Ambiguous error to be raised in various guessing
+      # methods. These errors can be avoided by disambiguation. Filename globs
+      # are disambiguated in one of two ways. Either the lexer will define a
+      # `self.detect?` method (intended for use with shebangs and doctypes) or a
+      # manual rule will be specified in Guessers::Disambiguation.
+      #
       # @example
       #   class Ruby < Lexer
       #     filenames '*.rb', '*.ruby', 'Gemfile', 'Rakefile'
@@ -256,7 +279,9 @@ module Rouge
 
       # @private
       def assert_utf8!(str)
-        return if %w(US-ASCII UTF-8 ASCII-8BIT).include? str.encoding.name
+        encoding = str.encoding.name
+        return if encoding == 'US-ASCII' || encoding == 'UTF-8' || encoding == 'ASCII-8BIT'
+
         raise EncodingError.new(
           "Bad encoding: #{str.encoding.names.join(',')}. " +
           "Please convert your string to UTF-8."
@@ -285,7 +310,7 @@ module Rouge
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
 
-      @debug = Lexer.debug_enabled? && bool_option(:debug)
+      @debug = Lexer.debug_enabled? && bool_option('debug')
     end
 
     def as_bool(val)
@@ -340,8 +365,10 @@ module Rouge
     end
 
     def bool_option(name, &default)
-      if @options.key?(name.to_s)
-        as_bool(@options[name.to_s])
+      name_str = name.to_s
+
+      if @options.key?(name_str)
+        as_bool(@options[name_str])
       else
         default ? default.call : false
       end
@@ -393,12 +420,25 @@ module Rouge
     #
     # @option opts :continue
     #   Continue the lex from the previous state (i.e. don't call #reset!)
+    #
+    # @note The use of `opts` has been deprecated. A warning is issued if run
+    #   with `$VERBOSE` set to true.
     def lex(string, opts={}, &b)
+      unless opts.nil?
+        warn 'The use of opts with Lexer.lex is deprecated' if $VERBOSE
+      end
+
       return enum_for(:lex, string, opts) unless block_given?
 
       Lexer.assert_utf8!(string)
-
       reset! unless opts[:continue]
+
+      continue_lex(string, &b)
+    end
+
+    # Continue the lex from the the current state without resetting
+    def continue_lex(string, &b)
+      return enum_for(:continue_lex, string, &b) unless block_given?
 
       # consolidate consecutive tokens of the same type
       last_token = nil
@@ -454,9 +494,7 @@ module Rouge
     def self.load_lexer(relpath)
       return if @_loaded_lexers.key?(relpath)
       @_loaded_lexers[relpath] = true
-
-      root = Pathname.new(__FILE__).dirname.join('lexers')
-      load root.join(relpath)
+      load File.join(__dir__, 'lexers', relpath)
     end
   end
 end

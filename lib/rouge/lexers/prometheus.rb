@@ -26,21 +26,21 @@ module Rouge
         mixin :strings
         mixin :whitespace
 
-        rule /-?\d+\.\d+/, Num::Float
-        rule /-?\d+[smhdwy]?/, Num::Integer
+        rule %r/-?\d+\.\d+/, Num::Float
+        rule %r/-?\d+[smhdwy]?/, Num::Integer
 
         mixin :operators
 
-        rule /(ignoring|on)(\()/ do
+        rule %r/(ignoring|on)(\()/ do
           groups Keyword::Pseudo, Punctuation
           push :label_list
         end
-        rule /(group_left|group_right)(\()/ do
+        rule %r/(group_left|group_right)(\()/ do
           groups Keyword::Type, Punctuation
         end
-        rule /(bool|offset)\b/, Keyword
-        rule /(without|by)\b/, Keyword, :label_list
-        rule /[\w:]+/ do |m|
+        rule %r/(bool|offset)\b/, Keyword
+        rule %r/(without|by)\b/, Keyword, :label_list
+        rule %r/[\w:]+/ do |m|
           if self.class.functions.include?(m[0])
             token Name::Builtin
           else
@@ -52,17 +52,17 @@ module Rouge
       end
 
       state :metrics do
-        rule /[a-zA-Z0-9_-]+/, Name
+        rule %r/[a-zA-Z0-9_-]+/, Name
 
-        rule /[\(\)\]:.,]/, Punctuation
-        rule /\{/, Punctuation, :filters
-        rule /\[/, Punctuation
+        rule %r/[\(\)\]:.,]/, Punctuation
+        rule %r/\{/, Punctuation, :filters
+        rule %r/\[/, Punctuation
       end
 
       state :strings do
-        rule /"/, Str::Double, :double_string_escaped
-        rule /'/, Str::Single, :single_string_escaped
-        rule /`.*`/, Str::Backtick
+        rule %r/"/, Str::Double, :double_string_escaped
+        rule %r/'/, Str::Single, :single_string_escaped
+        rule %r/`.*`/, Str::Backtick
       end
 
       [
@@ -70,52 +70,52 @@ module Rouge
         [:single, Str::Single, "'"]
       ].each do |name, tok, fin|
         state :"#{name}_string_escaped" do
-          rule /\\[\\abfnrtv#{fin}]/, Str::Escape
-          rule /[^\\#{fin}]+/m, tok
-          rule /#{fin}/, tok, :pop!
+          rule %r/\\[\\abfnrtv#{fin}]/, Str::Escape
+          rule %r/[^\\#{fin}]+/m, tok
+          rule %r/#{fin}/, tok, :pop!
         end
       end
 
       state :filters do
         mixin :inline_whitespace
-        rule /,/, Punctuation
+        rule %r/,/, Punctuation
         mixin :labels
         mixin :filter_matching_operators
         mixin :strings
-        rule /}/, Punctuation, :pop!
+        rule %r/}/, Punctuation, :pop!
       end
 
       state :label_list do
-        rule /\(/, Punctuation
-        rule /[a-zA-Z0-9_:-]+/, Name::Attribute
-        rule /,/, Punctuation
+        rule %r/\(/, Punctuation
+        rule %r/[a-zA-Z0-9_:-]+/, Name::Attribute
+        rule %r/,/, Punctuation
         mixin :whitespace
-        rule /\)/, Punctuation, :pop!
+        rule %r/\)/, Punctuation, :pop!
       end
 
       state :labels do
-        rule /[a-zA-Z0-9_:-]+/, Name::Attribute
+        rule %r/[a-zA-Z0-9_:-]+/, Name::Attribute
       end
 
       state :operators do
         rule %r([+\-\*/%\^]), Operator  # Arithmetic
         rule %r(=|==|!=|<|>|<=|>=), Operator # Comparison
-        rule /and|or|unless/, Operator # Logical/Set
-        rule /(sum|min|max|avg|stddev|stdvar|count|count_values|bottomk|topk)\b/, Name::Function
+        rule %r/and|or|unless/, Operator # Logical/Set
+        rule %r/(sum|min|max|avg|stddev|stdvar|count|count_values|bottomk|topk)\b/, Name::Function
       end
 
       state :filter_matching_operators do
-        rule /!(=|~)|=~?/, Operator
+        rule %r/!(=|~)|=~?/, Operator
       end
 
       state :inline_whitespace do
-        rule /[ \t\r]+/, Text
+        rule %r/[ \t\r]+/, Text
       end
 
       state :whitespace do
         mixin :inline_whitespace
-        rule /\n\s*/m, Text
-        rule /#.*?$/, Comment
+        rule %r/\n\s*/m, Text
+        rule %r/#.*?$/, Comment
       end
     end
   end

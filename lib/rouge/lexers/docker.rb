@@ -8,7 +8,7 @@ module Rouge
       desc "Dockerfile syntax"
       tag 'docker'
       aliases 'dockerfile'
-      filenames 'Dockerfile', '*.docker'
+      filenames 'Dockerfile', '*.Dockerfile', '*.docker', 'Dockerfile_*'
       mimetypes 'text/x-dockerfile-config'
 
       KEYWORDS = %w(
@@ -18,32 +18,32 @@ module Rouge
       start { @shell = Shell.new(@options) }
 
       state :root do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
 
-        rule /^(ONBUILD)(\s+)(#{KEYWORDS})(.*)/io do |m|
+        rule %r/^(ONBUILD)(\s+)(#{KEYWORDS})(.*)/io do |m|
           groups Keyword, Text::Whitespace, Keyword, Str
         end
 
-        rule /^(#{KEYWORDS})\b(.*)/io do |m|
+        rule %r/^(#{KEYWORDS})\b(.*)/io do |m|
           groups Keyword, Str
         end
 
-        rule /#.*?$/, Comment
+        rule %r/#.*?$/, Comment
 
-        rule /^(ONBUILD\s+)?RUN(\s+)/i do
+        rule %r/^(ONBUILD\s+)?RUN(\s+)/i do
           token Keyword
           push :run
           @shell.reset!
         end
 
-        rule /\w+/, Text
-        rule /[^\w]+/, Text
-        rule /./, Text
+        rule %r/\w+/, Text
+        rule %r/[^\w]+/, Text
+        rule %r/./, Text
       end
 
       state :run do
-        rule /\n/, Text, :pop!
-        rule /\\./m, Str::Escape
+        rule %r/\n/, Text, :pop!
+        rule %r/\\./m, Str::Escape
         rule(/(\\.|[^\n\\])+/) { delegate @shell }
       end
     end

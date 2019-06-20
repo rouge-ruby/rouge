@@ -9,7 +9,7 @@ html
 
     / Inline nested ruby expressions
     p Nested interp #{list.map { |x| x + 1 }.inject(&:+)} parses ok
-    
+
     /! HTML comment
     #content
       p This example shows you how a basic Slim file looks like.
@@ -61,6 +61,14 @@ html
             tr
               td.name = item.name
               td.price = item.price
+              td.spec
+                = render( \
+                    partial: 'item_spec',
+                    locals: { \
+                      item: item,
+                    },
+                  )
+
       - else
         p<
          | No items found.  Please add some inventory.

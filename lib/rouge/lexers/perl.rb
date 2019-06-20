@@ -65,17 +65,17 @@ module Rouge
       end
 
       state :root do
-        rule /#.*?$/, Comment::Single
-        rule /^=[a-zA-Z0-9]+\s+.*?\n=cut/m, Comment::Multiline
-        rule /(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/#.*?$/, Comment::Single
+        rule %r/^=[a-zA-Z0-9]+\s+.*?\n=cut/m, Comment::Multiline
+        rule %r/(?:#{keywords.join('|')})\b/, Keyword
 
-        rule /(format)(\s+)([a-zA-Z0-9_]+)(\s*)(=)(\s*\n)/ do
+        rule %r/(format)(\s+)([a-zA-Z0-9_]+)(\s*)(=)(\s*\n)/ do
           groups Keyword, Text, Name, Text, Punctuation, Text
 
           push :format
         end
 
-        rule /(?:eq|lt|gt|le|ge|ne|not|and|or|cmp)\b/, Operator::Word
+        rule %r/(?:eq|lt|gt|le|ge|ne|not|and|or|cmp)\b/, Operator::Word
 
         # common delimiters
         rule %r(s/(\\\\|\\/|[^/])*/(\\\\|\\/|[^/])*/[msixpodualngc]*), re_tok
@@ -93,89 +93,110 @@ module Rouge
         rule %r(m?/(\\\\|\\/|[^/\n])*/[msixpodualngc]*), re_tok
         rule %r(m(?=[/!\\{<\[\(@%\$])), re_tok, :balanced_regex
 
-        # Perl allows any non-whitespace character to delimit
-        # a regex when `m` is used.
-        rule %r(m(\S).*\1[msixpodualngc]*), re_tok
+        # arbitrary non-whitespace delimiters
+        rule %r(m\s*([^\w\s])((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
+        rule %r(m\s+(\w)((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
+
         rule %r(((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[msixpodualngc]*),
           re_tok, :balanced_regex
 
-        rule /\s+/, Text
-        rule /(?:#{builtins.join('|')})\b/, Name::Builtin
-        rule /((__(DATA|DIE|WARN)__)|(STD(IN|OUT|ERR)))\b/,
+        rule %r/\s+/, Text
+        rule %r/(?:#{builtins.join('|')})\b/, Name::Builtin
+        rule %r/((__(DATA|DIE|WARN)__)|(STD(IN|OUT|ERR)))\b/,
           Name::Builtin::Pseudo
 
-        rule /<<([\'"]?)([a-zA-Z_][a-zA-Z0-9_]*)\1;?\n.*?\n\2\n/m, Str
+        rule %r/<<([\'"]?)([a-zA-Z_][a-zA-Z0-9_]*)\1;?\n.*?\n\2\n/m, Str
 
-        rule /__END__\b/, Comment::Preproc, :end_part
-        rule /\$\^[ADEFHILMOPSTWX]/, Name::Variable::Global
-        rule /\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/-](?!\w)/, Name::Variable::Global
-        rule /[-+\/*%=<>&^\|!\\~]=?/, Operator
-        rule /[$@%#]+/, Name::Variable, :varname
+        rule %r/__END__\b/, Comment::Preproc, :end_part
+        rule %r/\$\^[ADEFHILMOPSTWX]/, Name::Variable::Global
+        rule %r/\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/-](?!\w)/, Name::Variable::Global
+        rule %r/[-+\/*%=<>&^\|!\\~]=?/, Operator
+        rule %r/[$@%#]+/, Name::Variable, :varname
 
-        rule /0_?[0-7]+(_[0-7]+)*/, Num::Oct
-        rule /0x[0-9A-Fa-f]+(_[0-9A-Fa-f]+)*/, Num::Hex
-        rule /0b[01]+(_[01]+)*/, Num::Bin
-        rule /(\d*(_\d*)*\.\d+(_\d*)*|\d+(_\d*)*\.\d+(_\d*)*)(e[+-]?\d+)?/i,
+        rule %r/0_?[0-7]+(_[0-7]+)*/, Num::Oct
+        rule %r/0x[0-9A-Fa-f]+(_[0-9A-Fa-f]+)*/, Num::Hex
+        rule %r/0b[01]+(_[01]+)*/, Num::Bin
+        rule %r/(\d*(_\d*)*\.\d+(_\d*)*|\d+(_\d*)*\.\d+(_\d*)*)(e[+-]?\d+)?/i,
           Num::Float
-        rule /\d+(_\d*)*e[+-]?\d+(_\d*)*/i, Num::Float
-        rule /\d+(_\d+)*/, Num::Integer
+        rule %r/\d+(_\d*)*e[+-]?\d+(_\d*)*/i, Num::Float
+        rule %r/\d+(_\d+)*/, Num::Integer
 
-        rule /'(\\\\|\\'|[^'])*'/, Str
-        rule /"(\\\\|\\"|[^"])*"/, Str
-        rule /`(\\\\|\\`|[^`])*`/, Str::Backtick
-        rule /<([^\s>]+)>/, re_tok
-        rule /(q|qq|qw|qr|qx)\{/, Str::Other, :cb_string
-        rule /(q|qq|qw|qr|qx)\(/, Str::Other, :rb_string
-        rule /(q|qq|qw|qr|qx)\[/, Str::Other, :sb_string
-        rule /(q|qq|qw|qr|qx)</, Str::Other, :lt_string
-        rule /(q|qq|qw|qr|qx)([^a-zA-Z0-9])(.|\n)*?\2/, Str::Other
+        rule %r/'/, Punctuation, :sq
+        rule %r/"/, Punctuation, :dq
+        rule %r/`/, Punctuation, :bq
+        rule %r/<([^\s>]+)>/, re_tok
+        rule %r/(q|qq|qw|qr|qx)\{/, Str::Other, :cb_string
+        rule %r/(q|qq|qw|qr|qx)\(/, Str::Other, :rb_string
+        rule %r/(q|qq|qw|qr|qx)\[/, Str::Other, :sb_string
+        rule %r/(q|qq|qw|qr|qx)</, Str::Other, :lt_string
+        rule %r/(q|qq|qw|qr|qx)([^a-zA-Z0-9])(.|\n)*?\2/, Str::Other
 
-        rule /package\s+/, Keyword, :modulename
-        rule /sub\s+/, Keyword, :funcname
-        rule /\[\]|\*\*|::|<<|>>|>=|<=|<=>|={3}|!=|=~|!~|&&?|\|\||\.{1,3}/,
+        rule %r/package\s+/, Keyword, :modulename
+        rule %r/sub\s+/, Keyword, :funcname
+        rule %r/\[\]|\*\*|::|<<|>>|>=|<=|<=>|={3}|!=|=~|!~|&&?|\|\||\.{1,3}/,
           Operator
-        rule /[()\[\]:;,<>\/?{}]/, Punctuation
+        rule %r/[()\[\]:;,<>\/?{}]/, Punctuation
         rule(/(?=\w)/) { push :name }
       end
 
       state :format do
-        rule /\.\n/, Str::Interpol, :pop!
-        rule /.*?\n/, Str::Interpol
+        rule %r/\.\n/, Str::Interpol, :pop!
+        rule %r/.*?\n/, Str::Interpol
       end
 
       state :name_common do
-        rule /\w+::/, Name::Namespace
-        rule /[\w:]+/, Name::Variable, :pop!
+        rule %r/\w+::/, Name::Namespace
+        rule %r/[\w:]+/, Name::Variable, :pop!
       end
 
       state :varname do
-        rule /\s+/, Text
-        rule /\{/, Punctuation, :pop! # hash syntax
-        rule /\)|,/, Punctuation, :pop! # arg specifier
+        rule %r/\s+/, Text
+        rule %r/\{/, Punctuation, :pop! # hash syntax
+        rule %r/\)|,/, Punctuation, :pop! # arg specifier
         mixin :name_common
       end
 
       state :name do
         mixin :name_common
-        rule /[A-Z_]+(?=[^a-zA-Z0-9_])/, Name::Constant, :pop!
+        rule %r/[A-Z_]+(?=[^a-zA-Z0-9_])/, Name::Constant, :pop!
         rule(/(?=\W)/) { pop! }
       end
 
       state :modulename do
-        rule /[a-z_]\w*/i, Name::Namespace, :pop!
+        rule %r/[a-z_]\w*/i, Name::Namespace, :pop!
       end
 
       state :funcname do
-        rule /[a-zA-Z_]\w*[!?]?/, Name::Function
-        rule /\s+/, Text
+        rule %r/[a-zA-Z_]\w*[!?]?/, Name::Function
+        rule %r/\s+/, Text
 
         # argument declaration
-        rule /(\([$@%]*\))(\s*)/ do
+        rule %r/(\([$@%]*\))(\s*)/ do
           groups Punctuation, Text
         end
 
-        rule /.*?{/, Punctuation, :pop!
-        rule /;/, Punctuation, :pop!
+        rule %r/.*?{/, Punctuation, :pop!
+        rule %r/;/, Punctuation, :pop!
+      end
+
+      state :sq do
+        rule %r/\\[']/, Str::Escape
+        rule %r/[^\\']+/, Str::Single
+        rule %r/'/, Punctuation, :pop!
+      end
+
+      state :dq do
+        mixin :string_intp
+        rule %r/\\[\\tnr"]/, Str::Escape
+        rule %r/[^\\"]+?/, Str::Double
+        rule %r/"/, Punctuation, :pop!
+      end
+
+      state :bq do
+        mixin :string_intp
+        rule %r/\\[\\tnr`]/, Str::Escape
+        rule %r/[^\\`]+?/, Str::Backtick
+        rule %r/`/, Punctuation, :pop!
       end
 
       [[:cb, '\{', '\}'],
@@ -184,17 +205,28 @@ module Rouge
        [:lt, '<',  '>']].each do |name, open, close|
         tok = Str::Other
         state :"#{name}_string" do
-          rule /\\[#{open}#{close}\\]/, tok
-          rule /\\/, tok
+          rule %r/\\[#{open}#{close}\\]/, tok
+          rule %r/\\/, tok
           rule(/#{open}/) { token tok; push }
-          rule /#{close}/, tok, :pop!
-          rule /[^#{open}#{close}\\]+/, tok
+          rule %r/#{close}/, tok, :pop!
+          rule %r/[^#{open}#{close}\\]+/, tok
         end
+      end
+
+      state :in_interp do
+        rule %r/}/, Str::Interpol, :pop!
+        rule %r/\s+/, Text
+        rule %r/[a-z_]\w*/i, Str::Interpol
+      end
+
+      state :string_intp do
+        rule %r/[$@][{]/, Str::Interpol, :in_interp
+        rule %r/[$@][a-z_]\w*/i, Str::Interpol
       end
 
       state :end_part do
         # eat the rest of the stream
-        rule /.+/m, Comment::Preproc, :pop!
+        rule %r/.+/m, Comment::Preproc, :pop!
       end
     end
   end

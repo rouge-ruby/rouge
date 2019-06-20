@@ -40,28 +40,28 @@ module Rouge
       )
 
       state :whitespace do
-        rule /[\s\t\r\n]+/m, Text
+        rule %r/\s+/m, Text
       end
 
       state :root do
         mixin :whitespace
-        rule /"""/, Str::Doc, :docstring
+        rule %r/"""/, Str::Doc, :docstring
         rule %r{//(.*?)\n}, Comment::Single
         rule %r{/(\\\n)?[*](.|\n)*?[*](\\\n)?/}, Comment::Multiline
-        rule /"/, Str, :string
+        rule %r/"/, Str, :string
         rule %r([~!%^&*+=\|?:<>/-]), Operator
-        rule /(true|false|NULL)\b/, Name::Constant
+        rule %r/(true|false|NULL)\b/, Name::Constant
         rule %r{(?:[A-Z_][a-zA-Z0-9_]*)}, Name::Class
-        rule /[()\[\],.';]/, Punctuation
+        rule %r/[()\[\],.';]/, Punctuation
 
         # Numbers
-        rule /0[xX]([0-9a-fA-F_]*\.[0-9a-fA-F_]+|[0-9a-fA-F_]+)[pP][+\-]?[0-9_]+[fFL]?[i]?/, Num::Float
-        rule /[0-9_]+(\.[0-9_]+[eE][+\-]?[0-9_]+|\.[0-9_]*|[eE][+\-]?[0-9_]+)[fFL]?[i]?/, Num::Float
-        rule /\.(0|[1-9][0-9_]*)([eE][+\-]?[0-9_]+)?[fFL]?[i]?/, Num::Float
-        rule /0[xX][0-9a-fA-F_]+/, Num::Hex
-        rule /(0|[1-9][0-9_]*)([LUu]|Lu|LU|uL|UL)?/, Num::Integer
+        rule %r/0[xX]([0-9a-fA-F_]*\.[0-9a-fA-F_]+|[0-9a-fA-F_]+)[pP][+\-]?[0-9_]+[fFL]?[i]?/, Num::Float
+        rule %r/[0-9_]+(\.[0-9_]+[eE][+\-]?[0-9_]+|\.[0-9_]*|[eE][+\-]?[0-9_]+)[fFL]?[i]?/, Num::Float
+        rule %r/\.(0|[1-9][0-9_]*)([eE][+\-]?[0-9_]+)?[fFL]?[i]?/, Num::Float
+        rule %r/0[xX][0-9a-fA-F_]+/, Num::Hex
+        rule %r/(0|[1-9][0-9_]*)([LUu]|Lu|LU|uL|UL)?/, Num::Integer
 
-        rule /[a-z_][a-z0-9_]*/io do |m|
+        rule %r/[a-z_][a-z0-9_]*/io do |m|
           match = m[0]
 
           if capabilities.include?(match)
@@ -77,17 +77,17 @@ module Rouge
       end
 
       state :string do
-        rule /"/, Str, :pop!
-        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
-        rule /[^\\"\n]+/, Str
-        rule /\\\n/, Str
-        rule /\\/, Str # stray backslash
+        rule %r/"/, Str, :pop!
+        rule %r/\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
+        rule %r/[^\\"\n]+/, Str
+        rule %r/\\\n/, Str
+        rule %r/\\/, Str # stray backslash
       end
 
       state :docstring do
-        rule /"""/, Str::Doc, :pop!
-        rule /\n/, Str::Doc
-        rule /./, Str::Doc
+        rule %r/"""/, Str::Doc, :pop!
+        rule %r/\n/, Str::Doc
+        rule %r/./, Str::Doc
       end
     end
   end

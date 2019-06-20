@@ -15,7 +15,7 @@ module Rouge
         # so we assume you're not using leading spaces that aren't tabs,
         # and just replace them here.
         if lexer.tag == 'make'
-          code.gsub! /^    /, "\t"
+          code.gsub! %r/^    /, "\t"
         end
 
         formatter = rouge_formatter(lexer)

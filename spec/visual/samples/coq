@@ -11,3 +11,5 @@ Section with_T.
 End with_T.
 
 Definition a_string := "hello\" world".
+
+Notation "A /\ B" := (and A B) : type_scope.

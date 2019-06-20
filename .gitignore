@@ -4,7 +4,7 @@ Gemfile.lock
 # build artifacts
 *.gem
 .bundle
-/vendor/bundle
+/vendor
 
 # docs
 /.yardoc
@@ -12,6 +12,7 @@ Gemfile.lock
 
 # tmp
 /tmp
+rouge-memory.tmp
 
 # IntelliJ IDEA / RubyMine
 .idea/

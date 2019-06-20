@@ -10,6 +10,16 @@ someText += "\nthere";
 
 var test = 123
 
+var foo = {
+  a: "\test",
+  b: "\nest",
+  c: "\\test",
+  d: "\\nest",
+  e: "\\",
+  f: "Using \\ in a string",
+  g: "\error"
+};
+
 switch(test) {
 case 123:
   console.log(123)

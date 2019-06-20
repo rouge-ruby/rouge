@@ -76,7 +76,6 @@ module Rouge
       prepend :basic do
         rule %r(#requires\s-version \d.\d*$),Comment::Preproc
         rule %r(<#[\s,\S]*?#>)m, Comment::Multiline
-        rule %r/#.*$/, Comment::Single
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator
         rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
         rule %r/[a-z,A-Z,0-9]+?-[a-z,A-Z,0-9]*/, Generic::Strong

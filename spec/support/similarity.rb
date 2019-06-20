@@ -1,11 +1,16 @@
 module Similarity
   def self.test(lexer_class)
-    state_names = Set.new(lexer_class.state_definitions.keys)
+    # state_defintions is an InheritableHash, so we use `own_keys` to
+    # exclude states inherited from superclasses
+    state_names = Set.new(lexer_class.state_definitions.own_keys)
 
     candidates = Rouge::Lexer.all.select do |x|
-      next false if x == lexer_class
+      # we can only compare to RegexLexers which have state_definitions
       next false unless x < Rouge::RegexLexer
-      next false if x < lexer_class || lexer_class < x
+
+      # don't compare a lexer to itself or any subclasses
+      next false if x <= lexer_class
+
       true
     end
 

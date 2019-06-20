@@ -1,16 +1,27 @@
+def test_similarity(lexer_class)
+  score, matches = Similarity.test(lexer_class)
+
+  if score == 1
+    puts "[none]"
+  else
+    puts "[#{score}] #{matches.map(&:tag).join(', ')}"
+  end
+end
+
 desc "tests the similarity with existing lexers"
 task :similarity, [:language] do |t, args|
   require 'rouge'
   require "#{File.dirname(File.dirname(__FILE__))}/spec/support/similarity.rb"
 
   language = args.language
-  lexer_class = Rouge::Lexer.find(language)
 
-  score, matches = Similarity.test(lexer_class)
-
-  if score == 1
-    puts "No similarity found"
+  if language
+    test_similarity Rouge::Lexer.find(language)
   else
-    puts "Similarity index #{score} with #{matches.map(&:tag).join(', ')}"
+    Rouge::Lexer.all.each do |lexer_class|
+      print "#{lexer_class.tag}: "
+      test_similarity lexer_class if lexer_class < Rouge::RegexLexer
+    end
   end
+
 end

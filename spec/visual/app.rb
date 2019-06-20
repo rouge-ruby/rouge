@@ -42,7 +42,7 @@ class VisualTestApp < Sinatra::Application
     @theme = theme_class.new(scope: '.codehilite')
     @comment_color = @theme.class.get_style(Rouge::Token::Tokens::Comment).fg
 
-    formatter_opts = { :line_numbers => params[:line_numbers] }
+    formatter_opts = { line_numbers: params[:line_numbers], line_table: true }
     formatter_opts[:inline_theme] = @theme if params[:inline]
 
     @formatter = Rouge::Formatters::HTMLLegacy.new(formatter_opts)

@@ -10,8 +10,9 @@ gitlab-runner stop
 gitlab-runner uninstall
 gitlab-runner install --user ".\ENTER-YOUR-USERNAME" --password "ENTER-YOUR-PASSWORD"
 
-# rouge-ruyby/rouge#640
+# rouge-ruby/rouge#640
 $my_path = "C:\Program Files (x86)\foo\ bar"
+import-module $PSScriptRoot\foo\bar
 
 "String that accepts $variables, and substitutions"
 'Literal string $($PSScriptRoot)'

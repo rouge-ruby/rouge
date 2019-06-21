@@ -1,6 +1,11 @@
 #requires -version 2.0
 "String that accepts $variables and substitutions"
 'Literal string $($PSScriptRoot)'
+$mydata = @{
+    key = "value"
+    key2 = "value2"
+    type = "bad highlighting"
+}
 function Add-Extension
 {
     param ([string]$Name,[string]$Extension = "txt")

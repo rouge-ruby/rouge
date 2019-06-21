@@ -1,4 +1,8 @@
 #requires -version 2.0
+# rouge-ruby/rouge#1025
+[System.Collections.Generic.List[string]](1..100)
+[System.Collections.Generic.Dictionary[string, int]](1..100|%{@{N=$_}})
+$global:ErrorActionPreference
 
 # rouge-ruby/rouge#1041 
 cd C:\GitLab-Runner

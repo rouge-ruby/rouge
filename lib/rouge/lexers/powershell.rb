@@ -107,14 +107,14 @@ module Rouge
       end
 
       state :hashtable do 
-        rule %r/\w/, Name::Variable
+        rule %r/\w+/, Name::Variable
         rule %r/}/, Operator, :pop!
         mixin :root
       end
 
       state :multiline do
         rule %r/\.(#{MULTILINEKEYWORDS})/i, Keyword::Pseudo
-        rule %r/[\w\d\s\.\-\,:\/{}<>"*]/, Comment
+        rule %r/[\w\s\.\-\,:\/{}<>"*]/, Comment
         rule %r/#>/, Comment, :pop!
         mixin :root
       end

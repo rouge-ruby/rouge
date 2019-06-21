@@ -13,6 +13,7 @@ module Rouge
       filenames '*.ps1', '*.psm1', '*.psd1', '*.psrc', '*.pssc'
       mimetypes 'text/x-powershell'
 
+      # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_commonparameters?view=powershell-6
       ATTRIBUTES = %w(
         CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI SupportsPaging
         SupportsShouldProcess PositionalBinding

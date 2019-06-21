@@ -126,11 +126,11 @@ you're at the top level of your clone of your repository and type:
 bundle install --path vendor
 ```
 
-This command tells Bundler to install the gems Rouge in the Gemfile into a
-directory called `vendor/`. This has one drawback (explained below) but means
-the gems we use for Rouge are isolated from the other gems we may have installed
-on our system. This will be tremendously helpful in avoiding conflicts that
-arise because of the use of incompatible versions of a gem.
+This command tells Bundler to install the gems in the Gemfile into a directory
+called `vendor/`. This has one drawback (explained below) but means the gems we
+use for Rouge are isolated from the other gems we may have installed on our
+system. This will be tremendously helpful in avoiding conflicts that arise
+because of the use of incompatible versions of a gem.
 
 The one drawback is that we will need to tell Ruby every time we run our Rouge
 code that it needs to look for the gems in `vendor/`. Bundler makes this easy by

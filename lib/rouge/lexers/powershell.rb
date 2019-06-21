@@ -133,7 +133,7 @@ module Rouge
         rule %r(@"), Operator, :heredoc
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator
         rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
-        rule %r/[a-zA-Z\d]+?-[a-zA-Z\d]*/, Name::Function
+        rule %r/[a-zA-Z\d]+-[a-zA-Z\d]+/, Name::Function
         rule %r/\b(#{KEYWORDS})\b/i, Keyword
         rule %r/\b(#{KEYWORDS_TYPE})\s*\b/i, Keyword::Type
         rule %r/\bcase\b/, Keyword, :case

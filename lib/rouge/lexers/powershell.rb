@@ -121,7 +121,6 @@ module Rouge
 
       state :heredoc do
         rule %r/"@/, Operator, :pop!
-        #rule %r/[^$\n]+/, Str::Heredoc
         rule %r/[$]/, Str::Heredoc
         mixin :data
       end

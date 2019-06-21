@@ -45,17 +45,17 @@ module Rouge
       KEYWORDS_TYPE = %w(
         Alias AllowEmptyCollection AllowEmptyString AllowNull ArgumentCompleter array bool byte char 
         CmdletBinding datetime decimal double DscResource float single guid hashtable int int32 int16
-         long int64 ciminstance cimclass cimtype cimconverter IPEndpoint NullString OutputType 
-         ObjectSecurity Parameter PhysicalAddress pscredential PSDefaultValue pslistmodifier psobject 
-         pscustomobject psprimitivedictionary ref PSTypeNameAttribute regex DscProperty sbyte string 
-         SupportsWildcards switch cultureinfo bigint securestring timespan uint16 uint32 uint64 uri 
-         ValidateCount ValidateDrive ValidateLength ValidateNotNull ValidateNotNullOrEmpty 
-         ValidatePattern ValidateRange ValidateScript ValidateSet ValidateTrustedData 
-         ValidateUserDrive version void ipaddress DscLocalConfigurationManager WildcardPattern 
-         X509Certificate X500DistinguishedName xml CimSession adsi adsisearcher wmiclass wmi 
-         wmisearcher mailaddress scriptblock psvariable type psmoduleinfo powershell runspacefactory 
-         runspace initialsessionstate psscriptmethod psscriptproperty psnoteproperty psaliasproperty 
-         psvariableproperty
+        long int64 ciminstance cimclass cimtype cimconverter IPEndpoint NullString OutputType 
+        ObjectSecurity Parameter PhysicalAddress pscredential PSDefaultValue pslistmodifier psobject 
+        pscustomobject psprimitivedictionary ref PSTypeNameAttribute regex DscProperty sbyte string 
+        SupportsWildcards switch cultureinfo bigint securestring timespan uint16 uint32 uint64 uri 
+        ValidateCount ValidateDrive ValidateLength ValidateNotNull ValidateNotNullOrEmpty 
+        ValidatePattern ValidateRange ValidateScript ValidateSet ValidateTrustedData 
+        ValidateUserDrive version void ipaddress DscLocalConfigurationManager WildcardPattern 
+        X509Certificate X500DistinguishedName xml CimSession adsi adsisearcher wmiclass wmi 
+        wmisearcher mailaddress scriptblock psvariable type psmoduleinfo powershell runspacefactory 
+        runspace initialsessionstate psscriptmethod psscriptproperty psnoteproperty psaliasproperty 
+        psvariableproperty
       ).join('|')
 
       OPERATORS = %w(
@@ -127,7 +127,7 @@ module Rouge
 
       prepend :basic do
         rule %r(#requires\s-version \d.\d*$),Comment::Preproc
-        rule %r(<#), Comment, :multiline
+        rule %r(<#), Comment::Multiline, :multiline
         rule %r(@{), Operator, :hashtable
         rule %r(@"), Operator, :heredoc
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator

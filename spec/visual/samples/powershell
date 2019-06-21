@@ -1,14 +1,28 @@
 #requires -version 2.0
-"String that accepts $variables and substitutions"
+
+# rouge-ruby/rouge#1041 
+cd C:\GitLab-Runner
+gitlab-runner stop
+gitlab-runner uninstall
+gitlab-runner install --user ".\ENTER-YOUR-USERNAME" --password "ENTER-YOUR-PASSWORD"
+
+"String that accepts $variables, and substitutions"
 'Literal string $($PSScriptRoot)'
+`# test escape hash
+# test `type` in hash table
 $mydata = @{
     key = "value"
     key2 = "value2"
     type = "bad highlighting"
 }
+# test `type` as a reserved word
+type
+alias foo bar
+
 function Add-Extension
 {
-    param ([string]$Name,[string]$Extension = "txt")
+    param ([string]$Name,
+    [string]$Extension = "txt",[string]$foo="bar")
     $name = $name + "." + $extension
     $name
 
@@ -84,8 +98,10 @@ if ($var1 -eq $var2)
 
 
 
-"@
-Heredoc string
+@"
+Heredoc string $env:USERNAME
+
+
 continues on for a bit
 "@
 

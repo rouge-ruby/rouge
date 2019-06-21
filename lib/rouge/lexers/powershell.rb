@@ -39,10 +39,23 @@ module Rouge
         end param
         enum private
       ).join('|')
-
+      
+      # https://devblogs.microsoft.com/scripting/powertip-find-a-list-of-powershell-type-accelerators/
+      # ([PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get).Keys -join ' '
       KEYWORDS_TYPE = %w(
-        bool byte char decimal double float int long object sbyte
-        short string uint ulong ushort
+        Alias AllowEmptyCollection AllowEmptyString AllowNull ArgumentCompleter array bool byte char 
+        CmdletBinding datetime decimal double DscResource float single guid hashtable int int32 int16
+         long int64 ciminstance cimclass cimtype cimconverter IPEndpoint NullString OutputType 
+         ObjectSecurity Parameter PhysicalAddress pscredential PSDefaultValue pslistmodifier psobject 
+         pscustomobject psprimitivedictionary ref PSTypeNameAttribute regex DscProperty sbyte string 
+         SupportsWildcards switch cultureinfo bigint securestring timespan uint16 uint32 uint64 uri 
+         ValidateCount ValidateDrive ValidateLength ValidateNotNull ValidateNotNullOrEmpty 
+         ValidatePattern ValidateRange ValidateScript ValidateSet ValidateTrustedData 
+         ValidateUserDrive version void ipaddress DscLocalConfigurationManager WildcardPattern 
+         X509Certificate X500DistinguishedName xml CimSession adsi adsisearcher wmiclass wmi 
+         wmisearcher mailaddress scriptblock psvariable type psmoduleinfo powershell runspacefactory 
+         runspace initialsessionstate psscriptmethod psscriptproperty psnoteproperty psaliasproperty 
+         psvariableproperty
       ).join('|')
 
       OPERATORS = %w(
@@ -54,6 +67,11 @@ module Rouge
         -creplace -band -bor -bxor -and -or -xor \. & = \+= -= \*= \/= %=
       ).join('|')
 
+      MULTILINEKEYWORDS = %w(
+        synopsis description parameter example inputs outputs notes link component 
+        role functionality forwardhelptargetname forwardhelpcategory remotehelprunspace
+        externalhelp 
+      ).join('|')
 
       # Override from Shell
       state :interp do
@@ -95,34 +113,28 @@ module Rouge
       end
 
       state :multiline do
-        rule %r/\.synopsis/i, Keyword
-        rule %r/\.description/i, Keyword
-        rule %r/\.parameter/i, Keyword
-        rule %r/\.example/i, Keyword
-        rule %r/\.inputs/i, Keyword
-        rule %r/\.outputs/i, Keyword
-        rule %r/\.notes/i, Keyword
-        rule %r/\.link/i, Keyword
-        rule %r/\.component/i, Keyword
-        rule %r/\.role/i, Keyword
-        rule %r/\.functionality/i, Keyword
-        rule %r/\.forwardhelptargetname/i, Keyword
-        rule %r/\.forwardhelpcategory/i, Keyword
-        rule %r/\.remotehelprunspace/i, Keyword
-        rule %r/\.externalhelp/i, Keyword
+        rule %r/\.(#{MULTILINEKEYWORDS})/i, Keyword::Pseudo
         rule %r/[\w,\d,\s,\.,\-,\,:\/,{,},<,>"*]/, Comment
         rule %r/#>/, Comment, :pop!
         mixin :root
+      end
+
+      state :heredoc do
+        rule %r/"@/, Operator, :pop!
+        rule %r/[^$\n]+/, Str::Heredoc
+        rule %r/[$]/, Str::Heredoc
+        mixin :data
       end
 
       prepend :basic do
         rule %r(#requires\s-version \d.\d*$),Comment::Preproc
         rule %r(<#), Comment, :multiline
         rule %r(@{), Operator, :hashtable
+        rule %r(@"), Operator, :heredoc
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator
         rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
         rule %r/[a-z,A-Z,0-9]+?-[a-z,A-Z,0-9]*/, Generic::Strong
-        rule %r/\b(#{KEYWORDS})\s*\b/i, Keyword
+        rule %r/\b(#{KEYWORDS})\b/i, Keyword
         rule %r/\b(#{KEYWORDS_TYPE})\s*\b/i, Keyword::Type
         rule %r/\bcase\b/, Keyword, :case
       end

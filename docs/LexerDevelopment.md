@@ -22,25 +22,31 @@ The remainder of this document explains how to develop a lexer for Rouge.
 
 ## Getting Started
 
-This guide assumes a familiarity with git. If you're new to git, GitHub has
-[documentation][gh-git] that will help get you started.
+### Development Environment
 
-[gh-git]: https://help.github.com/en/articles/git-and-github-learning-resources
+To develop a lexer, you need to have set up a development environment. If you
+haven't done that yet, we've got {file:docs/DevEnvironment.md a guide} that can
+help.
+
+The rest of this guide assumes that you have set up such an environment and,
+importantly, that you have installed the gems on which Rouge depends to a
+directory within the repository (we recommend `vendor/`).
+
+### File Location
 
 Rouge automatically loads lexers saved in the `lib/rouge/lexers/` directory and
-so if you're submitting a new lexer, that's the right place to put it.
+so if you're submitting a new lexer, that's the right place to put it. The
+filename should match the name of your lexer, with the Ruby filename extension
+`.rb` appended. If the name of your language is `Example`, the lexer would be
+saved as `lib/rouge/lexers/example.rb`.
+
+### Subclassing `RegexLexer`
 
 Your lexer needs to be a subclass of the {Rouge::Lexer} abstract class.  Most
 lexers are in fact subclassed from {Rouge::RegexLexer} as the simplest way to
 define the states of a lexer is to use rules consisting of regular expressions.
 The remainder of this guide assumes your lexer is subclassed from
 {Rouge::RegexLexer}.
-
-You can learn a lot by reading through some of the existing lexers. A good
-example that's not too long is [the JSON lexer][json-lexer].
-
-[json-lexer]:
-https://github.com/rouge-ruby/rouge/blob/master/lib/rouge/lexers/json.rb
 
 ## How to Structure
 
@@ -53,8 +59,12 @@ Basically, a lexer consists of two parts:
 There are some additional features that a lexer can implement and we'll cover
 those at the end.
 
-Now, using [the JSON lexer][json-lexer] as an example, let's look at each of
-these parts in turn.
+For the remainder of this guide, we'll use [the JSON lexer][json-lexer] as an
+example. The lexer is relatively simple and is for a language with which many
+people will at least have some level of familiarity.
+
+[json-lexer]:
+https://github.com/rouge-ruby/rouge/blob/master/lib/rouge/lexers/json.rb
 
 ### Lexer Properties
 
@@ -291,7 +301,7 @@ module Rouge
     ...
 
     def self.keywords
-      @keywords ||= %w(key words used in this language)
+      @keywords ||= Set.new %w(key words used in this language)
     end
 
     ...
@@ -312,8 +322,13 @@ end
 ```
 
 In some cases, you may want to interpolate your keywords into a regular
-expression. If you do, be careful to use the `\b` anchor to avoid inadvertently
-matching part of a longer word (eg. `if` matching `iff`)::
+expression. **We strongly recommend you avoid doing this.** Having a large
+number of rules that are searching for particular words is not as performant as
+a rule with a generic pattern with a block that checks whether the pattern is a
+member of a predefined set and assigns tokens, pushes new states, etc.
+
+If you do need to use interpolation, be careful to use the `\b` anchor to avoid
+inadvertently matching part of a longer word (eg. `if` matching `iff`)::
 
 ```rb
 rule /\b(#{keywords.join('|')})\b/, Keyword
@@ -328,19 +343,17 @@ start do
 end
 ```
 
-The {Rouge::RegexLexer.start} method can take a block that
-will be called when the lexer commences lexing. This provides a way to enter
-into a special state "before" entering into the `:root` state (the `:root`
-state is still the bottommost state in the state stack; the state pushed by
-`start` sits "on top" but is the state in which the lexer begins.
+The {Rouge::RegexLexer.start} method can take a block that will be called when
+the lexer commences lexing. This provides a way to enter into a special state
+"before" entering into the `:root` state (the `:root` state is still the
+bottommost state in the state stack; the state pushed by `start` sits "on top"
+but is the state in which the lexer begins.
 
 Why would you want to do this? In some languages, there may be language
 structures that can appear at the beginning of a file.
-{Rouge::RegexLexer.start} provides a way to parse these structures. An example
-is a preprocessor directive in C. You can see how these are lexed in [the C
-lexer][c-lexer].
-
-[c-lexer]: https://github.com/rouge-ruby/rouge/blob/master/lib/rouge/lexers/c.rb 
+{Rouge::RegexLexer.start} provides a way to parse these structures without
+needing a special rule in your `:root` state that has to keep track of whether
+you are processing things for the first time.
 
 ### Subclassing
 
@@ -384,12 +397,16 @@ end
 ```
 ## How to Test
 
-When submitting a lexer, it is important to include files to test it. There are
-three files that should be included:
+When developing a lexer, it is important to have ways to test it. Rouge provides
+support for three types of test files:
 
 1. a **spec** that will run as part of Rouge's test suite;
 2. a **demo** that will be tested as part of Rouge's test suite; and;
 3. a **visual sample** of the various language constructs.
+
+When you submit a lexer, you must also include these test files.
+
+Before we look at how to run these tests, let's look at the files themselves. 
 
 ### Specs
 
@@ -405,6 +422,8 @@ guessing algorithm. In particular, you should check:
 * the associated filenames;
 * the associated mimetypes; and
 * the associated sources (if any).
+
+Your spec must be saved to `spec/lexers/<name_of_your_lexer>_spec.rb`.
 
 #### Filenames
 
@@ -451,17 +470,37 @@ when a lexer is chosen. It should be short (less than 20 lines if possible).
 
 [hp]: http://rouge.jneen.net/
 
+Your demo must be saved to `lib/rouge/demos/<name_of_your_lexer>`. Please note
+that there is no file extension.
+
 ### Visual Samples
 
-While the visual sample is tested by the testing suite to ensure that it does
-not raise any errors, the primary purpose is to allow the user to quickly scan
-through a large sample of text in a particular language and make sure that the
-highlighting looks correct.
+A visual sample is a file that includes a representive sample of the syntax of
+your language. The sample should be long enough to reasonably demonstrate the
+correct lexing of the language but does not need to offer complete coverage.
+While it can be tempting to copy and paste code found online, please refrain
+from doing this. If you need to copy code, indicate in a comment (using the
+appropriate syntax for your lexer's language) the source of the code.  Avoid
+including code that is duplicative of the other code in the sample.
 
 If you are adding or fixing rules in the lexer, please add some examples of the
 expressions that will be highlighted differently to the visual sample if
 they're not already present. This greatly assists in reviewing your lexer
 submission.
+
+Your visual sample must be saved to `spec/visual/sample/<name_of_your_lexer>`.
+As with the demo file, there is no file extension.
+
+### Running the Tests
+
+The spec and the demo can be run using the `rake` command. You can run this by
+typing `bundle exec rake` at the command line. If everything works, you should
+see a series of dots. If you have an error, this will appear here, too.
+
+To see your visual sample, launch Rouge's visual test app by running `bundle
+exec rackup`. You can choose your sample from the complete list by going to
+<http://localhost:9292>.  ot have a file extension. To start the test suite, run
+`bundle exec rake`.
 
 ## How to Submit
 
@@ -483,3 +522,7 @@ documentation][gh-pr] that will help you get accustomed to the workflow.
 [gh-pr]: https://help.github.com/en/articles/about-pull-requests
 
 We're looking forward to seeing your code!
+
+You can learn a lot by reading through some of the existing lexers. A good
+example that's not too long is [the JSON lexer][json-lexer].
+

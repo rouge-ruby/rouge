@@ -349,6 +349,7 @@ module Rouge
           token Keyword, match[1]
           token Name::Class, match[2]
         end
+        rule literals, Name::Builtin
         rule commands, Name::Builtin
         rule controls, Keyword
         rule declarations, Keyword

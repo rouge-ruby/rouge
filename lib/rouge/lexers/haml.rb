@@ -66,10 +66,6 @@ module Rouge
       # To accomodate this, use this custom faux dot instead.
       dot = /[ ]\|\n(?=.*[ ]\|)|./
 
-      # In certain places, a comma at the end of the line
-      # allows line wrapping as well.
-      comma_dot = /,\s*\n|#{dot}/
-
       state :root do
         rule %r/\s*\n/, Text
         rule(/\s*/) { |m| token Text; indentation(m[0]) }

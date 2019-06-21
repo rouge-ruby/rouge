@@ -11,7 +11,6 @@ module Rouge
       title "Nasm"
       desc "Netwide Assembler"
 
-      ws = %r((?:\s|;.*?\n/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       #todo: pull more instructions from: http://www.nasm.us/doc/nasmdocb.html

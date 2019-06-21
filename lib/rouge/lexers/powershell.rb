@@ -665,7 +665,7 @@ module Rouge
       end
 
       prepend :basic do
-        rule %r(<#[\s,\S]*?#>)m, Comment::Multiline
+        rule %r(<#[\s\S]*?#>)m, Comment::Multiline
         rule %r/#.*$/, Comment::Single
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator
         rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Attribute

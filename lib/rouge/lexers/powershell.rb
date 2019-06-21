@@ -17,12 +17,26 @@ module Rouge
         CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI SupportsPaging
         SupportsShouldProcess PositionalBinding
       ).join('|')
-
+      
+      # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_reserved_words?view=powershell-6
       KEYWORDS = %w(
-        Begin Exit Process Break Filter Return Catch Finally Sequence Class For
-        Switch Continue ForEach Throw Data From Trap Define Function Try Do If
-        Until DynamicParam In Using Else InlineScript Var ElseIf Parallel While
-        End Param Workflow
+        assembly exit process
+        base filter public
+        begin finally return
+        break for sequence
+        catch foreach static
+        class from switch
+        command function throw
+        configuration hidden trap
+        continue if try
+        data in type
+        define inlinescript until
+        do interface using
+        dynamicparam module var
+        else namespace while
+        elseif parallel workflow
+        end param
+        enum private
       ).join('|')
 
       KEYWORDS_TYPE = %w(
@@ -73,9 +87,37 @@ module Rouge
         mixin :interp
       end
 
+      state :hashtable do 
+        rule %r/\w/, Name::Variable
+        rule %r/}/, Operator, :pop!
+        mixin :root
+      end
+
+      state :multiline do
+        rule %r/\.synopsis/i, Keyword
+        rule %r/\.description/i, Keyword
+        rule %r/\.parameter/i, Keyword
+        rule %r/\.example/i, Keyword
+        rule %r/\.inputs/i, Keyword
+        rule %r/\.outputs/i, Keyword
+        rule %r/\.notes/i, Keyword
+        rule %r/\.link/i, Keyword
+        rule %r/\.component/i, Keyword
+        rule %r/\.role/i, Keyword
+        rule %r/\.functionality/i, Keyword
+        rule %r/\.forwardhelptargetname/i, Keyword
+        rule %r/\.forwardhelpcategory/i, Keyword
+        rule %r/\.remotehelprunspace/i, Keyword
+        rule %r/\.externalhelp/i, Keyword
+        rule %r/[\w,\d,\s,\.,\-,\,:\/,{,},<,>"*]/, Comment
+        rule %r/#>/, Comment, :pop!
+        mixin :root
+      end
+
       prepend :basic do
         rule %r(#requires\s-version \d.\d*$),Comment::Preproc
-        rule %r(<#[\s,\S]*?#>)m, Comment::Multiline
+        rule %r(<#), Comment, :multiline
+        rule %r(@{), Operator, :hashtable
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator
         rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
         rule %r/[a-z,A-Z,0-9]+?-[a-z,A-Z,0-9]*/, Generic::Strong

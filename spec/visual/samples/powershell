@@ -1,124 +1,62 @@
 #requires -version 2.0
-# rouge-ruby/rouge#1025
-[System.Collections.Generic.List[string]](1..100)
-[System.Collections.Generic.Dictionary[string, int]](1..100|%{@{N=$_}})
-$global:ErrorActionPreference
-
-# rouge-ruby/rouge#1041 
-cd C:\GitLab-Runner
-gitlab-runner stop
-gitlab-runner uninstall
-gitlab-runner install --user ".\ENTER-YOUR-USERNAME" --password "ENTER-YOUR-PASSWORD"
-
-# rouge-ruby/rouge#640
-$my_path = "C:\Program Files (x86)\foo\ bar"
-import-module $PSScriptRoot\foo\bar
-
+# Normal Comment
+<#
+    multi
+    line
+    comment
+#>
 "String that accepts $variables, and substitutions"
+"String with escaped `$variable"
 'Literal string $($PSScriptRoot)'
-`# test escape hash
-# test `type` in hash table
+@"
+Heredoc with $variables
+"@
+
+@'
+Heredoc with $literal strings
+'@
+
 $mydata = @{
-    key = "value"
-    key2 = "value2"
-    type = "bad highlighting"
+    owner = "my"
+    type = "hash"
+    thing = "table"
 }
-# test `type` as a reserved word
-type
+
+type "is a reserved word"
 alias foo bar
 
-function Add-Extension
+function Verb-Noun
 {
     param ([string]$Name,
     [string]$Extension = "txt",[string]$foo="bar")
     $name = $name + "." + $extension
     $name
-
+    # multi line comment with powershell document strings
     <#
     .SYNOPSIS
 
-    Adds a file name extension to a supplied name.
+    Tells you what it does
 
     .DESCRIPTION
 
-    Adds a file name extension to a supplied name.
-    Takes any strings for the file name or extension.
-
-    .PARAMETER Name
-    Specifies the file name.
-
-    .PARAMETER Extension
-    Specifies the extension. "Txt" is the default.
-
-    .INPUTS
-
-    None. You cannot pipe objects to Add-Extension.
-
-    .OUTPUTS
-
-    System.String. Add-Extension returns a string with the extension
-    or file name.
-
-    .EXAMPLE
-
-    PS> extension -name "File"
-    File.txt
-
-    .EXAMPLE
-
-    PS> extension -name "File" -extension "doc"
-    File.doc
-
-    .EXAMPLE
-
-    PS> extension "File" "doc"
-    File.doc
-
-    .LINK
-
-    http://www.fabrikam.com/extension.html
+    Tells you what it does with more detail.
 
     #>
 }
 
-# Multi
-# Line
-# Comment
 
-<#
-Second
-Multi
-Line
-Comment
-#>
-
-Write-output "Hello" # Adding end-of-line comment
+Write-output "Hello" # End-of-line comment
 
 process {
-$var1 = $var2
+"This is a script block"
 $var3 = get-host | Select-Object -First 1
 
 if ($var1 -eq $var2)
 {
-    do-something
-    return $false
+    return $true
 }
 
 
-
-@"
-Heredoc string $env:USERNAME
-
-
-continues on for a bit
-"@
-
-
-<#
-
-things 
-
-#>
 
 
 try {
@@ -133,3 +71,9 @@ Get-Process | Tee-Object -FilePath "C:\Test1\testfile2.txt"
 Foreach ($Thing in $Things ) {
     Do-Something
 }
+
+
+# rouge-ruby/rouge#1025
+[System.Collections.Generic.List[string]](1..100)
+[System.Collections.Generic.Dictionary[string, int]](1..100|%{@{N=$_}})
+$global:ErrorActionPreference

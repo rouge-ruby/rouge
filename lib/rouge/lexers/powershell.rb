@@ -15,62 +15,53 @@ module Rouge
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_commonparameters?view=powershell-6
       ATTRIBUTES = %w(
-        CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI SupportsPaging
-        SupportsShouldProcess PositionalBinding
+        CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI
+        SupportsPaging SupportsShouldProcess PositionalBinding
       ).join('|')
       
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_reserved_words?view=powershell-6
       KEYWORDS = %w(
-        assembly exit process
-        base filter public
-        begin finally return
-        break for sequence
-        catch foreach static
-        class from switch
-        command function throw
-        configuration hidden trap
-        continue if try
-        data in type
-        define inlinescript until
-        do interface using
-        dynamicparam module var
-        else namespace while
-        elseif parallel workflow
-        end param
-        enum private
+        assembly exit process base filter public begin finally return break for
+        sequence catch foreach static class from switch command function throw
+        configuration hidden trap continue if try data in type define
+        inlinescript until do interface using dynamicparam module var else
+        namespace while elseif parallel workflow end param enum private
       ).join('|')
       
       # https://devblogs.microsoft.com/scripting/powertip-find-a-list-of-powershell-type-accelerators/
       # ([PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get).Keys -join ' '
       KEYWORDS_TYPE = %w(
-        Alias AllowEmptyCollection AllowEmptyString AllowNull ArgumentCompleter array bool byte char 
-        CmdletBinding datetime decimal double DscResource float single guid hashtable int int32 int16
-        long int64 ciminstance cimclass cimtype cimconverter IPEndpoint NullString OutputType 
-        ObjectSecurity Parameter PhysicalAddress pscredential PSDefaultValue pslistmodifier psobject 
-        pscustomobject psprimitivedictionary ref PSTypeNameAttribute regex DscProperty sbyte string 
-        SupportsWildcards switch cultureinfo bigint securestring timespan uint16 uint32 uint64 uri 
-        ValidateCount ValidateDrive ValidateLength ValidateNotNull ValidateNotNullOrEmpty 
-        ValidatePattern ValidateRange ValidateScript ValidateSet ValidateTrustedData 
-        ValidateUserDrive version void ipaddress DscLocalConfigurationManager WildcardPattern 
-        X509Certificate X500DistinguishedName xml CimSession adsi adsisearcher wmiclass wmi 
-        wmisearcher mailaddress scriptblock psvariable type psmoduleinfo powershell runspacefactory 
-        runspace initialsessionstate psscriptmethod psscriptproperty psnoteproperty psaliasproperty 
-        psvariableproperty
+        Alias AllowEmptyCollection AllowEmptyString AllowNull ArgumentCompleter
+        array bool byte char CmdletBinding datetime decimal double DscResource
+        float single guid hashtable int int32 int16 long int64 ciminstance
+        cimclass cimtype cimconverter IPEndpoint NullString OutputType
+        ObjectSecurity Parameter PhysicalAddress pscredential PSDefaultValue
+        pslistmodifier psobject pscustomobject psprimitivedictionary ref
+        PSTypeNameAttribute regex DscProperty sbyte string SupportsWildcards
+        switch cultureinfo bigint securestring timespan uint16 uint32 uint64
+        uri ValidateCount ValidateDrive ValidateLength ValidateNotNull
+        ValidateNotNullOrEmpty ValidatePattern ValidateRange ValidateScript
+        ValidateSet ValidateTrustedData ValidateUserDrive version void
+        ipaddress DscLocalConfigurationManager WildcardPattern X509Certificate
+        X500DistinguishedName xml CimSession adsi adsisearcher wmiclass wmi
+        wmisearcher mailaddress scriptblock psvariable type psmoduleinfo
+        powershell runspacefactory runspace initialsessionstate psscriptmethod
+        psscriptproperty psnoteproperty psaliasproperty psvariableproperty
       ).join('|')
 
       OPERATORS = %w(
-        -split -isplit -csplit -join -is -isnot -as -eq -ieq -ceq -ne -ine
-        -cne -gt -igt -cgt -ge -ige -cge -lt -ilt -clt -le -ile -cle -like
-        -ilike -clike -notlike -inotlike -cnotlike -match -imatch -cmatch
-        -notmatch -inotmatch -cnotmatch -contains -icontains -ccontains
-        -notcontains -inotcontains -cnotcontains -replace -ireplace
-        -creplace -band -bor -bxor -and -or -xor \. & = \+= -= \*= \/= %=
+        -split -isplit -csplit -join -is -isnot -as -eq -ieq -ceq -ne -ine -cne
+        -gt -igt -cgt -ge -ige -cge -lt -ilt -clt -le -ile -cle -like -ilike
+        -clike -notlike -inotlike -cnotlike -match -imatch -cmatch -notmatch
+        -inotmatch -cnotmatch -contains -icontains -ccontains -notcontains
+        -inotcontains -cnotcontains -replace -ireplace -creplace -band -bor
+        -bxor -and -or -xor \. & = \+= -= \*= \/= %=
       ).join('|')
 
       MULTILINEKEYWORDS = %w(
-        synopsis description parameter example inputs outputs notes link component 
-        role functionality forwardhelptargetname forwardhelpcategory remotehelprunspace
-        externalhelp 
+        synopsis description parameter example inputs outputs notes link
+        component role functionality forwardhelptargetname forwardhelpcategory
+        remotehelprunspace externalhelp 
       ).join('|')
 
       # Override from Shell
@@ -94,51 +85,68 @@ module Rouge
 
       # Override from Shell
       state :data do
-        rule %r/\s+/, Text
+        rule %r/\s+/, Text::Whitespace
         rule %r/\$?"/, Str::Double, :double_quotes
         rule %r/\$'/, Str::Single, :ansi_string
         rule %r/'/, Str::Single, :single_quotes
         rule %r/\*/, Keyword
-        rule %r/;/, Text
-        rule %r/[^=\*\s{}()$"'`<]+/, Text
-        rule %r/\d+(?= |\Z)/, Num
-        rule %r/</, Text
+        rule %r/\d*\.\d+/, Num::Float
+        rule %r/\d+/, Num::Integer
+        rule %r/\w+/, Name::Variable
         mixin :interp
       end
 
       state :hashtable do 
+        rule %r/\s+/, Text::Whitespace
+        rule %r/=/, Operator
         rule %r/\w+/, Name::Variable
-        rule %r/}/, Operator, :pop!
-        mixin :root
+        rule %r/"/, Str::Double, :double_quotes
+        rule %r/}/, Punctuation, :pop!
       end
 
       state :multiline do
-        rule %r/\.(#{MULTILINEKEYWORDS})/i, Keyword::Pseudo
-        rule %r/[\w\s\.\-\,:\/{}<>"*]/, Comment
-        rule %r/#>/, Comment, :pop!
-        mixin :root
+        rule %r/\.(#{MULTILINEKEYWORDS})/i, Comment::Special
+        rule %r/#>/, Comment::Multiline, :pop!
+        rule %r/[^#.]+?/m, Comment::Multiline
+        rule %r/[#.]+/, Comment::Multiline
       end
 
       state :heredocdouble do
         rule %r/"@/, Str::Heredoc, :pop!
-        rule %r/[$]/, Str::Heredoc
-        mixin :data
+        mixin :interp
+        rule %r/[^"$]+?/m, Str::Heredoc
+        rule %r/$+/, Str::Heredoc
       end
 
-      prepend :basic do
-        rule %r(#requires\s-version \d.\d*$),Comment::Preproc
+      state :basic do
+        rule %r(#requires\s-version \d(?:\.\d+)?), Comment::Preproc
+        rule %r/#.*/, Comment
         rule %r(<#), Comment::Multiline, :multiline
-        rule %r(@{), Operator, :hashtable
-        rule %r(@"), Str::Heredoc, :heredocdouble
-        rule %r(@'[.]*'@), Literal::String::Heredoc
-        rule %r/\b(#{OPERATORS})\s*\b/i, Operator
-        rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
+        
+        rule %r/@"/, Str::Heredoc, :heredocdouble
+        rule %r/@'.*?'@/m, Str::Heredoc
+
         rule %r/[a-zA-Z\d]+-[a-zA-Z\d]+/, Name::Function
-        rule %r/\b(#{KEYWORDS})\b/i, Keyword
-        rule %r/\b(#{KEYWORDS_TYPE})\s*\b/i, Keyword::Type
-        rule %r/\bcase\b/, Keyword, :case
+        rule %r/Foreach/, Name::Builtin
+        rule %r/case\b/, Name::Builtin, :case 
+        rule %r/(#{ATTRIBUTES})\b/i, Name::Builtin::Pseudo
+        
+        rule %r/[A-Z]\w+\.?(?:[A-Z]\w+\.?)*/, Keyword::Namespace  
+        rule %r/(#{KEYWORDS_TYPE})\b/i, Keyword::Type
+        rule %r/(#{KEYWORDS})\b/i, Keyword
+        rule %r/\s+-\w+/, Keyword::Pseudo
+
+        rule %r/(@)({)/ do
+          groups Operator, Punctuation
+          push :hashtable
+        end
+        
+        rule %r/[{}()\[\],;]/, Punctuation
+
+        rule %r/[-+=\/|<>]/, Operator
+        rule %r/\.\./, Operator
+        rule %r/\b(#{OPERATORS})\s*\b/i, Operator
       end
     end
   end
-
 end

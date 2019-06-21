@@ -11,7 +11,7 @@ you need to set up a development environment.
 
 ### Ruby and Git
 
-First thing's first. This guide is _not_ a guide to installing Ruby and Git.
+First things first. This guide is _not_ a guide to installing Ruby and Git.
 There are a number of excellent resources out there explaining how to do these
 things. For Ruby, we recommend [the official documentation][rb-inst-docs] and
 for Git, [GitHub's documentation][gh-inst-docs].
@@ -22,13 +22,15 @@ for Git, [GitHub's documentation][gh-inst-docs].
 ### Terminal Emulators
 
 This guide assumes you are familiar with the _command line_. The command line is
-accessed through a _terminal emulator_. In macOS, the default emulator is called
-"Terminal" and can be found by searching for "Terminal" in Spotlight. In
-Windows, depending on your version, you may want to install a third-party
-emulator like [Cygwin][]. In Linux, well, you're probably reading this at the
-command line.
+accessed through a _terminal emulator_. 
 
-[Cygwin]: https://cygwin.com/
+- In **macOS**, the default emulator is called "Terminal" and can be found by 
+  searching for "Terminal" in Spotlight.
+
+- In **Windows**, you can open a command line by running "Command Prompt". You
+  can start this by typing `cmd.exe` at the Start Menu.
+
+- In **Linux**, well, you're probably reading this at the command line.
 
 ### GitHub
 
@@ -67,6 +69,27 @@ git clone git@github.com:<your_github_account_name>/rouge.git
 
 Git will reach out to GitHub, grab the code and put it in a directory called
 `rouge/`.
+
+### Adding Upstream
+
+By default, the clone of the repository you've made will contain a reference to
+GitHub. That's great for syncing back to your fork but what if you want to sync
+your fork back up with master. If you spend a sufficient amount of time
+developing Rouge, this is something you'll want to do.
+
+Fortunately, it's easy to add additional remote repositories. To add the
+official Rouge GitHub repository (with the name `upstream`), type the following:
+
+```shell
+git remote add upstream https://github.com/rouge-ruby/rouge.git
+```
+
+Now you'll be able to fetch changes from the official repository and merge them
+back into your code. For more information, check out [the
+documentation][gh-fork-docs] on GitHub.
+
+[gh-fork-docs]:
+https://help.github.com/en/articles/configuring-a-remote-for-a-fork
 
 ## Installing Development Dependencies
 
@@ -137,22 +160,25 @@ You're now ready to roll. Here are the things you can do from the top level of
 your cloned repository:
 
 1. **Run the Visual Test App**
+
    Rouge includes a little web app you can run to display highlighted code. You
    can run this by typing `bundle exec rackup`. By default, this will start a
    web server on port 9292. You can access it by going to
    <http://localhost:9292> with Rack running. If everything is working, you'll
    see little snippets of code for each lexer in the repository. You can look at
-   a visual sample by clicking on the name of the lexer.
+   the full visual sample for a lexer by clicking on the name of the lexer.
 
 2. **Run the Tests**
+
    Rouge comes with a test suite you can run to check for errors in your code.
    You can run this using Rake. Just type `bundle exec rake` and you'll
    (hopefully) be greeted by a series of dots that indicate a successful test.
 
 3. **Check Code Quality**
-   Rouge uses tbe popular library [Rubocop][] for checking code quality. You can
-   run Rubocop by—you guessed it—typing `bundle exec rubocop`.
 
-   [Rubocop]: https://github.com/rubocop-hq/rubocop
+   Rouge uses the popular library [RuboCop][] for checking code quality. You can
+   run RuboCop by—you guessed it—typing `bundle exec rubocop`.
+
+   [RuboCop]: https://github.com/rubocop-hq/rubocop
 
 You're all set up! Have fun hacking on Rouge!

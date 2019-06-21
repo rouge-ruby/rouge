@@ -159,25 +159,22 @@ state. You can read more about branches on [GitHub][gh-branch-docs].
 You're now ready to roll. Here are the things you can do from the top level of
 your cloned repository:
 
-1. **Run the Visual Test App**
+1. **Run the Visual Test App**: Rouge includes a little web app you can run to
+   display highlighted code. You can run this by typing `bundle exec rackup`. By
+   default, this will start a web server on port 9292. You can access it by
+   going to <http://localhost:9292> with Rack running. If everything is working,
+   you'll see little snippets of code for each lexer in the repository. You can
+   look at the full visual sample for a lexer by clicking on the name of the
+   lexer.
 
-   Rouge includes a little web app you can run to display highlighted code. You
-   can run this by typing `bundle exec rackup`. By default, this will start a
-   web server on port 9292. You can access it by going to
-   <http://localhost:9292> with Rack running. If everything is working, you'll
-   see little snippets of code for each lexer in the repository. You can look at
-   the full visual sample for a lexer by clicking on the name of the lexer.
+2. **Run the Tests**: Rouge comes with a test suite you can run to check for
+   errors in your code.  You can run this using Rake. Just type `bundle exec
+   rake` and you'll (hopefully) be greeted by a series of dots that indicate a
+   successful test.
 
-2. **Run the Tests**
-
-   Rouge comes with a test suite you can run to check for errors in your code.
-   You can run this using Rake. Just type `bundle exec rake` and you'll
-   (hopefully) be greeted by a series of dots that indicate a successful test.
-
-3. **Check Code Quality**
-
-   Rouge uses the popular library [RuboCop][] for checking code quality. You can
-   run RuboCop by—you guessed it—typing `bundle exec rubocop`.
+3. **Check Code Quality**: Rouge uses the popular library [RuboCop][] for
+   checking code quality. You can run RuboCop by—you guessed it—typing `bundle
+   exec rubocop`.
 
    [RuboCop]: https://github.com/rubocop-hq/rubocop
 

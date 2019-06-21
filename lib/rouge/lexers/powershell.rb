@@ -114,7 +114,7 @@ module Rouge
 
       state :multiline do
         rule %r/\.(#{MULTILINEKEYWORDS})/i, Keyword::Pseudo
-        rule %r/[\w,\d,\s,\.,\-,\,:\/,{,},<,>"*]/, Comment
+        rule %r/[\w\d\s\.\-\,:\/{}<>"*]/, Comment
         rule %r/#>/, Comment, :pop!
         mixin :root
       end

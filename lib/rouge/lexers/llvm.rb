@@ -21,6 +21,7 @@ module Rouge
         rule %r/#{identifier}\s*:/, Name::Label
 
         rule %r/@(#{identifier}|\d+)/, Name::Variable::Global
+        rule %r/#\d+/, Name::Variable::Global
         rule %r/(%|!)#{identifier}/, Name::Variable
         rule %r/(%|!)\d+/, Name::Variable
 
@@ -42,7 +43,7 @@ module Rouge
       end
 
       builtin_keywords = %w(
-        begin end true false declare define global constant personality private
+        begin end true false declare define global constant alignstack private
         landingpad linker_private internal available_externally linkonce_odr
         linkonce weak weak_odr appending dllimport dllexport common default
         hidden protected extern_weak external thread_local zeroinitializer
@@ -54,7 +55,13 @@ module Rouge
         nest readnone readonly inlinehint noinline alwaysinline optsize ssp
         sspreq noredzone noimplicitfloat naked type opaque eq ne slt sgt sle
         sge ult ugt ule uge oeq one olt ogt ole oge ord uno unnamed_addr ueq
-        une uwtable x
+        une uwtable x personality allocsize builtin cold convergent
+        inaccessiblememonly inaccessiblemem_or_argmemonly jumptable minsize
+        no-jump-tables nobuiltin noduplicate nonlazybind noredzone norecurse
+        optforfuzzing optnone writeonly argmemonly returns_twice safestack
+        sanitize_address sanitize_memory sanitize_thread sanitize_hwaddress
+        speculative_load_hardening speculatable sspstrong strictfp nocf_check
+        shadowcallstack attributes
       )
 
       builtin_instructions = %w(

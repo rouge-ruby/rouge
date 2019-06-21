@@ -121,7 +121,7 @@ module Rouge
 
       state :heredoc do
         rule %r/"@/, Operator, :pop!
-        rule %r/[^$\n]+/, Str::Heredoc
+        #rule %r/[^$\n]+/, Str::Heredoc
         rule %r/[$]/, Str::Heredoc
         mixin :data
       end
@@ -133,7 +133,7 @@ module Rouge
         rule %r(@"), Operator, :heredoc
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator
         rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
-        rule %r/[a-z,A-Z,0-9]+?-[a-z,A-Z,0-9]*/, Generic::Strong
+        rule %r/[a-zA-Z0-9]+?-[a-zA-Z0-9]*/, Generic::Strong
         rule %r/\b(#{KEYWORDS})\b/i, Keyword
         rule %r/\b(#{KEYWORDS_TYPE})\s*\b/i, Keyword::Type
         rule %r/\bcase\b/, Keyword, :case

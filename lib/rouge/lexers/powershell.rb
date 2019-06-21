@@ -119,8 +119,8 @@ module Rouge
         mixin :root
       end
 
-      state :heredoc do
-        rule %r/"@/, Operator, :pop!
+      state :heredocdouble do
+        rule %r/"@/, Str::Heredoc, :pop!
         rule %r/[$]/, Str::Heredoc
         mixin :data
       end
@@ -129,7 +129,8 @@ module Rouge
         rule %r(#requires\s-version \d.\d*$),Comment::Preproc
         rule %r(<#), Comment::Multiline, :multiline
         rule %r(@{), Operator, :hashtable
-        rule %r(@"), Operator, :heredoc
+        rule %r(@"), Str::Heredoc, :heredocdouble
+        rule %r(@'[\w\s\d]*'@), Literal::String::Heredoc
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator
         rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
         rule %r/[a-zA-Z\d]+-[a-zA-Z\d]+/, Name::Function

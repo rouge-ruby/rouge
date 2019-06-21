@@ -305,6 +305,7 @@ module Rouge
 
       operators = %r(\b(#{self.operators.to_a.join('|')})\b)
       classes = %r(\b(as )(#{self.classes.to_a.join('|')})\b)
+      literals = %r(\b(#{self.literals.to_a.join('|')})\b)
       commands = %r(\b(#{self.commands.to_a.join('|')})\b)
       controls = %r(\b(#{self.controls.to_a.join('|')})\b)
       declarations = %r(\b(#{self.declarations.to_a.join('|')})\b)
@@ -348,6 +349,7 @@ module Rouge
           token Keyword, match[1]
           token Name::Class, match[2]
         end
+        rule literals, Name::Builtin
         rule commands, Name::Builtin
         rule controls, Keyword
         rule declarations, Keyword

@@ -74,11 +74,11 @@ Git will reach out to GitHub, grab the code and put it in a directory called
 
 By default, the clone of the repository you've made will contain a reference to
 GitHub. That's great for syncing back to your fork but what if you want to sync
-your fork back up with master. If you spend a sufficient amount of time
-developing Rouge, this is something you'll want to do.
+your fork back up with the official repository. If you spend a sufficient amount
+of time developing Rouge, this is something you'll want to do.
 
 Fortunately, it's easy to add additional remote repositories. To add the
-official Rouge GitHub repository (with the name `upstream`), type the following:
+official Rouge repository (with the name `upstream`), type the following:
 
 ```shell
 git remote add upstream https://github.com/rouge-ruby/rouge.git
@@ -94,14 +94,14 @@ https://help.github.com/en/articles/configuring-a-remote-for-a-fork
 ## Installing Development Dependencies
 
 Ruby provides support for using external "packages" of Ruby code. These packages
-are called _gems_. While Rouge itself does not depend on any gems to perform
-syntax highlighting, it does have a number of dependencies that you need to
-install to _develop_ Rouge. These are the development dependencies.
+are called _gems_. While Rouge does not depend on any gems to perform syntax
+highlighting, it does have a number of dependencies that you need to install to
+_develop_ Rouge. These are the development dependencies.
 
 ### Installing Bundler
 
 The easiest way to install Rouge's development dependencies is using
-[Bundler][]. Bundler is itself a gem and we'll install it differently to how we
+[Bundler][]. Bundler is itself a gem but we'll install it differently to how we
 install the other dependencies.
 
 [Bundler]: https://bundler.io/

@@ -19,7 +19,7 @@ module Rouge
       end
 
       def self.builtins
-        load Pathname.new(__FILE__).dirname.join('matlab/builtins.rb')
+        load File.join(__dir__, 'matlab/builtins.rb')
         self.builtins
       end
 

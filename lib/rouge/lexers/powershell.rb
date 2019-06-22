@@ -21,56 +21,47 @@ module Rouge
       
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_reserved_words?view=powershell-6
       KEYWORDS = %w(
-        assembly exit process
-        base filter public
-        begin finally return
-        break for sequence
-        catch foreach static
-        class from switch
-        command function throw
-        configuration hidden trap
-        continue if try
-        data in type
-        define inlinescript until
-        do interface using
-        dynamicparam module var
-        else namespace while
-        elseif parallel workflow
-        end param
-        enum private
+        assembly exit process base filter public begin finally return break for
+        sequence catch foreach static class from switch command function throw
+        configuration hidden trap continue if try data in type define
+        inlinescript until do interface using dynamicparam module var else
+        namespace while elseif parallel workflow end param enum private
       ).join('|')
       
       # https://devblogs.microsoft.com/scripting/powertip-find-a-list-of-powershell-type-accelerators/
       # ([PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get).Keys -join ' '
       KEYWORDS_TYPE = %w(
-        Alias AllowEmptyCollection AllowEmptyString AllowNull ArgumentCompleter array bool byte char 
-        CmdletBinding datetime decimal double DscResource float single guid hashtable int int32 int16
-        long int64 ciminstance cimclass cimtype cimconverter IPEndpoint NullString OutputType 
-        ObjectSecurity Parameter PhysicalAddress pscredential PSDefaultValue pslistmodifier psobject 
-        pscustomobject psprimitivedictionary ref PSTypeNameAttribute regex DscProperty sbyte string 
-        SupportsWildcards switch cultureinfo bigint securestring timespan uint16 uint32 uint64 uri 
-        ValidateCount ValidateDrive ValidateLength ValidateNotNull ValidateNotNullOrEmpty 
-        ValidatePattern ValidateRange ValidateScript ValidateSet ValidateTrustedData 
-        ValidateUserDrive version void ipaddress DscLocalConfigurationManager WildcardPattern 
-        X509Certificate X500DistinguishedName xml CimSession adsi adsisearcher wmiclass wmi 
-        wmisearcher mailaddress scriptblock psvariable type psmoduleinfo powershell runspacefactory 
-        runspace initialsessionstate psscriptmethod psscriptproperty psnoteproperty psaliasproperty 
-        psvariableproperty
+        Alias AllowEmptyCollection AllowEmptyString AllowNull ArgumentCompleter
+        array bool byte char CmdletBinding datetime decimal double DscResource
+        float single guid hashtable int int32 int16 long int64 ciminstance
+        cimclass cimtype cimconverter IPEndpoint NullString OutputType
+        ObjectSecurity Parameter PhysicalAddress pscredential PSDefaultValue
+        pslistmodifier psobject pscustomobject psprimitivedictionary ref
+        PSTypeNameAttribute regex DscProperty sbyte string SupportsWildcards
+        switch cultureinfo bigint securestring timespan uint16 uint32 uint64
+        uri ValidateCount ValidateDrive ValidateLength ValidateNotNull
+        ValidateNotNullOrEmpty ValidatePattern ValidateRange ValidateScript
+        ValidateSet ValidateTrustedData ValidateUserDrive version void
+        ipaddress DscLocalConfigurationManager WildcardPattern X509Certificate
+        X500DistinguishedName xml CimSession adsi adsisearcher wmiclass wmi
+        wmisearcher mailaddress scriptblock psvariable type psmoduleinfo
+        powershell runspacefactory runspace initialsessionstate psscriptmethod
+        psscriptproperty psnoteproperty psaliasproperty psvariableproperty
       ).join('|')
 
       OPERATORS = %w(
-        -split -isplit -csplit -join -is -isnot -as -eq -ieq -ceq -ne -ine
-        -cne -gt -igt -cgt -ge -ige -cge -lt -ilt -clt -le -ile -cle -like
-        -ilike -clike -notlike -inotlike -cnotlike -match -imatch -cmatch
-        -notmatch -inotmatch -cnotmatch -contains -icontains -ccontains
-        -notcontains -inotcontains -cnotcontains -replace -ireplace
-        -creplace -band -bor -bxor -and -or -xor \. & = \+= -= \*= \/= %=
+        -split -isplit -csplit -join -is -isnot -as -eq -ieq -ceq -ne -ine -cne
+        -gt -igt -cgt -ge -ige -cge -lt -ilt -clt -le -ile -cle -like -ilike
+        -clike -notlike -inotlike -cnotlike -match -imatch -cmatch -notmatch
+        -inotmatch -cnotmatch -contains -icontains -ccontains -notcontains
+        -inotcontains -cnotcontains -replace -ireplace -creplace -band -bor
+        -bxor -and -or -xor \. & = \+= -= \*= \/= %=
       ).join('|')
 
       MULTILINEKEYWORDS = %w(
-        synopsis description parameter example inputs outputs notes link component 
-        role functionality forwardhelptargetname forwardhelpcategory remotehelprunspace
-        externalhelp 
+        synopsis description parameter example inputs outputs notes link
+        component role functionality forwardhelptargetname forwardhelpcategory
+        remotehelprunspace externalhelp 
       ).join('|')
 
       # Override from Shell

@@ -119,7 +119,7 @@ module Rouge
       end
 
       state :basic do
-        rule %r(#requires\s-version \d(?:\.\d+)?), Comment::Preproc
+        rule %r/#requires.*/, Comment::Preproc
         rule %r/#.*/, Comment
         rule %r(<#), Comment::Multiline, :multiline
         

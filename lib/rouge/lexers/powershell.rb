@@ -121,7 +121,7 @@ module Rouge
         rule %r(<#), Comment::Multiline, :multiline
         rule %r(@{), Operator, :hashtable
         rule %r(@"), Str::Heredoc, :heredocdouble
-        rule %r(@'[.]*'@), Literal::String::Heredoc
+        rule %r(@'[.]*'@)m, Literal::String::Heredoc
         rule %r/\b(#{OPERATORS})\s*\b/i, Operator
         rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
         rule %r/[a-zA-Z\d]+-[a-zA-Z\d]+/, Name::Function

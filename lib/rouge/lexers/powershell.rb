@@ -117,7 +117,7 @@ module Rouge
       end
 
       prepend :basic do
-        rule %r(#requires\s-version \d.\d*$),Comment::Preproc
+        rule %r(#requires.*$),Comment::Preproc
         rule %r(<#), Comment::Multiline, :multiline
         rule %r(@{), Operator, :hashtable
         rule %r(@"), Str::Heredoc, :heredocdouble

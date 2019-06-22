@@ -85,7 +85,7 @@ module Rouge
 
       # Override from Shell
       state :data do
-        rule %r/\s+/, Text
+        rule %r/\s+/, Text::Whitespace
         rule %r/\$?"/, Str::Double, :double_quotes
         rule %r/\$'/, Str::Single, :ansi_string
         rule %r/'/, Str::Single, :single_quotes

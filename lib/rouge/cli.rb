@@ -297,6 +297,7 @@ module Rouge
         when 'html' then Formatters::HTML.new
         when 'html-pygments' then Formatters::HTMLPygments.new(Formatters::HTML.new, opts[:css_class])
         when 'html-inline' then Formatters::HTMLInline.new(theme)
+        when 'html-line-table' then Formatters::HTMLLineTable.new(Formatters::HTML.new)
         when 'html-table' then Formatters::HTMLTable.new(Formatters::HTML.new)
         when 'null', 'raw', 'tokens' then Formatters::Null.new
         else

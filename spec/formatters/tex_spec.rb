@@ -49,7 +49,7 @@ describe Rouge::Formatters::Tex do
       <<-'OUT'
 \begin{RG*}%
 \RG{k}{foo} \RG{p}{\{}\newline%
-\phantom{xx}\RG{no}{{\textasciitilde}100\%}\newline%
+\hphantom{xx}\RG{no}{{\textasciitilde}100\%}\newline%
 \RG{p}{\}}%
 \end{RG*}%
       OUT

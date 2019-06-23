@@ -67,12 +67,12 @@ module Rouge
 
       # special handling for the first token
       # of a line. we replace all initial spaces
-      # with \phantom{xxxx}, which renders an
+      # with \hphantom{xxxx}, which renders an
       # empty space equal to the size of the x's.
       def tag_first(tok, val)
         leading = nil
         val.sub!(/^[ ]+/) { leading = $&.size; '' }
-        yield "\\phantom{#{'x' * leading}}" if leading
+        yield "\\hphantom{#{'x' * leading}}" if leading
         yield tag(tok, val)
       end
 

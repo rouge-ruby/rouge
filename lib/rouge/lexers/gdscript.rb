@@ -11,38 +11,51 @@ module Rouge
       filenames '*.gd'
       mimetypes 'text/x-gdscript', 'application/x-gdscript'
 
-      affix_long  = '[rR]|[uUbB][rR]|[rR][uUbB]|[@]'
-      affix_short = '[uUbB]?'
+      def self.affix_long
+        @affix_long = '[rR]|[uUbB][rR]|[rR][uUbB]|[@]'
+      end
 
-      keywords = %w(
-        and in not or as breakpoint class class_name extends is func setget
-        signal tool const enum export onready static var break continue
-        if elif else for pass return match while remote master puppet
-        remotesync mastersync puppetsync
-      ).join('|')
+      def self.affix_short
+        @affix_short = '[uUbB]?'
+      end
+
+      def self.keywords
+        @keywords = %w(
+          and in not or as breakpoint class class_name extends is func setget
+          signal tool const enum export onready static var break continue
+          if elif else for pass return match while remote master puppet
+          remotesync mastersync puppetsync
+        ).join('|')
+      end
 
       # Reserved for future implementation
-      keywords_reserved = %w(
-        do switch case
-      ).join('|')
+      def self.keywords_reserved
+        @keywords_reserved = %w(
+          do switch case
+        ).join('|')
+      end
 
-      buildins = %w(
-        Color8 ColorN abs acos asin assert atan atan2 bytes2var ceil char
-        clamp convert cos cosh db2linear decimals dectime deg2rad dict2inst
-        ease exp floor fmod fposmod funcref hash inst2dict instance_from_id
-        is_inf is_nan lerp linear2db load log max min nearest_po2 pow
-        preload print print_stack printerr printraw prints printt rad2deg
-        rand_range rand_seed randf randi randomize range round seed sign
-        sin sinh sqrt stepify str str2var tan tan tanh type_exist typeof
-        var2bytes var2str weakref yield
-      ).join('|')
+      def self.builtins
+        builtins = %w(
+          Color8 ColorN abs acos asin assert atan atan2 bytes2var ceil char
+          clamp convert cos cosh db2linear decimals dectime deg2rad dict2inst
+          ease exp floor fmod fposmod funcref hash inst2dict instance_from_id
+          is_inf is_nan lerp linear2db load log max min nearest_po2 pow
+          preload print print_stack printerr printraw prints printt rad2deg
+          rand_range rand_seed randf randi randomize range round seed sign
+          sin sinh sqrt stepify str str2var tan tan tanh type_exist typeof
+          var2bytes var2str weakref yield
+        ).join('|')
+      end
 
-      builtins_type = %w(
-        bool int float String Vector2 Rect2 Transform2D Vector3 AABB
-        Plane Quat Basis Transform Color RID Object NodePath Dictionary
-        Array PoolByteArray PoolIntArray PoolRealArray PoolStringArray
-        PoolVector2Array PoolVector3Array PoolColorArray null
-      ).join('|')
+      def self.builtins_type
+        @builtins_type = %w(
+          bool int float String Vector2 Rect2 Transform2D Vector3 AABB
+          Plane Quat Basis Transform Color RID Object NodePath Dictionary
+          Array PoolByteArray PoolIntArray PoolRealArray PoolStringArray
+          PoolVector2Array PoolVector3Array PoolColorArray null
+        ).join('|')
+      end
 
       state :root do
         rule %r/\n/, Text
@@ -53,7 +66,7 @@ module Rouge
           groups Text, Str::Affix, Str::Doc
         end
         rule %r/[^\S\n]+/, Text
-        rule %r/#.*$/, Comment::Single
+        rule %r/#.*/, Comment::Single
         rule %r/[\[\]{}:(),;]/, Punctuation
         rule %r/\\\n/, Text
         rule %r/\\/, Text
@@ -68,36 +81,36 @@ module Rouge
           push :classname
         end
         mixin :keywords
-        mixin :buildins
-        rule %r/(#{affix_long})(""")/ do
+        mixin :builtins
+        rule %r/(#{GDScript.affix_long})(""")/ do
           groups Str::Affix, Str::Double
           push :tdqs
         end
-        rule %r/(#{affix_long})(''')/ do
+        rule %r/(#{GDScript.affix_long})(''')/ do
           groups Str::Affix, Str::Double
           push :tsqs
         end
-        rule %r/(#{affix_long})(")/ do
+        rule %r/(#{GDScript.affix_long})(")/ do
           groups Str::Affix, Str::Double
           push :dqs
         end
-        rule %r/(#{affix_long})(')/ do
+        rule %r/(#{GDScript.affix_long})(')/ do
           groups Str::Affix, Str::Double
           push :sqs
         end
-        rule %r/(#{affix_short})(""")/ do
+        rule %r/(#{GDScript.affix_short})(""")/ do
           groups Str::Affix, Str::Double
           push :escape_tdqs
         end
-        rule %r/(#{affix_short})(''')/ do
+        rule %r/(#{GDScript.affix_short})(''')/ do
           groups Str::Affix, Str::Double
           push :escape_tsqs
         end
-        rule %r/(#{affix_short})(")/ do
+        rule %r/(#{GDScript.affix_short})(")/ do
           groups Str::Affix, Str::Double
           push :escape_dqs
         end
-        rule %r/(#{affix_short})(')/ do
+        rule %r/(#{GDScript.affix_short})(')/ do
           groups Str::Affix, Str::Double
           push :escape_sqs
         end
@@ -106,14 +119,14 @@ module Rouge
       end
 
       state :keywords do
-        rule %r/(#{keywords})\b/, Keyword
-        rule %r/(?<!\.)(#{keywords_reserved})\b/, Keyword::Reserved
+        rule %r/(#{GDScript.keywords})\b/, Keyword
+        rule %r/(?<!\.)(#{GDScript.keywords_reserved})\b/, Keyword::Reserved
       end
 
-      state :buildins do
-        rule %r/(?<!\.)(#{buildins})\b/, Name::Builtin
+      state :builtins do
+        rule %r/(?<!\.)(#{GDScript.builtins})\b/, Name::Builtin
         rule %r/((?<!\.)(self|false|true)|(PI|TAU|NAN|INF))\b/, Name::Builtin::Pseudo
-        rule %r/(?<!\.)(#{builtins_type})\b/, Keyword::Type
+        rule %r/(?<!\.)(#{GDScript.builtins_type})\b/, Keyword::Type
       end
 
       state :numbers do

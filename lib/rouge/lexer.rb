@@ -421,8 +421,11 @@ module Rouge
     # @option opts :continue
     #   Continue the lex from the previous state (i.e. don't call #reset!)
     #
-    # @note The use of `opts` has been deprecated. A warning is issued if run
-    #   with `$VERBOSE` set to true.
+    # @note The use of :continue => true has been deprecated. A warning is
+    #       issued if run with `$VERBOSE` set to true.
+    #
+    # @note The use of arbitrary `opts` has never been supported, but we
+    #       previously ignored them with no error. We now warn unconditionally.
     def lex(string, opts=nil, &b)
       if opts
         if (opts.keys - [:continue]).size > 0

@@ -17,7 +17,7 @@ module Rouge
       end
 
       def stream(tokens, &b)
-        lineno = 0
+        lineno = @start_line - 1
         buffer = [%(<table class="#@table_class"><tbody>)]
         token_lines(tokens) do |line_tokens|
           lineno += 1
@@ -26,9 +26,9 @@ module Rouge
           buffer << %(<pre>#{lineno}</pre></td>)
           buffer << %(<td class="#@code_class"><pre>)
           @formatter.stream(line_tokens) { |formatted| buffer << formatted }
-          buffer << '</pre>'
+          buffer << "\n</pre></td></tr>"
         end
-        buffer << %(</td></tr></tbody></table>)
+        buffer << %(</tbody></table>)
         yield buffer.join
       end
     end

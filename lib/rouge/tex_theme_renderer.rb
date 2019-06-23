@@ -17,10 +17,10 @@ module Rouge
     #   any other formatting.
     #
     # * Define all the colors using xcolors \definecolor command. First we define
-    #   every palette color with a name such as rouge@palette@themneame@colorname.
+    #   every palette color with a name such as RG@palette@themneame@colorname.
     #   Then we find all foreground and background colors that have literal html
     #   colors embedded in them and define them with names such as
-    #   rouge@palette@themename@000000. While html allows three-letter colors such
+    #   RG@palette@themename@000000. While html allows three-letter colors such
     #   as #FFF, xcolor requires all six characters to be present, so we make sure
     #   to normalize that as well as the case convention in #inline_name.
     #
@@ -98,7 +98,7 @@ END
     def palette_name(name)
       name = inline_name(name) || name.to_s
 
-      "rouge@palette@#{camelize(@theme.name)}@#{camelize(name.to_s)}"
+      "#{@prefix}@palette@#{camelize(@theme.name)}@#{camelize(name.to_s)}"
     end
 
     def token_name(tok)

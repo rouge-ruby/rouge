@@ -141,19 +141,19 @@ module Rouge
         # Type commands
         rule %r/(cast|castable)(\s+)(as)/ do
           groups Keyword, Text::Whitespace, Keyword
-          goto :singletype
+          push :singletype
         end
         rule %r/(treat)(\s+)(as)/ do
           groups Keyword, Text::Whitespace, Keyword
-          goto :itemtype
+          push :itemtype
         end
         rule %r/(instance)(\s+)(of)/ do
           groups Keyword, Text::Whitespace, Keyword
-          goto :itemtype
+          push :itemtype
         end
         rule %r/\b(as)\b/ do
           token Keyword
-          goto :itemtype
+          push :itemtype
         end
 
         # Paths
@@ -182,7 +182,7 @@ module Rouge
         # Type name
         rule XPath.eqName do
           token Keyword::Type
-          goto :root
+          pop!
         end
       end
 
@@ -230,19 +230,19 @@ module Rouge
         # Operators
         rule XPath.operators do
           token Operator
-          goto :root
+          pop!
         end
         rule %r/\b#{XPath.word_operators}\b/ do
           token Operator::Word
-          goto :root
+          pop!
         end
         rule %r/\b#{XPath.keywords}\b/ do
           token Keyword
-          goto :root
+          pop!
         end
         rule %r/[\[),]/ do
           token Punctuation
-          goto :root
+          pop!
         end
 
         # Other types (e.g. xs:double)
@@ -293,12 +293,12 @@ module Rouge
         # Occurrence indicator
         rule %r/[?*+]/ do
           token Operator
-          goto :root
+          pop!
         end
 
         # Otherwise, lex it in root state:
         rule %r/(?![?*+])/ do
-          goto :root
+          pop!
         end
       end
 

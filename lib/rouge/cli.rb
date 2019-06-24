@@ -67,7 +67,7 @@ module Rouge
 
       while (head = argv.shift)
         case head
-        when '-h', '--help', 'help', '-help', nil
+        when '-h', '--help', 'help', '-help'
           return Help.parse(argv)
         when '--require', '-r'
           require argv.shift

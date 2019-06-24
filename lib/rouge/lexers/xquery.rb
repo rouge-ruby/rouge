@@ -35,103 +35,103 @@ module Rouge
       end
 
       state :tags do
-        rule /<#{XPath.qName}/, Name::Tag, :start_tag
-        rule /<!--/, Comment, :xml_comment
-        rule /<\?.*?\?>/, Comment::Preproc
-        rule /<!\[CDATA\[.*?\]\]>/, Comment::Preproc
-        rule /&\S*?;/, Name::Entity
+        rule %r/<#{XPath.qName}/, Name::Tag, :start_tag
+        rule %r/<!--/, Comment, :xml_comment
+        rule %r/<\?.*?\?>/, Comment::Preproc
+        rule %r/<!\[CDATA\[.*?\]\]>/, Comment::Preproc
+        rule %r/&\S*?;/, Name::Entity
       end
 
       prepend :root do
         mixin :tags
 
-        rule /{/, Punctuation, :root
-        rule /}(`)?/ do
+        rule %r/{/, Punctuation, :root
+        rule %r/}(`)?/ do
           token Punctuation
           if stack.length > 1
             pop!
           end
         end
 
-        rule /(namespace)(\s+)(#{XPath.ncName})/ do
+        rule %r/(namespace)(\s+)(#{XPath.ncName})/ do
           groups Keyword, Text::Whitespace, Name::Namespace
         end
 
-        rule /\b(#{XQuery.keywords})\b/, Keyword
-        rule /;/, Punctuation
-        rule /%/, Keyword::Declaration, :annotation
+        rule %r/\b(#{XQuery.keywords})\b/, Keyword
+        rule %r/;/, Punctuation
+        rule %r/%/, Keyword::Declaration, :annotation
 
-        rule /(\(#)(\s*)(#{XPath.eqName})/ do
+        rule %r/(\(#)(\s*)(#{XPath.eqName})/ do
           groups Comment::Preproc, Text::Whitespace, Name::Tag
           push :pragma
         end
 
-        rule /``\[/, Str, :str_constructor
+        rule %r/``\[/, Str, :str_constructor
       end
 
       state :annotation do
-        rule /\s+/m, Text::Whitespace
+        rule %r/\s+/m, Text::Whitespace
         rule XPath.commentStart, :comment
         rule XPath.eqName, Keyword::Declaration, :pop!
       end
 
       state :pragma do
-        rule /\s+/m, Text::Whitespace
+        rule %r/\s+/m, Text::Whitespace
         rule XPath.commentStart, :comment
-        rule /#\)/, Comment::Preproc, :pop!
-        rule /./, Comment::Preproc
+        rule %r/#\)/, Comment::Preproc, :pop!
+        rule %r/./, Comment::Preproc
       end
 
       # https://www.w3.org/TR/xquery-31/#id-string-constructors
       state :str_constructor do
-        rule /`{/, Punctuation, :root
-        rule /\]``/, Str, :pop!
-        rule /[^`\]]+/m, Str
-        rule /[`\]]/, Str
+        rule %r/`{/, Punctuation, :root
+        rule %r/\]``/, Str, :pop!
+        rule %r/[^`\]]+/m, Str
+        rule %r/[`\]]/, Str
       end
 
       state :xml_comment do
-        rule /[^-]+/m, Comment
-        rule /-->/, Comment, :pop!
-        rule /-/, Comment
+        rule %r/[^-]+/m, Comment
+        rule %r/-->/, Comment, :pop!
+        rule %r/-/, Comment
       end
 
       state :start_tag do
-        rule /\s+/m, Text::Whitespace
-        rule /([\w.:-]+\s*=)(")/m do
+        rule %r/\s+/m, Text::Whitespace
+        rule %r/([\w.:-]+\s*=)(")/m do
           groups Name::Attribute, Str
           push :quot_attr
         end
-        rule /([\w.:-]+\s*=)(')/m do
+        rule %r/([\w.:-]+\s*=)(')/m do
           groups Name::Attribute, Str
           push :apos_attr
         end
-        rule />/, Name::Tag, :tag_content
+        rule %r/>/, Name::Tag, :tag_content
         rule %r(/>), Name::Tag, :pop!
       end
 
       state :quot_attr do
-        rule /"/, Str, :pop!
-        rule /{{/, Str
-        rule /{/, Punctuation, :root
-        rule /[^"{>]+/m, Str
+        rule %r/"/, Str, :pop!
+        rule %r/{{/, Str
+        rule %r/{/, Punctuation, :root
+        rule %r/[^"{>]+/m, Str
       end
 
       state :apos_attr do
-        rule /'/, Str, :pop!
-        rule /{{/, Str
-        rule /{/, Punctuation, :root
-        rule /[^'{>]+/m, Str
+        rule %r/'/, Str, :pop!
+        rule %r/{{/, Str
+        rule %r/{/, Punctuation, :root
+        rule %r/[^'{>]+/m, Str
       end
 
       state :tag_content do
-        rule /\s+/m, Text::Whitespace
+        rule %r/\s+/m, Text::Whitespace
         mixin :tags
 
-        rule /({{|}})/, Text
-        rule /{/, Punctuation, :root
+        rule %r/({{|}})/, Text
+        rule %r/{/, Punctuation, :root
 
-        rule /[^{}<&]/, Text
+        rule %r/[^{}<&]/, Text
 
         rule %r(</#{XPath.qName}(\s*)>) do
           token Name::Tag

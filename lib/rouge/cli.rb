@@ -65,7 +65,7 @@ module Rouge
     def self.parse(argv=ARGV)
       argv = normalize_syntax(argv)
 
-      while head = argv.shift
+      while (head = argv.shift)
         case head
         when '-h', '--help', 'help', '-help', nil
           return Help.parse(argv)

@@ -98,7 +98,7 @@ module Rouge
       case arg
       when 'version', '--version', '-v'
         Version
-      when 'help'
+      when 'help', nil
         Help
       when 'highlight', 'hi'
         Highlight

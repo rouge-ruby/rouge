@@ -14,30 +14,39 @@ module Rouge
       def self.digits
         @digits ||= /[0-9]+/
       end
+
       def self.decimalLiteral
         @decimalLiteral ||= /\.#{digits}|#{digits}\.[0-9]*/
       end
+
       def self.doubleLiteral
         @doubleLiteral ||= /(\.#{digits})|#{digits}(\.[0-9]*)?[eE][+-]?#{digits}/
       end
+
       def self.stringLiteral
         @stringLiteral ||= /("(("")|[^"])*")|('(('')|[^'])*')/
       end
+
       def self.ncName
         @ncName ||= /[a-z_][a-z_\-.0-9]*/i
       end
+
       def self.qName
         @qName ||= /(?:#{ncName})(?::#{ncName})?/
       end
+
       def self.uriQName
         @uriQName ||= /Q{[^{}]*}#{ncName}/
       end
+
       def self.eqName
         @eqName ||= /(?:#{uriQName}|#{qName})/
       end
+
       def self.commentStart
         @commentStart ||= /\(:/
       end
+
       def self.openParen
         @openParen ||= /\((?!:)/
       end
@@ -50,9 +59,11 @@ module Rouge
           comment text node document-node namespace-node
         )
       end
+
       def self.kindTestForPi
         @kindTestForPi ||= Regexp.union %w(processing-instruction)
       end
+
       def self.axes
         @axes ||= Regexp.union %w(
           child descendant attribute self descendant-or-self
@@ -60,12 +71,15 @@ module Rouge
           parent ancestor preceding-sibling preceding ancestor-or-self
         )
       end
+
       def self.operators
         @operators ||= Regexp.union %w(, => = := : >= >> > <= << < - * != + // / || |)
       end
+
       def self.keywords
         @keywords ||= Regexp.union %w(let for some every if then else return in satisfies)
       end
+
       def self.word_operators
         @word_operators ||= Regexp.union %w(
           and or eq ge gt le lt ne is
@@ -74,6 +88,7 @@ module Rouge
           to
         )
       end
+
       def self.constructorTypes
         @constructorTypes ||= Regexp.union %w(function array map empty-sequence)
       end

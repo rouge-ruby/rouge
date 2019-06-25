@@ -633,7 +633,7 @@ module Rouge
         rule %r/`$/, Str::Escape # line continuation
         rule %r/`./, Str::Escape
         rule %r/\$\(\(/, Keyword, :math
-        rule %r/\$\(/, Keyword, :paren
+        rule %r/\$\(/, Str::Interpol, :paren_interp
         rule %r/\${#?/, Keyword, :curly
         rule %r/\$#?(\w+|.)/, Name::Variable
       end

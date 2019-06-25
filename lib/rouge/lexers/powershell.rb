@@ -3,9 +3,8 @@
 
 module Rouge
   module Lexers
-    load_lexer 'shell.rb'
 
-    class Powershell < Shell
+    class Powershell < RegexLexer
       title 'powershell'
       desc 'powershell'
       tag 'powershell'
@@ -15,8 +14,8 @@ module Rouge
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_commonparameters?view=powershell-6
       ATTRIBUTES = %w(
-        CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI SupportsPaging
-        SupportsShouldProcess PositionalBinding
+        CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI
+        SupportsPaging SupportsShouldProcess PositionalBinding
       ).join('|')
       
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_reserved_words?view=powershell-6
@@ -25,7 +24,8 @@ module Rouge
         sequence catch foreach static class from switch command function throw
         configuration hidden trap continue if try data in type define
         inlinescript until do interface using dynamicparam module var else
-        namespace while elseif parallel workflow end param enum private
+        namespace while elseif parallel workflow end param enum private \$true
+        \$false \$null
       ).join('|')
       
       # https://devblogs.microsoft.com/scripting/powertip-find-a-list-of-powershell-type-accelerators/
@@ -54,82 +54,158 @@ module Rouge
         -gt -igt -cgt -ge -ige -cge -lt -ilt -clt -le -ile -cle -like -ilike
         -clike -notlike -inotlike -cnotlike -match -imatch -cmatch -notmatch
         -inotmatch -cnotmatch -contains -icontains -ccontains -notcontains
-        -inotcontains -cnotcontains -replace -ireplace -creplace -band -bor
-        -bxor -and -or -xor \. & = \+= -= \*= \/= %=
+        -inotcontains -cnotcontains -replace -ireplace -creplace -shl -shr -band
+        -bor -bxor -and -or -xor -not \+= -= \*= \/= %=
       ).join('|')
 
-      MULTILINEKEYWORDS = %w(
+      MULTILINE_KEYWORDS = %w(
         synopsis description parameter example inputs outputs notes link
         component role functionality forwardhelptargetname forwardhelpcategory
         remotehelprunspace externalhelp 
       ).join('|')
 
-      # Override from Shell
-      state :interp do
-        rule %r/`$/, Str::Escape # line continuation
-        rule %r/`./, Str::Escape
-        rule %r/\$\(\(/, Keyword, :math
-        rule %r/\$\(/, Keyword, :paren
-        rule %r/\${#?/, Keyword, :curly
-        rule %r/\$#?(\w+|.)/, Name::Variable
-      end
-
-      # Override from Shell
-      state :double_quotes do
-        # NB: "abc$" is literally the string abc$.
-        # Here we prevent :interp from interpreting $" as a variable.
-        rule %r/(?:\$#?)?"/, Str::Double, :pop!
-        mixin :interp
-        rule %r/[^"`$]+/, Str::Double
-      end
-
-      # Override from Shell
-      state :data do
-        rule %r/\s+/, Text::Whitespace
-        rule %r/\$?"/, Str::Double, :double_quotes
-        rule %r/\$'/, Str::Single, :ansi_string
-        rule %r/'/, Str::Single, :single_quotes
-        rule %r/\*/, Keyword
-        rule %r/;/, Text
-        rule %r/[^=\*\s{}()$"'`<]+/, Text
-        rule %r/\d+(?= |\Z)/, Num
-        rule %r/</, Text
-        mixin :interp
-      end
-
-      state :hashtable do 
-        rule %r/\w+/, Name::Variable
-        rule %r/}/, Operator, :pop!
-        mixin :root
+      state :variable do
+        rule %r/(\$)(?:(\w+)(:))?(\w+|\{(?:[^`]|`.)+?\})/ do
+          groups Name::Variable, Name::Namespace, Punctuation, Name::Variable
+        end
+        rule %r/\$\w+/, Name::Variable
+        rule %r/\$\{(?:[^`]|`.)+?\}/, Name::Variable
       end
 
       state :multiline do
-        rule %r/\.(#{MULTILINEKEYWORDS})/i, Comment::Special
-        rule %r/[\w\s\.\-\,:\/{}<>"*]/, Comment
-        rule %r/#>/, Comment, :pop!
+        rule %r/\.(?:#{MULTILINE_KEYWORDS})/i, Comment::Special
+        rule %r/#>/, Comment::Multiline, :pop!
+        rule %r/[^#.]+?/m, Comment::Multiline
+        rule %r/[#.]+/, Comment::Multiline
+      end
+
+      state :interpol do
+        rule %r/\)/, Str::Interpol, :pop!
         mixin :root
       end
 
-      state :heredocdouble do
-        rule %r/"@/, Str::Heredoc, :pop!
-        rule %r/[$]/, Str::Heredoc
-        mixin :data
+      state :dq do
+        # NB: "abc$" is literally the string abc$.
+        # Here we prevent :interp from interpreting $" as a variable.
+        rule %r/(?:\$#?)?"/, Str::Double, :pop!
+        rule %r/\$\(/, Str::Interpol, :interpol
+        rule %r/`$/, Str::Escape # line continuation
+        rule %r/`./, Str::Escape
+        rule %r/[^"`$]+/, Str::Double
+        mixin :variable
       end
 
-      prepend :basic do
-        rule %r(#requires.*$),Comment::Preproc
-        rule %r(<#), Comment::Multiline, :multiline
-        rule %r(@{), Operator, :hashtable
-        rule %r(@"), Str::Heredoc, :heredocdouble
-        rule %r(@'[.]*'@)m, Literal::String::Heredoc
-        rule %r/\b(#{OPERATORS})\s*\b/i, Operator
-        rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Builtin::Pseudo
-        rule %r/[a-zA-Z\d]+-[a-zA-Z\d]+/, Name::Function
-        rule %r/\b(#{KEYWORDS})\b/i, Keyword
-        rule %r/\b(#{KEYWORDS_TYPE})\s*\b/i, Keyword::Type
-        rule %r/\bcase\b/, Keyword, :case
+      state :sq do
+        rule %r/'/, Str::Single, :pop!
+        rule %r/[^']+/, Str::Single
+      end
+
+      state :heredoc do
+        rule %r/(?:\$#?)?"@/, Str::Heredoc, :pop!
+        rule %r/\$\(/, Str::Interpol, :interpol
+        rule %r/`$/, Str::Escape # line continuation
+        rule %r/`./, Str::Escape
+        rule %r/[^"`$]+?/m, Str::Heredoc
+        rule %r/"+/, Str::Heredoc
+        mixin :variable
+      end
+
+      state :class do
+        rule %r/\{/, Punctuation, :pop!
+        rule %r/\s+/, Text::Whitespace
+        rule %r/\w+/, Name::Class
+        rule %r/[:,]/, Punctuation
+      end
+
+      state :hasht do
+        rule /\s+/, Text::Whitespace
+        rule %r/\}/, Punctuation, :pop!
+        rule %r/"/, Str::Double, :dq
+        rule %r/'/, Str::Single, :sq
+        rule %r/\w+/, Name::Other
+        rule %r/=/, Operator
+        rule %r/,/, Punctuation
+        mixin :variable
+      end
+
+      state :array do
+        rule /\s+/, Text::Whitespace
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/"/, Str::Double, :dq
+        rule %r/'/, Str::Single, :sq
+        rule %r/,/, Punctuation
+        mixin :variable
+      end
+
+      state :bracket do
+        rule %r/\[/, Punctuation, :bracket
+        rule %r/\]/, Punctuation, :pop!
+        rule %r/\s+/, Text::Whitespace
+        rule %r/[A-Za-z]\w+\./, Name::Constant
+        rule %r/[A-Za-z]\w+/, Keyword::Type
+        rule %r/\d+/, Num::Integer
+        rule %r/\.{1,2}/, Operator
+        rule %r/\+/, Operator
+        rule %r/,/, Punctuation
+        mixin :variable
+      end
+
+      state :parameters do
+        rule %r/\n/, Text::Whitespace, :pop!
+        rule %r/[;(){}\]]/, Punctuation, :pop!
+        rule %r/[|=]/, Operator, :pop!
+        rule %r/\w[-\w]+/, Name::Other 
+        mixin :root
+      end
+
+      state :root do
+        rule %r/\s+/, Text::Whitespace
+        
+        rule %r/#requires\s-version \d(?:\.\d+)?/, Comment::Preproc
+        rule %r/#.*/, Comment
+        rule %r/<#/, Comment::Multiline, :multiline
+
+        rule %r/"/, Str::Double, :dq
+        rule %r/'/, Str::Single, :sq
+        rule %r/@"/, Str::Heredoc, :heredoc
+        rule %r/@'.*?'@/m, Str::Heredoc
+        
+        rule %r/\d*\.\d+/, Num::Float
+        rule %r/\d+/, Num::Integer
+
+        rule %r/\.\.(?=\.?\d)/, Operator
+        rule %r/(?:#{OPERATORS})\b/i, Operator
+        
+        rule %r/\[(?:#{ATTRIBUTES})\]/i, Name::Builtin::Pseudo
+        
+        rule %r/(class)(\s+)(\w+)/i do
+          groups Keyword::Reserved, Text::Whitespace, Name::Class
+          push :class
+        end
+        rule %r/(function)(\s+)(?:(\w+)(:))?(\w[-\w]+)/i do
+          groups Keyword::Reserved, Text::Whitespace, Name::Namespace, Punctuation, Name::Function
+        end
+        rule %r/(?:#{KEYWORDS})\b(?!-)/i, Keyword::Reserved
+
+        rule %r/(\w+)(\.)/ do |m|
+          groups Name::Constant, Operator
+        end
+        
+        rule %r/-\w+/, Keyword
+        
+        rule %r/(\.)?([-\w]+)(\()?/ do
+          groups Operator, Name::Function, Punctuation
+          push :parameters
+        end
+        
+        rule %r/[-+*\/%=!\.&|]/, Operator
+        rule %r/@\{/, Punctuation, :hasht
+        rule %r/@\(/, Punctuation, :array
+        rule %r/\[/, Punctuation, :bracket
+        rule %r/[{}(),:;]/, Punctuation
+
+        mixin :variable
       end
     end
   end
-
 end

@@ -1,63 +1,102 @@
 #requires -version 2.0
+
+###########################
+# Comments
+###########################
+
 # Normal Comment
+
 <#
     multi
     line
     comment
 #>
+
+###########################
+## Strings
+###########################
+
 "String that accepts $variables, and substitutions"
 "String with escaped `$variable"
 'Literal string $($PSScriptRoot)'
+
+###########################
+# Heredoc strings
+###########################
+
 @"
 Heredoc with $variables
 "@
-
 @'
 Heredoc with $literal strings
 '@
 
-$mydata = @{
+###########################
+# Variables
+###########################
+
+$var1 = 5
+$var2 = $true
+$var3 = get-host | Select-Object -First 1
+${this-is_a%valid*variable@name} = "OMG"
+Write-Output ${this-is_a%valid*variable@name}
+$global:ErrorActionPreference
+
+###########################
+# Collections
+###########################
+
+$my_hash = @{
     owner = "my"
     type = "hash"
     thing = "table"
 }
 
+$my_array = @("my" "array")
+
+###########################
+# Commands
+###########################
+
 type "is a reserved word"
 alias foo bar
+Write-output "Hello" # End-of-line comment
+Get-Process | Tee-Object -FilePath "C:\Test1\testfile2.txt" # Unapproved verb
+
+###########################
+# Declarations
+###########################
 
 function Verb-Noun
 {
-    param ([string]$Name,
-    [string]$Extension = "txt",[string]$foo="bar")
-    $name = $name + "." + $extension
-    $name
-    # multi line comment with powershell document strings
     <#
     .SYNOPSIS
-
     Tells you what it does
 
     .DESCRIPTION
-
     Tells you what it does with more detail.
-
     #>
+    param ([string]$Name, [string]$Extension = "txt", [string]$foo="bar")
+    $name = $name + "." + $extension
+    $name
 }
 
-
-Write-output "Hello" # End-of-line comment
+function global:Verb-Noun {
+    something
+}
 
 process {
-"This is a script block"
-$var3 = get-host | Select-Object -First 1
+    "This is a script block"
+}
+
+###########################
+# Control structures 
+###########################
 
 if ($var1 -eq $var2)
 {
     return $true
 }
-
-
-
 
 try {
     write-output "something"
@@ -65,15 +104,31 @@ try {
     write-output "something else"
 }
 
-# Unapproved verb
-Get-Process | Tee-Object -FilePath "C:\Test1\testfile2.txt"
-
 Foreach ($Thing in $Things ) {
     Do-Something
 }
 
+###########################
+# Classes 
+###########################
 
-# rouge-ruby/rouge#1025
+class Child : Parent, Relatives {
+    [int] hidden $var = 8
+    
+    Child ([string]$a, [string]$b, [int]$capacity) {
+        $this.var = $a
+    } 
+
+    [string]toString() {
+        return "A string"
+    }
+}
+
+$my_obj = [Child]::new()
+
+###########################
+# Challenges
+###########################
+
 [System.Collections.Generic.List[string]](1..100)
 [System.Collections.Generic.Dictionary[string, int]](1..100|%{@{N=$_}})
-$global:ErrorActionPreference

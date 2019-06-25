@@ -499,8 +499,7 @@ see a series of dots. If you have an error, this will appear here, too.
 
 To see your visual sample, launch Rouge's visual test app by running `bundle
 exec rackup`. You can choose your sample from the complete list by going to
-<http://localhost:9292>.  ot have a file extension. To start the test suite, run
-`bundle exec rake`.
+<http://localhost:9292>.
 
 ## How to Submit
 

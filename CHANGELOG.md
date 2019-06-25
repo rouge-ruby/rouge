@@ -4,13 +4,69 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.5.0: 2019-06-26
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.4.1...v3.5.0)
+
+* General
+  - Correct typo in lexer development guide ([#1219](https://github.com/rouge-ruby/rouge/pull/1219/) by Michael Camilleri)
+  - Add support for TeX rendering ([#1183](https://github.com/rouge-ruby/rouge/pull/1183/) by Jeanine Adkisson)
+  - Fix deprecation of argument to Lexer.continue ([#1187](https://github.com/rouge-ruby/rouge/pull/1187/) by Jeanine Adkisson)
+  - Add development environment documentation ([#1212](https://github.com/rouge-ruby/rouge/pull/1212/) by Michael Camilleri)
+  - Correct lexer development guide ([#1145](https://github.com/rouge-ruby/rouge/pull/1145/) by Michael Camilleri)
+  - Remove unnecessary variables and fix duplicate ranges ([#1197](https://github.com/rouge-ruby/rouge/pull/1197/) by Masataka Pocke Kuwabara)
+  - Optimise creation of directory names ([#1207](https://github.com/rouge-ruby/rouge/pull/1207/) by Ashwin Maroli)
+  - Add reference to semantic versioning to README ([#1205](https://github.com/rouge-ruby/rouge/pull/1205/) by Michael Camilleri)
+  - Add pr-open to Probot's exempt labels ([#1203](https://github.com/rouge-ruby/rouge/pull/1203/) by Michael Camilleri)
+  - Adjust wording of stale issue message ([#1202](https://github.com/rouge-ruby/rouge/pull/1202/) by Michael Camilleri)
+  - Configure Probot to close stale issues ([#1199](https://github.com/rouge-ruby/rouge/pull/1199/) by Michael Camilleri)
+  - Add theme switcher to visual test app ([#1198](https://github.com/rouge-ruby/rouge/pull/1198/) by Ashwin Maroli)
+  - Add the magritte theme ([#1182](https://github.com/rouge-ruby/rouge/pull/1182/) by Jeanine Adkisson)
+  - Reduce duplicated range warnings ([#1189](https://github.com/rouge-ruby/rouge/pull/1189/) by Ashwin Maroli)
+  - Improve display of visual samples ([#1181](https://github.com/rouge-ruby/rouge/pull/1181/) by Ashwin Maroli)
+  - Remove duplicate issue templates ([#1193](https://github.com/rouge-ruby/rouge/pull/1193/) by Michael Camilleri)
+  - Add issue templates ([#1190](https://github.com/rouge-ruby/rouge/pull/1190/) by Michael Camilleri)
+  - Enable Rubocop ambiguity warnings ([#1180](https://github.com/rouge-ruby/rouge/pull/1180/) by Michael Camilleri)
+  - Allow Rake tasks to be run with warnings ([#1177](https://github.com/rouge-ruby/rouge/pull/1177/) by Ashwin Maroli)
+  - Reset instance variable only if it is defined ([#1184](https://github.com/rouge-ruby/rouge/pull/1184/) by Ashwin Maroli)
+  - Fix `escape_enabled?` predicate method ([#1174](https://github.com/rouge-ruby/rouge/pull/1174/) by Dan Allen)
+  - Fix removal of `@debug_enabled` ([#1173](https://github.com/rouge-ruby/rouge/pull/1173/) by Dan Allen)
+  - Fix wording and indentation in changelog Rake task ([#1171](https://github.com/rouge-ruby/rouge/pull/1171/) by Michael Camilleri)
+* BPF Lexer (**NEW**)
+  - Add BPF lexer ([#1191](https://github.com/rouge-ruby/rouge/pull/1191/) by Paul Chaignon)
+* Brainfuck Lexer (**NEW**)
+  - Add Brainfuck lexer ([#1037](https://github.com/rouge-ruby/rouge/pull/1037/) by Andrea Esposito)
+* Haskell Lexer
+  - Support promoted data constructors in Haskell lexer ([#1027](https://github.com/rouge-ruby/rouge/pull/1027/) by Ben Gamari)
+  - Add `*.hs-boot` glob to Haskell lexer ([#1060](https://github.com/rouge-ruby/rouge/pull/1060/) by Ben Gamari)
+* JSON Lexer
+  - Add extra mimetypes to JSON lexer ([#1030](https://github.com/rouge-ruby/rouge/pull/1030/) by duncangodwin)
+* Jsonnet Lexer
+  - Add `*.libsonnet` glob to Jsonnet lexer ([#972](https://github.com/rouge-ruby/rouge/pull/972/) by Tomas Virgl)
+* Liquid Lexer
+  - Fix debug errors in Liquid lexer ([#1192](https://github.com/rouge-ruby/rouge/pull/1192/) by Michael Camilleri)
+* LLVM Lexer
+  - Fix various issues in LLVM lexer ([#986](https://github.com/rouge-ruby/rouge/pull/986/) by Robin Dupret)
+* Magik Lexer (**NEW**)
+  - Add (Smallworld) Magik lexer ([#1044](https://github.com/rouge-ruby/rouge/pull/1044/) by Steven Looman)
+* Prolog Lexer
+  - Fix comment character in Prolog lexer ([#830](https://github.com/rouge-ruby/rouge/pull/830/) by Darius Foo)
+* Python Lexer
+  - Fix shebang regex in Python lexer ([#1172](https://github.com/rouge-ruby/rouge/pull/1172/) by Michael Camilleri)
+* Rust Lexer
+  - Add support for integer literal separators in Rust lexer ([#984](https://github.com/rouge-ruby/rouge/pull/984/) by Linda_pp)
+* Shell Lexer
+  - Fix interpolation and escaped backslash bugs in Shell lexer ([#1216](https://github.com/rouge-ruby/rouge/pull/1216/) by Jeanine Adkisson)
+* Swift Lexer
+  - Fix Swift lexer to support Swift 4.2 ([#1035](https://github.com/rouge-ruby/rouge/pull/1035/) by Mattt)
+
 ## version 3.4.1: 2019-06-13
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.4.0...v3.4.1)
 
 * General
   - Restore support for opts to Lexer.lex ([#1178](https://github.com/rouge-ruby/rouge/pull/1178/) by Michael Camilleri)
-  - Use predefined string in bool_option ([#1159](https://github.com/rouge-ruby/rouge/pull/1159/) by Ashwin Maroli)
+  - Use predefined string in `bool_option` ([#1159](https://github.com/rouge-ruby/rouge/pull/1159/) by Ashwin Maroli)
   - Expand list of files ignored by Git ([#1157](https://github.com/rouge-ruby/rouge/pull/1157/) by Michael Camilleri)
 
 ## version 3.4.0: 2019-06-12
@@ -42,7 +98,7 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
   - Fix various issues with highlighting in C and C++ lexers ([#1069](https://github.com/rouge-ruby/rouge/pull/1069/) by Vidar Hokstad)
 * C# Lexer
   - Fix rendering of C# attributes ([#1117](https://github.com/rouge-ruby/rouge/pull/1117/) by Michael Camilleri)
-* CoffeeScript lexer
+* CoffeeScript Lexer
   - Add operators, keywords and reserved words to CoffeeScript lexer ([#1061](https://github.com/rouge-ruby/rouge/pull/1061/) by Erik Demaine)
   - Fix comments in CoffeeScript lexer ([#1123](https://github.com/rouge-ruby/rouge/pull/1123/) by Michael Camilleri)
 * Common Lisp Lexer

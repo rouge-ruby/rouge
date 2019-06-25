@@ -71,7 +71,7 @@ module Rouge
 
       state :heredoc do
         rule %r/\n/, Str::Heredoc, :heredoc_nl
-        rule %r/[^$\n]+/, Str::Heredoc
+        rule %r/[^$\n\\]+/, Str::Heredoc
         mixin :interp
         rule %r/[$]/, Str::Heredoc
       end
@@ -141,8 +141,17 @@ module Rouge
         mixin :root
       end
 
-      state :paren do
-        rule %r/\)/, Keyword, :pop!
+      # the state inside $(...)
+      state :paren_interp do
+        rule %r/\)/, Str::Interpol, :pop!
+        rule %r/\(/, Operator, :paren_inner
+        mixin :root
+      end
+
+      # used to balance parentheses inside interpolation
+      state :paren_inner do
+        rule %r/\(/, Operator, :push
+        rule %r/\)/, Operator, :pop!
         mixin :root
       end
 
@@ -174,7 +183,7 @@ module Rouge
         rule %r/\\$/, Str::Escape # line continuation
         rule %r/\\./, Str::Escape
         rule %r/\$\(\(/, Keyword, :math
-        rule %r/\$\(/, Keyword, :paren
+        rule %r/\$\(/, Str::Interpol, :paren_interp
         rule %r/\${#?/, Keyword, :curly
         rule %r/`/, Str::Backtick, :backticks
         rule %r/\$#?(\w+|.)/, Name::Variable

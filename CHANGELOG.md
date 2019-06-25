@@ -4,6 +4,13 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.5.1: 2019-06-26
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.5.0...v3.5.1)
+
+* PowerShell Lexer
+  - Fix invalid parenthesis state in PowerShell lexer ([#1222](https://github.com/rouge-ruby/rouge/pull/1222/) by Michael Camilleri)
+
 ## version 3.5.0: 2019-06-26
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.4.1...v3.5.0)

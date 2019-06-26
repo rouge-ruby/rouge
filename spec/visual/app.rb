@@ -14,12 +14,14 @@ class VisualTestApp < Sinatra::Application
   ROOT = BASE.parent.parent
 
   ROUGE_LIB = ROOT.join('lib/rouge.rb')
+  ROUGE_VER = ROOT.join('lib/rouge/version.rb')
 
   DEMOS = ROOT.join('lib/rouge/demos')
 
   def reload_source!
     Object.send :remove_const, :Rouge
     load ROUGE_LIB
+    load ROUGE_VER
   end
 
   def query_string

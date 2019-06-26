@@ -1,3 +1,10 @@
+# numbers
+291         # integer
+0b100100011 # binary
+0o443       # octal
+0x123       # hexadecimal
+291.0       # float
+
 # keywords with no following whitespace
 (cond)
 (do)

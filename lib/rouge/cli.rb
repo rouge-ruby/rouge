@@ -38,7 +38,7 @@ module Rouge
     def self.doc
       return enum_for(:doc) unless block_given?
 
-      yield %|usage: rougify [command] [args...]|
+      yield %|usage: rougify {global options} [command] [args...]|
       yield %||
       yield %|where <command> is one of:|
       yield %|	highlight	#{Highlight.desc}|
@@ -47,6 +47,9 @@ module Rouge
       yield %|	list		#{List.desc}|
       yield %|	guess		#{Guess.desc}|
       yield %|	version		#{Version.desc}|
+      yield %||
+      yield %|global options:|
+      yield %[	--require|-r <fname>	require <fname> after loading rouge]
       yield %||
       yield %|See `rougify help <command>` for more info.|
     end
@@ -62,18 +65,22 @@ module Rouge
     def self.parse(argv=ARGV)
       argv = normalize_syntax(argv)
 
-      mode = argv.shift
+      while (head = argv.shift)
+        case head
+        when '-h', '--help', 'help', '-help'
+          return Help.parse(argv)
+        when '--require', '-r'
+          require argv.shift
+        else
+          break
+        end
+      end
 
-      klass = class_from_arg(mode)
+      klass = class_from_arg(head)
       return klass.parse(argv) if klass
 
-      case mode
-      when '-h', '--help', 'help', '-help', nil
-        Help.parse(argv)
-      else
-        argv.unshift(mode) if mode
-        Highlight.parse(argv)
-      end
+      argv.unshift(head) if head
+      Highlight.parse(argv)
     end
 
     def initialize(options={})
@@ -91,7 +98,7 @@ module Rouge
       case arg
       when 'version', '--version', '-v'
         Version
-      when 'help'
+      when 'help', nil
         Help
       when 'highlight', 'hi'
         Highlight

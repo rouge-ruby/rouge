@@ -18,6 +18,7 @@ module Rouge
         SupportsPaging SupportsShouldProcess PositionalBinding
       ).join('|')
 
+      # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-6
       AUTO_VARS = %w(
         \$\$ \$\? \$\^ \$_
         \$args \$ConsoleFileName \$Error \$Event \$EventArgs \$EventSubscriber

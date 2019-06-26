@@ -10,8 +10,6 @@ module Rouge
       filenames '*.groovy', 'Jenkinsfile'
       mimetypes 'text/x-groovy'
 
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
-
       def self.detect?(text)
         return true if text.shebang?(/groovy/)
       end

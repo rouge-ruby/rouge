@@ -59,13 +59,13 @@ module Rouge
         rule %r/include/, Name::Tag, :include
 
         # end of block
-        rule %r/(end(case|unless|if))(\s*)(%\})/ do
-          groups Keyword::Reserved, nil, Text::Whitespace, Punctuation
+        rule %r/(end(?:case|unless|if))(\s*)(%\})/ do
+          groups Keyword::Reserved, Text::Whitespace, Punctuation
           pop!
         end
 
-        rule %r/(end([^\s%]+))(\s*)(%\})/ do
-          groups Name::Tag, nil, Text::Whitespace, Punctuation
+        rule %r/(end(?:[^\s%]+))(\s*)(%\})/ do
+          groups Name::Tag, Text::Whitespace, Punctuation
           pop!
         end
 
@@ -86,6 +86,29 @@ module Rouge
           token Text::Whitespace, m[6]
 
           push :variable_tag_markup
+        end
+
+        # iteration
+        rule %r/
+          (for)(\s+)
+          ([\w-]+)(\s+)
+          (in)(\s+)
+          (
+            (?: [^\s,\|'"] | (?:"[^"]*"|'[^']*') )+
+          )(\s*)
+        /x do |m|
+          groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace,
+                 Keyword::Reserved, Text::Whitespace
+
+          token_class = case m[7]
+                        when %r/'[^']*'/ then Str::Single
+                        when %r/"[^"]*"/ then Str::Double
+                        else
+                          Name::Variable
+                        end
+          token token_class, m[7]
+          token Text::Whitespace, m[8]
+          push :tag_markup
         end
 
         # other tags or blocks
@@ -128,8 +151,8 @@ module Rouge
 
         rule %r/([=!><]=?)/, Operator
 
-        rule %r/\b((!)|(not\b))/ do
-          groups nil, Operator, Operator::Word
+        rule %r/\b(?:(!)|(not\b))/ do
+          groups Operator, Operator::Word
         end
 
         rule %r/(contains)/, Operator::Word
@@ -145,8 +168,8 @@ module Rouge
       end
 
       state :operator do
-        rule %r/(\s*)((=|!|>|<)=?)(\s*)/ do
-          groups Text::Whitespace, Operator, nil, Text::Whitespace
+        rule %r/(\s*)((?:=|!|>|<)=?)(\s*)/ do
+          groups Text::Whitespace, Operator, Text::Whitespace
           pop!
         end
 
@@ -174,7 +197,7 @@ module Rouge
         end
 
         rule %r/(\{\{)(\s*)([^\s\}])(\s*)(\}\})/ do
-          groups Punctuation, Text::Whitespace, nil, Text::Whitespace, Punctuation
+          groups Punctuation, Text::Whitespace, Text, Text::Whitespace, Punctuation
         end
 
         mixin :number

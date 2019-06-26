@@ -38,7 +38,7 @@ module Rouge
     def self.doc
       return enum_for(:doc) unless block_given?
 
-      yield %|usage: rougify [command] [args...]|
+      yield %|usage: rougify {global options} [command] [args...]|
       yield %||
       yield %|where <command> is one of:|
       yield %|	highlight	#{Highlight.desc}|
@@ -47,6 +47,9 @@ module Rouge
       yield %|	list		#{List.desc}|
       yield %|	guess		#{Guess.desc}|
       yield %|	version		#{Version.desc}|
+      yield %||
+      yield %|global options:|
+      yield %[	--require|-r <fname>	require <fname> after loading rouge]
       yield %||
       yield %|See `rougify help <command>` for more info.|
     end
@@ -62,18 +65,22 @@ module Rouge
     def self.parse(argv=ARGV)
       argv = normalize_syntax(argv)
 
-      mode = argv.shift
+      while (head = argv.shift)
+        case head
+        when '-h', '--help', 'help', '-help'
+          return Help.parse(argv)
+        when '--require', '-r'
+          require argv.shift
+        else
+          break
+        end
+      end
 
-      klass = class_from_arg(mode)
+      klass = class_from_arg(head)
       return klass.parse(argv) if klass
 
-      case mode
-      when '-h', '--help', 'help', '-help', nil
-        Help.parse(argv)
-      else
-        argv.unshift(mode) if mode
-        Highlight.parse(argv)
-      end
+      argv.unshift(head) if head
+      Highlight.parse(argv)
     end
 
     def initialize(options={})
@@ -91,7 +98,7 @@ module Rouge
       case arg
       when 'version', '--version', '-v'
         Version
-      when 'help'
+      when 'help', nil
         Help
       when 'highlight', 'hi'
         Highlight
@@ -299,6 +306,7 @@ module Rouge
         when 'html-inline' then Formatters::HTMLInline.new(theme)
         when 'html-table' then Formatters::HTMLTable.new(Formatters::HTML.new)
         when 'null', 'raw', 'tokens' then Formatters::Null.new
+        when 'tex' then Formatters::Tex.new
         else
           error! "unknown formatter preset #{opts[:formatter]}"
         end
@@ -334,18 +342,30 @@ module Rouge
         yield %|respectively. Theme defaults to thankful_eyes.|
         yield %||
         yield %|options:|
-        yield %|  --scope	(default: .highlight) a css selector to scope by|
+        yield %|  --scope     	(default: .highlight) a css selector to scope by|
+        yield %|  --tex       	(default: false) render as TeX|
+        yield %|  --tex-prefix	(default: RG) a command prefix for TeX|
+        yield %|              	implies --tex if specified|
         yield %||
         yield %|available themes:|
         yield %|  #{Theme.registry.keys.sort.join(', ')}|
       end
 
       def self.parse(argv)
-        opts = { :theme_name => 'thankful_eyes' }
+        opts = {
+          :theme_name => 'thankful_eyes',
+          :tex => false,
+          :tex_prefix => 'RG'
+        }
 
         until argv.empty?
           arg = argv.shift
           case arg
+          when '--tex'
+            opts[:tex] = true
+          when '--tex-prefix'
+            opts[:tex] = true
+            opts[:tex_prefix] = argv.shift
           when /--(\w+)/
             opts[$1.tr('-', '_').to_sym] = argv.shift
           else
@@ -362,6 +382,10 @@ module Rouge
           or error! "unknown theme: #{theme_name}"
 
         @theme = theme_class.new(opts)
+        if opts[:tex]
+          tex_prefix = opts[:tex_prefix]
+          @theme = TexThemeRenderer.new(@theme, prefix: tex_prefix)
+        end
       end
 
       def run

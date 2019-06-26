@@ -59,7 +59,7 @@ module Rouge
 
       state :heredoc do
         rule %r/\n/, Str::Heredoc, :heredoc_nl
-        rule %r/[^$\n\$]+/, Str::Heredoc
+        rule %r/[^$\n]+/, Str::Heredoc
         rule %r/[$]/, Str::Heredoc
         mixin :strings
       end

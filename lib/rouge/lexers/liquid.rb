@@ -88,6 +88,29 @@ module Rouge
           push :variable_tag_markup
         end
 
+        # iteration
+        rule %r/
+          (for)(\s+)
+          ([\w-]+)(\s+)
+          (in)(\s+)
+          (
+            (?: [^\s,\|'"] | (?:"[^"]*"|'[^']*') )+
+          )(\s*)
+        /x do |m|
+          groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace,
+                 Keyword::Reserved, Text::Whitespace
+
+          token_class = case m[7]
+                        when %r/'[^']*'/ then Str::Single
+                        when %r/"[^"]*"/ then Str::Double
+                        else
+                          Name::Variable
+                        end
+          token token_class, m[7]
+          token Text::Whitespace, m[8]
+          push :tag_markup
+        end
+
         # other tags or blocks
         rule %r/([^\s%]+)(\s*)/ do
           groups Name::Tag, Text::Whitespace

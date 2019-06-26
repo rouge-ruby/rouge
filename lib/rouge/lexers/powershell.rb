@@ -14,8 +14,8 @@ module Rouge
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_commonparameters?view=powershell-6
       ATTRIBUTES = %w(
-        CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI Parameter
-        PositionalBinding SupportsPaging SupportsShouldProcess
+        ConfirmImpact DefaultParameterSetName HelpURI PositionalBinding
+        SupportsPaging SupportsShouldProcess
       ).join('|')
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-6
@@ -78,6 +78,7 @@ module Rouge
       ).join('|')
 
       state :variable do
+        rule %r/#{AUTO_VARS}/, Name::Builtin::Pseudo
         rule %r/(\$)(?:(\w+)(:))?(\w+|\{(?:[^`]|`.)+?\})/ do
           groups Name::Variable, Name::Namespace, Punctuation, Name::Variable
         end
@@ -196,7 +197,6 @@ module Rouge
         rule %r/(function)(\s+)(?:(\w+)(:))?(\w[-\w]+)/i do
           groups Keyword::Reserved, Text::Whitespace, Name::Namespace, Punctuation, Name::Function
         end
-        rule %r/(?:#{AUTO_VARS})\b/i, Name::Builtin::Pseudo
         rule %r/(?:#{KEYWORDS})\b(?!-)/i, Keyword::Reserved
 
         rule %r/(\w+)(\.)/ do |m|

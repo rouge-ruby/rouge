@@ -320,10 +320,13 @@ module Rouge
         formatter.format(lexer.lex(input), &method(:print))
       end
 
-      private_class_method def self.parse_cgi(str)
+      # TODO: When we drop support for Ruby 2.0, private_class_method can
+      # preface this method
+      def self.parse_cgi(str)
         pairs = CGI.parse(str).map { |k, v| [k.to_sym, v.first] }
         Hash[pairs]
       end
+      private_class_method :parse_cgi
     end
 
     class Style < CLI
@@ -459,8 +462,9 @@ module Rouge
       end
     end
 
-
-    private_class_method def self.normalize_syntax(argv)
+    # TODO: When we drop support for Ruby 2.0, private_class_method can preface
+    # this method
+    def self.normalize_syntax(argv)
       out = []
       argv.each do |arg|
         case arg
@@ -475,5 +479,6 @@ module Rouge
 
       out
     end
+    private_class_method :normalize_syntax
   end
 end

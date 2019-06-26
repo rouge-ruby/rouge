@@ -44,6 +44,8 @@ module Rouge
       CHARS =     lambda { |list| Regexp.new %/[#{list.join}]/  }
       NOT_CHARS = lambda { |list| Regexp.new %/[^#{list.join}]/ }
 
+      start { @brace_count = 0 }
+
       state :word do
         rule %r/\{\*\}/, Keyword
 
@@ -171,7 +173,6 @@ module Rouge
         # strings have to keep count of their internal braces, to support
         # for example { "{ }" }.
         rule %r/{/ do
-          @brace_count ||= 0
           @brace_count += 1
 
           token Str::Double

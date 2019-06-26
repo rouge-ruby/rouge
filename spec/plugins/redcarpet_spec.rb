@@ -13,7 +13,7 @@ describe Rouge::Plugins::Redcarpet do
   }
 
   let(:markdown) {
-    Redcarpet::Markdown.new(redcarpet.new, :fenced_code_blocks => true)
+    Redcarpet::Markdown.new(redcarpet.new({}), :fenced_code_blocks => true)
   }
 
   it 'renders a thing' do

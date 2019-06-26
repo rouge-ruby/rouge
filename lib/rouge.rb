@@ -4,6 +4,9 @@
 # stdlib
 require 'pathname'
 
+# version
+require 'rouge/version'
+
 # The containing module for Rouge
 module Rouge
   class << self
@@ -43,7 +46,6 @@ def lexer_dir(path = '')
   File.join(__dir__, 'rouge', 'lexers', path)
 end
 
-load_relative 'rouge/version'
 load_relative 'rouge/util'
 load_relative 'rouge/text_analyzer'
 load_relative 'rouge/token'

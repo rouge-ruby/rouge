@@ -19,8 +19,7 @@ module Rouge
 
       # self-modifying method that loads the keywords file
       def self.keywords
-        load File.join(__dir__, 'gherkin/keywords.rb')
-        keywords
+        @keywords ||= instance_eval(File.read(File.join(__dir__, "gherkin/keywords.rb")))
       end
 
       def self.step_regex

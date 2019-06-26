@@ -19,8 +19,7 @@ module Rouge
       end
 
       def self.builtins
-        load File.join(__dir__, 'matlab/builtins.rb')
-        self.builtins
+        @builtins ||= instance_eval(File.read(File.join(__dir__, "matlab/builtins.rb")))
       end
 
       state :root do

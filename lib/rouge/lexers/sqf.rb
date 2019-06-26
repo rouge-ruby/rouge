@@ -55,8 +55,7 @@ module Rouge
       end
 
       def self.commands
-        load File.join(__dir__, "sqf/commands.rb")
-        @commands = self.commands
+        @command ||= instance_eval(File.read(File.join(__dir__, "sqf/commands.rb")))
       end
 
       state :root do

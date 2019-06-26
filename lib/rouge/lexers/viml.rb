@@ -14,8 +14,7 @@ module Rouge
       mimetypes 'text/x-vim'
 
       def self.keywords
-        load File.join(__dir__, 'viml/keywords.rb')
-        self.keywords
+        @keywords ||= instance_eval(File.read(File.join(__dir__, 'viml/keywords.rb')))
       end
 
       state :root do

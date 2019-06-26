@@ -109,7 +109,7 @@ END
     end
 
     def render_blank(tok, &b)
-      out = "\\expandafter\\def#{token_name(tok)}#1{#1}"
+      "\\expandafter\\def#{token_name(tok)}#1{#1}"
     end
 
     def render_style(tok, style, &b)

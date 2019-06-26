@@ -25,8 +25,7 @@ module Rouge
       end
 
       def self.builtins
-        load File.join(__dir__, 'lua/builtins.rb')
-        self.builtins
+        @builtins ||= instance_eval(File.read(File.join(__dir__, 'lua/builtins.rb')))
       end
 
       def builtins

@@ -24,7 +24,7 @@ module Rouge
       # negative lookahead to filter out other classes
       op = %r(
         (?!#{whitespace}|#{letter}|#{digits}|#{parens}|#{delims})
-        [\u0020-\u007F\p{Sm}\p{So}]
+        (?:[\u0020-\u007F]|[\p{Sm}\p{So}])
       )x
 
       idrest = %r(#{letter}(?:#{letter}|#{digits})*(?:(?<=_)#{op}+)?)x

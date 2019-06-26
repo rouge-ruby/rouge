@@ -29,8 +29,7 @@ module Rouge
       end
 
       def self.builtins
-        load File.join(__dir__, 'php/builtins.rb')
-        self.builtins
+        @builtins ||= instance_eval(File.read(File.join(__dir__, "php/builtins.rb")))
       end
 
       def builtins

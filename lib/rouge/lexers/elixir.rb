@@ -120,7 +120,11 @@ module Rouge
               rule %r/[\\#]/, toktype
             end
 
-            uniq_chars = "#{open}#{close}".squeeze
+            uniq_chars = if open == close
+                           open.squeeze
+                         else
+                           "#{open}#{close}".squeeze
+                         end
             rule %r/[^##{uniq_chars}\\]+/m, toktype
           end
         end

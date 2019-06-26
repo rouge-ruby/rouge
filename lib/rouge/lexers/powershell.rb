@@ -14,8 +14,8 @@ module Rouge
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_commonparameters?view=powershell-6
       ATTRIBUTES = %w(
-        CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI
-        SupportsPaging SupportsShouldProcess PositionalBinding
+        CmdletBinding ConfirmImpact DefaultParameterSetName HelpURI Parameter
+        PositionalBinding SupportsPaging SupportsShouldProcess
       ).join('|')
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-6
@@ -151,16 +151,16 @@ module Rouge
       end
 
       state :bracket do
-        rule %r/\[/, Punctuation, :bracket
         rule %r/\]/, Punctuation, :pop!
-        rule %r/\s+/, Text::Whitespace
         rule %r/[A-Za-z]\w+\./, Name::Constant
-        rule %r/[A-Za-z]\w+/, Keyword::Type
-        rule %r/\d+/, Num::Integer
-        rule %r/\.{1,2}/, Operator
-        rule %r/\+/, Operator
-        rule %r/,/, Punctuation
-        mixin :variable
+        rule %r/([A-Za-z]\w+)/ do |m|
+          if ATTRIBUTES.include? m[0]
+            token Name::Builtin::Pseudo
+          else
+            token Keyword::Type
+          end
+        end
+        mixin :root
       end
 
       state :parameters do
@@ -188,8 +188,6 @@ module Rouge
 
         rule %r/\.\.(?=\.?\d)/, Operator
         rule %r/(?:#{OPERATORS})\b/i, Operator
-
-        rule %r/\[(?:#{ATTRIBUTES})\]/i, Name::Builtin::Pseudo
 
         rule %r/(class)(\s+)(\w+)/i do
           groups Keyword::Reserved, Text::Whitespace, Name::Class

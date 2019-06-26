@@ -131,7 +131,7 @@ module Rouge
       end
 
       state :hasht do
-        rule /\s+/, Text::Whitespace
+        rule %r/\s+/, Text::Whitespace
         rule %r/\}/, Punctuation, :pop!
         rule %r/"/, Str::Double, :dq
         rule %r/'/, Str::Single, :sq
@@ -142,7 +142,7 @@ module Rouge
       end
 
       state :array do
-        rule /\s+/, Text::Whitespace
+        rule %r/\s+/, Text::Whitespace
         rule %r/\)/, Punctuation, :pop!
         rule %r/"/, Str::Double, :dq
         rule %r/'/, Str::Single, :sq

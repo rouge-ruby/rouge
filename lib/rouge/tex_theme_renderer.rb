@@ -35,8 +35,8 @@ module Rouge
 END
 
       base = @theme.class.base_style
-      yield "\\definecolor{#{@prefix}@fgcolor}{HTML}{#{inline_name(base.fg)}}"
-      yield "\\definecolor{#{@prefix}@bgcolor}{HTML}{#{inline_name(base.bg)}}"
+      yield "\\definecolor{#{@prefix}@fgcolor}{HTML}{#{inline_name(base.fg || '#000000')}}"
+      yield "\\definecolor{#{@prefix}@bgcolor}{HTML}{#{inline_name(base.bg || '#FFFFFF')}}"
 
       render_palette(@theme.palette, &b)
 

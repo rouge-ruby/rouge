@@ -8,7 +8,7 @@ module Rouge
       desc "Xojo"
       tag 'xojo'
       aliases 'realbasic'
-      filenames '*.xojo_code', '*.xojo_window', '*.xojo_toolbar', '*.xojo_menu'
+      filenames '*.xojo_code', '*.xojo_window', '*.xojo_toolbar', '*.xojo_menu', '*.xojo_image', '*.rbbas', '*.rbfrm', '*.rbmnu', '*rbres', '*rbtbar'
 
       keywords = %w(
           addhandler aggregates array asc assigns attributes begin break
@@ -30,15 +30,15 @@ module Rouge
         )
 
       operator_words = %w(
-          addressof and as in is isa mod not or xor
+          addressof weakaddressof and as in is isa mod not or xor
         )
 
       state :root do
         rule %r/\s+/, Text::Whitespace
 
         rule %r/rem\b.*?$/i, Comment::Single
-        rule %r(//.*$), Comment::Single
-        rule %r/\#tag Note.*\#tag EndNote/m, Comment::Preproc
+        rule %r([//'].*$), Comment::Single
+        rule %r/\#tag Note.*?\#tag EndNote/mi, Comment::Preproc
         rule %r/\s*[#].*$/x, Comment::Preproc
 
         rule %r/".*?"/, Literal::String::Double

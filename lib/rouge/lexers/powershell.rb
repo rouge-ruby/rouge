@@ -168,6 +168,7 @@ module Rouge
         rule %r/\n/, Text::Whitespace, :pop!
         rule %r/[;(){}\]]/, Punctuation, :pop!
         rule %r/[|=]/, Operator, :pop!
+        rule %r/[.\/\\~\w][-.:\/\\~\w]*/, Name::Other
         rule %r/\w[-\w]+/, Name::Other
         mixin :root
       end
@@ -205,12 +206,17 @@ module Rouge
 
         rule %r/-\w+/, Name::Tag
 
-        rule %r/(\.)?([-\w]+)(\()?/ do
-          groups Operator, Name::Function, Punctuation
-          push :parameters
+        rule %r/(\w[-.:\/\\~\w]*)(\n)?/ do |m|
+          groups Name::Function, Text::Whitespace
+          push :parameters unless m[2]
         end
 
-        rule %r/[-+*\/%=!\.&|]/, Operator
+        rule %r/(\.)?([-\w]+)(?:(\()|(\n))?/ do |m|
+          groups Operator, Name::Function, Punctuation, Text::Whitespace
+          push :parameters unless m[3]
+        end
+
+        rule %r/[-+*\/%=!.&|]/, Operator
         rule %r/@\{/, Punctuation, :hasht
         rule %r/@\(/, Punctuation, :array
         rule %r/\[/, Punctuation, :bracket

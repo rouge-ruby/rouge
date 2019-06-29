@@ -1,5 +1,6 @@
 <%doc>
     This is a mason component. 
+    # This is a comment
 </%doc>
 
 <%args>
@@ -32,24 +33,23 @@ author => 'maria ines parnisari'
     my $cookies = Apache::Cookie->fetch;
 </%init>
 
-# A random block of Perl code
+% # A random block of Perl code
 <%perl>
+#testing a comment '<%args>..</%args>>'
     my @people = ('mary' 'john' 'pete' 'david');
     my $moduloOperation = $totalNumber % $numColumns ? 1 : 0;
 </%perl>
 
-# Note how each line of code begins with the mandatory %
+% # Note how each line of code begins with the mandatory %
 % foreach my $person (@people) {
     Name: <% $person %> age: <& 'path/to/component' &> location: (unkown!)
 % }
 
+%# this is a comment :)
+
             % this is not perl code. the % is not the first character of the line!
 
 <h1>Here at wally world you will find all the finest accoutrements.</h1>
-
-<h2>What follows is a table.</h2>
-
-<input type="password" name="pwd" />
 
 % my @array = qw(zero one two);
 
@@ -62,16 +62,16 @@ author => 'maria ines parnisari'
 %        }
 </table>
 
-# These are all component calls
+%# These are all component calls
 <& 'path/to/component' &>
 <& $component &>
 <& menu, width => 100, height => 200 &>
 
-# Special globals $m and $r
+%# Special globals $m and $r
 %   my $result = $m->base_comp;
 %   my $apache = $r->name;
 
-# a nice PRIVATE subcomponent that renders a hyperlink
+%# a PRIVATE subcomponent that renders a hyperlink
 <%def .make_a_link>
     <a href="<% $url %>"> <% $text %></a>
 <%args>
@@ -94,15 +94,12 @@ author => 'maria ines parnisari'
 </%def>
 
 <%method getPublic>
-%    my $text = "hello world";
-<b><% $text %></b>
-</%method>
-
-<%method getPrivate>
     <%perl>
         print "<font color=\"red\">some text!</font>";
         return 42;
     </%perl>
+    %    my $text = "hello world";
+<b><% $text %></b>
 </%method>
 
 <%text>
@@ -110,7 +107,6 @@ author => 'maria ines parnisari'
 %   my $variable = "hello";
 </%text>
 
-# This code runs at the very end of the component
 <%filter>
     s/(\w+)/\U$1/g #uppercase the entire thing
 </%filter>
@@ -127,10 +123,10 @@ author => 'maria ines parnisari'
         background: url("http://img.url/");
     }
 
-# TODO this should work but it doesn't 
-#   .dashed {
-#        background: url("<% $someUrl %>");
-#   }
+% # TODO this should work but it doesn't 
+% % #   .dashed {
+% #        background: url("<% $someUrl %>");
+% #   }
 
     .<% $wow %> .normal {
         background: url("http://img.url/");
@@ -145,11 +141,11 @@ author => 'maria ines parnisari'
 
 <!-- END HTML -->
 
-# Random Perl blocks
+% # Random Perl blocks
 <%perl>my $hello = "world";</%perl>
 <%perl> } </%perl>
 
-# Components with content (https://masonbook.houseabsolute.com/book/chapter-5.html)
+% # Components with content (https://masonbook.houseabsolute.com/book/chapter-5.html)
 <&| .top_menu_filter &>
    <& SELF:top_menu, %ARGS &>
 </&>

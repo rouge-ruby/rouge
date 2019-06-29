@@ -2,7 +2,6 @@
 
 describe Rouge::Lexers::Mason do
   let(:subject) { Rouge::Lexers::Mason.new }
-  let(:bom) { "\xEF\xBB\xBF" }
 
   describe 'guessing' do
     include Support::Guessing
@@ -28,23 +27,14 @@ describe Rouge::Lexers::Mason do
       This is a mason component.
   </%doc>
   
-  <%args>
-      $color         # this argument is required!
-      $size => 20    # default size
-      $country => undef   # this argument is optional, default value is 'undef'
-      @items => (1, 2, 'something else')
-      %pairs => (name => "John", age => 29)
-  </%args>
+  eos
   
-  # A random block of Perl code
-  <%perl>
-      my @people = ('mary' 'john' 'pete' 'david');
-  </%perl>
+    end
+    
+    it 'guesses by source when using component calls' do
+      assert_guess :filename => 'foo.m', :source => <<-eos
+      <& 'SELF:component' &>
   
-  # Note how each line of code begins with the mandatory %
-  % foreach my $person (@people) {
-      Name: <% $person %>
-  % }
   eos
   
     end

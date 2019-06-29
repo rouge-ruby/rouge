@@ -1,5 +1,6 @@
 <%doc>
     This is a mason component.
+    # This is a comment.
 </%doc>
 
 <%args>
@@ -10,12 +11,12 @@
     %pairs => (name => "John", age => 29)
 </%args>
 
-# A random block of Perl code
+% # A random block of Perl code
 <%perl>
     my @people = ('mary' 'john' 'pete' 'david');
 </%perl>
 
-# Note how each line of code begins with the mandatory %
+% # Note how each line of code begins with the mandatory %
 % foreach my $person (@people) {
     Name: <% $person %>
 % }

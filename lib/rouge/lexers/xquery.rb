@@ -49,8 +49,8 @@ module Rouge
       prepend :root do
         mixin :tags
 
-        rule %r/{/, Punctuation, :root
-        rule %r/}(`)?/ do
+        rule %r/\{/, Punctuation, :root
+        rule %r/\}(`)?/ do
           token Punctuation
           if stack.length > 1
             pop!
@@ -86,7 +86,7 @@ module Rouge
 
       # https://www.w3.org/TR/xquery-31/#id-string-constructors
       state :str_constructor do
-        rule %r/`{/, Punctuation, :root
+        rule %r/`\{/, Punctuation, :root
         rule %r/\]``/, Str, :pop!
         rule %r/[^`\]]+/m, Str
         rule %r/[`\]]/, Str
@@ -114,15 +114,15 @@ module Rouge
 
       state :quot_attr do
         rule %r/"/, Str, :pop!
-        rule %r/{{/, Str
-        rule %r/{/, Punctuation, :root
+        rule %r/\{\{/, Str
+        rule %r/\{/, Punctuation, :root
         rule %r/[^"{>]+/m, Str
       end
 
       state :apos_attr do
         rule %r/'/, Str, :pop!
-        rule %r/{{/, Str
-        rule %r/{/, Punctuation, :root
+        rule %r/\{\{/, Str
+        rule %r/\{/, Punctuation, :root
         rule %r/[^'{>]+/m, Str
       end
 
@@ -130,8 +130,8 @@ module Rouge
         rule %r/\s+/m, Text::Whitespace
         mixin :tags
 
-        rule %r/({{|}})/, Text
-        rule %r/{/, Punctuation, :root
+        rule %r/(\{\{|\}\})/, Text
+        rule %r/\{/, Punctuation, :root
 
         rule %r/[^{}<&]/, Text
 

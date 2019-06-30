@@ -179,7 +179,7 @@ module Rouge
         end
 
         # literal and folded scalars
-        rule %r/[\|>]/ do
+        rule %r/[\|>][+-]?/ do
           token Punctuation::Indicator
           push :block_scalar_content
           push :block_scalar_header

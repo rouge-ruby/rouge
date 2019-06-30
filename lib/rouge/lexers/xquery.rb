@@ -34,6 +34,8 @@ module Rouge
         ))
       end
 
+      # Mixin states:
+
       state :tags do
         rule %r/<#{XPath.qName}/, Name::Tag, :start_tag
         rule %r/<!--/, Comment, :xml_comment
@@ -41,6 +43,8 @@ module Rouge
         rule %r/<!\[CDATA\[.*?\]\]>/, Comment::Preproc
         rule %r/&\S*?;/, Name::Entity
       end
+
+      # Lexical states:
 
       prepend :root do
         mixin :tags
@@ -70,14 +74,12 @@ module Rouge
       end
 
       state :annotation do
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, :comment
+        mixin :commentsAndWhitespace
         rule XPath.eqName, Keyword::Declaration, :pop!
       end
 
       state :pragma do
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, :comment
+        mixin :commentsAndWhitespace
         rule %r/#\)/, Comment::Preproc, :pop!
         rule %r/./, Comment::Preproc
       end

@@ -93,6 +93,13 @@ module Rouge
         @constructorTypes ||= Regexp.union %w(function array map empty-sequence)
       end
 
+      # Mixin states:
+
+      state :commentsAndWhitespace do
+        rule XPath.commentStart, Comment, :comment
+        rule %r/\s+/m, Text::Whitespace
+      end
+
       # Lexical states:
       # https://www.w3.org/TR/xquery-xpath-parsing/#XPath-lexical-states
       # https://lists.w3.org/Archives/Public/public-qt-comments/2004Aug/0127.html
@@ -100,8 +107,7 @@ module Rouge
       # https://www.w3.org/TR/xpath-31/#id-revision-log
 
       state :root do
-        # Comments
-        rule XPath.commentStart, Comment, :comment
+        mixin :commentsAndWhitespace
 
         # Literals
         rule XPath.doubleLiteral, Num::Float
@@ -169,15 +175,10 @@ module Rouge
         rule %r/\.\.|\.|\*/, Operator
         rule %r/@/, Name::Attribute, :attrname
         rule XPath.eqName, Name::Tag
-
-        # Whitespace
-        rule %r/(\s+)/m, Text::Whitespace
       end
 
       state :singletype do
-        # Whitespace and comments
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, Comment, :comment
+        mixin :commentsAndWhitespace
 
         # Type name
         rule XPath.eqName do
@@ -187,9 +188,7 @@ module Rouge
       end
 
       state :itemtype do
-        # Whitespace and comments
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, Comment, :comment
+        mixin :commentsAndWhitespace
 
         # Type tests
         rule %r/(#{XPath.kindTest})(\s*)(#{XPath.openParen})/ do
@@ -254,9 +253,7 @@ module Rouge
 
       # For pseudo-parameters for the KindTest productions
       state :kindtest do
-        # Whitespace and comments
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, Comment, :comment
+        mixin :commentsAndWhitespace
 
         # Pseudo-parameters:
         rule %r/[?*]/, Operator
@@ -273,9 +270,7 @@ module Rouge
 
       # Similar to :kindtest, but recognizes NCNames instead of EQNames
       state :kindtestforpi do
-        # Whitespace and comments
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, Comment, :comment
+        mixin :commentsAndWhitespace
 
         # Pseudo-parameters
         rule XPath.ncName, Name
@@ -286,9 +281,7 @@ module Rouge
       end
 
       state :occurrenceindicator do
-        # Whitespace and comments
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, Comment, :comment
+        mixin :commentsAndWhitespace
 
         # Occurrence indicator
         rule %r/[?*+]/ do
@@ -303,9 +296,7 @@ module Rouge
       end
 
       state :varname do
-        # Whitespace and comments
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, Comment, :comment
+        mixin :commentsAndWhitespace
 
         # Function call
         rule %r/(#{XPath.eqName})(\s*)(#{XPath.openParen})/ do
@@ -318,9 +309,7 @@ module Rouge
       end
 
       state :attrname do
-        # Whitespace and comments
-        rule %r/\s+/m, Text::Whitespace
-        rule XPath.commentStart, Comment, :comment
+        mixin :commentsAndWhitespace
 
         # Attribute name
         rule XPath.eqName, Name::Attribute, :pop!

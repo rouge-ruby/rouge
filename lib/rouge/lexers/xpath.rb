@@ -157,16 +157,16 @@ module Rouge
         end
 
         # Paths
-        rule %r/\.\.|\.|\*/, Operator
         rule %r/(#{XPath.ncName})(\s*)(:)(\s*)(\*)/ do
-          groups Name::Tag, Text::Whitespace, Punctuation, Text::Whitespace, Keyword::Reserved
+          groups Name::Tag, Text::Whitespace, Punctuation, Text::Whitespace, Operator
         end
         rule %r/(\*)(\s*)(:)(\s*)(#{XPath.ncName})/ do
-          groups Keyword::Reserved, Text::Whitespace, Punctuation, Text::Whitespace, Name::Tag
+          groups Operator, Text::Whitespace, Punctuation, Text::Whitespace, Name::Tag
         end
         rule %r/(#{XPath.axes})(\s*)(::)/ do
           groups Keyword, Text::Whitespace, Operator
         end
+        rule %r/\.\.|\.|\*/, Operator
         rule %r/@/, Name::Attribute, :attrname
         rule XPath.eqName, Name::Tag
 

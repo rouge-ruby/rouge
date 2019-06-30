@@ -246,7 +246,7 @@ module Rouge
           end
         end
 
-        rule %r/[^\n\r\f\v]+/, Name::Constant
+        rule %r/[^\n\r\f\v]+/, Str
       end
 
       state :block_scalar_header do

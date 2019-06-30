@@ -65,6 +65,8 @@ Get-Process | Tee-Object -FilePath "C:\Test1\testfile2.txt" # Unapproved verb
 cd C:\Test1\
 C:\Test1\test2.cmd input.txt
 & "C:\Test1\test2.exe"
+\command.exe something
+command.exe arg --user ".\ENTER-YOUR-USERNAME" --password "ENTER-YOUR-PASSWORD"
 
 ###########################
 # Declarations

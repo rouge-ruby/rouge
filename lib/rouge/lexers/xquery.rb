@@ -50,7 +50,7 @@ module Rouge
         mixin :tags
 
         rule %r/\{/, Punctuation
-        rule %r/\}(`)?/ do
+        rule %r/\}`?/ do
           token Punctuation
           if stack.length > 1
             pop!

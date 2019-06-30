@@ -60,8 +60,8 @@ module Rouge
         )
       end
 
-      def self.kindTestForPi
-        @kindTestForPi ||= Regexp.union %w(processing-instruction)
+      def self.kindTestForPI
+        @kindTestForPI ||= Regexp.union %w(processing-instruction)
       end
 
       def self.axes
@@ -127,7 +127,7 @@ module Rouge
           groups Keyword, Text::Whitespace, Punctuation
           push :kindtest
         end
-        rule %r/(#{XPath.kindTestForPi})(\s*)(#{XPath.openParen})/ do # processing instruction kindtest
+        rule %r/(#{XPath.kindTestForPI})(\s*)(#{XPath.openParen})/ do # processing instruction kindtest
           groups Keyword, Text::Whitespace, Punctuation
           push :kindtestforpi
         end
@@ -198,7 +198,7 @@ module Rouge
           goto :occurrenceindicator
           push :kindtest
         end
-        rule %r/(#{XPath.kindTestForPi})(\s*)(#{XPath.openParen})/ do
+        rule %r/(#{XPath.kindTestForPI})(\s*)(#{XPath.openParen})/ do
           groups Keyword::Type, Text::Whitespace, Punctuation
           # go to kindtestforpi then occurrenceindicator
           goto :occurrenceindicator

@@ -49,7 +49,7 @@ module Rouge
       prepend :root do
         mixin :tags
 
-        rule %r/\{/, Punctuation, :root
+        rule %r/\{/, Punctuation
         rule %r/\}(`)?/ do
           token Punctuation
           if stack.length > 1

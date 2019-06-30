@@ -57,7 +57,7 @@ module Rouge
           groups Keyword, Text::Whitespace, Name::Namespace
         end
 
-        rule %r/\b(#{XQuery.keywords})\b/, Keyword
+        rule %r/(#{XQuery.keywords})\b/, Keyword
         rule %r/;/, Punctuation
         rule %r/%/, Keyword::Declaration, :annotation
 

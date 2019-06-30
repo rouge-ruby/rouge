@@ -114,8 +114,8 @@ module Rouge
 
         # Operators
         rule XPath.operators, Operator
-        rule %r/\b#{XPath.word_operators}\b/, Operator::Word
-        rule %r/\b#{XPath.keywords}\b/, Keyword
+        rule %r/#{XPath.word_operators}\b/, Operator::Word
+        rule %r/#{XPath.keywords}\b/, Keyword
         rule %r/[?,{}()\[\]]/, Punctuation
 
         # Functions
@@ -151,7 +151,7 @@ module Rouge
           groups Keyword, Text::Whitespace, Keyword
           push :itemtype
         end
-        rule %r/\b(as)\b/ do
+        rule %r/(as)\b/ do
           token Keyword
           push :itemtype
         end
@@ -225,18 +225,18 @@ module Rouge
           groups Keyword, Text::Whitespace, Keyword
           goto :itemtype
         end
-        rule %r/\b(as)\b/, Keyword
+        rule %r/(as)\b/, Keyword
 
         # Operators
         rule XPath.operators do
           token Operator
           pop!
         end
-        rule %r/\b#{XPath.word_operators}\b/ do
+        rule %r/#{XPath.word_operators}\b/ do
           token Operator::Word
           pop!
         end
-        rule %r/\b#{XPath.keywords}\b/ do
+        rule %r/#{XPath.keywords}\b/ do
           token Keyword
           pop!
         end

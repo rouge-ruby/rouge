@@ -36,7 +36,7 @@ module Rouge
       end
 
       def self.uriQName
-        @uriQName ||= %r/Q{[^{}]*}#{ncName}/
+        @uriQName ||= %r/Q\{[^{}]*\}#{ncName}/
       end
 
       def self.eqName

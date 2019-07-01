@@ -16,7 +16,7 @@ module Rouge
       end
   
       def self.detect?(text)
-        return false if text.doctype?(/[html|xml]/)
+        return false if text.doctype?(/[ht|x]ml/)
         return true if text.doctype?
       end
 

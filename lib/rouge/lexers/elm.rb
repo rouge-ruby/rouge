@@ -23,66 +23,66 @@ module Rouge
 
       state :root do
         # Whitespaces
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         # Single line comments
-        rule /--.*/, Comment::Single
+        rule %r/--.*/, Comment::Single
         # Multiline comments
-        rule /{-/, Comment::Multiline, :multiline_comment
+        rule %r/{-/, Comment::Multiline, :multiline_comment
 
         # Keywords
-        rule /\b(#{keywords.join('|')})\b/, Keyword
+        rule %r/\b(#{keywords.join('|')})\b/, Keyword
 
         # Variable or a function
-        rule /[a-z][\w]*/, Name
+        rule %r/[a-z]\w*/, Name
         # Underscore is a name for a variable, when it won't be used later
-        rule /_/, Name
+        rule %r/_/, Name
         # Type
-        rule /[A-Z][\w]*/, Keyword::Type        
+        rule %r/[A-Z]\w*/, Keyword::Type
 
         # Two symbol operators: -> :: // .. && || ++ |> <| << >> == /= <= >=
-        rule /(->|::|\/\/|\.\.|&&|\|\||\+\+|\|>|<\||>>|<<|==|\/=|<=|>=)/, Operator
+        rule %r/(->|::|\/\/|\.\.|&&|\|\||\+\+|\|>|<\||>>|<<|==|\/=|<=|>=)/, Operator
         # One symbol operators: + - / * % = < > ^ | !
-        rule /[+-\/*%=<>^\|!]/, Operator
+        rule %r/[+-\/*%=<>^\|!]/, Operator
         # Lambda operator
-        rule /\\/, Operator
+        rule %r/\\/, Operator
         # Not standard Elm operators, but these symbols can be used for custom inflix operators. We need to highlight them as operators as well.
-        rule /[@\#$&~?]/, Operator
+        rule %r/[@\#$&~?]/, Operator
 
         # Single, double quotes, and triple double quotes
-        rule /"""/, Str, :multiline_string
-        rule /'(\\.|.)'/, Str::Char        
-        rule /"/, Str, :double_quote
+        rule %r/"""/, Str, :multiline_string
+        rule %r/'(\\.|.)'/, Str::Char        
+        rule %r/"/, Str, :double_quote
 
         # Numbers
-        rule /0x[\da-f]+/i, Num::Hex
-        rule /\d+e[+-]?\d+/i, Num::Float
-        rule /\d+\.\d+(e[+-]?\d+)?/i, Num::Float
-        rule /\d+/, Num::Integer
+        rule %r/0x[\da-f]+/i, Num::Hex
+        rule %r/\d+e[+-]?\d+/i, Num::Float
+        rule %r/\d+\.\d+(e[+-]?\d+)?/i, Num::Float
+        rule %r/\d+/, Num::Integer
 
         # Punctuation: [ ] ( ) , ; ` { } :
-        rule /[\[\](),;`{}:]/, Punctuation
+        rule %r/[\[\](),;`{}:]/, Punctuation
       end
 
       # Multiline and nested commenting
       state :multiline_comment do
-        rule /-}/, Comment::Multiline, :pop!
-        rule /{-/, Comment::Multiline, :multiline_comment
-        rule /[^-{}]+/, Comment::Multiline
-        rule /[-{}]/, Comment::Multiline
+        rule %r/-}/, Comment::Multiline, :pop!
+        rule %r/{-/, Comment::Multiline, :multiline_comment
+        rule %r/[^-{}]+/, Comment::Multiline
+        rule %r/[-{}]/, Comment::Multiline
       end
 
       # Double quotes
       state :double_quote do
-        rule /[^\\"]+/, Str::Double
-        rule /\\"/, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule %r/[^\\"]+/, Str::Double
+        rule %r/\\"/, Str::Escape
+        rule %r/"/, Str::Double, :pop!
       end
 
       # Multiple line string with tripple double quotes, e.g. """ multi """
       state :multiline_string do
-        rule /\s*"""/, Str, :pop!
-        rule /.*/, Str
-        rule /\s*/, Str
+        rule %r/\s*"""/, Str, :pop!
+        rule %r/.*/, Str
+        rule %r/\s*/, Str
       end
 
     end

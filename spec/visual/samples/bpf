@@ -1,0 +1,117 @@
+bpf_prog2:
+	r6 = r1
+	r0 = *(u8 *)skb[23]
+	*(u32 *)(r10 - 4) = r0
+	r1 = *(u32 *)(r6 + 4)
+	if r1 != 0 goto +13 <LBB0_4>
+	r2 = r10
+	r2 += -4
+	r1 = 0 ll
+	call 1	/* lookup */
+	if r0 == 0 goto +2 <LBB0_3>
+	r1 = *(u32 *)(r6 + 0)
+	lock *(u64 *)(r0 + 0) += r1
+
+LBB0_3:
+	r1 = r6
+	r2 = 0 ll
+	r3 = 0
+	call 12
+
+LBB0_4:
+	r0 = 0
+	exit
+
+
+  r0 = * (u8 *)skb[0]    // BPF_LD | BPF_ABS | BPF_B
+  r0 = *(u16 *)skb[2]    // BPF_LD | BPF_ABS | BPF_H
+  r0 = * (u32*)skb[4]    // BPF_LD | BPF_ABS | BPF_W
+
+  r0 = * (u8 *)skb[r0]   // BPF_LD | BPF_IND | BPF_B
+  r0 = *  (u16 *)skb[r1] // BPF_LD | BPF_IND | BPF_H
+  r0 = *(u32 *)skb[r2]   // BPF_LD | BPF_IND | BPF_W
+
+  r9 = 0xffffffff ll     // BPF_LD | BPF_DW | BPF_IMM
+  r9 = 8589934591 ll     // BPF_LD | BPF_DW | BPF_IMM
+  r9 = 0x1ffffffff ll    // BPF_LD | BPF_DW | BPF_IMM
+  r9 = dummy_map  ll     // BPF_LD | BPF_DW | BPF_IMM
+
+// ======== BPF_LDX Class ========
+  r5 = *(u8 *)(r0 + 0)   // BPF_LDX | BPF_B
+  r6 = *(u16 *)(r1 + 8)  // BPF_LDX | BPF_H
+  r7 = *(u32 *)(r2 + 16) // BPF_LDX | BPF_W
+  r8 = *(u64 *)(r3 - 30) // BPF_LDX | BPF_DW
+
+// ======== BPF_STX Class ========
+  *(u8 *)(r0 + 0) = r7    // BPF_STX | BPF_B
+  *(u16 *)(r1 + 8) = r8   // BPF_STX | BPF_H
+  *(u32 *)(r2 + 16) = r9  // BPF_STX | BPF_W
+  *(u64 *)(r3 - 30) = r10 // BPF_STX | BPF_DW
+
+  lock *(u32 *)(r2 + 16) += r9  // BPF_STX | BPF_W | BPF_XADD
+  lock *(u64 *)(r3 - 30) += r10 // BPF_STX | BPF_DW | BPF_XADD
+
+// ======== BPF_JMP Class ========
+  goto Llabel0               // BPF_JA
+  call 1                     // BPF_CALL
+  exit                       // BPF_EXIT
+
+  if r0 == r1 goto Llabel0   // BPF_JEQ  | BPF_X
+  if r3 != r4 goto Llabel0   // BPF_JNE  | BPF_X
+
+  if r1 > r2 goto Llabel0    // BPF_JGT  | BPF_X
+  if r2 >= r3 goto Llabel0   // BPF_JGE  | BPF_X
+  if r4 s> r5 goto Llabel0   // BPF_JSGT | BPF_X
+  if r5 s>= r6 goto Llabel0  // BPF_JSGE | BPF_X
+
+  if r6 < r7 goto Llabel0    // BPF_JLT  | BPF_X
+  if r7 <= r8 goto Llabel0   // BPF_JLE  | BPF_X
+  if r8 s< r9 goto Llabel0   // BPF_JSLT | BPF_X
+  if r9 s<= r10 goto Llabel0 // BPF_JSLE | BPF_X
+
+  if r0 == 0 goto Llabel0           // BPF_JEQ  | BPF_K
+  if r3 != -1 goto Llabel0          // BPF_JNE  | BPF_K
+
+  if r1 > 64 goto Llabel0           // BPF_JGT  | BPF_K
+  if r2 >= 0xffffffff goto Llabel0  // BPF_JGE  | BPF_K
+  if r4 s> 0xffffffff goto Llabel0  // BPF_JSGT | BPF_K
+  if r5 s>= 0x7fffffff goto Llabel0 // BPF_JSGE | BPF_K
+
+  if r6 < 0xff goto Llabel0         // BPF_JLT  | BPF_K
+  if r7 <= 0xffff goto Llabel0      // BPF_JLE  | BPF_K
+  if r8 s< 0 goto Llabel0           // BPF_JSLT | BPF_K
+  if r9 s<= -1 goto Llabel0         // BPF_JSLE | BPF_K
+
+// ======== BPF_ALU64 Class ========
+  r0 += r1    // BPF_ADD  | BPF_X
+  r1 -= r2    // BPF_SUB  | BPF_X
+  r2 *= r3    // BPF_MUL  | BPF_X
+  r3 /= r4    // BPF_DIV  | BPF_X
+
+Llabel0 :
+  r2 = -r2    // BPF_NEG
+  r4 |= r5    // BPF_OR   | BPF_X
+  r5 &= r6    // BPF_AND  | BPF_X
+  r6 <<= r7   // BPF_LSH  | BPF_X
+  r7 >>= r8   // BPF_RSH  | BPF_X
+  r8 ^= r9    // BPF_XOR  | BPF_X
+  r9 = r10    // BPF_MOV  | BPF_X
+  r10 s>>= r0 // BPF_ARSH | BPF_X
+
+  r1 = be16 r1  // BPF_END  | BPF_TO_BE
+  r2 = be32 r2  // BPF_END  | BPF_TO_BE
+  r3 = be64 r3  // BPF_END  | BPF_TO_BE
+
+  r0 += 1           // BPF_ADD  | BPF_K
+  r1 -= 0x1         // BPF_SUB  | BPF_K
+  r2 *= -4          // BPF_MUL  | BPF_K
+  r3 /= 5           // BPF_DIV  | BPF_K
+
+  r4 |= 0xff        // BPF_OR   | BPF_K
+  r5 &= 0xFF        // BPF_AND  | BPF_K
+  r6 <<= 63         // BPF_LSH  | BPF_K
+  r7 >>= 32         // BPF_RSH  | BPF_K
+  r8 ^= 0           // BPF_XOR  | BPF_K
+  r9 = 1            // BPF_MOV  | BPF_K
+  r9 = 0xffffffff   // BPF_MOV  | BPF_K
+  r10 s>>= 64       // BPF_ARSH | BPF_K

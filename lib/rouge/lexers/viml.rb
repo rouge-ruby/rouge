@@ -14,18 +14,18 @@ module Rouge
       mimetypes 'text/x-vim'
 
       def self.keywords
-        load Pathname.new(__FILE__).dirname.join('viml/keywords.rb')
+        load File.join(__dir__, 'viml/keywords.rb')
         self.keywords
       end
 
       state :root do
-        rule /^(\s*)(".*?)$/ do
+        rule %r/^(\s*)(".*?)$/ do
           groups Text, Comment
         end
 
-        rule /^\s*\\/, Str::Escape
+        rule %r/^\s*\\/, Str::Escape
 
-        rule /[ \t]+/, Text
+        rule %r/[ \t]+/, Text
 
         # TODO: regexes can have other delimiters
         rule %r(/(\\\\|\\/|[^\n/])*/), Str::Regex
@@ -33,19 +33,19 @@ module Rouge
         rule %r('(\\\\|\\'|[^\n'])*'), Str::Single
 
         # if it's not a string, it's a comment.
-        rule /(?<=\s)"[^-:.%#=*].*?$/, Comment
+        rule %r/(?<=\s)"[^-:.%#=*].*?$/, Comment
 
-        rule /-?\d+/, Num
-        rule /#[0-9a-f]{6}/i, Num::Hex
-        rule /^:/, Punctuation
-        rule /[():<>+=!\[\]{}\|,~.-]/, Punctuation
-        rule /\b(let|if|else|endif|elseif|fun|function|endfunction)\b/,
+        rule %r/-?\d+/, Num
+        rule %r/#[0-9a-f]{6}/i, Num::Hex
+        rule %r/^:/, Punctuation
+        rule %r/[():<>+=!\[\]{}\|,~.-]/, Punctuation
+        rule %r/\b(let|if|else|endif|elseif|fun|function|endfunction)\b/,
           Keyword
 
-        rule /\b(NONE|bold|italic|underline|dark|light)\b/, Name::Builtin
+        rule %r/\b(NONE|bold|italic|underline|dark|light)\b/, Name::Builtin
 
-        rule /[absg]:\w+\b/, Name::Variable
-        rule /\b\w+\b/ do |m|
+        rule %r/[absg]:\w+\b/, Name::Variable
+        rule %r/\b\w+\b/ do |m|
           name = m[0]
           keywords = self.class.keywords
 
@@ -61,7 +61,7 @@ module Rouge
         end
 
         # no errors in VimL!
-        rule /./m, Text
+        rule %r/./m, Text
       end
 
       def mapping_contains?(mapping, word)

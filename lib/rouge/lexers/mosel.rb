@@ -166,7 +166,7 @@ module Rouge
 
       state :whitespace do
         # Spaces
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         # ! Comments
         rule %r((!).*$\n?), Comment::Single
         # (! Comments !)
@@ -182,14 +182,14 @@ module Rouge
       # The escape sequences are not interpreted if they are contained in strings that are enclosed in single quotes.
 
       state :single_quotes do
-        rule /'/, Str::Single, :pop!
-        rule /[^']+/, Str::Single
+        rule %r/'/, Str::Single, :pop!
+        rule %r/[^']+/, Str::Single
       end
 
       state :double_quotes do
-        rule /"/, Str::Double, :pop!
-        rule /(\\"|\\[0-7]{1,3}\D|\\[abfnrtv]|\\\\)/, Str::Escape
-        rule /[^"]/, Str::Double
+        rule %r/"/, Str::Double, :pop!
+        rule %r/(\\"|\\[0-7]{1,3}\D|\\[abfnrtv]|\\\\)/, Str::Escape
+        rule %r/[^"]/, Str::Double
       end
 
       state :base do
@@ -200,25 +200,25 @@ module Rouge
         rule %r{((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?}, Num
         rule %r{[~!@#\$%\^&\*\(\)\+`\-={}\[\]:;<>\?,\.\/\|\\]}, Punctuation
 #        rule %r{'([^']|'')*'}, Str
-#        rule /"(\\\\|\\"|[^"])*"/, Str
+#        rule %r/"(\\\\|\\"|[^"])*"/, Str
         
 
 
-        rule /(true|false)\b/i, Name::Builtin
-        rule /\b(#{core_keywords.join('|')})\b/i, Keyword
-        rule /\b(#{core_functions.join('|')})\b/, Name::Builtin
+        rule %r/(true|false)\b/i, Name::Builtin
+        rule %r/\b(#{core_keywords.join('|')})\b/i, Keyword
+        rule %r/\b(#{core_functions.join('|')})\b/, Name::Builtin
         
         
 
-        rule /\b(#{mmxprs_functions.join('|')})\b/, Name::Function
-        rule /\b(#{mmxpres_constants.join('|')})\b/, Name::Constant
-        rule /\b(#{mmxprs_parameters.join('|')})\b/i, Name::Property
+        rule %r/\b(#{mmxprs_functions.join('|')})\b/, Name::Function
+        rule %r/\b(#{mmxpres_constants.join('|')})\b/, Name::Constant
+        rule %r/\b(#{mmxprs_parameters.join('|')})\b/i, Name::Property
                   
-        rule /\b(#{mmsystem_functions.join('|')})\b/i, Name::Function
-        rule /\b(#{mmsystem_parameters.join('|')})\b/, Name::Property
+        rule %r/\b(#{mmsystem_functions.join('|')})\b/i, Name::Function
+        rule %r/\b(#{mmsystem_parameters.join('|')})\b/, Name::Property
           
-        rule /\b(#{mmjobs_functions.join('|')})\b/i, Name::Function
-        rule /\b(#{mmjobs_parameters.join('|')})\b/, Name::Property
+        rule %r/\b(#{mmjobs_functions.join('|')})\b/i, Name::Function
+        rule %r/\b(#{mmjobs_parameters.join('|')})\b/, Name::Property
 
         rule id, Name
       end

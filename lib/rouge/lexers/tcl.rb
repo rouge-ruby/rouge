@@ -39,33 +39,33 @@ module Rouge
       CLOSE = %w| \) \] \} |
       ALL = OPEN + CLOSE
       END_LINE = CLOSE + %w(; \n)
-      END_WORD = END_LINE + %w(\s)
+      END_WORD = END_LINE + %w(\r \t \v)
 
       CHARS =     lambda { |list| Regexp.new %/[#{list.join}]/  }
       NOT_CHARS = lambda { |list| Regexp.new %/[^#{list.join}]/ }
 
       state :word do
-        rule /\{\*\}/, Keyword
+        rule %r/\{\*\}/, Keyword
 
         mixin :brace_abort
         mixin :interp
-        rule /\{/, Punctuation, :brace
-        rule /\(/, Punctuation,   :paren
-        rule /"/,  Str::Double, :string
-        rule /#{NOT_CHARS[END_WORD]}+?(?=#{CHARS[OPEN+['\\\\']]})/, Text
+        rule %r/\{/, Punctuation, :brace
+        rule %r/\(/, Punctuation,   :paren
+        rule %r/"/,  Str::Double, :string
+        rule %r/#{NOT_CHARS[END_WORD]}+?(?=#{CHARS[OPEN+['\\\\']]})/, Text
       end
 
       def self.gen_command_state(name='')
         state(:"command#{name}") do
           mixin :word
 
-          rule /##{NOT_CHARS[END_LINE]}+/, Comment::Single
+          rule %r/##{NOT_CHARS[END_LINE]}+/, Comment::Single
 
-          rule /(?=#{CHARS[END_WORD]})/ do
+          rule %r/(?=#{CHARS[END_WORD]})/ do
             push :"params#{name}"
           end
 
-          rule /#{NOT_CHARS[END_WORD]}+/ do |m|
+          rule %r/#{NOT_CHARS[END_WORD]}+/ do |m|
             if KEYWORDS.include? m[0]
               token Keyword
             elsif BUILTINS.include? m[0]
@@ -116,7 +116,7 @@ module Rouge
       # such things as [ abc" ] are a runtime error, but will still
       # parse.  Currently something like this will muck up the lex.
       state :brace_abort do
-        rule /}/ do
+        rule %r/}/ do
           if in_state? :brace
             pop! until state? :brace
             pop!
@@ -128,12 +128,12 @@ module Rouge
       end
 
       state :params do
-        rule /;/, Punctuation, :pop!
-        rule /\n/, Text, :pop!
-        rule /else|elseif|then/, Keyword
+        rule %r/;/, Punctuation, :pop!
+        rule %r/\n/, Text, :pop!
+        rule %r/else|elseif|then/, Keyword
         mixin :word
         mixin :whitespace
-        rule /#{NOT_CHARS[END_WORD]}+/, Text
+        rule %r/#{NOT_CHARS[END_WORD]}+/, Text
       end
 
       gen_delimiter_states :brace,   /\}/, :strict => false
@@ -147,37 +147,37 @@ module Rouge
 
       state :whitespace do
         # not a multiline regex because we want to capture \n sometimes
-        rule /\s+/, Text
+        rule %r/\s+/, Text
       end
 
       state :interp do
-        rule /\[/, Punctuation, :bracket
-        rule /\$[a-z0-9.:-]+/, Name::Variable
-        rule /\$\{.*?\}/m, Name::Variable
-        rule /\$/, Text
+        rule %r/\[/, Punctuation, :bracket
+        rule %r/\$[a-z0-9.:-]+/, Name::Variable
+        rule %r/\$\{.*?\}/m, Name::Variable
+        rule %r/\$/, Text
 
         # escape sequences
-        rule /\\[0-7]{3}/, Str::Escape
-        rule /\\x[0-9a-f]{2}/i, Str::Escape
-        rule /\\u[0-9a-f]{4}/i, Str::Escape
-        rule /\\./m, Str::Escape
+        rule %r/\\[0-7]{3}/, Str::Escape
+        rule %r/\\x[0-9a-f]{2}/i, Str::Escape
+        rule %r/\\u[0-9a-f]{4}/i, Str::Escape
+        rule %r/\\./m, Str::Escape
       end
 
       state :string do
-        rule /"/, Str::Double, :pop!
+        rule %r/"/, Str::Double, :pop!
         mixin :interp
-        rule /[^\\\[\$"{}]+/m, Str::Double
+        rule %r/[^\\\[\$"{}]+/m, Str::Double
 
         # strings have to keep count of their internal braces, to support
         # for example { "{ }" }.
-        rule /{/ do
+        rule %r/{/ do
           @brace_count ||= 0
           @brace_count += 1
 
           token Str::Double
         end
 
-        rule /}/ do
+        rule %r/}/ do
           if in_state? :brace and @brace_count.to_i == 0
             pop! until state? :brace
             pop!

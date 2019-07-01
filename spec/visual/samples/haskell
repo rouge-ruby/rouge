@@ -1,3 +1,10 @@
+
+-- Initial tests
+
+_a'
+Ab'
+'Cd'
+
 ---------------------------------------------------------------------
 -- SmallCheck: another lightweight testing library.
 -- Colin Runciman, August 2006

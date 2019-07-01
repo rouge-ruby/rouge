@@ -11,7 +11,6 @@ module Rouge
       title "Nasm"
       desc "Netwide Assembler"
 
-      ws = %r((?:\s|;.*?\n/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       #todo: pull more instructions from: http://www.nasm.us/doc/nasmdocb.html
@@ -119,57 +118,57 @@ module Rouge
       end
 
       state :inline_whitespace do
-        rule /[ \t\r]+/, Text
+        rule %r/[ \t\r]+/, Text
       end
 
       state :whitespace do
-        rule /\n+/m, Text, :expr_bol
+        rule %r/\n+/m, Text, :expr_bol
         rule %r(//(\\.|.)*?\n), Comment::Single, :expr_bol
         mixin :inline_whitespace
       end
 
       state :expr_whitespace do
-        rule /\n+/m, Text, :expr_bol
+        rule %r/\n+/m, Text, :expr_bol
         mixin :whitespace
       end
 
       state :root do
         mixin :expr_whitespace
         rule(//) { push :statement }
-        rule /^%[a-zA-Z0-9]+/, Comment::Preproc, :statement
+        rule %r/^%[a-zA-Z0-9]+/, Comment::Preproc, :statement
 
         rule(
           %r(&=|[*]=|/=|\\=|\^=|\+=|-=|<<=|>>=|<<|>>|:=|<=|>=|<>|[-&*/\\^+=<>.]),
           Operator
         )
-        rule /;.*/, Comment, :statement
-        rule /^[a-zA-Z]+[a-zA-Z0-9]*:/, Name::Function
-        rule /;.*/, Comment
+        rule %r/;.*/, Comment, :statement
+        rule %r/^[a-zA-Z]+[a-zA-Z0-9]*:/, Name::Function
+        rule %r/;.*/, Comment
       end
 
       state :statement do
         mixin :expr_whitespace
         mixin :statements
-        rule /;.*/, Comment
-        rule /^%[a-zA-Z0-9]+/, Comment::Preproc
-        rule /[a-zA-Z]+%[0-9]+:/, Name::Function
+        rule %r/;.*/, Comment
+        rule %r/^%[a-zA-Z0-9]+/, Comment::Preproc
+        rule %r/[a-zA-Z]+%[0-9]+:/, Name::Function
       end
 
       state :statements do
         mixin :whitespace
-        rule /L?"/, Str, :string
-        rule /[a-zA-Z]+%[0-9]+:/, Name::Function  #labels/subroutines/functions
+        rule %r/L?"/, Str, :string
+        rule %r/[a-zA-Z]+%[0-9]+:/, Name::Function  #labels/subroutines/functions
         rule %r(L?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
-        rule /0x[0-9a-f]+[lu]*/i, Num::Hex
-        rule /\d+[lu]*/i, Num::Integer
+        rule %r/0x[0-9a-f]+[lu]*/i, Num::Hex
+        rule %r/\d+[lu]*/i, Num::Integer
         rule %r(\*/), Error
         rule %r([~&*+=\|?:<>/-]), Operator
-        rule /[(),.]/, Punctuation
-        rule /\[[a-zA-Z0-9]*\]/, Punctuation
-        rule /%[0-9]+/, Keyword::Reserved
-        rule /[a-zA-Z]+%[0-9]+/, Name::Function  #labels/subroutines/functions
+        rule %r/[(),.]/, Punctuation
+        rule %r/\[[a-zA-Z0-9]*\]/, Punctuation
+        rule %r/%[0-9]+/, Keyword::Reserved
+        rule %r/[a-zA-Z]+%[0-9]+/, Name::Function  #labels/subroutines/functions
 
-        #rule /(?<!\.)#{id}/ do |m|
+        #rule %r/(?<!\.)#{id}/ do |m|
         rule id do |m|
           name = m[0]
 
@@ -188,11 +187,11 @@ module Rouge
       end
 
       state :string do
-        rule /"/, Str, :pop!
-        rule /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
-        rule /[^\\"\n]+/, Str
-        rule /\\\n/, Str
-        rule /\\/, Str # stray backslash
+        rule %r/"/, Str, :pop!
+        rule %r/\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
+        rule %r/[^\\"\n]+/, Str
+        rule %r/\\\n/, Str
+        rule %r/\\/, Str # stray backslash
       end
     end
   end

@@ -319,28 +319,28 @@ module Rouge
       identifiers = %r(\b([a-zA-Z]\w*)\b)
 
       state :root do
-        rule /\s+/, Text::Whitespace
-        rule /¬\n/, Literal::String::Escape
-        rule /'s\s+/, Text
-        rule /(--|#).*?$/, Comment::Single
-        rule /\(\*/, Comment::Multiline
-        rule /[\(\){}!,.:]/, Punctuation
-        rule /(«)([^»]+)(»)/ do |match|
+        rule %r/\s+/, Text::Whitespace
+        rule %r/¬\n/, Literal::String::Escape
+        rule %r/'s\s+/, Text
+        rule %r/(--|#).*?$/, Comment::Single
+        rule %r/\(\*/, Comment::Multiline
+        rule %r/[\(\){}!,.:]/, Punctuation
+        rule %r/(«)([^»]+)(»)/ do |match|
           token Text, match[1]
           token Name::Builtin, match[2]
           token Text, match[3]
         end
-        rule /\b((?:considering|ignoring)\s*)(application responses|case|diacriticals|hyphens|numeric strings|punctuation|white space)/ do |match|
+        rule %r/\b((?:considering|ignoring)\s*)(application responses|case|diacriticals|hyphens|numeric strings|punctuation|white space)/ do |match|
           token Keyword, match[1]
           token Name::Builtin, match[2]
         end
-        rule /(-|\*|\+|&|≠|>=?|<=?|=|≥|≤|\/|÷|\^)/, Operator
+        rule %r/(-|\*|\+|&|≠|>=?|<=?|=|≥|≤|\/|÷|\^)/, Operator
         rule operators, Operator::Word
-        rule /^(\s*(?:on|end)\s+)'r'(%s)/ do |match|
+        rule %r/^(\s*(?:on|end)\s+)'r'(%s)/ do |match|
           token Keyword, match[1]
           token Name::Function, match[2]
         end
-        rule /^(\s*)(in|on|script|to)(\s+)/ do |match|
+        rule %r/^(\s*)(in|on|script|to)(\s+)/ do |match|
           token Text, match[1]
           token Keyword, match[2]
           token Text, match[3]
@@ -349,6 +349,7 @@ module Rouge
           token Keyword, match[1]
           token Name::Class, match[2]
         end
+        rule literals, Name::Builtin
         rule commands, Name::Builtin
         rule controls, Keyword
         rule declarations, Keyword
@@ -359,10 +360,10 @@ module Rouge
         rule studio_classes, Name::Builtin
         rule studio_commands, Name::Builtin
         rule references, Name::Builtin
-        rule /"(\\\\|\\"|[^"])*"/, Literal::String::Double
+        rule %r/"(\\\\|\\"|[^"])*"/, Literal::String::Double
         rule identifiers, Name::Variable
-        rule /[-+]?(\d+\.\d*|\d*\.\d+)(E[-+][0-9]+)?/, Literal::Number::Float
-        rule /[-+]?\d+/, Literal::Number::Integer
+        rule %r/[-+]?(\d+\.\d*|\d*\.\d+)(E[-+][0-9]+)?/, Literal::Number::Float
+        rule %r/[-+]?\d+/, Literal::Number::Integer
       end
     end
   end

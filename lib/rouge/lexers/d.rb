@@ -41,8 +41,8 @@ module Rouge
       )
 
       state :whitespace do
-        rule /\n/m, Text
-        rule /\s+/m, Text
+        rule %r/\n/m, Text
+        rule %r/\s+/m, Text
       end
 
       state :root do
@@ -52,58 +52,58 @@ module Rouge
         rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/), Comment::Multiline
         rule %r(/\+), Comment::Multiline, :nested_comment
         # Keywords
-        rule /(#{keywords.join('|')})\b/, Keyword
-        rule /(#{keywords_type.join('|')})\b/, Keyword::Type
-        rule /(false|true|null)\b/, Keyword::Constant
-        rule /(#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo
-        rule /macro\b/, Keyword::Reserved
-        rule /(string|wstring|dstring|size_t|ptrdiff_t)\b/, Name::Builtin
+        rule %r/(#{keywords.join('|')})\b/, Keyword
+        rule %r/(#{keywords_type.join('|')})\b/, Keyword::Type
+        rule %r/(false|true|null)\b/, Keyword::Constant
+        rule %r/(#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo
+        rule %r/macro\b/, Keyword::Reserved
+        rule %r/(string|wstring|dstring|size_t|ptrdiff_t)\b/, Name::Builtin
         # Literals
         # HexFloat
-        rule /0[xX]([0-9a-fA-F_]*\.[0-9a-fA-F_]+|[0-9a-fA-F_]+)[pP][+\-]?[0-9_]+[fFL]?[i]?/, Num::Float
+        rule %r/0[xX]([0-9a-fA-F_]*\.[0-9a-fA-F_]+|[0-9a-fA-F_]+)[pP][+\-]?[0-9_]+[fFL]?[i]?/, Num::Float
         # DecimalFloat
-        rule /[0-9_]+(\.[0-9_]+[eE][+\-]?[0-9_]+|\.[0-9_]*|[eE][+\-]?[0-9_]+)[fFL]?[i]?/, Num::Float
-        rule /\.(0|[1-9][0-9_]*)([eE][+\-]?[0-9_]+)?[fFL]?[i]?/, Num::Float
+        rule %r/[0-9_]+(\.[0-9_]+[eE][+\-]?[0-9_]+|\.[0-9_]*|[eE][+\-]?[0-9_]+)[fFL]?[i]?/, Num::Float
+        rule %r/\.(0|[1-9][0-9_]*)([eE][+\-]?[0-9_]+)?[fFL]?[i]?/, Num::Float
         # IntegerLiteral
         # Binary
-        rule /0[Bb][01_]+/, Num::Bin
+        rule %r/0[Bb][01_]+/, Num::Bin
         # Octal
         # TODO: 0[0-7] isn't supported use octal![0-7] instead
-        rule /0[0-7_]+/, Num::Oct
+        rule %r/0[0-7_]+/, Num::Oct
         # Hexadecimal
-        rule /0[xX][0-9a-fA-F_]+/, Num::Hex
+        rule %r/0[xX][0-9a-fA-F_]+/, Num::Hex
         # Decimal
-        rule /(0|[1-9][0-9_]*)([LUu]|Lu|LU|uL|UL)?/, Num::Integer
+        rule %r/(0|[1-9][0-9_]*)([LUu]|Lu|LU|uL|UL)?/, Num::Integer
         # CharacterLiteral
-        rule /'(\\['"?\\abfnrtv]|\\x[0-9a-fA-F]{2}|\\[0-7]{1,3}|\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}|\\&\w+;|.)'/, Str::Char
+        rule %r/'(\\['"?\\abfnrtv]|\\x[0-9a-fA-F]{2}|\\[0-7]{1,3}|\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}|\\&\w+;|.)'/, Str::Char
         # StringLiteral
         # WysiwygString
-        rule /r"[^"]*"[cwd]?/, Str
+        rule %r/r"[^"]*"[cwd]?/, Str
         # Alternate WysiwygString
-        rule /`[^`]*`[cwd]?/, Str
+        rule %r/`[^`]*`[cwd]?/, Str
         # DoubleQuotedString
-        rule /"(\\\\|\\"|[^"])*"[cwd]?/, Str
+        rule %r/"(\\\\|\\"|[^"])*"[cwd]?/, Str
         # EscapeSequence
-        rule /\\(['\"?\\abfnrtv]|x[0-9a-fA-F]{2}|[0-7]{1,3}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|&\w+;)/, Str
+        rule %r/\\(['\"?\\abfnrtv]|x[0-9a-fA-F]{2}|[0-7]{1,3}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|&\w+;)/, Str
         # HexString
-        rule /x"[0-9a-fA-F_\s]*"[cwd]?/, Str
+        rule %r/x"[0-9a-fA-F_\s]*"[cwd]?/, Str
         # DelimitedString
-        rule /q"\[/, Str, :delimited_bracket
-        rule /q"\(/, Str, :delimited_parenthesis
-        rule /q"</, Str, :delimited_angle
-        rule /q"\{/, Str, :delimited_curly
-        rule /q"([a-zA-Z_]\w*)\n.*?\n\1"/, Str
-        rule /q"(.).*?\1"/, Str
+        rule %r/q"\[/, Str, :delimited_bracket
+        rule %r/q"\(/, Str, :delimited_parenthesis
+        rule %r/q"</, Str, :delimited_angle
+        rule %r/q"\{/, Str, :delimited_curly
+        rule %r/q"([a-zA-Z_]\w*)\n.*?\n\1"/, Str
+        rule %r/q"(.).*?\1"/, Str
         # TokenString
-        rule /q\{/, Str, :token_string
+        rule %r/q\{/, Str, :token_string
         # Attributes
-        rule /@([a-zA-Z_]\w*)?/, Name::Decorator
+        rule %r/@([a-zA-Z_]\w*)?/, Name::Decorator
         # Tokens
         rule %r`(~=|\^=|%=|\*=|==|!>=|!<=|!<>=|!<>|!<|!>|!=|>>>=|>>>|>>=|>>|>=|<>=|<>|<<=|<<|<=|\+\+|\+=|--|-=|\|\||\|=|&&|&=|\.\.\.|\.\.|/=)|[/.&|\-+<>!()\[\]{}?,;:$=*%^~]`, Punctuation
         # Identifier
-        rule /[a-zA-Z_]\w*/, Name
+        rule %r/[a-zA-Z_]\w*/, Name
         # Line
-        rule /#line\s.*\n/, Comment::Special
+        rule %r/#line\s.*\n/, Comment::Special
       end
 
       state :nested_comment do
@@ -114,63 +114,63 @@ module Rouge
       end
 
       state :token_string do
-        rule /\{/, Punctuation, :token_string_nest
-        rule /\}/, Str, :pop!
+        rule %r/\{/, Punctuation, :token_string_nest
+        rule %r/\}/, Str, :pop!
         mixin :root
       end
 
       state :token_string_nest do
-        rule /\{/, Punctuation, :push
-        rule /\}/, Punctuation, :pop!
+        rule %r/\{/, Punctuation, :push
+        rule %r/\}/, Punctuation, :pop!
         mixin :root
       end
 
       state :delimited_bracket do
-        rule /[^\[\]]+/, Str
-        rule /\[/, Str, :delimited_inside_bracket
-        rule /\]"/, Str, :pop!
+        rule %r/[^\[\]]+/, Str
+        rule %r/\[/, Str, :delimited_inside_bracket
+        rule %r/\]"/, Str, :pop!
       end
 
       state :delimited_inside_bracket do
-        rule /[^\[\]]+/, Str
-        rule /\[/, Str, :push
-        rule /\]/, Str, :pop!
+        rule %r/[^\[\]]+/, Str
+        rule %r/\[/, Str, :push
+        rule %r/\]/, Str, :pop!
       end
 
       state :delimited_parenthesis do
-        rule /[^()]+/, Str
-        rule /\(/, Str, :delimited_inside_parenthesis
-        rule /\)"/, Str, :pop!
+        rule %r/[^()]+/, Str
+        rule %r/\(/, Str, :delimited_inside_parenthesis
+        rule %r/\)"/, Str, :pop!
       end
 
       state :delimited_inside_parenthesis do
-        rule /[^()]+/, Str
-        rule /\(/, Str, :push
-        rule /\)/, Str, :pop!
+        rule %r/[^()]+/, Str
+        rule %r/\(/, Str, :push
+        rule %r/\)/, Str, :pop!
       end
 
       state :delimited_angle do
-        rule /[^<>]+/, Str
-        rule /</, Str, :delimited_inside_angle
-        rule />"/, Str, :pop!
+        rule %r/[^<>]+/, Str
+        rule %r/</, Str, :delimited_inside_angle
+        rule %r/>"/, Str, :pop!
       end
 
       state :delimited_inside_angle do
-        rule /[^<>]+/, Str
-        rule /</, Str, :push
-        rule />/, Str, :pop!
+        rule %r/[^<>]+/, Str
+        rule %r/</, Str, :push
+        rule %r/>/, Str, :pop!
       end
 
       state :delimited_curly do
-        rule /[^{}]+/, Str
-        rule /\{/, Str, :delimited_inside_curly
-        rule /\}"/, Str, :pop!
+        rule %r/[^{}]+/, Str
+        rule %r/\{/, Str, :delimited_inside_curly
+        rule %r/\}"/, Str, :pop!
       end
 
       state :delimited_inside_curly do
-        rule /[^{}]+/, Str
-        rule /\{/, Str, :push
-        rule /\}/, Str, :pop!
+        rule %r/[^{}]+/, Str
+        rule %r/\{/, Str, :push
+        rule %r/\}/, Str, :pop!
       end
     end
   end

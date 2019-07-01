@@ -66,19 +66,15 @@ module Rouge
       # To accomodate this, use this custom faux dot instead.
       dot = /[ ]\|\n(?=.*[ ]\|)|./
 
-      # In certain places, a comma at the end of the line
-      # allows line wrapping as well.
-      comma_dot = /,\s*\n|#{dot}/
-
       state :root do
-        rule /\s*\n/, Text
+        rule %r/\s*\n/, Text
         rule(/\s*/) { |m| token Text; indentation(m[0]) }
       end
 
       state :content do
         mixin :css
         rule(/%#{identifier}/) { token Name::Tag; goto :tag }
-        rule /!!!#{dot}*\n/, Name::Namespace, :pop!
+        rule %r/!!!#{dot}*\n/, Name::Namespace, :pop!
         rule %r(
           (/) (\[#{dot}*?\]) (#{dot}*\n)
         )x do
@@ -92,20 +88,20 @@ module Rouge
           starts_block :html_comment_block
         end
 
-        rule /-##{dot}*\n/ do
+        rule %r/-##{dot}*\n/ do
           token Comment
           pop!
           starts_block :haml_comment_block
         end
 
-        rule /-/ do
+        rule %r/-/ do
           token Punctuation
           reset_stack
           ruby! :ruby_line
         end
 
         # filters
-        rule /:(#{dot}*)\n/ do |m|
+        rule %r/:(#{dot}*)\n/ do |m|
           token Name::Decorator
           pop!
           starts_block :filter_block
@@ -131,11 +127,11 @@ module Rouge
         rule(/[{]/) { token Punctuation; ruby! :ruby_tag }
         rule(/\[#{dot}*?\]/) { delegate ruby }
 
-        rule /\(/, Punctuation, :html_attributes
-        rule /\s*\n/, Text, :pop!
+        rule %r/\(/, Punctuation, :html_attributes
+        rule %r/\s*\n/, Text, :pop!
 
         # whitespace chompers
-        rule /[<>]{1,2}(?=[ \t=])/, Punctuation
+        rule %r/[<>]{1,2}(?=[ \t=])/, Punctuation
 
         mixin :eval_or_plain
       end
@@ -147,8 +143,8 @@ module Rouge
       end
 
       state :eval_or_plain do
-        rule /[&!]?==/, Punctuation, :plain
-        rule /[&!]?[=!]/ do
+        rule %r/[&!]?==/, Punctuation, :plain
+        rule %r/[&!]?[=!]/ do
           token Punctuation
           reset_stack
           ruby! :ruby_line
@@ -158,9 +154,9 @@ module Rouge
       end
 
       state :ruby_line do
-        rule /\n/, Text, :pop!
+        rule %r/\n/, Text, :pop!
         rule(/,[ \t]*\n/) { delegate ruby }
-        rule /[ ]\|[ \t]*\n/, Str::Escape
+        rule %r/[ ]\|[ \t]*\n/, Str::Escape
         rule(/.*?(?=(,$| \|)?[ \t]*$)/) { delegate ruby }
       end
 
@@ -169,33 +165,33 @@ module Rouge
       end
 
       state :html_attributes do
-        rule /\s+/, Text
-        rule /#{identifier}\s*=/, Name::Attribute, :html_attribute_value
+        rule %r/\s+/, Text
+        rule %r/#{identifier}\s*=/, Name::Attribute, :html_attribute_value
         rule identifier, Name::Attribute
-        rule /\)/, Text, :pop!
+        rule %r/\)/, Text, :pop!
       end
 
       state :html_attribute_value do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule ruby_var, Name::Variable, :pop!
-        rule /@#{ruby_var}/, Name::Variable::Instance, :pop!
-        rule /\$#{ruby_var}/, Name::Variable::Global, :pop!
-        rule /'(\\\\|\\'|[^'\n])*'/, Str, :pop!
-        rule /"(\\\\|\\"|[^"\n])*"/, Str, :pop!
+        rule %r/@#{ruby_var}/, Name::Variable::Instance, :pop!
+        rule %r/\$#{ruby_var}/, Name::Variable::Global, :pop!
+        rule %r/'(\\\\|\\'|[^'\n])*'/, Str, :pop!
+        rule %r/"(\\\\|\\"|[^"\n])*"/, Str, :pop!
       end
 
       state :html_comment_block do
-        rule /#{dot}+/, Comment
+        rule %r/#{dot}+/, Comment
         mixin :indented_block
       end
 
       state :haml_comment_block do
-        rule /#{dot}+/, Comment::Preproc
+        rule %r/#{dot}+/, Comment::Preproc
         mixin :indented_block
       end
 
       state :filter_block do
-        rule /([^#\n]|#[^{\n]|(\\\\)*\\#\{)+/ do
+        rule %r/([^#\n]|#[^{\n]|(\\\\)*\\#\{)+/ do
           if @filter_lexer
             delegate @filter_lexer
           else
@@ -208,11 +204,11 @@ module Rouge
       end
 
       state :interpolation do
-        rule /#[{]/, Str::Interpol, :ruby
+        rule %r/#[{]/, Str::Interpol, :ruby
       end
 
       state :ruby do
-        rule /[}]/, Str::Interpol, :pop!
+        rule %r/[}]/, Str::Interpol, :pop!
         mixin :ruby_inner
       end
 

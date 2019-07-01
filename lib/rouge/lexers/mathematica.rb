@@ -56,18 +56,18 @@ module Rouge
 
       # The list of built-in symbols comes from a wolfram server and is created automatically by rake
       def self.builtins
-        load Pathname.new(__FILE__).dirname.join('mathematica/builtins.rb')
+        load File.join(__dir__, 'mathematica/builtins.rb')
         self.builtins
       end
 
       state :root do
-        rule /\s+/, Text::Whitespace
-        rule /\(\*/, Comment, :comment
-        rule /#{base}\^\^#{number_base}#{precision}?(\*\^[+-]?\d+)?/, Num # a number with a base
-        rule /(?:#{number}#{precision}?(?:\*\^[+-]?\d+)?)/, Num # all other numbers
+        rule %r/\s+/, Text::Whitespace
+        rule %r/\(\*/, Comment, :comment
+        rule %r/#{base}\^\^#{number_base}#{precision}?(\*\^[+-]?\d+)?/, Num # a number with a base
+        rule %r/(?:#{number}#{precision}?(?:\*\^[+-]?\d+)?)/, Num # all other numbers
         rule message, Name::Tag
         rule in_out, Generic::Prompt
-        rule /#{context_symbol}/m do |m|
+        rule %r/#{context_symbol}/m do |m|
           match = m[0]
           if self.class.keywords.include? match
             token Name::Builtin::Pseudo
@@ -85,11 +85,11 @@ module Rouge
 
       # Allow for nested comments and special treatment of ::Section:: or :Author: markup
       state :comment do
-        rule /\(\*/, Comment, :comment
-        rule /\*\)/, Comment, :pop!
-        rule /::#{identifier}::/, Comment::Preproc
-        rule /[ ]:(#{identifier}|[^\S])+:[ ]/, Comment::Preproc
-        rule /./, Comment
+        rule %r/\(\*/, Comment, :comment
+        rule %r/\*\)/, Comment, :pop!
+        rule %r/::#{identifier}::/, Comment::Preproc
+        rule %r/[ ]:(#{identifier}|[^\S])+:[ ]/, Comment::Preproc
+        rule %r/./, Comment
       end
     end
   end

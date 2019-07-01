@@ -9,6 +9,7 @@ describe Rouge::Lexers::Jsonnet do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.jsonnet'
+      assert_guess :filename => 'foo.libsonnet'
     end
 
     it 'guesses by mimetype' do

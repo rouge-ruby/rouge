@@ -15,39 +15,39 @@ module Rouge
       identifier = /[\w\-.]+/
 
       state :basic do
-        rule /[;#].*?\n/, Comment
-        rule /\s+/, Text
-        rule /\\\n/, Str::Escape
+        rule %r/[;#].*?\n/, Comment
+        rule %r/\s+/, Text
+        rule %r/\\\n/, Str::Escape
       end
 
       state :root do
         mixin :basic
 
-        rule /(#{identifier})(\s*)(=)/ do
+        rule %r/(#{identifier})(\s*)(=)/ do
           groups Name::Property, Text, Punctuation
           push :value
         end
 
-        rule /\[.*?\]/, Name::Namespace
+        rule %r/\[.*?\]/, Name::Namespace
       end
 
       state :value do
-        rule /\n/, Text, :pop!
+        rule %r/\n/, Text, :pop!
         mixin :basic
-        rule /"/, Str, :dq
-        rule /'.*?'/, Str
+        rule %r/"/, Str, :dq
+        rule %r/'.*?'/, Str
         mixin :esc_str
-        rule /[^\\\n]+/, Str
+        rule %r/[^\\\n]+/, Str
       end
 
       state :dq do
-        rule /"/, Str, :pop!
+        rule %r/"/, Str, :pop!
         mixin :esc_str
-        rule /[^\\"]+/m, Str
+        rule %r/[^\\"]+/m, Str
       end
 
       state :esc_str do
-        rule /\\./m, Str::Escape
+        rule %r/\\./m, Str::Escape
       end
     end
   end

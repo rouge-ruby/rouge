@@ -60,22 +60,22 @@ module Rouge
                     )\s*(?=\()/ix
 
       state :root do
-        rule /\n/, Text
-        rule /[^\S\n]+/, Text
-        rule /\/\/.*$/, Comment::Single
-        rule /[\[\]:(),;]/, Punctuation
-        rule /(?<=[^\wа-яё]|^)\&.*$/, Keyword::Declaration
-        rule /[-+\/=<>*%=<>.?&]/, Operator
-        rule /(?<=[^\wа-яё]|^)\#.*$/, Keyword::Declaration
+        rule %r/\n/, Text
+        rule %r/[^\S\n]+/, Text
+        rule %r(//.*$), Comment::Single
+        rule %r/[\[\]:(),;]/, Punctuation
+        rule %r/(?<=[^\wа-яё]|^)\&.*$/, Keyword::Declaration
+        rule %r/[-+\/*%=<>.?&]/, Operator
+        rule %r/(?<=[^\wа-яё]|^)\#.*$/, Keyword::Declaration
         rule KEYWORDS, Keyword
         rule BUILTINS, Name::Builtin
-        rule /[\wа-яё_][\wа-яё0-9_]*/i, Name::Variable
+        rule %r/[\wа-яё][\wа-яё]*/i, Name::Variable
 
         #literals
-        rule /\b((\h{8}-(\h{4}-){3}\h{12})|\d+\.?\d*)\b/, Literal::Number
-        rule /\'.*\'/, Literal::Date
-        rule /".*?("|$)/, Literal::String::Single
-        rule /(?<=[^\wа-яё]|^)\|((?!\"\").)*?(\"|$)/, Literal::String
+        rule %r/\b((\h{8}-(\h{4}-){3}\h{12})|\d+\.?\d*)\b/, Literal::Number
+        rule %r/\'.*\'/, Literal::Date
+        rule %r/".*?("|$)/, Literal::String::Single
+        rule %r/(?<=[^\wа-яё]|^)\|((?!\"\").)*?(\"|$)/, Literal::String
       end
     end
   end

@@ -9,7 +9,7 @@ module Rouge
 
       tag 'haskell'
       aliases 'hs'
-      filenames '*.hs'
+      filenames '*.hs', '*.hs-boot'
       mimetypes 'text/x-haskell'
 
       def self.detect?(text)
@@ -27,40 +27,41 @@ module Rouge
       )
 
       state :basic do
-        rule /\s+/m, Text
-        rule /{-#/, Comment::Preproc, :comment_preproc
-        rule /{-/, Comment::Multiline, :comment
-        rule /^--\s+\|.*?$/, Comment::Doc
+        rule %r/\s+/m, Text
+        rule %r/{-#/, Comment::Preproc, :comment_preproc
+        rule %r/{-/, Comment::Multiline, :comment
+        rule %r/^--\s+\|.*?$/, Comment::Doc
         # this is complicated in order to support custom symbols
         # like -->
-        rule /--(?![!#\$\%&*+.\/<=>?@\^\|_~]).*?$/, Comment::Single
+        rule %r/--(?![!#\$\%&*+.\/<=>?@\^\|_~]).*?$/, Comment::Single
       end
 
       # nested commenting
       state :comment do
-        rule /-}/, Comment::Multiline, :pop!
-        rule /{-/, Comment::Multiline, :comment
-        rule /[^-{}]+/, Comment::Multiline
-        rule /[-{}]/, Comment::Multiline
+        rule %r/-}/, Comment::Multiline, :pop!
+        rule %r/{-/, Comment::Multiline, :comment
+        rule %r/[^-{}]+/, Comment::Multiline
+        rule %r/[-{}]/, Comment::Multiline
       end
 
       state :comment_preproc do
-        rule /-}/, Comment::Preproc, :pop!
-        rule /{-/, Comment::Preproc, :comment
-        rule /[^-{}]+/, Comment::Preproc
-        rule /[-{}]/, Comment::Preproc
+        rule %r/-}/, Comment::Preproc, :pop!
+        rule %r/{-/, Comment::Preproc, :comment
+        rule %r/[^-{}]+/, Comment::Preproc
+        rule %r/[-{}]/, Comment::Preproc
       end
 
       state :root do
         mixin :basic
 
-        rule /\bimport\b/, Keyword::Reserved, :import
-        rule /\bmodule\b/, Keyword::Reserved, :module
-        rule /\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
+        rule %r/\bimport\b/, Keyword::Reserved, :import
+        rule %r/\bmodule\b/, Keyword::Reserved, :module
+        rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
         # not sure why, but ^ doesn't work here
-        # rule /^[_a-z][\w']*/, Name::Function
-        rule /[_a-z][\w']*/, Name
-        rule /[A-Z][\w']*/, Keyword::Type
+        # rule %r/^[_a-z][\w']*/, Name::Function
+        rule %r/[_a-z][\w']*/, Name
+        rule %r/[A-Z][\w']*/, Keyword::Type
+        rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function
@@ -71,35 +72,35 @@ module Rouge
         # other operators
         rule %r([:!#\$\%&*+.\\/<=>?@^\|~-]+), Operator
 
-        rule /\d+e[+-]?\d+/i, Num::Float
-        rule /\d+\.\d+(e[+-]?\d+)?/i, Num::Float
-        rule /0o[0-7]+/i, Num::Oct
-        rule /0x[\da-f]+/i, Num::Hex
-        rule /\d+/, Num::Integer
+        rule %r/\d+e[+-]?\d+/i, Num::Float
+        rule %r/\d+\.\d+(e[+-]?\d+)?/i, Num::Float
+        rule %r/0o[0-7]+/i, Num::Oct
+        rule %r/0x[\da-f]+/i, Num::Hex
+        rule %r/\d+/, Num::Integer
 
-        rule /'/, Str::Char, :character
-        rule /"/, Str, :string
+        rule %r/'/, Str::Char, :character
+        rule %r/"/, Str, :string
 
-        rule /\[\s*\]/, Keyword::Type
-        rule /\(\s*\)/, Name::Builtin
+        rule %r/\[\s*\]/, Keyword::Type
+        rule %r/\(\s*\)/, Name::Builtin
 
         # Quasiquotations
-        rule /(\[)([_a-z][\w']*)(\|)/ do |m|
+        rule %r/(\[)([_a-z][\w']*)(\|)/ do |m|
           token Operator, m[1]
           token Name, m[2]
           token Operator, m[3]
           push :quasiquotation
         end
 
-        rule /[\[\](),;`{}]/, Punctuation
+        rule %r/[\[\](),;`{}]/, Punctuation
       end
 
       state :import do
-        rule /\s+/, Text
-        rule /"/, Str, :string
-        rule /\bqualified\b/, Keyword
+        rule %r/\s+/, Text
+        rule %r/"/, Str, :string
+        rule %r/\bqualified\b/, Keyword
         # import X as Y
-        rule /([A-Z][\w.]*)(\s+)(as)(\s+)([A-Z][a-zA-Z0-9_.]*)/ do
+        rule %r/([A-Z][\w.]*)(\s+)(as)(\s+)([A-Z][a-zA-Z0-9_.]*)/ do
           groups(
             Name::Namespace, # X
             Text, Keyword, # as
@@ -109,7 +110,7 @@ module Rouge
         end
 
         # import X hiding (functions)
-        rule /([A-Z][\w.]*)(\s+)(hiding)(\s+)(\()/ do
+        rule %r/([A-Z][\w.]*)(\s+)(hiding)(\s+)(\()/ do
           groups(
             Name::Namespace, # X
             Text, Keyword, # hiding
@@ -119,7 +120,7 @@ module Rouge
         end
 
         # import X (functions)
-        rule /([A-Z][\w.]*)(\s+)(\()/ do
+        rule %r/([A-Z][\w.]*)(\s+)(\()/ do
           groups(
             Name::Namespace, # X
             Text,
@@ -128,70 +129,70 @@ module Rouge
           goto :funclist
         end
 
-        rule /[\w.]+/, Name::Namespace, :pop!
+        rule %r/[\w.]+/, Name::Namespace, :pop!
       end
 
       state :module do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         # module Foo (functions)
-        rule /([A-Z][\w.]*)(\s+)(\()/ do
+        rule %r/([A-Z][\w.]*)(\s+)(\()/ do
           groups Name::Namespace, Text, Punctuation
           push :funclist
         end
 
-        rule /\bwhere\b/, Keyword::Reserved, :pop!
+        rule %r/\bwhere\b/, Keyword::Reserved, :pop!
 
-        rule /[A-Z][a-zA-Z0-9_.]*/, Name::Namespace, :pop!
+        rule %r/[A-Z][a-zA-Z0-9_.]*/, Name::Namespace, :pop!
       end
 
       state :funclist do
         mixin :basic
-        rule /[A-Z]\w*/, Keyword::Type
-        rule /(_[\w\']+|[a-z][\w\']*)/, Name::Function
-        rule /,/, Punctuation
-        rule /[:!#\$\%&*+.\\\/<=>?@^\|~-]+/, Operator
-        rule /\(/, Punctuation, :funclist
-        rule /\)/, Punctuation, :pop!
+        rule %r/[A-Z]\w*/, Keyword::Type
+        rule %r/(_[\w\']+|[a-z][\w\']*)/, Name::Function
+        rule %r/,/, Punctuation
+        rule %r/[:!#\$\%&*+.\\\/<=>?@^\|~-]+/, Operator
+        rule %r/\(/, Punctuation, :funclist
+        rule %r/\)/, Punctuation, :pop!
       end
 
       state :character do
-        rule /\\/ do
+        rule %r/\\/ do
           token Str::Escape
           goto :character_end
           push :escape
         end
 
-        rule /./ do
+        rule %r/./ do
           token Str::Char
           goto :character_end
         end
       end
 
       state :character_end do
-        rule /'/, Str::Char, :pop!
-        rule /./, Error, :pop!
+        rule %r/'/, Str::Char, :pop!
+        rule %r/./, Error, :pop!
       end
 
       state :quasiquotation do
-        rule /\|\]/, Operator, :pop!
-        rule /[^\|]+/m, Text
-        rule /\|/, Text
+        rule %r/\|\]/, Operator, :pop!
+        rule %r/[^\|]+/m, Text
+        rule %r/\|/, Text
       end
 
       state :string do
-        rule /"/, Str, :pop!
-        rule /\\/, Str::Escape, :escape
-        rule /[^\\"]+/, Str
+        rule %r/"/, Str, :pop!
+        rule %r/\\/, Str::Escape, :escape
+        rule %r/[^\\"]+/, Str
       end
 
       state :escape do
-        rule /[abfnrtv"'&\\]/, Str::Escape, :pop!
-        rule /\^[\]\[A-Z@\^_]/, Str::Escape, :pop!
-        rule /#{ascii.join('|')}/, Str::Escape, :pop!
-        rule /o[0-7]+/i, Str::Escape, :pop!
-        rule /x[\da-f]+/i, Str::Escape, :pop!
-        rule /\d+/, Str::Escape, :pop!
-        rule /\s+\\/, Str::Escape, :pop!
+        rule %r/[abfnrtv"'&\\]/, Str::Escape, :pop!
+        rule %r/\^[\]\[A-Z@\^_]/, Str::Escape, :pop!
+        rule %r/#{ascii.join('|')}/, Str::Escape, :pop!
+        rule %r/o[0-7]+/i, Str::Escape, :pop!
+        rule %r/x[\da-f]+/i, Str::Escape, :pop!
+        rule %r/\d+/, Str::Escape, :pop!
+        rule %r/\s+\\/, Str::Escape, :pop!
       end
     end
   end

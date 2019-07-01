@@ -114,7 +114,7 @@ module Rouge
       def demo_file(arg=:absent)
         return @demo_file = Pathname.new(arg) unless arg == :absent
 
-        @demo_file = Pathname.new(__FILE__).dirname.join('demos', tag)
+        @demo_file = Pathname.new(File.join(__dir__, 'demos', tag))
       end
 
       # Specify or get a small demo string for this lexer
@@ -196,7 +196,7 @@ module Rouge
       end
 
       def disable_debug!
-        remove_instance_variable :@debug_enabled
+        remove_instance_variable :@debug_enabled if defined? @debug_enabled
       end
 
       def debug_enabled?
@@ -213,7 +213,7 @@ module Rouge
       # @private
       def register(name, lexer)
         # reset an existing list of lexers
-        @all = nil if @all
+        @all = nil if defined?(@all)
         registry[name.to_s] = lexer
       end
 
@@ -310,7 +310,7 @@ module Rouge
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
 
-      @debug = Lexer.debug_enabled? && bool_option(:debug)
+      @debug = Lexer.debug_enabled? && bool_option('debug')
     end
 
     def as_bool(val)
@@ -365,8 +365,10 @@ module Rouge
     end
 
     def bool_option(name, &default)
-      if @options.key?(name.to_s)
-        as_bool(@options[name.to_s])
+      name_str = name.to_s
+
+      if @options.key?(name_str)
+        as_bool(@options[name_str])
       else
         default ? default.call : false
       end
@@ -415,10 +417,27 @@ module Rouge
 
     # Given a string, yield [token, chunk] pairs.  If no block is given,
     # an enumerator is returned.
+    #
+    # @option opts :continue
+    #   Continue the lex from the previous state (i.e. don't call #reset!)
+    #
+    # @note The use of :continue => true has been deprecated. A warning is
+    #       issued if run with `$VERBOSE` set to true.
+    #
+    # @note The use of arbitrary `opts` has never been supported, but we
+    #       previously ignored them with no error. We now warn unconditionally.
     def lex(string, opts=nil, &b)
       if opts
-        warn 'the :continue option to Formatter#lex is deprecated, use #continue_lex instead.'
-        return continue_lex(string, &b)
+        if (opts.keys - [:continue]).size > 0
+          # improper use of options hash
+          warn('Improper use of Lexer#lex - this method does not receive options.' +
+               ' This will become an error in a future version.')
+        end
+
+        if opts[:continue]
+          warn '`lex :continue => true` is deprecated, please use #continue_lex instead'
+          return continue_lex(string, &b)
+        end
       end
 
       return enum_for(:lex, string) unless block_given?

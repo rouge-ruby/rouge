@@ -10,8 +10,6 @@ module Rouge
       filenames '*.groovy', 'Jenkinsfile'
       mimetypes 'text/x-groovy'
 
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
-
       def self.detect?(text)
         return true if text.shebang?(/groovy/)
       end
@@ -43,8 +41,8 @@ module Rouge
 
       state :root do
         rule %r(^
-          (\s*(?:\w[\w\d.\[\]]*\s+)+?) # return arguments
-          (\w[\w\d]*) # method name
+          (\s*(?:\w[\w.\[\]]*\s+)+?) # return arguments
+          (\w\w*) # method name
           (\s*) (\() # signature start
         )x do |m|
           delegate self.clone, m[1]
@@ -54,29 +52,29 @@ module Rouge
         end
 
         # whitespace
-        rule /[^\S\n]+/, Text
+        rule %r/[^\S\n]+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
-        rule /@\w[\w\d.]*/, Name::Decorator
-        rule /(class|interface|trait)\b/,  Keyword::Declaration, :class
-        rule /package\b/, Keyword::Namespace, :import
-        rule /import\b/, Keyword::Namespace, :import
+        rule %r/@\w[\w.]*/, Name::Decorator
+        rule %r/(class|interface|trait)\b/,  Keyword::Declaration, :class
+        rule %r/package\b/, Keyword::Namespace, :import
+        rule %r/import\b/, Keyword::Namespace, :import
 
         # TODO: highlight backslash escapes
-        rule /""".*?"""/m, Str::Double
-        rule /'''.*?'''/m, Str::Single
+        rule %r/""".*?"""/m, Str::Double
+        rule %r/'''.*?'''/m, Str::Single
 
-        rule /"(\\.|\\\n|.)*?"/, Str::Double
-        rule /'(\\.|\\\n|.)*?'/, Str::Single
+        rule %r/"(\\.|\\\n|.)*?"/, Str::Double
+        rule %r/'(\\.|\\\n|.)*?'/, Str::Single
         rule %r(\$/(\$.|.)*?/\$)m, Str
         rule %r(/(\\.|\\\n|.)*?/), Str
-        rule /'\\.'|'[^\\]'|'\\u[0-9a-f]{4}'/, Str::Char
-        rule /(\.)([a-zA-Z_][a-zA-Z0-9_]*)/ do
+        rule %r/'\\.'|'[^\\]'|'\\u[0-9a-f]{4}'/, Str::Char
+        rule %r/(\.)([a-zA-Z_][a-zA-Z0-9_]*)/ do
           groups Operator, Name::Attribute
         end
 
-        rule /[a-zA-Z_][a-zA-Z0-9_]*:/, Name::Label
-        rule /[a-zA-Z_\$][a-zA-Z0-9_]*/ do |m|
+        rule %r/[a-zA-Z_][a-zA-Z0-9_]*:/, Name::Label
+        rule %r/[a-zA-Z_\$][a-zA-Z0-9_]*/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           elsif self.class.declarations.include? m[0]
@@ -93,20 +91,20 @@ module Rouge
         rule %r([~^*!%&\[\](){}<>\|+=:;,./?-]), Operator
 
         # numbers
-        rule /\d+\.\d+([eE]\d+)?[fd]?/, Num::Float
-        rule /0x[0-9a-f]+/, Num::Hex
-        rule /[0-9]+L?/, Num::Integer
-        rule /\n/, Text
+        rule %r/\d+\.\d+([eE]\d+)?[fd]?/, Num::Float
+        rule %r/0x[0-9a-f]+/, Num::Hex
+        rule %r/[0-9]+L?/, Num::Integer
+        rule %r/\n/, Text
       end
 
       state :class do
-        rule /\s+/, Text
-        rule /\w[\w\d]*/, Name::Class, :pop!
+        rule %r/\s+/, Text
+        rule %r/\w\w*/, Name::Class, :pop!
       end
 
       state :import do
-        rule /\s+/, Text
-        rule /[\w\d.]+[*]?/, Name::Namespace, :pop!
+        rule %r/\s+/, Text
+        rule %r/[\w.]+[*]?/, Name::Namespace, :pop!
       end
     end
   end

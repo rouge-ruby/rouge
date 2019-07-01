@@ -11,37 +11,43 @@ module Rouge
       filenames '*.pro', '*.P', '*.prolog', '*.pl'
       mimetypes 'text/x-prolog'
 
+      start { push :bol }
+
+      state :bol do
+        rule %r/#.*/, Comment::Single
+        rule(//) { pop! }
+      end
+
       state :basic do
-        rule /\s+/, Text
-        rule /^#.*/, Comment::Single
-        rule /%.*/, Comment::Single
-        rule /\/\*/, Comment::Multiline, :nested_comment
+        rule %r/\s+/, Text
+        rule %r/%.*/, Comment::Single
+        rule %r/\/\*/, Comment::Multiline, :nested_comment
 
-        rule /[\[\](){}|.,;!]/, Punctuation
-        rule /:-|-->/, Punctuation
+        rule %r/[\[\](){}|.,;!]/, Punctuation
+        rule %r/:-|-->/, Punctuation
 
-        rule /"[^"]*"/, Str::Double
+        rule %r/"[^"]*"/, Str::Double
 
-        rule /\d+\.\d+/, Num::Float
-        rule /\d+/, Num
+        rule %r/\d+\.\d+/, Num::Float
+        rule %r/\d+/, Num
       end
 
       state :atoms do
-        rule /[[:lower:]]([_[:word:][:digit:]])*/, Str::Symbol
-        rule /'[^']*'/, Str::Symbol
+        rule %r/[[:lower:]]([[:word:]])*/, Str::Symbol
+        rule %r/'[^']*'/, Str::Symbol
       end
 
       state :operators do
-        rule /(<|>|=<|>=|==|=:=|=|\/|\/\/|\*|\+|-)(?=\s|[a-zA-Z0-9\[])/,
+        rule %r/(<|>|=<|>=|==|=:=|=|\/|\/\/|\*|\+|-)(?=\s|[a-zA-Z0-9\[])/,
           Operator
-        rule /is/, Operator
-        rule /(mod|div|not)/, Operator
-        rule /[#&*+-.\/:<=>?@^~]+/, Operator
+        rule %r/is/, Operator
+        rule %r/(mod|div|not)/, Operator
+        rule %r/[#&*+-.\/:<=>?@^~]+/, Operator
       end
 
       state :variables do
-        rule /[A-Z]+\w*/, Name::Variable
-        rule /_[[:word:]]*/, Name::Variable
+        rule %r/[A-Z]+\w*/, Name::Variable
+        rule %r/_[[:word:]]*/, Name::Variable
       end
 
       state :root do
@@ -52,9 +58,9 @@ module Rouge
       end
 
       state :nested_comment do
-        rule /\/\*/, Comment::Multiline, :push
-        rule /\s*\*[^*\/]+/, Comment::Multiline
-        rule /\*\//, Comment::Multiline, :pop!
+        rule %r(/\*), Comment::Multiline, :push
+        rule %r/\s*\*[^*\/]+/, Comment::Multiline
+        rule %r(\*/), Comment::Multiline, :pop!
       end
     end
   end

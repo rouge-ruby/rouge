@@ -39,7 +39,7 @@ module Rouge
       end
 
       # Load Lasso keywords from separate YML file
-      @keywords = ::YAML.load_file(Pathname.new(__FILE__).dirname.join('lasso/keywords.yml')).tap do |h|
+      @keywords = ::YAML.load_file(File.join(__dir__, 'lasso/keywords.yml')).tap do |h|
         h.each do |k,v|
           h[k] = Set.new v
         end
@@ -48,23 +48,23 @@ module Rouge
       id = /[a-z_][\w.]*/i
 
       state :root do
-        rule /^#![ \S]+lasso9\b/, Comment::Preproc, :lasso
+        rule %r/^#![ \S]+lasso9\b/, Comment::Preproc, :lasso
         rule(/(?=\[|<)/) { push :delimiters }
-        rule /\s+/, Text::Whitespace
+        rule %r/\s+/, Text::Whitespace
         rule(//) { push :delimiters; push :lassofile }
       end
 
       state :delimiters do
-        rule /\[no_square_brackets\]/, Comment::Preproc, :nosquarebrackets
-        rule /\[noprocess\]/, Comment::Preproc, :noprocess
-        rule /\[/, Comment::Preproc, :squarebrackets
-        rule /<\?(lasso(script)?|=)/i, Comment::Preproc, :anglebrackets
+        rule %r/\[no_square_brackets\]/, Comment::Preproc, :nosquarebrackets
+        rule %r/\[noprocess\]/, Comment::Preproc, :noprocess
+        rule %r/\[/, Comment::Preproc, :squarebrackets
+        rule %r/<\?(lasso(script)?|=)/i, Comment::Preproc, :anglebrackets
         rule(/([^\[<]|<!--.*?-->|<(script|style).*?\2>|<(?!\?(lasso(script)?|=)))+/im) { delegate parent }
       end
 
       state :nosquarebrackets do
-        rule /\[noprocess\]/, Comment::Preproc, :noprocess
-        rule /<\?(lasso(script)?|=)/i, Comment::Preproc, :anglebrackets
+        rule %r/\[noprocess\]/, Comment::Preproc, :noprocess
+        rule %r/<\?(lasso(script)?|=)/i, Comment::Preproc, :anglebrackets
         rule(/([^\[<]|<!--.*?-->|<(script|style).*?\2>|<(?!\?(lasso(script)?|=))|\[(?!noprocess))+/im) { delegate parent }
       end
 
@@ -74,22 +74,22 @@ module Rouge
       end
 
       state :squarebrackets do
-        rule /\]/, Comment::Preproc, :pop!
+        rule %r/\]/, Comment::Preproc, :pop!
         mixin :lasso
       end
 
       state :anglebrackets do
-        rule /\?>/, Comment::Preproc, :pop!
+        rule %r/\?>/, Comment::Preproc, :pop!
         mixin :lasso
       end
 
       state :lassofile do
-        rule /\]|\?>/, Comment::Preproc, :pop!
+        rule %r/\]|\?>/, Comment::Preproc, :pop!
         mixin :lasso
       end
 
       state :whitespacecomments do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r(//.*?\n), Comment::Single
         rule %r(/\*\*!.*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
@@ -99,43 +99,43 @@ module Rouge
         mixin :whitespacecomments
 
         # literals
-        rule /\d*\.\d+(e[+-]?\d+)?/i, Num::Float
-        rule /0x[\da-f]+/i, Num::Hex
-        rule /\d+/, Num::Integer
-        rule /(infinity|NaN)\b/i, Num
-        rule /'[^'\\]*(\\.[^'\\]*)*'/m, Str::Single
-        rule /"[^"\\]*(\\.[^"\\]*)*"/m, Str::Double
-        rule /`[^`]*`/m, Str::Backtick
+        rule %r/\d*\.\d+(e[+-]?\d+)?/i, Num::Float
+        rule %r/0x[\da-f]+/i, Num::Hex
+        rule %r/\d+/, Num::Integer
+        rule %r/(infinity|NaN)\b/i, Num
+        rule %r/'[^'\\]*(\\.[^'\\]*)*'/m, Str::Single
+        rule %r/"[^"\\]*(\\.[^"\\]*)*"/m, Str::Double
+        rule %r/`[^`]*`/m, Str::Backtick
 
         # names
-        rule /\$#{id}/, Name::Variable
-        rule /#(#{id}|\d+\b)/, Name::Variable::Instance
-        rule /(\.\s*)('#{id}')/ do
+        rule %r/\$#{id}/, Name::Variable
+        rule %r/#(#{id}|\d+\b)/, Name::Variable::Instance
+        rule %r/(\.\s*)('#{id}')/ do
           groups Name::Builtin::Pseudo, Name::Variable::Class
         end
-        rule /(self)(\s*->\s*)('#{id}')/i do
+        rule %r/(self)(\s*->\s*)('#{id}')/i do
           groups Name::Builtin::Pseudo, Operator, Name::Variable::Class
         end
-        rule /(\.\.?\s*)(#{id}(=(?!=))?)/ do
+        rule %r/(\.\.?\s*)(#{id}(=(?!=))?)/ do
           groups Name::Builtin::Pseudo, Name::Other
         end
-        rule /(->\\?\s*|&\s*)(#{id}(=(?!=))?)/ do
+        rule %r/(->\\?\s*|&\s*)(#{id}(=(?!=))?)/ do
           groups Operator, Name::Other
         end
-        rule /(?<!->)(self|inherited|currentcapture|givenblock)\b/i, Name::Builtin::Pseudo
-        rule /-(?!infinity)#{id}/i, Name::Attribute
-        rule /::\s*#{id}/, Name::Label
-        rule /error_((code|msg)_\w+|adderror|columnrestriction|databaseconnectionunavailable|databasetimeout|deleteerror|fieldrestriction|filenotfound|invaliddatabase|invalidpassword|invalidusername|modulenotfound|noerror|nopermission|outofmemory|reqcolumnmissing|reqfieldmissing|requiredcolumnmissing|requiredfieldmissing|updateerror)/i, Name::Exception
+        rule %r/(?<!->)(self|inherited|currentcapture|givenblock)\b/i, Name::Builtin::Pseudo
+        rule %r/-(?!infinity)#{id}/i, Name::Attribute
+        rule %r/::\s*#{id}/, Name::Label
+        rule %r/error_((code|msg)_\w+|adderror|columnrestriction|databaseconnectionunavailable|databasetimeout|deleteerror|fieldrestriction|filenotfound|invaliddatabase|invalidpassword|invalidusername|modulenotfound|noerror|nopermission|outofmemory|reqcolumnmissing|reqfieldmissing|requiredcolumnmissing|requiredfieldmissing|updateerror)/i, Name::Exception
 
         # definitions
-        rule /(define)(\s+)(#{id})(\s*=>\s*)(type|trait|thread)\b/i do
+        rule %r/(define)(\s+)(#{id})(\s*=>\s*)(type|trait|thread)\b/i do
           groups Keyword::Declaration, Text, Name::Class, Operator, Keyword
         end
         rule %r((define)(\s+)(#{id})(\s*->\s*)(#{id}=?|[-+*/%]))i do
           groups Keyword::Declaration, Text, Name::Class, Operator, Name::Function
           push :signature
         end
-        rule /(define)(\s+)(#{id})/i do
+        rule %r/(define)(\s+)(#{id})/i do
           groups Keyword::Declaration, Text, Name::Function
           push :signature
         end
@@ -143,25 +143,25 @@ module Rouge
           groups Keyword, Text, Name::Function
           push :signature
         end
-        rule /(public|protected|private|provide)(\s+)(#{id})/i do
+        rule %r/(public|protected|private|provide)(\s+)(#{id})/i do
           groups Keyword, Text, Name::Function
         end
 
         # keywords
-        rule /(true|false|none|minimal|full|all|void)\b/i, Keyword::Constant
-        rule /(local|var|variable|global|data(?=\s))\b/i, Keyword::Declaration
-        rule /(array|date|decimal|duration|integer|map|pair|string|tag|xml|null|boolean|bytes|keyword|list|locale|queue|set|stack|staticarray)\b/i, Keyword::Type
-        rule /(#{id})(\s+)(in)\b/i do
+        rule %r/(true|false|none|minimal|full|all|void)\b/i, Keyword::Constant
+        rule %r/(local|var|variable|global|data(?=\s))\b/i, Keyword::Declaration
+        rule %r/(array|date|decimal|duration|integer|map|pair|string|tag|xml|null|boolean|bytes|keyword|list|locale|queue|set|stack|staticarray)\b/i, Keyword::Type
+        rule %r/(#{id})(\s+)(in)\b/i do
           groups Name, Text, Keyword
         end
-        rule /(let|into)(\s+)(#{id})/i do
+        rule %r/(let|into)(\s+)(#{id})/i do
           groups Keyword, Text, Name
         end
 
         # other
-        rule /,/, Punctuation, :commamember
-        rule /(and|or|not)\b/i, Operator::Word
-        rule /(#{id})(\s*::\s*#{id})?(\s*=(?!=|>))/ do
+        rule %r/,/, Punctuation, :commamember
+        rule %r/(and|or|not)\b/i, Operator::Word
+        rule %r/(#{id})(\s*::\s*#{id})?(\s*=(?!=|>))/ do
           groups Name, Name::Label, Operator
         end
 
@@ -183,31 +183,31 @@ module Rouge
           end
         end
 
-        rule /(=)(n?bw|n?ew|n?cn|lte?|gte?|n?eq|n?rx|ft)\b/i do
+        rule %r/(=)(n?bw|n?ew|n?cn|lte?|gte?|n?eq|n?rx|ft)\b/i do
           groups Operator, Operator::Word
         end
         rule %r(:=|[-+*/%=<>&|!?\\]+), Operator
-        rule /[{}():;,@^]/, Punctuation
+        rule %r/[{}():;,@^]/, Punctuation
       end
 
       state :signature do
-        rule /\=>/, Operator, :pop!
-        rule /\)/, Punctuation, :pop!
-        rule /[(,]/, Punctuation, :parameter
+        rule %r/\=>/, Operator, :pop!
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/[(,]/, Punctuation, :parameter
         mixin :lasso
       end
 
       state :parameter do
-        rule /\)/, Punctuation, :pop!
-        rule /-?#{id}/, Name::Attribute, :pop!
-        rule /\.\.\./, Name::Builtin::Pseudo
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/-?#{id}/, Name::Attribute, :pop!
+        rule %r/\.\.\./, Name::Builtin::Pseudo
         mixin :lasso
       end
 
       state :commamember do
         rule %r((#{id}=?|[-+*/%])(?=\s*(\(([^()]*\([^()]*\))*[^\)]*\)\s*)?(::[\w.\s]+)?=>)), Name::Function, :signature
         mixin :whitespacecomments
-        rule //, Text, :pop!
+        rule %r//, Text, :pop!
       end
 
     end

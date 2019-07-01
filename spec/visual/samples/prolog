@@ -1,4 +1,6 @@
-# Atoms
+#!/bin/prolog
+
+% Atoms
 
 x
 blue
@@ -6,47 +8,47 @@ blue
 'some atom'
 camelCaseAtom
 
-# Numbers
+% Numbers
 
 1
 123123123123
 12312.1231
 0.1
 
-# Variables
+% Variables
 
 Hello
 How_are_you_doing
 _amazing
 Wow123
 
-# Compound terms
+% Compound terms
 
 truck_year('Mazda', 1986)
 'Person_Friends'(zelda,[tom,jim])
 
-# List
+% List
 
 []
 [1,2,3]
 [red,green,blue]
 
-# Strings
+% Strings
 
 "to be, or not to be"
 "東京都"
 
-# This example was taken from
-# http://en.wikipedia.org/wiki/Prolog#Turing_completeness
+% This example was taken from
+% http://en.wikipedia.org/wiki/Prolog#Turing_completeness
 turing(Tape0, Tape) :-
     perform(q0, [], Ls, Tape0, Rs),
     reverse(Ls, Ls1),
     append(Ls1, Rs, Tape).
 
 /*
-*
+ *
  * This is a multiline comment.
-*/
+ */
 
 % This is a single-line comment
 
@@ -69,7 +71,7 @@ action(right, Ls0, [Sym|Ls0], [Sym|Rs], Rs).
 left([], [], Rs0, [b|Rs0]).
 left([L|Ls], Ls, Rs, [L|Rs]).
 
-## Example from pygments
+%% Example from pygments
 
 partition([], _, [], []).
 partition([X|Xs], Pivot, Smalls, Bigs) :-
@@ -81,6 +83,6 @@ partition([X|Xs], Pivot, Smalls, Bigs) :-
     ).
 
 quicksort([])     --> [].
-quicksort([X|Xs]) --> 
+quicksort([X|Xs]) -->
     { partition(Xs, X, Smaller, Bigger) },
     quicksort(Smaller), [X], quicksort(Bigger).

@@ -8,7 +8,7 @@ module Rouge
       desc "Xojo"
       tag 'xojo'
       aliases 'realbasic'
-      filenames '*.xojo_code', '*.xojo_window', '*.xojo_toolbar', '*.xojo_menu', '*.xojo_image', '*.rbbas', '*.rbfrm', '*.rbmnu', '*rbres', '*rbtbar'
+      filenames '*.xojo_code', '*.xojo_window', '*.xojo_toolbar', '*.xojo_menu', '*.xojo_image', '*.rbbas', '*.rbfrm', '*.rbmnu', '*.rbres', '*.rbtbar'
 
       keywords = %w(
           addhandler aggregates array asc assigns attributes begin break

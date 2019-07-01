@@ -124,7 +124,7 @@ author => 'maria ines parnisari'
     }
 
 % # TODO this should work but it doesn't 
-% % #   .dashed {
+% #   .dashed {
 % #        background: url("<% $someUrl %>");
 % #   }
 

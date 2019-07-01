@@ -21,9 +21,9 @@ module Rouge
       end
 
       # Note: If you add a tag in the lines below, you also need to modify "disambiguate '*.m'" in file disambiguation.rb
-      textblocks = %w(text doc)
-      perlblocks = %w(args flags attr init once shared perl cleanup filter)
-      components = %w(def method)
+      TEXT_BLOCKS = %w(text doc)
+      PERL_BLOCKS = %w(args flags attr init once shared perl cleanup filter strings general_media shared_vars)
+      COMPONENTS = %w(def method)
   
       state :root do
         mixin :mason_tags
@@ -32,35 +32,35 @@ module Rouge
       state :mason_tags do
         rule %r/\s+/, Text::Whitespace
 
-        rule %r/<%(#{textblocks.join('|')})>/i, Comment::Preproc, :text_block
+        rule %r/<%(#{TEXT_BLOCKS.join('|')})>/oi, Keyword, :text_block
 
-        rule %r/<%(#{perlblocks.join('|')})>/i, Comment::Preproc, :perl_block
+        rule %r/<%(#{PERL_BLOCKS.join('|')})>/oi, Keyword, :perl_block
 
-        rule %r/(<%(#{components.join('|')}))([^>]*)(>)/i do |m|
-          token Comment::Preproc, m[1]
+        rule %r/(<%(#{COMPONENTS.join('|')}))([^>]*)(>)/oi do |m|
+          token Keyword, m[1]
           token Name, m[3]
-          token Comment::Preproc, m[4]
+          token Keyword, m[4]
           push :component_block
         end
         
         # perl line
         rule %r/^(%)(.*)$/ do |m|
-          token Comment::Preproc, m[1]
+          token Keyword, m[1]
           delegate @perl, m[2]
         end
 
         # start of component call
-        rule %r/<%/, Comment::Preproc, :component_call
+        rule %r/<%/, Keyword, :component_call
 
          # start of component with content
         rule %r/<&\|/ do
-          token Comment::Preproc
+          token Keyword
           push :component_with_content
           push :component_sub
         end
 
         # start of component substitution
-        rule %r/<&/, Comment::Preproc, :component_sub
+        rule %r/<&/, Keyword, :component_sub
 
         # fallback to HTML until a mason tag is encountered
         rule(/(.+?)(?=(<\/?&|<\/?%|^%|^#))/m) { delegate parent }
@@ -70,21 +70,21 @@ module Rouge
       end
 
       state :perl_block do
-        rule %r/<\/%(#{perlblocks.join('|')})>/i, Comment::Preproc, :pop!
+        rule %r/<\/%(#{PERL_BLOCKS.join('|')})>/oi, Keyword, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
         rule(/(.*?[^"])(?=<\/%)/m) { delegate @perl }
       end
 
       state :text_block do
-        rule %r/<\/%(#{textblocks.join('|')})>/i, Comment::Preproc, :pop!
+        rule %r/<\/%(#{TEXT_BLOCKS.join('|')})>/oi, Keyword, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
         rule %r/(.*?[^"])(?=<\/%)/m, Comment
       end
 
       state :component_block do
-        rule %r/<\/%(#{components.join('|')})>/i, Comment::Preproc, :pop!
+        rule %r/<\/%(#{COMPONENTS.join('|')})>/oi, Keyword, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
         mixin :mason_tags
@@ -92,7 +92,7 @@ module Rouge
 
       state :component_with_content do
         rule %r/<\/&>/ do 
-          token Comment::Preproc
+          token Keyword
           pop!
         end
 
@@ -100,13 +100,13 @@ module Rouge
       end
 
       state :component_sub do
-        rule %r/&>/, Comment::Preproc, :pop!
+        rule %r/&>/, Keyword, :pop!
 
         rule(/(.*?)(?=&>)/m) { delegate @perl }
       end
 
       state :component_call do
-        rule %r/%>/, Comment::Preproc, :pop!
+        rule %r/%>/, Keyword, :pop!
 
         rule(/(.*?)(?=%>)/m) { delegate @perl }
       end

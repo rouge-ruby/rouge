@@ -90,7 +90,7 @@ module Rouge
 
         next Matlab if matches?(/^\s*?%/)
 
-        next Mason if matches?(/(<\/?%|<&)/)
+        next Mason if matches? %r!(</?%|<&)!
       end
 
       disambiguate '*.php' do

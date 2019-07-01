@@ -328,7 +328,7 @@ module Rouge
       state :plain_scalar_in_block_context do
         # the : indicator ends a scalar
         rule %r/[ ]*(?=:[ \n]|:$)/, Text, :pop!
-        rule %r/[ ]*:/, Str
+        rule %r/[ ]*:\S+/, Str
         rule %r/[ ]+(?=#)/, Text, :pop!
         rule %r/[ ]+$/, Text
         # check for new documents or dedents at the new line
@@ -339,6 +339,8 @@ module Rouge
 
         rule %r/[ ]+/, Str
         rule SPECIAL_VALUES, Name::Constant
+        rule %r/\d+(?:\.\d+)?(?=(\r?\n)| +#)/, Literal::Number, :pop!
+
         # regular non-whitespace characters
         rule %r/[^\s:]+/, Str
       end

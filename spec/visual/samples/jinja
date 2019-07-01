@@ -7,6 +7,9 @@
 {% endfor %}
 </ul>
 
+{% set navigation = [('index.html', 'Index'), ('about.html', 'About')] %}
+{% set key, value = call_something() %}
+
 {# A comment #}
 
 Hello {{ user.name|capitalize }} !
@@ -19,5 +22,13 @@ Hello {{ user.name|capitalize }} !
 
 {# A comment on multiple lines
    to hide a piece of code or whatever #}
+
+{% raw %}
+  {% for item in seq %}
+    <li>{{ item }}</li>
+  {% endfor %}
+{% endraw %}
+
+{% raw %} One line {{ raw }} block {% endraw %}
 
 {% include 'footer.html' %}

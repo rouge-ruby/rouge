@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -20,17 +21,19 @@ module Rouge
         public static strictfp super synchronized throws transient volatile
       )
 
-      types = %w(boolean byte char double float int long short void)
+      types = %w(boolean byte char double float int long short var void)
 
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
+      const_name = /[A-Z][A-Z0-9_]*\b/
+      class_name = /[A-Z][a-zA-Z0-9]*\b/
 
       state :root do
-        rule /[^\S\n]+/, Text
+        rule %r/[^\S\n]+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
         # keywords: go before method names to avoid lexing "throw new XYZ"
         # as a method signature
-        rule /(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/(?:#{keywords.join('|')})\b/, Keyword
 
         rule %r(
           (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
@@ -44,43 +47,45 @@ module Rouge
           token Operator, m[4]
         end
 
-        rule /@#{id}/, Name::Decorator
-        rule /(?:#{declarations.join('|')})\b/, Keyword::Declaration
-        rule /(?:#{types.join('|')})\b/, Keyword::Type
-        rule /package\b/, Keyword::Namespace
-        rule /(?:true|false|null)\b/, Keyword::Constant
-        rule /(?:class|interface)\b/, Keyword::Declaration, :class
-        rule /import\b/, Keyword::Namespace, :import
-        rule /"(\\\\|\\"|[^"])*"/, Str
-        rule /'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
-        rule /(\.)(#{id})/ do
+        rule %r/@#{id}/, Name::Decorator
+        rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
+        rule %r/(?:#{types.join('|')})\b/, Keyword::Type
+        rule %r/package\b/, Keyword::Namespace
+        rule %r/(?:true|false|null)\b/, Keyword::Constant
+        rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
+        rule %r/import\b/, Keyword::Namespace, :import
+        rule %r/"(\\\\|\\"|[^"])*"/, Str
+        rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
+        rule %r/(\.)(#{id})/ do
           groups Operator, Name::Attribute
         end
 
-        rule /#{id}:/, Name::Label
-        rule /\$?#{id}/, Name
-        rule /[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
+        rule %r/#{id}:/, Name::Label
+        rule const_name, Name::Constant
+        rule class_name, Name::Class
+        rule %r/\$?#{id}/, Name
+        rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
 
         digit = /[0-9]_+[0-9]|[0-9]/
         bin_digit = /[01]_+[01]|[01]/
         oct_digit = /[0-7]_+[0-7]|[0-7]/
         hex_digit = /[0-9a-f]_+[0-9a-f]|[0-9a-f]/i
-        rule /#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
-        rule /0b#{bin_digit}+/i, Num::Bin
-        rule /0x#{hex_digit}+/i, Num::Hex
-        rule /0#{oct_digit}+/, Num::Oct
-        rule /#{digit}+L?/, Num::Integer
-        rule /\n/, Text
+        rule %r/#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
+        rule %r/0b#{bin_digit}+/i, Num::Bin
+        rule %r/0x#{hex_digit}+/i, Num::Hex
+        rule %r/0#{oct_digit}+/, Num::Oct
+        rule %r/#{digit}+L?/, Num::Integer
+        rule %r/\n/, Text
       end
 
       state :class do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         rule id, Name::Class, :pop!
       end
 
       state :import do
-        rule /\s+/m, Text
-        rule /[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
+        rule %r/\s+/m, Text
+        rule %r/[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
       end
     end
   end

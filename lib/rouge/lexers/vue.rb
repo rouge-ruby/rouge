@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rouge
   module Lexers
     load_lexer 'html.rb'
@@ -16,13 +18,15 @@ module Rouge
       end
 
       def lookup_lang(lang)
+        lang.downcase!
+        lang = lang.gsub(/["']*/, '')
         case lang
         when 'html' then HTML
         when 'css' then CSS
         when 'javascript' then Javascript
         when 'sass' then Sass
         when 'scss' then Scss
-        when 'coffee' then CoffeeScript
+        when 'coffee' then Coffeescript
           # TODO: add more when the lexers are done
         else
           PlainText
@@ -32,21 +36,21 @@ module Rouge
       start { @js.reset! }
 
       prepend :root do
-        rule /(<)(\s*)(template)/ do
+        rule %r/(<)(\s*)(template)/ do
           groups Name::Tag, Text, Keyword
           @lang = HTML
           push :template
           push :lang_tag
         end
 
-        rule /(<)(\s*)(style)/ do
+        rule %r/(<)(\s*)(style)/ do
           groups Name::Tag, Text, Keyword
           @lang = CSS
           push :style
           push :lang_tag
         end
 
-        rule /(<)(\s*)(script)/ do
+        rule %r/(<)(\s*)(script)/ do
           groups Name::Tag, Text, Keyword
           @lang = Javascript
           push :script
@@ -55,7 +59,7 @@ module Rouge
       end
 
       state :style do
-        rule /(<\s*\/\s*)(style)(\s*>)/ do
+        rule %r/(<\s*\/\s*)(style)(\s*>)/ do
           groups Name::Tag, Keyword, Name::Tag
           pop!
         end
@@ -65,7 +69,7 @@ module Rouge
       end
 
       state :script do
-        rule /(<\s*\/\s*)(script)(\s*>)/ do
+        rule %r/(<\s*\/\s*)(script)(\s*>)/ do
           groups Name::Tag, Keyword, Name::Tag
           pop!
         end
@@ -75,9 +79,9 @@ module Rouge
       end
 
       state :lang_tag do
-        rule /(lang\s*=)(\s*)("(?:\\.|[^\\])*?"|'(\\.|[^\\])*?'|[^\s>]+)/ do |m|
+        rule %r/(lang\s*=)(\s*)("(?:\\.|[^\\])*?"|'(\\.|[^\\])*?'|[^\s>]+)/ do |m|
           groups Name::Attribute, Text, Str
-          @lang = lookup_lang(m[2])
+          @lang = lookup_lang(m[3])
         end
 
         mixin :tag
@@ -89,7 +93,7 @@ module Rouge
           pop!
         end
 
-        rule /{{/ do
+        rule %r/{{/ do
           token Str::Interpol
           push :template_interpol
           @js.reset!
@@ -99,8 +103,8 @@ module Rouge
       end
 
       state :template_interpol do
-        rule /}}/, Str::Interpol, :pop!
-        rule /}/, Error
+        rule %r/}}/, Str::Interpol, :pop!
+        rule %r/}/, Error
         mixin :template_interpol_inner
       end
 

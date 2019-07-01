@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::JSX do
   let(:subject) { Rouge::Lexers::JSX.new }
 

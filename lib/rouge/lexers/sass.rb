@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -17,7 +18,7 @@ module Rouge
       id = /[\w-]+/
 
       state :root do
-        rule /[ \t]*\n/, Text
+        rule %r/[ \t]*\n/, Text
         rule(/[ \t]*/) { |m| token Text; indentation(m[0]) }
       end
 
@@ -33,32 +34,32 @@ module Rouge
           pop!; starts_block :multi_comment
         end
 
-        rule /@import\b/, Keyword, :import
+        rule %r/@import\b/, Keyword, :import
 
         mixin :content_common
 
         rule %r(=#{id}), Name::Function, :value
         rule %r([+]#{id}), Name::Decorator, :value
 
-        rule /:/, Name::Attribute, :old_style_attr
+        rule %r/:/, Name::Attribute, :old_style_attr
 
-        rule(/(?=.+?:([^a-z]|$))/) { push :attribute }
+        rule(/(?=[^\[\n]+?:([^a-z]|$))/) { push :attribute }
 
         rule(//) { push :selector }
       end
 
       state :single_comment do
-        rule /.*?$/, Comment::Single, :pop!
+        rule %r/.*?$/, Comment::Single, :pop!
       end
 
       state :multi_comment do
-        rule /.*?\n/, Comment::Multiline, :pop!
+        rule %r/.*?\n/, Comment::Multiline, :pop!
       end
 
       state :import do
-        rule /[ \t]+/, Text
-        rule /\S+/, Str
-        rule /\n/, Text, :pop!
+        rule %r/[ \t]+/, Text
+        rule %r/\S+/, Str
+        rule %r/\n/, Text, :pop!
       end
 
       state :old_style_attr do

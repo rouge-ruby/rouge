@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
+
 module Rouge
   module Themes
     class MonokaiSublime < CSSTheme
@@ -9,6 +11,7 @@ module Rouge
       palette :bright_pink    => '#f92672'
       palette :carmine        => '#960050'
       palette :dark           => '#49483e'
+      palette :dark_graphite  => '#272822'
       palette :dark_grey      => '#888888'
       palette :dark_red       => '#aa0000'
       palette :dimgrey        => '#75715e'
@@ -78,7 +81,7 @@ module Rouge
             Name::Variable,
             Text::Whitespace,
             Text,
-            Name,                             :fg => :white
+            Name,                             :fg => :white, :bg => :dark_graphite
       style Operator::Word,
             Name::Tag,
             Keyword,

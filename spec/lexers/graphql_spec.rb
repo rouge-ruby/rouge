@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::GraphQL do
   let(:subject) { Rouge::Lexers::GraphQL.new }
 

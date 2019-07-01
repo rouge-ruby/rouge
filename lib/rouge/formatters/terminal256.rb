@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Formatters
@@ -158,6 +159,7 @@ module Rouge
 
     # private
       def escape_sequence(token)
+        return '' if escape?(token)
         @escape_sequences ||= {}
         @escape_sequences[token.qualname] ||=
           EscapeSequence.new(get_style(token))

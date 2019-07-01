@@ -33,9 +33,12 @@ b > 10 && 42 >= 12
 
 "this is a string"
 
-"interpolated ${x}"
+"antiquotation ${toString (x + 7)}"
 
-"Escaped chars ${x} \n \r \t \${q}"
+"escaped chars \n \r \t \q \${q}"
+
+''escaped chars ''\n ''\r ''\t ''\q ''' ''${q}''
+++ ''raw chars " \n \r \t \q''
 
 # Examples from https://nixos.org/nix/manual/#idm140737318143152
 
@@ -43,13 +46,18 @@ b > 10 && 42 >= 12
 
 "--with-freetype2-library=" + freetype + "/lib"
 
-configureFlags = "
-  -system-zlib -system-libpng -system-libjpeg
-  ${if openglSupport then "-dlopen-opengl
-    -L${mesa}/lib -I${mesa}/include
-    -L${libXmu}/lib -I${libXmu}/include" else ""}
-  ${if threadSupport then "-thread" else "-no-thread"}
-";
+configureFlags = [
+  "-system-zlib"
+  "-system-libpng"
+  "-system-libjpeg"
+  (if threadSupport then "-thread" else "-no-thread")
+] ++ stdenv.lib.optionals openglSupport [
+  "-dlopen-opengl"
+  "-L${mesa}/lib"
+  "-I${mesa}/include"
+  "-L${libXmu}/lib"
+  "-I${libXmu}/include"
+];
 
 # indented string
 indented = ''
@@ -93,14 +101,23 @@ __variable__z_ = variable-y
 
 local/file
 
-https://nixos.org/nixos/manual/index.html
-git+https://nixos.org/nixos/manual/index.html
+./. # current directory
 
-file:///tmp/nixos
+/. # root directory
 
 ~ # not a path
 
+. # not a path
+
 / # not a path
+
+# uri
+
+https://nixos.org/nixos/manual/index.html
+
+git+https://nixos.org/nixos/manual/index.html
+
+file:///tmp/nixos
 
 # lists
 

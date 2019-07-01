@@ -1,156 +1,70 @@
 #! /usr/bin/env perl
 
-#### regex_delimiters
-
+# common regex delimiters
 sub substitutionOperator
 {
-  s!\\!\\\\!g;
-  s!\\!\\\\!g;
-  s!"!\\"!g;
-  s!\(!\\\(!g;
-  s!\)!\\\)!g;
+    s!\\!\\\\!g;
+    s!\\!\\\\!g;
+    s!"!\\"!g;
+    s!\(!\\\(!g;
+    s!\)!\\\)!g;
 }
 
-
-sub substitutionOperator
-{
-  s!\\!\\\\!g;
-  s!\\!\\\\!g;
-  s!"!\\"!g;
-  s!\(!\\\(!g;
-  s!\)!\\\)!g;
-}
-
-
-sub substitutionOperator
-{
-  s!\\!\\\\!g;
-  s!\\!\\\\!g;
-  s!"!\\"!g;
-  s!\(!\\\(!g;
-  s!\)!\\\)!g;
-}
-
-use strict;
-use warnings;
-
-# common delimiters
-print "a: ";
-my $a = "foo";
-print $a, " - ";
 $a =~ s/foo/bar/;
-print $a, "\n";
-
-print "b: ";
-my $b = "foo";
-print $b, " - ";
 $b =~ s!foo!bar!;
-print $b, "\n";
-
-print "c: ";
-my $c = "foo";
-print $c, " - ";
 $c =~ s@foo@bar@;
-print $c, "\n";
-
-print "d: ";
-my $d = "foo";
-print $d, " - ";
 $d =~ s\foo\bar\;
-print $d, "\n";
 
-print "\n";
-
-# balanced delimiters
-print "e: ";
-my $e = "foo";
-print $e, " - ";
+# balanced regex delimiters
 $e =~ s{foo}{bar};
-print $e, "\n";
-
-print "f: ";
-my $f = "foo";
-print $f, " - ";
 $f =~ s(foo)(bar);
-print $f, "\n";
-
-print "g: ";
-my $g = "foo";
-print $g, " - ";
 $g =~ s<foo><bar>;
-print $g, "\n";
-
-print "h: ";
-my $h = "foo";
-print $h, " - ";
 $h =~ s[foo][bar];
-print $h, "\n";
 
-print "\n";
-
-# balanced delimiters with whitespace
-print "i: ";
-my $i = "foo";
-print $i, " - ";
+# balanced regex delimiters with whitespace
 $i =~ s{foo} {bar};
-print $i, "\n";
-
-print "j: ";
-my $j = "foo";
-print $j, " - ";
 $j =~ s<foo>		<bar>;
-print $j, "\n";
-
-print "k: ";
-my $k = "foo";
-print $k, " - ";
 $k =~
 	s(foo)
 
 	(bar);
-print $k, "\n";
-
-print "\n";
-
-# mixed delimiters
-print "l: ";
-my $l = "foo";
-print $l, " - ";
 $l =~ s{foo} <bar>;
-print $l, "\n";
-
-print "m: ";
-my $m = "foo";
-print $m, " - ";
 $m =~ s(foo) !bar!;
-print $m, "\n";
-
-print "n: ";
-my $n = "foo";
-print $n, " - ";
 $n =~ s[foo] $bar$;
-print $n, "\n";
 
-print "\n";
-
-# /x modifier
-print "o: ";
-my $o = "foo";
-print $o, " - ";
+# /x modifier after regex delimiters
 $o =~ s{
 				foo
 			 } {bar}x;
-print $o, "\n";
-
-print "p: ";
-my $p = "foo";
-print $p, " - ";
 $p =~ s%
   foo
   %bar%x;
-print $p, "\n";
+  #
+# arbitrary regex delimiters
+my $re_1 = m,This should match,;
+my $re_2 = m aSo should thisa;
+if $filename and $filename =~ m,usr/share/doc/[^/]+/examples/,;
 
-###### perl_misc ########
+# keys in hashes aren't match as regular expressions
+my %countries =  ( england => 'English',
+                   france => 'French',
+                   spain => 'Spanish',
+                   china => 'Chinese',
+                   germany => 'German',
+                   mozambique => 'Mozambican');
+
+# quoted strings
+my $a = "foo";
+
+print "a: ";
+print $a, " - ";
+print $a, "\n";
+
+my $str1 = "This is a ${ string } with fancy interpolation."
+my $cmd1 = `So is @{ this } one.`
+my $str2 = "This is a $string with plain interpolation."
+my $cmd2 = `So is @this one.`
+my $str3 = 'A boring $string.'
 
 # from http://gist.github.com/485595
 use strict;
@@ -165,11 +79,9 @@ for (1..5) {
 }
 
 # other miscellaneous tests of numbers separated by _
-#usleep 100_000;
+usleep 100_000;
 100_000_000;
 my $nichts = 0.005_006;
-print "$nichts\n";
-my $nichts2 = 0.005_006_007;
 print 900_800_700.005_006_007, $/;
 
 # numbers from `man 1 perlnumber`
@@ -223,4 +135,7 @@ sub foo {
     "after the POD with the single quote, it's all still good"
 }
 
-
+# operators
+my $moduloOperation = $totalNumber % $columns ? 1 : 0;
+$moduloOperation = 2;
+my $addOperation = $totalNumber + $myOtherVar;

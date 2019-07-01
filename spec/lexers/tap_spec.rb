@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::Tap do
   let(:subject) { Rouge::Lexers::Tap.new }
 

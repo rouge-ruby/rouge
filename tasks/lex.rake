@@ -9,6 +9,8 @@ end
 
 def lexer_template(language)
   <<-LEX
+# frozen_string_literal: true"
+
 module Rouge
   module Lexers
     class #{language.capitalize} < RegexLexer

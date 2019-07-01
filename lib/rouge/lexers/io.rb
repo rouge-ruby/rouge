@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -25,22 +26,22 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         rule %r(//.*?\n), Comment::Single
         rule %r(#.*?\n), Comment::Single
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
         rule %r(/[+]), Comment::Multiline, :nested_comment
 
-        rule /"(\\\\|\\"|[^"])*"/, Str
+        rule %r/"(\\\\|\\"|[^"])*"/, Str
 
         rule %r(:?:=), Keyword
-        rule /[()]/, Punctuation
+        rule %r/[()]/, Punctuation
 
         rule %r([-=;,*+><!/|^.%&\[\]{}]), Operator
 
-        rule /[A-Z]\w*/, Name::Class
+        rule %r/[A-Z]\w*/, Name::Class
 
-        rule /[a-z_]\w*/ do |m|
+        rule %r/[a-z_]\w*/ do |m|
           name = m[0]
 
           if self.class.constants.include? name
@@ -53,9 +54,9 @@ module Rouge
         end
 
         rule %r((\d+[.]?\d*|\d*[.]\d+)(e[+-]?[0-9]+)?)i, Num::Float
-        rule /\d+/, Num::Integer
+        rule %r/\d+/, Num::Integer
 
-        rule /@@?/, Keyword
+        rule %r/@@?/, Keyword
       end
 
       state :nested_comment do

@@ -32,6 +32,7 @@ national:
   name: Mark McGwire
   hr:   65
   avg:  0.278
+  addr: B 221 Block
 -
   name: Sammy Sosa
   hr:   63

@@ -19,10 +19,10 @@
 </header>
 <main>
   <header class="section-header"><h2>Highlighted</h2></header>
-  <%= @highlighted %>
+  <div id="highlight"><%= @highlighted %></div>
 
   <header class="section-header"><h2>Raw</h2></header>
-  <pre><%= @raw %></pre>
+  <div id="rawtext"><pre><%= @raw %></pre></div>
 </main>
 
 <aside class="legend">
@@ -33,3 +33,15 @@
 <% end %>
   </pre>
 </aside>
+
+<script type="text/javascript">
+  var errorSpans = document.querySelectorAll("code > span.err").length;
+  var highlightSection = document.getElementsByClassName("highlight")[0].textContent;
+  var rawSection = document.getElementById("rawtext").textContent;
+  if (highlightSection != rawSection) {
+    alert("Highlighted and raw section don't match!")
+  }
+  if (errorSpans > 0) {
+    alert("There are " + errorSpans + " errors.");
+  }
+</script> 

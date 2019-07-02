@@ -137,8 +137,13 @@ If you're here to implement a lexer for your awesome language, there's a good ch
 
 ### Run the tests
 
-You can test the core of Rouge simply by running `rake` (no `bundle exec` required), or `rake spec TEST=spec/xxx_spec.rb`
-to run a single test file.
+You can test the core of Rouge simply by running `rake` (no `bundle exec` required). You can also run a single test file by
+setting the `TEST` environment variable to the path of the desired test. For example, to test just the *`ruby` lexer* which is
+at path, `spec/lexers/ruby_spec.rb` within the repository, one may simply run the following:
+
+```sh
+TEST=spec/lexers/ruby_spec.rb rake
+```
 
 It's also set up with `guard`, if you like.
 

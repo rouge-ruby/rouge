@@ -292,7 +292,7 @@ module Rouge
         if rule.is_a?(State)
           puts "  entering: mixin :#{rule.name}" if @debug
           return true if step(rule, stream)
-          puts "  exiting:  mixin :#{rule.name}" if @debug
+          puts "  exiting: mixin :#{rule.name}" if @debug
         else
           puts "  trying: #{rule.inspect}" if @debug
 

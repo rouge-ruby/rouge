@@ -146,6 +146,49 @@ stats: |
   65 Home Runs
   0.278 Batting Average
 
+# Multi-line block chomping
+
+## No newlines at end of folded block
+---
+desc: >-
+  This is just a dummy text intended to
+  test this lexer. The following whitespace
+  until "label" is intentional.
+
+
+label: lipsum
+
+## Allow all newlines at end of folded block
+---
+desc: >+
+  This is just a dummy text intended to
+  test this lexer. The following whitespace
+  until "label" is intentional.
+
+
+label: lipsum
+
+## No newlines at end of literal block
+---
+desc: |-
+  This is just a dummy text intended to
+  test this lexer. The following whitespace
+  until "label" is intentional.
+
+
+label: lipsum
+
+## Allow all newlines at end of literal block
+---
+desc: |+
+  This is just a dummy text intended to
+  test this lexer. The following whitespace
+  until "label" is intentional.
+
+
+label: lipsum
+...
+
 # Quoted scalars
 ---
 unicode: "Sosa did fine.\u263A"

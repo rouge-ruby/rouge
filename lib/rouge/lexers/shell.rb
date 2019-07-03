@@ -52,7 +52,7 @@ module Rouge
         rule %r/\b(#{BUILTINS})\s*\b(?!(\.|-))/, Name::Builtin
         rule %r/[.](?=\s)/, Name::Builtin
 
-        rule %r/(\b\w+)(=)/ do |m|
+        rule %r/(\b\w+)(=)/ do
           groups Name::Variable, Operator
         end
 

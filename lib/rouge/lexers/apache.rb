@@ -50,7 +50,7 @@ module Rouge
 
       state :section do
         # Match section arguments
-        rule %r/([^>]+)?(>(?:\r\n?|\n)?)/ do |m|
+        rule %r/([^>]+)?(>(?:\r\n?|\n)?)/ do
           groups Literal::String::Regex, Punctuation
           pop!
         end

@@ -72,7 +72,7 @@ module Rouge
       end
 
       state :content do
-        rule %r/.+/m do |m|
+        rule %r/.+/m do
           delegate(content_lexer)
         end
       end

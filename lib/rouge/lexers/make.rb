@@ -69,7 +69,7 @@ module Rouge
       end
 
       state :block_body do
-        rule %r/(\t[\t ]*)([@-]?)/ do |m|
+        rule %r/(\t[\t ]*)([@-]?)/ do
           groups Text, Punctuation
           push :shell_line
         end

@@ -199,7 +199,7 @@ module Rouge
         end
         rule %r/(?:#{KEYWORDS})\b(?!-)/i, Keyword::Reserved
 
-        rule %r/(\w+)(\.)/ do |m|
+        rule %r/(\w+)(\.)/ do
           groups Name::Constant, Operator
         end
 

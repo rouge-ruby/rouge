@@ -226,9 +226,12 @@ not a number: .NaN
 # Miscellaneous
 ---
 null: ~
-true: boolean
-false: boolean
+bool_true: true
+str_true: 'true'
+bool_false: false
+str_false: "false"
 string: '12345'
+number: 12345
 
 # Timestamps
 ---
@@ -249,6 +252,7 @@ application specific tag: !something |
  The semantics of the tag
  above may be different for
  different documents.
+email_regex: !ruby/regexp '/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i'
 
 # Global tags
 %TAG ! tag:clarkevans.com,2002:

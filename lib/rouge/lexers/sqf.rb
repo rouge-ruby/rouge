@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -54,7 +55,7 @@ module Rouge
       end
 
       def self.commands
-        load Pathname.new(__FILE__).dirname.join("sqf/commands.rb")
+        load File.join(__dir__, "sqf/commands.rb")
         @commands = self.commands
       end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::Tulip do
   let(:subject) { Rouge::Lexers::Tulip.new }
 

@@ -71,3 +71,14 @@ second_end:
                                        ; control-equivalent to %end, so this is
                                        ; well-defined (ignoring earlier undefined
                                        ; behavior in this example).
+
+; copied from https://llvm.org/docs/LangRef.html#attribute-groups
+
+; Target-independent attributes:
+attributes #0 = { alwaysinline alignstack=4 }
+
+; Target-dependent attributes:
+attributes #1 = { "no-sse" }
+
+; Function @f has attributes: alwaysinline, alignstack=4, and "no-sse".
+define void @f() #0 #1 { ... }

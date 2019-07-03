@@ -17,6 +17,9 @@ if [ -n "$BASH_VERSION" ]; then . "$RY_PREFIX/lib/ry.bash_completion"; fi
 
 echo $((16#0F)) # should be 15
 
+echo "Balanced paren interpolation: $( if (( a == b )) ; then echo "equal" ; fi )"
+echo "Balanced paren interpolation: $( ( seq 10; seq 10 ) | grep 0 )"
+
 # ltmain.sh - Provide generalized library-building support services.
 # NOTE: Changing this file will not affect anything until you rerun configure.
 #

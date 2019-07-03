@@ -23,6 +23,9 @@ Performance/RedundantBlockCall:
 Lint/UselessAssignment:
   Enabled: false
 
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: true
+
 Lint/UnusedMethodArgument:
   Enabled: false
 
@@ -39,12 +42,4 @@ Lint/UnneededSplatExpansion:
   Enabled: false
 
 Lint/IneffectiveAccessModifier:
-  Enabled: false
-
-# TODO: enable it in a future because `ruby -w` warns it
-Lint/AmbiguousRegexpLiteral:
-  Enabled: false
-
-# TODO: enable it in a future because `ruby -w` warns it
-Lint/AmbiguousOperator:
   Enabled: false

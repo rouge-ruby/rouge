@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -11,6 +12,7 @@ module Rouge
 
       def self.detect?(text)
         return true if text.doctype?(/\bhtml\b/i)
+        return false if text =~ /\A<\?xml\b/
         return true if text =~ /<\s*html\b/
       end
 
@@ -20,21 +22,21 @@ module Rouge
       end
 
       state :root do
-        rule /[^<&]+/m, Text
-        rule /&\S*?;/, Name::Entity
-        rule /<!DOCTYPE .*?>/im, Comment::Preproc
-        rule /<!\[CDATA\[.*?\]\]>/m, Comment::Preproc
-        rule /<!--/, Comment, :comment
-        rule /<\?.*?\?>/m, Comment::Preproc # php? really?
+        rule %r/[^<&]+/m, Text
+        rule %r/&\S*?;/, Name::Entity
+        rule %r/<!DOCTYPE .*?>/im, Comment::Preproc
+        rule %r/<!\[CDATA\[.*?\]\]>/m, Comment::Preproc
+        rule %r/<!--/, Comment, :comment
+        rule %r/<\?.*?\?>/m, Comment::Preproc # php? really?
 
-        rule /<\s*script\s*/m do
+        rule %r/<\s*script\s*/m do
           token Name::Tag
           @javascript.reset!
           push :script_content
           push :tag
         end
 
-        rule /<\s*style\s*/m do
+        rule %r/<\s*style\s*/m do
           token Name::Tag
           @css.reset!
           @lang = @css
@@ -42,8 +44,8 @@ module Rouge
           push :tag
         end
 
-        rule /<\//, Name::Tag, :tag_end
-        rule /</, Name::Tag, :tag_start
+        rule %r(</), Name::Tag, :tag_end
+        rule %r/</, Name::Tag, :tag_start
 
         rule %r(<\s*[a-zA-Z0-9:-]+), Name::Tag, :tag # opening tags
         rule %r(<\s*/\s*[a-zA-Z0-9:-]+\s*>), Name::Tag # closing tags
@@ -51,21 +53,21 @@ module Rouge
 
       state :tag_end do
         mixin :tag_end_end
-        rule /[a-zA-Z0-9:-]+/ do
+        rule %r/[a-zA-Z0-9:-]+/ do
           token Name::Tag
           goto :tag_end_end
         end
       end
 
       state :tag_end_end do
-        rule /\s+/, Text
-        rule />/, Name::Tag, :pop!
+        rule %r/\s+/, Text
+        rule %r/>/, Name::Tag, :pop!
       end
 
       state :tag_start do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
 
-        rule /[a-zA-Z0-9:-]+/ do
+        rule %r/[a-zA-Z0-9:-]+/ do
           token Name::Tag
           goto :tag
         end
@@ -74,41 +76,41 @@ module Rouge
       end
 
       state :comment do
-        rule /[^-]+/, Comment
-        rule /-->/, Comment, :pop!
-        rule /-/, Comment
+        rule %r/[^-]+/, Comment
+        rule %r/-->/, Comment, :pop!
+        rule %r/-/, Comment
       end
 
       state :tag do
-        rule /\s+/m, Text
-        rule /[a-zA-Z0-9_:-]+\s*=\s*/m, Name::Attribute, :attr
-        rule /[a-zA-Z0-9_:-]+/, Name::Attribute
+        rule %r/\s+/m, Text
+        rule %r/[a-zA-Z0-9_:-]+\s*=\s*/m, Name::Attribute, :attr
+        rule %r/[a-zA-Z0-9_:-]+/, Name::Attribute
         rule %r(/?\s*>)m, Name::Tag, :pop!
       end
 
       state :attr do
         # TODO: are backslash escapes valid here?
-        rule /"/ do
+        rule %r/"/ do
           token Str
           goto :dq
         end
 
-        rule /'/ do
+        rule %r/'/ do
           token Str
           goto :sq
         end
 
-        rule /[^\s>]+/, Str, :pop!
+        rule %r/[^\s>]+/, Str, :pop!
       end
 
       state :dq do
-        rule /"/, Str, :pop!
-        rule /[^"]+/, Str
+        rule %r/"/, Str, :pop!
+        rule %r/[^"]+/, Str
       end
 
       state :sq do
-        rule /'/, Str, :pop!
-        rule /[^']+/, Str
+        rule %r/'/, Str, :pop!
+        rule %r/[^']+/, Str
       end
 
       state :script_content do
@@ -124,13 +126,13 @@ module Rouge
       end
 
       state :style_content do
-        rule /[^<]+/ do
+        rule %r/[^<]+/ do
           delegate @lang
         end
 
         rule %r(<\s*/\s*style\s*>)m, Name::Tag, :pop!
 
-        rule /</ do
+        rule %r/</ do
           delegate @lang
         end
       end

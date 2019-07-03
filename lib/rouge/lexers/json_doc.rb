@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -9,14 +10,14 @@ module Rouge
       tag 'json-doc'
 
       prepend :root do
-        rule /([$\w]+)(\s*)(:)/ do
+        rule %r/([$\w]+)(\s*)(:)/ do
           groups Name::Attribute, Text, Punctuation
         end
 
         rule %r(/[*].*?[*]/), Comment
 
         rule %r(//.*?$), Comment::Single
-        rule /(\.\.\.)/, Comment::Single
+        rule %r/(\.\.\.)/, Comment::Single
       end
     end
   end

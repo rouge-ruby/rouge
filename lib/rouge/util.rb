@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   class InheritableHash < Hash
@@ -74,13 +75,13 @@ module Rouge
     def starts_block(block_state)
       @block_state = block_state
       @block_indentation = @last_indentation || ''
-      puts "    starts_block #{block_state.inspect}" if @debug
+      puts "    starts_block: #{block_state.inspect}" if @debug
       puts "    block_indentation: #{@block_indentation.inspect}" if @debug
     end
 
     # handle a single indented line
     def indentation(indent_str)
-      puts "    indentation #{indent_str.inspect}" if @debug
+      puts "    indentation: #{indent_str.inspect}" if @debug
       puts "    block_indentation: #{@block_indentation.inspect}" if @debug
       @last_indentation = indent_str
 

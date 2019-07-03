@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers do
   spec_dir = Pathname.new(__FILE__).dirname
@@ -17,10 +18,13 @@ describe Rouge::Lexers do
       it 'lexes the sample without throwing' do
         sample = File.read(samples_dir.join(lexer_class.tag), encoding: 'utf-8')
 
-        out_buf = ""
+        out_buf = String.new("")
         subject.lex(sample) do |token, value|
           out_buf << value
         end
+
+        # Escape is allowed to drop characters from its input
+        next if lexer_class == Rouge::Lexers::Escape
 
         if out_buf != sample
           out_file = "tmp/mismatch.#{subject.tag}"

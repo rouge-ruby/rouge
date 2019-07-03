@@ -80,3 +80,46 @@ Some other {{ output }}!
     {{ 'blank-page-image.jpg' | asset_url | img_tag: shop.name }}
   </a>
 {% endif %}
+
+{% for page in site.pages %}
+  {% if page.layout == 'home' %}
+    {{ page.excerpt }}
+  {% endif %}
+{% endfor %}
+
+{% for i in (1..5) %}
+  {% if i == 4 %}
+    {% break %}
+  {% else %}
+    {% continue %}
+  {% endif %}
+{% endfor %}
+
+{% for item in array limit:2 reversed %}
+  {{ item }}
+{% endfor %}
+
+{% for item in array offset:2 %}
+  {{ item }}
+{% endfor %}
+
+{% for item in array reversed %}
+  {{ item }}
+{% endfor %}
+
+{% for i in (3..5) %}
+  {{ i }}
+{% endfor %}
+
+{% assign num = 4 %}
+{% for i in (1..num) %}
+  {{ i }}
+{% endfor %}
+
+{% for char in 'The Quick Brown Fox' %}
+  {{ char | upcase }}
+{% endfor %}
+
+{% for char in "Hello World" %}
+  {{ char | upcase }}
+{% endfor %}

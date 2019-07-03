@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rouge
   module Guessers
     class Disambiguation < Guesser
@@ -98,6 +100,19 @@ module Rouge
         next Hack if matches?(/(\(|, ?)\$\$/)
 
         Cpp
+      end
+
+      disambiguate '*.plist' do
+        next XML if matches?(/\A<\?xml\b/)
+
+        Plist
+      end
+
+      disambiguate '*.sc' do
+        next Python if matches?(/^#/)
+        next SuperCollider if matches?(/(?:^~|;$)/)
+
+        next Python
       end
     end
   end

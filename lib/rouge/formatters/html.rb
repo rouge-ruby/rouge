@@ -15,7 +15,7 @@ module Rouge
       def span(tok, val)
         return val if escape?(tok)
 
-        safe_span(tok, val.gsub(/[&<>]/, TABLE_FOR_ESCAPE_HTML))
+        safe_span(tok, escape_special_html_chars(val))
       end
 
       def safe_span(tok, safe_val)
@@ -29,12 +29,19 @@ module Rouge
         end
       end
 
-
       TABLE_FOR_ESCAPE_HTML = {
         '&' => '&amp;',
         '<' => '&lt;',
         '>' => '&gt;',
       }
+
+    private
+      def escape_special_html_chars(value)
+        escape_regex = /[&<>]/
+        return value unless value =~ escape_regex
+
+        value.gsub(escape_regex, TABLE_FOR_ESCAPE_HTML)
+      end
     end
   end
 end

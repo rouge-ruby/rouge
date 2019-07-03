@@ -46,7 +46,13 @@ class VisualTestApp < Sinatra::Application
 
     # Invoke a specific formatter based on what one intends to test
     @formatter = params[:inline] ? formatters::HTMLInline.new(@theme) : formatters::HTML.new
-    @formatter = formatters::HTMLLineTable.new(@formatter) if params[:line_numbers] == 'true'
+    @formatter = if params[:line_numbers] == 'true'
+                   if params[:line_table] == 'false'
+                     formatters::HTMLTable.new(@formatter)
+                   else
+                     formatters::HTMLLineTable.new(@formatter)
+                   end
+                 end
     @formatter = formatters::HTMLPygments.new(@formatter) unless params[:wrap] == 'false'
   end
 

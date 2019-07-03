@@ -36,6 +36,15 @@ module Rouge
       }
 
     private
+      # A performance-oriented helper method to escape `&`, `<` and `>` for the rendered
+      # HTML from this formatter.
+      #
+      # `String#gsub` will always return a new string instance irrespective of whether
+      # a substitution occurs. This method however invokes `String#gsub` only if
+      # a substitution is imminent.
+      #
+      # Returns either the given `value` argument string as is or a new string with the
+      # special characters replaced with their escaped counterparts.
       def escape_special_html_chars(value)
         escape_regex = /[&<>]/
         return value unless value =~ escape_regex

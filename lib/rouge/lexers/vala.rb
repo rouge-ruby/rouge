@@ -24,7 +24,7 @@ module Rouge
       )
 
       keywords_type = %w(
-        bool char double float int int8 int16 int32 int64 long short size_t 
+        bool char double float int int8 int16 int32 int64 long short size_t
         ssize_t string unichar uint uint8 uint16 uint32 uint64 ulong ushort
       )
 

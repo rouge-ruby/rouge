@@ -131,7 +131,7 @@ module Rouge
         rule %r/}/, Punctuation, :pop!
         mixin :expression
       end
-      
+
       state :expression do
         mixin :ignore
         mixin :comment

@@ -31,7 +31,7 @@ module Rouge
         \$REPORTERRORSHOWSOURCE \$REPORTERRORSHOWSTACKTRACE
         \$SENDER \$ShellId \$StackTrace \$switch \$this \$true
       ).join('|')
-      
+
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_reserved_words?view=powershell-6
       KEYWORDS = %w(
         assembly exit process base filter public begin finally return break for
@@ -40,7 +40,7 @@ module Rouge
         inlinescript until do interface using dynamicparam module var else
         namespace while elseif parallel workflow end param enum private
       ).join('|')
-      
+
       # https://devblogs.microsoft.com/scripting/powertip-find-a-list-of-powershell-type-accelerators/
       # ([PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get).Keys -join ' '
       KEYWORDS_TYPE = %w(
@@ -74,7 +74,7 @@ module Rouge
       MULTILINE_KEYWORDS = %w(
         synopsis description parameter example inputs outputs notes link
         component role functionality forwardhelptargetname forwardhelpcategory
-        remotehelprunspace externalhelp 
+        remotehelprunspace externalhelp
       ).join('|')
 
       state :variable do

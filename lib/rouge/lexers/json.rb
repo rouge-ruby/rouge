@@ -7,7 +7,7 @@ module Rouge
       title 'JSON'
       desc "JavaScript Object Notation (json.org)"
       tag 'json'
-      filenames '*.json'
+      filenames '*.json', 'Pipfile.lock'
       mimetypes 'application/json', 'application/vnd.api+json',
                 'application/hal+json', 'application/problem+json',
                 'application/schema+json'

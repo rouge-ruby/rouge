@@ -28,10 +28,8 @@ module Rouge
         @formatter = opts[:inline_theme] ? HTMLInline.new(opts[:inline_theme])
                    : HTML.new
 
-        if opts[:line_numbers]
-          table_formatter_class = opts[:line_table] ? HTMLLineTable : HTMLTable
-          @formatter = table_formatter_class.new(@formatter, opts)
-        end
+
+        @formatter = HTMLTable.new(@formatter, opts) if opts[:line_numbers]
 
         if opts.fetch(:wrap, true)
           @formatter = HTMLPygments.new(@formatter, opts.fetch(:css_class, 'codehilite'))

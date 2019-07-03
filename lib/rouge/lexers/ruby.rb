@@ -11,7 +11,7 @@ module Rouge
       filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
                 'Rakefile', 'Guardfile', 'Gemfile', 'Capfile', 'Podfile',
                 'Vagrantfile', '*.ru', '*.prawn', 'Berksfile', '*.arb',
-                'Dangerfile'
+                'Dangerfile', 'Fastfile', 'Deliverfile', 'Appfile'
 
       mimetypes 'text/x-ruby', 'application/x-ruby'
 

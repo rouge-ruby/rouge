@@ -4,86 +4,63 @@
 module Rouge
   module Lexers
     class Squirrel < RegexLexer
-      tag 'squirrel'
-      filenames '*.nut'
-      mimetypes 'text/x-squirrel'
+      tag "squirrel"
+      filenames "*.nut"
+      mimetypes "text/x-squirrel"
 
       title "Squirrel"
-      desc 'The Squirrel programming language'
+      desc "The Squirrel programming language (squirrel-lang.org)"
 
-      any = /@?[_a-z]\w*/i
-
-      state :whitespace do
-        rule /\s+/, Text
-        rule %r((#|//).*$), Comment::Single
-        rule %r(/[*].*?[*]/)m, Comment::Multiline
+      def self.keywords
+        @keywords ||= %w(
+          base break case catch clone
+          continue default delete else enum
+          for foreach function if in
+          local resume return switch this
+          throw try typeof while yield constructor
+          instanceof
+        )
       end
 
-      state :nest do
-        rule /{/, Punctuation, :nest
-        rule /}/, Punctuation, :pop!
-        mixin :root
+      def self.declarations
+        @declarations ||= %w(
+          class const extends static local
+        )
       end
 
-      state :splice_string do
-        rule /\\./, Str
-        rule /{/, Punctuation, :nest
-        rule /"|\n/, Str, :pop!
-        rule /./, Str
-      end
-
-      state :splice_literal do
-        rule /""/, Str
-        rule /{/, Punctuation, :nest
-        rule /"/, Str, :pop!
-        rule /./, Str
+      def self.id
+        @id ||= /@?[_a-z]\w*/i
       end
 
       state :root do
-        mixin :whitespace
+        rule /\s+/m, Text
+
+        # comments
+        rule %r((#|//).*?$), Comment::Single
+        rule %r(/[*].*?[*]/)m, Comment::Multiline
 
         # strings
-        rule /[$]\s*"/, Str, :splice_string
-        rule /[$]@\s*"/, Str, :splice_literal
         rule /@"(""|[^"])*"/m, Str
         rule /"(\\.|.)*?["\n]/, Str
         rule /'(\\.|.)'/, Str::Char
 
-        # naming
-        rule /\b(?:class)\b/, Keyword, :class_name
-        rule /\b(?:function)\b/, Keyword, :function_name
-        rule /\b(?:local)\b/, Keyword, :variable_name
-
-        # reserved words
-        rule %r((base|break|case|catch|clone|const|default|delete|do|else|extends|for|foreach|if|in|instanceof|resume|return|static|switch|this|throw|try|typeof|while|yield)\b), Keyword
-        rule %r((class|constructor|function|local)\b), Keyword::Declaration
-        rule %r((true|false|null)\b), Keyword::Constant
+        # keywords
+        rule /(?:#{Squirrel.keywords.join('|')})\b/, Keyword
+        rule /(?:#{Squirrel.declarations.join('|')})\b/, Keyword::Declaration
+        rule /(?:true|false|null)\b/, Keyword::Constant
+        rule /(?:class)\b/, Keyword::Declaration, :class
 
         # operators and punctuation
         rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
 
-        # numbers
-        rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
-        rule %r((?i)\d+e[+-]?\d+), Num::Float
-        rule %r((?i)0x[0-9a-f]*), Num::Hex
-        rule %r(\d+), Num::Integer
-
-        rule any, Name
+        rule /[0-9]+(([.]([0-9]+)?)(e[-]?[0-9]+)?)/, Num::Float
+        rule /0x[0-9a-fA-F]+|0[0-7]+|[0-9]+/, Num::Integer
+        rule Squirrel.id, Name
       end
 
-      state :class_name do
-        mixin :whitespace
-        rule any, Name::Class, :pop!
-      end
-
-      state :function_name do
-        mixin :whitespace
-        rule any, Name::Function, :pop!
-      end
-
-      state :variable_name do
-        mixin :whitespace
-        rule any, Name::Variable, :pop!
+      state :class do
+        rule /\s+/m, Text
+        rule Squirrel.id, Name::Class, :pop!
       end
 
     end

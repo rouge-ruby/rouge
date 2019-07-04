@@ -58,7 +58,7 @@ module Rouge
         rule %r/[^\/*)]+/, Comment
         rule(/[\/][*]/) { token Comment; push }
         rule %r/[*][\/]/, Comment, :pop!
-        rule %r/[(*)]/, Comment
+        rule %r/[(*)\/]/, Comment
       end
     end
   end

@@ -468,7 +468,7 @@ module Rouge
         rule /@/, Str::Symbol # line hold specifiers
         rule /\?/, Str::Symbol # used for format modifiers
         
-        rule /.*/, Text # Fallback for anything we haven't matched so far
+        rule /[^\s]+/, Text # Fallback for anything we haven't matched so far
       end
 
       state :root do

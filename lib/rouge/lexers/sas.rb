@@ -439,12 +439,12 @@ module Rouge
         rule /\$/, Keyword::Type
 
         # Macro definitions
-        rule /(%macro|%mend)(\s*)([\w\d]+)/i do
+        rule /(%macro|%mend)(\s*)(\w+)/i do
           groups Keyword, Text, Name::Function
         end
         rule /%mend/, Keyword
 
-        rule /%\w[\w\d]*/ do |m|
+        rule /%\w+/ do |m|
           if self.class.sas_macro_statements.include? m[0].upcase
             token Keyword
           elsif self.class.sas_macro_functions.include? m[0].upcase
@@ -488,15 +488,15 @@ module Rouge
         end
 
         # Data step definitions
-        rule /(data)(\s+)([\w\d\.]+)/i do
+        rule /(data)(\s+)([\w\.]+)/i do
           groups Keyword, Text, Name::Variable
         end
         # Libname definitions
-        rule /(libname)(\s+)([\w\d]+)/i do
+        rule /(libname)(\s+)(\w+)/i do
           groups Keyword, Text, Name::Variable
         end
 
-        rule /\w[\w\d]*/ do |m|
+        rule /\w+/ do |m|
           if self.class.data_step_statements.include? m[0].upcase
             token Keyword
           elsif self.class.sas_functions.include? m[0].upcase
@@ -543,7 +543,7 @@ module Rouge
         rule /(quit|run)/i, Keyword, :pop!
         
         mixin :basics
-        rule /\w[\w\d]*/ do |m|
+        rule /\w+/ do |m|
           if self.class.data_step_statements.include? m[0].upcase
             token Keyword
           elsif self.class.sas_functions.include? m[0].upcase

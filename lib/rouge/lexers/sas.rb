@@ -139,7 +139,7 @@ module Rouge
 
       def self.proc_keywords 
         # Create a hash with keywords for common PROCs, keyed by PROC name
-        @proc_keywords = Hash.new
+        @proc_keywords ||= {}
 
 	@proc_keywords["sql"] ||= Set.new %w(
             ALTER TABLE CONNECT CREATE INDEX VIEW DELETE DESCRIBE DISCONNECT DROP EXECUTE

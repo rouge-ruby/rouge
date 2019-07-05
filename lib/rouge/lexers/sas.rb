@@ -513,7 +513,7 @@ module Rouge
       state :single_string do
         rule /''/, Str::Escape
         rule /'/, Str::Single, :pop!
-        rule /[^\\']+/, Str::Single
+        rule /[^']+/, Str::Single
       end
 
       state :double_string do

@@ -17,10 +17,6 @@ module Rouge
       title "GLSL"
       desc "The GLSL shader language"
 
-      # optional comment or whitespace
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
-      id = /[a-zA-Z_][a-zA-Z0-9_]*/
-
       def self.keywords
         @keywords ||= Set.new %w(
           attribute const uniform varying
@@ -99,7 +95,7 @@ module Rouge
           gl_TexCoord gl_FogFragCoord gl_Color gl_SecondaryColor gl_Normal gl_VertexID
           gl_MultiTexCord0 gl_MultiTexCord1 gl_MultiTexCord2 gl_MultiTexCord3
           gl_MultiTexCord4 gl_MultiTexCord5 gl_MultiTexCord6 gl_MultiTexCord7
-          gl_FogCoord gl_MaxVertexAttribs gl_MaxVertexUniformComponents 
+          gl_FogCoord gl_MaxVertexAttribs gl_MaxVertexUniformComponents
           gl_MaxVaryingFloats gl_MaxVaryingComponents gl_MaxVertexOutputComponents
           gl_MaxGeometryInputComponents gl_MaxGeometryOutputComponents
           gl_MaxFragmentInputComponents gl_MaxVertexTextureImageUnits

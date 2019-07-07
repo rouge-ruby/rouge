@@ -179,7 +179,7 @@ module Rouge
         end
 
         # literal and folded scalars
-        rule %r/[\|>]/ do
+        rule %r/[\|>][+-]?/ do
           token Punctuation::Indicator
           push :block_scalar_content
           push :block_scalar_header
@@ -246,7 +246,7 @@ module Rouge
           end
         end
 
-        rule %r/[^\n\r\f\v]+/, Name::Constant
+        rule %r/[^\n\r\f\v]+/, Str
       end
 
       state :block_scalar_header do
@@ -328,7 +328,7 @@ module Rouge
       state :plain_scalar_in_block_context do
         # the : indicator ends a scalar
         rule %r/[ ]*(?=:[ \n]|:$)/, Text, :pop!
-        rule %r/[ ]*:/, Str
+        rule %r/[ ]*:\S+/, Str
         rule %r/[ ]+(?=#)/, Text, :pop!
         rule %r/[ ]+$/, Text
         # check for new documents or dedents at the new line
@@ -339,6 +339,8 @@ module Rouge
 
         rule %r/[ ]+/, Str
         rule SPECIAL_VALUES, Name::Constant
+        rule %r/\d+(?:\.\d+)?(?=(\r?\n)| +#)/, Literal::Number, :pop!
+
         # regular non-whitespace characters
         rule %r/[^\s:]+/, Str
       end

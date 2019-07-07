@@ -23,6 +23,9 @@ Performance/RedundantBlockCall:
 Lint/UselessAssignment:
   Enabled: false
 
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: true
+
 Lint/UnusedMethodArgument:
   Enabled: false
 

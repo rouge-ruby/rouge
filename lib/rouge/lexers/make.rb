@@ -15,12 +15,6 @@ module Rouge
         include undef error warning if else elif endif for endfor
       )
 
-      gnu_special = %w(
-        ifeq ifneq ifdef ifndef else endif include -include define endef :
-      )
-
-      line = /(?:\\.|\\\n|[^\\\n])*/m
-
       def initialize(opts={})
         super
         @shell = Shell.new(opts)
@@ -75,7 +69,7 @@ module Rouge
       end
 
       state :block_body do
-        rule %r/(\t[\t ]*)([@-]?)/ do |m|
+        rule %r/(\t[\t ]*)([@-]?)/ do
           groups Text, Punctuation
           push :shell_line
         end

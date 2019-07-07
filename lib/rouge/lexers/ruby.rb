@@ -11,7 +11,7 @@ module Rouge
       filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
                 'Rakefile', 'Guardfile', 'Gemfile', 'Capfile', 'Podfile',
                 'Vagrantfile', '*.ru', '*.prawn', 'Berksfile', '*.arb',
-                'Dangerfile'
+                'Dangerfile', 'Fastfile', 'Deliverfile', 'Appfile'
 
       mimetypes 'text/x-ruby', 'application/x-ruby'
 
@@ -289,9 +289,9 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/\(/, Punctuation, :defexpr
         rule %r(
-          (?:([a-zA-Z_][\w_]*)(\.))?
+          (?:([a-zA-Z_]\w*)(\.))?
           (
-            [a-zA-Z_][\w_]*[!?]? |
+            [a-zA-Z_]\w*[!?]? |
             \*\*? | [-+]@? | [/%&\|^`~] | \[\]=? |
             <<? | >>? | <=>? | >= | ===?
           )

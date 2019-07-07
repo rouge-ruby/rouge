@@ -78,7 +78,7 @@ module Rouge
           (#{keywords.join("|")})\b|
           (<[%:-]|=>|>:|[#=@_\u21D2\u2190])(\b|(?=\s)|$)
         )x, Keyword
-        rule %r/:(?!#{op})/, Keyword, :type        
+        rule %r/:(?!#{op})/, Keyword, :type
         rule %r/(true|false|null)\b/, Keyword::Constant
         rule %r/(import|package)(\s+)/ do
           groups Keyword, Text

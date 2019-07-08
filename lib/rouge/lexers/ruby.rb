@@ -106,7 +106,7 @@ module Rouge
       end
 
       keywords = %w(
-        BEGIN END alias begin break case do else elsif end
+        BEGIN END alias begin break case defined\? do else elsif end
         ensure for if in next redo rescue raise retry return super then
         undef unless until when while yield
       )
@@ -183,8 +183,7 @@ module Rouge
 
         mixin :strings
 
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword, :expr_start
-        rule %r/(?:defined\?)(?=[ ]+|\()/, Keyword, :expr_start
+        rule %r/(?:#{keywords.join('|')})(?=\W|$)/, Keyword, :expr_start
         rule %r/(?:#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo, :expr_start
 
         rule %r(

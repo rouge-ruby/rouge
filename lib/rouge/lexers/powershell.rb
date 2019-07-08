@@ -165,9 +165,10 @@ module Rouge
       end
 
       state :parameters do
-        rule %r/\n/, Text::Whitespace, :pop!
+        rule %r/\s*?\n/, Text::Whitespace, :pop!
         rule %r/[;(){}\]]/, Punctuation, :pop!
         rule %r/[|=]/, Operator, :pop!
+        rule %r/[\/\\~\w][-.:\/\\~\w]*/, Name::Other
         rule %r/\w[-\w]+/, Name::Other
         mixin :root
       end
@@ -197,20 +198,21 @@ module Rouge
         rule %r/(function)(\s+)(?:(\w+)(:))?(\w[-\w]+)/i do
           groups Keyword::Reserved, Text::Whitespace, Name::Namespace, Punctuation, Name::Function
         end
-        rule %r/(?:#{KEYWORDS})\b(?!-)/i, Keyword::Reserved
+        rule %r/(?:#{KEYWORDS})\b(?![-.])/i, Keyword::Reserved
 
-        rule %r/(\w+)(\.)/ do
-          groups Name::Constant, Operator
+        rule %r/-{1,2}\w+/, Name::Tag
+
+        rule %r/([\/\\~\w][-.:\/\\~\w]*)(\n)?/ do |m|
+          groups Name::Function, Text::Whitespace
+          push :parameters unless m[2]
         end
 
-        rule %r/-\w+/, Name::Tag
-
-        rule %r/(\.)?([-\w]+)(\()?/ do
-          groups Operator, Name::Function, Punctuation
-          push :parameters
+        rule %r/(\.)?([-\w]+)(?:(\()|(\n))?/ do |m|
+          groups Operator, Name::Function, Punctuation, Text::Whitespace
+          push :parameters unless m[3]
         end
 
-        rule %r/[-+*\/%=!\.&|]/, Operator
+        rule %r/[-+*\/%=!.&|]/, Operator
         rule %r/@\{/, Punctuation, :hasht
         rule %r/@\(/, Punctuation, :array
         rule %r/\[/, Punctuation, :bracket

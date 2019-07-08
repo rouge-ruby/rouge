@@ -20,11 +20,11 @@ module Rouge
       state :root do
         rule %r/\s+/, Text
 
-        rule %r/^(ONBUILD)(\s+)(#{KEYWORDS})(.*)/io do |m|
+        rule %r/^(ONBUILD)(\s+)(#{KEYWORDS})(.*)/io do
           groups Keyword, Text::Whitespace, Keyword, Str
         end
 
-        rule %r/^(#{KEYWORDS})\b(.*)/io do |m|
+        rule %r/^(#{KEYWORDS})\b(.*)/io do
           groups Keyword, Str
         end
 

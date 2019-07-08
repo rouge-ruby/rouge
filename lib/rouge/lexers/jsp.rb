@@ -7,7 +7,7 @@ module Rouge
       desc 'JSP'
       tag 'jsp'
       filenames '*.jsp'
-      mimetypes 'text/x-jsp', 'application/x-jsp'   
+      mimetypes 'text/x-jsp', 'application/x-jsp'
 
       def initialize(*)
         super
@@ -16,7 +16,7 @@ module Rouge
 
       directives = %w(page include taglib)
       actions = %w(scriptlet declaration expression)
-     
+
       state :root do
 
         rule %r/<%--/, Comment, :jsp_comment
@@ -106,7 +106,7 @@ module Rouge
 
       state :jsp_interp do
         rule %r/\}/, Str::Interpol, :pop!
-        rule %r/'/, Literal, :jsp_interp_literal_start 
+        rule %r/'/, Literal, :jsp_interp_literal_start
         rule(/[^'\}]+/) { delegate @java }
       end
 

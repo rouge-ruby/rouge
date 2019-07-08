@@ -8,7 +8,7 @@ module Rouge
       desc 'the TOML configuration format (https://github.com/mojombo/toml)'
       tag 'toml'
 
-      filenames '*.toml'
+      filenames '*.toml', 'Pipfile'
       mimetypes 'text/x-toml'
 
       identifier = /\S+/

@@ -9,6 +9,10 @@ Rouge is written in Ruby and has a number of development dependencies. To
 develop new features for Rouge (like a lexer for a new syntax) or to fix bugs,
 you need to set up a development environment.
 
+Please note that this guide is about how to configure a development environment
+on your local machine. If you want to isolate your Rouge development environment
+using Docker, take a gander at {file:docs/Docker.md our guide}.
+
 ### Ruby and Git
 
 First things first. This guide is _not_ a guide to installing Ruby and Git.

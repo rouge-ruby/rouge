@@ -50,7 +50,7 @@ module Rouge
 
         # Single, double quotes, and triple double quotes
         rule %r/"""/, Str, :multiline_string
-        rule %r/'(\\.|.)'/, Str::Char        
+        rule %r/'(\\.|.)'/, Str::Char
         rule %r/"/, Str, :double_quote
 
         # Numbers

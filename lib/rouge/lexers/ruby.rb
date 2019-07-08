@@ -183,7 +183,7 @@ module Rouge
 
         mixin :strings
 
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword, :expr_start
+        rule %r/(?:#{keywords.join('|')})(?=\W|$)/, Keyword, :expr_start
         rule %r/(?:#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo, :expr_start
 
         rule %r(

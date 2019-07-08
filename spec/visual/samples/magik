@@ -8,7 +8,8 @@ def_slotted_exemplar(
         :test_object,
         {
                 {:slot, _unset}
-        })
+        },
+        {_class |java.lang.Integer|})
 $
 
 _pragma(classify_level=basic, topic={test_topic, rouge})
@@ -25,6 +26,11 @@ _method test_object.method_name(arg_1, _gather args)
 
         _local l_y << _true
         l_y _and<< _true
+
+        _while _true
+        _loop
+                _leave
+        _endloop
 
         # numbers
         45, 0, -101

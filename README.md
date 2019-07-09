@@ -47,6 +47,14 @@ Builtin formatters include:
   This formatter will split your code into lines, each contained in its own div. The
   `class` option will be used to add a class name to the div, given the line
   number.
+* `Rouge::Formatters::HTMLLineTable.new(formatter, opts={})` will output an HTML table containing
+  numbered lines, each contained in its own table-row. Options are:
+    * `start_line: 1` - the number of the first row
+    * `line_id: 'line-%i'` - a `sprintf` template for `id` attribute with current line number
+    * `line_class: 'lineno'` - a CSS class for each table-row
+    * `table_class: 'rouge-line-table'` - a CSS class for the table
+    * `gutter_class: 'rouge-gutter'` - a CSS class for the line-number cell
+    * `code_class: 'rouge-code'` - a CSS class for the code cell
 * `Rouge::Formatters::HTMLPygments.new(formatter, css_class='codehilite')`
   wraps the given formatter with div wrappers generally expected by stylesheets designed for
   Pygments.

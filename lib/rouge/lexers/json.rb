@@ -13,60 +13,60 @@ module Rouge
                 'application/schema+json'
 
       state :root do
-        rule /\s+/, Text::Whitespace
-        rule /{/, Punctuation, :object
-        rule /\[/, Punctuation, :array
+        rule %r/\s+/, Text::Whitespace
+        rule %r/{/, Punctuation, :object
+        rule %r/\[/, Punctuation, :array
       end
 
       state :object do
-        rule /\s+/, Text::Whitespace
-        rule /"/, Str::Double, :name
-        rule /:/, Punctuation, :value
-        rule /,/, Punctuation
-        rule /}/, Punctuation, :pop!
+        rule %r/\s+/, Text::Whitespace
+        rule %r/"/, Str::Double, :name
+        rule %r/:/, Punctuation, :value
+        rule %r/,/, Punctuation
+        rule %r/}/, Punctuation, :pop!
       end
 
       state :value do
-        rule /"/, Name::Tag, :stringvalue
+        rule %r/"/, Name::Tag, :stringvalue
         mixin :constants
-        rule /}/ do
+        rule %r/}/ do
           token Punctuation
           pop! 2 # pop both this state and the :object one below it
         end
-        rule /\[/, Punctuation, :array
-        rule /{/, Punctuation, :object
-        rule /}/ do
+        rule %r/\[/, Punctuation, :array
+        rule %r/{/, Punctuation, :object
+        rule %r/}/ do
           token Punctuation
           pop! 2 # pop both this state and the :object one below it
         end
-        rule /,/, Punctuation, :pop!
-        rule /\s+/, Text::Whitespace
+        rule %r/,/, Punctuation, :pop!
+        rule %r/\s+/, Text::Whitespace
       end
 
       state :name do
-        rule /[^\\"]+/, Str::Double
-        rule /\\./, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule %r/[^\\"]+/, Str::Double
+        rule %r/\\./, Str::Escape
+        rule %r/"/, Str::Double, :pop!
       end
 
       state :stringvalue do
-        rule /[^\\"]+/, Name::Tag
-        rule /\\./, Str::Escape
-        rule /"/, Name::Tag, :pop!
+        rule %r/[^\\"]+/, Name::Tag
+        rule %r/\\./, Str::Escape
+        rule %r/"/, Name::Tag, :pop!
       end
 
       state :array do
-        rule /\]/, Punctuation, :pop!
-        rule /"/, Name::Tag, :stringvalue
-        rule /,/, Punctuation
+        rule %r/\]/, Punctuation, :pop!
+        rule %r/"/, Name::Tag, :stringvalue
+        rule %r/,/, Punctuation
         mixin :constants
         mixin :root
       end
 
       state :constants do 
-        rule /(?:true|false|null)/, Keyword::Constant
-        rule /-?(?:0|[1-9]\d*)\.\d+(?:e[+-]?\d+)?/i, Num::Float
-        rule /-?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
+        rule %r/(?:true|false|null)/, Keyword::Constant
+        rule %r/-?(?:0|[1-9]\d*)\.\d+(?:e[+-]?\d+)?/i, Num::Float
+        rule %r/-?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
       end
     end
   end

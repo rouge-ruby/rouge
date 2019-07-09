@@ -11,9 +11,10 @@ module Rouge
       filenames '*.make', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile'
       mimetypes 'text/x-makefile'
 
-      bsd_special = %w(
-        include undef error warning if else elif endif for endfor
-      )
+      # TODO: Add support for special keywords
+      # bsd_special = %w(
+      #   include undef error warning if else elif endif for endfor
+      # )
 
       def initialize(opts={})
         super

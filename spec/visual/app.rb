@@ -28,20 +28,20 @@ class VisualTestApp < Sinatra::Application
 
   # Invoke a specific formatter based on what one intends to test
   def setup_formatter(params)
+    # parameters disabled by default
+    inline       = as_boolean params.fetch(:inline, false)
+    line_numbers = as_boolean params.fetch(:line_numbers, false)
+
     # parameters enabled by default
     wrapped    = as_boolean params.fetch(:wrap, true)
     line_table = as_boolean params.fetch(:line_table, true)
 
-    # parameters disabled by default
-    inline     = as_boolean params.fetch(:inline, false)
-    line_nums  = as_boolean params.fetch(:line_numbers, false)
-
     # base HTML formatter
-    formatter  = inline ?
-                   Rouge::Formatters::HTMLInline.new(@theme) :
-                   Rouge::Formatters::HTML.new
+    formatter = inline ?
+                  Rouge::Formatters::HTMLInline.new(@theme) :
+                  Rouge::Formatters::HTML.new
 
-    if line_nums
+    if line_numbers
       formatter = line_table ?
                     Rouge::Formatters::HTMLLineTable.new(formatter) :
                     Rouge::Formatters::HTMLTable.new(formatter)

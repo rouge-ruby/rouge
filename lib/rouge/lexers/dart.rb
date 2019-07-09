@@ -30,8 +30,8 @@ module Rouge
       state :root do
         rule %r(^
           (\s*(?:[a-zA-Z_][a-zA-Z\d_.\[\]]*\s+)+?) # return arguments
-          ([a-zA-Z_][\w]*)                          # method name
-          (\s*)(\()                                 # signature start
+          ([a-zA-Z_]\w*)                           # method name
+          (\s*)(\()                                # signature start
         )mx do |m|
           # TODO: do this better, this shouldn't need a delegation
           delegate Dart, m[1]

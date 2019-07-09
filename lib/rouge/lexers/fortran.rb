@@ -88,7 +88,7 @@ module Rouge
       end
 
       state :root do
-        rule %r/[\s\n]+/, Text::Whitespace
+        rule %r/[\s]+/, Text::Whitespace
         rule %r/!.*$/, Comment::Single
         rule %r/^#.*$/, Comment::Preproc
 
@@ -169,7 +169,7 @@ module Rouge
         rule %r/\(/, Punctuation, :format_spec
         rule %r/\)/, Punctuation, :pop!
         rule %r/,/, Punctuation
-        rule %r/[\s\n]+/, Text::Whitespace
+        rule %r/[\s]+/, Text::Whitespace
         # Edit descriptors could be seen as a kind of "format literal".
         rule %r/[^\s'"(),]+/, Literal
       end

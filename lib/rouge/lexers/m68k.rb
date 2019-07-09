@@ -9,7 +9,6 @@ module Rouge
       title "M68k"
       desc "Motorola 68k Assembler"
 
-      ws = %r((?:\s|;.*?\n/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       def self.keywords
@@ -83,7 +82,7 @@ module Rouge
       end
 
       state :inline_whitespace do
-        rule %r/[\s\t\r]+/, Text
+        rule %r/\s+/, Text
       end
 
       state :whitespace do

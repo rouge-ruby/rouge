@@ -114,7 +114,7 @@ module Rouge
       def demo_file(arg=:absent)
         return @demo_file = Pathname.new(arg) unless arg == :absent
 
-        @demo_file = Pathname.new(__FILE__).dirname.join('demos', tag)
+        @demo_file = Pathname.new(File.join(__dir__, 'demos', tag))
       end
 
       # Specify or get a small demo string for this lexer
@@ -421,17 +421,29 @@ module Rouge
     # @option opts :continue
     #   Continue the lex from the previous state (i.e. don't call #reset!)
     #
-    # @note The use of `opts` has been deprecated. A warning is issued if run
-    #   with `$VERBOSE` set to true.
-    def lex(string, opts={}, &b)
-      unless opts.nil?
-        warn 'The use of opts with Lexer.lex is deprecated' if $VERBOSE
+    # @note The use of :continue => true has been deprecated. A warning is
+    #       issued if run with `$VERBOSE` set to true.
+    #
+    # @note The use of arbitrary `opts` has never been supported, but we
+    #       previously ignored them with no error. We now warn unconditionally.
+    def lex(string, opts=nil, &b)
+      if opts
+        if (opts.keys - [:continue]).size > 0
+          # improper use of options hash
+          warn('Improper use of Lexer#lex - this method does not receive options.' +
+               ' This will become an error in a future version.')
+        end
+
+        if opts[:continue]
+          warn '`lex :continue => true` is deprecated, please use #continue_lex instead'
+          return continue_lex(string, &b)
+        end
       end
 
-      return enum_for(:lex, string, opts) unless block_given?
+      return enum_for(:lex, string) unless block_given?
 
       Lexer.assert_utf8!(string)
-      reset! unless opts[:continue]
+      reset!
 
       continue_lex(string, &b)
     end

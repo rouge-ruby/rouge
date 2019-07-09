@@ -23,7 +23,7 @@ module Rouge
 
         rule %r/#.*$/, Comment::Single
 
-        rule %r/@[^\s,.; ]+/, Name::Attribute
+        rule %r/@[^\s,.;]+/, Name::Attribute
 
         rule %r/[+-]?[0-9]+\.[0-9]*E[+-]?[0-9]+/, Literal::Number::Float
         rule %r/[+-]?\.[0-9]+E[+-]?[0-9]+/, Literal::Number::Float

@@ -93,7 +93,7 @@ module Rouge
         rule %r([=-]>), Keyword
         rule %r(<->), Keyword
         rule %r/[()\[\]{}|,:;]/, Punctuation
-        rule %r/[*!@~&+%^<>=-\?]|\.{2,3}/, Operator
+        rule %r/[*!@~&+%^<>=\?-]|\.{2,3}/, Operator
 
         rule %r/([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule %r/[.]\s*#{id}/, Name::Property
@@ -172,8 +172,8 @@ module Rouge
 
         rule %r(
           ( 0b[10_]+
-          | 0x[0-9a-fA-F-]+
-          | [0-9]+
+          | 0x[0-9a-fA-F_]+
+          | [0-9_]+
           ) (u#{size}?|i#{size})?
         )x, Num::Integer
 

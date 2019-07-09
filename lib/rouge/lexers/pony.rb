@@ -40,7 +40,7 @@ module Rouge
       )
 
       state :whitespace do
-        rule %r/[\s\t\r\n]+/m, Text
+        rule %r/\s+/m, Text
       end
 
       state :root do

@@ -53,6 +53,12 @@ my %countries =  ( england => 'English',
                    germany => 'German',
                    mozambique => 'Mozambican');
 
+# transliterations
+say "food" =~ tr/o/e/r;
+$r =~ tr ^y^z^;
+$s =~ y/[]|/()&/; # "backward" compatible
+
+
 # quoted strings
 my $a = "foo";
 
@@ -139,3 +145,11 @@ sub foo {
 my $moduloOperation = $totalNumber % $columns ? 1 : 0;
 $moduloOperation = 2;
 my $addOperation = $totalNumber + $myOtherVar;
+
+sub __END__but_not_really { 1 }
+
+__DATA__
+
+This is just some end text; everything after DATA can be accessed
+by the <DATA> filehandle.  __END__ does the same thing, without the
+filehandle, but we can't test both in the same file.

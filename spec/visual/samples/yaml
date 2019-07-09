@@ -32,6 +32,7 @@ national:
   name: Mark McGwire
   hr:   65
   avg:  0.278
+  addr: B 221 Block
 -
   name: Sammy Sosa
   hr:   63
@@ -145,6 +146,49 @@ stats: |
   65 Home Runs
   0.278 Batting Average
 
+# Multi-line block chomping
+
+## No newlines at end of folded block
+---
+desc: >-
+  This is just a dummy text intended to
+  test this lexer. The following whitespace
+  until "label" is intentional.
+
+
+label: lipsum
+
+## Allow all newlines at end of folded block
+---
+desc: >+
+  This is just a dummy text intended to
+  test this lexer. The following whitespace
+  until "label" is intentional.
+
+
+label: lipsum
+
+## No newlines at end of literal block
+---
+desc: |-
+  This is just a dummy text intended to
+  test this lexer. The following whitespace
+  until "label" is intentional.
+
+
+label: lipsum
+
+## Allow all newlines at end of literal block
+---
+desc: |+
+  This is just a dummy text intended to
+  test this lexer. The following whitespace
+  until "label" is intentional.
+
+
+label: lipsum
+...
+
 # Quoted scalars
 ---
 unicode: "Sosa did fine.\u263A"
@@ -182,9 +226,12 @@ not a number: .NaN
 # Miscellaneous
 ---
 null: ~
-true: boolean
-false: boolean
+bool_true: true
+str_true: 'true'
+bool_false: false
+str_false: "false"
 string: '12345'
+number: 12345
 
 # Timestamps
 ---
@@ -205,6 +252,7 @@ application specific tag: !something |
  The semantics of the tag
  above may be different for
  different documents.
+email_regex: !ruby/regexp '/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i'
 
 # Global tags
 %TAG ! tag:clarkevans.com,2002:

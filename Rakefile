@@ -2,6 +2,7 @@
 
 require 'rake/clean'
 require 'pathname'
+require 'bundler/setup'
 require "bundler/gem_tasks"
 require "rake/testtask"
 
@@ -52,9 +53,9 @@ task :profile_memory do
     require 'rouge'
     formatter = Rouge::Formatters::HTML.new
     lexer     = Rouge::Lexers::Ruby.new
-    formatter.format(lexer.lex(source))
+    formatter.format(lexer.lex(sample))
   end
-  print_options = { :scale_bytes => true }
+  print_options = { scale_bytes: true, normalize_paths: true }
 
   if ENV['CI']
     report.pretty_print(print_options)

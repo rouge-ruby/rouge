@@ -179,7 +179,7 @@ module Rouge
                               | !==   | =>
                             /x
 
-      PUNCTUATION         = / [ \[ \] { } \( \) , ; ] /x
+      PUNCTUATION         = /[\[\]{}\(\),;]/
 
 
       state :root do

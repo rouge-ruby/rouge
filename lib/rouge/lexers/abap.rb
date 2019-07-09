@@ -188,7 +188,7 @@ module Rouge
         rule %r(^\*.*), Comment::Multiline
         rule %r/\d+/, Num::Integer
         rule %r/('|`)/, Str::Single, :single_string
-        rule %r/[\[\]\(\)\{\}\[\]\.,:\|]/, Punctuation
+        rule %r/[\[\]\(\)\{\}\.,:\|]/, Punctuation
 
         # builtins / new ABAP 7.40 keywords (@DATA(), ...)
         rule %r/(->|=>)?([A-Za-z][A-Za-z0-9_\-]*)(\()/ do |m|
@@ -207,7 +207,7 @@ module Rouge
         end
 
         # keywords, types and normal text
-        rule %r/\w[\w\d]*/ do |m|
+        rule %r/\w\w*/ do |m|
           if self.class.keywords.include? m[0].upcase
             token Keyword
           elsif self.class.types.include? m[0].downcase

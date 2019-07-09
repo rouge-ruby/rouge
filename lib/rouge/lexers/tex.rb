@@ -30,7 +30,7 @@ module Rouge
         rule %r/\$/, Punctuation, :inlinemath
         rule %r/\\(begin|end)\{.*?\}/, Name::Tag
 
-        rule %r/(\\verb)\b(\S)(.*?)(\2)/ do |m|
+        rule %r/(\\verb)\b(\S)(.*?)(\2)/ do
           groups Name::Builtin, Keyword::Pseudo, Str::Other, Keyword::Pseudo
         end
 

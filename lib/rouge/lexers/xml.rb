@@ -9,7 +9,7 @@ module Rouge
       tag 'xml'
       filenames '*.xml', '*.xsl', '*.rss', '*.xslt', '*.xsd', '*.wsdl', '*.svg',
                 '*.plist'
-      mimetypes 'text/xml', 'application/xml', 'image/svg+xml', 
+      mimetypes 'text/xml', 'application/xml', 'image/svg+xml',
                 'application/rss+xml', 'application/atom+xml'
 
       def self.detect?(text)

@@ -61,6 +61,25 @@ let ქართულადაც = "This is Georgian"
 let こんにちは = "...and Japanese"
 let 𓂀 = "and hieroglyphs"
 
+// Integer Literals
+let decimalInteger = 1234567
+let decimalIntegerWithGroupings = 1_234_567
+let hexadecimalInteger = 0xABCDEF
+let octalInteger = 0o0644
+let binaryInteger = 0b1010
+
+// Floating-Point Literals
+let decimalFloatingPoint = 1234567.89
+let decimalFloatingPointWithGroupings = 1_2345_67.89
+let hexadecimalFloatingPoint = 0xA.1p-3
+
+// String Literals
+let string = "Hello, world!"
+let multilineString = """
+All human beings are born free and equal in dignity and rights.
+They are endowed with reason and conscience
+and should act towards one another in a spirit of brotherhood.
+"""
 
 func join(#firstString:String,#secondString:String,joiner:String = " & ") -> String {
     return "\(firstString)\(joiner)\(secondString)"
@@ -314,6 +333,8 @@ enum State: Equatable {
         typealias View = UIView
     #elseif arch(arm64)
         typealias View = UIView64
+    #else
+        #warning("Unknown architecture")
     #endif
 #elseif os(OSX)
     /* Uncomment this when the Mac goes 64bit

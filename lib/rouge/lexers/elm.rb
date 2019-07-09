@@ -33,11 +33,11 @@ module Rouge
         rule %r/\b(#{keywords.join('|')})\b/, Keyword
 
         # Variable or a function
-        rule %r/[a-z][\w]*/, Name
+        rule %r/[a-z]\w*/, Name
         # Underscore is a name for a variable, when it won't be used later
         rule %r/_/, Name
         # Type
-        rule %r/[A-Z][\w]*/, Keyword::Type        
+        rule %r/[A-Z]\w*/, Keyword::Type
 
         # Two symbol operators: -> :: // .. && || ++ |> <| << >> == /= <= >=
         rule %r/(->|::|\/\/|\.\.|&&|\|\||\+\+|\|>|<\||>>|<<|==|\/=|<=|>=)/, Operator
@@ -50,7 +50,7 @@ module Rouge
 
         # Single, double quotes, and triple double quotes
         rule %r/"""/, Str, :multiline_string
-        rule %r/'(\\.|.)'/, Str::Char        
+        rule %r/'(\\.|.)'/, Str::Char
         rule %r/"/, Str, :double_quote
 
         # Numbers

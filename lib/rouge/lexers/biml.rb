@@ -35,7 +35,7 @@ module Rouge
       state :directive_tag do
         rule %r/\s+/m, Text
         rule %r/[\w.:-]+\s*=/m, Name::Attribute, :attr
-        rule %r/[\w]+\s*/m, Name::Attribute
+        rule %r/\w+\s*/m, Name::Attribute
         rule %r(/?\s*#>), Name::Tag, :pop!
       end
     end

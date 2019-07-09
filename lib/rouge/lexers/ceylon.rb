@@ -11,34 +11,6 @@ module Rouge
       title "Ceylon"
       desc 'Say more, more clearly.'
 
-      keywords = %w(
-        break case catch continue else finally for in
-        if return switch this throw try while is exists dynamic
-        nonempty then outer assert let
-      )
-      
-      keywords_declaration = %w(
-        abstracts extends satisfies super given of out assign
-      )
-      
-      keywords_type = %w(
-        function value void new
-      )
-      
-      keywords_namespace = %w(
-        assembly module package
-      )
-      
-      keywords_constant = %w(
-        true false null
-      )
-
-      annotations = %w(
-        shared abstract formal default actual variable deprecated small
-        late literal doc by see throws optional license tagged final native
-        annotation sealed
-      )
-
       state :whitespace do
         rule %r([^\S\n]+), Text
         rule %r(//.*?\n), Comment::Single
@@ -59,14 +31,14 @@ module Rouge
         rule %r((abstracts|extends|satisfies|super|given|of|out|assign)\b), Keyword::Declaration
 
         rule %r((function|value|void|new)\b), Keyword::Type
-        
+
         rule %r((assembly|module|package)(\s+)) do
           groups Keyword::Namespace, Text
           push :import
         end
-        
+
         rule %r((true|false|null)\b), Keyword::Constant
-        
+
         rule %r((class|interface|object|alias)(\s+)) do
           groups Keyword::Declaration, Text
           push :class
@@ -76,7 +48,7 @@ module Rouge
           groups Keyword::Namespace, Text
           push :import
         end
-        
+
         rule %r("(\\\\|\\"|[^"])*"), Literal::String
         rule %r('\\.'|'[^\\]'|'\\\{#[0-9a-fA-F]{4}\}'), Literal::String::Char
         rule %r(".*``.*``.*"', String::Interpol
@@ -86,7 +58,7 @@ module Rouge
         rule %r([a-zA-Z_]\w*:), Name::Label
         rule %r((\\I[a-z]|[A-Z])\w*), Name::Decorator
         rule %r([a-zA-Z_]\w*), Name
-        rule %r([~^*!%&\[\](){}<>|+=:;,./?-`]), Operator
+        rule %r([~^*!%&\[\](){}<>|+=:;,./?`-]), Operator
         rule %r(\d{1,3}(_\d{3})+\.\d{1,3}(_\d{3})+[kMGTPmunpf]?), Literal::Number::Float
         rule %r(\d{1,3}(_\d{3})+\.[0-9]+([eE][+-]?[0-9]+)?[kMGTPmunpf]?),
           Literal::Number::Float
@@ -112,7 +84,7 @@ module Rouge
         rule %r([a-z][\w.]*), Name::Namespace, :pop!
         rule %r("(\\\\|\\"|[^"])*"), Literal::String, :pop!
       end
-      
+
       state :comment do
         rule %r([^*/]), Comment.Multiline
         rule %r(/\*), Comment::Multiline, :push!

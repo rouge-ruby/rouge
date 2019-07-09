@@ -11,7 +11,7 @@ module Rouge
       filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
                 'Rakefile', 'Guardfile', 'Gemfile', 'Capfile', 'Podfile',
                 'Vagrantfile', '*.ru', '*.prawn', 'Berksfile', '*.arb',
-                'Dangerfile'
+                'Dangerfile', 'Fastfile', 'Deliverfile', 'Appfile'
 
       mimetypes 'text/x-ruby', 'application/x-ruby'
 
@@ -57,7 +57,9 @@ module Rouge
           token toktype
 
           push do
-            rule %r/\\[##{open}#{close}\\]/, Str::Escape
+            uniq_chars = "#{open}#{close}".squeeze
+            uniq_chars = '' if open == close && open == "\\#"
+            rule %r/\\[##{uniq_chars}\\]/, Str::Escape
             # nesting rules only with asymmetric delimiters
             if open != close
               rule %r/#{open}/ do
@@ -74,7 +76,7 @@ module Rouge
               rule %r/[\\#]/, toktype
             end
 
-            rule %r/[^##{open}#{close}\\]+/m, toktype
+            rule %r/[^##{uniq_chars}\\]+/m, toktype
           end
         end
       end
@@ -181,7 +183,7 @@ module Rouge
 
         mixin :strings
 
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword, :expr_start
+        rule %r/(?:#{keywords.join('|')})(?=\W|$)/, Keyword, :expr_start
         rule %r/(?:#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo, :expr_start
 
         rule %r(
@@ -287,9 +289,9 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/\(/, Punctuation, :defexpr
         rule %r(
-          (?:([a-zA-Z_][\w_]*)(\.))?
+          (?:([a-zA-Z_]\w*)(\.))?
           (
-            [a-zA-Z_][\w_]*[!?]? |
+            [a-zA-Z_]\w*[!?]? |
             \*\*? | [-+]@? | [/%&\|^`~] | \[\]=? |
             <<? | >>? | <=>? | >= | ===?
           )

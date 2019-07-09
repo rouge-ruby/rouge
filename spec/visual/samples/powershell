@@ -1,61 +1,189 @@
 #requires -version 2.0
-function Test-Highlighting
+
+###########################
+# Comments
+###########################
+
+# Normal Comment
+
+<#
+    multi
+    line
+    comment
+#>
+
+###########################
+## Strings
+###########################
+
+"String that accepts $variables, and substitutions"
+"String with escaped `$variable"
+'Literal string $($PSScriptRoot)'
+
+###########################
+# Heredoc strings
+###########################
+
+@"
+Heredoc with $variables
+"@
+@'
+Heredoc with $literal strings
+'@
+
+###########################
+# Variables
+###########################
+
+$var1 = 5
+$var2 = $true
+$var3 = get-host | Select-Object -First 1
+${this-is_a%valid*variable@name} = "OMG"
+Write-Output ${this-is_a%valid*variable@name}
+$global:ErrorActionPreference
+
+###########################
+# Collections
+###########################
+
+$my_hash = @{
+    owner = "my"
+    type = "hash"
+    thing = "table"
+}
+
+$my_array = @("my" "array")
+
+###########################
+# Commands
+###########################
+
+type "is a reserved word"
+alias foo bar
+Write-output "Hello" # End-of-line comment
+Get-Process | Tee-Object -FilePath "C:\Test1\testfile2.txt" # Unapproved verb
+cd C:\Test1\
+C:\Test1\test2.cmd input.txt
+& "C:\Test1\test2.exe"
+\command.exe something
+command.exe arg --user ".\ENTER-YOUR-USERNAME" --password "ENTER-YOUR-PASSWORD"
+
+###########################
+# Declarations
+###########################
+
+function Verb-Noun
 {
-<#
-.Synopsis
-Testing powershell highlighting
-.Description
-Tests powershell highlighting
-.Example
-Test-Highlighting
-#>
-param(
-[Parameter(Mandatory=$true,
-ValueFromPipelineByPropertyName=$true)]
-[Alias('Name')]
-[String]$Things
+    <#
+    .SYNOPSIS
+    Tells you what it does
 
-# Multi
-# Line
-# Comment
+    .DESCRIPTION
+    Tells you what it does with more detail.
+    #>
+    param ([string]$Name, [string]$Extension = "txt", [string]$foo="bar")
+    $name = $name + "." + $extension
+    $name
+}
 
-<#
-Second
-Multi
-Line
-Comment
-#>
-
-Write-output "Hello" # Adding end-of-line comment
+function global:Verb-Noun {
+    something
+}
 
 process {
-$var1 = $var2
-$var3 = get-host | Select-Object -First 1
+    "This is a script block"
+}
+
+###########################
+# Control structures 
+###########################
 
 if ($var1 -eq $var2)
 {
-    do-something
-    return $false
+    return $true
 }
-
-
-
-"@
-Heredoc string
-continues on for a bit
-"@
-
-}
-
-<#
-
-things 
-
-#>
-
 
 try {
     write-output "something"
 } catch {
     write-output "something else"
 }
+
+Foreach ($Thing in $Things ) {
+    Do-Something
+}
+
+###########################
+# Classes 
+###########################
+
+class Child : Parent, Relatives {
+    [int] hidden $var = 8
+    
+    Child ([string]$a, [string]$b, [int]$capacity) {
+        $this.var = $a
+    } 
+
+    [string]toString() {
+        return "A string"
+    }
+}
+
+$my_obj = [Child]::new()
+
+###########################
+# Challenges
+###########################
+
+[System.Collections.Generic.List[string]](1..100)
+[System.Collections.Generic.Dictionary[string, int]](1..100|%{@{N=$_}})
+
+Function Get-IPv4Scopes
+<#
+	.SYNOPSIS
+		Read IPv4Scopes from an array of servers
+	.PARAMETER Servers
+		Specifies an array of servers
+	.EXAMPLE
+		Get-IPv4Scopes
+
+		Will prompt for all inputs
+#>
+{
+    [CmdletBinding()]
+    Param(
+    # 1
+    [parameter(
+        Mandatory=$true,
+        Position=0,
+        ValueFromPipelineByPropertyName=$true,
+        HelpMessage="Server List"
+        )]
+    [string[]]$Servers,
+    #2
+    [parameter(Mandatory=$false,ValueFromPipeline=$false)]
+    [bool]$Unique=$false
+    )  #EndParam
+
+    Begin {}
+
+    Process {
+        $arrayJobs=@()
+        foreach ($server in $Servers) {
+            $arrayJobs+=Invoke-Command -ComputerName $server -scriptblock {Get-DhcpServerv4Scope}  -AsJob
+        }
+        $complete=$false
+        while (-not $complete) {
+            $arrayJobsInProgress= $arrayJobs | Where-Object { $_.State -match 'running' }
+            if (-not $arrayJobsInProgress) { $complete=$true }
+        }
+        $Scopes=$arrayJobs|Receive-Job
+        $UniqueScopes=$Scopes|Sort-Object -Property ScopeId -Unique
+    }
+
+    End {
+        if ($Unique) { return $UniqueScopes }
+        else { return $Scopes }
+    }
+
+} #end function

@@ -6,7 +6,7 @@ module Rouge
     # A port of the pastie style from Pygments.
     # See https://bitbucket.org/birkenfeld/pygments-main/src/default/pygments/styles/pastie.py
     class Pastie < CSSTheme
-      name 'pastie' 
+      name 'pastie'
 
       style Comment,                   :fg => '#888888'
       style Comment::Preproc,          :fg => '#cc0000', :bold => true

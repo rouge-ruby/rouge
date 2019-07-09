@@ -7,7 +7,7 @@ module Rouge
       title 'Jsonnet'
       desc 'An elegant, formally-specified config language for JSON'
       tag 'jsonnet'
-      filenames '*.jsonnet'
+      filenames '*.jsonnet', '*.libsonnet'
       mimetypes 'text/x-jsonnet'
 
       def self.keywords

@@ -26,8 +26,8 @@ module Rouge
         rule %r/\b(import|require|use|recur|quote|unquote|super|refer)\b(?![?!])/, Keyword::Namespace
         rule %r/(?<!\.)\b(and|not|or|when|xor|in)\b/, Operator::Word
         rule %r{%=|\*=|\*\*=|\+=|\-=|\^=|\|\|=|
-             <=>|<(?!<|=)|>(?!<|=|>)|<=|>=|===|==|=~|!=|!~|(?=[\s\t])\?|
-             (?<=[\s\t])!+|&(&&?|(?!\d))|\|\||\^|\*|\+|\-|/|
+             <=>|<(?!<|=)|>(?!<|=|>)|<=|>=|===|==|=~|!=|!~|(?=[\s])\?|
+             (?<=[\s])!+|&(&&?|(?!\d))|\|\||\^|\*|\+|\-|/|
              \||\+\+|\-\-|\*\*|\/\/|\<\-|\<\>|<<|>>|=|\.|~~~}x, Operator
         rule %r{(?<!:)(:)([a-zA-Z_]\w*([?!]|=(?![>=]))?|\<\>|===?|>=?|<=?|
              <=>|&&?|%\(\)|%\[\]|%\{\}|\+\+?|\-\-?|\|\|?|\!|//|[%&`/\|]|
@@ -35,11 +35,14 @@ module Rouge
         rule %r/:"/, Str::Symbol, :interpoling_symbol
         rule %r/\b(nil|true|false)\b(?![?!])|\b[A-Z]\w*\b/, Name::Constant
         rule %r/\b(__(FILE|LINE|MODULE|MAIN|FUNCTION)__)\b(?![?!])/, Name::Builtin::Pseudo
-        rule %r/[a-zA-Z_!][\w_]*[!\?]?/, Name
+        rule %r/[a-zA-Z_!]\w*[!\?]?/, Name
         rule %r{::|[%(){};,/\|:\\\[\]]}, Punctuation
         rule %r/@[a-zA-Z_]\w*|&\d/, Name::Variable
-        rule %r{\b(0[xX][0-9A-Fa-f]+|\d(_?\d)*(\.(?![^\d\s])
-             (_?\d)*)?([eE][-+]?\d(_?\d)*)?|0[bB][01]+)\b}x, Num
+        rule %r{\b\d(_?\d)*(\.(?![^\d\s])(_?\d)+)([eE][-+]?\d(_?\d)*)?\b}, Num::Float
+        rule %r{\b0x[0-9A-Fa-f](_?[0-9A-Fa-f])*\b}, Num::Hex
+        rule %r{\b0o[0-7](_?[0-7])*\b}, Num::Oct
+        rule %r{\b0b[01](_?[01])*\b}, Num::Bin
+        rule %r{\b\d(_?\d)*\b}, Num::Integer
 
         mixin :strings
         mixin :sigil_strings
@@ -117,7 +120,8 @@ module Rouge
               rule %r/[\\#]/, toktype
             end
 
-            rule %r/[^##{open}#{close}\\]+/m, toktype
+            uniq_chars = "#{open}#{close}".squeeze
+            rule %r/[^##{uniq_chars}\\]+/m, toktype
           end
         end
       end

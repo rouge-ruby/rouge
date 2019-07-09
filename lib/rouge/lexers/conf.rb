@@ -18,7 +18,7 @@ module Rouge
         rule %r/'.*?'/, Str::Single
         rule %r/[a-z]\w*/i, Name
         rule %r/\d+/, Num
-        rule %r/[^\d\w#"']+/, Text
+        rule %r/[^\w#"']+/, Text
       end
     end
   end

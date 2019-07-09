@@ -9,7 +9,7 @@ module Rouge
 
       tag 'haskell'
       aliases 'hs'
-      filenames '*.hs'
+      filenames '*.hs', '*.hs-boot'
       mimetypes 'text/x-haskell'
 
       def self.detect?(text)
@@ -61,6 +61,7 @@ module Rouge
         # rule %r/^[_a-z][\w']*/, Name::Function
         rule %r/[_a-z][\w']*/, Name
         rule %r/[A-Z][\w']*/, Keyword::Type
+        rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function

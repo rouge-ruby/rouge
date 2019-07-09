@@ -23,7 +23,7 @@ module Rouge
         rule %r/"([^"\\]|\\.)*"/, Literal::String::Double
         rule %r/'([^'\\]|\\.)*'/, Literal::String::Single
         rule %r/</, Punctuation, :data
-        rule %r{[\w_$/:.-]+}, Literal
+        rule %r{[\w$/:.-]+}, Literal
       end
 
       state :dictionary do

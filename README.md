@@ -47,6 +47,14 @@ Builtin formatters include:
   This formatter will split your code into lines, each contained in its own div. The
   `class` option will be used to add a class name to the div, given the line
   number.
+* `Rouge::Formatters::HTMLLineTable.new(formatter, opts={})` will output an HTML table containing
+  numbered lines, each contained in its own table-row. Options are:
+    * `start_line: 1` - the number of the first row
+    * `line_id: 'line-%i'` - a `sprintf` template for `id` attribute with current line number
+    * `line_class: 'lineno'` - a CSS class for each table-row
+    * `table_class: 'rouge-line-table'` - a CSS class for the table
+    * `gutter_class: 'rouge-gutter'` - a CSS class for the line-number cell
+    * `code_class: 'rouge-code'` - a CSS class for the code cell
 * `Rouge::Formatters::HTMLPygments.new(formatter, css_class='codehilite')`
   wraps the given formatter with div wrappers generally expected by stylesheets designed for
   Pygments.
@@ -124,14 +132,26 @@ Rouge is only for UTF-8 strings.  If you'd like to highlight a string with a dif
 
 ## Contributing
 
+### Bug reports
+
+Rouge uses GitHub issues to report bugs. You can [choose][issue-chooser] from one of our templates or create a custom issue. Issues that have not been active for a year are automatically closed by GitHub's [Probot][].
+
+[issue-chooser]: https://github.com/rouge-ruby/rouge/issues/new/choose "Issue Template Chooser"
+[Probot]: https://probot.github.io "GitHub's Probot"
+
 ### Installing Ruby
 
 If you're here to implement a lexer for your awesome language, there's a good chance you don't already have a ruby development environment set up.  Follow the [instructions on the wiki](https://github.com/rouge-ruby/rouge/wiki/Setting-up-Ruby) to get up and running.  If you have trouble getting set up, let me know - I'm always happy to help.
 
 ### Run the tests
 
-You can test the core of Rouge simply by running `rake` (no `bundle exec` required), or `rake spec TEST=spec/xxx_spec.rb`
-to run a single test file.
+You can test the core of Rouge simply by running `rake` (no `bundle exec` required). You can also run a single test file by
+setting the `TEST` environment variable to the path of the desired test. For example, to test just the *`ruby` lexer* which is
+at path, `spec/lexers/ruby_spec.rb` within the repository, one may simply run the following:
+
+```sh
+TEST=spec/lexers/ruby_spec.rb rake
+```
 
 It's also set up with `guard`, if you like.
 
@@ -148,6 +168,12 @@ We have [a guide][lexer-dev-doc] on lexer development in the documentation but y
 [lexer-dev-doc]: https://www.rubydoc.info/github/rouge-ruby/rouge/file/docs/LexerDevelopment.md
 
 Please don't submit lexers that are largely copy-pasted from other files.
+
+## Versioning
+
+Rouge uses [Semantic Versioning 2.0.0][sv2].
+
+[sv2]: http://semver.org/
 
 ## Tips
 

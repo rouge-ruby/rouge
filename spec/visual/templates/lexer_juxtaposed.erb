@@ -2,44 +2,27 @@
   main {
     display: inline-block;
     margin-right: -215px;
-    margin-bottom: -5px;
-    padding: 8px 215px 8px 0;
+    padding: 8px 215px 0 0;
     width: 100%;
   }
   section {
     float: left;
-    padding: 8px;
-    padding-right: 4px;
-    overflow-y: auto;
+    padding: 0 4px
   }
   pre { margin: 0 }
-
-  .legend {
-    float: right;
-    padding: 16px 8px 8px 0;
-    width: 215px;
-  }
-  .legend header { padding-top: 8px }
-  .codehilite {
-    overflow-x: auto;
-    border-radius: 5px;
-  }
-  .legend .codehilite { font-size: 13px }
+  .codehilite { overflow-x: auto }
   .codeviewer {
     float: left;
     padding: 8px 12px;
-    width: 49%;
-    border: 1px dotted <%= @comment_color %>
+    width: 49.5%;
   }
-  .codeviewer:not(:first-of-type) { margin-left: 4px }
-  .codeviewer:not(:last-of-type) { margin-right: 4px }
-
-  .codeviewer header, .legend header {
-    margin-bottom: 20px;
-    padding-bottom: 8px;
-    color: <%= @comment_color %>;
-    border-bottom: 1px dotted
+  .legend {
+    float: right;
+    padding: 16px 20px 8px 0;
+    width: 215px;
   }
+  .legend header { padding-top: 8px }
+  .legend .codehilite { font-size: 13px }
 </style>
 
 <header id="page-header">

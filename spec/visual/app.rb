@@ -89,7 +89,7 @@ class VisualTestApp < Sinatra::Application
     @raw = Rouge.highlight(@sample, 'plaintext', @formatter)
     @highlighted = Rouge.highlight(@sample, @lexer, @formatter)
 
-    template = params[:juxtaposed] ? :juxtaposed : :lexer
+    template = params[:juxtaposed] ? :lexer_juxtaposed : :lexer
     erb template
   end
 

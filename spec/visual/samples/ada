@@ -1,0 +1,129 @@
+generic
+
+   type Element_Type is private;
+   type Array_Type is array (Integer range <>) of Element_Type;
+   with function ">" (Left, Right : Element_Type) return Boolean is <>;
+
+procedure Algorithms.Best_Sort (A : in out Array_Type);
+
+
+package Scanner is
+
+   type Token_Type is
+     (Whitespace, New_Line, Ident, Equals, Left_Par, Right_Par, Pipe, Question,
+      Asterisk, Plus);
+
+   -- Scanning for a token can fail, or it can return a token.
+   type Result (Ok : Boolean) is record
+      Last : Positive;
+      case Ok is
+         when True =>
+            Token : Token_Type;
+         when False =>
+            null;
+      end case;
+   end record;
+
+   -- Identify the token at the beginning of Text.
+   function Scan_Token (Text : String) return Result with
+      Pre => Text'Length > 0;
+
+end Scanner;
+
+
+package 動物園 is
+   type 動物 is (犬, 猫);
+   function いう (だれ : 動物) return Wide_Wide_String is
+     (case だれ is when 犬 => """ワン"", ""ワン""", when 猫 => """にゃん""");
+end 動物園;
+
+
+procedure Algorithms.Best_Sort (A : in out Array_Type) is
+begin
+
+   if A'Length <= 1 then
+      return;
+   end if;
+
+   <<Try_Again>>
+   for I in A'First .. A'Last - 1 loop
+      if A (I) > A (I + 1) then
+         Exchange (A (I), A (I + 1));
+         goto Try_Again;
+      end if;
+   end loop;
+
+end Algorithms.Best_Sort;
+
+
+with Ada.Characters.Latin_1;
+package body Scanner is
+
+   package Lat1 renames Ada.Characters.Latin_1;
+
+   function Scan_Token (Text : String) return Result is
+
+      Pos : Positive := Text'First;
+
+      -- Shortcut functions for returning a token or an error at the
+      -- current position.
+      function Ok (Token : Token_Type) return Result is (True, Pos, Token);
+      function Error return Result is (False, Pos);
+
+   begin
+      case Text (Pos) is
+         when Lat1.LF =>
+            return Ok (New_Line);
+         when '=' =>
+            return Ok (Equals);
+         when '(' =>
+            return Ok (Left_Par);
+         when ')' =>
+            return Ok (Right_Par);
+         when '|' =>
+            return Ok (Pipe);
+         when '?' =>
+            return Ok (Question);
+         when '*' =>
+            return Ok (Asterisk);
+         when '+' =>
+            return Ok (Plus);
+
+         when ' ' | Lat1.HT | Lat1.CR =>
+            while Pos < Text'Last and Text (Pos + 1) in ' ' | Lat1.HT | Lat1.CR
+            loop
+               Pos := Pos + 1;
+            end loop;
+            return Ok (Whitespace);
+
+         when 'A' .. 'Z' | 'a' .. 'z' =>
+            while Pos < Text'Last and
+              Text (Pos + 1) in 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' | '-'
+            loop
+               Pos := Pos + 1;
+            end loop;
+            return Ok (Ident);
+
+         when others =>
+            return Error;
+      end case;
+   end Scan_Token;
+end Scanner;
+
+
+Package MACHINE_CODE Is
+   Type REGISTER Is Range 0 .. 16#F#;
+   Type DISPLACEMENT Is Range 0 .. 16#FFF#;
+
+   Type SI Is Record
+      CODE : OPCODE;
+      B    : REGISTER;
+      D    : DISPLACEMENT;
+   End Record;
+
+   for SI Use Record
+      CODE at 0 Range  0 ..  7;
+      B    at 0 Range 16 .. 19; -- Bits 8 .. 15 Unused
+      D    at 0 Range 20 .. 31;
+   End Record;
+End MACHINE_CODE;

@@ -112,7 +112,16 @@ module Rouge
 
         rule %r/[~!%^&*+=\|:.<>\/?@-]+/, Operator
         rule %r/[\[\]{}();,]/, Punctuation
-        rule %r/(class|interface|trait)\b/, Keyword::Declaration, :classname
+        rule %r/(class|interface|trait)(\s+)(#{nsid})/ do
+          groups Keyword::Declaration, Text, Name::Class
+        end
+        rule %r/(use)(\s+)(function|const|)(\s*)(#{nsid})/ do
+          groups Keyword::Namespace, Text, Keyword::Namespace, Text, Name::Namespace
+          push :use
+        end
+        rule %r/(namespace)(\s+)(#{nsid})/ do
+          groups Keyword::Namespace, Text, Name::Namespace
+        end
         # anonymous functions
         rule %r/(function)(\s*)(?=\()/ do
           groups Keyword, Text
@@ -154,10 +163,24 @@ module Rouge
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string
       end
-
-      state :classname do
+      
+      state :use do
+        rule %r/(\s+)(as)(\s+)(#{id})/ do
+          groups Text, Keyword, Text, Name
+          :pop!
+        end
+        rule %r/\\\{/, Operator, :uselist
+        rule %r/;/, Punctuation, :pop!
+      end
+      
+      state :uselist do
         rule %r/\s+/, Text
-        rule %r/#{nsid}/, Name::Class, :pop!
+        rule %r/,/, Operator
+        rule %r/\}/, Operator, :pop!
+        rule %r/(as)(\s+)(#{id})/ do
+          groups Keyword, Text, Name
+        end
+        rule %r/#{id}/, Name::Namespace
       end
 
       state :funcname do

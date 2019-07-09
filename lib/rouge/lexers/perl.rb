@@ -77,19 +77,17 @@ module Rouge
 
         rule %r/(?:eq|lt|gt|le|ge|ne|not|and|or|cmp)\b/, Operator::Word
 
-        # common delimiters
-        rule %r(s/(\\\\|\\/|[^/])*/(\\\\|\\/|[^/])*/[msixpodualngc]*), re_tok
-        rule %r(s!(\\\\|\\!|[^!])*!(\\\\|\\!|[^!])*![msixpodualngc]*), re_tok
-        rule %r(s\\(\\\\|[^\\])*\\(\\\\|[^\\])*\\[msixpodualngc]*), re_tok
-        rule %r(s@(\\\\|\\@|[^@])*@(\\\\|\\@|[^@])*@[msixpodualngc]*), re_tok
-        rule %r(s%(\\\\|\\%|[^%])*%(\\\\|\\%|[^%])*%[msixpodualngc]*), re_tok
+        # substitution/transliteration: balanced delimiters
+        rule %r((?:s|tr|y){(\\\\|\\}|[^}])*}\s*), re_tok, :balanced_regex
+        rule %r((?:s|tr|y)<(\\\\|\\>|[^>])*>\s*), re_tok, :balanced_regex
+        rule %r((?:s|tr|y)\[(\\\\|\\\]|[^\]])*\]\s*), re_tok, :balanced_regex
+        rule %r[(?:s|tr|y)\((\\\\|\\\)|[^\)])*\)\s*], re_tok, :balanced_regex
 
-        # balanced delimiters
-        rule %r(s{(\\\\|\\}|[^}])*}\s*), re_tok, :balanced_regex
-        rule %r(s<(\\\\|\\>|[^>])*>\s*), re_tok, :balanced_regex
-        rule %r(s\[(\\\\|\\\]|[^\]])*\]\s*), re_tok, :balanced_regex
-        rule %r[s\((\\\\|\\\)|[^\)])*\)\s*], re_tok, :balanced_regex
+        # substitution/transliteration: arbitrary non-whitespace delimiters
+        rule %r((?:s|tr|y)\s*([^\w\s])((\\\\|\\\1)|[^\1])*?\1((\\\\|\\\1)|[^\1])*?\1[msixpodualngcr]*)m, re_tok
+        rule %r((?:s|tr|y)\s+(\w)((\\\\|\\\1)|[^\1])*?\1((\\\\|\\\1)|[^\1])*?\1[msixpodualngcr]*)m, re_tok
 
+        # matches: common case, m-optional
         rule %r(m?/(\\\\|\\/|[^/\n])*/[msixpodualngc]*), re_tok
         rule %r(m(?=[/!\\{<\[\(@%\$])), re_tok, :balanced_regex
 
@@ -102,12 +100,12 @@ module Rouge
 
         rule %r/\s+/, Text
         rule %r/(?:#{builtins.join('|')})\b/, Name::Builtin
-        rule %r/((__(DATA|DIE|WARN)__)|(STD(IN|OUT|ERR)))\b/,
+        rule %r/((__(DIE|WARN)__)|(DATA|STD(IN|OUT|ERR)))\b/,
           Name::Builtin::Pseudo
 
         rule %r/<<([\'"]?)([a-zA-Z_][a-zA-Z0-9_]*)\1;?\n.*?\n\2\n/m, Str
 
-        rule %r/__END__\b/, Comment::Preproc, :end_part
+        rule %r/(__(END|DATA)__)\b/, Comment::Preproc, :end_part
         rule %r/\$\^[ADEFHILMOPSTWX]/, Name::Variable::Global
         rule %r/\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/-](?!\w)/, Name::Variable::Global
         rule %r/[-+\/*%=<>&^\|!\\~]=?/, Operator

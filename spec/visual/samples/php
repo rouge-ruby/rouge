@@ -103,6 +103,10 @@ $b = <<<'EOF'
 Some long string without $values
 EOF;
 
+$c = <<<EOF
+  Hello
+  EOF;
+
 // Flexible heredoc
 callingFunc(<<<EOF
     With a long string

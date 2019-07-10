@@ -51,9 +51,11 @@ task :profile_memory do
   sample = File.read(source, encoding: 'utf-8')
   report = MemoryProfiler.report do
     require 'rouge'
-    formatter = Rouge::Formatters::HTML.new
-    lexer     = Rouge::Lexers::Ruby.new
-    formatter.format(lexer.lex(sample))
+    formatter  = Rouge::Formatters::HTML.new
+    ruby_lexer = Rouge::Lexers::Ruby.new
+    guessed_lexer = Rouge::Lexer.find_fancy('guess', sample)
+    formatter.format ruby_lexer.lex(sample)
+    formatter.format guessed_lexer.lex(sample)
   end
   print_options = { scale_bytes: true, normalize_paths: true }
 

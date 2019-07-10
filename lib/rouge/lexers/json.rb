@@ -20,6 +20,15 @@ module Rouge
         mixin :whitespace
         rule %r/{/, Punctuation, :object
         rule %r/\[/, Punctuation, :array
+        
+        rule %r/("[^"]*")(:?)/ do |m|
+          if m[2] == ":"
+            groups Name::Label, Punctuation
+            push :value
+          else
+            token Str::Double
+          end
+        end
 
         rule(%r//) { push :value }
       end

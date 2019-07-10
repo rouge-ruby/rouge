@@ -20,6 +20,22 @@ if ( !file_exists( dirname(__FILE__) . '/wp-config.php') ) {
     );
 }
 
+# A comment
+// Another comment
+$a = 1;
+/* another comment */
+$a = 1;
+/* a multi
+line comemnt 
+followed by an empty comment */
+$a = 1;
+/**/
+$a = 1;
+/**
+ * doc block comment
+ */
+$a = 1;
+
 // unicode variable names
 $Δ = 1;
 ++$_Δ;

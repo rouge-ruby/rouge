@@ -102,10 +102,9 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/#.*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single
-        # empty comment, otherwise seen as the start of a docstring
-        rule %r(/\*\*/), Comment::Multiline
-        rule %r(/\*\*.*?\*/)m, Str::Doc
+        rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
+        
         rule %r/(->|::)(\s*)(#{id})/ do
           groups Operator, Text, Name::Attribute
         end

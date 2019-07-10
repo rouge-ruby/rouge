@@ -72,7 +72,7 @@ module Rouge
           while endforeach global __FILE__ endif list __LINE__ endswitch
           new __sleep endwhile not array __wakeup E_ALL NULL final
           php_user_filter interface implements public private protected
-          abstract clone try catch throw this use namespace yield
+          abstract clone try catch finally throw this use namespace yield
         )
       end
 
@@ -98,21 +98,29 @@ module Rouge
       state :php do
         rule %r/\?>/, Comment::Preproc, :pop!
         # heredocs
-        rule %r/<<<('?)(#{id})\1\n.*?\n\2;?\n/im, Str::Heredoc
+        rule %r/<<<('?)(#{id})\1\n.*?\n\s*\2;?/im, Str::Heredoc
         rule %r/\s+/, Text
         rule %r/#.*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single
-        # empty comment, otherwise seen as the start of a docstring
-        rule %r(/\*\*/), Comment::Multiline
-        rule %r(/\*\*.*?\*/)m, Str::Doc
+        rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
+        
         rule %r/(->|::)(\s*)(#{id})/ do
           groups Operator, Text, Name::Attribute
         end
 
         rule %r/[~!%^&*+=\|:.<>\/?@-]+/, Operator
         rule %r/[\[\]{}();,]/, Punctuation
-        rule %r/class\b/, Keyword, :classname
+        rule %r/(class|interface|trait)(\s+)(#{nsid})/ do
+          groups Keyword::Declaration, Text, Name::Class
+        end
+        rule %r/(use)(\s+)(function|const|)(\s*)(#{nsid})/ do
+          groups Keyword::Namespace, Text, Keyword::Namespace, Text, Name::Namespace
+          push :use
+        end
+        rule %r/(namespace)(\s+)(#{nsid})/ do
+          groups Keyword::Namespace, Text, Name::Namespace
+        end
         # anonymous functions
         rule %r/(function)(\s*)(?=\()/ do
           groups Keyword, Text
@@ -154,10 +162,24 @@ module Rouge
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string
       end
-
-      state :classname do
+      
+      state :use do
+        rule %r/(\s+)(as)(\s+)(#{id})/ do
+          groups Text, Keyword, Text, Name
+          :pop!
+        end
+        rule %r/\\\{/, Operator, :uselist
+        rule %r/;/, Punctuation, :pop!
+      end
+      
+      state :uselist do
         rule %r/\s+/, Text
-        rule %r/#{nsid}/, Name::Class, :pop!
+        rule %r/,/, Operator
+        rule %r/\}/, Operator, :pop!
+        rule %r/(as)(\s+)(#{id})/ do
+          groups Keyword, Text, Name
+        end
+        rule %r/#{id}/, Name::Namespace
       end
 
       state :funcname do

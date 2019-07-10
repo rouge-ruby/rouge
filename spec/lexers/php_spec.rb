@@ -36,5 +36,21 @@ describe Rouge::Lexers::PHP do
     it 'recognizes double-slash comments not followed by a newline (#797)' do
       assert_tokens_equal '// comment', ['Comment.Single', '// comment']
     end
+    
+    it 'recognizes try catch finally definition' do
+      assert_tokens_equal 'try {} catch () {} finally {}', ["Keyword", "try"], ["Text", " "], ["Punctuation", "{}"], ["Text", " "], ["Keyword", "catch"], ["Text", " "], ["Punctuation", "()"], ["Text", " "], ["Punctuation", "{}"], ["Text", " "], ["Keyword", "finally"], ["Text", " "], ["Punctuation", "{}"]
+    end
+    
+    it 'recognizes class definition' do
+      assert_tokens_equal 'class A {}', ["Keyword.Declaration", "class"], ["Text", " "], ["Name.Class", "A"], ["Text", " "], ["Punctuation", "{}"]
+    end
+    
+    it 'recognizes interface definition' do
+      assert_tokens_equal 'interface A {}', ["Keyword.Declaration", "interface"], ["Text", " "], ["Name.Class", "A"], ["Text", " "], ["Punctuation", "{}"]
+    end
+    
+    it 'recognizes trait definition' do
+      assert_tokens_equal 'trait A {}', ["Keyword.Declaration", "trait"], ["Text", " "], ["Name.Class", "A"], ["Text", " "], ["Punctuation", "{}"]
+    end
   end
 end

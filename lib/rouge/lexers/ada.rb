@@ -81,21 +81,34 @@ module Rouge
       end
 
       # Handle a sequence of library unit names: with Ada.Foo, Ada.Bar;
+      #
+      # There's a chance we entered this state mistakenly since 'with'
+      # has multiple other uses in Ada (none of which are likely to
+      # appear at the beginning of a line). Try to bail as soon as
+      # possible if we see something suspicious like keywords.
+      #
+      # See ada_spec.rb for some examples.
       state :libunit_name do
         mixin :whitespace
-        rule ID do
-          token Name::Namespace
-          goto :libunit_sep
-        end
-        rule %r{}, Text, :pop!
-      end
 
-      state :libunit_sep do
-        mixin :whitespace
-        rule %r{[.,]} do
-          token Punctuation
-          goto :libunit_name
+        rule ID do |m|
+          t = self.class.idents[m[0].downcase]
+          if t <= Name
+            # Convert all kinds of Name to namespaces in this context.
+            token Name::Namespace
+          else
+            # Yikes, we're not supposed to get a keyword in a library unit name!
+            # We probably entered this state by mistake, so try to fix it.
+            token t
+            if t == Keyword::Declaration
+              goto :decl_name
+            else
+              pop!
+            end
+          end
         end
+
+        rule %r{[.,]}, Punctuation
         rule %r{}, Text, :pop!
       end
 
@@ -124,7 +137,10 @@ module Rouge
 
         # Context clauses are tricky because the 'with' keyword is used
         # for many purposes. Detect at beginning of the line only.
-        rule %r{^(limited\s+)?(private\s+)?with\b}i, Keyword::Namespace, :libunit_name
+        rule %r{^(?:(limited)(\s+))?(?:(private)(\s+))?(with)\b}i do
+          groups Keyword::Namespace, Text, Keyword::Namespace, Text, Keyword::Namespace
+          push :libunit_name
+        end
 
         # Operators and punctuation characters.
         rule %r{[+*/&<=>|]|-|=>|\.\.|\*\*|[:></]=|<<|>>|<>}, Operator

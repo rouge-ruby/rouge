@@ -102,6 +102,63 @@ describe Rouge::Lexers::Ada do
                           ['Text', ' '],
                           ['Keyword', 'IS']
     end
+
+    it 'allows both names and builtin names in context clauses' do
+      assert_tokens_equal 'limited with Math.Integer;',
+                          ['Keyword.Namespace', 'limited'],
+                          ['Text', ' '],
+                          ['Keyword.Namespace', 'with'],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'Math'],
+                          ['Punctuation', '.'],
+                          ['Name.Namespace', 'Integer'],
+                          ['Punctuation', ';']
+    end
+
+    it 'recovers quickly after mistakenly entering :libunit_name' do
+      # A `with` keyword at the beginning of a line is 99.9% sure to be
+      # a context clause, but there are things that could be mistaken if
+      # they are indented strangely:
+      #
+      # generic
+      #    with function Random return Integer is <>;
+      # procedure Foo;
+      #
+      # If that `with` is not indented, we should recover immediately:
+      assert_tokens_equal 'with function Random',
+                          ['Keyword.Namespace', 'with'],
+                          ['Text', ' '],
+                          ['Keyword.Declaration', 'function'],
+                          ['Text', ' '],
+                          ['Name.Function', 'Random']
+
+      # Another case that's even less likely to be at BOL:
+      #
+      # type Painted_Point is new Point with
+      #    record
+      #       Paint : Color := White;
+      #    end record;
+      #
+      # type Addition is new Binary_Operation with null record;
+      assert_tokens_equal 'with record Paint',
+                          ['Keyword.Namespace', 'with'],
+                          ['Text', ' '],
+                          ['Keyword', 'record'],
+                          ['Text', ' '],
+                          ['Name', 'Paint']
+      assert_tokens_equal 'with null record;',
+                          ['Keyword.Namespace', 'with'],
+                          ['Text', ' '],
+                          ['Keyword', 'null'],
+                          ['Text', ' '],
+                          ['Keyword', 'record'],
+                          ['Punctuation', ';']
+
+      # Finally: raise Runtime_Error with "NO!"
+      assert_tokens_equal 'with "NO!"',
+                          ['Keyword.Namespace', 'with'],
+                          ['Text', ' '],
+                          ['Literal.String.Double', '"NO!"']
+    end
   end
 end
-

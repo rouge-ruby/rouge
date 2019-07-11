@@ -19,11 +19,7 @@ module Rouge
       state :pod6 do
          rule(/\=end pod/m, Keyword, :pop!)
 
-         rule(/\=NAME/, Keyword, :semantic)
-         rule(/\=AUTHOR/, Keyword, :semantic)
-         rule(/\=VERSION/, Keyword, :semantic)
-         rule(/\=TITLE/, Keyword, :semantic)
-         rule(/\=SUBTITLE/, Keyword, :semantic)
+         rule(/\=(?:NAME|AUTHOR|VERSION|TITLE|SUBTITLE)/, Keyword, :semantic)
 
          rule(/\=begin code/, Keyword, :block_code)
          rule(/\=begin input/, Keyword, :block_input)

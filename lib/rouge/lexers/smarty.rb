@@ -64,18 +64,18 @@ module Rouge
         rule %r/#[a-zA-Z_]\w*#/, Name::Variable
         rule %r/\$[a-zA-Z_]\w*(\.\w+)*/, Name::Variable
         rule %r/(true|false|null)\b/, Keyword::Constant
-	rule %r/[0-9](\.[0-9]*)?(eE[+-][0-9])?[flFLdD]?|0[xX][0-9a-fA-F]+[Ll]?/, Num
-	rule %r/"(\\.|.)*?"/, Str::Double
+        rule %r/[0-9](\.[0-9]*)?(eE[+-][0-9])?[flFLdD]?|0[xX][0-9a-fA-F]+[Ll]?/, Num
+        rule %r/"(\\.|.)*?"/, Str::Double
         rule %r/'(\\.|.)*?'/, Str::Single
-	rule %r/([a-zA-Z_]\w*)/ do |m|
-	  if self.class.builtins.include? m[0]
-	    token Name::Builtin
-	  else
-	    token Name::Attribute
-	  end
-	end
-      end
 
+        rule %r/([a-zA-Z_]\w*)/ do |m|
+          if self.class.builtins.include? m[0]
+            token Name::Builtin
+          else
+            token Name::Attribute
+          end
+        end
+      end
     end
   end
 end

@@ -11,6 +11,19 @@ module Rouge
 
       filenames '*.pod', '*.pod6'
 
+      formatting_tokens = {
+        "B" => Generic::Strong,
+        "C" => Generic::Output,
+        "E" => Literal::Number::Other,
+        "I" => Generic::Emph,
+        "K" => Generic::Inserted,
+        "L" => Other,
+        "N" => Comment::Special,
+        "T" => Generic::Output,
+        "U" => Generic,
+        "Z" => Comment,
+      }
+
       state :root do
          rule(/\=begin pod/m, Keyword, :pod6)
          rule(/^#.*$/, Comment)
@@ -32,16 +45,10 @@ module Rouge
          rule(/\=output/, Keyword, :output)
          rule(/\=defn/, Keyword)
 
-         rule(/B\</, Punctuation::Indicator, :formatting_b)
-         rule(/C\</, Punctuation::Indicator, :formatting_c)
-         rule(/E\</, Punctuation::Indicator, :formatting_e)
-         rule(/I\</, Punctuation::Indicator, :formatting_i)
-         rule(/K\</, Punctuation::Indicator, :formatting_k)
-         rule(/L\</, Punctuation::Indicator, :formatting_l)
-         rule(/N\</, Punctuation::Indicator, :formatting_n)
-         rule(/T\</, Punctuation::Indicator, :formatting_t)
-         rule(/U\</, Punctuation::Indicator, :formatting_u)
-         rule(/Z\</, Punctuation::Indicator, :formatting_z)
+         rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
+           t = formatting_tokens[m[0][0]]
+           groups Punctuation::Indicator, t, Punctuation::Indicator
+         end
 
          rule(/^(?:\t|\s{4,})/, Other, :code)
 
@@ -63,16 +70,10 @@ module Rouge
       state :item do
          rule(/\n/, Text::Whitespace, :pop!)
 
-         rule(/B\</, Punctuation::Indicator, :formatting_b)
-         rule(/C\</, Punctuation::Indicator, :formatting_c)
-         rule(/E\</, Punctuation::Indicator, :formatting_e)
-         rule(/I\</, Punctuation::Indicator, :formatting_i)
-         rule(/K\</, Punctuation::Indicator, :formatting_k)
-         rule(/L\</, Punctuation::Indicator, :formatting_l)
-         rule(/N\</, Punctuation::Indicator, :formatting_n)
-         rule(/T\</, Punctuation::Indicator, :formatting_t)
-         rule(/U\</, Punctuation::Indicator, :formatting_u)
-         rule(/Z\</, Punctuation::Indicator, :formatting_z)
+         rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
+           t = formatting_tokens[m[0][0]]
+           groups Punctuation::Indicator, t, Punctuation::Indicator
+         end
 
          rule(/./, Generic)
       end
@@ -106,16 +107,10 @@ module Rouge
          rule(/:\w+\</, Name::Attribute, :attribute)
          rule(/\=end/, Keyword, :pop!)
 
-         rule(/B\</, Punctuation::Indicator, :formatting_b)
-         rule(/C\</, Punctuation::Indicator, :formatting_c)
-         rule(/E\</, Punctuation::Indicator, :formatting_e)
-         rule(/I\</, Punctuation::Indicator, :formatting_i)
-         rule(/K\</, Punctuation::Indicator, :formatting_k)
-         rule(/L\</, Punctuation::Indicator, :formatting_l)
-         rule(/N\</, Punctuation::Indicator, :formatting_n)
-         rule(/T\</, Punctuation::Indicator, :formatting_t)
-         rule(/U\</, Punctuation::Indicator, :formatting_u)
-         rule(/Z\</, Punctuation::Indicator, :formatting_z)
+         rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
+           t = formatting_tokens[m[0][0]]
+           groups Punctuation::Indicator, t, Punctuation::Indicator
+         end
 
          rule(/./, Generic)
       end
@@ -139,56 +134,6 @@ module Rouge
          rule(/\=end output/, Keyword, :pop!)
 
          rule(/./, Generic::Output)
-      end
-
-      state :formatting_b do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Generic::Strong)
-      end
-
-      state :formatting_c do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Generic::Output)
-      end
-
-      state :formatting_e do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Literal::Number::Other)
-      end
-
-      state :formatting_i do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Generic::Emph)
-      end
-
-      state :formatting_k do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Generic::Inserted)
-      end
-
-      state :formatting_l do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Other)
-      end
-
-      state :formatting_n do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Comment::Special)
-      end
-
-      state :formatting_t do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Generic::Output)
-      end
-
-      state :formatting_u do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Generic)
-      end
-
-      state :formatting_z do
-         rule(/\>/, Punctuation::Indicator, :pop!)
-         rule(/.*?(?=\>)/, Comment)
       end
     end
   end

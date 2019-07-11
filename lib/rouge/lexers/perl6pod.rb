@@ -27,6 +27,7 @@ module Rouge
       state :root do
         rule(/\=begin pod/m, Keyword, :pod6)
         rule(/^#.*$/, Comment)
+        rule(/./m, Text)
       end
 
       state :pod6 do
@@ -52,7 +53,7 @@ module Rouge
 
         rule(/^(?:\t|\s{4,})/, Other, :code)
 
-        rule(/./, Text)
+        rule(/./m, Text)
       end
 
       state :semantic do
@@ -64,7 +65,7 @@ module Rouge
 
         rule(/:\w+\</, Name::Attribute, :attribute)
 
-        rule(/./, Generic::Heading)
+        rule(/./m, Generic::Heading)
       end
 
       state :item do
@@ -75,19 +76,19 @@ module Rouge
           groups Punctuation::Indicator, t, Punctuation::Indicator
         end
 
-        rule(/./, Generic)
+        rule(/./m, Generic)
       end
 
       state :input do
         rule(/\n/, Text::Whitespace, :pop!)
 
-        rule(/./, Generic::Inserted)
+        rule(/./m, Generic::Inserted)
       end
 
       state :output do
         rule(/\n/, Text::Whitespace, :pop!)
 
-        rule(/./, Generic::Output)
+        rule(/./m, Generic::Output)
       end
 
       state :code do
@@ -97,7 +98,7 @@ module Rouge
       state :attribute do
         rule(/\>/, Name::Attribute, :pop!)
 
-        rule(/./, Name)
+        rule(/./m, Name)
       end
 
       state :block do
@@ -112,28 +113,28 @@ module Rouge
           groups Punctuation::Indicator, t, Punctuation::Indicator
         end
 
-        rule(/./, Generic)
+        rule(/./m, Generic)
       end
 
       state :block_code do
         rule(/:\w+\</, Name::Attribute, :attribute)
         rule(/\=end code/, Keyword, :pop!)
 
-        rule(/./, Generic::Output)
+        rule(/./m, Generic::Output)
       end
 
       state :block_input do
         rule(/:\w+\</, Name::Attribute, :attribute)
         rule(/\=end input/, Keyword, :pop!)
 
-        rule(/./, Generic::Inserted)
+        rule(/./m, Generic::Inserted)
       end
 
       state :block_output do
         rule(/:\w+\</, Name::Attribute, :attribute)
         rule(/\=end output/, Keyword, :pop!)
 
-        rule(/./, Generic::Output)
+        rule(/./m, Generic::Output)
       end
     end
   end

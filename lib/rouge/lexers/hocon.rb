@@ -7,7 +7,7 @@ module Rouge
 
     class HOCON < JSON
       title 'HOCON'
-      desc "Human-Optimized Object Configuration Notation (https://github.com/lightbend/config)"
+      desc "Human-Optimized Config Object Notation (https://github.com/lightbend/config)"
       tag 'hocon'
       filenames '*.hocon'
 

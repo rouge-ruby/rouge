@@ -20,25 +20,26 @@ module Rouge
         end
 
         rule %r/\bfragment\b/, Keyword, :fragment_definition
+        
         rule %r/\bscalar\b/, Keyword, :value
-        rule %r/\bextend\sscalar\b/, Keyword, :value
 
         rule %r/\b(?:type|interface|enum)\b/, Keyword, :type_definition
-        rule %r/\b(?:extend\s+type|extend\s+interface|extend\s+enum)\b/, Keyword, :type_definition
 
         rule %r/\b(?:input|schema)\b/, Keyword, :type_definition
-        rule %r/\b(?:extend\sinput|extend\sschema)\b/, Keyword, :type_definition
 
         rule %r/\bunion\b/, Keyword, :union_definition
-        rule %r/\bextend\s+union\b/, Keyword, :union_definition
+
+        rule %r/\bextend\b/, Keyword
 
         mixin :basic
 
         # Markdown descriptions
-        rule %r/(""")(.*?)(""")/m do |m|
-          token Str::Double, m[1] + "\n"
-          delegate Markdown, m[2].strip
-          token Str::Double, "\n" + m[3]
+        rule %r/(""")(\n)(.*?)(\n)(""")/m do |m|
+          token Str::Double, m[1]
+          token Text::Whitespace, m[2]
+          delegate Markdown, m[3]
+          token Text::Whitespace, m[4]
+          token Str::Double, m[5]
         end
       end
 

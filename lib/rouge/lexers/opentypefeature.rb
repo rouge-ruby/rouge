@@ -9,18 +9,18 @@ module Rouge
       title "OpenTypeFeature"
       desc "OpenType feature code"
       tag 'opentypefeature'
-      aliases 'feature', 'fea', 'opentype'
+      aliases 'fea', 'opentype'
       filenames '*.fea'
 
       def self.keywords
         @keywords ||= %w(
-          Ascender Attach CapHeight CaretOffset CodePageRange Descender FontRevision
+          Ascender Attach CapHeight CaretOffset CodePageRange Descender FontRevision FSType
           GlyphClassDef HorizAxis.BaseScriptList HorizAxis.BaseTagList HorizAxis.MinMax
           IgnoreBaseGlyphs IgnoreLigatures IgnoreMarks LigatureCaretByDev LigatureCaretByIndex
           LigatureCaretByPos LineGap MarkAttachClass MarkAttachmentType NULL Panose RightToLeft
           TypoAscender TypoDescender TypoLineGap UnicodeRange UseMarkFilteringSet Vendor
           VertAdvanceY VertAxis.BaseScriptList VertAxis.BaseTagList VertAxis.MinMax VertOriginY
-          VertTypoAscender VertTypoDescender VertTypoLineGap XHeight
+          VertTypoAscender VertTypoDescender VertTypoLineGap WeightClass WidthClass XHeight
 
           anchorDef anchor anonymous anon by contour cursive device enumerate enum
           exclude_dflt featureNames feature from ignore include_dflt include languagesystem
@@ -34,30 +34,29 @@ module Rouge
       identifier = /[a-z_][a-z0-9\/_]*/i
 
       state :root do
-        rule /\n+/m, Text
-        rule /\s+/, Text::Whitespace
+        rule %r/\s+/m, Text::Whitespace
         rule /#.*$/, Comment
 
         # feature <tag>
-        rule /(anonymous|anon|feature|lookup|table)((?:\s|\\\s)+)/ do
+        rule /(anonymous|anon|feature|lookup|table)((?:\s)+)/ do
           groups Keyword, Text
           push :featurename
         end
         # } <tag> ;
-        rule /(\})((?:\s|\\\s)*)((?:\s|\\\s)*)/ do
+        rule /(\})((?:\s|\\\s)*)/ do
           groups Punctuation, Text
           push :featurename
         end
         # solve include( ../path)
         rule /(include)/i, Keyword, :includepath
 
-        rule /[\[\]\/(\){},.:;-=%*<>']/, Punctuation
+        rule /[\-\[\]\/(){},.:;=%*<>']/, Punctuation
 
         rule /`.*?/, Str::Backtick
-        rule /\"/i, Str, :dqs
+        rule /\"/, Str, :dqs
 
         # classes, start with @<nameOfClass
-        rule /@#{identifier}/i, Name::Class
+        rule /@#{identifier}/, Name::Class
 
         # using negative lookbehind so we don't match property names
         rule /(?<!\.)#{identifier}/ do |m|
@@ -78,13 +77,13 @@ module Rouge
 
       state :includepath do
         rule /\s+/, Text::Whitespace
-        rule /\)/i, Num::Integer, :pop!
-        rule /\(/i, Num::Integer
+        rule /\)/, Punctuation, :pop!
+        rule /\(/, Punctuation
         rule /[a-z0-9\/_.]*/i, Str
       end
 
       state :strings do
-        rule /%(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
+        rule /(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
       end
 
       state :strings_double do

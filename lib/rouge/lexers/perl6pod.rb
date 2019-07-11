@@ -25,115 +25,115 @@ module Rouge
       }
 
       state :root do
-         rule(/\=begin pod/m, Keyword, :pod6)
-         rule(/^#.*$/, Comment)
+        rule(/\=begin pod/m, Keyword, :pod6)
+        rule(/^#.*$/, Comment)
       end
 
       state :pod6 do
-         rule(/\=end pod/m, Keyword, :pop!)
+        rule(/\=end pod/m, Keyword, :pop!)
 
-         rule(/\=(?:NAME|AUTHOR|VERSION|TITLE|SUBTITLE)/, Keyword, :semantic)
+        rule(/\=(?:NAME|AUTHOR|VERSION|TITLE|SUBTITLE)/, Keyword, :semantic)
 
-         rule(/\=begin code/, Keyword, :block_code)
-         rule(/\=begin input/, Keyword, :block_input)
-         rule(/\=begin output/, Keyword, :block_output)
-         rule(/\=begin/, Keyword, :block)
+        rule(/\=begin code/, Keyword, :block_code)
+        rule(/\=begin input/, Keyword, :block_input)
+        rule(/\=begin output/, Keyword, :block_output)
+        rule(/\=begin/, Keyword, :block)
 
-         rule(/\=head(\d+)\s+/, Keyword, :head)
-         rule(/\=item(\d+)\s+/, Keyword, :item)
-         rule(/\=input/, Keyword, :input)
-         rule(/\=output/, Keyword, :output)
-         rule(/\=defn/, Keyword)
+        rule(/\=head(\d+)\s+/, Keyword, :head)
+        rule(/\=item(\d+)\s+/, Keyword, :item)
+        rule(/\=input/, Keyword, :input)
+        rule(/\=output/, Keyword, :output)
+        rule(/\=defn/, Keyword)
 
-         rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
-           t = formatting_tokens[m[0][0]]
-           groups Punctuation::Indicator, t, Punctuation::Indicator
-         end
+        rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
+          t = formatting_tokens[m[0][0]]
+          groups Punctuation::Indicator, t, Punctuation::Indicator
+        end
 
-         rule(/^(?:\t|\s{4,})/, Other, :code)
+        rule(/^(?:\t|\s{4,})/, Other, :code)
 
-         rule(/./, Text)
+        rule(/./, Text)
       end
 
       state :semantic do
-         rule(/.+\n/, Name, :pop!)
+        rule(/.+\n/, Name, :pop!)
       end
 
       state :head do
-         rule(/\n/, Text::Whitespace, :pop!)
+        rule(/\n/, Text::Whitespace, :pop!)
 
-         rule(/:\w+\</, Name::Attribute, :attribute)
+        rule(/:\w+\</, Name::Attribute, :attribute)
 
-         rule(/./, Generic::Heading)
+        rule(/./, Generic::Heading)
       end
 
       state :item do
-         rule(/\n/, Text::Whitespace, :pop!)
+        rule(/\n/, Text::Whitespace, :pop!)
 
-         rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
-           t = formatting_tokens[m[0][0]]
-           groups Punctuation::Indicator, t, Punctuation::Indicator
-         end
+        rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
+          t = formatting_tokens[m[0][0]]
+          groups Punctuation::Indicator, t, Punctuation::Indicator
+        end
 
-         rule(/./, Generic)
+        rule(/./, Generic)
       end
 
       state :input do
-         rule(/\n/, Text::Whitespace, :pop!)
+        rule(/\n/, Text::Whitespace, :pop!)
 
-         rule(/./, Generic::Inserted)
+        rule(/./, Generic::Inserted)
       end
 
       state :output do
-         rule(/\n/, Text::Whitespace, :pop!)
+        rule(/\n/, Text::Whitespace, :pop!)
 
-         rule(/./, Generic::Output)
+        rule(/./, Generic::Output)
       end
 
       state :code do
-         rule(/.*$/, Generic::Output, :pop!)
+        rule(/.*$/, Generic::Output, :pop!)
       end
 
       state :attribute do
-         rule(/\>/, Name::Attribute, :pop!)
+        rule(/\>/, Name::Attribute, :pop!)
 
-         rule(/./, Name)
+        rule(/./, Name)
       end
 
       state :block do
-         # TODO: Check the name of the block, and make sure the =end matches
-         # the same name
+        # TODO: Check the name of the block, and make sure the =end matches
+        # the same name
 
-         rule(/:\w+\</, Name::Attribute, :attribute)
-         rule(/\=end/, Keyword, :pop!)
+        rule(/:\w+\</, Name::Attribute, :attribute)
+        rule(/\=end/, Keyword, :pop!)
 
-         rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
-           t = formatting_tokens[m[0][0]]
-           groups Punctuation::Indicator, t, Punctuation::Indicator
-         end
+        rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
+          t = formatting_tokens[m[0][0]]
+          groups Punctuation::Indicator, t, Punctuation::Indicator
+        end
 
-         rule(/./, Generic)
+        rule(/./, Generic)
       end
 
       state :block_code do
-         rule(/:\w+\</, Name::Attribute, :attribute)
-         rule(/\=end code/, Keyword, :pop!)
+        rule(/:\w+\</, Name::Attribute, :attribute)
+        rule(/\=end code/, Keyword, :pop!)
 
-         rule(/./, Generic::Output)
+        rule(/./, Generic::Output)
       end
 
       state :block_input do
-         rule(/:\w+\</, Name::Attribute, :attribute)
-         rule(/\=end input/, Keyword, :pop!)
+        rule(/:\w+\</, Name::Attribute, :attribute)
+        rule(/\=end input/, Keyword, :pop!)
 
-         rule(/./, Generic::Inserted)
+        rule(/./, Generic::Inserted)
       end
 
       state :block_output do
-         rule(/:\w+\</, Name::Attribute, :attribute)
-         rule(/\=end output/, Keyword, :pop!)
+        rule(/:\w+\</, Name::Attribute, :attribute)
+        rule(/\=end output/, Keyword, :pop!)
 
-         rule(/./, Generic::Output)
+        rule(/./, Generic::Output)
       end
     end
   end

@@ -31,35 +31,35 @@ module Rouge
       end
 
 
-      identifier = /[a-z_][a-z0-9\/_]*/i
+      identifier = %r/[a-z_][a-z0-9\/_]*/i
 
       state :root do
         rule %r/\s+/m, Text::Whitespace
-        rule /#.*$/, Comment
+        rule %r/#.*$/, Comment
 
         # feature <tag>
-        rule /(anonymous|anon|feature|lookup|table)((?:\s)+)/ do
+        rule %r/(anonymous|anon|feature|lookup|table)((?:\s)+)/ do
           groups Keyword, Text
           push :featurename
         end
         # } <tag> ;
-        rule /(\})((?:\s|\\\s)*)/ do
+        rule %r/(\})((?:\s|\\\s)*)/ do
           groups Punctuation, Text
           push :featurename
         end
         # solve include( ../path)
-        rule /(include)/i, Keyword, :includepath
+        rule %r/(include)/i, Keyword, :includepath
 
-        rule /[\-\[\]\/(){},.:;=%*<>']/, Punctuation
+        rule %r/[\-\[\]\/(){},.:;=%*<>']/, Punctuation
 
-        rule /`.*?/, Str::Backtick
-        rule /\"/, Str, :dqs
+        rule %r/`.*?/, Str::Backtick
+        rule %r/\"/, Str, :dqs
 
-        # classes, start with @<nameOfClass
-        rule /@#{identifier}/, Name::Class
+        # classes, start with @<nameOfClass>
+        rule %r/@#{identifier}/, Name::Class
 
         # using negative lookbehind so we don't match property names
-        rule /(?<!\.)#{identifier}/ do |m|
+        rule %r/(?<!\.)#{identifier}/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           else
@@ -68,7 +68,7 @@ module Rouge
         end
 
         rule identifier, Name
-        rule /-?\d+/, Num::Integer
+        rule %r/-?\d+/, Num::Integer
       end
 
       state :featurename do
@@ -76,18 +76,18 @@ module Rouge
       end
 
       state :includepath do
-        rule /\s+/, Text::Whitespace
-        rule /\)/, Punctuation, :pop!
-        rule /\(/, Punctuation
-        rule /[a-z0-9\/_.]*/i, Str
+        rule %r/\s+/, Text::Whitespace
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/\(/, Punctuation
+        rule %r/[a-z0-9\/_.]*/i, Str
       end
 
       state :strings do
-        rule /(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
+        rule %r/(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
       end
 
       state :strings_double do
-        rule /[^\\"%\n]+/, Str
+        rule %r/[^\\"%\n]+/, Str
         mixin :strings
       end
 
@@ -105,11 +105,10 @@ module Rouge
       end
 
       state :dqs do
-        rule /"/, Str, :pop!
+        rule %r/"/, Str, :pop!
         mixin :escape
         mixin :strings_double
       end
-
 
     end
   end

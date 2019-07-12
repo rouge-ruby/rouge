@@ -39,3 +39,10 @@
       "hex": "#0F0"
     }
 }
+
+"this": { "is": "not syntactically correct JSON but is here for backwards compatibility" }
+true
+100
+null
+"a": "test"
+"string"

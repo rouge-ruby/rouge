@@ -21,49 +21,30 @@ module Rouge
         rule %r/{/, Punctuation, :object
         rule %r/\[/, Punctuation, :array
         
-        rule %r/("[^"]*")(:?)/ do |m|
-          if m[2] == ":"
-            groups Name::Label, Punctuation
-            push :value
-          else
-            token Str::Double
-          end
-        end
-
-        rule(%r//) { push :value }
+        mixin :name
+        mixin :value
       end
 
       state :object do
         mixin :whitespace
-        rule %r/"/, Name::Label, :name
-        rule %r/:/, Punctuation, :value
-        rule %r/,/, Punctuation
+        mixin :name
+        mixin :value
         rule %r/}/, Punctuation, :pop!
-      end
-      
-      state :value do
-        mixin :whitespace
-        rule %r/"/, Str::Double, :string_value
-        mixin :constants
-        rule %r/\[/, Punctuation, :array
-        rule %r/{/, Punctuation, :object
-        rule %r/}/ do
-          if stack[-2].name == :object
-            token Punctuation
-            pop! 2 # pop both this state and the :object one below it
-          else
-            token Error
-            pop!
-          end
-        end
-        rule %r/,/, Punctuation, :pop!
-        rule %r/:/, Punctuation
+        rule %r/,/, Punctuation
       end
 
       state :name do
-        rule %r/[^\\"]+/, Name::Label
-        rule %r/\\./, Name::Label
-        rule %r/"/, Name::Label, :pop!
+        rule %r/("(?:\"|[^"\n])*?")(:)/ do
+          groups Name::Label, Punctuation
+        end
+      end
+
+      state :value do
+        mixin :whitespace
+        mixin :constants
+        rule %r/"/, Str::Double, :string_value
+        rule %r/\[/, Punctuation, :array
+        rule %r/{/, Punctuation, :object
       end
 
       state :string_value do
@@ -73,11 +54,9 @@ module Rouge
       end
 
       state :array do
+        mixin :value
         rule %r/\]/, Punctuation, :pop!
-        rule %r/"/, Str::Double, :string_value
         rule %r/,/, Punctuation
-        mixin :constants
-        mixin :root
       end
 
       state :constants do

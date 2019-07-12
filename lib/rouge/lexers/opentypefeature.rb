@@ -43,7 +43,7 @@ module Rouge
           push :featurename
         end
         # } <tag> ;
-        rule %r/(\})((?:\s|\\\s)*)/ do
+        rule %r/(\})((?:\s)*)/ do
           groups Punctuation, Text
           push :featurename
         end

@@ -79,7 +79,7 @@ module Rouge
 
       prepend :constants do
         # Numbers (handle the case where we have multiple periods, ie. IP addresses)
-        rule %r/\d+\.(\d+\.?){3,}/, Literal #
+        rule %r/\d+\.(\d+\.?){3,}/, Literal
       end
     end
   end

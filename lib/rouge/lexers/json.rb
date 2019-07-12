@@ -20,7 +20,7 @@ module Rouge
         mixin :whitespace
         rule %r/{/, Punctuation, :object
         rule %r/\[/, Punctuation, :array
-        
+
         mixin :name
         mixin :value
       end
@@ -34,20 +34,20 @@ module Rouge
       end
 
       state :name do
-        rule %r/("(?:\"|[^"\n])*?")(:)/ do
-          groups Name::Label, Punctuation
+        rule %r/("(?:\"|[^"\n])*?")(\s*)(:)/ do
+          groups Name::Label, Text::Whitespace, Punctuation
         end
       end
 
       state :value do
         mixin :whitespace
         mixin :constants
-        rule %r/"/, Str::Double, :string_value
+        rule %r/"/, Str::Double, :string
         rule %r/\[/, Punctuation, :array
         rule %r/{/, Punctuation, :object
       end
 
-      state :string_value do
+      state :string do
         rule %r/[^\\"]+/, Str::Double
         rule %r/\\./, Str::Escape
         rule %r/"/, Str::Double, :pop!

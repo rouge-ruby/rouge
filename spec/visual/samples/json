@@ -29,7 +29,7 @@
   "life_is_good": true,
   "life_is_bad": 10e-4,
   "errors": {
-      "object": { "a": 1, "b": 2, 
+      "object": { "a": 1, "b": 2,
       "c": "some string" }
   },
   "emptyObject": {},

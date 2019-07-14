@@ -83,7 +83,7 @@ module Rouge
       end
 
       state :strings do
-        rule %r/(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
+        rule %r/(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str
       end
 
       state :strings_double do

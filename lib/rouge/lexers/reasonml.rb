@@ -5,16 +5,16 @@ module Rouge
   module Lexers
     load_lexer 'ocaml/common.rb'
 
-    class OCaml < OCamlCommon
-      title "OCaml"
-      desc 'Objective Caml (ocaml.org)'
-      tag 'ocaml'
-      filenames '*.ml', '*.mli', '*.mll', '*.mly'
-      mimetypes 'text/x-ocaml'
+    class ReasonML < OCamlCommon
+      title "ReasonML"
+      desc 'New syntax on top of OCaml ecosystem (reasonml.github.io)'
+      tag 'reasonml'
+      filenames '*.re', '*.rei'
+      mimetypes 'text/x-reasonml'
 
       def self.keywords
         @keywords ||= super + Set.new(%w(
-          match raise
+          switch
         ))
       end
 
@@ -24,7 +24,7 @@ module Rouge
         rule %r/#{@@upper_id}(?=\s*[.])/, Name::Namespace, :dotted
         rule %r/`#{@@id}/, Name::Tag
         rule @@upper_id, Name::Class
-        rule %r/[(][*](?![)])/, Comment, :comment
+        rule %r/[\/][*](?![\/])/, Comment, :comment
         rule @@id do |m|
           match = m[0]
           if self.class.keywords.include? match
@@ -48,17 +48,17 @@ module Rouge
         rule %r/\d[\d_]*/, Num::Integer
 
         rule %r/'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char
-        rule %r/'[.]'/, Str::Char
+        rule %r/'[^'\/]'/, Str::Char
         rule %r/'/, Keyword
         rule %r/"/, Str::Double, :string
         rule %r/[~?]#{@@id}/, Name::Variable
       end
 
       state :comment do
-        rule %r/[^(*)]+/, Comment
-        rule(/[(][*]/) { token Comment; push }
-        rule %r/[*][)]/, Comment, :pop!
-        rule %r/[(*)]/, Comment
+        rule %r|[^/*)]+|, Comment
+        rule %r|[/][*]|, Comment, :push
+        rule %r|[*][/]|, Comment, :pop!
+        rule %r|[*/]|, Comment
       end
     end
   end

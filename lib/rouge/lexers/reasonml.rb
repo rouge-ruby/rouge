@@ -48,17 +48,17 @@ module Rouge
         rule %r/\d[\d_]*/, Num::Integer
 
         rule %r/'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char
-        rule %r/'[.]'/, Str::Char
+        rule %r/'[^'\/]'/, Str::Char
         rule %r/'/, Keyword
         rule %r/"/, Str::Double, :string
         rule %r/[~?]#{@@id}/, Name::Variable
       end
 
       state :comment do
-        rule %r/[^\/*)]+/, Comment
-        rule(/[\/][*]/) { token Comment; push }
-        rule %r/[*][\/]/, Comment, :pop!
-        rule %r/[(*)\/]/, Comment
+        rule %r|[^/*)]+|, Comment
+        rule %r|[/][*]|, Comment, :push
+        rule %r|[*][/]|, Comment, :pop!
+        rule %r|[*/]|, Comment
       end
     end
   end

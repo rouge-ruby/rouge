@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class OpenTypeFeatureFile < RegexLexer
       title "OpenType Feature File"
-      desc "OpenType feature file, a text file that contains the typographic layout feature specifications for an OpenType font (adobe-type-tools.github.io/afdko)"
+      desc "Feature specifications for an OpenType font (adobe-type-tools.github.io/afdko)"
       tag 'opentype_feature_file'
       aliases 'fea', 'opentype', 'opentypefeature'
       filenames '*.fea'

@@ -1,0 +1,116 @@
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+languagesystem latn DEU;
+languagesystem cyrl dflt;
+languagesystem cyrl SRB;
+languagesystem grek dflt;
+
+
+table name {
+  nameid 0 "Copyright Enschede";
+  nameid 9 "Jan van Krimpen";
+} name;
+
+
+
+include (../../family.fea);
+include (  ../../family.fea  ) ;
+
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+
+@className = [A B C.alt];
+@className2 = [a b c.alt];
+
+# some comment
+
+lookup SomeGreatNameHere {
+  sub colon parenright by smile;
+} SomeGreatNameHere;
+
+lookup SomeGreatNameHere {
+  substitute colon parenright by smile;
+} SomeGreatNameHere;
+
+feature mkmk {
+    include (mkmk.fea);
+    markClass [acute grave] <anchor 350 0>  @MARK_TOP_ACCENTS;
+    markClass [cedilla hook] <anchor  300 0>  @MARK_BOTTOM_ACCENTS;
+    markClass [dieresis umlaut] <anchor 400 0>  @MARK_TOP_ACCENTS;
+    pos a a <10, 10, 10, 10>;
+} mkmk;
+
+feature liga {
+  sub f i by f_i;
+  sub f t' by t.liga;
+  # sub f t' by t.liga; # FIRST FIX contextual rule highlight...
+  ignore sub w o r d s exclam;
+} liga;
+
+table OS/2 {
+  Panose 2 4 8 3 5 4 5 2 2 4;
+  # NOTE: For cross-platform consistency, OS/2.TypoAscender and |OS/2.TypoDescender| must add up to the font's UPM value
+  TypoAscender 730;   # Must be the same on all fonts for cross-platform consistency
+  TypoDescender -270; # Must be the same on all fonts for cross-platform consistency
+} OS/2;
+
+# Script and language coverage
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+
+# Ligature formation
+feature liga {
+    substitute f i by f_i;
+    substitute f l by f_l;
+} liga;
+
+# Kerning
+feature kern {
+    position A Y -100;
+    position a y -80;
+    position s f' <0 0 10 0> t;
+    anchorDef 300 0 ANCHOR_1;
+    anchorDef 120 -20 contourpoint 5 ANCHOR_2;
+} kern;
+
+lookup CNTXT_LIGS {
+     substitute f i by f_i;
+     substitute c t by c_t;
+ } CNTXT_LIGS;
+
+lookup CNTXT_SUB {
+     substitute n by n.end;
+     substitute s by s.end;
+ } CNTXT_SUB;
+
+feature test {
+     substitute [ a e i o u] f' lookup CNTXT_LIGS i' n' lookup CNTXT_SUB;
+     substitute [ a e i o u] c' lookup CNTXT_LIGS t' s' lookup CNTXT_SUB;
+ } test;
+
+table OS/2 {
+    FSType 4;
+    Panose 2 15 0 0 2 2 8 2 9 4;
+    TypoAscender 800;
+    TypoDescender -200; # Note that TypoDescender is negative for descent below the baseline.
+    winAscent 832;
+    winDescent 321; # Note that winDescent is positive for descent below the baseline.
+    UnicodeRange
+        0   # Basic Latin
+        1   # Latin-1 Supplement
+        9   # Cyrillic
+        55  # CJK Compatibility
+        59  # CJK Unified Ideographs
+        60  # Private Use Area
+        ;
+    CodePageRange
+        1252    # Latin 1
+        1251    # Cyrillic
+        932     # JIS/Japan
+        ;
+    XHeight 400;
+    CapHeight 600;
+    WeightClass 800;
+    WidthClass 3;
+    Vendor "ADBE";
+} OS/2;

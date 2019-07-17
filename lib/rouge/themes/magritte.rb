@@ -32,7 +32,7 @@ module Rouge
       # style Generic::Prompt,            :fg => :chilly, :bold => true
 
       style Comment,                      :fg => :dragon, :italic => true
-      style Comment::Preproc,             :fg => :chocolate, :bold => true, :italic => true
+      style Comment::Preproc,             :fg => :chocolate, :bold => true
       style Error,                        :fg => :eggshell, :bg => :cherry
       style Generic::Error,               :fg => :cherry, :italic => true, :bold => true
       style Keyword,                      :fg => :royal, :bold => true

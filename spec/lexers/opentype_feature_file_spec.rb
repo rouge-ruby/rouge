@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-describe Rouge::Lexers::OpenTypeFeature do
-  let(:subject) { Rouge::Lexers::OpenTypeFeature.new }
+describe Rouge::Lexers::OpenTypeFeatureFile do
+  let(:subject) { Rouge::Lexers::OpenTypeFeatureFile.new }
 
   describe 'guessing' do
     include Support::Guessing

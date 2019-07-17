@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# http://www.adobe.com/devnet/opentype/afdko/topic_feature_file_syntax.html
-
 module Rouge
   module Lexers
-    class OpenTypeFeature < RegexLexer
-      title "OpenTypeFeature"
-      desc "OpenType feature code"
-      tag 'opentypefeature'
-      aliases 'fea', 'opentype'
+    class OpenTypeFeatureFile < RegexLexer
+      title "OpenType Feature File"
+      desc "OpenType feature file, a text file that contains the typographic layout feature specifications for an OpenType font (adobe-type-tools.github.io/afdko)"
+      tag 'opentype_feature_file'
+      aliases 'fea', 'opentype', 'opentypefeature'
       filenames '*.fea'
 
       def self.keywords

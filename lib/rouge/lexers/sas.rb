@@ -141,7 +141,7 @@ module Rouge
         # Create a hash with keywords for common PROCs, keyed by PROC name
         @proc_keywords ||= {}
 
-	@proc_keywords["sql"] ||= Set.new %w(
+	@proc_keywords["SQL"] ||= Set.new %w(
             ALTER TABLE CONNECT CREATE INDEX VIEW DELETE DESCRIBE DISCONNECT DROP EXECUTE
             INSERT RESET SELECT UPDATE VALIDATE ADD CONSTRAINT DROP FOREIGN KEY PRIMARY
             MODIFY LIKE AS ORDER BY USING FROM INTO SET VALUES RESET DISTINCT UNIQUE
@@ -149,7 +149,7 @@ module Rouge
           )
         # from SAS 9.4 SQL Procedure User's Guide
 
-	@proc_keywords["means"] ||= Set.new %w(
+	@proc_keywords["MEANS"] ||= Set.new %w(
             BY CLASS FREQ ID OUTPUT OUT TYPES VAR WAYS WEIGHT
             ATTRIB FORMAT LABEL WHERE
             DESCENDING NOTSORTED 
@@ -168,7 +168,7 @@ module Rouge
           )
         # from BASE SAS 9.4 Procedures Guide, Fifth Edition
 
-	@proc_keywords["datasets"] ||= Set.new %w(
+	@proc_keywords["DATASETS"] ||= Set.new %w(
             AGE APPEND ATTRIB AUDIT CHANGE CONTENTS COPY DELETE EXCHANGE
             EXCLUDE FORMAT IC CREATE DELETE REACTIVATE INDEX CENTILES INFORMAT
             INITIATE LABEL LOG MODIFY REBUILD RENAME REPAIR RESUME SAVE SELECT
@@ -176,7 +176,7 @@ module Rouge
           )
         # from BASE SAS 9.4 Procedures Guide, Fifth Edition
 
-	@proc_keywords["sort"] ||= Set.new %w(
+	@proc_keywords["SORT"] ||= Set.new %w(
             BY DESCENDING KEY ASCENDING ASC DESC DATECOPY FORCE OVERWRITE 
             PRESORTED SORTSIZE TAGSORT DUPOUT OUT UNIQUEOUT NODUPKEY NOUNIQUEKEY 
             NOTHREADS THREADS EQUALS NOEQUALS
@@ -184,7 +184,7 @@ module Rouge
           )
         # from BASE SAS 9.4 Procedures Guide, Fifth Edition
 
-	@proc_keywords["print"] ||= Set.new %w(
+	@proc_keywords["PRINT"] ||= Set.new %w(
             BY DESCENDING NOTSORTED PAGEBY SUMBY ID STYLE SUM VAR CONTENTS DATA
             GRANDTOTAL_LABEL HEADING LABEL SPLIT SUMLABEL NOSUMLABEL
             BLANKLINE COUNT DOUBLE N NOOBS OBS ROUND
@@ -193,20 +193,20 @@ module Rouge
           )
         # from BASE SAS 9.4 Procedures Guide, Fifth Edition
 
-	@proc_keywords["append"] ||= Set.new %w(
+	@proc_keywords["APPEND"] ||= Set.new %w(
             BASE APPENDVER DATA ENCRYPTKEY FORCE GETSORT NOWARN
             ATTRIB FORMAT LABEL WHERE
           )
         # from BASE SAS 9.4 Procedures Guide, Fifth Edition
 
-	@proc_keywords["transpose"] ||= Set.new %w(
+	@proc_keywords["TRANSPOSE"] ||= Set.new %w(
             DELIMITER LABEL LET NAME OUT PREFIX SUFFIX BY DESCENDING NOTSORTED
             COPY ID IDLABEL VAR INDB
             ATTRIB FORMAT LABEL WHERE
           )
         # from BASE SAS 9.4 Procedures Guide, Fifth Edition
 
-	@proc_keywords["freq"] ||= Set.new %w(
+	@proc_keywords["FREQ"] ||= Set.new %w(
             BY EXACT OUTPUT TABLES TEST WEIGHT
             COMPRESS DATA FORMCHAR NLEVELS NOPRINT ORDER PAGE FORMATTED FREQ 
             INTERNAL
@@ -226,7 +226,7 @@ module Rouge
           )
         # from Base SAS 9.4 Procedures Guide: Statistical Procedures, Fourth Edition
 
-	@proc_keywords["corr"] ||= Set.new %w(
+	@proc_keywords["CORR"] ||= Set.new %w(
             BY FREQ ID PARTIAL VAR WEIGHT WITH
             DATA OUTH OUTK OUTP OUTPLC OUTPLS OUTS
             EXCLNPWGHT FISHER HOEFFDING KENDALL NOMISS PEARSON POLYCHORIC
@@ -235,7 +235,7 @@ module Rouge
           )
         # from Base SAS 9.4 Procedures Guide: Statistical Procedures, Fourth Edition
 
-	@proc_keywords["report"] ||= Set.new %w(
+	@proc_keywords["REPORT"] ||= Set.new %w(
             BREAK BY DESCENDING NOTSORTED COLUMN COMPUTE STYLE LINE ENDCOMP
             CALL DEFINE _ROW_ FREQ RBREAK WEIGHT
             ATTRIB FORMAT LABEL WHERE
@@ -261,7 +261,7 @@ module Rouge
           )
         # from BASE SAS 9.4 Procedures Guide, Fifth Edition
 
-	@proc_keywords["metalib"] ||= Set.new %w(
+	@proc_keywords["METALIB"] ||= Set.new %w(
             OMR DBAUTH DBUSER DBPASSWORD EXCLUDE SELECT READ FOLDER FOLDERID
             IMPACT_LIMIT NOEXEC PREFIX REPORT UPDATE_RULE DELETE NOADD NODELDUP
             NOUPDATE
@@ -270,7 +270,7 @@ module Rouge
           )
         # from SAS 9.4 Language Interfaces to Metadata, Third Edition
 
-	@proc_keywords["gchart"] ||= Set.new %w(
+	@proc_keywords["GCHART"] ||= Set.new %w(
             DATA ANNOTATE GOUT IMAGEMAP BLOCK HBAR HBAR3D VBAR VBAR3D PIE PIE3D
             DONUT STAR ANNO
             BY NOTE FORMAT LABEL WHERE
@@ -294,7 +294,7 @@ module Rouge
           )
         # from SAS GRAPH 9.4 Reference, Fourth Edition
 
-	@proc_keywords["gplot"] ||= Set.new %w(
+	@proc_keywords["GPLOT"] ||= Set.new %w(
             DATA ANNOTATE GOUT IMAGEMAP UNIFORM BUBBLE BUBBLE2 PLOT PLOT2
             BCOLOR BFILL BFONT BLABEL BSCALE AREA RADIUS BSIZE DESCRIPTION NAME
             AUTOHREF CAUTOHREF CHREF HAXIS HMINOR HREF HREVERSE HZERO LAUTOHREF
@@ -308,13 +308,13 @@ module Rouge
           )
         # from SAS GRAPH 9.4 Reference, Fourth Edition
 
-	@proc_keywords["reg"] ||= Set.new %w(
+	@proc_keywords["REG"] ||= Set.new %w(
             MODEL BY FREQ ID VAR WEIGHT ADD CODE DELETE MTEST OUTPUT PAINT
             PLOT PRINT REFIT RESTRICT REWEIGHT STORE TEST
           )
          # from SAS/STAT 15.1 User's Guide
 
-	@proc_keywords["sgplot"] ||= Set.new %w(
+	@proc_keywords["SGPLOT"] ||= Set.new %w(
             STYLEATTRS BAND X Y UPPER LOWER BLOCK BUBBLE DENSITY DOT DROPLINE
             ELLIPSE ELLIPSEPARM FRINGE GRADLEGEND HBAR HBARBASIC HBARPARM
             HBOX HEATMAP HEATMAPPARM HIGHLOW HISTOGRAM HLINE INSET KEYLEGEND
@@ -476,9 +476,9 @@ module Rouge
 
         # PROC definitions
         rule %r((proc)(\s+)(\w+))ix do |m|
-          @proc_name = m[0].split(' ')[1].downcase
+          @proc_name = m[3].upcase
           puts "    proc name: #{@proc_name}" if @debug
-          if self.class.sas_proc_names.include? @proc_name.upcase
+          if self.class.sas_proc_names.include? @proc_name
             groups Keyword, Text, Keyword
           else
             groups Keyword, Text, Name

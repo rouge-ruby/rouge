@@ -378,13 +378,13 @@ module Rouge
         # Rules to be parsed before the keywords (which are different depending
         # on the context)
 
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
 
         # Single-line comments (between * and ;) - these can actually go onto multiple lines
         # case 1 - where it starts a line
-        rule /^\s*%?\*[^;]*;/m, Comment::Single
+        rule %r/^\s*%?\*[^;]*;/m, Comment::Single
         # case 2 - where it follows the previous statement on the line (after a semicolon)
-        rule /(;)(\s*)(%?\*[^;]*;)/m do
+        rule %r/(;)(\s*)(%?\*[^;]*;)/m do
           groups Punctuation, Text, Comment::Single
         end
 
@@ -392,30 +392,30 @@ module Rouge
         rule %r(/[*].*?[*]/)m, Comment::Multiline
 
         # date/time constants (Language Reference pp91-2)
-        rule /'[0-9a-z]+?'d/i, Literal::Date
-        rule /'.+?'dt/i, Literal::Date
-        rule /'[0-9:]+?([a|p]m)?'t/i, Literal::Date
+        rule %r/'[0-9a-z]+?'d/i, Literal::Date
+        rule %r/'.+?'dt/i, Literal::Date
+        rule %r/'[0-9:]+?([a|p]m)?'t/i, Literal::Date
 
-        rule /'/, Str::Single, :single_string
-        rule /"/, Str::Double, :double_string
-        rule /&[a-z0-9_&.]+/i, Name::Variable
+        rule %r/'/, Str::Single, :single_string
+        rule %r/"/, Str::Double, :double_string
+        rule %r/&[a-z0-9_&.]+/i, Name::Variable
 
         # numeric constants (Language Reference p91)
-        rule /\d[0-9a-f]*x/i, Num::Hex
-        rule /\d[0-9e\-.]+/i, Num # scientific notation
+        rule %r/\d[0-9a-f]*x/i, Num::Hex
+        rule %r/\d[0-9e\-.]+/i, Num # scientific notation
 
         # auto variables from DATA step (Language Reference p46, p37)
-        rule /\b(_n_|_error_|_file_|_infile_|_msg_|_iorc_|_cmd_)\b/i, Name::Builtin::Pseudo
+        rule %r/\b(_n_|_error_|_file_|_infile_|_msg_|_iorc_|_cmd_)\b/i, Name::Builtin::Pseudo
 
         # auto variable list names
-        rule /\b(_character_|_numeric_|_all_)\b/i, Name::Builtin
+        rule %r/\b(_character_|_numeric_|_all_)\b/i, Name::Builtin
 
         # datalines/cards etc
-        rule /\b(datalines|cards)(\s*)(;)/i do
+        rule %r/\b(datalines|cards)(\s*)(;)/i do
           groups Keyword, Text, Punctuation
           push :datalines
         end
-        rule /\b(datalines4|cards4)(\s*)(;)/i do
+        rule %r/\b(datalines4|cards4)(\s*)(;)/i do
           groups Keyword, Text, Punctuation
           push :datalines4
         end
@@ -423,28 +423,28 @@ module Rouge
 
         # operators (Language Reference p96)
         rule %r(\*\*|[\*/\+-]), Operator
-        rule /[^¬~]?=:?|[<>]=?:?/, Operator
-        rule /\b(eq|ne|gt|lt|ge|le|in)\b/i, Operator::Word
-        rule /[&|!¦¬∘~]/, Operator
-        rule /\b(and|or|not)\b/i, Operator::Word
-        rule /(<>|><)/, Operator # min/max
-        rule /\|\|/, Operator # concatenation
+        rule %r/[^¬~]?=:?|[<>]=?:?/, Operator
+        rule %r/\b(eq|ne|gt|lt|ge|le|in)\b/i, Operator::Word
+        rule %r/[&|!¦¬∘~]/, Operator
+        rule %r/\b(and|or|not)\b/i, Operator::Word
+        rule %r/(<>|><)/, Operator # min/max
+        rule %r/\|\|/, Operator # concatenation
 
         # The OF operator should also be highlighted (Language Reference p49)
-        rule /\b(of)\b/i, Operator::Word
-        rule /\b(like)\b/i, Operator::Word # Language Ref p181
+        rule %r/\b(of)\b/i, Operator::Word
+        rule %r/\b(like)\b/i, Operator::Word # Language Ref p181
       
-        rule /\d+/, Num::Integer
+        rule %r/\d+/, Num::Integer
 
-        rule /\$/, Keyword::Type
+        rule %r/\$/, Keyword::Type
 
         # Macro definitions
-        rule /(%macro|%mend)(\s*)(\w+)/i do
+        rule %r/(%macro|%mend)(\s*)(\w+)/i do
           groups Keyword, Text, Name::Function
         end
-        rule /%mend/, Keyword
+        rule %r/%mend/, Keyword
 
-        rule /%\w+/ do |m|
+        rule %r/%\w+/ do |m|
           if self.class.sas_macro_statements.include? m[0].upcase
             token Keyword
           elsif self.class.sas_macro_functions.include? m[0].upcase
@@ -460,15 +460,15 @@ module Rouge
         # on the context)
 
         # Missing values (Language Reference p81)
-        rule /\s\.[;\s]/, Keyword::Constant # missing
-        rule /\s\.[a-z_]/, Name::Constant # user-defined missing
+        rule %r/\s\.[;\s]/, Keyword::Constant # missing
+        rule %r/\s\.[a-z_]/, Name::Constant # user-defined missing
 
-        rule /[\(\),;:\{\}\[\]\\\.]/, Punctuation
+        rule %r/[\(\),;:\{\}\[\]\\\.]/, Punctuation
 
-        rule /@/, Str::Symbol # line hold specifiers
-        rule /\?/, Str::Symbol # used for format modifiers
+        rule %r/@/, Str::Symbol # line hold specifiers
+        rule %r/\?/, Str::Symbol # used for format modifiers
         
-        rule /[^\s]+/, Text # Fallback for anything we haven't matched so far
+        rule %r/[^\s]+/, Text # Fallback for anything we haven't matched so far
       end
 
       state :root do
@@ -488,15 +488,15 @@ module Rouge
         end
 
         # Data step definitions
-        rule /(data)(\s+)([\w\.]+)/i do
+        rule %r/(data)(\s+)([\w\.]+)/i do
           groups Keyword, Text, Name::Variable
         end
         # Libname definitions
-        rule /(libname)(\s+)(\w+)/i do
+        rule %r/(libname)(\s+)(\w+)/i do
           groups Keyword, Text, Name::Variable
         end
 
-        rule /\w+/ do |m|
+        rule %r/\w+/ do |m|
           if self.class.data_step_statements.include? m[0].upcase
             token Keyword
           elsif self.class.sas_functions.include? m[0].upcase
@@ -511,39 +511,39 @@ module Rouge
 
 
       state :single_string do
-        rule /''/, Str::Escape
-        rule /'/, Str::Single, :pop!
-        rule /[^']+/, Str::Single
+        rule %r/''/, Str::Escape
+        rule %r/'/, Str::Single, :pop!
+        rule %r/[^']+/, Str::Single
       end
 
       state :double_string do
-        rule /&[a-z0-9_&]+\.?/i, Str::Interpol
-        rule /""/, Str::Escape
-        rule /"/, Str::Double, :pop!
+        rule %r/&[a-z0-9_&]+\.?/i, Str::Interpol
+        rule %r/""/, Str::Escape
+        rule %r/"/, Str::Double, :pop!
 
-        rule /[^&"]+/, Str::Double
+        rule %r/[^&"]+/, Str::Double
         # Allow & to be used as character if not already matched as macro variable
-        rule /&/, Str::Double
+        rule %r/&/, Str::Double
       end
 
       state :datalines do
-        rule /[^;]/, Literal::String::Heredoc
-        rule /;/, Punctuation, :pop!
+        rule %r/[^;]/, Literal::String::Heredoc
+        rule %r/;/, Punctuation, :pop!
       end
 
       state :datalines4 do
-        rule /;{4}/, Punctuation, :pop!
-        rule /[^;]/, Literal::String::Heredoc
-        rule /;{,3}/, Literal::String::Heredoc
+        rule %r/;{4}/, Punctuation, :pop!
+        rule %r/[^;]/, Literal::String::Heredoc
+        rule %r/;{,3}/, Literal::String::Heredoc
       end
 
 
       # PROCS
       state :proc do
-        rule /(quit|run)/i, Keyword, :pop!
+        rule %r/(quit|run)/i, Keyword, :pop!
         
         mixin :basics
-        rule /\w+/ do |m|
+        rule %r/\w+/ do |m|
           if self.class.data_step_statements.include? m[0].upcase
             token Keyword
           elsif self.class.sas_functions.include? m[0].upcase

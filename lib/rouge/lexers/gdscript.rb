@@ -11,14 +11,6 @@ module Rouge
       filenames '*.gd'
       mimetypes 'text/x-gdscript', 'application/x-gdscript'
 
-      def self.affix_long
-        @affix_long = '[rR]|[uUbB][rR]|[rR][uUbB]|[@]'
-      end
-
-      def self.affix_short
-        @affix_short = '[uUbB]?'
-      end
-
       def self.keywords
         @keywords = %w(
           and in not or as breakpoint class class_name extends is func setget
@@ -59,58 +51,34 @@ module Rouge
 
       state :root do
         rule %r/\n/, Text
-        rule %r/^(\s*)([rRuUbB]{,2})("""(?:.|\n)*?""")/ do
-          groups Text, Str::Affix, Str::Doc
-        end
-        rule %r/^(\s*)([rRuUbB]{,2})('''(?:.|\n)*?''')/ do
-          groups Text, Str::Affix, Str::Doc
-        end
         rule %r/[^\S\n]+/, Text
         rule %r/#.*/, Comment::Single
         rule %r/[\[\]{}:(),;]/, Punctuation
-        rule %r/\\\n/, Text
-        rule %r/\\/, Text
         rule %r/(in|and|or|not)\b/, Operator::Word
-        rule %r/!=|==|<<|>>|&&|\+=|-=|\*=|\/=|%=|&=|\|=|\|\||[-~+\/*%=<>&^.!|$]/, Operator
-        rule %r/(func)((?:\s|\\\s)+)/ do
+        rule %r/!=|==|<<|>>|&&|\+=|-=|\*=|\/=|%=|&=|\|=|\|\||[-~+\/\\*%=<>&^.!|$]/, Operator
+        rule %r/(func)((?:\s|\\)+)/ do
           groups Keyword, Text
           push :funcname
         end
-        rule %r/(class)((?:\s|\\\s)+)/ do
+        rule %r/(class)((?:\s|\\)+)/ do
           groups Keyword, Text
           push :classname
         end
         mixin :keywords
         mixin :builtins
-        rule %r/(#{GDScript.affix_long})(""")/ do
-          groups Str::Affix, Str::Double
-          push :tdqs
-        end
-        rule %r/(#{GDScript.affix_long})(''')/ do
-          groups Str::Affix, Str::Double
-          push :tsqs
-        end
-        rule %r/(#{GDScript.affix_long})(")/ do
-          groups Str::Affix, Str::Double
-          push :dqs
-        end
-        rule %r/(#{GDScript.affix_long})(')/ do
-          groups Str::Affix, Str::Double
-          push :sqs
-        end
-        rule %r/(#{GDScript.affix_short})(""")/ do
+        rule %r/(""")/ do
           groups Str::Affix, Str::Double
           push :escape_tdqs
         end
-        rule %r/(#{GDScript.affix_short})(''')/ do
+        rule %r/(''')/ do
           groups Str::Affix, Str::Double
           push :escape_tsqs
         end
-        rule %r/(#{GDScript.affix_short})(")/ do
+        rule %r/(")/ do
           groups Str::Affix, Str::Double
           push :escape_dqs
         end
-        rule %r/(#{GDScript.affix_short})(')/ do
+        rule %r/(')/ do
           groups Str::Affix, Str::Double
           push :escape_sqs
         end
@@ -119,14 +87,14 @@ module Rouge
       end
 
       state :keywords do
-        rule %r/(#{GDScript.keywords})\b/, Keyword
-        rule %r/(?<!\.)(#{GDScript.keywords_reserved})\b/, Keyword::Reserved
+        rule %r/\b(#{GDScript.keywords})\b/, Keyword
+        rule %r/\b(#{GDScript.keywords_reserved})\b/, Keyword::Reserved
       end
 
       state :builtins do
-        rule %r/(?<!\.)(#{GDScript.builtins})\b/, Name::Builtin
-        rule %r/((?<!\.)(self|false|true)|(PI|TAU|NAN|INF))\b/, Name::Builtin::Pseudo
-        rule %r/(?<!\.)(#{GDScript.builtins_type})\b/, Keyword::Type
+        rule %r/\b(#{GDScript.builtins})\b/, Name::Builtin
+        rule %r/\b((self|false|true)|(PI|TAU|NAN|INF))\b/, Name::Builtin::Pseudo
+        rule %r/\b(#{GDScript.builtins_type})\b/, Keyword::Type
       end
 
       state :numbers do
@@ -154,15 +122,15 @@ module Rouge
 
       state :strings_single do
         rule %r/%(\(\w+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?[hlL]?[E-GXc-giorsux%]/, Str::Interpol
-        rule %r/[^\\\'"%\n]+/, Str::Single
-        rule %r/[\'"\\]/, Str::Single
+        rule %r/[^\\'%\n]+/, Str::Single
+        rule %r/["\\]/, Str::Single
         rule %r/%/, Str::Single
       end
 
       state :strings_double do
         rule %r/%(\(\w+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?[hlL]?[E-GXc-giorsux%]/, Str::Interpol
-        rule %r/[^\\\'"%\n]+/, Str::Double
-        rule %r/[\'"\\]/, Str::Double
+        rule %r/[^\\"%\n]+/, Str::Double
+        rule %r/['\\]/, Str::Double
         rule %r/%/, Str::Double
       end
 

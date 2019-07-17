@@ -427,7 +427,7 @@ module Rouge
         rule /\b(eq|ne|gt|lt|ge|le|in)\b/i, Operator::Word
         rule /[&|!¦¬∘~]/, Operator
         rule /\b(and|or|not)\b/i, Operator::Word
-        rule /[<>|><]/, Operator # min/max
+        rule /(<>|><)/, Operator # min/max
         rule /\|\|/, Operator # concatenation
 
         # The OF operator should also be highlighted (Language Reference p49)
@@ -475,7 +475,7 @@ module Rouge
         mixin :basics
 
         # PROC definitions
-        rule %r((proc)(\s+)(\w+))ix do |m|
+        rule %r!(proc)(\s+)(\w+)!ix do |m|
           @proc_name = m[3].upcase
           puts "    proc name: #{@proc_name}" if @debug
           if self.class.sas_proc_names.include? @proc_name

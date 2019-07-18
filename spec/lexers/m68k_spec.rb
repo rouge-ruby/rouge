@@ -8,7 +8,7 @@ describe Rouge::Lexers::M68k do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.s'
-      assert_guess :filename => 'foo.i'
+      assert_guess :filename => 'foo.i', :source => 'move'
       assert_guess :filename => 'foo.68k'
       assert_guess :filename => 'foo.m68k'
     end

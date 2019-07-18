@@ -8,7 +8,7 @@ module Rouge
       aliases 'cucumber', 'behat'
 
       title "Gherkin"
-      desc 'A business-readable spec DSL ( github.com/cucumber/cucumber/wiki/Gherkin )'
+      desc 'A business-readable spec DSL (github.com/cucumber/cucumber/wiki/Gherkin)'
 
       filenames '*.feature'
       mimetypes 'text/x-gherkin'

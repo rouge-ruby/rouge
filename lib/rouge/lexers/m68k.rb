@@ -83,30 +83,30 @@ module Rouge
       end
 
       state :root do # the basic flow is label->opcode->operand->comment with a few specialcases 
-        rule /^(\p{Blank}+)?\n/, Name #empty line
-        rule /^\p{Blank}*(;|\*|`).*\n/, Comment::Single #comment line 
-        rule /^(([\.\w]+\$?:?(\p{Blank}*))|(\p{Blank}+))(?=.*\n)/, Name::Label, :opcode #label
+        rule %r/^(\p{Blank}+)?\n/, Name #empty line
+        rule %r/^\p{Blank}*(;|\*|`).*\n/, Comment::Single #comment line
+        rule %r/^(([\.\w]+\$?:?(\p{Blank}*))|(\p{Blank}+))(?=.*\n)/, Name::Label, :opcode #label
       end
 
       state :opcode do
         
         rule includes, Keyword, :includes
-        rule /rts|even|rsreset|endc%\w+(?=\p{Blank}+.*\n|\n)/, Keyword, :comment #special case, opcodes with no operands might have freestyle comments
-        rule /\p{Blank}*\n/, Keyword, :pop! #0 or more spaces, ending in newline
-        rule /\=\p{Blank}*(?=.*\n)/, Operator, :operand # found a = instead of opcode   
-        rule /(?=((#{opcode.join('|')})|(#{data_def.join('|')})|(\w+))(\.[bswl])?(\p{Blank}+)?(?=.*\n))/i, Keyword, :opcodedetail #opcode ie movem, move.l and friends
-        rule /\p{Blank}*(?=(;|\*).*\n)/, Keyword, :operand  #no opcode found but comments found
+        rule %r/rts|even|rsreset|endc%\w+(?=\p{Blank}+.*\n|\n)/, Keyword, :comment #special case, opcodes with no operands might have freestyle comments
+        rule %r/\p{Blank}*\n/, Keyword, :pop! #0 or more spaces, ending in newline
+        rule %r/\=\p{Blank}*(?=.*\n)/, Operator, :operand # found a = instead of opcode
+        rule %r/(?=((#{opcode.join('|')})|(#{data_def.join('|')})|(\w+))(\.[bswl])?(\p{Blank}+)?(?=.*\n))/i, Keyword, :opcodedetail #opcode ie movem, move.l and friends
+        rule %r/\p{Blank}*(?=(;|\*).*\n)/, Keyword, :operand  #no opcode found but comments found
 
       end
 
       state :includes do
-        rule /.*(?=\n)/, Name::Namespace, :comment
+        rule %r/.*(?=\n)/, Name::Namespace, :comment
       end
 
 
       state :opcodedetail do
 
-        rule /(\w+)(\.[bwsl])?(\p{Blank}+)?(?=.*)/i do
+        rule %r/(\w+)(\.[bwsl])?(\p{Blank}+)?(?=.*)/i do
           groups Keyword, Keyword::Type, Keyword
           pop!
           push :operand
@@ -116,10 +116,10 @@ module Rouge
 
       
       state :operand do
-        rule /(?=\*-\w+.*)/, Keyword, :operanddetail #*-operand"
-        rule /(?=(;|\*).*\n)/, Keyword, :comment #end of line comments
-        rule /(?=#{word_specialchars_range}+(,\p{Blank}*#{word_specialchars_range}+)*)/, Keyword::Constant, :operanddetail #the operands field
-        rule /(?=\n)/, Keyword, :comment #nothing to see, go to comments
+        rule %r/(?=\*-\w+.*)/, Keyword, :operanddetail #*-operand"
+        rule %r/(?=(;|\*).*\n)/, Keyword, :comment #end of line comments
+        rule %r/(?=#{word_specialchars_range}+(,\p{Blank}*#{word_specialchars_range}+)*)/, Keyword::Constant, :operanddetail #the operands field
+        rule %r/(?=\n)/, Keyword, :comment #nothing to see, go to comments
       end
 
       state :operanddetail do #the tokens in the operands field 
@@ -133,17 +133,17 @@ module Rouge
           end
         end
 
-        rule /[#%]/, Name::Decorator
-        rule /\$[0-9a-f]+/i, Num::Hex
-        rule /@[0-8]+/i, Num::Oct
-        rule /%[01]+/i, Num::Bin
-        rule /\d+/i, Num::Integer
-        rule /[\*~&+=\|?!:<>\/\-]/, Operator
-        rule /\\./, Comment::Preproc
-        rule /[(){},.]/, Punctuation
-        rule /\[[a-zA-Z0-9]*\]/, Punctuation
+        rule %r/[#%]/, Name::Decorator
+        rule %r/\$[0-9a-f]+/i, Num::Hex
+        rule %r/@[0-8]+/i, Num::Oct
+        rule %r/%[01]+/i, Num::Bin
+        rule %r/\d+/i, Num::Integer
+        rule %r/[\*~&+=\|?!:<>\/\-]/, Operator
+        rule %r/\\./, Comment::Preproc
+        rule %r/[(){},.]/, Punctuation
+        rule %r/\[[a-zA-Z0-9]*\]/, Punctuation
 
-        rule /\.?[a-zA-Z0-9_]+:?/ do |m| 
+        rule %r/\.?[a-zA-Z0-9_]+:?/ do |m|
          name=m[0] 
           if self.class.registers.include? name.downcase
             token Name::Builtin
@@ -153,14 +153,14 @@ module Rouge
         
         end
 
-        rule // do 
+        rule %r// do
           push :comment
         end
 
       end
 
       state :comment do
-        rule /.*\n/ do |m| #everything not consumed before newline is a comment, consume it and restart the flow from :root
+        rule %r/.*\n/ do |m| #everything not consumed before newline is a comment, consume it and restart the flow from :root
           
           token Comment::Single
           reset_stack

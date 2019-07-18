@@ -63,15 +63,15 @@ module Rouge
 
       state :try_doc_comment do
         mixin :whitespace
-        rule /#\s[^\n]*/, Comment::Preproc
-        rule //, Text, :pop!
+        rule %r/#\s[^\n]*/, Comment::Preproc
+        rule %r//, Text, :pop!
       end
 
       state :attribute do
         mixin :whitespace
         mixin :has_literals
-        rule /[(,)=:]/, Name::Decorator
-        rule /\]/, Name::Decorator, :pop!
+        rule %r/[(,)=:]/, Name::Decorator
+        rule %r/\]/, Name::Decorator, :pop!
         rule id, Name::Decorator
       end
 
@@ -83,13 +83,13 @@ module Rouge
 
       state :root do
         if @beginning
-          rule //, Text, :try_doc_comment
+          rule %r//, Text, :try_doc_comment
           @beginning = false
         end
-        rule /\n/, Text, :try_doc_comment
+        rule %r/\n/, Text, :try_doc_comment
         mixin :whitespace
-        rule /#!?\[/, Name::Decorator, :attribute
-        rule /\b(?:#{Rust.keywords.join('|')})\b/, Keyword
+        rule %r/#!?\[/, Name::Decorator, :attribute
+        rule %r/\b(?:#{Rust.keywords.join('|')})\b/, Keyword
         mixin :has_literals
 
         rule %r([=-]>), Keyword

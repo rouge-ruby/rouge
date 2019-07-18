@@ -70,3 +70,13 @@ foo {{!-- this is a
 
 {{#foo bar}}
 {{/foo}}
+
+{{foo bat=(bar 'baz')}}
+
+{{#foo as |bar|}}
+
+{{~#foo bar~}}
+{{~/foo~}}
+
+<foo bam="bat" bar={{baz}} {{wot}}>
+<foo bar={{baz}} bam="{{bat}} wom" {{wot}}>

@@ -15,7 +15,6 @@ module Rouge
         'rust,should_panic', 'rs,should_panic'
       filenames '*.rs'
       mimetypes 'text/x-rust'
-      @beginning=true
 
       def self.detect?(text)
         return true if text.shebang? 'rustc'
@@ -50,6 +49,7 @@ module Rouge
 
       start {
         @macro_delims = { ']' => 0, ')' => 0, '}' => 0 }
+        push :bol
       }
 
       delim_map = { '[' => ']', '(' => ')', '{' => '}' }
@@ -61,10 +61,15 @@ module Rouge
       )x
       size = /8|16|32|64/
 
-      state :try_doc_comment do
+      # Although not officially part of Rust, the rustdoc tool allows code in
+      # comments to begin with `#`. Code like this will be evaluated but not
+      # included in the HTML output produced by rustdoc. So that code intended
+      # for these comments can be higlighted with Rouge, the  Rust lexer needs
+      # to check if the beginning of the line begins with a `# `.
+      state :bol do
         mixin :whitespace
-        rule %r/#\s[^\n]*/, Comment::Preproc
-        rule %r//, Text, :pop!
+        rule %r/#\s[^\n]*/, Comment::Special
+        rule(//) { pop! }
       end
 
       state :attribute do
@@ -82,11 +87,7 @@ module Rouge
       end
 
       state :root do
-        if @beginning
-          rule %r//, Text, :try_doc_comment
-          @beginning = false
-        end
-        rule %r/\n/, Text, :try_doc_comment
+        rule %r/\n/, Text, :bol
         mixin :whitespace
         rule %r/#!?\[/, Name::Decorator, :attribute
         rule %r/\b(?:#{Rust.keywords.join('|')})\b/, Keyword

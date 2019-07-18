@@ -32,35 +32,35 @@ module Rouge
       state :mason_tags do
         rule %r/\s+/, Text::Whitespace
 
-        rule %r/<%(#{TEXT_BLOCKS.join('|')})>/oi, Keyword, :text_block
+        rule %r/<%(#{TEXT_BLOCKS.join('|')})>/oi, Comment::Preproc, :text_block
 
-        rule %r/<%(#{PERL_BLOCKS.join('|')})>/oi, Keyword, :perl_block
+        rule %r/<%(#{PERL_BLOCKS.join('|')})>/oi, Comment::Preproc, :perl_block
 
         rule %r/(<%(#{COMPONENTS.join('|')}))([^>]*)(>)/oi do |m|
-          token Keyword, m[1]
+          token Comment::Preproc, m[1]
           token Name, m[3]
-          token Keyword, m[4]
+          token Comment::Preproc, m[4]
           push :component_block
         end
         
         # perl line
         rule %r/^(%)(.*)$/ do |m|
-          token Keyword, m[1]
+          token Comment::Preproc, m[1]
           delegate @perl, m[2]
         end
 
         # start of component call
-        rule %r/<%/, Keyword, :component_call
+        rule %r/<%/, Comment::Preproc, :component_call
 
          # start of component with content
         rule %r/<&\|/ do
-          token Keyword
+          token Comment::Preproc
           push :component_with_content
           push :component_sub
         end
 
         # start of component substitution
-        rule %r/<&/, Keyword, :component_sub
+        rule %r/<&/, Comment::Preproc, :component_sub
 
         # fallback to HTML until a mason tag is encountered
         rule(/(.+?)(?=(<\/?&|<\/?%|^%|^#))/m) { delegate parent }
@@ -70,21 +70,21 @@ module Rouge
       end
 
       state :perl_block do
-        rule %r/<\/%(#{PERL_BLOCKS.join('|')})>/oi, Keyword, :pop!
+        rule %r/<\/%(#{PERL_BLOCKS.join('|')})>/oi, Comment::Preproc, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
         rule(/(.*?[^"])(?=<\/%)/m) { delegate @perl }
       end
 
       state :text_block do
-        rule %r/<\/%(#{TEXT_BLOCKS.join('|')})>/oi, Keyword, :pop!
+        rule %r/<\/%(#{TEXT_BLOCKS.join('|')})>/oi, Comment::Preproc, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
         rule %r/(.*?[^"])(?=<\/%)/m, Comment
       end
 
       state :component_block do
-        rule %r/<\/%(#{COMPONENTS.join('|')})>/oi, Keyword, :pop!
+        rule %r/<\/%(#{COMPONENTS.join('|')})>/oi, Comment::Preproc, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
         mixin :mason_tags
@@ -92,7 +92,7 @@ module Rouge
 
       state :component_with_content do
         rule %r/<\/&>/ do 
-          token Keyword
+          token Comment::Preproc
           pop!
         end
 
@@ -100,13 +100,13 @@ module Rouge
       end
 
       state :component_sub do
-        rule %r/&>/, Keyword, :pop!
+        rule %r/&>/, Comment::Preproc, :pop!
 
         rule(/(.*?)(?=&>)/m) { delegate @perl }
       end
 
       state :component_call do
-        rule %r/%>/, Keyword, :pop!
+        rule %r/%>/, Comment::Preproc, :pop!
 
         rule(/(.*?)(?=%>)/m) { delegate @perl }
       end

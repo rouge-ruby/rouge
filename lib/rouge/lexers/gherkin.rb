@@ -8,7 +8,7 @@ module Rouge
       aliases 'cucumber', 'behat'
 
       title "Gherkin"
-      desc 'A business-readable spec DSL ( github.com/cucumber/cucumber/wiki/Gherkin )'
+      desc 'A business-readable spec DSL (github.com/cucumber/cucumber/wiki/Gherkin)'
 
       filenames '*.feature'
       mimetypes 'text/x-gherkin'
@@ -30,6 +30,8 @@ module Rouge
           keywords[:step].map do |w|
             if w.end_with? '<'
               Regexp.escape(w.chop)
+            elsif w.end_with?(' ')
+              Regexp.escape(w)
             else
               "#{Regexp.escape(w)}\\b"
             end
@@ -130,7 +132,7 @@ module Rouge
         mixin :basic
         rule %r/<.*?>/, Name::Variable
         rule %r/".*?"/, Str
-        rule %r/\S+/, Text
+        rule %r/\S[^\s<]*/, Text
         rule rest_of_line, Text, :pop!
       end
     end

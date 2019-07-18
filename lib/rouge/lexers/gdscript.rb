@@ -54,8 +54,9 @@ module Rouge
         rule %r/[^\S\n]+/, Text
         rule %r/#.*/, Comment::Single
         rule %r/[\[\]{}:(),;]/, Punctuation
+        rule %r/\\\n/, Text
         rule %r/(in|and|or|not)\b/, Operator::Word
-        rule %r/!=|==|<<|>>|&&|\+=|-=|\*=|\/=|%=|&=|\|=|\|\||[-~+\/\\*%=<>&^.!|$]/, Operator
+        rule %r/!=|==|<<|>>|&&|\+=|-=|\*=|\/=|%=|&=|\|=|\|\||[-~+\/*%=<>&^.!|$]/, Operator
         rule %r/(func)((?:\s|\\)+)/ do
           groups Keyword, Text
           push :funcname
@@ -66,22 +67,10 @@ module Rouge
         end
         mixin :keywords
         mixin :builtins
-        rule %r/(""")/ do
-          groups Str::Affix, Str::Double
-          push :escape_tdqs
-        end
-        rule %r/(''')/ do
-          groups Str::Affix, Str::Double
-          push :escape_tsqs
-        end
-        rule %r/(")/ do
-          groups Str::Affix, Str::Double
-          push :escape_dqs
-        end
-        rule %r/(')/ do
-          groups Str::Affix, Str::Double
-          push :escape_sqs
-        end
+        rule %r/"""/, Str::Double, :escape_tdqs
+        rule %r/'''/, Str::Double, :escape_tsqs
+        rule %r/"/, Str::Double, :escape_dqs
+        rule %r/'/, Str::Double, :escape_sqs
         mixin :name
         mixin :numbers
       end

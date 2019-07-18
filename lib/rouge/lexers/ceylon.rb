@@ -31,14 +31,14 @@ module Rouge
         rule %r((abstracts|extends|satisfies|super|given|of|out|assign)\b), Keyword::Declaration
 
         rule %r((function|value|void|new)\b), Keyword::Type
-        
+
         rule %r((assembly|module|package)(\s+)) do
           groups Keyword::Namespace, Text
           push :import
         end
-        
+
         rule %r((true|false|null)\b), Keyword::Constant
-        
+
         rule %r((class|interface|object|alias)(\s+)) do
           groups Keyword::Declaration, Text
           push :class
@@ -48,7 +48,7 @@ module Rouge
           groups Keyword::Namespace, Text
           push :import
         end
-        
+
         rule %r("(\\\\|\\"|[^"])*"), Literal::String
         rule %r('\\.'|'[^\\]'|'\\\{#[0-9a-fA-F]{4}\}'), Literal::String::Char
         rule %r(".*``.*``.*"', String::Interpol
@@ -84,7 +84,7 @@ module Rouge
         rule %r([a-z][\w.]*), Name::Namespace, :pop!
         rule %r("(\\\\|\\"|[^"])*"), Literal::String, :pop!
       end
-      
+
       state :comment do
         rule %r([^*/]), Comment.Multiline
         rule %r(/\*), Comment::Multiline, :push!

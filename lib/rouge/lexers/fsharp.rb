@@ -18,10 +18,10 @@ module Rouge
           internal lazy let let! match member module mutable namespace
           new not null of open or override private public rec return
           return! select static struct then to true try type upcast
-          use use! val void when while with yield yield! sig atomic 
-          break checked component const constraint constructor 
-          continue eager event external fixed functor include method 
-          mixin object parallel process protected pure sealed tailcall 
+          use use! val void when while with yield yield! sig atomic
+          break checked component const constraint constructor
+          continue eager event external fixed functor include method
+          mixin object parallel process protected pure sealed tailcall
           trait virtual volatile
         )
       end

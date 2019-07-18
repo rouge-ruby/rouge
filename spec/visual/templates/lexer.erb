@@ -7,9 +7,9 @@
   }
 
   .legend {
+    float: right;
     padding: 15px;
     padding-left: 0;
-    float: right;
     width: 250px;
   }
 </style>
@@ -17,12 +17,13 @@
 <header id="page-header">
   <h1><%= @lexer.class.tag %> lexer visual test</h1>
 </header>
+
 <main>
   <header class="section-header"><h2>Highlighted</h2></header>
   <%= @highlighted %>
 
   <header class="section-header"><h2>Raw</h2></header>
-  <pre><%= @raw %></pre>
+  <%= @raw %>
 </main>
 
 <aside class="legend">

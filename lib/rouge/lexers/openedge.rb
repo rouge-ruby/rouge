@@ -359,14 +359,14 @@ module Rouge
       state :root do
         rule %r(\s+), Text
 
-        rule %r((\.)(\s+)) do |m|
+        rule %r((\.)(\s+)) do
           groups Operator, Text
         end
 
         rule %r(//[^\n]*), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
 
-        rule %r/(\{?&)(\S+)/ do |m|
+        rule %r/(\{?&)(\S+)/ do
           groups Comment::Preproc, Name::Other
           push :preproc
         end
@@ -415,7 +415,7 @@ module Rouge
         rule %r/\n/, Text, :pop!
         rule %r/\s+/, Text
 
-        rule %r/({?&)(\S+)/ do |m|
+        rule %r/({?&)(\S+)/ do
           groups Comment::Preproc, Name::Other
         end
 

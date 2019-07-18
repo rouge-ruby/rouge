@@ -31,7 +31,7 @@ module Rouge
         \$REPORTERRORSHOWSOURCE \$REPORTERRORSHOWSTACKTRACE
         \$SENDER \$ShellId \$StackTrace \$switch \$this \$true
       ).join('|')
-      
+
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_reserved_words?view=powershell-6
       KEYWORDS = %w(
         assembly exit process base filter public begin finally return break for
@@ -40,7 +40,7 @@ module Rouge
         inlinescript until do interface using dynamicparam module var else
         namespace while elseif parallel workflow end param enum private
       ).join('|')
-      
+
       # https://devblogs.microsoft.com/scripting/powertip-find-a-list-of-powershell-type-accelerators/
       # ([PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get).Keys -join ' '
       KEYWORDS_TYPE = %w(
@@ -74,7 +74,7 @@ module Rouge
       MULTILINE_KEYWORDS = %w(
         synopsis description parameter example inputs outputs notes link
         component role functionality forwardhelptargetname forwardhelpcategory
-        remotehelprunspace externalhelp 
+        remotehelprunspace externalhelp
       ).join('|')
 
       state :variable do
@@ -165,9 +165,10 @@ module Rouge
       end
 
       state :parameters do
-        rule %r/\n/, Text::Whitespace, :pop!
+        rule %r/\s*?\n/, Text::Whitespace, :pop!
         rule %r/[;(){}\]]/, Punctuation, :pop!
         rule %r/[|=]/, Operator, :pop!
+        rule %r/[\/\\~\w][-.:\/\\~\w]*/, Name::Other
         rule %r/\w[-\w]+/, Name::Other
         mixin :root
       end
@@ -197,20 +198,21 @@ module Rouge
         rule %r/(function)(\s+)(?:(\w+)(:))?(\w[-\w]+)/i do
           groups Keyword::Reserved, Text::Whitespace, Name::Namespace, Punctuation, Name::Function
         end
-        rule %r/(?:#{KEYWORDS})\b(?!-)/i, Keyword::Reserved
+        rule %r/(?:#{KEYWORDS})\b(?![-.])/i, Keyword::Reserved
 
-        rule %r/(\w+)(\.)/ do |m|
-          groups Name::Constant, Operator
+        rule %r/-{1,2}\w+/, Name::Tag
+
+        rule %r/([\/\\~\w][-.:\/\\~\w]*)(\n)?/ do |m|
+          groups Name::Function, Text::Whitespace
+          push :parameters unless m[2]
         end
 
-        rule %r/-\w+/, Name::Tag
-
-        rule %r/(\.)?([-\w]+)(\()?/ do
-          groups Operator, Name::Function, Punctuation
-          push :parameters
+        rule %r/(\.)?([-\w]+)(?:(\()|(\n))?/ do |m|
+          groups Operator, Name::Function, Punctuation, Text::Whitespace
+          push :parameters unless m[3]
         end
 
-        rule %r/[-+*\/%=!\.&|]/, Operator
+        rule %r/[-+*\/%=!.&|]/, Operator
         rule %r/@\{/, Punctuation, :hasht
         rule %r/@\(/, Punctuation, :array
         rule %r/\[/, Punctuation, :bracket

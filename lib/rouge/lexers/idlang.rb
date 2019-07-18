@@ -243,7 +243,7 @@ module Rouge
 
         rule %r{\#\#|\#|\&\&|\|\||/=|<=|>=|->|\@|\?|[-+*/<=~^{}]}, Operator
         # Structures and the like
-        rule %r/(#{name})(\.)([^\s,]*)/i do |m|
+        rule %r/(#{name})(\.)([^\s,]*)/i do
           groups Name, Operator, Name
           #delegate IDLang, m[3]
         end

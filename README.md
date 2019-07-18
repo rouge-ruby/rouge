@@ -47,6 +47,14 @@ Builtin formatters include:
   This formatter will split your code into lines, each contained in its own div. The
   `class` option will be used to add a class name to the div, given the line
   number.
+* `Rouge::Formatters::HTMLLineTable.new(formatter, opts={})` will output an HTML table containing
+  numbered lines, each contained in its own table-row. Options are:
+    * `start_line: 1` - the number of the first row
+    * `line_id: 'line-%i'` - a `sprintf` template for `id` attribute with current line number
+    * `line_class: 'lineno'` - a CSS class for each table-row
+    * `table_class: 'rouge-line-table'` - a CSS class for the table
+    * `gutter_class: 'rouge-gutter'` - a CSS class for the line-number cell
+    * `code_class: 'rouge-code'` - a CSS class for the code cell
 * `Rouge::Formatters::HTMLPygments.new(formatter, css_class='codehilite')`
   wraps the given formatter with div wrappers generally expected by stylesheets designed for
   Pygments.
@@ -137,8 +145,13 @@ If you're here to implement a lexer for your awesome language, there's a good ch
 
 ### Run the tests
 
-You can test the core of Rouge simply by running `rake` (no `bundle exec` required), or `rake spec TEST=spec/xxx_spec.rb`
-to run a single test file.
+You can test the core of Rouge simply by running `rake` (no `bundle exec` required). You can also run a single test file by
+setting the `TEST` environment variable to the path of the desired test. For example, to test just the *`ruby` lexer* which is
+at path, `spec/lexers/ruby_spec.rb` within the repository, one may simply run the following:
+
+```sh
+TEST=spec/lexers/ruby_spec.rb rake
+```
 
 It's also set up with `guard`, if you like.
 

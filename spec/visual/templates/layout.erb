@@ -16,14 +16,13 @@
       white-space: pre-wrap;
     }
     a { text-decoration: none }
-
+    header {
+      color: <%= @comment_color %>;
+      border-bottom: 1px dotted
+    }
     #page-header, #page-footer {
       padding: 15px;
       text-align: center;
-      color: <%= @comment_color %>
-    }
-    #page-header {
-      border-bottom: 1px dotted
     }
     #page-header h1 {
       margin: 0.25em;
@@ -32,12 +31,15 @@
     .section-header {
       margin-bottom: 20px;
       padding-bottom: 8px;
-      color: <%= @comment_color %>;
-      border-bottom: 1px dotted
     }
     #page-footer {
+      color: <%= @comment_color %>;
       border-top: 1px dotted
     }
+    .rouge-line-table { border-collapse: collapse }
+    .rouge-line-table tr > td { padding: 0 5px }
+    .rouge-line-table .rouge-gutter { text-align: right; vertical-align: top }
+    .rouge-line-table .rouge-gutter pre { margin: 0 }
   </style>
 </head>
 

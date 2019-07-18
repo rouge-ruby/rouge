@@ -395,3 +395,8 @@ fn int_literals_delimiter() {
 # extern crate core;
 # use core::str;
 # let x = 5;
+
+async fn learn_and_sing() {
+    let song = learn_song().await;
+    sing_song(song).await;
+}

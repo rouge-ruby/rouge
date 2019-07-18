@@ -29,7 +29,7 @@ module Rouge
       style Generic::Prompt, :fg => :chilly, :bold => true
 
       style Comment, :fg => :cool_as_ice, :italic => true
-      style Comment::Preproc, :fg => :go_get_it, :bold => true, :italic => true
+      style Comment::Preproc, :fg => :go_get_it, :bold => true
       style Error, :fg => :aluminum1, :bg => :scarletred2
       style Generic::Error, :fg => :scarletred2, :italic => true, :bold => true
       style Keyword, :fg => :sandy, :bold => true

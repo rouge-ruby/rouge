@@ -2,6 +2,7 @@
 
 require 'rake/clean'
 require 'pathname'
+require 'bundler/setup'
 require "bundler/gem_tasks"
 require "rake/testtask"
 
@@ -50,11 +51,13 @@ task :profile_memory do
   sample = File.read(source, encoding: 'utf-8')
   report = MemoryProfiler.report do
     require 'rouge'
-    formatter = Rouge::Formatters::HTML.new
-    lexer     = Rouge::Lexers::Ruby.new
-    formatter.format(lexer.lex(source))
+    formatter  = Rouge::Formatters::HTML.new
+    ruby_lexer = Rouge::Lexers::Ruby.new
+    guessed_lexer = Rouge::Lexer.find_fancy('guess', sample)
+    formatter.format ruby_lexer.lex(sample)
+    formatter.format guessed_lexer.lex(sample)
   end
-  print_options = { :scale_bytes => true }
+  print_options = { scale_bytes: true, normalize_paths: true }
 
   if ENV['CI']
     report.pretty_print(print_options)

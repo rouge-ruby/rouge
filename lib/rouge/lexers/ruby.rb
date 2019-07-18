@@ -11,7 +11,7 @@ module Rouge
       filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
                 'Rakefile', 'Guardfile', 'Gemfile', 'Capfile', 'Podfile',
                 'Vagrantfile', '*.ru', '*.prawn', 'Berksfile', '*.arb',
-                'Dangerfile'
+                'Dangerfile', 'Fastfile', 'Deliverfile', 'Appfile'
 
       mimetypes 'text/x-ruby', 'application/x-ruby'
 
@@ -183,7 +183,7 @@ module Rouge
 
         mixin :strings
 
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword, :expr_start
+        rule %r/(?:#{keywords.join('|')})(?=\W|$)/, Keyword, :expr_start
         rule %r/(?:#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo, :expr_start
 
         rule %r(

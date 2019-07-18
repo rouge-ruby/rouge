@@ -4,6 +4,57 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.6.0: 2019-07-10
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.5.1...v3.6.0)
+
+* General
+  - Add HTMLLineTable formatter ([#1211](https://github.com/rouge-ruby/rouge/pull/1211/) by Ashwin Maroli)
+  - Avoid unnecessary String duplication in HTML formatter ([#1244](https://github.com/rouge-ruby/rouge/pull/1244/) by Ashwin Maroli)
+  - Remove trailing whitespace ([#1245](https://github.com/rouge-ruby/rouge/pull/1245/) by Ashwin Maroli)
+  - Avoid allocating block parameters unnecessarily ([#1246](https://github.com/rouge-ruby/rouge/pull/1246/) by Ashwin Maroli)
+  - Update profile_memory task ([#1243](https://github.com/rouge-ruby/rouge/pull/1243/) by Ashwin Maroli)
+  - Clarify instructions for running a single test ([#1238](https://github.com/rouge-ruby/rouge/pull/1238/) by Ashwin Maroli)
+  - Configure Bundler to validate task dependencies ([#1242](https://github.com/rouge-ruby/rouge/pull/1242/) by Ashwin Maroli)
+  - Improve readability of lexer debug output ([#1240](https://github.com/rouge-ruby/rouge/pull/1240/) by Ashwin Maroli)
+  - Add documentation on using Docker for development ([#1214](https://github.com/rouge-ruby/rouge/pull/1214/) by Nicolas Guillaumin)
+  - Add ability to evaluate lexer similarity ([#1206](https://github.com/rouge-ruby/rouge/pull/1206/) by Jeanine Adkisson)
+  - Fix empty color bug in TeX rendering ([#1224](https://github.com/rouge-ruby/rouge/pull/1224/) by Jeanine Adkisson)
+  - Add a global 'require' option for rougify CLI tool  ([#1215](https://github.com/rouge-ruby/rouge/pull/1215/) by Jeanine Adkisson)
+  - Add background colour for monokai.sublime theme ([#1204](https://github.com/rouge-ruby/rouge/pull/1204/) by Ashwin Maroli)
+* Elixir Lexer
+  - Improve tokenising of numbers in Elixir lexer ([#1225](https://github.com/rouge-ruby/rouge/pull/1225/) by Michael Camilleri)
+* JSON Lexer
+  - Add Pipfile filename globs to JSON and TOML lexers ([#975](https://github.com/rouge-ruby/rouge/pull/975/) by Remco Haszing)
+* Liquid Lexer
+  - Improve highlighting of for tags in Liquid lexer ([#1196](https://github.com/rouge-ruby/rouge/pull/1196/) by Ashwin Maroli)
+* Make Lexer
+  - Simplify Make visual sample ([#1227](https://github.com/rouge-ruby/rouge/pull/1227/) by Michael Camilleri)
+* Magik Lexer
+  - Add `_class` and `_while` keywords to Magik lexer ([#1251](https://github.com/rouge-ruby/rouge/pull/1251/) by Steven Looman)
+* OpenEdge ABL Lexer (**NEW**)
+  - Add OpenEdge ABL lexer ([#1200](https://github.com/rouge-ruby/rouge/pull/1200/) by Michael Camilleri)
+* Perl Lexer
+  - Add improvements (eg. transliteration) to Perl lexer ([#1250](https://github.com/rouge-ruby/rouge/pull/1250/) by Brent Laabs)
+* PowerShell Lexer
+  - Fix file paths in PowerShell lexer ([#1232](https://github.com/rouge-ruby/rouge/pull/1232/) by Michael Camilleri)
+  - Reimplement PowerShell lexer ([#1213](https://github.com/rouge-ruby/rouge/pull/1213/) by Aaron)
+* Ruby Lexer
+  - Fix tokenizing of `defined?` in Ruby lexer ([#1247](https://github.com/rouge-ruby/rouge/pull/1247/) by Ashwin Maroli)
+  - Add Fastlane filename globs to Ruby lexer ([#976](https://github.com/rouge-ruby/rouge/pull/976/) by Remco Haszing)
+* TOML Lexer
+  - Add Pipfile filename globs to JSON and TOML lexers ([#975](https://github.com/rouge-ruby/rouge/pull/975/) by Remco Haszing)
+* XPath Lexer (**NEW**)
+  - Add XPath and XQuery lexers ([#1089](https://github.com/rouge-ruby/rouge/pull/1089/) by Maxime Kjaer)
+* XQuery Lexer (**NEW**)
+  - Add XPath and XQuery lexers ([#1089](https://github.com/rouge-ruby/rouge/pull/1089/) by Maxime Kjaer)
+* Xojo Lexer
+  - Improve comment support in Xojo lexer ([#1229](https://github.com/rouge-ruby/rouge/pull/1229/) by Jim McKay)
+* YAML Lexer
+  - Fix tokenization of block strings in YAML lexer ([#1235](https://github.com/rouge-ruby/rouge/pull/1235/) by Ashwin Maroli)
+  - Fix block chomping syntax in YAML lexer ([#1234](https://github.com/rouge-ruby/rouge/pull/1234/) by Ashwin Maroli)
+  - Fix tokenization of number literals in YAML lexer ([#1239](https://github.com/rouge-ruby/rouge/pull/1239/) by Ashwin Maroli)
+
 ## version 3.5.1: 2019-06-26
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.5.0...v3.5.1)

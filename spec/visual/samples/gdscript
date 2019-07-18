@@ -1,0 +1,44 @@
+""" Everything on these lines is considered
+a comment. """
+
+tool
+extends BaseClass
+class_name ScriptName, "res://path/to/optional/icon.svg"
+
+# Variables & Built-in Types
+
+var i = 5
+var f = 1.23
+var h = 0xDEADC0DE
+var b = true
+var s = "Hello"
+var arr = [1, 2, 3]
+var dict = {"key": "value", 2: 3}
+var v = Vector2(1, 2)
+var t = "Hello, " \
+        + "very long " \
+        + "text"
+
+# Constants & Enums
+
+const ANSWER = 42
+enum { UNIT_NEUTRAL, UNIT_ENEMY, UNIT_ALLY }
+
+# Functions
+
+signal some_signal
+
+func some_function(param1: int, param2: float) -> int:
+    var local_var = 5
+    var format_string_1 = "We're waiting for %s." % "Godot"
+    var format_string_2 = "We're waiting for {str}"
+    var actual_string = format_string_2.format({"str": "Godot"})
+    print(param1, param2, local_var)
+    return local_var
+
+# Inner Classes
+class InnerClass extends BaseClass:
+    var local_var
+
+    func _init():
+        print(local_var)

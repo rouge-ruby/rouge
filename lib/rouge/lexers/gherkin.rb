@@ -130,9 +130,9 @@ module Rouge
 
       state :step do
         mixin :basic
-        rule /<.*?>/, Name::Variable
-        rule /".*?"/, Str
-        rule /\S[^ \r\n\t<]*/, Text
+        rule %r/<.*?>/, Name::Variable
+        rule %r/".*?"/, Str
+        rule %r/\S[^ \r\n\t<]*/, Text
         rule rest_of_line, Text, :pop!
       end
     end

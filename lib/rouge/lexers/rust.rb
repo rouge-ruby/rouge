@@ -49,6 +49,7 @@ module Rouge
 
       start {
         @macro_delims = { ']' => 0, ')' => 0, '}' => 0 }
+        push :bol
       }
 
       delim_map = { '[' => ']', '(' => ')', '{' => '}' }
@@ -60,20 +61,21 @@ module Rouge
       )x
       size = /8|16|32|64/
 
-      state :start_line do
+      # Although not officially part of Rust, the rustdoc tool allows code in
+      # comments to begin with `#`. Code like this will be evaluated but not
+      # included in the HTML output produced by rustdoc. So that code intended
+      # for these comments can be higlighted with Rouge, the  Rust lexer needs
+      # to check if the beginning of the line begins with a `# `.
+      state :bol do
         mixin :whitespace
-        rule %r/\s+/, Text
-        rule %r/#\[/ do
-          token Name::Decorator; push :attribute
-        end
+        rule %r/#\s[^\n]*/, Comment::Special
         rule(//) { pop! }
-        rule %r/#\s[^\n]*/, Comment::Preproc
       end
 
       state :attribute do
         mixin :whitespace
         mixin :has_literals
-        rule %r/[(,)=]/, Name::Decorator
+        rule %r/[(,)=:]/, Name::Decorator
         rule %r/\]/, Name::Decorator, :pop!
         rule id, Name::Decorator
       end
@@ -85,8 +87,9 @@ module Rouge
       end
 
       state :root do
-        rule %r/\n/, Text, :start_line
+        rule %r/\n/, Text, :bol
         mixin :whitespace
+        rule %r/#!?\[/, Name::Decorator, :attribute
         rule %r/\b(?:#{Rust.keywords.join('|')})\b/, Keyword
         mixin :has_literals
 

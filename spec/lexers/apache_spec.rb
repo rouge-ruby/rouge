@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::Apache do
   let(:subject) { Rouge::Lexers::Apache.new }
 

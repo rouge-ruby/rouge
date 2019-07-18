@@ -1,3 +1,4 @@
+#![test(a::b)]
 fn f() {
     let a = String::new("hello");
     let b: &str = a;
@@ -17,6 +18,11 @@ fn main() {
 }
 
 let mut f = File::open("username.txt")?;
+
+println!("a\\");
+println!("a\n");
+println!("a\"b");
+println!("a\'");
 
 debug!("test %?", a.b);
 debug!("test %u", a.c);
@@ -381,7 +387,17 @@ enum HTMLFragment {
     text(~str),
 }
 
+fn int_literals_delimiter() {
+    let billion = 1000_000_000;
+    let red_color = 0xff_60_60;
+}
+
 // Some hidden lines by starting with hash
 # extern crate core;
 # use core::str;
 # let x = 5;
+
+async fn learn_and_sing() {
+    let song = learn_song().await;
+    sing_song(song).await;
+}

@@ -1,0 +1,45 @@
+<style type="text/css">
+  main {
+    display: inline-block;
+    margin-right: -215px;
+    padding: 8px 215px 0 0;
+    width: 100%;
+  }
+  .codeviewer {
+    float: left;
+    padding: 8px 12px;
+    width: 49.5%;
+  }
+  .legend {
+    float: right;
+    padding: 16px 14px 8px 0;
+    width: 215px;
+  }
+  .legend .codehilite { font-size: 13px }
+</style>
+
+<header id="page-header">
+  <h1><%= @lexer.class.tag %> lexer visual test</h1>
+</header>
+
+<main>
+  <section>
+    <div class="codeviewer">
+      <header class="section-header"><h2>Raw</h2></header>
+      <%= @raw %>
+    </div>
+    <div class="codeviewer">
+      <header class="section-header"><h2>Highlighted</h2></header>
+      <%= @highlighted %>
+    </div>
+  </section>
+</main>
+
+<aside class="legend">
+  <header class="section-header"><h2>Legend</h2></header>
+  <pre class="codehilite">
+<% Rouge::Token.each_token do |token|
+  %><span class="<%= token.shortname %>"><%= token.qualname %></span>
+<% end %>
+  </pre>
+</aside>

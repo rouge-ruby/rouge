@@ -1,0 +1,11 @@
+__global__ void kernel(float *a, float *b) {
+    __shared__ float sum;
+    some_func();
+}
+
+__device__ __host__ void some_func() {}
+
+int main() {
+    dim3 grid(1, 1);
+    kernel<<<grid, block>>>(&a, &b);
+}

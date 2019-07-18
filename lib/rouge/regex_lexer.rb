@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   # @abstract
@@ -101,21 +102,21 @@ module Rouge
         callback ||= case next_state
         when :pop!
           proc do |stream|
-            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
             puts "    popping stack: 1" if @debug
             @stack.pop or raise 'empty stack!'
           end
         when :push
           proc do |stream|
-            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
             puts "    pushing :#{@stack.last.name}" if @debug
             @stack.push(@stack.last)
           end
         when Symbol
           proc do |stream|
-            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
             state = @states[next_state] || self.class.get_state(next_state)
             puts "    pushing :#{state.name}" if @debug
@@ -123,7 +124,7 @@ module Rouge
           end
         when nil
           proc do |stream|
-            puts "    yielding #{tok.qualname}, #{stream[0].inspect}" if @debug
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
           end
         else
@@ -182,18 +183,18 @@ module Rouge
     # Define a new state for this lexer with the given name.
     # The block will be evaluated in the context of a {StateDSL}.
     def self.state(name, &b)
-      name = name.to_s
+      name = name.to_sym
       state_definitions[name] = StateDSL.new(name, &b)
     end
 
     def self.prepend(name, &b)
-      name = name.to_s
+      name = name.to_sym
       dsl = state_definitions[name] or raise "no such state #{name.inspect}"
       replace_state(name, dsl.prepended(&b))
     end
 
     def self.append(name, &b)
-      name = name.to_s
+      name = name.to_sym
       dsl = state_definitions[name] or raise "no such state #{name.inspect}"
       replace_state(name, dsl.appended(&b))
     end
@@ -203,7 +204,7 @@ module Rouge
       return name if name.is_a? State
 
       states[name.to_sym] ||= begin
-        defn = state_definitions[name.to_s] or raise "unknown state: #{name.inspect}"
+        defn = state_definitions[name.to_sym] or raise "unknown state: #{name.inspect}"
         defn.to_state(self)
       end
     end
@@ -262,6 +263,7 @@ module Rouge
 
       until stream.eos?
         if @debug
+          puts
           puts "lexer: #{self.class.tag}"
           puts "stack: #{stack.map(&:name).map(&:to_sym).inspect}"
           puts "stream: #{stream.peek(20).inspect}"
@@ -288,11 +290,11 @@ module Rouge
     def step(state, stream)
       state.rules.each do |rule|
         if rule.is_a?(State)
-          puts "  entering mixin #{rule.name}" if @debug
+          puts "  entering: mixin :#{rule.name}" if @debug
           return true if step(rule, stream)
-          puts "  exiting  mixin #{rule.name}" if @debug
+          puts "  exiting: mixin :#{rule.name}" if @debug
         else
-          puts "  trying #{rule.inspect}" if @debug
+          puts "  trying: #{rule.inspect}" if @debug
 
           # XXX HACK XXX
           # StringScanner's implementation of ^ is b0rken.
@@ -302,14 +304,14 @@ module Rouge
           next if rule.beginning_of_line && !stream.beginning_of_line?
 
           if (size = stream.skip(rule.re))
-            puts "    got #{stream[0].inspect}" if @debug
+            puts "    got: #{stream[0].inspect}" if @debug
 
             instance_exec(stream, &rule.callback)
 
             if size.zero?
               @null_steps += 1
               if @null_steps > MAX_NULL_SCANS
-                puts "    too many scans without consuming the string!" if @debug
+                puts "    warning: too many scans without consuming the string!" if @debug
                 return false
               end
             else
@@ -351,20 +353,20 @@ module Rouge
       end
     end
 
-    # Delegate the lex to another lexer.  The #lex method will be called
-    # with `:continue` set to true, so that #reset! will not be called.
-    # In this way, a single lexer can be repeatedly delegated to while
-    # maintaining its own internal state stack.
+    # Delegate the lex to another lexer. We use the `continue_lex` method
+    # so that #reset! will not be called.  In this way, a single lexer
+    # can be repeatedly delegated to while maintaining its own internal
+    # state stack.
     #
     # @param [#lex] lexer
     #   The lexer or lexer class to delegate to
     # @param [String] text
     #   The text to delegate.  This defaults to the last matched string.
     def delegate(lexer, text=nil)
-      puts "    delegating to #{lexer.inspect}" if @debug
+      puts "    delegating to: #{lexer.inspect}" if @debug
       text ||= @current_stream[0]
 
-      lexer.lex(text, :continue => true) do |tok, val|
+      lexer.continue_lex(text) do |tok, val|
         puts "    delegated token: #{tok.inspect}, #{val.inspect}" if @debug
         yield_token(tok, val)
       end
@@ -387,7 +389,7 @@ module Rouge
         self.state
       end
 
-      puts "    pushing :#{push_state.name}" if @debug
+      puts "    pushing: :#{push_state.name}" if @debug
       stack.push(push_state)
     end
 
@@ -407,7 +409,7 @@ module Rouge
     def goto(state_name)
       raise 'empty stack!' if stack.empty?
 
-      puts "    going to state :#{state_name} " if @debug
+      puts "    going to: state :#{state_name} " if @debug
       stack[-1] = get_state(state_name)
     end
 
@@ -420,21 +422,21 @@ module Rouge
 
     # Check if `state_name` is in the state stack.
     def in_state?(state_name)
-      state_name = state_name.to_s
+      state_name = state_name.to_sym
       stack.any? do |state|
-        state.name == state_name.to_s
+        state.name == state_name.to_sym
       end
     end
 
     # Check if `state_name` is the state on top of the state stack.
     def state?(state_name)
-      state_name.to_s == state.name
+      state_name.to_sym == state.name
     end
 
   private
     def yield_token(tok, val)
       return if val.nil? || val.empty?
-      puts "    yielding #{tok.qualname}, #{val.inspect}" if @debug
+      puts "    yielding: #{tok.qualname}, #{val.inspect}" if @debug
       @output_stream.yield(tok, val)
     end
   end

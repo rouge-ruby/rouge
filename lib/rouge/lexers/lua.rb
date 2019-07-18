@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -24,7 +25,7 @@ module Rouge
       end
 
       def self.builtins
-        load Pathname.new(__FILE__).dirname.join('lua/builtins.rb')
+        load File.join(__dir__, 'lua/builtins.rb')
         self.builtins
       end
 
@@ -42,7 +43,7 @@ module Rouge
       state :root do
         # lua allows a file to start with a shebang
         rule %r(#!(.*?)$), Comment::Preproc
-        rule //, Text, :base
+        rule %r//, Text, :base
       end
 
       state :base do
@@ -88,7 +89,7 @@ module Rouge
       end
 
       state :function_name do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
         rule %r((?:([A-Za-z_][A-Za-z0-9_]*)(\.))?([A-Za-z_][A-Za-z0-9_]*)) do
           groups Name::Class, Punctuation, Name::Function
           pop!

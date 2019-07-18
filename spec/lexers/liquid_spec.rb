@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::Liquid do
   let(:subject) { Rouge::Lexers::Liquid.new }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::Q do
   let(:subject) { Rouge::Lexers::Q.new }
 

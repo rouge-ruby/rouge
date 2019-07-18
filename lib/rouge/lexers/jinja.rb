@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -36,16 +37,16 @@ module Rouge
 
       state :root do
         # Comments
-        rule /{#/, Comment, :comment
+        rule %r/{#/, Comment, :comment
 
         # Statements
-        rule /\{\%/ do
+        rule %r/\{\%/ do
           token Comment::Preproc
           push :statement
         end
 
         # Expressions
-        rule /\{\{/ do
+        rule %r/\{\{/ do
           token Comment::Preproc
           push :expression
         end
@@ -56,42 +57,42 @@ module Rouge
 
       state :filter do
         # Filters are called like variable|foo(arg1, ...)
-        rule /(\|)(\w+)/ do
+        rule %r/(\|)(\w+)/ do
           groups Operator, Name::Function
         end
       end
 
       state :function do
-        rule /(\w+)(\()/ do
+        rule %r/(\w+)(\()/ do
           groups Name::Function, Punctuation
         end
       end
 
       state :text do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
       end
 
       state :literal do
         # Strings
-        rule /"(\\.|.)*?"/, Str::Double
-        rule /'(\\.|.)*?'/, Str::Single
+        rule %r/"(\\.|.)*?"/, Str::Double
+        rule %r/'(\\.|.)*?'/, Str::Single
 
         # Numbers
-        rule /\d+(?=}\s)/, Num
+        rule %r/\d+(?=}\s)/, Num
 
         # Arithmetic operators (+, -, *, **, //, /)
         # TODO : implement modulo (%)
-        rule /(\+|\-|\*|\/\/?|\*\*?)/, Operator
+        rule %r/(\+|\-|\*|\/\/?|\*\*?|=)/, Operator
 
         # Comparisons operators (<=, <, >=, >, ==, ===, !=)
-        rule /(<=?|>=?|===?|!=)/, Operator
+        rule %r/(<=?|>=?|===?|!=)/, Operator
 
         # Punctuation (the comma, [], ())
-        rule /,/,  Punctuation
-        rule /\[/, Punctuation
-        rule /\]/, Punctuation
-        rule /\(/, Punctuation
-        rule /\)/, Punctuation
+        rule %r/,/,  Punctuation
+        rule %r/\[/, Punctuation
+        rule %r/\]/, Punctuation
+        rule %r/\(/, Punctuation
+        rule %r/\)/, Punctuation
       end
 
       state :comment do
@@ -100,18 +101,23 @@ module Rouge
       end
 
       state :expression do
-        rule /\w+\.?/m, Name::Variable
+        rule %r/\w+\.?/m, Name::Variable
 
         mixin :filter
         mixin :function
         mixin :literal
         mixin :text
 
-        rule /%}|}}/, Comment::Preproc, :pop!
+        rule %r/%}|}}/, Comment::Preproc, :pop!
       end
 
       state :statement do
-        rule /(\w+\.?)/ do |m|
+        rule %r/(raw|verbatim)(\s+)(\%\})/ do
+          groups Keyword, Text, Comment::Preproc
+          goto :raw
+        end
+
+        rule %r/(\w+\.?)/ do |m|
           if self.class.keywords.include?(m[0])
             groups Keyword
           elsif self.class.pseudo_keywords.include?(m[0])
@@ -130,7 +136,16 @@ module Rouge
         mixin :literal
         mixin :text
 
-        rule /\%\}/, Comment::Preproc, :pop!
+        rule %r/\%\}/, Comment::Preproc, :pop!
+      end
+
+      state :raw do
+        rule %r{(\{\%)(\s+)(endverbatim|endraw)(\s+)(\%\})} do
+          groups Comment::Preproc, Text, Keyword, Text, Comment::Preproc
+          pop!
+        end
+
+        rule %r/(.+?)/m, Text
       end
     end
   end

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 require 'rubygems'
 require 'bundler'
@@ -25,6 +26,41 @@ class VisualTestApp < Sinatra::Application
     env['rack.request.query_string']
   end
 
+  # Invoke a specific formatter based on what one intends to test
+  def setup_formatter(params)
+    # parameters disabled by default
+    inline       = as_boolean params.fetch(:inline, false)
+    line_numbers = as_boolean params.fetch(:line_numbers, false)
+
+    # parameters enabled by default
+    wrapped    = as_boolean params.fetch(:wrap, true)
+    line_table = as_boolean params.fetch(:line_table, true)
+
+    # base HTML formatter
+    formatter = inline ?
+                  Rouge::Formatters::HTMLInline.new(@theme) :
+                  Rouge::Formatters::HTML.new
+
+    if line_numbers
+      formatter = line_table ?
+                    Rouge::Formatters::HTMLLineTable.new(formatter) :
+                    Rouge::Formatters::HTMLTable.new(formatter)
+    end
+
+    return Rouge::Formatters::HTMLPygments.new(formatter) if wrapped
+
+    formatter
+  end
+
+  def as_boolean(value)
+    case value
+    when nil, false, 0, '0', 'false', 'off', 'disabled', ''
+      false
+    else
+      true
+    end
+  end
+
   configure do
     set :root, BASE
     set :views, BASE.join('templates')
@@ -34,15 +70,14 @@ class VisualTestApp < Sinatra::Application
     reload_source!
 
     Rouge::Lexer.enable_debug!
+    Rouge::Formatter.enable_escape! if params[:escape]
 
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
-    @theme = theme_class.new(scope: '.codehilite')
 
-    formatter_opts = { :line_numbers => params[:line_numbers] }
-    formatter_opts[:inline_theme] = @theme if params[:inline]
-
-    @formatter = Rouge::Formatters::HTMLLegacy.new(formatter_opts)
+    @theme         = theme_class.new(scope: '.codehilite')
+    @comment_color = theme_class.get_style(Rouge::Token::Tokens::Comment).fg
+    @formatter     = setup_formatter(params)
   end
 
   get '/:lexer' do |lexer_name|
@@ -51,9 +86,11 @@ class VisualTestApp < Sinatra::Application
     @sample = File.read(SAMPLES.join(@lexer.class.tag), encoding: 'utf-8')
 
     @title = "#{@lexer.class.tag} | Visual Test"
+    @raw = Rouge.highlight(@sample, 'plaintext', @formatter)
     @highlighted = Rouge.highlight(@sample, @lexer, @formatter)
 
-    erb :lexer
+    template = params[:juxtaposed] ? :lexer_juxtaposed : :lexer
+    erb template
   end
 
 

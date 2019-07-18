@@ -1,0 +1,79 @@
+* Example SAS script showing syntax highlighting;
+data population;
+/* 
+The first 10 lines of 2017 population data. Source: World Bank
+https://data.worldbank.org/indicator/sp.pop.totl
+Used under licence: CC BY-4.0 https://creativecommons.org/licenses/by/4.0
+
+To demonstrate reading data in-line using datalines.
+*/
+infile datalines dlm = '09'x;
+input
+    country_name: $20.
+    country_code: $3.
+    pop2017;
+datalines;
+Aruba	ABW	105264
+Afghanistan	AFG	35530081
+Angola	AGO	29784193
+Albania	ALB	2873457
+Andorra	AND	76965
+Arab World	ARB	414491886
+United Arab Emirates	ARE	9400145
+Argentina	ARG	44271041
+Armenia	ARM	2930450
+American Samoa	ASM	55641
+;
+run;
+
+* Print first 5 records with over 100k population;
+proc print data=population (obs=10);
+    where pop2017 > 100000;
+run;
+
+* Simulation via a SAS data step;
+data sim;
+    do i = 1 to 100;
+        x1 = rand("Normal");
+        x2 = rand("Binomial", 0.5, 100);
+        output;
+    end;
+run;
+
+* Some analysis of sample data included with SAS;
+proc means data=sashelp.class;
+    class sex;
+    var height weight;
+    output out = mean_by_sex;
+run;
+
+proc freq data=sashelp.cars;
+    tables origin;
+run;
+
+* Fit a regression model;
+proc reg data=sashelp.cars;
+    model msrp = enginesize horsepower mpg_city;
+run;
+
+* Plot Fisher's Iris data;
+proc sgplot data=sashelp.iris;
+    scatter x = SepalLength y = SepalWidth / group = Species;
+run;
+
+/* Example macro */
+%macro my_macro(n_iter);
+    %do i = 1 %to &n_iter;
+        %put Iteration &i.;
+    %end;
+%mend;
+
+%my_macro(20);
+
+* Hexadecimal and scientific format;
+data my_hex;
+    hex1 = 1ax;
+    hex2 = 0bx; *SAS requires that hex numbers start with a digit;
+    sci1 = 3.2e5;
+    sci2 = 7E-4;
+run;

@@ -50,6 +50,35 @@ x.a / 1 # comment
 Foo::a / 3 + 4
 
 ########
+# Keywords that may be immediately followed by an opening
+# parenthesis
+########
+
+# defined?
+return if defined? Rouge
+return unless defined?(Foobar)
+
+# super
+class Beta < Alpha
+  def gamma(msg)
+    super
+    @msg = msg
+  end
+end
+
+class Bar < Foo
+  def log(msg)
+    super()
+  end
+end
+
+class Ipsum < Lorem
+  def dolor(txt)
+    super(txt)
+  end
+end
+
+########
 # The popular . :bow:
 ########
 

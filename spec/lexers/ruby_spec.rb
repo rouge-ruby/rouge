@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::Ruby do
   let(:subject) { Rouge::Lexers::Ruby.new }
@@ -109,6 +110,9 @@ describe Rouge::Lexers::Ruby do
       assert_guess :filename => 'config.ru'
       assert_guess :filename => 'foo.pdf.prawn'
       assert_guess :filename => 'Berksfile'
+      assert_guess :filename => 'Deliverfile'
+      assert_guess :filename => 'Fastfile'
+      assert_guess :filename => 'Appfile'
     end
 
     it 'guesses by mimetype' do

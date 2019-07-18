@@ -1,0 +1,260 @@
+#tag IOSView
+Begin iosView DrawView
+   BackButtonTitle =   "Draw"
+   Compatibility   =   ""
+   Left            =   0
+   NavigationBarVisible=   True
+   TabIcon         =   ""
+   TabTitle        =   ""
+   Title           =   "Xojo Draw"
+   Top             =   0
+   Begin iOSCanvas DrawingCanvas
+      AccessibilityHint=   ""
+      AccessibilityLabel=   ""
+      AutoLayout      =   DrawingCanvas, 4, BottomLayoutGuide, 3, False, +1.00, 2, 1, 0, 
+      AutoLayout      =   DrawingCanvas, 1, <Parent>, 1, False, +1.00, 1, 1, 0, 
+      AutoLayout      =   DrawingCanvas, 2, <Parent>, 2, False, +1.00, 2, 1, 0, 
+      AutoLayout      =   DrawingCanvas, 3, TopLayoutGuide, 4, False, +1.00, 1, 1, 0, 
+      Height          =   503.
+      Left            =   0
+      LockedInPosition=   False
+      Scope           =   0
+      Top             =   65
+      Visible         =   True
+      Width           =   320.0
+   End
+End
+#tag EndIOSView
+
+#tag WindowCode
+	#tag Event
+		Sub Activate()
+		  DrawingCanvas.Invalidate
+		  dim x as double=1. //this is allowed
+		  dim y as double=.1 //also allowed
+		  rem This is an old style comment (throw back to Basic)
+		  dim escaped_quotes as string="this is an ""escaped"" string" //would compile as 'this is an "escaped" string'
+		  'this is a single quote comment
+		  msgbox "ok" 'this should be a comment too!
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  // Load image if saved
+		  Dim loadFile As FolderItem = SpecialFolder.Documents.Child("XojoDoodle.png")
+		  If loadFile.Exists Then
+		    Dim pic As iOSImage = iOSImage.FromFile(loadFile)
+		    DrawingImage = New iOSBitmap(pic.Width, pic.Height, 1.0, True)
+		    DrawingImage.Graphics.DrawImage(pic, 0, 0)
+		  End If
+		  
+		  // Add a button for the about view
+		  Dim aboutButton As iOSToolButton = iOSToolButton.NewPlain(QuestionMarkImage)
+		  aboutButton.Tag = "AboutButton"
+		  RightNavigationToolbar.Add(aboutButton)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  // Need to adjust drawing area of size of canvas is changed
+		  // due to device orientation change.
+		  
+		  LayoutChanged = True
+		  
+		  DrawingCanvas.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ToolbarPressed(button As iOSToolButton)
+		  // Process the button taps
+		  select case button
+		  Case ClearButton
+		    // Clear button was pressed, so erase image
+		    DrawingImage = Nil
+		    DrawingCanvas.Invalidate
+		  Case ShareButton
+		    Dim panel As New iOSSharingPanel
+		    panel.SharePicture(DrawingImage.Image, Self, RemoveMeButton)
+		  Case SaveButton
+		    SaveToCameraRoll
+		  Case PenSizeButton
+		    Dim v As New PenSizeView
+		    PushTo(v)
+		  Else
+		    Select Case button.Tag
+		    Case "AboutButton"
+		      Dim v As New AboutView
+		      PushTo(v)
+		    End Select
+		  End Select
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Function MainScreenScale() As Double
+		  Declare function NSClassFromString Lib "Foundation" (aClassName As CFStringRef) As Ptr
+		  Declare Function scale Lib "Foundation" Selector "scale" (classRef As Ptr) As CGFloat
+		  Declare Function mainScreen Lib "Foundation" Selector "mainScreen" (classRef As Ptr) As Ptr
+		  
+		  Return scale(mainScreen(NSClassFromString("UIScreen")))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveImage()
+		  // Save the image so it can be reloaded when
+		  // the user comes back to the app.
+		  Dim saveFile As FolderItem = SpecialFolder.Documents.Child("XojoDraw.png")
+		  
+		  if DrawingImage <> nil then
+		    DrawingImage.Image.WriteToFile(saveFile, "public.png")
+		  end if
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveToCameraRoll()
+		  // Directly call UIKit method to save the picture directly
+		  // to the camera roll.
+		  Declare Sub UIImageWriteToSavedPhotosAlbum Lib "UIKit" _
+		  (img As Ptr, target As Ptr, sel As Ptr, info As Ptr)
+		  UIImageWriteToSavedPhotosAlbum(DrawingImage.Image.Handle, Nil, Nil, Nil)
+		  
+		End Sub
+	#tag EndMethod
+
+
+	#tag Note, Name = RemoveMeButton
+		The RemoveMe button is only used so that the sharing panel
+		on iPad has a parent control it can use to display itself
+		near the actual toolbar button that displays it.
+		
+		When this feedback case is resolve, the button can be removed:
+		<feedback://showreport?report_id=45080>
+		
+	#tag EndNote
+
+
+	#tag Property, Flags = &h21
+		Private ColorButton As iOSToolButton
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private DrawingImage As iOSBitmap
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private LastDragPosition As Point
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private LayoutChanged As Boolean
+	#tag EndProperty
+
+
+#tag EndWindowCode
+
+#tag Events DrawingCanvas
+	#tag Event
+		Sub Paint(g As iOSGraphics)
+		  Dim scale As Double = MainScreenScale
+		  If DrawingImage Is Nil Then
+		    // Create an image if one does not already exist
+		    DrawingImage = New iOSBitmap(g.Width, g.Height, scale, True)
+		    DrawingImage.Graphics.Scale(scale, scale)
+		    DrawingImage.Graphics.FillColor = &cffffff // White
+		    DrawingImage.Graphics.FillRect(0, 0, DrawingImage.Graphics.Width, DrawingImage.Graphics.Height)
+		  ElseIf LayoutChanged Then
+		    // Create image in new screen size and copy old image to it
+		    Dim oldImage As iOSBitmap = DrawingImage
+		    DrawingImage = New iOSBitmap(g.Width, g.Height, scale, True)
+		    DrawingImage.Graphics.Scale(scale, scale)
+		    DrawingImage.Graphics.FillColor = &cffffff // White
+		    DrawingImage.Graphics.FillRect(0, 0, DrawingImage.Graphics.Width, DrawingImage.Graphics.Height)
+		    // Copy the old image to the new image any information that does not fit is lost
+		    DrawingImage.Graphics.DrawImage(oldImage.Image, 0, 0, oldImage.Width, oldImage.Height)
+		    LayoutChanged = False
+		  End If
+		  
+		  // Draw the image to the Canvas
+		  g.DrawImage(DrawingImage, 0, 0)
+		  
+		  // Draw the "Color" button over the drawing
+		  // so that it is not part of the actual drawing
+		  // and does not get saved.
+		  g.FillColor = App.Colors(App.CurrentColorIndex)
+		  g.FillRect(0, g.Height - App.LineSize, g.Width, App.LineSize)
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PointerUp(pos As Xojo.Core.Point, eventInfo As iOSEventInfo)
+		  // Clear the drag position so that when the user
+		  // starts drawing again, it does not connect a line
+		  // from where they last drew.
+		  LastDragPosition = Nil
+		  
+		  Me.Invalidate
+		  
+		  // Save the image whenever they stop drawing
+		  SaveImage
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PointerDrag(pos As Xojo.Core.Point, eventInfo As iOSEventInfo)
+		  // Draw a line following the touches as they drag on the Canvas
+		  Dim scalePos As New Xojo.Core.Point(pos.X * MainScreenScale, pos.Y * MainScreenScale)
+		  
+		  Dim g As iOSGraphics = DrawingImage.Graphics
+		  
+		  If LastDragPosition <> Nil Then
+		    // Draw a line from the last position to the current position
+		    g.FillColor = App.Colors(App.CurrentColorIndex)
+		    g.LineColor = App.Colors(App.CurrentColorIndex)
+		    g.LineWidth = App.LineSize
+		    g.FillOval(LastDragPosition.X, LastDragPosition.Y, App.LineSize, App.LineSize)
+		    g.DrawLine(LastDragPosition.X + App.LineSize / 2, _
+		    LastDragPosition.Y + App.LineSize / 2, _
+		    pos.X + App.LineSize / 2, _
+		    pos.Y + App.LineSize / 2)
+		  End If
+		  
+		  LastDragPosition = pos
+		  
+		  Me.Invalidate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+
+#tag Note, Name = More Notes
+		This another note to make sure we're not grabbing too much/multiple 
+		notes.
+		
+#tag EndNote
+
+#tag ViewBehavior
+	#tag ViewProperty
+		Name="BackButtonTitle"
+		Group="Behavior"
+		Type="Text"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Index"
+		Visible=true
+		Group="ID"
+		InitialValue="-2147483648"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Left"
+		Visible=true
+		Group="Position"
+		InitialValue="0"
+		Type="Integer"
+	#tag EndViewProperty
+#tag EndViewBehavior

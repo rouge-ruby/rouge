@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   class Theme
@@ -80,6 +81,10 @@ module Rouge
 
     def get_style(token)
       self.class.get_style(token)
+    end
+
+    def name
+      self.class.name
     end
 
     class << self

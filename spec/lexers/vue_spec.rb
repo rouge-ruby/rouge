@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::Vue do
   let(:subject) { Rouge::Lexers::Vue.new }
 

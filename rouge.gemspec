@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './lib/rouge/version'
 
 Gem::Specification.new do |s|
@@ -11,7 +13,6 @@ Gem::Specification.new do |s|
     for pygments.
   desc
   s.homepage = "http://rouge.jneen.net/"
-  s.rubyforge_project = "rouge"
   s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'lib/**/*.yml', 'bin/rougify', 'lib/rouge/demos/*']
   s.executables = %w(rougify)
   s.licenses = ['MIT', 'BSD-2-Clause']

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -18,18 +19,18 @@ module Rouge
 
       # TODO: support TeX versions as well.
       state :root do
-        rule /\s*?\n(?=>)/, Text, :code
-        rule /.*?\n/, Text
-        rule /.+\z/, Text
+        rule %r/\s*?\n(?=>)/, Text, :code
+        rule %r/.*?\n/, Text
+        rule %r/.+\z/, Text
       end
 
       state :code do
-        rule /(>)( .*?(\n|\z))/ do |m|
+        rule %r/(>)( .*?(\n|\z))/ do |m|
           token Name::Label, m[1]
           delegate haskell, m[2]
         end
 
-        rule /\s*\n(?=\s*[^>])/, Text, :pop!
+        rule %r/\s*\n(?=\s*[^>])/, Text, :pop!
       end
     end
   end

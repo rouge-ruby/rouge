@@ -8,11 +8,18 @@ module Rouge
 
       title "M68k"
       desc "Motorola 68k Assembler"
+      filenames '*.s','*.i','*.68k','*.m68k'
 
-      id = /[a-zA-Z_][a-zA-Z0-9_]*/
-
-      def self.keywords
-        @keywords ||= Set.new %w(
+      includes = /\p{Blank}*(include|incdir|incbin|image)\p{Blank}*/
+      strings =  /".*"|'.*'|`.*`/
+      word_specialchars_range = %q{[\w\(\)\-#\/\\\\%$\.\|'\"`\*!\+~<]}
+ 
+      def self.detect?(text)
+        return true if text =~ /\A.*?\p{Blank}(move(.[bwl])?)\p{Blank}.*/
+        return true if text =~ /\A.*?\p{Blank}(d0).*/
+      end
+      
+      opcode = %w(
           abcd add adda addi addq addx and andi asl asr
 
           bcc bcs beq bge bgt bhi ble bls blt bmi bne bpl bvc bvs bhs blo
@@ -42,102 +49,125 @@ module Rouge
 
           unlk unpk eori
         )
-      end
 
-      def self.keywords_type
-        @keywords_type ||= Set.new %w(
-          dc ds dcb
+
+      data_def =
+       %w(
+          blk 
+          bss bss_p bss_c bss_f
+          code code_p code_c code_f
+          dc ds dcb dr
+          data data_p data_c data_f 
+          text
         )
-      end
-
-      def self.reserved
-        @reserved ||= Set.new %w(
-          include incdir incbin end endf endfunc endmain endproc fpu func machine main mmu opword proc set opt section
-          rept endr
-          ifeq ifne ifgt ifge iflt ifle iif ifd ifnd ifc ifnc elseif else endc
-          even cnop fail machine
-          output radix __G2 __LK
-          list nolist plen llen ttl subttl spc page listchar format
-          equ equenv equr set reg
-          rsreset rsset offset
-          cargs
-          fequ.s fequ.d fequ.x fequ.p fequ.w fequ.l fopt
-          macro endm mexit narg
-        )
-      end
-
-      def self.builtins
-        @builtins ||=Set.new %w(
+      
+      def self.registers
+        @registers ||=Set.new %w(
           d0 d1 d2 d3 d4 d5 d6 d7
-          a0 a1 a2 a3 a4 a5 a6 a7 a7'
-          pc usp ssp ccr
+          a0 a1 a2 a3 a4 a5 a6 a7
+          pc usp ssp ccr sp
+          sfc dfc vbr cacr char
+          msp isp crp srp tc tt0 tt1
+          mmusr itt0 itt1 dtt0 dtt1
+          drp pcsr ac cal val scc psr
+          bad0 bad1 bad2 bad3 bad4 bad5 bad6 bad7
+          bac0 bac1 bac2 bac3 bac4 bac5 bac6 bac7
+          fp0 fp1 fp2 fp3 fp4 fp5 fp6 fp7
+          fpcr fpsr fpiar
         )
       end
 
-      start { push :expr_bol }
-
-      state :expr_bol do
-        mixin :inline_whitespace
-        rule(//) { pop! }
+      def reset_stack
+        stack.clear
+        stack.push get_state(:root)
       end
 
-      state :inline_whitespace do
-        rule %r/\s+/, Text
+      state :root do # the basic flow is label->opcode->operand->comment with a few specialcases 
+        rule %r/^(\p{Blank}+)?\n/, Name #empty line
+        rule %r/^\p{Blank}*(;|\*|`).*\n/, Comment::Single #comment line
+        rule %r/^(([\.\w]+\$?:?(\p{Blank}*))|(\p{Blank}+))(?=.*\n)/, Name::Label, :opcode #label
       end
 
-      state :whitespace do
-        rule %r/\n+/m, Text, :expr_bol
-        rule %r(^\*(\\.|.)*?\n), Comment::Single, :expr_bol
-        rule %r(;(\\.|.)*?\n), Comment::Single, :expr_bol
-        mixin :inline_whitespace
+      state :opcode do
+        
+        rule includes, Keyword, :includes
+        rule %r/rts|even|rsreset|endc%\w+(?=\p{Blank}+.*\n|\n)/, Keyword, :comment #special case, opcodes with no operands might have freestyle comments
+        rule %r/\p{Blank}*\n/, Keyword, :pop! #0 or more spaces, ending in newline
+        rule %r/\=\p{Blank}*(?=.*\n)/, Operator, :operand # found a = instead of opcode
+        rule %r/(?=((#{opcode.join('|')})|(#{data_def.join('|')})|(\w+))(\.[bswl])?(\p{Blank}+)?(?=.*\n))/i, Keyword, :opcodedetail #opcode ie movem, move.l and friends
+        rule %r/\p{Blank}*(?=(;|\*).*\n)/, Keyword, :operand  #no opcode found but comments found
+
       end
 
-      state :root do
-        rule(//) { push :statements }
+      state :includes do
+        rule %r/.*(?=\n)/, Name::Namespace, :comment
       end
 
-      state :statements do
-        mixin :whitespace
-        rule %r/"/, Str, :string
-        rule %r/#/, Name::Decorator
-        rule %r/^\.?[a-zA-Z0-9_]+:?/, Name::Label
-        rule %r/\.[bswl]\s/i, Name::Decorator
-        rule %r('(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
+
+      state :opcodedetail do
+
+        rule %r/(\w+)(\.[bwsl])?(\p{Blank}+)?(?=.*)/i do
+          groups Keyword, Keyword::Type, Keyword
+          pop!
+          push :operand
+        end
+
+      end
+
+      
+      state :operand do
+        rule %r/(?=\*-\w+.*)/, Keyword, :operanddetail #*-operand"
+        rule %r/(?=(;|\*).*\n)/, Keyword, :comment #end of line comments
+        rule %r/(?=#{word_specialchars_range}+(,\p{Blank}*#{word_specialchars_range}+)*)/, Keyword::Constant, :operanddetail #the operands field
+        rule %r/(?=\n)/, Keyword, :comment #nothing to see, go to comments
+      end
+
+      state :operanddetail do #the tokens in the operands field 
+
+        rule strings do |m|
+          thestring = m[0]
+          if thestring =~ /\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/
+            token Str::Escape
+          else
+            token Str
+          end
+        end
+
+        rule %r/[#%]/, Name::Decorator
         rule %r/\$[0-9a-f]+/i, Num::Hex
         rule %r/@[0-8]+/i, Num::Oct
         rule %r/%[01]+/i, Num::Bin
         rule %r/\d+/i, Num::Integer
-        rule %r([*~&+=\|?:<>/-]), Operator
+        rule %r/[\*~&+=\|?!:<>\/\-]/, Operator
         rule %r/\\./, Comment::Preproc
-        rule %r/[(),.]/, Punctuation
+        rule %r/[(){},.]/, Punctuation
         rule %r/\[[a-zA-Z0-9]*\]/, Punctuation
 
-        rule id do |m|
-          name = m[0]
-
-          if self.class.keywords.include? name.downcase
-            token Keyword
-          elsif self.class.keywords_type.include? name.downcase
-            token Keyword::Type
-          elsif self.class.reserved.include? name.downcase
-            token Keyword::Reserved
-          elsif self.class.builtins.include? name.downcase
+        rule %r/\.?[a-zA-Z0-9_]+:?/ do |m|
+         name=m[0] 
+          if self.class.registers.include? name.downcase
             token Name::Builtin
-          elsif name =~ /[a-zA-Z0-9]+/
-            token Name::Variable
           else
-            token Name
+            token Name::Label
           end
+        
+        end
+
+        rule %r// do
+          push :comment
+        end
+
+      end
+
+      state :comment do
+        rule %r/.*\n/ do |m| #everything not consumed before newline is a comment, consume it and restart the flow from :root
+          
+          token Comment::Single
+          reset_stack
+        
         end
       end
 
-      state :string do
-        rule %r/"/, Str, :pop!
-        rule %r/\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
-        rule %r/[^\\"\n]+/, Str
-        rule %r/\\\n/, Str
-        rule %r/\\/, Str # stray backslash
-      end
     end
   end
 end

@@ -9,7 +9,7 @@ describe Rouge::Lexers::OpenEdge do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.w'
-      assert_guess :filename => 'foo.i'
+      assert_guess :filename => 'foo.i', :source => 'CURRENT-WINDOW = w.'
     end
 
     it 'guesses by mimetype' do

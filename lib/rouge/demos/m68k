@@ -1,3 +1,4 @@
+move
 initialize:                     ; go into super user mode
    clr.l -(a7)
    move.w #32,-(a7)

@@ -114,6 +114,11 @@ module Rouge
 
         next Python
       end
+
+      disambiguate '*.i' do
+        next OpenEdge if matches?(/[^;\n]*?\.$/)
+        next M68k
+      end
     end
   end
 end

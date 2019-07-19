@@ -46,3 +46,97 @@ true
 null
 "a": "test"
 "string"
+
+{ "statement": "SELECT (CASE WHEN (SELECT count(*) FROM \"ci_builds\" WHERE 
+               \"ci_builds\".\"commit_id\" = 77 AND \"ci_builds\".\"id\" IN
+               (SELECT max(\"ci_builds\".id) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\"))=0 THEN
+               NULL WHEN (SELECT count(*) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 AND \"ci_builds\".\"id\" IN
+               (SELECT max(\"ci_builds\".id) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\"))=(SELECT
+               count(*) FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" =
+               77 AND \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id)
+               FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP
+               BY \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'skipped') THEN 'skipped' WHEN
+               (SELECT count(*) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 AND \"ci_builds\".\"id\" IN
+               (SELECT max(\"ci_builds\".id) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\"))=(SELECT
+               count(*) FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" =
+               77 AND \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id)
+               FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP
+               BY \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'success')+(SELECT count(*) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 AND
+               \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"allow_failure\" = 't' AND
+               \"ci_builds\".\"status\" IN ('failed', 'canceled'))+(SELECT
+               count(*) FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" =
+               77 AND \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id)
+               FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP
+               BY \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'skipped') THEN 'success' WHEN
+               (SELECT count(*) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 AND \"ci_builds\".\"id\" IN
+               (SELECT max(\"ci_builds\".id) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\"))=(SELECT
+               count(*) FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" =
+               77 AND \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id)
+               FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP
+               BY \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'pending')+(SELECT count(*) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 AND
+               \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'skipped') THEN 'pending' WHEN
+               (SELECT count(*) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 AND \"ci_builds\".\"id\" IN
+               (SELECT max(\"ci_builds\".id) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\"))=(SELECT
+               count(*) FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" =
+               77 AND \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id)
+               FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP
+               BY \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'canceled')+(SELECT count(*) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 AND
+               \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'success')+(SELECT count(*) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 AND
+               \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"allow_failure\" = 't' AND
+               \"ci_builds\".\"status\" IN ('failed', 'canceled'))+(SELECT
+               count(*) FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" =
+               77 AND \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id)
+               FROM \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP
+               BY \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'skipped') THEN 'canceled' WHEN
+               (SELECT count(*) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 AND \"ci_builds\".\"id\" IN
+               (SELECT max(\"ci_builds\".id) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'running')+(SELECT count(*) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 AND
+               \"ci_builds\".\"id\" IN (SELECT max(\"ci_builds\".id) FROM
+               \"ci_builds\" WHERE \"ci_builds\".\"commit_id\" = 77 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\") AND
+               \"ci_builds\".\"status\" = 'pending')>0 THEN 'running' ELSE
+               'failed' END) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = $1 AND \"ci_builds\".\"id\" IN
+               (SELECT max(\"ci_builds\".id) FROM \"ci_builds\" WHERE
+               \"ci_builds\".\"commit_id\" = $2 GROUP BY
+               \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\")" }

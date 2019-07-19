@@ -11,23 +11,10 @@ module Rouge
 
       filenames '*.pod', '*.pod6'
 
-      formatting_tokens = {
-        "B" => Generic::Strong,
-        "C" => Generic::Output,
-        "E" => Literal::Number::Other,
-        "I" => Generic::Emph,
-        "K" => Generic::Inserted,
-        "L" => Other,
-        "N" => Comment::Special,
-        "T" => Generic::Output,
-        "U" => Generic,
-        "Z" => Comment,
-      }
-
       state :root do
-        rule(/\=begin pod/m, Keyword, :pod6)
+        rule(/\s*\=begin pod/m, Keyword, :pod6)
         rule(/^#.*$/, Comment)
-        rule(/./m, Text)
+        rule(/[^=]*/m, Text)
       end
 
       state :pod6 do
@@ -41,100 +28,90 @@ module Rouge
         rule(/\=begin/, Keyword, :block)
 
         rule(/\=head(\d+)\s+/, Keyword, :head)
+        rule(/\=code/, Keyword, :code)
         rule(/\=item(\d+)\s+/, Keyword, :item)
         rule(/\=input/, Keyword, :input)
         rule(/\=output/, Keyword, :output)
         rule(/\=defn/, Keyword)
 
-        rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
-          t = formatting_tokens[m[0][0]]
-          groups Punctuation::Indicator, t, Punctuation::Indicator
-        end
-
-        rule(/^(?:\t|\s{4,})/, Other, :code)
-
-        rule(/./m, Text)
+        rule(/^(?:\t|[ ]{4,})/, Other, :code)
+        rule(/[^=]*/m, Text)
       end
 
       state :semantic do
-        rule(/.+\n/, Name, :pop!)
+        rule(/\n/, Name, :pop!)
+
+        rule(/.*/, Name)
       end
 
       state :head do
         rule(/\n/, Text::Whitespace, :pop!)
 
         rule(/:\w+\</, Name::Attribute, :attribute)
+        rule(/.*/, Generic::Heading)
+      end
 
-        rule(/./m, Generic::Heading)
+      state :code do
+        rule(/\n/, Text::Whitespace, :pop!)
+
+        rule(/.*/, Generic::Output)
       end
 
       state :item do
         rule(/\n/, Text::Whitespace, :pop!)
 
-        rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
-          t = formatting_tokens[m[0][0]]
-          groups Punctuation::Indicator, t, Punctuation::Indicator
-        end
-
-        rule(/./m, Generic)
+        rule(/[^\n]/, Generic)
       end
 
       state :input do
         rule(/\n/, Text::Whitespace, :pop!)
 
-        rule(/./m, Generic::Inserted)
+        rule(/.*/, Generic::Inserted)
       end
 
       state :output do
         rule(/\n/, Text::Whitespace, :pop!)
 
-        rule(/./m, Generic::Output)
+        rule(/.*/, Generic::Output)
       end
 
       state :code do
-        rule(/.*$/, Generic::Output, :pop!)
+        rule(/[^\n]/m, Generic::Output, :pop!)
       end
 
       state :attribute do
         rule(/\>/, Name::Attribute, :pop!)
 
-        rule(/./m, Name)
+        rule(/[^>]*/, Name)
       end
 
       state :block do
+        rule(/\=end/, Keyword, :pop!)
+
         # TODO: Check the name of the block, and make sure the =end matches
         # the same name
 
         rule(/:\w+\</, Name::Attribute, :attribute)
-        rule(/\=end/, Keyword, :pop!)
-
-        rule(/(BCEIKLNTUZ)<([^>]*)>/) do |m|
-          t = formatting_tokens[m[0][0]]
-          groups Punctuation::Indicator, t, Punctuation::Indicator
-        end
-
-        rule(/./m, Generic)
+        rule(/.*/, Generic)
       end
 
       state :block_code do
-        rule(/:\w+\</, Name::Attribute, :attribute)
         rule(/\=end code/, Keyword, :pop!)
-
-        rule(/./m, Generic::Output)
+        rule(/.*/, Generic::Output)
       end
 
       state :block_input do
         rule(/:\w+\</, Name::Attribute, :attribute)
         rule(/\=end input/, Keyword, :pop!)
 
-        rule(/./m, Generic::Inserted)
+        rule(/.*/, Generic::Inserted)
       end
 
       state :block_output do
         rule(/:\w+\</, Name::Attribute, :attribute)
         rule(/\=end output/, Keyword, :pop!)
 
-        rule(/./m, Generic::Output)
+        rule(/.*/, Generic::Output)
       end
     end
   end

@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class Mason < TemplateLexer
       title 'Mason'
-      desc 'HTML::Mason'
+      desc 'The HTML::Mason framework (https://metacpan.org/pod/HTML::Mason)'
       tag 'mason'
       filenames '*.mi', '*.mc', '*.mas', '*.m', '*.mhtml', '*.mcomp', 'autohandler', 'dhandler'
       mimetypes 'text/x-mason', 'application/x-mason'

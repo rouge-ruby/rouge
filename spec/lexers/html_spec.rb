@@ -18,6 +18,44 @@ describe Rouge::Lexers::HTML do
                             ['Name.Tag', '<custom-element></custom-element>']
       end
     end
+    describe 'attribute names' do
+      it 'allow * to support Angular 2+ structural Directives' do
+        assert_tokens_equal '<custom-element *ng-structural-directive></custom-element>',
+                            ['Name.Tag', '<custom-element'],
+                            ['Text', ' '],
+                            ['Name.Attribute', '*ng-structural-directive'],
+                            ['Name.Tag', '></custom-element>']
+      end
+    end
+    describe 'attribute names' do
+      it 'allow # to support Angular 2+ template reference variables' do
+        assert_tokens_equal '<custom-element #ref></custom-element>',
+                            ['Name.Tag', '<custom-element'],
+                            ['Text', ' '],
+                            ['Name.Attribute', '#ref'],
+                            ['Name.Tag', '></custom-element>']
+      end
+    end
+    describe 'attribute names' do
+      it 'allow [] to support Angular 2+ data binding inputs' do
+        assert_tokens_equal '<custom-element [target]="expression"></custom-element>',
+                            ['Name.Tag', '<custom-element'],
+                            ['Text', ' '],
+                            ['Name.Attribute', '[target]='],
+                            ['Literal.String', '"expression"'],
+                            ['Name.Tag', '></custom-element>']
+      end
+    end
+    describe 'attribute names' do
+      it 'allow () to support Angular 2+ data binding outputs' do
+        assert_tokens_equal '<custom-element (target)="expression"></custom-element>',
+                            ['Name.Tag', '<custom-element'],
+                            ['Text', ' '],
+                            ['Name.Attribute', '(target)='],
+                            ['Literal.String', '"expression"'],
+                            ['Name.Tag', '></custom-element>']
+      end
+    end
   end
 
   describe 'guessing' do

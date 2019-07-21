@@ -49,3 +49,8 @@
 <!-- no tags -->
 Hello tagless world!
 
+<!-- custom Angular 2-style tags -->
+<custom-element *ng-structural-directive></custom-element>
+<custom-element #ref></custom-element>
+<custom-element [target]="expression"></custom-element>
+<custom-element (target)="expression"></custom-element>

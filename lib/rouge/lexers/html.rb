@@ -83,7 +83,7 @@ module Rouge
 
       state :tag do
         rule %r/\s+/m, Text
-        rule %r/[a-zA-Z0-9_:\[\]()*.-]+\s*=/m, Name::Attribute, :attr
+        rule %r/[a-zA-Z0-9_:\[\]()*.-]+\s*=\s*/m, Name::Attribute, :attr
         rule %r/[a-zA-Z0-9_:#*-]+/, Name::Attribute
         rule %r(/?\s*>)m, Name::Tag, :pop!
       end

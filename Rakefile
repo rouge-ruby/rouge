@@ -27,11 +27,11 @@ end
 # Legacy task names (for preserving backwards compatibility)
 def alias_task(aliases)
   aliases.each do |alias_name,task_name|
-		t = Rake::Task[task_name]
-		task alias_name, *t.arg_names do |_, args|
-			args = t.arg_names.map { |a| args[a] }
-			t.invoke(args)
-		end
+    t = Rake::Task[task_name]
+    task alias_name, *t.arg_names do |_, args|
+      args = t.arg_names.map { |a| args[a] }
+      t.invoke(args)
+    end
   end
 end
 

@@ -13,13 +13,13 @@ cache:
   bundler: true
 bundler_args: --without development
 script:
-  - rake
+  - bundle exec rake
 matrix:
   include:
     - rvm   : *latest_ruby
       name  : Profile Memory Allocation
-      script: rake check:memory
+      script: bundle exec rake check:memory
     - rvm   : *latest_ruby
       name  : Interpreter Warnings Test
       env   : RUBYOPT=-w
-      script: rake check:specs
+      script: bundle exec rake check:specs

@@ -1,75 +1,42 @@
 # frozen_string_literal: true
 
-require 'rake/clean'
-require 'pathname'
-require 'bundler/setup'
-require "bundler/gem_tasks"
+require "bundler/setup"
+require "bundler/gem_tasks" # Adds the :build, :install and :release tasks
+require "rake/clean" # Adds the :clean and :clobber tasks
 require "rake/testtask"
+require "rubocop/rake_task"
 
-Rake::TestTask.new(:spec) do |t|
-  t.libs << "lib"
-  t.ruby_opts << "-r./spec/spec_helper"
-  t.warning = !!$VERBOSE
-  t.pattern = FileList['spec/**/*_spec.rb']
-end
+# Add tasks
+task :check => ["check:specs", :newline, "check:style"]
+task :default => [:check]
+task :test => [:check]
 
-task :test => [:spec]
+# Add pre-requisites
+task :build => [:clean, :check]
 
-task :doc do
-  sh 'bundle exec yard'
-end
-
-namespace :doc do
-  task :server do
-    sh 'bundle exec yard server --reload'
-  end
-
-  task :clean do
-    sh 'rm -rf ./doc/ ./.yardoc/'
-  end
-end
-
-CLEAN.include('*.gem')
-task :build => [:clean, :spec] do
+# Add utility tasks
+task :newline do
   puts
-  sh "gem build rouge.gemspec"
 end
 
-task :default => :spec
-
-Dir.glob(Pathname.new(__FILE__).dirname.join('tasks/*.rake')).each do |f|
+# Load tasks
+Dir.glob(Pathname.new(__FILE__).dirname.join('tasks/**/*.rake')).each do |f|
   load f
 end
 
-task :profile_memory do
-  lib = File.expand_path("lib", __dir__)
-  $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-
-  require 'memory_profiler'
-
-  source = File.expand_path('lib/rouge/lexer.rb', __dir__)
-  sample = File.read(source, encoding: 'utf-8')
-  report = MemoryProfiler.report do
-    require 'rouge'
-    formatter  = Rouge::Formatters::HTML.new
-    ruby_lexer = Rouge::Lexers::Ruby.new
-    guessed_lexer = Rouge::Lexer.find_fancy('guess', sample)
-    formatter.format ruby_lexer.lex(sample)
-    formatter.format guessed_lexer.lex(sample)
-  end
-  print_options = { scale_bytes: true, normalize_paths: true }
-
-  if ENV['CI']
-    report.pretty_print(print_options)
-  else
-    results_file = File.expand_path('rouge-memory.tmp')
-    t_allocated = report.scale_bytes(report.total_allocated_memsize)
-    t_retained  = report.scale_bytes(report.total_retained_memsize)
-    puts
-    puts "Total allocated: #{t_allocated} (#{report.total_allocated} objects)"
-    puts "Total retained:  #{t_retained} (#{report.total_retained} objects)"
-    report.pretty_print(print_options.merge(to_file: results_file))
-    puts
-    puts "Detailed report saved to file: #{results_file}"
+# Legacy task names (for preserving backwards compatibility)
+def alias_task(aliases)
+  aliases.each do |alias_name,task_name|
+		t = Rake::Task[task_name]
+		task alias_name, *t.arg_names do |_, args|
+			args = t.arg_names.map { |a| args[a] }
+			t.invoke(args)
+		end
   end
 end
+
+alias_task "changelog:insert" => "update:changelog"
+alias_task :lex               => "generate:lexer"
+alias_task :profile_memory    => "check:memory"
+alias_task :similarity        => "check:similarity"
+alias_task :spec              => "check:specs"

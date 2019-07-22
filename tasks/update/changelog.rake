@@ -1,3 +1,35 @@
+namespace :update do
+  desc "Insert lines in CHANGELOG.md for commits between SHAs (inclusive)" 
+  task :changelog, [:beg_sha, :end_sha] do |t, args|
+    args.with_defaults(:end_sha => nil)
+
+    changelog = "CHANGELOG.md"
+
+    remote = "github.com/rouge-ruby/rouge"
+    working_dir = Rake.application.original_dir
+    repo = Rouge::Tasks::Git.new(working_dir, remote)
+    gitlog = repo.log(args.beg_sha, args.end_sha)
+    
+    text = ''
+    not_inserted = true
+
+    File.readlines(changelog).each do |l|
+      if not_inserted && l.start_with?("##")
+        text += Rouge::Tasks.version_line(Rouge.version)
+        text += Rouge::Tasks.comparison_line(remote, 
+                                             repo.prev_version, 
+                                             "v" + Rouge.version)
+        text += gitlog.converted.join("") + "\n"
+        not_inserted = false
+      end
+      
+      text += l
+    end
+
+    File.write(changelog, text)
+  end
+end
+
 require 'git'
 
 module Rouge
@@ -69,37 +101,5 @@ module Rouge
     def self.version_line(version)
       "## version #{version}: #{Time.now.strftime("%Y-%m-%d")}\n\n"
     end
-  end
-end
-
-namespace :changelog do
-  desc "Insert lines in CHANGELOG.md for commits between SHAs (inclusive)" 
-  task :insert, [:beg_sha, :end_sha] do |t, args|
-    args.with_defaults(:end_sha => nil)
-
-    changelog = "CHANGELOG.md"
-
-    remote = "github.com/rouge-ruby/rouge"
-    working_dir = "."
-    repo = Rouge::Tasks::Git.new(working_dir, remote)
-    gitlog = repo.log(args.beg_sha, args.end_sha)
-    
-    text = ''
-    not_inserted = true
-
-    File.readlines(changelog).each do |l|
-      if not_inserted && l.start_with?("##")
-        text += Rouge::Tasks.version_line(Rouge.version)
-        text += Rouge::Tasks.comparison_line(remote, 
-                                             repo.prev_version, 
-                                             "v" + Rouge.version)
-        text += gitlog.converted.join("") + "\n"
-        not_inserted = false
-      end
-      
-      text += l
-    end
-
-    File.write(changelog, text)
   end
 end

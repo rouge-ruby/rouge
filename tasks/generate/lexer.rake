@@ -1,10 +1,12 @@
-desc "Creates all necessary files for a new lexer"
-task :lex, [:language] do |t, args|
-  language = args.language
-  sh "touch lib/rouge/demos/#{language}"
-  sh "touch spec/visual/samples/#{language}"
-  sh "echo \"#{lexer_template(language)}\" > lib/rouge/lexers/#{language}.rb"
-  sh "echo \"#{spec_template(language)}\" > spec/lexers/#{language}_spec.rb"
+namespace :generate do
+  desc "Create all necessary files for a new lexer"
+  task :lexer, [:lang] do |t, args|
+    language = args.lang
+    sh "touch lib/rouge/demos/#{language}"
+    sh "touch spec/visual/samples/#{language}"
+    sh "echo \"#{lexer_template(language)}\" > lib/rouge/lexers/#{language}.rb"
+    sh "echo \"#{spec_template(language)}\" > spec/lexers/#{language}_spec.rb"
+  end
 end
 
 def lexer_template(language)

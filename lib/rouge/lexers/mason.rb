@@ -22,7 +22,7 @@ module Rouge
 
       # Note: If you add a tag in the lines below, you also need to modify "disambiguate '*.m'" in file disambiguation.rb
       TEXT_BLOCKS = %w(text doc)
-      PERL_BLOCKS = %w(args flags attr init once shared perl cleanup filter strings general_media shared_vars)
+      PERL_BLOCKS = %w(args flags attr init once shared perl cleanup filter)
       COMPONENTS = %w(def method)
   
       state :root do
@@ -113,4 +113,3 @@ module Rouge
     end
   end
 end
-  

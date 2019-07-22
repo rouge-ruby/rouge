@@ -2,6 +2,7 @@
 
 [![Build Status](https://secure.travis-ci.org/rouge-ruby/rouge.svg)](https://travis-ci.org/rouge-ruby/rouge)
 [![Gem Version](https://badge.fury.io/rb/rouge.svg)](https://rubygems.org/gems/rouge)
+[![YARD Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rouge-ruby.github.io/docs/)
 
 [rouge]: http://rouge.jneen.net/
 
@@ -159,13 +160,13 @@ To test a lexer visually, run `rackup` from the root and go to `localhost:9292/#
 
 ### API Documentation
 
-is at http://rubydoc.info/gems/rouge/frames.
+is at https://rouge-ruby.github.io/docs/.
 
 ### Developing lexers
 
 We have [a guide][lexer-dev-doc] on lexer development in the documentation but you'll also learn a lot by reading through the existing lexers. 
 
-[lexer-dev-doc]: https://www.rubydoc.info/github/rouge-ruby/rouge/file/docs/LexerDevelopment.md
+[lexer-dev-doc]: https://rouge-ruby.github.io/docs/file.LexerDevelopment.html
 
 Please don't submit lexers that are largely copy-pasted from other files.
 

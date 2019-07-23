@@ -1,3 +1,5 @@
+# This task is intended to be the same as check:specs but with verbose warnings
+# output set by calling t.ruby_opts << "-W2"
 namespace :check do
   Rake::TestTask.new(:warnings) do |t|
     t.libs << "lib"

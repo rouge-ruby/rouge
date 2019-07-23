@@ -4,6 +4,52 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.7.0: 2019-07-24
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.6.0...v3.7.0)
+
+- General
+  - Rationalise Rake tasks ([#1267](https://github.com/rouge-ruby/rouge/pull/1267/) by Michael Camilleri)
+  - Remove italics from preprocessor style rules ([#1264](https://github.com/rouge-ruby/rouge/pull/1264/) by Michael Camilleri)
+  - Remove rubyforge_project property from gemspec ([#1263](https://github.com/rouge-ruby/rouge/pull/1263/) by Olle Jonsson)
+  - Add missing magic comments ([#1258](https://github.com/rouge-ruby/rouge/pull/1258/) by Ashwin Maroli)
+  - Replace tabs with spaces in some lexers ([#1257](https://github.com/rouge-ruby/rouge/pull/1257/) by Ashwin Maroli)
+  - Profile memory usage of Rouge::Lexer.find_fancy ([#1256](https://github.com/rouge-ruby/rouge/pull/1256/) by Ashwin Maroli)
+  - Add juxtaposing support to visual test app ([#1168](https://github.com/rouge-ruby/rouge/pull/1168/) by Ashwin Maroli)
+- Ada Lexer (**NEW**)
+  - Add Ada lexer ([#1255](https://github.com/rouge-ruby/rouge/pull/1255/) by Jakob Stoklund Olesen)
+- CUDA Lexer (**NEW**)
+  - Add CUDA lexer ([#963](https://github.com/rouge-ruby/rouge/pull/963/) by Yuma Hiramatsu)
+- GDScript Lexer (**NEW**)
+  - Add GDScript lexer ([#1036](https://github.com/rouge-ruby/rouge/pull/1036/) by Leonid Boykov)
+- Gherkin Lexer
+  - Fix placeholder lexing in Gherkin lexer ([#952](https://github.com/rouge-ruby/rouge/pull/952/) by Jamis Buck)
+- GraphQL Lexer
+  - Add keywords and improve frontmatter lexing in GraphQL lexer ([#1261](https://github.com/rouge-ruby/rouge/pull/1261/) by Emile Bosch)
+- Handlebars Lexer
+  - Fix Handlebars lexing with HTML attributes and whitespace ([#899](https://github.com/rouge-ruby/rouge/pull/899/) by Jasper Maes)
+- HOCON Lexer (**NEW**)
+  - Add HOCON lexer ([#1253](https://github.com/rouge-ruby/rouge/pull/1253/) by David Wood)
+- HTML Lexer
+  - Add support for Angular-style attributes to HTML lexer ([#907](https://github.com/rouge-ruby/rouge/pull/907/) by Runinho)
+  - Simplify HTML visual sample ([#1265](https://github.com/rouge-ruby/rouge/pull/1265/) by Michael Camilleri)
+- JSON Lexer
+  - Add key/value highlighting to JSON lexer ([#1029](https://github.com/rouge-ruby/rouge/pull/1029/) by María Inés Parnisari)
+- Mason Lexer (**NEW**)
+  - Remove mistaken keywords in Mason lexer ([#1268](https://github.com/rouge-ruby/rouge/pull/1268/) by Michael Camilleri)
+  - Add Mason lexer ([#838](https://github.com/rouge-ruby/rouge/pull/838/) by María Inés Parnisari)
+- OpenType Feature File Lexer (**NEW**)
+  - Add OpenType Feature File lexer ([#864](https://github.com/rouge-ruby/rouge/pull/864/) by Thom Janssen)
+- PHP Lexer
+  - Update keywords and fix comment bug in PHP lexer ([#973](https://github.com/rouge-ruby/rouge/pull/973/) by Fred Cox)
+- ReasonML Lexer (**NEW**)
+  - Add ReasonML lexer ([#1248](https://github.com/rouge-ruby/rouge/pull/1248/) by Sergei Azarkin)
+- Rust Lexer
+  - Fix lexing of attributes and doc comments in Rust lexer ([#957](https://github.com/rouge-ruby/rouge/pull/957/) by djrenren)
+  - Add async & await keywords to Rust lexer ([#1259](https://github.com/rouge-ruby/rouge/pull/1259/) by Edward Andrews-Hodgson)
+- SAS Lexer (**NEW**)
+  - Add SAS lexer ([#1107](https://github.com/rouge-ruby/rouge/pull/1107/) by tomsutch)
+
 ## version 3.6.0: 2019-07-10
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.5.1...v3.6.0)

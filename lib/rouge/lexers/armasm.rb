@@ -47,93 +47,93 @@ module Rouge
       )
 
       state :root do
-        rule /\n/, Text
-        rule /^[ \t]*#[ \t]*((#{preproc_keyword.join('|')})[ \t].*)?\n/, Comment::Preproc
-        rule /[ \t]+/, Text, :command
-        rule /;.*\n/, Comment
-        rule /\$[A-Za-z_][0-9A-Za-z_]*\.?/, Name::Namespace, :afterlabel # variable substitution or macro argument
-        rule /([0-9A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Label, :afterlabel
+        rule %r/\n/, Text
+        rule %r/^[ \t]*#[ \t]*((#{preproc_keyword.join('|')})[ \t].*)?\n/, Comment::Preproc
+        rule %r/[ \t]+/, Text, :command
+        rule %r/;.*\n/, Comment
+        rule %r/\$[A-Za-z_][0-9A-Za-z_]*\.?/, Name::Namespace, :afterlabel # variable substitution or macro argument
+        rule %r/([0-9A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Label, :afterlabel
       end
 
       state :afterlabel do
-        rule /\n/,  Text, :pop!
-        rule /[ \t]+/ do |m|
+        rule %r/\n/,  Text, :pop!
+        rule %r/[ \t]+/ do |m|
           token Text
           goto :command
         end
-        rule /;.*\n/, Comment, :pop!
+        rule %r/;.*\n/, Comment, :pop!
       end
 
       state :command do
-        rule /\n/, Text, :pop!
-        rule /[ \t]+/ do |m|
+        rule %r/\n/, Text, :pop!
+        rule %r/[ \t]+/ do |m|
           token Text
           goto :args
         end
-        rule /;.*\n/, Comment, :pop!
-        rule /(#{file_directive.join('|')})(?=[ \t])/ do |m|
+        rule %r/;.*\n/, Comment, :pop!
+        rule %r/(#{file_directive.join('|')})(?=[ \t])/ do |m|
           token Keyword
           goto :filespec
         end
-        rule /(#{general_directive.join('|')})(?=[; \t\n])/, Keyword
-        rule /([A-Z][0-9A-Z]*|[a-z][0-9a-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^0-9A-Za-z_])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
-        rule /([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Function # probably a macro name
-        rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/(#{general_directive.join('|')})(?=[; \t\n])/, Keyword
+        rule %r/([A-Z][0-9A-Z]*|[a-z][0-9a-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^0-9A-Za-z_])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
+        rule %r/([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Function # probably a macro name
+        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
       end
 
       state :args do
-        rule /\n/, Text, :pop!
-        rule /[ \t]+/, Text
-        rule /;.*\n/, Comment, :pop!
-        rule /(?<![0-9A-Za-z_])(#{shift_or_condition.join('|')})(?![0-9A-Za-z_])/, Name::Builtin
-        rule /([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
-        rule /%[BFbf]?[ATat]?[0-9]+([A-Za-z_][0-9A-Za-z_]*)?/, Name::Label
-        rule /(&|0[Xx])[0-9A-Fa-f]+(?![0-9A-FPa-fp])/, Literal::Number::Hex
-        rule /(&|0[Xx])[.0-9A-Fa-f]+([Pp][-+]?[0-9]+)?/, Literal::Number::Float
-        rule /(0[Ff]_[0-9A-Fa-f]{8}|0[Dd]_[0-9A-Fa-f]{16})/, Literal::Number::Float
-        rule /(2_[01]+|3_[0-2]+|4_[0-3]+|5_[0-4]+|6_[0-5]+|7_[0-6]+|8_[0-7]+|9_[0-8]+|[0-9]+)(?![0-9Ee])/, Literal::Number::Integer
-        rule /(2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.0-9]+)([Ee][-+]?[0-9]+)?/, Literal::Number::Float
-        rule /[@:](?=[ \t]*(8|16|32|64|128|256)[^0-9])/, Operator
-        rule /[.@]|\{(#{builtin.join('|')})\}/, Name::Constant
-        rule /([-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(#{operator.join('|')}):)/, Operator
-        rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
-        rule /'/ do |m|
+        rule %r/\n/, Text, :pop!
+        rule %r/[ \t]+/, Text
+        rule %r/;.*\n/, Comment, :pop!
+        rule %r/(?<![0-9A-Za-z_])(#{shift_or_condition.join('|')})(?![0-9A-Za-z_])/, Name::Builtin
+        rule %r/([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
+        rule %r/%[BFbf]?[ATat]?[0-9]+([A-Za-z_][0-9A-Za-z_]*)?/, Name::Label
+        rule %r/(&|0[Xx])[0-9A-Fa-f]+(?![0-9A-FPa-fp])/, Literal::Number::Hex
+        rule %r/(&|0[Xx])[.0-9A-Fa-f]+([Pp][-+]?[0-9]+)?/, Literal::Number::Float
+        rule %r/(0[Ff]_[0-9A-Fa-f]{8}|0[Dd]_[0-9A-Fa-f]{16})/, Literal::Number::Float
+        rule %r/(2_[01]+|3_[0-2]+|4_[0-3]+|5_[0-4]+|6_[0-5]+|7_[0-6]+|8_[0-7]+|9_[0-8]+|[0-9]+)(?![0-9Ee])/, Literal::Number::Integer
+        rule %r/(2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.0-9]+)([Ee][-+]?[0-9]+)?/, Literal::Number::Float
+        rule %r/[@:](?=[ \t]*(8|16|32|64|128|256)[^0-9])/, Operator
+        rule %r/[.@]|\{(#{builtin.join('|')})\}/, Name::Constant
+        rule %r/([-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(#{operator.join('|')}):)/, Operator
+        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/'/ do |m|
           token Literal::String::Char
           goto :singlequoted
         end
-        rule /"/ do |m|
+        rule %r/"/ do |m|
           token Literal::String::Double
           goto :doublequoted
         end
       end
 
       state :singlequoted do
-        rule /\n/, Text, :pop!
-        rule /\$\$/, Literal::String::Char
-        rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
-        rule /'/ do |m|
+        rule %r/\n/, Text, :pop!
+        rule %r/\$\$/, Literal::String::Char
+        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/'/ do |m|
           token Literal::String::Char
           goto :args
         end
-        rule /[^$'\n]+/, Literal::String::Char
+        rule %r/[^$'\n]+/, Literal::String::Char
       end
 
       state :doublequoted do
-        rule /\n/, Text, :pop!
-        rule /\$\$/, Literal::String::Double
-        rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
-        rule /"/ do |m|
+        rule %r/\n/, Text, :pop!
+        rule %r/\$\$/, Literal::String::Double
+        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/"/ do |m|
           token Literal::String::Double
           goto :args
         end
-        rule /[^$"\n]+/, Literal::String::Double
+        rule %r/[^$"\n]+/, Literal::String::Double
       end
 
       state :filespec do
-        rule /\n/, Text, :pop!
-        rule /\$\$/, Literal::String::Other
-        rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
-        rule /[^$\n]+/, Literal::String::Other
+        rule %r/\n/, Text, :pop!
+        rule %r/\$\$/, Literal::String::Other
+        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/[^$\n]+/, Literal::String::Other
       end
     end
   end

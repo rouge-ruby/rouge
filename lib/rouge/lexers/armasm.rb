@@ -9,9 +9,46 @@ module Rouge
       tag 'armasm'
       filenames '*.s'
 
+      preproc_keyword ||= %w(
+        define elif else endif error if ifdef ifndef include line pragma undef warning
+      )
+
+      file_directive ||= %w(
+        BIN GET INCBIN INCLUDE LNK
+      )
+
+      general_directive ||= %w(
+        ALIAS ALIGN AOF AOUT AREA ARM ASSERT ATTR CN CODE16 CODE32 COMMON CP
+        DATA DCB DCD DCDO DCDU DCFD DCFDU DCFH DCFHU DCFS DCFSU DCI DCI.N DCI.W
+        DCQ DCQU DCW DCWU DN ELIF ELSE END ENDFUNC ENDIF ENDP ENTRY EQU EXPORT
+        EXPORTAS EXTERN FIELD FILL FN FRAME FUNCTION GBLA GBLL GBLS GLOBAL IF
+        IMPORT INFO KEEP LCLA LCLL LCLS LEADR LEAF LTORG MACRO MAP MEND MEXIT
+        NOFP OPT ORG PRESERVE8 PROC QN RELOC REQUIRE REQUIRE8 RLIST RN ROUT
+        SETA SETL SETS SN SPACE STRONG SUBT THUMB THUMBX TTL WEND WHILE
+        \[ \] [|!#*=%&^]
+      )
+
+      shift_or_condition ||= %w(
+        ASR LSL LSR ROR RRX AL CC CS EQ GE GT HI HS LE LO LS LT MI NE PL VC VS
+        asr lsl lsr ror rrx al cc cs eq ge gt hi hs le lo ls lt mi ne pl vc vs
+      )
+
+      builtin ||= %w(
+        ARCHITECTURE AREANAME ARMASM_VERSION CODESIZE COMMANDLINE CONFIG CPU
+        ENDIAN FALSE FPIC FPU INPUTFILE INTER LINENUM LINENUMUP LINENUMUPPER
+        OBJASM_VERSION OPT PC PCSTOREOFFSET REENTRANT ROPI RWPI TRUE VAR
+      )
+
+      operator ||= %w(
+        AND BASE CC CC_ENCODING CHR DEF EOR FATTR FEXEC FLOAD FSIZE INDEX LAND
+        LEFT LEN LEOR LNOT LOR LOWERCASE MOD NOT OR RCONST REVERSE_CC RIGHT ROL
+        ROR SHL SHR STR TARGET_ARCH_[0-9A-Z_]+ TARGET_FEATURE_[0-9A-Z_]+
+        TARGET_FPU_[A-Z_] TARGET_PROFILE_[ARM] UAL UPPERCASE
+      )
+
       state :root do
         rule /\n/, Text
-        rule /^[ \t]*#[ \t]*((define|elif|else|endif|error|if|ifdef|ifndef|include|line|pragma|undef|warning)[ \t].*)?\n/, Comment::Preproc
+        rule /^[ \t]*#[ \t]*((#{preproc_keyword.join('|')})[ \t].*)?\n/, Comment::Preproc
         rule /[ \t]+/, Text, :command
         rule /;.*\n/, Comment
         rule /\$[A-Za-z_][0-9A-Za-z_]*\.?/, Name::Namespace, :afterlabel # variable substitution or macro argument
@@ -28,8 +65,8 @@ module Rouge
         rule /\n/, Text, :root
         rule /[ \t]+/, Text, :args
         rule /;.*\n/, Comment, :root
-        rule /(BIN|GET|INCBIN|INCLUDE|LNK)(?=[ \t])/, Keyword, :filespec
-        rule /(ALIAS|ALIGN|AOF|AOUT|AREA|ARM|ASSERT|ATTR|CN|CODE16|CODE32|COMMON|CP|DATA|DCB|DCD|DCDO|DCDU|DCFD|DCFDU|DCFH|DCFHU|DCFS|DCFSU|DCI(\.[NW])?|DCQ|DCQU|DCW|DCWU|DN|ELIF|ELSE|END|ENDFUNC|ENDIF|ENDP|ENTRY|EQU|EXPORT|EXPORTAS|EXTERN|FIELD|FILL|FN|FRAME|FUNCTION|GBL[ALS]|GLOBAL|IF|IMPORT|INFO|KEEP|LCL[ALS]|LEADR|LEAF|LTORG|MACRO|MAP|MEND|MEXIT|NOFP|OPT|ORG|PRESERVE8|PROC|QN|RELOC|REQUIRE8?|RLIST|RN|ROUT|SET[ALS]|SN|SPACE|STRONG|SUBT|THUMBX?|TTL|WEND|WHILE|\[|\]|[|!#*=%&^])(?=[; \t\n])/, Keyword
+        rule /(#{file_directive.join('|')})(?=[ \t])/, Keyword, :filespec
+        rule /(#{general_directive.join('|')})(?=[; \t\n])/, Keyword
         rule /([A-Z][0-9A-Z]*|[a-z][0-9a-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^0-9A-Za-z_])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
         rule /([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Function # probably a macro name
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
@@ -39,7 +76,7 @@ module Rouge
         rule /\n/, Text, :root
         rule /[ \t]+/, Text
         rule /;.*\n/, Comment, :root
-        rule /(?<![0-9A-Za-z_])(ASR|LSL|LSR|ROR|RRX|AL|CC|CS|EQ|GE|GT|HI|HS|LE|LO|LS|LT|MI|NE|PL|VC|VS|asr|lsl|lsr|ror|rrx|al|cc|cs|eq|ge|gt|hi|hs|le|lo|ls|lt|mi|ne|pl|vc|vs)(?![0-9A-Za-z_])/, Name::Builtin
+        rule /(?<![0-9A-Za-z_])(#{shift_or_condition.join('|')})(?![0-9A-Za-z_])/, Name::Builtin
         rule /([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
         rule /%[BFbf]?[ATat]?[0-9]+([A-Za-z_][0-9A-Za-z_]*)?/, Name::Label
         rule /(&|0[Xx])[0-9A-Fa-f]+(?![0-9A-FPa-fp])/, Literal::Number::Hex
@@ -48,8 +85,8 @@ module Rouge
         rule /(2_[01]+|3_[0-2]+|4_[0-3]+|5_[0-4]+|6_[0-5]+|7_[0-6]+|8_[0-7]+|9_[0-8]+|[0-9]+)(?![0-9Ee])/, Literal::Number::Integer
         rule /(2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.0-9]+)([Ee][-+]?[0-9]+)?/, Literal::Number::Float
         rule /[@:](?=[ \t]*(8|16|32|64|128|256)[^0-9])/, Operator
-        rule /[.@]|\{(ARCHITECTURE|AREANAME|ARMASM_VERSION|CODESIZE|COMMANDLINE|CONFIG|CPU|ENDIAN|FALSE|FPIC|FPU|INPUTFILE|INTER|LINENUM(UP(PER)?)?|OBJASM_VERSION|OPT|PC|PCSTOREOFFSET|REENTRANT|ROPI|RWPI|TRUE|VAR)\}/, Name::Constant
-        rule /([-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(AND|BASE|CC|CC_ENCODING|CHR|DEF|EOR|FATTR|FEXEC|FLOAD|FSIZE|INDEX|LAND|LEFT|LEN|LEOR|LNOT|LOR|LOWERCASE|MOD|NOT|OR|RCONST|REVERSE_CC|RIGHT|ROL|ROR|SHL|SHR|STR|TARGET_ARCH_[A-Z_]+|TARGET_FEATURE_[A-Z_]+|TARGET_FPU_[A-Z_]+|TARGET_PROFILE_[ARM]|UAL|UPPERCASE):)/, Operator
+        rule /[.@]|\{(#{builtin.join('|')})\}/, Name::Constant
+        rule /([-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(#{operator.join('|')}):)/, Operator
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
         rule /'/, Literal::String::Char, :singlequoted
         rule /"/, Literal::String::Double, :doublequoted

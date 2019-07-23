@@ -56,16 +56,25 @@ module Rouge
       end
 
       state :afterlabel do
-        rule /\n/, Text, :root
-        rule /[ \t]+/, Text, :command
-        rule /;.*\n/, Comment, :root
+        rule /\n/,  Text, :pop!
+        rule /[ \t]+/ do |m|
+          token Text
+          goto :command
+        end
+        rule /;.*\n/, Comment, :pop!
       end
 
       state :command do
-        rule /\n/, Text, :root
-        rule /[ \t]+/, Text, :args
-        rule /;.*\n/, Comment, :root
-        rule /(#{file_directive.join('|')})(?=[ \t])/, Keyword, :filespec
+        rule /\n/, Text, :pop!
+        rule /[ \t]+/ do |m|
+          token Text
+          goto :args
+        end
+        rule /;.*\n/, Comment, :pop!
+        rule /(#{file_directive.join('|')})(?=[ \t])/ do |m|
+          token Keyword
+          goto :filespec
+        end
         rule /(#{general_directive.join('|')})(?=[; \t\n])/, Keyword
         rule /([A-Z][0-9A-Z]*|[a-z][0-9a-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^0-9A-Za-z_])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
         rule /([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Function # probably a macro name
@@ -73,9 +82,9 @@ module Rouge
       end
 
       state :args do
-        rule /\n/, Text, :root
+        rule /\n/, Text, :pop!
         rule /[ \t]+/, Text
-        rule /;.*\n/, Comment, :root
+        rule /;.*\n/, Comment, :pop!
         rule /(?<![0-9A-Za-z_])(#{shift_or_condition.join('|')})(?![0-9A-Za-z_])/, Name::Builtin
         rule /([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
         rule /%[BFbf]?[ATat]?[0-9]+([A-Za-z_][0-9A-Za-z_]*)?/, Name::Label
@@ -88,28 +97,40 @@ module Rouge
         rule /[.@]|\{(#{builtin.join('|')})\}/, Name::Constant
         rule /([-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(#{operator.join('|')}):)/, Operator
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
-        rule /'/, Literal::String::Char, :singlequoted
-        rule /"/, Literal::String::Double, :doublequoted
+        rule /'/ do |m|
+          token Literal::String::Char
+          goto :singlequoted
+        end
+        rule /"/ do |m|
+          token Literal::String::Double
+          goto :doublequoted
+        end
       end
 
       state :singlequoted do
-        rule /\n/, Text, :root
+        rule /\n/, Text, :pop!
         rule /\$\$/, Literal::String::Char
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
-        rule /'/, Literal::String::Char, :args
+        rule /'/ do |m|
+          token Literal::String::Char
+          goto :args
+        end
         rule /[^$'\n]+/, Literal::String::Char
       end
 
       state :doublequoted do
-        rule /\n/, Text, :root
+        rule /\n/, Text, :pop!
         rule /\$\$/, Literal::String::Double
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
-        rule /"/, Literal::String::Double, :args
+        rule /"/ do |m|
+          token Literal::String::Double
+          goto :args
+        end
         rule /[^$"\n]+/, Literal::String::Double
       end
 
       state :filespec do
-        rule /\n/, Text, :root
+        rule /\n/, Text, :pop!
         rule /\$\$/, Literal::String::Other
         rule /\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
         rule /[^$\n]+/, Literal::String::Other

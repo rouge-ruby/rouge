@@ -62,7 +62,7 @@ module Rouge
         rule %r/\n/, Text
         rule %r/^[ \t]*#[ \t]*(?:(?:#{ArmAsm.preproc_keyword.join('|')})[ \t].*)?\n/, Comment::Preproc
         rule %r/[ \t]+/, Text, :command
-        rule %r/;.*\n/, Comment
+        rule %r/;.*/, Comment
         rule %r/\$[a-z_]\w*\.?/i, Name::Namespace # variable substitution or macro argument
         rule %r/\w+|\|[^|\n]+\|/, Name::Label
       end
@@ -73,7 +73,7 @@ module Rouge
           token Text
           goto :args
         end
-        rule %r/;.*\n/, Comment, :pop!
+        rule %r/;.*/, Comment, :pop!
         rule %r/(?:#{ArmAsm.file_directive.join('|')})\b/ do |m|
           token Keyword
           goto :filespec
@@ -87,7 +87,7 @@ module Rouge
       state :args do
         rule %r/\n/, Text, :pop!
         rule %r/[ \t]+/, Text
-        rule %r/;.*\n/, Comment, :pop!
+        rule %r/;.*/, Comment, :pop!
         rule %r/(?:#{ArmAsm.shift_or_condition.join('|')})\b/, Name::Builtin
         rule %r/[a-z_]\w*|\|[^|\n]+\|/i, Name::Variable # various types of symbol
         rule %r/%[bf]?[at]?\d+(?:[a-z_]\w*)?/i, Name::Label

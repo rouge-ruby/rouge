@@ -91,11 +91,11 @@ module Rouge
         rule %r/(?:#{ArmAsm.shift_or_condition.join('|')})\b/, Name::Builtin
         rule %r/[a-z_]\w*|\|[^|\n]+\|/i, Name::Variable # various types of symbol
         rule %r/%[bf]?[at]?\d+(?:[a-z_]\w*)?/i, Name::Label
-        rule %r/(?:&|0[x])\h+(?![\hp])/i, Literal::Number::Hex
-        rule %r/(?:&|0[x])[.\h]+(?:[p][-+]?\d+)?/i, Literal::Number::Float
-        rule %r/0[f]_\h{8}|0[d]_\h{16}/i, Literal::Number::Float
+        rule %r/(?:&|0x)\h+(?![\hp])/i, Literal::Number::Hex
+        rule %r/(?:&|0x)[.\h]+(?:p[-+]?\d+)?/i, Literal::Number::Float
+        rule %r/0f_\h{8}|0d_\h{16}/i, Literal::Number::Float
         rule %r/(?:2_[01]+|3_[0-2]+|4_[0-3]+|5_[0-4]+|6_[0-5]+|7_[0-6]+|8_[0-7]+|9_[0-8]+|\d+)(?![\de])/i, Literal::Number::Integer
-        rule %r/(?:2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.\d]+)(?:[e][-+]?\d+)?/i, Literal::Number::Float
+        rule %r/(?:2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.\d]+)(?:e[-+]?\d+)?/i, Literal::Number::Float
         rule %r/[@:](?=[ \t]*(?:8|16|32|64|128|256)[^\d])/, Operator
         rule %r/[.@]|\{(?:#{ArmAsm.builtin.join('|')})\}/, Name::Constant
         rule %r/[-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(?:#{ArmAsm.operator.join('|')}):/, Operator

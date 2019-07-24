@@ -63,8 +63,8 @@ module Rouge
         rule %r/^[ \t]*#[ \t]*((#{ArmAsm.preproc_keyword.join('|')})[ \t].*)?\n/, Comment::Preproc
         rule %r/[ \t]+/, Text, :command
         rule %r/;.*\n/, Comment
-        rule %r/\$[A-Za-z_][0-9A-Za-z_]*\.?/, Name::Namespace, :afterlabel # variable substitution or macro argument
-        rule %r/([0-9A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Label, :afterlabel
+        rule %r/\$[A-Za-z_]\w*\.?/, Name::Namespace, :afterlabel # variable substitution or macro argument
+        rule %r/(\w+|\|[^|\n]+\|)/, Name::Label, :afterlabel
       end
 
       state :afterlabel do
@@ -88,18 +88,18 @@ module Rouge
           goto :filespec
         end
         rule %r/(#{ArmAsm.general_directive.join('|')})(?=[; \t\n])/, Keyword
-        rule %r/([A-Z][0-9A-Z]*|[a-z][0-9a-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^0-9A-Za-z_])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
-        rule %r/([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Function # probably a macro name
-        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/([A-Z][0-9A-Z]*|[a-z][0-9a-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^\w])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
+        rule %r/([A-Za-z_]\w*|\|[^|\n]+\|)/, Name::Function # probably a macro name
+        rule %r/\$[A-Za-z]\w*\.?/, Name::Namespace
       end
 
       state :args do
         rule %r/\n/, Text, :pop!
         rule %r/[ \t]+/, Text
         rule %r/;.*\n/, Comment, :pop!
-        rule %r/(?<![0-9A-Za-z_])(#{ArmAsm.shift_or_condition.join('|')})(?![0-9A-Za-z_])/, Name::Builtin
-        rule %r/([A-Za-z_][0-9A-Za-z_]*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
-        rule %r/%[BFbf]?[ATat]?[0-9]+([A-Za-z_][0-9A-Za-z_]*)?/, Name::Label
+        rule %r/(?<!\w)(#{ArmAsm.shift_or_condition.join('|')})(?!\w)/, Name::Builtin
+        rule %r/([A-Za-z_]\w*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
+        rule %r/%[BFbf]?[ATat]?[0-9]+([A-Za-z_]\w*)?/, Name::Label
         rule %r/(&|0[Xx])[0-9A-Fa-f]+(?![0-9A-FPa-fp])/, Literal::Number::Hex
         rule %r/(&|0[Xx])[.0-9A-Fa-f]+([Pp][-+]?[0-9]+)?/, Literal::Number::Float
         rule %r/(0[Ff]_[0-9A-Fa-f]{8}|0[Dd]_[0-9A-Fa-f]{16})/, Literal::Number::Float
@@ -108,7 +108,7 @@ module Rouge
         rule %r/[@:](?=[ \t]*(8|16|32|64|128|256)[^0-9])/, Operator
         rule %r/[.@]|\{(#{ArmAsm.builtin.join('|')})\}/, Name::Constant
         rule %r/([-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(#{ArmAsm.operator.join('|')}):)/, Operator
-        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/\$[A-Za-z]\w*\.?/, Name::Namespace
         rule %r/'/ do |m|
           token Literal::String::Char
           goto :singlequoted
@@ -122,7 +122,7 @@ module Rouge
       state :singlequoted do
         rule %r/\n/, Text, :pop!
         rule %r/\$\$/, Literal::String::Char
-        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/\$[A-Za-z]\w*\.?/, Name::Namespace
         rule %r/'/ do |m|
           token Literal::String::Char
           goto :args
@@ -133,7 +133,7 @@ module Rouge
       state :doublequoted do
         rule %r/\n/, Text, :pop!
         rule %r/\$\$/, Literal::String::Double
-        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/\$[A-Za-z]\w*\.?/, Name::Namespace
         rule %r/"/ do |m|
           token Literal::String::Double
           goto :args
@@ -144,7 +144,7 @@ module Rouge
       state :filespec do
         rule %r/\n/, Text, :pop!
         rule %r/\$\$/, Literal::String::Other
-        rule %r/\$[A-Za-z][0-9A-Za-z_]*\.?/, Name::Namespace
+        rule %r/\$[A-Za-z]\w*\.?/, Name::Namespace
         rule %r/[^$\n]+/, Literal::String::Other
       end
     end

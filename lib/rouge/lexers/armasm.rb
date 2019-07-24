@@ -88,7 +88,7 @@ module Rouge
           goto :filespec
         end
         rule %r/(#{ArmAsm.general_directive.join('|')})(?=[; \t\n])/, Keyword
-        rule %r/([A-Z][0-9A-Z]*|[a-z][0-9a-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^\w])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
+        rule %r/([A-Z][\dA-Z]*|[a-z][\da-z]*)(\.[NWnw])?(\.[DFIPSUdfipsu]?(8|16|32|64)?){,3}(?=[^\w])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
         rule %r/([A-Za-z_]\w*|\|[^|\n]+\|)/, Name::Function # probably a macro name
         rule %r/\$[A-Za-z]\w*\.?/, Name::Namespace
       end
@@ -99,13 +99,13 @@ module Rouge
         rule %r/;.*\n/, Comment, :pop!
         rule %r/(?<!\w)(#{ArmAsm.shift_or_condition.join('|')})(?!\w)/, Name::Builtin
         rule %r/([A-Za-z_]\w*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
-        rule %r/%[BFbf]?[ATat]?[0-9]+([A-Za-z_]\w*)?/, Name::Label
-        rule %r/(&|0[Xx])[0-9A-Fa-f]+(?![0-9A-FPa-fp])/, Literal::Number::Hex
-        rule %r/(&|0[Xx])[.0-9A-Fa-f]+([Pp][-+]?[0-9]+)?/, Literal::Number::Float
-        rule %r/(0[Ff]_[0-9A-Fa-f]{8}|0[Dd]_[0-9A-Fa-f]{16})/, Literal::Number::Float
-        rule %r/(2_[01]+|3_[0-2]+|4_[0-3]+|5_[0-4]+|6_[0-5]+|7_[0-6]+|8_[0-7]+|9_[0-8]+|[0-9]+)(?![0-9Ee])/, Literal::Number::Integer
-        rule %r/(2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.0-9]+)([Ee][-+]?[0-9]+)?/, Literal::Number::Float
-        rule %r/[@:](?=[ \t]*(8|16|32|64|128|256)[^0-9])/, Operator
+        rule %r/%[BFbf]?[ATat]?\d+([A-Za-z_]\w*)?/, Name::Label
+        rule %r/(&|0[Xx])[\dA-Fa-f]+(?![\dA-FPa-fp])/, Literal::Number::Hex
+        rule %r/(&|0[Xx])[.\dA-Fa-f]+([Pp][-+]?\d+)?/, Literal::Number::Float
+        rule %r/(0[Ff]_[\dA-Fa-f]{8}|0[Dd]_[\dA-Fa-f]{16})/, Literal::Number::Float
+        rule %r/(2_[01]+|3_[0-2]+|4_[0-3]+|5_[0-4]+|6_[0-5]+|7_[0-6]+|8_[0-7]+|9_[0-8]+|\d+)(?![\dEe])/, Literal::Number::Integer
+        rule %r/(2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.\d]+)([Ee][-+]?\d+)?/, Literal::Number::Float
+        rule %r/[@:](?=[ \t]*(8|16|32|64|128|256)[^\d])/, Operator
         rule %r/[.@]|\{(#{ArmAsm.builtin.join('|')})\}/, Name::Constant
         rule %r/([-!#%&()*+,\/<=>?^{|}]|\[|\]|!=|&&|\/=|<<|<=|<>|==|><|>=|>>|\|\||:(#{ArmAsm.operator.join('|')}):)/, Operator
         rule %r/\$[A-Za-z]\w*\.?/, Name::Namespace

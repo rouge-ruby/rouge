@@ -17,7 +17,7 @@ module Rouge
                 '*.cc',  '*.hh',
                 '*.cxx', '*.hxx',
                 '*.pde', '*.ino',
-                '*.tpp'
+                '*.tpp', '*.h'
       mimetypes 'text/x-c++hdr', 'text/x-c++src'
 
       def self.keywords

@@ -75,6 +75,8 @@ module Rouge
       disambiguate '*.h' do
         next ObjectiveC if matches?(/@(end|implementation|protocol|property)\b/)
         next ObjectiveC if contains?('@"')
+        next Cpp if matches?(/^\s*(?:catch|class|constexpr|namespace|private|
+                                   protected|public|template|throw|try|using)\b/x)
 
         C
       end

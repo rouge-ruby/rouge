@@ -63,17 +63,8 @@ module Rouge
         rule %r/^[ \t]*#[ \t]*(?:(?:#{ArmAsm.preproc_keyword.join('|')})[ \t].*)?\n/, Comment::Preproc
         rule %r/[ \t]+/, Text, :command
         rule %r/;.*\n/, Comment
-        rule %r/\$[a-z_]\w*\.?/i, Name::Namespace, :afterlabel # variable substitution or macro argument
-        rule %r/\w+|\|[^|\n]+\|/, Name::Label, :afterlabel
-      end
-
-      state :afterlabel do
-        rule %r/\n/,  Text, :pop!
-        rule %r/[ \t]+/ do |m|
-          token Text
-          goto :command
-        end
-        rule %r/;.*\n/, Comment, :pop!
+        rule %r/\$[a-z_]\w*\.?/i, Name::Namespace # variable substitution or macro argument
+        rule %r/\w+|\|[^|\n]+\|/, Name::Label
       end
 
       state :command do

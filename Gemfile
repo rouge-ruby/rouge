@@ -22,12 +22,12 @@ end
 
 # Needed for a Rake task
 gem 'git'
+gem 'yard'
 
 group :development do
   gem 'pry'
 
   # docs
-  gem 'yard'
   gem 'github-markup'
 
   # for visual tests

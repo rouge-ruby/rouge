@@ -5,14 +5,15 @@ require "bundler/gem_tasks" # Adds the :build, :install and :release tasks
 require "rake/clean" # Adds the :clean and :clobber tasks
 require "rake/testtask"
 require "rubocop/rake_task"
+require "yard"
 
 # Add tasks
-task :check => ["check:specs", :newline, "check:style"]
+task :check => ["check:specs", "check:style"]
 task :default => [:check]
 task :test => [:check]
 
 # Add pre-requisites
-task :build => [:clean, :check]
+task :build => [:clean, :check, "generate:docs"]
 
 # Add utility tasks
 task :newline do

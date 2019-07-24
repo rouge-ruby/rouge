@@ -22,7 +22,6 @@ describe Rouge::Lexers::Cpp do
       deny_guess :filename => 'foo.h', :source => 'namespaces'
       deny_guess :filename => 'foo.h', :source => 'struct namespace'
 
-
       # Disambiguate with hacklang.org
       assert_guess :filename => 'foo.hh', :source => 'foo'
 

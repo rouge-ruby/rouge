@@ -42,16 +42,18 @@ Rouge::Theme.find('base16.light').render(scope: '.highlight')
 
 #### Jekyll
 
-**Note**: If you're using GitHub Pages, you're stuck with [version
-2.2.1][ghp-versions] of Rouge. Although GitHub Page uses an up to date version
-of Jekyll, it locks the version of Rouge. There is [an open issue][ghp-issue] to
-upgrade this to a more current release.
+<p class="note">
+  If you're using GitHub Pages, you're stuck with [version 2.2.1][ghp-versions]
+  of Rouge. Although GitHub Page uses an up to date version of Jekyll, it locks
+  the version of Rouge. There is [an open issue][ghp-issue] to upgrade this to
+  a more current release.
+</p>
 
-[ghp-versions]: https://pages.github.com/versions/ "Version of the dependencies
-used by GitHub Pages"
+[ghp-versions]: https://pages.github.com/versions/
+"Version of the dependencies used by GitHub Pages"
 
-[ghp-issue]: https://github.com/github/pages-gem/issues/601 "pages-gem Issue
-#601"
+[ghp-issue]: https://github.com/github/pages-gem/issues/601
+"pages-gem Issue #601"
 
 Rouge is Jekyll's default syntax highlighter. Out of the box, Rouge will be
 used to highlight text wrapped in the `{% highlight %}` template tags. The
@@ -59,8 +61,8 @@ used to highlight text wrapped in the `{% highlight %}` template tags. The
 use and whether to enable line numbers or not. More information is available in
 [the Jekyll docs][j-docs].
 
-[j-docs]: https://jekyllrb.com/docs/liquid/tags/#code-snippet-highlighting "Code
-snippet highlighting in the Jekyll documentation"
+[j-docs]: https://jekyllrb.com/docs/liquid/tags/#code-snippet-highlighting
+"Code snippet highlighting in the Jekyll documentation"
 
 #### Command Line
 
@@ -71,12 +73,6 @@ in your terminal:
 $ rougify foo.rb
 $ rougify style monokai.sublime > syntax.css
 ```
-
-### API Documentation
-
-Rouge's documentation is available at [rouge-ruby.github.io/docs][docs].
-
-[docs]: https://rouge-ruby.github.io/docs "Rouge's official documentation"
 
 ## Configuration
 
@@ -142,9 +138,16 @@ The built-in formatters are:
 ### CSS Options
 
 * `scope: '.highlight'` sets the CSS selector to which styles are applied, eg.
+
   ``` ruby
-  `Rouge::Themes::MonokaiSublime.render(scope: 'code')`
+  Rouge::Themes::MonokaiSublime.render(scope: 'code')
   ```
+
+## Documentation
+
+Rouge's documentation is available at [rouge-ruby.github.io/docs/][docs].
+
+[docs]: https://rouge-ruby.github.io/docs "Rouge's official documentation"
 
 ## Comparisons
 
@@ -220,8 +223,10 @@ an issue from the templates"
 
 ### Developing Lexers
 
-**Note**: Please don't submit lexers that are copy-pasted from other files.
-These submission will be rejected and we don't want you to waste your time.
+<p class="note">
+  Please don't submit lexers that are copy-pasted from other files. These
+  submissions will be rejected and we don't want you to waste your time.
+</p>
 
 We want to make it as easy as we can for anyone to contribute a lexer to Rouge.
 To help get you started, we have [a shiny new guide][lexer-dev-doc] on lexer

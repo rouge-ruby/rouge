@@ -74,12 +74,12 @@ module Rouge
           goto :args
         end
         rule %r/;.*\n/, Comment, :pop!
-        rule %r/(?:#{ArmAsm.file_directive.join('|')})(?=[ \t])/ do |m|
+        rule %r/(?:#{ArmAsm.file_directive.join('|')})\b/ do |m|
           token Keyword
           goto :filespec
         end
         rule %r/(?:#{ArmAsm.general_directive.join('|')})(?=[; \t\n])/, Keyword
-        rule %r/(?:[A-Z][\dA-Z]*|[a-z][\da-z]*)(?:\.[NWnw])?(?:\.[DFIPSUdfipsu]?(?:8|16|32|64)?){,3}(?=[^\w])/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
+        rule %r/(?:[A-Z][\dA-Z]*|[a-z][\da-z]*)(?:\.[NWnw])?(?:\.[DFIPSUdfipsu]?(?:8|16|32|64)?){,3}\b/, Name::Builtin # rather than attempt to list all opcodes, rely on all-uppercase or all-lowercase rule
         rule %r/[a-z_]\w*|\|[^|\n]+\|/i, Name::Function # probably a macro name
         rule %r/\$[a-z]\w*\.?/i, Name::Namespace
       end
@@ -88,7 +88,7 @@ module Rouge
         rule %r/\n/, Text, :pop!
         rule %r/[ \t]+/, Text
         rule %r/;.*\n/, Comment, :pop!
-        rule %r/(?<!\w)(?:#{ArmAsm.shift_or_condition.join('|')})(?!\w)/, Name::Builtin
+        rule %r/(?:#{ArmAsm.shift_or_condition.join('|')})\b/, Name::Builtin
         rule %r/[a-z_]\w*|\|[^|\n]+\|/i, Name::Variable # various types of symbol
         rule %r/%[bf]?[at]?\d+(?:[a-z_]\w*)?/i, Name::Label
         rule %r/(?:&|0[x])\h+(?![\hp])/i, Literal::Number::Hex

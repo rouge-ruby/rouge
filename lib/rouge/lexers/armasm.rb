@@ -100,9 +100,9 @@ module Rouge
         rule %r/(?<!\w)(#{ArmAsm.shift_or_condition.join('|')})(?!\w)/, Name::Builtin
         rule %r/([A-Za-z_]\w*|\|[^|\n]+\|)/, Name::Variable # various types of symbol
         rule %r/%[BFbf]?[ATat]?\d+([A-Za-z_]\w*)?/, Name::Label
-        rule %r/(&|0[Xx])[\dA-Fa-f]+(?![\dA-FPa-fp])/, Literal::Number::Hex
-        rule %r/(&|0[Xx])[.\dA-Fa-f]+([Pp][-+]?\d+)?/, Literal::Number::Float
-        rule %r/(0[Ff]_[\dA-Fa-f]{8}|0[Dd]_[\dA-Fa-f]{16})/, Literal::Number::Float
+        rule %r/(&|0[Xx])\h+(?![\hPp])/, Literal::Number::Hex
+        rule %r/(&|0[Xx])[.\h]+([Pp][-+]?\d+)?/, Literal::Number::Float
+        rule %r/(0[Ff]_\h{8}|0[Dd]_\h{16})/, Literal::Number::Float
         rule %r/(2_[01]+|3_[0-2]+|4_[0-3]+|5_[0-4]+|6_[0-5]+|7_[0-6]+|8_[0-7]+|9_[0-8]+|\d+)(?![\dEe])/, Literal::Number::Integer
         rule %r/(2_[.01]+|3_[.0-2]+|4_[.0-3]+|5_[.0-4]+|6_[.0-5]+|7_[.0-6]+|8_[.0-7]+|9_[.0-8]+|[.\d]+)([Ee][-+]?\d+)?/, Literal::Number::Float
         rule %r/[@:](?=[ \t]*(8|16|32|64|128|256)[^\d])/, Operator

@@ -18,9 +18,7 @@ compatible with stylesheets designed for [Pygments][].
 Rouge's most common uses are as a Ruby library, as part of Jekyll and as a
 command line tool.
 
-### Ways to Use
-
-#### Library
+### Library
 
 Here's a quick example of using Rouge as you would any other regular Ruby
 library:
@@ -40,14 +38,12 @@ Rouge::Themes::Base16.mode(:light).render(scope: '.highlight')
 Rouge::Theme.find('base16.light').render(scope: '.highlight')
 ```
 
-#### Jekyll
+### Jekyll
 
-<p class="note">
-  If you're using GitHub Pages, you're stuck with [version 2.2.1][ghp-versions]
-  of Rouge. Although GitHub Page uses an up to date version of Jekyll, it locks
-  the version of Rouge. There is [an open issue][ghp-issue] to upgrade this to
-  a more current release.
-</p>
+**NOTE**: If you're using GitHub Pages, you're stuck with [version
+2.2.1][ghp-versions] of Rouge. Although GitHub Page uses an up to date version
+of Jekyll, it locks the version of Rouge. There is [an open issue][ghp-issue] to
+upgrade this to a more current release.
 
 [ghp-versions]: https://pages.github.com/versions/
 "Version of the dependencies used by GitHub Pages"
@@ -64,7 +60,7 @@ use and whether to enable line numbers or not. More information is available in
 [j-docs]: https://jekyllrb.com/docs/liquid/tags/#code-snippet-highlighting
 "Code snippet highlighting in the Jekyll documentation"
 
-#### Command Line
+### Command Line
 
 Rouge ships with a `rougify` command which allows you to easily highlight files
 in your terminal:
@@ -149,35 +145,6 @@ Rouge's documentation is available at [rouge-ruby.github.io/docs/][docs].
 
 [docs]: https://rouge-ruby.github.io/docs "Rouge's official documentation"
 
-## Comparisons
-
-Rouge aims to be simple to extend and to be a drop-in replacement for Pygments.
-It stacks up well in comparison to other Ruby libraries.
-
-### pygments.rb
-
-In comparison to [pygments.rb][]:
-
-[pygments.rb]: https://github.com/tmm1/pygments.rb "pygments.rb repository on
-GitHub"
-
-* no need to spawn Python processes; and
-* Rouge is faster in [almost every measure][comp].
-
-[comp]: https://github.com/rouge-ruby/rouge/pull/41#issuecomment-223751572
-"Comparison with pygments.rb"
-
-### CodeRay
-
-In comparison to [CodeRay][]:
-
-* HTML output from Rouge is fully compatible with stylesheets designed for
-  Pygments;
-* lexers are implemented with a dedicated DSL, rather than being hand-coded; and
-* Rouge supports every language CodeRay does and more.
-
-[CodeRay]: https://github.com/rubychan/coderay "CodeRay repository on GitHub"
-
 ## Requirements
 
 ### Ruby
@@ -212,21 +179,19 @@ developing new lexers.
 
 ### Bug Reports
 
-Rouge uses GitHub's Issues to report bugs. You can [choose][issue-chooser] from
+Rouge uses GitHub's Issues to report bugs. You can [choose][issue_chooser] from
 one of our templates or create a custom issue. Issues that have not been active
 for a year are automatically closed by GitHub's [Probot][].
 
-[issue-chooser]: https://github.com/rouge-ruby/rouge/issues/new/choose "Choose
-an issue from the templates"
+[issue_chooser]: https://github.com/rouge-ruby/rouge/issues/new/choose
+"Choose an issue from the templates"
 
 [Probot]: https://probot.github.io "Read more about GitHub's Probot"
 
 ### Developing Lexers
 
-<p class="note">
-  Please don't submit lexers that are copy-pasted from other files. These
-  submissions will be rejected and we don't want you to waste your time.
-</p>
+**NOTE**: Please don't submit lexers that are copy-pasted from other files.
+These submission will be rejected and we don't want you to waste your time.
 
 We want to make it as easy as we can for anyone to contribute a lexer to Rouge.
 To help get you started, we have [a shiny new guide][lexer-dev-doc] on lexer

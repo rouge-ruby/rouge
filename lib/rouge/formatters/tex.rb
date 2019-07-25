@@ -22,6 +22,9 @@ module Rouge
         '^' => '{\textasciicircum}',
         '|' => '{\textbar}',
         '\\' => '{\textbackslash}',
+        '`' => '{\textasciigrave}',
+        "'" => "'{}",
+        '"' => '"{}',
         "\t" => '{\tab}',
       }
 

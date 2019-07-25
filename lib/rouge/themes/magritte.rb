@@ -67,8 +67,8 @@ module Rouge
             Literal::String::Interpol,    :fg => :purple, :bold => true
       style Name::Builtin,                :bold => true
       style Name::Entity,                 :fg => :darkgray, :bold => true
-      style Text::Whitespace,
-            Generic::Output,              :fg => :lightgray
+      style Text::Whitespace,             :fg => :lightgray
+      style Generic::Output,              :fg => :royal
       style Name::Function,
             Name::Property,
             Name::Attribute,              :fg => :candy

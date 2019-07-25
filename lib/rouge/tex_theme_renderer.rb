@@ -113,7 +113,7 @@ END
     end
 
     def render_style(tok, style, &b)
-      out = String.new
+      out = String.new('')
       out << "\\expandafter\\def#{token_name(tok)}#1{"
       out << "\\fboxsep=0pt\\colorbox{#{palette_name(style[:bg])}}{" if style[:bg]
       out << '\\textbf{' if style[:bold]

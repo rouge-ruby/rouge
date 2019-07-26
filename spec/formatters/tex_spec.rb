@@ -48,7 +48,7 @@ describe Rouge::Formatters::Tex do
     let(:expected) do
       <<-'OUT'
 \begin{RG*}%
-\RG{k}{foo} \RG{p}{\{}\newline%
+\RG{k}{foo}\hphantom{x}\RG{p}{\{}\newline%
 \hphantom{xx}\RG{no}{{\textasciitilde}100\%}\newline%
 \RG{p}{\}}%
 \end{RG*}%

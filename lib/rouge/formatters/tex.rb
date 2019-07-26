@@ -22,6 +22,9 @@ module Rouge
         '^' => '{\textasciicircum}',
         '|' => '{\textbar}',
         '\\' => '{\textbackslash}',
+        '`' => '{\textasciigrave}',
+        "'" => "'{}",
+        '"' => '"{}',
         "\t" => '{\tab}',
       }
 
@@ -59,24 +62,20 @@ module Rouge
       end
 
       def render_line(line, &b)
-        head, *rest = line
-        return unless head
-
-        tag_first(*head, &b)
-        rest.each do |(tok, val)|
-          yield tag(tok, val)
+        line.each do |(tok, val)|
+          hphantom_tag(tok, val, &b)
         end
       end
 
-      # special handling for the first token
-      # of a line. we replace all initial spaces
-      # with \hphantom{xxxx}, which renders an
-      # empty space equal to the size of the x's.
-      def tag_first(tok, val)
+      # Special handling for leading spaces, since they may be gobbled
+      # by a previous command.  We replace all initial spaces with
+      # \hphantom{xxxx}, which renders an empty space equal to the size
+      # of the x's.
+      def hphantom_tag(tok, val)
         leading = nil
         val.sub!(/^[ ]+/) { leading = $&.size; '' }
         yield "\\hphantom{#{'x' * leading}}" if leading
-        yield tag(tok, val)
+        yield tag(tok, val) unless val.empty?
       end
 
       def tag(tok, val)

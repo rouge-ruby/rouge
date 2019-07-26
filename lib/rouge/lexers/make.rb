@@ -28,7 +28,7 @@ module Rouge
 
         rule %r/#.*?\n/, Comment
 
-        rule %r/(export)([\t ]+)(?=[a-zA-Z0-9_\${}\t -]+\n)/ do
+        rule %r/(export)([\t ]+)(?=[a-zA-Z0-9_\${}()\t -]+\n)/ do
           groups Keyword, Text
           push :export
         end
@@ -36,7 +36,7 @@ module Rouge
         rule %r/export[\t ]+/, Keyword
 
         # assignment
-        rule %r/([a-zA-Z0-9_${}.-]+)([\t ]*)([!?:+]?=)/m do |m|
+        rule %r/([a-zA-Z0-9_${}().-]+)([\t ]*)([!?:+]?=)/m do |m|
           token Name::Variable, m[1]
           token Text, m[2]
           token Operator, m[3]
@@ -52,7 +52,7 @@ module Rouge
       end
 
       state :export do
-        rule %r/[\w\${}-]/, Name::Variable
+        rule %r/[\w\${}()-]/, Name::Variable
         rule %r/\n/, Text, :pop!
         rule %r/[\t ]+/, Text
       end
@@ -80,22 +80,22 @@ module Rouge
 
       state :shell do
         # macro interpolation
-        rule %r/\$\([\t ]*[a-z_]\w*[\t ]*\)/i, Name::Variable
+        rule %r/\$[({][\t ]*[a-z_]\w*[\t ]*[)}]/i, Name::Variable
         # $(shell ...)
-        rule %r/(\$\()([\t ]*)(shell)([\t ]+)/m do
+        rule %r/(\$[({])([\t ]*)(shell)([\t ]+)/m do
           groups Name::Function, Text, Name::Builtin, Text
           push :shell_expr
         end
 
         rule(/\\./m) { delegate @shell }
-        stop = /\$\(|\(|\)|\\|$/
+        stop = /\$\(|\$\{|\(|\)|\}|\\|$/
         rule(/.+?(?=#{stop})/m) { delegate @shell }
         rule(stop) { delegate @shell }
       end
 
       state :shell_expr do
-        rule(/\(/) { delegate @shell; push }
-        rule %r/\)/, Name::Function, :pop!
+        rule(/[({]/) { delegate @shell; push }
+        rule %r/[)}]/, Name::Function, :pop!
         mixin :shell
       end
 

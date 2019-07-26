@@ -11,6 +11,15 @@ module Rouge
       filenames '*.make', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile'
       mimetypes 'text/x-makefile'
 
+      def self.functions
+        @functions ||= %w(
+          abspath addprefix addsuffix and basename call dir error eval file
+          filter filter-out findstring firstword flavor foreach if join lastword
+          notdir or origin patsubst realpath shell sort strip subst suffix value
+          warning wildcard word wordlist words
+        )
+      end
+
       # TODO: Add support for special keywords
       # bsd_special = %w(
       #   include undef error warning if else elif endif for endfor
@@ -81,8 +90,8 @@ module Rouge
       state :shell do
         # macro interpolation
         rule %r/\$[({][\t ]*[a-z_]\w*[\t ]*[)}]/i, Name::Variable
-        # $(shell ...)
-        rule %r/(\$[({])([\t ]*)(shell)([\t ]+)/m do
+        # function invocation
+        rule %r/(\$[({])([\t ]*)(#{Make.functions.join('|')})([\t ]+)/m do
           groups Name::Function, Text, Name::Builtin, Text
           push :shell_expr
         end

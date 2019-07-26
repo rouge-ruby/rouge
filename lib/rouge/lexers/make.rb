@@ -41,6 +41,12 @@ module Rouge
           groups Keyword, Literal::String::Other
         end
 
+        rule %r/(ifn?def|ifn?eq)([\t ]+)([^#\n]+)/ do
+          groups Keyword, Text, Name::Variable
+        end
+
+        rule %r/(?:else|endif)[\t ]*(?=[#\n])/, Keyword
+
         rule %r/(export)([\t ]+)(?=[a-zA-Z0-9_\${}()\t -]+\n)/ do
           groups Keyword, Text
           push :export
@@ -83,6 +89,14 @@ module Rouge
       end
 
       state :block_body do
+        rule %r/(ifn?def|ifn?eq)([\t ]+)([^#\n]+)(#.*)?(\n)/ do
+          groups Keyword, Text, Name::Variable, Comment, Text
+        end
+
+        rule %r/(else|endif)([\t ]*)(#.*)?(\n)/ do
+          groups Keyword, Text, Comment, Text
+        end
+
         rule %r/(\t[\t ]*)([@-]?)/ do
           groups Text, Punctuation
           push :shell_line

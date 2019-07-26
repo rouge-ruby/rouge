@@ -41,7 +41,7 @@ Rouge::Theme.find('base16.light').render(scope: '.highlight')
 ### Jekyll
 
 **NOTE**: If you're using GitHub Pages, you're stuck with [version
-2.2.1][ghp-versions] of Rouge. Although GitHub Page uses an up to date version
+2.2.1][ghp-versions] of Rouge. Although GitHub Pages uses an up to date version
 of Jekyll, it locks the version of Rouge. There is [an open issue][ghp-issue] to
 upgrade this to a more current release.
 

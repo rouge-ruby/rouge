@@ -28,15 +28,15 @@ module Rouge
 
         rule %r/#.*?\n/, Comment
 
-        rule %r/(export)(\s+)(?=[a-zA-Z0-9_\${}\t -]+\n)/ do
+        rule %r/(export)([\t ]+)(?=[a-zA-Z0-9_\${}\t -]+\n)/ do
           groups Keyword, Text
           push :export
         end
 
-        rule %r/export\s+/, Keyword
+        rule %r/export[\t ]+/, Keyword
 
         # assignment
-        rule %r/([a-zA-Z0-9_${}.-]+)(\s*)([!?:+]?=)/m do |m|
+        rule %r/([a-zA-Z0-9_${}.-]+)([\t ]*)([!?:+]?=)/m do |m|
           token Name::Variable, m[1]
           token Text, m[2]
           token Operator, m[3]
@@ -54,7 +54,7 @@ module Rouge
       state :export do
         rule %r/[\w\${}-]/, Name::Variable
         rule %r/\n/, Text, :pop!
-        rule %r/\s+/, Text
+        rule %r/[\t ]+/, Text
       end
 
       state :block_header do
@@ -80,9 +80,9 @@ module Rouge
 
       state :shell do
         # macro interpolation
-        rule %r/\$\(\s*[a-z_]\w*\s*\)/i, Name::Variable
+        rule %r/\$\([\t ]*[a-z_]\w*[\t ]*\)/i, Name::Variable
         # $(shell ...)
-        rule %r/(\$\()(\s*)(shell)(\s+)/m do
+        rule %r/(\$\()([\t ]*)(shell)([\t ]+)/m do
           groups Name::Function, Text, Name::Builtin, Text
           push :shell_expr
         end

@@ -113,7 +113,7 @@ The built-in formatters are:
     * `gutter_class: 'rouge-gutter'` - a CSS class for the gutter
     * `code_class: 'rouge-code'` - a CSS class for the code column
 
-* `Rouge::Formatters::HTMLLegacy.new(opts={})` is a backwards-compatibile class
+* `Rouge::Formatters::HTMLLegacy.new(opts={})` is a backwards-compatible class
   intended for users of Rouge 1.x, with options that were supported then.
   Options are:
     * `inline_theme: nil` - use an HTMLInline formatter with the given theme
@@ -230,12 +230,12 @@ Rouge uses [Semantic Versioning 2.0.0][sv2].
 
 [sv2]: http://semver.org/
 
-## Tips
+## Maintainers
 
-I don't get paid to maintain rouge. If you've found this software useful,
-consider dropping a tip in the [bucket][cashme].
-
-[cashme]: http://cash.me/$jneen "Jeanine Adkisson's Cash App page"
+Rouge is largely the result of the hard work of unpaid volunteers. It was
+originally developed by Jeanine Adkisson (@jneen) and is currently maintained by
+Jeanine Adkisson, Drew Blessing (@dblessing), Michael Camilleri (@pyrmont) and
+Goro Fuji (@gfx).
 
 ## License
 

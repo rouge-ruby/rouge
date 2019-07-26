@@ -2,11 +2,11 @@
 # frozen_string_literal: true
 
 require 'rubygems'
-require 'bundler'
-Bundler.require
-require 'rouge'
+require 'bundler/setup'
+require 'rouge/all'
 require 'minitest/spec'
 require 'minitest/autorun'
+require 'minitest/power_assert'
 
 Token = Rouge::Token
 

@@ -113,8 +113,8 @@ The built-in formatters are:
     * `gutter_class: 'rouge-gutter'` - a CSS class for the gutter
     * `code_class: 'rouge-code'` - a CSS class for the code column
 
-* `Rouge::Formatters::HTMLLegacy.new(opts={})` is a backwards-compatible class
-  intended for users of Rouge 1.x, with options that were supported then.
+* `Rouge::Formatters::HTMLLegacy.new(opts={})` is a backwards-compatibility
+  class intended for users of Rouge 1.x, with options that were supported then.
   Options are:
     * `inline_theme: nil` - use an HTMLInline formatter with the given theme
     * `line_numbers: false` - use an HTMLTable formatter

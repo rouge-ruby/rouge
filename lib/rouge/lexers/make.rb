@@ -107,7 +107,7 @@ module Rouge
 
       state :shell do
         # macro interpolation
-        rule %r/\$[({][\t ]*[a-z_]\w*[\t ]*[)}]/i, Name::Variable
+        rule %r/\$[({][\t ]*[a-z_][\w:=%.]*[\t ]*[)}]/i, Name::Variable
         # function invocation
         rule %r/(\$[({])([\t ]*)(#{Make.functions.join('|')})([\t ]+)/m do
           groups Name::Function, Text, Name::Builtin, Text

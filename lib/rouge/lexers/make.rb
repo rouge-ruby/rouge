@@ -95,7 +95,7 @@ module Rouge
 
       state :shell_expr do
         rule(/\(/) { delegate @shell; push }
-        rule %r/\)/, Name::Variable, :pop!
+        rule %r/\)/, Name::Function, :pop!
         mixin :shell
       end
 

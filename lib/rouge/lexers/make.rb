@@ -37,6 +37,10 @@ module Rouge
 
         rule %r/#.*?\n/, Comment
 
+        rule %r/([-s]?include)((?:[\t ]+[^\t\n #]+)+)/ do
+          groups Keyword, Literal::String::Other
+        end
+
         rule %r/(export)([\t ]+)(?=[a-zA-Z0-9_\${}()\t -]+\n)/ do
           groups Keyword, Text
           push :export

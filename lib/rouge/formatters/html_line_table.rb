@@ -37,7 +37,9 @@ module Rouge
         token_lines(tokens) do |line_tokens|
           lineno += 1
           buffer << %(<tr id="#{sprintf @line_id, lineno}" class="#@line_class">)
-          buffer << %(<td class="#@gutter_class gl">)
+          buffer << %(<td class="#@gutter_class gl" )
+          buffer << %(style="-moz-user-select: none;-ms-user-select: none;)
+          buffer << %(-webkit-user-select: none;user-select: none;">)
           buffer << %(<pre>#{lineno}</pre></td>)
           buffer << %(<td class="#@code_class"><pre>)
           @formatter.stream(line_tokens) { |formatted| buffer << formatted }

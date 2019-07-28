@@ -2,11 +2,7 @@ namespace :generate do
   desc "Generate a cache of lexers"
   task :cache do
     require "json"
-    require "rouge/util"
-    require "rouge/token"
-    require "rouge/lexer"
-    require "rouge/regex_lexer"
-    require "rouge/template_lexer"
+    require "rouge"
 
     builder = Rouge::Tasks::ProxyBuilder.new
 

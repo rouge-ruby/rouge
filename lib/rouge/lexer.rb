@@ -538,14 +538,17 @@ module Rouge
                                h["mimetypes"] || [])
         @_loaded_proxies[proxy.name] = proxy
         registry[proxy.tag] = proxy
-        proxy.aliases.each { |a| registry[a] = proxy } unless proxy.aliases.nil?
+        proxy.aliases.each { |a| registry[a] = proxy }
       end
 
       Rouge::Lexer.load_registry registry
     end
 
     def self.const_missing(name)
-      raise NameError unless (proxy = @_loaded_proxies[name.to_s])
+      unless (proxy = @_loaded_proxies[name.to_s])
+        raise NameError, 'uninitialized constant #{name}'
+      end
+
       load_lexer proxy.path
       Lexers.const_get name
     end

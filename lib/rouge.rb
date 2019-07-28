@@ -47,6 +47,10 @@ def lexer_dir(path = '')
   File.join(__dir__, 'rouge', 'lexers', path)
 end
 
+def cache_file(path)
+  File.join(__dir__, '..', 'cache', path)
+end
+
 load_relative 'rouge/version'
 load_relative 'rouge/util'
 load_relative 'rouge/text_analyzer'
@@ -56,7 +60,7 @@ load_relative 'rouge/lexer'
 load_relative 'rouge/regex_lexer'
 load_relative 'rouge/template_lexer'
 
-Rouge::Lexers.load_proxies 'cache/proxies.json' unless Rouge.load_all?
+Rouge::Lexers.load_proxies cache_file('proxies.json') unless Rouge.load_all?
 
 load_relative 'rouge/guesser'
 load_relative 'rouge/guessers/util'

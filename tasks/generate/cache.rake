@@ -26,33 +26,32 @@ namespace :generate do
                    "mimetypes" => lexer.mimetypes }
     end
 
-    File.write("cache/proxies.json", JSON.generate(proxies) + "\n")
+    File.write(cache_file("proxies.json"), JSON.generate(proxies) + "\n")
   end
 end
 
 module Rouge
   module Tasks
     class ProxyBuilder
-      attr_accessor :source_files
-      attr_accessor :lexer_classes
+      attr_accessor :lexer_classes, :source_files
 
       def initialize()
-        @source_files = Array.new
-        @lexer_classes = Hash.new
+        @lexer_classes = {}
+        @source_files = []
 
         builder = self
 
-        ::Rouge::Lexer.define_singleton_method(:inherited) do |subclass|
+        Rouge::Lexer.define_singleton_method(:inherited) do |subclass|
           builder.lexer_classes[subclass] = builder.source_files.last
         end
 
-        ::Rouge::Lexers.singleton_class.send(:alias_method,
+        Rouge::Lexers.singleton_class.send(:alias_method,
                                              :load_lexer_original,
                                              :load_lexer)
 
-        ::Rouge::Lexers.define_singleton_method(:load_lexer) do |relpath|
+        Rouge::Lexers.define_singleton_method(:load_lexer) do |relpath|
           builder.source_files.push relpath
-          ::Rouge::Lexers.load_lexer_original relpath
+          Rouge::Lexers.load_lexer_original relpath
           builder.source_files.pop
         end
       end

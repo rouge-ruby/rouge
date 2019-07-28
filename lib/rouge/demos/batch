@@ -1,0 +1,4 @@
+@echo off
+setlocal enableextensions enabledelayedexpansion
+set result=10
+echo hello

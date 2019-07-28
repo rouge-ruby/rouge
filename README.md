@@ -106,7 +106,10 @@ The built-in formatters are:
   designed for Pygments.
 
 * `Rouge::Formatters::HTMLTable.new(formatter, opts={})` will output an HTML
-  table containing numbered lines. Options are:
+  table containing numbered lines similar to `Rouge::Formatters::HTMLLineTable`,
+  except that the table from this formatter has just a single table-row.
+  Therefore, while the table is more DOM-friendly for JavaScript scripting, long
+  code lines will mess with the column alignment. Options are:
     * `start_line: 1` - the number of the first line
     * `line_format: '%i'` - a `sprintf` template for the line number itself
     * `table_class: 'rouge-table'` - a CSS class for the table

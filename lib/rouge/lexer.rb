@@ -511,9 +511,10 @@ module Rouge
   module Lexers
     ProxyLexer = Struct.new(:path, :name, :tag, :aliases, :filenames, :mimetypes) do
       def method_missing(name, *args, &blk)
-        Lexers.load_lexer self.path
-        lexer = Lexers.const_get self.name
-        lexer.send(name, *args, &blk)
+        unless Lexers.const_defined? self.name, false
+          Lexers.load_lexer self.path
+        end
+        Lexers.const_get(self.name).send(name, *args, &blk)
       end
     end
 

@@ -46,8 +46,8 @@ module Rouge
         end
 
         Rouge::Lexers.singleton_class.send(:alias_method,
-                                             :load_lexer_original,
-                                             :load_lexer)
+                                           :load_lexer_original,
+                                           :load_lexer)
 
         Rouge::Lexers.define_singleton_method(:load_lexer) do |relpath|
           builder.source_files.push relpath

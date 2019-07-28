@@ -14,11 +14,12 @@ module Rouge
       mimetypes 'text/x-cython', 'application/x-cython'
 
       def self.keywords
-        @keywords ||= super + Set.new(%w(
+        @keywords ||= super + Array.new(%w(
           by ctypedef except? fused gil nogil 
         ))
       end
 
+      dotted_identifier = /[a-z_.][a-z0-9_.]*/i
       prepend :root do
         rule %r/(cimport)(\s+)(#{dotted_identifier})/ do
           groups Keyword::Namespace, Text, Name::Namespace
@@ -32,9 +33,13 @@ module Rouge
                  Keyword::Namespace
         end
 
-        rule %r/(cp?def)((?:\s|\\\s)+)/ do
+        rule %r/(cp?def)(\s+)/ do
           groups Keyword, Text
           push :cdef
+        end
+
+        rule %r/(cdef)(:)/ do
+          groups Keyword, Punctuation
         end
 
         rule %r/(struct)((?:\s|\\\s)+)/ do
@@ -55,10 +60,7 @@ module Rouge
         end
         rule %r/from\b/, Keyword, :pop!
         rule %r/as\b/, Keyword
-        rule %r/:/, Punctuation, :pop!
-        rule %r/(?=["\'])/, Text, :pop!
-        rule %r/[a-zA-Z_]\w*/, Keyword::Type
-        rule %r/./, Text
+        mixin :root
       end
 
     end

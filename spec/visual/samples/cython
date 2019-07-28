@@ -1,144 +1,46 @@
-def lex(code, lexer):
-    """
-    Lex ``code`` with ``lexer`` and return an iterable of tokens.
-    """
-    try:
-        return lexer.get_tokens(code)
-    except TypeError, err:
-        if isinstance(err.args[0], str) and \
-           'unbound method get_tokens' in err.args[0]:
-            raise TypeError('lex() argument must be a lexer instance, '
-                            'not a class')
-        raise
+# File from https://cython.readthedocs.io/en/latest/src/userguide/memoryviews.html
 
-# quotes in strings
-def foo():
-    "it's working"
+from cython.view cimport array as cvarray
+import numpy as np
 
-def foo():
-    'he said "hi"'
+# Memoryview on a NumPy array
+narr = np.arange(27, dtype=np.dtype("i")).reshape((3, 3, 3))
+cdef int [:, :, :] narr_view = narr
 
-def foo():
-    """it's working"""
-    """he said "hi" """
+# Memoryview on a C array
+cdef int carr[3][3][3]
+cdef int [:, :, :] carr_view = carr
 
-def foo():
-    '''he said "hi"'''
-    '''it's working'''
+# Memoryview on a Cython array
+cyarr = cvarray(shape=(3, 3, 3), itemsize=sizeof(int), format="i")
+cdef int [:, :, :] cyarr_view = cyarr
 
-# unicode docstrings
-def foo():
-    ur"""unicode-raw"""
+# Show the sum of all the arrays before altering it
+print("NumPy sum of the NumPy array before assignments: %s" % narr.sum())
 
-def bar():
-    u"""unicode"""
+# We can copy the values from one memoryview into another using a single
+# statement, by either indexing with ... or (NumPy-style) with a colon.
+carr_view[...] = narr_view
+cyarr_view[:] = narr_view
+# NumPy-style syntax for assigning a single value to all elements.
+narr_view[:, :, :] = 3
 
-def baz():
-    r'raw'
+# Just to distinguish the arrays
+carr_view[0, 0, 0] = 100
+cyarr_view[0, 0, 0] = 1000
 
-def zap():
-    """docstring"""
+# Assigning into the memoryview on the NumPy array alters the latter
+print("NumPy sum of NumPy array after assignments: %s" % narr.sum())
 
-# escaped characters in string literals
-def baz():
-    '\a\b\f\n\r\t\v\"\''
-    '\N{DEGREE SIGN}'
-    '\uaF09'
-    '\UaaaaAF09'
-    '\xaf\xAF\x09'
-    '\007'
-
-# escaped characters in raw strings
-def baz():
-    r'\a\b\f\n\r\t\v\"\''
-    r'\N{DEGREE SIGN}'
-    r'\uaF09'
-    r'\UaaaaAF09'
-    r'\xaf\xAF\x09'
-    r'\007'
-
-# line continuations
-apple.filter(x, y)
-apple.\
-    filter(x, y)
-
-1 \
-    . \
-    __str__
-
-from os import path
-from \
-        os \
-        import \
-        path
-
-import os.path as something
-
-import \
-        os.path \
-        as \
-        something
-
-class \
- Spam:
-    pass
-
-class Spam: pass
-
-class Spam(object):
-    pass
-
-class \
- Spam \
-  (
-   object
- ) \
- :
- pass
-
-
-def \
- spam \
-  ( \
-  ) \
-  : \
-  pass
-
-def the_word_strand():
-    a = b.strip()
-    a = strand
-    b = band
-    c = strand
-    b = error
-    c = stror
-    c = string
-
-py2_long = -123L
-
-# Python 3
-
-def test():
-    raise Exception from foo
-
-def exceptions():
-    try:
-        print("Hello")
-    except Exception as e:
-        print("Exception")
-
-# PEP 515
-integer_literals = [
-    123, -1_2_0, 0, 00, 0_0_00, 0b1, 0B1_0, 0b_1, 0b00_0,
-    0o1, 0O1_2, 0O_1, 0o00_0, 0x1, 0X1_2, 0x_1, 0x00_0
-]
-float_literals = [
-    0., 1., 00., 0_00., 1_0_0., 0_1., .0,
-    .1_2, 3.4_5, 1_2.3_4, 00_0.0_0_0, 0_0.1_2,
-    0_1_2j, 0_00J, 1.2J, 0.1j, 1_0.J,
-    0_00E+2_34_5, 0.e+1, 00_1.E-0_2, -100.e+20, 1e01,
-    0_00E+2_34_5j, 0.e+1J, 00_1.E-0_2j, -100.e+20J 1e01j
-]
-
-# PEP 465
-a = b @ c
-x @= y
+# A function using a memoryview does not usually need the GIL
+cpdef int sum3d(int[:, :, :] arr) nogil:
+    cdef size_t i, j, k, I, J, K
+    cdef int total = 0
+    I = arr.shape[0]
+    J = arr.shape[1]
+    K = arr.shape[2]
+    for i in range(I):
+        for j in range(J):
+            for k in range(K):
+                total += arr[i, j, k]
+    return total

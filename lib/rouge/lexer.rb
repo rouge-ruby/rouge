@@ -4,6 +4,7 @@
 # stdlib
 require 'strscan'
 require 'cgi'
+require 'json'
 require 'set'
 
 module Rouge
@@ -15,10 +16,6 @@ module Rouge
     @option_docs = {}
 
     class << self
-      def inherited(subclass)
-        Lexers.add_lexer(subclass)
-      end
-
       def load_registry(r)
         @registry = r
       end
@@ -43,10 +40,7 @@ module Rouge
       # @param [String] name
       # @return [Class<Rouge::Lexer>,nil]
       def find(name)
-        res = registry[name.to_s]
-        return nil if res.nil?
-        return res unless res.is_a? Lexers::ProxyLexer
-        return Object.const_get("Rouge::Lexers::" + res.name.to_s)
+        registry[name.to_s]
       end
 
       # Find a lexer, with fancy shiny features.
@@ -140,16 +134,7 @@ module Rouge
 
       # @return a list of all lexers.
       def all
-        return @all if defined? @all
-        vals = registry.values.uniq
-        @all = vals.map do |v|
-          unless v.is_a? Lexers::ProxyLexer
-            v
-          else
-            # Object.const_get("Rouge::Lexers::" + v.name.to_s)
-            Lexers.const_missing v.name
-          end
-        end
+        @all ||= registry.values.uniq
       end
 
       # Guess which lexer to use based on a hash of info.
@@ -524,36 +509,34 @@ module Rouge
   end
 
   module Lexers
-    ProxyLexer = Struct.new :path, :name, :tag, :aliases, :filenames, :mimetypes
+    ProxyLexer = Struct.new(:path, :name, :tag, :aliases, :filenames, :mimetypes) do
+      def method_missing(name, *args, &blk)
+        Lexers.load_lexer self.path
+        lexer = Lexers.const_get self.name
+        lexer.send(name, *args, &blk)
+      end
+    end
 
-    @_loaded_files = {}
     @_loaded_lexers = {}
     @_loaded_proxies = {}
-    @_source_files = []
-
-    def self.add_lexer(class_name)
-      return if @_source_files.empty?
-      @_loaded_files[class_name] = @_source_files.last
-    end
 
     def self.load_lexer(relpath)
       return if @_loaded_lexers.key?(relpath)
       @_loaded_lexers[relpath] = true
-      @_source_files.push relpath
       load File.join(__dir__, 'lexers', relpath)
-      @_source_files.pop
     end
 
-    def self.load_proxies(hashes)
-      hashes.each do |h|
-        next if h["tag"].nil?
-        proxy = ProxyLexer.new(h["path"], h["name"].to_sym, h["tag"],
-                               h["filenames"], h["mimetypes"])
-        @_loaded_proxies[proxy.name] = proxy
-      end
-
+    def self.load_proxies(cache_file)
       registry = {}
-      @_loaded_proxies.values.each do |proxy|
+
+      JSON.parse(File.read(cache_file)).each do |h|
+        proxy = ProxyLexer.new(h["path"],
+                               h["name"],
+                               h["tag"],
+                               h["aliases"] || [],
+                               h["filenames"] || [],
+                               h["mimetypes"] || [])
+        @_loaded_proxies[proxy.name] = proxy
         registry[proxy.tag] = proxy
         proxy.aliases.each { |a| registry[a] = proxy } unless proxy.aliases.nil?
       end
@@ -562,9 +545,9 @@ module Rouge
     end
 
     def self.const_missing(name)
-      return super.const_missing(name) unless @_loaded_proxies.key?(name)
-      load_lexer @_loaded_proxies[name].path
-      self.const_get name
+      raise NameError unless (proxy = @_loaded_proxies[name.to_s])
+      load_lexer proxy.path
+      Lexers.const_get name
     end
   end
 end

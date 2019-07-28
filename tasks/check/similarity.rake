@@ -11,7 +11,7 @@ end
 namespace :check do
   desc "Test the similarity with existing lexers"
   task :similarity, [:lang] do |t, args|
-    require "rouge"
+    require "rouge/all"
     require "#{Rake.application.original_dir}/spec/support/similarity.rb"
 
     language = args.lang

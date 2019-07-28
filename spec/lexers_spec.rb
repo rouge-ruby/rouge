@@ -24,7 +24,7 @@ describe Rouge::Lexers do
         end
 
         # Escape is allowed to drop characters from its input
-        next if lexer_class == Rouge::Lexers::Escape
+        next if subject.class == Rouge::Lexers::Escape
 
         if out_buf != sample
           out_file = "tmp/mismatch.#{subject.tag}"

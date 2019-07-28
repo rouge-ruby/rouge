@@ -3,7 +3,7 @@
 
 require 'rubygems'
 require 'bundler/setup'
-require 'rouge/all'
+require 'rouge'
 require 'minitest/spec'
 require 'minitest/autorun'
 require 'minitest/power_assert'

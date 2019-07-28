@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 # stdlib
-require 'json'
 require 'pathname'
 
 # The containing module for Rouge
@@ -57,7 +56,7 @@ load_relative 'rouge/lexer'
 load_relative 'rouge/regex_lexer'
 load_relative 'rouge/template_lexer'
 
-Rouge::Lexers.load_proxies JSON.parse(File.read('cache/proxies.json')) unless Rouge.load_all?
+Rouge::Lexers.load_proxies 'cache/proxies.json' unless Rouge.load_all?
 
 load_relative 'rouge/guesser'
 load_relative 'rouge/guessers/util'

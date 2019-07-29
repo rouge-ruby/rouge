@@ -21,8 +21,8 @@ module Rouge
         @puppet_lexer.reset!
       end
 
-      open  = /<%%|<%=|<%#|(<%-|<%)(\s*?\|)?/
-      close = /%%>|(\|\s*?)?(-%>|%>)/
+      open  = /<%%|<%=|<%#|(<%-|<%)(\s*\|)?/
+      close = /%%>|(\|\s*)?(-%>|%>)/
 
       state :root do
         rule /<%#/, Comment, :comment

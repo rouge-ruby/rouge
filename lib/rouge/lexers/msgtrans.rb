@@ -11,7 +11,7 @@ module Rouge
 
       state :root do
         rule %r/^#[^\n]*/, Comment
-        rule %r/[^\n ,):?\/]+/, Name::Variable
+        rule %r/[^\t\n\r ,):?\/]+/, Name::Variable
         rule %r/[\n\/?]/, Operator
         rule %r/:/, Operator, :value
       end

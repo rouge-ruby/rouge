@@ -8,7 +8,7 @@ module Rouge
       desc "Makefile syntax"
       tag 'make'
       aliases 'makefile', 'mf', 'gnumake', 'bsdmake'
-      filenames '*.make', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile'
+      filenames '*.make', '*.mak', '*.mk', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile'
       mimetypes 'text/x-makefile'
 
       def self.functions

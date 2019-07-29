@@ -64,8 +64,7 @@ module Rouge
         rule %r/:/, Punctuation, :pop!
         rule %r/(?=["\'])/, Text, :pop!
         rule %r/[a-zA-Z_]\w*/, Keyword::Type
-        rule %r/\n+/m, Text
-        rule %r/./, Text
+        rule %r/./m, Text
       end
 
     end

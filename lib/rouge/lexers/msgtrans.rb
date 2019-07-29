@@ -7,7 +7,7 @@ module Rouge
       title "MessageTrans"
       desc "RISC OS message translator messages file"
       tag 'msgtrans'
-      filenames 'Messages*'
+      filenames 'Messages', 'Message[0-9]', 'Message[1-9][0-9]', 'Message[1-9][0-9][0-9]'
 
       state :root do
         rule %r/^#[^\n]*/, Comment

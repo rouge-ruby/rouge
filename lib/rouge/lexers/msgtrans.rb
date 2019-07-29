@@ -19,7 +19,7 @@ module Rouge
       state :value do
         rule %r/\n/, Text, :pop!
         rule %r/%[0-3%]/, Operator
-        rule %r/./, Literal::String
+        rule %r/[^\n%]/, Literal::String
       end
     end
   end

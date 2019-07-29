@@ -47,7 +47,7 @@ module Rouge
 
         rule %r/(?:else|endif)[\t ]*(?=[#\n])/, Keyword
 
-        rule %r/(export)([\t ]+)(?=[a-zA-Z0-9_\${}()\t -]+\n)/ do
+        rule %r/(export)([\t ]+)(?=[\w\${}()\t -]+\n)/ do
           groups Keyword, Text
           push :export
         end
@@ -55,7 +55,7 @@ module Rouge
         rule %r/export[\t ]+/, Keyword
 
         # assignment
-        rule %r/([a-zA-Z0-9_${}().-]+)([\t ]*)([!?:+]?=)/m do |m|
+        rule %r/([\w${}().-]+)([\t ]*)([!?:+]?=)/m do |m|
           token Name::Variable, m[1]
           token Text, m[2]
           token Operator, m[3]

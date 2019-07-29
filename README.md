@@ -136,7 +136,8 @@ The built-in formatters are:
 
 ### CSS Options
 
-* `scope: '.highlight'` sets the CSS selector to which styles are applied, eg.
+* `scope: '.highlight'` sets the CSS selector to which styles are applied,
+  e.g.:
 
   ``` ruby
   Rouge::Themes::MonokaiSublime.render(scope: 'code')

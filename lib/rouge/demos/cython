@@ -1,3 +1,17 @@
+import numpy
+from numpy cimport abs
+
+cdef extern from 'foo.h':
+    int foo_int
+    struct foo_struct:
+        pass
+
+ctypedef int word
+
+cdef struct Foo:
+    pass
+
+
 cpdef fib(int n):    # Cython version
     """Print a Fibonacci series up to n."""
     cdef int a = 0

@@ -37,6 +37,8 @@ print("NumPy sum of NumPy array after assignments: %s" % narr.sum())
 cpdef int sum3d(int[:, :, :] arr) nogil:
     cdef size_t i, j, k, I, J, K
     cdef int total = 0
+    cdef:
+        int I, J, K
     I = arr.shape[0]
     J = arr.shape[1]
     K = arr.shape[2]

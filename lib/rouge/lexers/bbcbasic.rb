@@ -43,7 +43,7 @@ module Rouge
 
       def self.operator
         @operator ||= %w(
-          << <= <> < >= >>> >> > [-!\$()*+\/=?^|] AND DIV EOR MOD NOT OR
+          << <= <> < >= >>> >> > [-!$()*+/=?^|] AND DIV EOR MOD NOT OR
         )
       end
 
@@ -69,7 +69,7 @@ module Rouge
         rule %r/#{BBCBASIC.operator.join('|')}/, Operator
         rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant
         rule %r/"[^"]*"/, Literal::String
-        rule %r/[a-z_`][\w`]*[\$%]?/i, Name::Variable
+        rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
         rule %r/@%/, Name::Variable
         rule %r/[\d.]+/, Literal::Number
         rule %r/%[01]+/, Literal::Number # binary
@@ -105,7 +105,7 @@ module Rouge
         rule %r/#{BBCBASIC.operator.join('|')}/, Operator
         rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant
         rule %r/"[^"]*"/, Literal::String
-        rule %r/[a-z_`][\w`]*[\$%]?/i, Name::Variable
+        rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
         rule %r/@%/, Name::Variable
         rule %r/[\d.]+/, Literal::Number
         rule %r/%[01]+/, Literal::Number # binary

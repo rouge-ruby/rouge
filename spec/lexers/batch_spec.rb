@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-describe Rouge::Lexers::Batch do
-  let(:subject) { Rouge::Lexers::Batch.new }
+describe Rouge::Lexers::Batchfile do
+  let(:subject) { Rouge::Lexers::Batchfile.new }
 
   describe 'guessing' do
     include Support::Guessing

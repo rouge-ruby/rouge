@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    class Batch < RegexLexer
+    class Batchfile < RegexLexer
       title "Batchfile"
       desc "Windows Batch File"
 
@@ -13,147 +13,166 @@ module Rouge
 
       mimetypes 'application/bat', 'application/x-bat', 'application/x-msdos-program'
 
-      KEYWORDS = %w(
-        if else
-        not equ neq lss leq gtr geq
-        exist defined
-        for in do
-        goto call exit
-        errorlevel cmdextversion
-      ).join('|')
+      def self.keywords
+        @keywords ||= %w(
+          if else
+          for in do
+          goto call exit
+        ).join('|')
+      end
 
-      DEVICES = %w(
-        nul aux prn
-        con conin$ conout$
-      ).join('|')
+      def self.operatorswords
+        @operatorswords ||= %w(
+          exist defined
+          errorlevel cmdextversion
+          not
+          equ neq
+          lss leq
+          gtr geq
+        ).join('|')
+      end
 
-      DEVICESNUM = %w(
-        com lpt
-      ).join('|')
+      def self.devices
+        @devices ||= %w(
+          nul aux prn
+          con conin$ conout$
+        ).join('|')
+      end
 
-      INTERNAL = %w(
-        assoc break cd md rd chdir mkdir rmdir
-        cls color copy date del erase dir dpath
-        echo ftype move pause path prompt
-        setlocal endlocal shift start
-        time title type ren rename
-        ver verify vol
-      ).join('|')
+      def self.devicesnum
+        @devicesnum ||= %w(
+          com lpt
+        ).join('|')
+      end
 
-      ATTRIBUTES = %w(
-        on off disable
-        enableextensions enabledelayedexpansion
-      ).join('|')
+      def self.builtincommands
+        @builtincommands ||= %w(
+          assoc attrib break bcdedit cacls
+          cd chcp chdir chkdsk chkntfs choice cls cmd color
+          comp compact convert copy
+          date del dir dir diskpart doskey dpath driverquery
+          echo endlocal erase
+          fc find findstr format fsutil ftype
+          gpresult graftabl help
+          icacls label md mkdir mklink mode more move
+          openfiles path pause popd print prompt pushd
+          rd recover ren rename replace rmdir robocopy
+          setlocal sc schtasks shift shutdown
+          sort start subst systeminfo takeown
+          tasklist taskkill time timeout title tree type
+          ver verify vol xcopy waitfor wmic
+        ).join('|')
+      end
 
-      EXTERNAL = %w(
-        addusers admodcmd ansicon arp at attrib
-        bcdboot bcdedit bitsadmin browstat
-        cacls certreq certutil
-        change chcp chkdsk chkntfs choice
-        cidiag cipher cleanmgr clip cmd cmdkey
-        comp compact compress convert convertcp coreinfo csccmd csvde
-        cscript curl
-        debug defrag delprof deltree devcon diamond dirquota diruse
-        diskpart diskshadow diskuse dism dnscmd doskey driverquery
-        dsacls dsadd dsget dsquery dsmod dsmove dsrm dsmgmt dsregcmd
-        edlin eventcreate expand extract
-        fc fdisk find findstr fltmc forfiles format freedisk fsutil ftp
-        getmac gpresult gpupdate help hostname
-        icacls ifmember inuse ipconfig kill
-        label lgpo lodctr logman logoff logtime
-        makecab mapisend mbsacli mem
-        mklink mode more mountvol moveuser msg mshta msiexec msinfo32 mstsc
-        nbtstat net net1 netdom netsh netstat nlsinfo nltest now nslookup
-        ntbackup ntdsutil ntoskrnl ntrights nvspbind
-        openfiles
-        pathping perms ping popd portqry powercfg pngout
-        pnputil print printbrm prncnfg prnmngr procdump
-        psexec psfile psgetsid psinfo pskill pslist
-        psloggedon psloglist pspasswd psping
-        psservice psshutdown pssuspend
-        qbasic qgrep qprocess query quser qwinsta
-        rasdial recover reg reg1 regdump regedt32
-        regsvr32 regini replace reset restore
-        rundll32 rmtshare robocopy route rpcping run runas
-        sc scandisk schtasks setspn setx sfc
-        share shellrunas shortcut shutdown
-        sigcheck sleep slmgr sort strings subinacl
-        subst sysmon systeminfo
-        takeown taskkill tasklist telnet tftp
-        timeout tlist touch tracerpt tracert tree tscon
-        tsdiscon tskill tttracer typeperf tzutil
-        undelete unformat
-        verifier vmconnect vssadmin
-        w32tm waitfor wbadmin wecutil wevtutil wget
-        where whoami windiff winrm winrs wmic wpeutil wpr wusa wuauclt
-        wscript
-        xcopy
-      ).join('|')
+      def self.othercommands
+        @othercommands ||= %w(
+          addusers admodcmd ansicon arp at
+          bcdboot bitsadmin browstat
+          certreq certutil change
+          cidiag cipher cleanmgr clip cmdkey
+          compress convertcp coreinfo csccmd csvde
+          cscript curl debug defrag delprof
+          deltree devcon diamond dirquota diruse
+          diskshadow diskuse dism dnscmd dsacls
+          dsadd dsget dsquery dsmod dsmove dsrm dsmgmt
+          dsregcmd edlin eventcreate expand extract
+          fdisk fltmc forfiles freedisk ftp getmac
+          gpupdate hostname ifmember inuse ipconfig kill
+          lgpo lodctr logman logoff logtime makecab mapisend
+          mbsacli mem mountvol moveuser msg mshta msiexec
+          msinfo32 mstsc nbtstat net net1 netdom netsh netstat
+          nlsinfo nltest now nslookup ntbackup ntdsutil ntoskrnl
+          ntrights nvspbind pathping perms ping portqry powercfg
+          pngout pnputil printbrm prncnfg prnmngr procdump
+          psexec psfile psgetsid psinfo pskill pslist
+          psloggedon psloglist pspasswd psping psservice
+          psshutdown pssuspend qbasic qgrep qprocess query
+          quser qwinsta rasdial reg reg1 regdump regedt32
+          regsvr32 regini reset restore rundll32
+          rmtshare route rpcping run runas scandisk setspn
+          setx sfc share shellrunas shortcut sigcheck
+          sleep slmgr strings subinacl sysmon
+          telnet tftp tlist touch tracerpt tracert tscon
+          tsdiscon tskill tttracer typeperf tzutil
+          undelete unformat verifier vmconnect vssadmin
+          w32tm wbadmin wecutil wevtutil wget
+          where whoami windiff winrm winrs wpeutil wpr wusa wuauclt
+          wscript
+        ).join('|')
+      end
+
+      def self.attributes
+        @attributes ||= %w(
+          on off disable
+          enableextensions enabledelayedexpansion
+        ).join('|')
+      end
 
       state :basic do
         # Comments
-        rule %r/\b(REM)\b.*$/i, Comment
+        rule %r/\brem\b.*$/i, Comment
         # Empty Labels
         rule %r/^::.*$/, Comment
 
         # Labels
-        rule %r/:[a-z]+/i, Keyword::Constant
+        rule %r/:[a-z]+/i, Name::Label
 
         # Devices
-        rule %r/@?\b(#{DEVICES})\s*\b/i, Keyword::Reserved
-        rule %r/@?\b(#{DEVICESNUM}[0-9])\s*\b/i, Keyword::Reserved
+        rule %r/\b(#{Batchfile.devices})\b/i, Keyword::Reserved
+        rule %r/\b(#{Batchfile.devicesnum}[0-9])\b/i, Keyword::Reserved
 
         # Lang Keywords
-        rule %r/@?\b(#{KEYWORDS})\s*\b/i, Name::Builtin::Pseudo
-        # Internal Commands
-        rule %r/@?\b(#{INTERNAL})\s*\b/i, Name::Builtin::Pseudo
-        # External Commands
-        rule %r/\b(#{EXTERNAL})(\.exe|\.com)?\s*\b/i, Name::Builtin::Pseudo
+        rule %r/\b(#{Batchfile.keywords})\b/i, Keyword
+        rule %r/\b(#{Batchfile.operatorswords})\b/i, Operator::Word
+        # Builtin Commands
+        rule %r/@?\b(#{Batchfile.builtincommands})\b/i, Keyword
+        # Other Commands
+        rule %r/@?\b(#{Batchfile.othercommands})\b/i, Keyword
+        # Generic Executable
+        rule %r/[a-z_0-9]*\.(exe|com|bat|cmd|msi)/i, Keyword
 
         # Arguments to commands
-        rule %r/\b(#{ATTRIBUTES})\s*\b/i, Name::Attribute
-        rule %r/([\/\-+][A-Z]+)\s*/i, Name::Attribute
+        rule %r/\b#{Batchfile.attributes}\b/i, Name::Attribute
+        rule %r/([\/\-+][a-z]+)\s*/i, Name::Attribute
 
         # Variable Expansions
-        rule %r/[\%!]+([a-z_$@#]+)[\%!]+/i, Name::Variable
+        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
         # For Variables
-        rule %r/(\%+~?[A-Z]+\d?)/i, Keyword::Constant
+        rule %r/(\%+~?[a-z]+\d?)/i, Name::Constant
 
-        rule %r/\b(set)\b/i, Keyword::Declaration
+        rule %r/\bset\b/i, Keyword::Declaration
 
         # Operators
-        rule %r/[%!()=<>&|~$*@]/, Operator
+        rule %r/[&|()\[\]{}\^=;+\-,~?*]/, Operator
 
-      end
-
-      state :single_quotes do
-        rule %r/[']/, Str::Single, :pop!
-        rule %r/[^']+/, Text
       end
 
       state :double_quotes do
         rule %r/["]/, Str::Double, :pop!
-        rule %r/[^"]+/, Text
+        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
+        rule %r/[^"\%\!]+/, Text
+      end
+
+      state :single_quotes do
+        rule %r/[']/, Str::Single, :pop!
+        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
+        rule %r/[^'\%\!]+/, Text
       end
 
       state :backtick do
         rule %r/[`]/, Str::Backtick, :pop!
-        rule %r/[^`]+/, Text
+        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
+        rule %r/[^`\%\!]+/, Text
       end
 
       state :data do
         rule %r/\s+/, Text
-        rule %r/\^/, Str::Escape
-        rule %r/[']/, Str::Single, :single_quotes
+        rule %r/0x[0-9a-f]+/i, Literal::Number::Hex
+        rule %r/[0-9]/, Literal::Number
         rule %r/["]/, Str::Double, :double_quotes
+        rule %r/[']/, Str::Single, :single_quotes
         rule %r/[`]/, Str::Backtick, :backtick
-        rule %r/[^=\!\%\*\s()$"'`;\\]+/, Text
-      end
-
-      state :paren_inner do
-        rule %r/\(/, Operator, :push
-        rule %r/\)/, Operator, :pop!
-        mixin :root
+        rule %r/[^\s&|()\[\]{}\^=;!%+\-,"'`~?*]+/, Text
       end
 
       state :root do

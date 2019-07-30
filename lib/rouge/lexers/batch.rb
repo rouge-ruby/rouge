@@ -105,7 +105,7 @@ module Rouge
         # Variable Expansions
         rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
         # For Variables
-        rule %r/(\%+~?[a-z]+\d?)/i, Name::Constant
+        rule %r/(\%+~?[a-z]+\d?)/i, Name::Builtin
 
         rule %r/\bset\b/i, Keyword::Declaration
 
@@ -117,19 +117,19 @@ module Rouge
       state :double_quotes do
         rule %r/["]/, Str::Double, :pop!
         rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
-        rule %r/[^"\%\!]+/, Text
+        rule %r/[^"\%\!]+/, Str::Double
       end
 
       state :single_quotes do
         rule %r/[']/, Str::Single, :pop!
         rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
-        rule %r/[^'\%\!]+/, Text
+        rule %r/[^'\%\!]+/, Str::Single
       end
 
       state :backtick do
         rule %r/[`]/, Str::Backtick, :pop!
         rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
-        rule %r/[^`\%\!]+/, Text
+        rule %r/[^`\%\!]+/, Str::Backtick
       end
 
       state :data do

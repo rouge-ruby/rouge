@@ -68,7 +68,7 @@ module Rouge
         rule %r/(in|and|or)\b/, Operator::Word
         rule %r/[=!<>]=/, Operator
         rule %r/[=!]~/, Operator, :regex_allowed
-        rule %r([=<>!+*/-]), Operator
+        rule %r([.|=<>!+*/-]), Operator
 
         rule %r/(class|include)(\s*)(#{qualname})/ do
           groups Keyword, Text, Name::Class

@@ -1,3 +1,7 @@
+#ifndef Version
+    #include "Version.h"
+#endif
+
 ; it shouldn't have any problem with apostrophes in comments
 ; or "quotation marks" or more ;s
 

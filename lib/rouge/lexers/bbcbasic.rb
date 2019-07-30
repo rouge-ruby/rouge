@@ -72,7 +72,7 @@ module Rouge
         rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
         rule %r/@%/, Name::Variable
         rule %r/[\d.]+/, Literal::Number
-        rule %r/%[01]+/, Literal::Number # binary
+        rule %r/%[01]+/, Literal::Number::Bin
         rule %r/&[\h]+/, Literal::Number::Hex
       end
 
@@ -108,7 +108,7 @@ module Rouge
         rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
         rule %r/@%/, Name::Variable
         rule %r/[\d.]+/, Literal::Number
-        rule %r/%[01]+/, Literal::Number # binary
+        rule %r/%[01]+/, Literal::Number::Bin
         rule %r/&[\h]+/, Literal::Number::Hex
         rule %r/[!#,@\[\]^{}]/, Punctuation
       end

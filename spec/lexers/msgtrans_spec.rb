@@ -8,7 +8,10 @@ describe Rouge::Lexers::MsgTrans do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'Messages*'
+      assert_guess :filename => 'Messages'
+      assert_guess :filename => 'Message0'
+      assert_guess :filename => 'Message12'
+      assert_guess :filename => 'Message123'
     end
   end
 end

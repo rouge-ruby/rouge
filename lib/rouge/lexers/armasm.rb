@@ -60,7 +60,9 @@ module Rouge
 
       state :root do
         rule %r/\n/, Text
-        rule %r/^[ \t]*#[ \t]*(?:(?:#{ArmAsm.preproc_keyword.join('|')})(?:[ \t].*)?)?\n/, Comment::Preproc
+        rule %r/^([ \t]*)(#[ \t]*(?:(?:#{ArmAsm.preproc_keyword.join('|')})(?:[ \t].*)?)?)(\n)/ do
+          groups Text, Comment::Preproc, Text
+        end
         rule %r/[ \t]+/, Text, :command
         rule %r/;.*/, Comment
         rule %r/\$[a-z_]\w*\.?/i, Name::Namespace # variable substitution or macro argument

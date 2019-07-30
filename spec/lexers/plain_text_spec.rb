@@ -10,6 +10,7 @@ describe Rouge::Lexers::PlainText do
     it 'guesses by filename' do
       assert_guess :filename => 'foo'
       assert_guess :filename => 'foo.txt'
+      assert_guess :filename => 'Messages', :source => 'foo'
     end
 
     it 'guesses by mimetype' do

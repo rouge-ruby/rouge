@@ -69,7 +69,6 @@ module Rouge
         rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 
         rule %r/(?:(?:[[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*)|[.]/ do |m|
-        # rule %r/[a-zA-Z.]([a-zA-Z0-9_][\w.]*)?/ do |m|
           if KEYWORDS.include? m[0]
             token Keyword
           elsif KEYWORD_CONSTANTS.include? m[0]

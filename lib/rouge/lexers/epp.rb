@@ -25,24 +25,24 @@ module Rouge
       close = /%%>|(\|\s*)?(-%>|%>)/
 
       state :root do
-        rule /<%#/, Comment, :comment
+        rule %r/<%#/, Comment, :comment
 
         rule open, Comment::Preproc, :puppet
 
-        rule /.+?(?=#{open})|.+/m do
+        rule %r/.+?(?=#{open})|.+/m do
           delegate parent
         end
       end
 
       state :comment do
         rule close, Comment, :pop!
-        rule /.+?(?=#{close})|.+/m, Comment
+        rule %r/.+?(?=#{close})|.+/m, Comment
       end
 
       state :puppet do
         rule close, Comment::Preproc, :pop!
 
-        rule /.+?(?=#{close})|.+/m do
+        rule %r/.+?(?=#{close})|.+/m do
           delegate @puppet_lexer
         end
       end

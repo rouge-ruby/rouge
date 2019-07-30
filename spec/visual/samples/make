@@ -55,3 +55,60 @@ commands_switch:	all platform
 
 frameworkaltinstallunixtools:
 	cd Mac && $(MAKE) altinstallunixtools DESTDIR="$(DESTDIR)"
+
+include SubMake.make # Insert lines from another file (which must exist)
+-include Maybe.make  # Next 2 similar, but not an error if they doon't exist
+sinclude DynamicDependencies.make
+
+# Function expansions (including $(shell)) can occur anywhere
+$(shell echo VARIABLE) := $(shell echo value)
+
+$(shell echo $(TARGET1)) $(TARGET2) target3: \
+	$(shell echo $(DEPENDENCY1)) $(DEPENDENCY2) dependency3
+	touch $(shell echo target{1..3})
+	@echo $(shell echo 1)
+	@echo $(shell echo 2 )
+	@echo ${shell echo 3}
+	@echo ${shell echo 4 }
+
+# Many other built-in functions exist
+OBJECT_GOALS = $(filter %.o,${MAKECMDGOALS})
+
+# User-defined functions can be used via $(call)
+reverse = $(2) $(1)
+foo = $(call reverse,a,b) # foo contains 'b a'
+
+# Substitution references can be used when expanding variables
+SOURCE = $(OBJECT:.o=.c)
+
+# Alternative syntax for substitution references
+foo = input1.txt
+bar = $(foo:input%.txt=output%.bin) # set to 'output1.bin'
+
+# Conditionals
+ifdef THING
+THING2 = $(THING)
+else
+THING2 = default
+endif
+
+ifeq ($(TARGET),special) # syntax variant: parentheses and separating comma
+TARGET = something_else
+else
+	ifneq '$(TARGET)' "don't" # syntax variant: either argument can be single or double quoted
+TARGET = be_silly
+	endif # and can be indented, even with tabs (so long as not in a recipe)
+endif
+
+count:
+	echo one
+	echo two
+ifndef QUIET # conditionals can happen within recipes
+	echo miss a few
+endif
+	echo one hundred
+
+# Dollars must be escaped if a literal one is required
+
+print_path:
+	echo $$PATH

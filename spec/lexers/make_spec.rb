@@ -9,6 +9,9 @@ describe Rouge::Lexers::Make do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.make'
+      assert_guess :filename => 'bar.mak'
+      assert_guess :filename => 'baz.mk'
+      assert_guess :filename => 'Make,fe1'
       assert_guess :filename => 'Makefile'
       assert_guess :filename => 'makefile'
       assert_guess :filename => 'Makefile.in'

@@ -8,8 +8,17 @@ module Rouge
       desc "Makefile syntax"
       tag 'make'
       aliases 'makefile', 'mf', 'gnumake', 'bsdmake'
-      filenames '*.make', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile'
+      filenames '*.make', '*.mak', '*.mk', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile', '*,fe1'
       mimetypes 'text/x-makefile'
+
+      def self.functions
+        @functions ||= %w(
+          abspath addprefix addsuffix and basename call dir error eval file
+          filter filter-out findstring firstword flavor foreach if join lastword
+          notdir or origin patsubst realpath shell sort strip subst suffix value
+          warning wildcard word wordlist words
+        )
+      end
 
       # TODO: Add support for special keywords
       # bsd_special = %w(
@@ -28,15 +37,25 @@ module Rouge
 
         rule %r/#.*?\n/, Comment
 
-        rule %r/(export)(\s+)(?=[a-zA-Z0-9_\${}\t -]+\n)/ do
+        rule %r/([-s]?include)((?:[\t ]+[^\t\n #]+)+)/ do
+          groups Keyword, Literal::String::Other
+        end
+
+        rule %r/(ifn?def|ifn?eq)([\t ]+)([^#\n]+)/ do
+          groups Keyword, Text, Name::Variable
+        end
+
+        rule %r/(?:else|endif)[\t ]*(?=[#\n])/, Keyword
+
+        rule %r/(export)([\t ]+)(?=[\w\${}()\t -]+\n)/ do
           groups Keyword, Text
           push :export
         end
 
-        rule %r/export\s+/, Keyword
+        rule %r/export[\t ]+/, Keyword
 
         # assignment
-        rule %r/([a-zA-Z0-9_${}.-]+)(\s*)([!?:+]?=)/m do |m|
+        rule %r/([\w${}().-]+)([\t ]*)([!?:+]?=)/m do |m|
           token Name::Variable, m[1]
           token Text, m[2]
           token Operator, m[3]
@@ -52,9 +71,9 @@ module Rouge
       end
 
       state :export do
-        rule %r/[\w\${}-]/, Name::Variable
+        rule %r/[\w\${}()-]/, Name::Variable
         rule %r/\n/, Text, :pop!
-        rule %r/\s+/, Text
+        rule %r/[\t ]+/, Text
       end
 
       state :block_header do
@@ -70,6 +89,14 @@ module Rouge
       end
 
       state :block_body do
+        rule %r/(ifn?def|ifn?eq)([\t ]+)([^#\n]+)(#.*)?(\n)/ do
+          groups Keyword, Text, Name::Variable, Comment, Text
+        end
+
+        rule %r/(else|endif)([\t ]*)(#.*)?(\n)/ do
+          groups Keyword, Text, Comment, Text
+        end
+
         rule %r/(\t[\t ]*)([@-]?)/ do
           groups Text, Punctuation
           push :shell_line
@@ -80,22 +107,22 @@ module Rouge
 
       state :shell do
         # macro interpolation
-        rule %r/\$\(\s*[a-z_]\w*\s*\)/i, Name::Variable
-        # $(shell ...)
-        rule %r/(\$\()(\s*)(shell)(\s+)/m do
+        rule %r/\$[({][\t ]*\w[\w:=%.]*[\t ]*[)}]/i, Name::Variable
+        # function invocation
+        rule %r/(\$[({])([\t ]*)(#{Make.functions.join('|')})([\t ]+)/m do
           groups Name::Function, Text, Name::Builtin, Text
           push :shell_expr
         end
 
         rule(/\\./m) { delegate @shell }
-        stop = /\$\(|\(|\)|\\|$/
+        stop = /\$\(|\$\{|\(|\)|\}|\\|$/
         rule(/.+?(?=#{stop})/m) { delegate @shell }
         rule(stop) { delegate @shell }
       end
 
       state :shell_expr do
-        rule(/\(/) { delegate @shell; push }
-        rule %r/\)/, Name::Variable, :pop!
+        rule(/[({]/) { delegate @shell; push }
+        rule %r/[)}]/, Name::Function, :pop!
         mixin :shell
       end
 

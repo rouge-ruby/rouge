@@ -11,9 +11,9 @@ module Rouge
       filenames '*.epp'
 
       def initialize(opts={})
-        @puppet_lexer = Puppet.new(opts)
-
         super(opts)
+        @parent = lexer_option(:parent) { PlainText.new(opts) }
+        @puppet_lexer = Puppet.new(opts)
       end
 
       start do

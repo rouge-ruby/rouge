@@ -60,8 +60,7 @@ module Rouge
         rule %r/%[^%]*?%/, Operator
 
         rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
-        rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/,
-          Num
+        rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/, Num
 
         # Only recognize built-in functions when they are actually used as a
         # function call, i.e. followed by an opening parenthesis.
@@ -69,7 +68,7 @@ module Rouge
         # highlighted specifically; thus use `Name::Function`.
         rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 
-        rule %r/[a-zA-Z.]([a-zA-Z_][\w.]*)?/ do |m|
+        rule %r/(?:(?:[[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*)|[.]/ do |m|
           if KEYWORDS.include? m[0]
             token Keyword
           elsif KEYWORD_CONSTANTS.include? m[0]

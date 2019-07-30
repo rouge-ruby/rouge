@@ -39,8 +39,8 @@ title-string:		SDIODriver
 help-string:		SDIODriver Module_MajorVersion_CMHG Module_MinorVersion_CMHG
 
 command-keyword-table:	module_command
-			SDIODevices(min-args:0, max-args:0, international:, invalid-syntax:"SSDIDEV", help-text:"HSDIDEV"),
-			SDIOSlots(min-args:0, max-args:0, international:, invalid-syntax:"SSDISLT", help-text:"HSDISLT")
+			SDIODevices(min-args:0, max-args:1, international:, invalid-syntax:"SSDIDEV", help-text:"HSDIDEV"),
+			SDIOSlots(min-args:0, max-args:255, international:, invalid-syntax:"SSDISLT", help-text:"HSDISLT")
 
 swi-chunk-base-number:	0x59000
 

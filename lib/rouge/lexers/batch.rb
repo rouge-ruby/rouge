@@ -34,14 +34,9 @@ module Rouge
 
       def self.devices
         @devices ||= %w(
-          nul aux prn
-          con conin$ conout$
-        ).join('|')
-      end
-
-      def self.devicesnum
-        @devicesnum ||= %w(
-          com lpt
+          con prn aux nul
+          com1 com2 com3 com4 com5 com6 com7 com8 com9
+          lpt1 lpt2 lpt3 lpt4 lpt5 lpt6 lpt7 lpt8 lpt9
         ).join('|')
       end
 
@@ -119,7 +114,6 @@ module Rouge
 
         # Devices
         rule %r/\b(#{Batchfile.devices})\b/i, Keyword::Reserved
-        rule %r/\b(#{Batchfile.devicesnum}[0-9])\b/i, Keyword::Reserved
 
         # Lang Keywords
         rule %r/\b(#{Batchfile.keywords})\b/i, Keyword

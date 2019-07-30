@@ -50,7 +50,7 @@ module Rouge
           assoc attrib break bcdedit cacls
           cd chcp chdir chkdsk chkntfs choice cls cmd color
           comp compact convert copy
-          date del dir dir diskpart doskey dpath driverquery
+          date del dir diskpart doskey dpath driverquery
           echo endlocal erase
           fc find findstr format fsutil ftype
           gpresult graftabl help

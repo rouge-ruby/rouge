@@ -24,7 +24,7 @@ module Rouge
         rule %r/(?:&|0x)\h+/, Literal::Number::Hex
         rule %r/\d+/, Literal::Number
         rule %r/[,\/()]/, Punctuation
-        rule %r/[ \t\n]+/, Text
+        rule %r/\s+/, Text
       end
     end
   end

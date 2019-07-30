@@ -64,7 +64,7 @@ module Rouge
         rule %r/#{BBCBASIC.punctuation.join('|')}/, Punctuation
         rule %r/#{BBCBASIC.function.join('|')}/, Name::Builtin # function or pseudo-variable
         rule %r/(?:DIM|POINT)(?=\()/, Name::Builtin # function sharing keyword with statement, distinguished by ()
-        rule %r/(?:#{BBCBASIC.function.join('|')}|DEF *(?:FN|PROC)|ERROR(?: *EXT)?|ON(?: *ERROR *OFF| *ERROR *LOCAL| *ERROR))/, Keyword # control flow statement
+        rule %r/(?:#{BBCBASIC.control.join('|')}|DEF *(?:FN|PROC)|ERROR(?: *EXT)?|ON(?: *ERROR *OFF| *ERROR *LOCAL| *ERROR))/, Keyword # control flow statement
         rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/, Keyword # other statement
         rule %r/#{BBCBASIC.operator.join('|')}/, Operator
         rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant

@@ -17,7 +17,9 @@ module Rouge
 
       state :root do
         rule %r/;[^\n]*/, Comment
-        rule %r/^[ \t]*#[ \t]*(?:(?:#{CMHG.preproc_keyword.join('|')})(?:[ \t].*)?)?(?=\n)/, Comment::Preproc
+        rule %r/^([ \t]*)(#[ \t]*(?:(?:#{CMHG.preproc_keyword.join('|')})(?:[ \t].*)?)?)(?=\n)/ do
+          groups Text, Comment::Preproc
+        end
         rule %r/[-a-z]+:/, Keyword::Declaration
         rule %r/[a-z_]\w+/i, Name::Entity
         rule %r/"[^"]*"/, Literal::String

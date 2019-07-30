@@ -13,9 +13,9 @@ rem all okay
 attrib.exe +r file.txt
 set /a "row+=1,moved=1"
 echo %~dp0
-for /f "tokens=1" %%a in ("hello %username% hi") do echo %%~a
-for /f "tokens=*" %%a in ("hello !username! hi") do echo %%~a
-for /f "usebackq" %%a in (`world`) do echo %%~a
+for /f "tokens=1" %%a in ('hello %username% hi ^'') do echo %%~a
+for /f "tokens=*" %%a in ("hello !username! hi ^"") do echo %%~a
+for /f "usebackq" %%a in (`world ^``) do echo %%~a
 for /f %%a in ('echo hi') do echo %%~a
 call :a || goto :bye
 if 5 equ 5 (

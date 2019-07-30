@@ -114,22 +114,29 @@ module Rouge
 
       end
 
+      state :escape do
+        rule %r/\^./m, Str::Escape
+      end
+
       state :double_quotes do
+        mixin :escape
         rule %r/["]/, Str::Double, :pop!
         rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
-        rule %r/[^"\%\!]+/, Str::Double
+        rule %r/[^\^"%!]+/, Str::Double
       end
 
       state :single_quotes do
+        mixin :escape
         rule %r/[']/, Str::Single, :pop!
         rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
-        rule %r/[^'\%\!]+/, Str::Single
+        rule %r/[^\^'%!]+/, Str::Single
       end
 
       state :backtick do
+        mixin :escape
         rule %r/[`]/, Str::Backtick, :pop!
         rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
-        rule %r/[^`\%\!]+/, Str::Backtick
+        rule %r/[^\^`%!]+/, Str::Backtick
       end
 
       state :data do

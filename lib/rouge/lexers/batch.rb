@@ -96,7 +96,7 @@ module Rouge
         # Other Commands
         rule %r/@?\b(#{Batchfile.othercommands})\b/i, Keyword
         # Generic Executable
-        rule %r/[a-z_0-9]*\.(exe|com|bat|cmd|msi)/i, Keyword
+        rule %r/\w*\.(exe|com|bat|cmd|msi)/i, Keyword
 
         # Arguments to commands
         rule %r/\b#{Batchfile.attributes}\b/i, Name::Attribute

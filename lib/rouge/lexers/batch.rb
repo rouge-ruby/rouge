@@ -7,7 +7,7 @@ module Rouge
       title "Batchfile"
       desc "Windows Batch File"
 
-      tag 'batch'
+      tag 'batchfile'
       aliases 'bat', 'batch', 'dosbatch', 'winbatch'
       filenames '*.bat', '*.cmd'
 

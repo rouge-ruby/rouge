@@ -56,7 +56,9 @@ module Rouge
       state :root do
         rule %r/[ \n]+/, Text
         rule %r/[\[]/, Keyword, :assembly1
-        rule %r/\*.*/, Generic::Prompt # CLI command
+        rule %r/(\*)(.*)/ do
+          groups Generic::Prompt, Text # CLI command
+        end
         rule %r/REM *>.*/, Comment::Special
         rule %r/REM.*/, Comment
         rule %r/#{BBCBASIC.punctuation.join('|')}/, Punctuation

@@ -24,7 +24,9 @@
 ;
 
 #include "Global/Services.h"
-#include "VersionNum"
+#ifndef Module_Date_CMHG
+	#include "VersionNum"
+#endif
 
 initialisation-code:	module_initialise
 

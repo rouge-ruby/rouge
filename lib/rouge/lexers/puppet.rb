@@ -59,7 +59,7 @@ module Rouge
         rule cap_id, Name::Class
 
         rule %r/[+=|~-]>|<[|~-]/, Punctuation
-        rule %r/[:}();\[\]]/, Punctuation
+        rule %r/[|:}();\[\]]/, Punctuation
 
         # HACK for case statements and selectors
         rule %r/{/, Punctuation, :regex_allowed
@@ -68,7 +68,7 @@ module Rouge
         rule %r/(in|and|or)\b/, Operator::Word
         rule %r/[=!<>]=/, Operator
         rule %r/[=!]~/, Operator, :regex_allowed
-        rule %r([=<>!+*/-]), Operator
+        rule %r([.=<>!+*/-]), Operator
 
         rule %r/(class|include)(\s*)(#{qualname})/ do
           groups Keyword, Text, Name::Class

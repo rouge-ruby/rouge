@@ -1,3 +1,5 @@
+# Some example code
+
 node /www\.example\.com/ {
   include foo::bar
 
@@ -18,4 +20,15 @@ class foo::bar (
     'bar',
     'baz',
   ]
+}
+
+lookup('classes', {merge => unique}).include
+
+$resources = $acls.map |$index, $acl| {
+  $parts = $acl.split('\s+')
+  unless $parts =~ Array[Data, 4] {
+    fail("${func_name}: acl line $index does not have enough parts")
+  }
+
+  $resource
 }

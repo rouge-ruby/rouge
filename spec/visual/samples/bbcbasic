@@ -2,7 +2,7 @@ REM > DefaultFilename
 PRINT:REM Ordinary comment: This is still a comment
 *Cat
 FOR n=1 TO 10
-PRINTTAB(n)"Hello there ";FNnumber(n)DIV3+1'INKEY$(500)
+PRINTTAB(n)"Hello there ";FNnumber(n)DIV3+1'INKEY$(500)INKEY(500)
 NEXT
 DIM code% 100
 FOR opt=0 TO 3 STEP 3
@@ -15,5 +15,14 @@ P%=code%
  ALIGN
 .label4
 ]
+NEXT
+CALL code%:PRINT USR(code%)
+DIM`(100,100):PRINTDIM(`())
+X=&FEDCBA98:PRINT X,~X,X>>>1,X>>1,X>1
+PRINT %1010%1111:REM Prints "10" then "15"
+A%=@%:@%="F10.2":PRINT~@%:@%=A%
+ELLIPSE FILL 100,100,100,50,45
+MOUSEOFF
+REPEATUNTILFALSE
 END
 DEFFNnumber(x%)=ABS(x%-4)

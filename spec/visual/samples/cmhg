@@ -1,0 +1,60 @@
+;
+; CDDL HEADER START
+;
+; The contents of this file are subject to the terms of the
+; Common Development and Distribution License (the "Licence").
+; You may not use this file except in compliance with the Licence.
+;
+; You can obtain a copy of the licence at
+; cddl/RiscOS/Sources/HWSupport/SD/SDIODriver/LICENCE.
+; See the Licence for the specific language governing permissions
+; and limitations under the Licence.
+;
+; When distributing Covered Code, include this CDDL HEADER in each
+; file and include the Licence file. If applicable, add the
+; following below this CDDL HEADER, with the fields enclosed by
+; brackets "[]" replaced with your own identifying information:
+; Portions Copyright [yyyy] [name of copyright owner]
+;
+; CDDL HEADER END
+;
+; Copyright 2012 Ben Avison.  All rights reserved.
+; Portions Copyright 2013 Jeffrey Lee.
+; Use is subject to license terms.
+;
+
+#include "Global/Services.h"
+#ifndef Module_Date_CMHG
+	#include "VersionNum"
+#endif
+
+initialisation-code:	module_initialise
+
+finalisation-code:	module_finalise
+
+; Service_Hardware
+service-call-handler:	module_service Service_Hardware,
+				       Service_ModulePostInit
+
+title-string:		SDIODriver
+
+help-string:		SDIODriver Module_MajorVersion_CMHG Module_MinorVersion_CMHG
+
+command-keyword-table:	module_command
+			SDIODevices(min-args:0, max-args:1, international:, invalid-syntax:"SSDIDEV", help-text:"HSDIDEV"),
+			SDIOSlots(min-args:0, max-args:255, international:, invalid-syntax:"SSDISLT", help-text:"HSDISLT")
+
+swi-chunk-base-number:	0x59000
+
+swi-handler-code:	module_swi
+
+swi-decoding-table:	SDIO, Initialise, Control, Enumerate, ControllerFeatures, ReadRegister, Op, ClaimDeviceVector, ReleaseDeviceVector
+
+international-help-file:"Resources:$.Resources.SDIODriver.Messages"
+
+date-string:		Module_Date_CMHG
+
+generic-veneers:	module_irq_veneer/module_irq_handler,
+			module_card_insertion_veneer/module_card_insertion_handler
+
+vector-handlers:	module_tickerv_veneer/module_tickerv_handler

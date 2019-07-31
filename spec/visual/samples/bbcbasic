@@ -2,7 +2,7 @@ REM > DefaultFilename
 PRINT:REM Ordinary comment: This is still a comment
 ONERRORPRINTERR:END
 ERROR1,"error"
-*Cat
+IF2*2=4ELSE*Cat:4.$
 FOR n=1 TO 10
 PRINTTAB(n)"Hello there ";FNnumber(n)DIV3+1'INKEY$(500)INKEY(500)
 NEXT
@@ -25,6 +25,8 @@ PRINT %1010%1111:REM Prints "10" then "15"
 A%=@%:@%="F10.2":PRINT~@%:@%=A%
 ELLIPSE FILL 100,100,100,50,45
 MOUSEOFF
+DIM block% 100
+block%!2*4=0
 REPEATUNTILFALSE
 END
 DEFFNnumber(x%)=ABS(x%-4)

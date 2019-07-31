@@ -11,7 +11,7 @@ module Rouge
 
       def self.punctuation
         @punctuation ||= %w(
-          [:,;'~] SPC TAB
+          [,;'~] SPC TAB
         )
       end
 
@@ -25,11 +25,31 @@ module Rouge
         )
       end
 
-      def self.control
+      def self.control # these must be followed by an expression, if anything
         @control ||= %w(
-          CASE CHAIN ELSE ENDCASE ENDIF ENDPROC ENDWHILE END FN FOR GOSUB GOTO
-          IF INSTALL LIBRARY NEXT OF OTHERWISE OVERLAY PROC REPEAT RETURN STEP
-          STOP THEN TO UNTIL WHEN WHILE
+          CASE CHAIN ENDCASE ENDIF ENDPROC ENDWHILE END FN FOR GOSUB GOTO IF
+          INSTALL LIBRARY NEXT OF OVERLAY PROC RETURN STEP STOP TO UNTIL WHEN
+          WHILE
+        )
+      end
+
+      def self.control2 # these can be followed by further imperatives
+        @control2 ||= %w(
+          ELSE OTHERWISE REPEAT THEN
+        )
+      end
+
+      def self.control3 # these can come after a statement and expression,
+                        # and must be followed by an expression, if anything
+        @control3 ||= %w(
+          GOSUB GOTO OF ON TINT TO STEP
+        )
+      end
+
+      def self.control4 # these can come after a statement and expression,
+                        # and can be followed by further imperatives
+        @control4 ||= %w(
+          ELSE THEN
         )
       end
 
@@ -69,7 +89,19 @@ module Rouge
         rule %r/&[\h]+/, Literal::Number::Hex
       end
 
+      state :no_further_imperatives do
+        rule %r/:+/, Punctuation, :pop!
+        rule %r/\n+/, Text, :pop!
+        rule %r/ +/, Text
+        mixin :builtin_function
+        rule %r/#{BBCBASIC.control3.join('|')}/, Keyword
+        rule %r/#{BBCBASIC.control4.join('|')}/, Keyword, :pop!
+        mixin :expression
+        rule %r/#{BBCBASIC.punctuation.join('|')}/, Punctuation
+      end
+
       state :root do
+        rule %r/:+/, Punctuation
         rule %r/[ \n]+/, Text
         rule %r/[\[]/, Keyword, :assembly1
         rule %r/(\*)(.*)/ do
@@ -77,11 +109,11 @@ module Rouge
         end
         rule %r/REM *>.*/, Comment::Special
         rule %r/REM.*/, Comment
-        rule %r/#{BBCBASIC.punctuation.join('|')}/, Punctuation
-        rule %r/ERROR(?: *EXT)?/, Keyword
+        rule %r/ERROR(?: *EXT)?/, Keyword, :no_further_imperatives
         mixin :builtin_function
-        rule %r/(?:#{BBCBASIC.control.join('|')}|DEF *(?:FN|PROC)|ON(?: *ERROR *OFF| *ERROR *LOCAL| *ERROR))/, Keyword # control flow statement
-        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/, Keyword # other statement
+        rule %r/(?:#{BBCBASIC.control.join('|')}|ON *ERROR *OFF)/, Keyword, :no_further_imperatives
+        rule %r/(?:#{BBCBASIC.control2.join('|')}|DEF *(?:FN|PROC)|ON *ERROR(?: *LOCAL)?)/, Keyword
+        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/, Keyword, :no_further_imperatives # other statement
         mixin :expression
       end
 

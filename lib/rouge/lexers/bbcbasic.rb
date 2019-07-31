@@ -18,10 +18,10 @@ module Rouge
       def self.function
         @function ||= %w(
           ABS ACS ADVAL ASC ASN ATN BEATS BEAT BGET# CHR\$ COS COUNT DEG EOF#
-          ERL ERR ERROR EVAL EXP EXT# GET\$# GET\$ GET HIMEM INKEY\$ INKEY
-          INSTR INT LEFT\$ LEN LN LOG LOMEM MID\$ OPENIN OPENOUT OPENUP PAGE
-          POS PTR# RAD REPORT\$ RIGHT\$ RND SGN SIN SQR STR\$ STRING\$ SUM
-          SUMLEN TAN TEMPO TIME\$ TIME TOP USR VAL VPOS
+          ERL ERR EVAL EXP EXT# GET\$# GET\$ GET HIMEM INKEY\$ INKEY INSTR INT
+          LEFT\$ LEN LN LOG LOMEM MID\$ OPENIN OPENOUT OPENUP PAGE POS PTR# RAD
+          REPORT\$ RIGHT\$ RND SGN SIN SQR STR\$ STRING\$ SUM SUMLEN TAN TEMPO
+          TIME\$ TIME TOP USR VAL VPOS
         )
       end
 
@@ -78,8 +78,9 @@ module Rouge
         rule %r/REM *>.*/, Comment::Special
         rule %r/REM.*/, Comment
         rule %r/#{BBCBASIC.punctuation.join('|')}/, Punctuation
+        rule %r/ERROR(?: *EXT)?/, Keyword
         mixin :builtin_function
-        rule %r/(?:#{BBCBASIC.control.join('|')}|DEF *(?:FN|PROC)|ERROR(?: *EXT)?|ON(?: *ERROR *OFF| *ERROR *LOCAL| *ERROR))/, Keyword # control flow statement
+        rule %r/(?:#{BBCBASIC.control.join('|')}|DEF *(?:FN|PROC)|ON(?: *ERROR *OFF| *ERROR *LOCAL| *ERROR))/, Keyword # control flow statement
         rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/, Keyword # other statement
         mixin :expression
       end

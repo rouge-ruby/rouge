@@ -120,6 +120,12 @@ module Rouge
 
         next Python
       end
+
+      disambiguate 'Messages' do
+        next MsgTrans if matches?(/^[^\s:]+:[^\s:]+/)
+
+        next PlainText
+      end
     end
   end
 end

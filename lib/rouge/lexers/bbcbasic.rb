@@ -73,7 +73,7 @@ module Rouge
         rule %r/[ \n]+/, Text
         rule %r/[\[]/, Keyword, :assembly1
         rule %r/(\*)(.*)/ do
-          groups Generic::Prompt, Text # CLI command
+          groups Keyword, Text # CLI command
         end
         rule %r/REM *>.*/, Comment::Special
         rule %r/REM.*/, Comment

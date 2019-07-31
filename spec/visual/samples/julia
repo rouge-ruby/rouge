@@ -280,7 +280,10 @@ function meow(animal::Lion)
   animal.roar # access type properties using dot notation
 end
 
-# Code samples adapred from "Learn Julia in Y Minutes".  "Learn Julia in Y
+mutable struct Foo
+end
+
+# Code samples adapted from "Learn Julia in Y Minutes".  "Learn Julia in Y
 # Minutes" is copyright Leah Hanson, and the original can be found at
 # http://learnxinyminutes.com/docs/files/learnjulia.jl or
 # https://github.com/adambard/learnxinyminutes-docs/blob/master/julia.html.markdown

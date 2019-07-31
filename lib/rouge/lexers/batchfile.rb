@@ -110,7 +110,7 @@ module Rouge
         rule %r/\bset\b/i, Keyword::Declaration
 
         # Operators
-        rule %r/[&|()\[\]{}\^=;+\-,~?*]/, Operator
+        rule %r/[<>&|(){}\[\]\^\-+=;,~?*]/, Operator
 
       end
 

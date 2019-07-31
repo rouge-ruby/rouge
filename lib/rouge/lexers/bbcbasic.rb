@@ -53,6 +53,22 @@ module Rouge
         )
       end
 
+      state :builtin_function do
+        rule %r/#{BBCBASIC.function.join('|')}/, Name::Builtin # function or pseudo-variable
+        rule %r/(?:DIM|POINT)(?=\()/, Name::Builtin # function sharing keyword with statement, distinguished by ()
+      end
+
+      state :expression do
+        rule %r/#{BBCBASIC.operator.join('|')}/, Operator
+        rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant
+        rule %r/"[^"]*"/, Literal::String
+        rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
+        rule %r/@%/, Name::Variable
+        rule %r/[\d.]+/, Literal::Number
+        rule %r/%[01]+/, Literal::Number::Bin
+        rule %r/&[\h]+/, Literal::Number::Hex
+      end
+
       state :root do
         rule %r/[ \n]+/, Text
         rule %r/[\[]/, Keyword, :assembly1
@@ -62,18 +78,10 @@ module Rouge
         rule %r/REM *>.*/, Comment::Special
         rule %r/REM.*/, Comment
         rule %r/#{BBCBASIC.punctuation.join('|')}/, Punctuation
-        rule %r/#{BBCBASIC.function.join('|')}/, Name::Builtin # function or pseudo-variable
-        rule %r/(?:DIM|POINT)(?=\()/, Name::Builtin # function sharing keyword with statement, distinguished by ()
+        mixin :builtin_function
         rule %r/(?:#{BBCBASIC.control.join('|')}|DEF *(?:FN|PROC)|ERROR(?: *EXT)?|ON(?: *ERROR *OFF| *ERROR *LOCAL| *ERROR))/, Keyword # control flow statement
         rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/, Keyword # other statement
-        rule %r/#{BBCBASIC.operator.join('|')}/, Operator
-        rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant
-        rule %r/"[^"]*"/, Literal::String
-        rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
-        rule %r/@%/, Name::Variable
-        rule %r/[\d.]+/, Literal::Number
-        rule %r/%[01]+/, Literal::Number::Bin
-        rule %r/&[\h]+/, Literal::Number::Hex
+        mixin :expression
       end
 
       # Assembly statements are parsed as
@@ -100,16 +108,8 @@ module Rouge
         rule %r/ +/, Text
         rule %r/[:\n]/, Punctuation, :pop!
         rule %r/(?:REM|;)[^:\n]*/, Comment, :pop!
-        rule %r/#{BBCBASIC.function.join('|')}/, Name::Builtin # function or pseudo-variable
-        rule %r/(?:DIM|POINT)(?=\()/, Name::Builtin # function sharing keyword with statement, distinguished by ()
-        rule %r/#{BBCBASIC.operator.join('|')}/, Operator
-        rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant
-        rule %r/"[^"]*"/, Literal::String
-        rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
-        rule %r/@%/, Name::Variable
-        rule %r/[\d.]+/, Literal::Number
-        rule %r/%[01]+/, Literal::Number::Bin
-        rule %r/&[\h]+/, Literal::Number::Hex
+        mixin :builtin_function
+        mixin :expression
         rule %r/[!#,@\[\]^{}]/, Punctuation
       end
     end

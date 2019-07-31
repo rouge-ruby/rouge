@@ -103,9 +103,7 @@ module Rouge
         rule %r/([\/\-+][a-z]+)\s*/i, Name::Attribute
 
         # Variable Expansions
-        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
-        # For Variables
-        rule %r/(\%+~?[a-z]+\d?)/i, Name::Builtin
+        mixin :expansions
 
         rule %r/\bset\b/i, Keyword::Declaration
 
@@ -118,24 +116,31 @@ module Rouge
         rule %r/\^./m, Str::Escape
       end
 
+      state :expansions do
+        # Normal and Delayed expansion
+        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
+        # For Variables
+        rule %r/(\%+~?[a-z]+\d?)/i, Name::Builtin
+      end
+
       state :double_quotes do
         mixin :escape
         rule %r/["]/, Str::Double, :pop!
-        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
+        mixin :expansions
         rule %r/[^\^"%!]+/, Str::Double
       end
 
       state :single_quotes do
         mixin :escape
         rule %r/[']/, Str::Single, :pop!
-        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
+        mixin :expansions
         rule %r/[^\^'%!]+/, Str::Single
       end
 
       state :backtick do
         mixin :escape
         rule %r/[`]/, Str::Backtick, :pop!
-        rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
+        mixin :expansions
         rule %r/[^\^`%!]+/, Str::Backtick
       end
 

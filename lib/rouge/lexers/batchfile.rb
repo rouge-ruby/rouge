@@ -16,24 +16,24 @@ module Rouge
       def self.keywords
         @keywords ||= %w(
           if else for in do goto call exit
-        ).join('|')
+        )
       end
 
-      def self.operatorswords
-        @operatorswords ||= %w(
+      def self.operator_words
+        @operator_words ||= %w(
           exist defined errorlevel cmdextversion not equ neq lss leq gtr geq
-        ).join('|')
+        )
       end
 
       def self.devices
         @devices ||= %w(
           con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2
           lpt3 lpt4 lpt5 lpt6 lpt7 lpt8 lpt9
-        ).join('|')
+        )
       end
 
-      def self.builtincommands
-        @builtincommands ||= %w(
+      def self.builtin_commands
+        @builtin_commands ||= %w(
           assoc attrib break bcdedit cacls cd chcp chdir chkdsk chkntfs choice
           cls cmd color comp compact convert copy date del dir diskpart doskey
           dpath driverquery echo endlocal erase fc find findstr format fsutil
@@ -42,11 +42,11 @@ module Rouge
           rename replace rmdir robocopy setlocal sc schtasks shift shutdown sort
           start subst systeminfo takeown tasklist taskkill time timeout title
           tree type ver verify vol xcopy waitfor wmic
-        ).join('|')
+        )
       end
 
-      def self.othercommands
-        @othercommands ||= %w(
+      def self.other_commands
+        @other_commands ||= %w(
           addusers admodcmd ansicon arp at bcdboot bitsadmin browstat certreq
           certutil change cidiag cipher cleanmgr clip cmdkey compress convertcp
           coreinfo csccmd csvde cscript curl debug defrag delprof deltree devcon
@@ -67,13 +67,13 @@ module Rouge
           tracert tscon tsdiscon tskill tttracer typeperf tzutil undelete
           unformat verifier vmconnect vssadmin w32tm wbadmin wecutil wevtutil
           wget where whoami windiff winrm winrs wpeutil wpr wusa wuauclt wscript
-        ).join('|')
+        )
       end
 
       def self.attributes
         @attributes ||= %w(
           on off disable enableextensions enabledelayedexpansion
-        ).join('|')
+        )
       end
 
       state :basic do
@@ -85,31 +85,31 @@ module Rouge
         # Labels
         rule %r/:[a-z]+/i, Name::Label
 
-        # Devices
-        rule %r/\b(#{Batchfile.devices})\b/i, Keyword::Reserved
+        rule %r/([a-z]\w*)(\.exe|com|bat|cmd|msi)?/i do |m|
+          if self.class.devices.include? m[1]
+            groups Keyword::Reserved, Error
+          elsif self.class.keywords.include? m[1]
+            groups Keyword, Error
+          elsif self.class.operator_words.include? m[1]
+            groups Operator::Word, Error
+          elsif self.class.builtin_commands.include? m[1]
+            token Name::Builtin
+          elsif self.class.other_commands.include? m[1]
+            token Name::Builtin
+          elsif self.class.attributes.include? m[1]
+            groups Name::Attribute, Error
+          elsif "set" == m[1].downcase
+            groups Keyword::Declaration, Error
+          else
+            token Text
+          end
+        end
 
-        # Lang Keywords
-        rule %r/\b(#{Batchfile.keywords})\b/i, Keyword
-        rule %r/\b(#{Batchfile.operatorswords})\b/i, Operator::Word
-        # Builtin Commands
-        rule %r/@?\b(#{Batchfile.builtincommands})\b/i, Keyword
-        # Other Commands
-        rule %r/@?\b(#{Batchfile.othercommands})\b/i, Keyword
-        # Generic Executable
-        rule %r/\w*\.(exe|com|bat|cmd|msi)/i, Keyword
-
-        # Arguments to commands
-        rule %r/\b#{Batchfile.attributes}\b/i, Name::Attribute
         rule %r/([\/\-+][a-z]+)\s*/i, Name::Attribute
 
-        # Variable Expansions
         mixin :expansions
 
-        rule %r/\bset\b/i, Keyword::Declaration
-
-        # Operators
         rule %r/[<>&|(){}\[\]\^\-+=;,~?*]/, Operator
-
       end
 
       state :escape do
@@ -120,7 +120,7 @@ module Rouge
         # Normal and Delayed expansion
         rule %r/[%!]+([a-z_$@#]+)[%!]+/i, Name::Variable
         # For Variables
-        rule %r/(\%+~?[a-z]+\d?)/i, Name::Builtin
+        rule %r/(\%+~?[a-z]+\d?)/i, Name::Variable::Magic
       end
 
       state :double_quotes do

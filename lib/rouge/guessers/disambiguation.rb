@@ -122,7 +122,7 @@ module Rouge
       end
 
       disambiguate 'Messages' do
-        next MsgTrans if matches?(/^(?:#|[^\s:]+:[^\s:]+)/)
+        next MsgTrans if matches?(/^[^\s:]+:[^\s:]+/)
 
         next PlainText
       end

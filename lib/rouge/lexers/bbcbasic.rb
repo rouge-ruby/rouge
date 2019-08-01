@@ -28,14 +28,13 @@ module Rouge
       def self.control # these must be followed by an expression, if anything
         @control ||= %w(
           CASE CHAIN ENDCASE ENDIF ENDPROC ENDWHILE END FN FOR GOSUB GOTO IF
-          INSTALL LIBRARY NEXT OF OVERLAY PROC RETURN STEP STOP TO UNTIL WHEN
-          WHILE
+          INSTALL LIBRARY NEXT OVERLAY PROC RETURN STOP UNTIL WHEN WHILE
         )
       end
 
       def self.control2 # these can be followed by further imperatives
         @control2 ||= %w(
-          ELSE OTHERWISE REPEAT THEN
+          ELSE OTHERWISE REPEAT
         )
       end
 

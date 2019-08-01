@@ -75,7 +75,7 @@ module Rouge
         rule %r/[\[]/o, Keyword, :assembly1
         rule %r/REM *>.*/o, Comment::Special
         rule %r/REM.*/o, Comment
-        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DEF (?:FN|PROC)|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|ERROR(?: *EXT)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|ON(?! *ERROR)|ON *ERROR *(?:LOCAL|OFF)?|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/o, Keyword
+        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DEF *(?:FN|PROC)|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|ERROR(?: *EXT)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|ON(?! *ERROR)|ON *ERROR *(?:LOCAL|OFF)?|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/o, Keyword
         mixin :expression
         rule %r/#{BBCBASIC.punctuation.join('|')}/o, Punctuation
       end

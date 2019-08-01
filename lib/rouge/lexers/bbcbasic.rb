@@ -25,33 +25,14 @@ module Rouge
         )
       end
 
-      def self.control # these must be followed by an expression, if anything
-        @control ||= %w(
+      def self.statement
+        @statement ||= %w(
           BEATS BPUT# CALL CASE CHAIN CLEAR CLG CLOSE# CLS COLOR COLOUR DATA
-          ENDCASE ENDIF ENDPROC ENDWHILE END ENVELOPE FOR GCOL GOSUB GOTO IF
-          INSTALL LET LIBRARY MODE NEXT OFF ORIGIN OSCI OVERLAY PLOT PRINT#
-          PRINT PROC QUIT READ REPORT RETURN SOUND STEREO STOP SWAP SYS TINT VDU#
-          VOICE VOICES UNTIL WAIT WHEN WHILE WIDTH
-        )
-      end
-
-      def self.control2 # these can be followed by further imperatives
-        @control2 ||= %w(
-          ELSE OTHERWISE REPEAT
-        )
-      end
-
-      def self.control3 # these can come after a statement and expression,
-                        # and must be followed by an expression, if anything
-        @control3 ||= %w(
-          GOSUB GOTO OF ON PROC TINT TO STEP
-        )
-      end
-
-      def self.control4 # these can come after a statement and expression,
-                        # and can be followed by further imperatives
-        @control4 ||= %w(
-          ELSE THEN
+          ELSE ENDCASE ENDIF ENDPROC ENDWHILE END ENVELOPE FOR GCOL GOSUB GOTO
+          IF INSTALL LET LIBRARY MODE NEXT OFF OF ON ORIGIN OSCI OTHERWISE
+          OVERLAY PLOT PRINT# PRINT PROC QUIT READ REPEAT REPORT RETURN SOUND
+          STEP STEREO STOP SWAP SYS THEN TINT TO VDU VOICES VOICE UNTIL WAIT
+          WHEN WHILE WIDTH
         )
       end
 
@@ -68,82 +49,35 @@ module Rouge
       end
 
       state :expression do
-        rule %r/#{BBCBASIC.function.join('|')}/o do
-          # function or pseudo-variable
-          token Name::Builtin
-          goto :no_further_imperatives
-        end
-        rule %r/#{BBCBASIC.operator.join('|')}/o do
-          token Operator
-          goto :no_further_imperatives
-        end
-        rule %r/#{BBCBASIC.constant.join('|')}/o do
-          token Name::Constant
-          goto :no_further_imperatives
-        end
-        rule %r/"[^"]*"/o do
-          token Literal::String
-          goto :no_further_imperatives
-        end
-        rule %r/[a-z_`][\w`]*[$%]?/io do
-          token Name::Variable
-          goto :no_further_imperatives
-        end
-        rule %r/@%/o do
-          token Name::Variable
-          goto :no_further_imperatives
-        end
-        rule %r/[\d.]+/o do
-          token Literal::Number
-          goto :no_further_imperatives
-        end
-        rule %r/%[01]+/o do
-          token Literal::Number::Bin
-          goto :no_further_imperatives
-        end
-        rule %r/&[\h]+/o do
-          token Literal::Number::Hex
-          goto :no_further_imperatives
-        end
-      end
-
-      state :no_further_imperatives do
-        rule %r/:+/o do
-          token Punctuation
-          goto :root
-        end
-        rule %r/\n+/o do
-          token Text
-          goto :root
-        end
-        rule %r/ +/o, Text
-        rule %r/#{BBCBASIC.control3.join('|')}/o, Keyword
-        rule %r/#{BBCBASIC.control4.join('|')}/o do
-          token Keyword
-          goto :root
-        end
-        mixin :expression
-        rule %r/#{BBCBASIC.punctuation.join('|')}/o, Punctuation
+        rule %r/#{BBCBASIC.function.join('|')}/o, Name::Builtin  # function or pseudo-variable
+        rule %r/#{BBCBASIC.operator.join('|')}/o, Operator
+        rule %r/#{BBCBASIC.constant.join('|')}/o, Name::Constant
+        rule %r/"[^"]*"/o, Literal::String
+        rule %r/[a-z_`][\w`]*[$%]?/io, Name::Variable
+        rule %r/@%/o, Name::Variable
+        rule %r/[\d.]+/o, Literal::Number
+        rule %r/%[01]+/o, Literal::Number::Bin
+        rule %r/&[\h]+/o, Literal::Number::Hex
       end
 
       state :root do
-        rule %r/:+/o, Punctuation
-        rule %r/[ \n]+/o, Text
-        rule %r/[\[]/o, Keyword, :assembly1
-        rule %r/(\*)(.*)/o do
-          groups Keyword, Text # CLI command
+        rule %r/(:)( *)(\*)(.*)/ do
+          groups Punctuation, Text, Keyword, Text # CLI command
         end
+        rule %r/(\n *)(\*)(.*)/ do
+          groups Text, Keyword, Text # CLI command
+        end
+        rule %r/(ELSE|OTHERWISE|REPEAT|THEN)( *)(\*)(.*)/ do
+          groups Keyword, Text, Keyword, Text # CLI command
+        end
+        rule %r/[ \n]+/o, Text
+        rule %r/:+/o, Punctuation
+        rule %r/[\[]/o, Keyword, :assembly1
         rule %r/REM *>.*/o, Comment::Special
         rule %r/REM.*/o, Comment
-        rule %r/(?:#{BBCBASIC.control.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|ERROR(?: *EXT)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|ON(?! *ERROR)|ON *ERROR *OFF|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/o do
-          token Keyword
-          goto :no_further_imperatives
-        end
-        rule %r/(?:#{BBCBASIC.control2.join('|')}|DEF *FN|ON *ERROR(?: *LOCAL)?)/o, Keyword
-        rule %r/(DEF *PROC)([a-z_`][\w`]*)/o do
-          groups Keyword, Name::Variable
-        end
+        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DEF (?:FN|PROC)|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|ERROR(?: *EXT)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|ON(?! *ERROR)|ON *ERROR *(?:LOCAL|OFF)?|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/o, Keyword
         mixin :expression
+        rule %r/#{BBCBASIC.punctuation.join('|')}/o, Punctuation
       end
 
       # Assembly statements are parsed as
@@ -170,16 +104,8 @@ module Rouge
         rule %r/ +/o, Text
         rule %r/[:\n]/o, Punctuation, :pop!
         rule %r/(?:REM|;)[^:\n]*/o, Comment, :pop!
-        rule %r/#{BBCBASIC.function.join('|')}/o, Name::Builtin # function or pseudo-variable
-        rule %r/#{BBCBASIC.operator.join('|')}/o, Operator
-        rule %r/#{BBCBASIC.constant.join('|')}/o, Name::Constant
-        rule %r/"[^"]*"/o, Literal::String
-        rule %r/[a-z_`][\w`]*[$%]?/io, Name::Variable
-        rule %r/@%/o, Name::Variable
-        rule %r/[\d.]+/o, Literal::Number
-        rule %r/%[01]+/o, Literal::Number::Bin
-        rule %r/&[\h]+/o, Literal::Number::Hex
-        rule %r/[!#,@\[\]^{}]/o, Punctuation
+        mixin :expression
+        rule %r/[!#,@\[\]^{}]/, Punctuation
       end
     end
   end

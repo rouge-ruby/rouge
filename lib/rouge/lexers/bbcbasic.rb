@@ -27,8 +27,11 @@ module Rouge
 
       def self.control # these must be followed by an expression, if anything
         @control ||= %w(
-          CASE CHAIN ENDCASE ENDIF ENDPROC ENDWHILE END FN FOR GOSUB GOTO IF
-          INSTALL LIBRARY NEXT OVERLAY PROC RETURN STOP UNTIL WHEN WHILE
+          BEATS BPUT# CALL CASE CHAIN CLEAR CLG CLOSE# CLS COLOR COLOUR DATA
+          ENDCASE ENDIF ENDPROC ENDWHILE END ENVELOPE FN FOR GCOL GOSUB GOTO IF
+          INSTALL LET LIBRARY MODE NEXT OFF ORIGIN OSCI OVERLAY PLOT PRINT#
+          PRINT PROC QUIT READ REPORT RETURN SOUND STEREO STOP SWAP SYS TINT VDU#
+          VOICE VOICES UNTIL WAIT WHEN WHILE WIDTH
         )
       end
 
@@ -49,14 +52,6 @@ module Rouge
                         # and can be followed by further imperatives
         @control4 ||= %w(
           ELSE THEN
-        )
-      end
-
-      def self.statement
-        @statement ||= %w(
-          BEATS BPUT# CALL CLEAR CLG CLOSE# CLS COLOR COLOUR DATA ENVELOPE GCOL
-          LET MODE OFF ON ORIGIN OSCI PLOT PRINT# PRINT QUIT READ REPORT SOUND
-          STEREO SWAP SYS TINT VDU VOICE VOICES WAIT WIDTH
         )
       end
 
@@ -140,15 +135,11 @@ module Rouge
         end
         rule %r/REM *>.*/o, Comment::Special
         rule %r/REM.*/o, Comment
-        rule %r/(?:#{BBCBASIC.control.join('|')}|ERROR(?: *EXT)?|ON *ERROR *OFF)/o do
+        rule %r/(?:#{BBCBASIC.control.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|ERROR(?: *EXT)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|ON(?! *ERROR)|ON *ERROR *OFF|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/o do
           token Keyword
           goto :no_further_imperatives
         end
         rule %r/(?:#{BBCBASIC.control2.join('|')}|DEF *(?:FN|PROC)|ON *ERROR(?: *LOCAL)?)/o, Keyword
-        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/o do
-          token Keyword
-          goto :no_further_imperatives
-        end
         mixin :expression
       end
 

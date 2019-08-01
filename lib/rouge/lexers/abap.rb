@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
+
 # ABAP elements taken from http://help.sap.com/abapdocu_750/en/index.htm?file=abapdo.htm
 
 module Rouge
@@ -180,16 +182,16 @@ module Rouge
       end
 
       state :root do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
 
-        rule /".*/, Comment::Single
+        rule %r/".*/, Comment::Single
         rule %r(^\*.*), Comment::Multiline
-        rule /\d+/, Num::Integer
-        rule /('|`)/, Str::Single, :single_string
-        rule /[\[\]\(\)\{\}\[\]\.,:\|]/, Punctuation
+        rule %r/\d+/, Num::Integer
+        rule %r/('|`)/, Str::Single, :single_string
+        rule %r/[\[\]\(\)\{\}\.,:\|]/, Punctuation
 
         # builtins / new ABAP 7.40 keywords (@DATA(), ...)
-        rule /(->|=>)?([A-Za-z][A-Za-z0-9_\-]*)(\()/ do |m|
+        rule %r/(->|=>)?([A-Za-z][A-Za-z0-9_\-]*)(\()/ do |m|
           if m[1] != ''
             token Operator, m[1]
           end
@@ -205,7 +207,7 @@ module Rouge
         end
 
         # keywords, types and normal text
-        rule /\w[\w\d]*/ do |m|
+        rule %r/\w\w*/ do |m|
           if self.class.keywords.include? m[0].upcase
             token Keyword
           elsif self.class.types.include? m[0].downcase
@@ -227,10 +229,10 @@ module Rouge
       end
 
       state :single_string do
-        rule /\\./, Str::Escape
-        rule /(''|``)/, Str::Escape
-        rule /['`]/, Str::Single, :pop!
-        rule /[^\\'`]+/, Str::Single
+        rule %r/\\./, Str::Escape
+        rule %r/(''|``)/, Str::Escape
+        rule %r/['`]/, Str::Single, :pop!
+        rule %r/[^\\'`]+/, Str::Single
       end
 
     end

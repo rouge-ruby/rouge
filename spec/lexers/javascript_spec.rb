@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::Javascript do
   let(:subject) { Rouge::Lexers::Javascript.new }
@@ -17,14 +18,10 @@ describe Rouge::Lexers::Javascript do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.js'
-      assert_guess Rouge::Lexers::JSON, :filename => 'foo.json'
     end
 
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/javascript'
-      assert_guess Rouge::Lexers::JSON, :mimetype => 'application/json'
-      assert_guess Rouge::Lexers::JSON, :mimetype => 'application/vnd.api+json'
-      assert_guess Rouge::Lexers::JSON, :mimetype => 'application/hal+json'
     end
 
     it 'guesses by source' do

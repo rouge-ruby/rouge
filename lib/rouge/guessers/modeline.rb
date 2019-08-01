@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rouge
   module Guessers
     class Modeline < Guesser
@@ -35,7 +37,7 @@ module Rouge
 
         matches = MODELINES.map { |re| re.match(search_space) }.compact
         return lexers unless matches.any?
-        
+
         match_set = Set.new(matches.map { |m| m[1] })
         lexers.select { |l| match_set.include?(l.tag) || l.aliases.any? { |a| match_set.include?(a) } }
       end

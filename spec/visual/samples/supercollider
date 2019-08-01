@@ -1,0 +1,166 @@
+// modulate a sine frequency and a noise amplitude with another sine
+// whose frequency depends on the horizontal mouse pointer position
+~myFunction = {
+        var x = SinOsc.ar(MouseX.kr(1, 100));
+        SinOsc.ar(300 * x + 800, 0, 0.1)
+        +
+        PinkNoise.ar(0.1 * x + 0.1)
+};
+
+~myFunction.play;
+"that's all, folks!".postln;
+
+/* Test Class */
+Collection {
+	*newFrom { | aCollection |
+		var newCollection = this.new(aCollection.size);
+		aCollection.do {| item | newCollection.add(item) };
+		^newCollection
+	}
+	*with { | ... args |
+		var newColl;
+		// answer a collection of my class of the given arguments
+		// the class Array has a simpler implementation
+		newColl = this.new(args.size);
+		newColl.addAll(args);
+		^newColl
+	}
+	*fill { | size, function |
+		var obj;
+		if(size.isSequenceableCollection) { ^this.fillND(size, function) };
+		obj = this.new(size);
+		size.do { | i |
+			obj.add(function.value(i));
+		};
+		^obj
+	}
+	*fill2D { | rows, cols, function |
+		var obj = this.new(rows);
+		rows.do { |row|
+			var obj2 = this.new(cols);
+			cols.do { |col|
+				obj2 = obj2.add(function.value(row, col))
+			};
+			obj = obj.add(obj2);
+		};
+		^obj
+	}
+	*fill3D { | planes, rows, cols, function |
+		var obj = this.new(planes);
+		planes.do { |plane|
+			var obj2 = this.new(rows);
+			rows.do { |row|
+				var obj3 = this.new(cols);
+				cols.do { |col|
+					obj3 = obj3.add(function.value(plane, row, col))
+				};
+				obj2 = obj2.add(obj3);
+			};
+			obj = obj.add(obj2);
+		};
+		^obj
+	}
+
+	// from Array
+	mirror2 {
+		_ArrayMirror2
+		^this.primitiveFailed
+	}
+}
+
+// class inheritance
+MyClass : Object {
+	classvar <>decorations;
+	var <>igloos;
+	const magicNumber = 3;
+}
+
+/* This is a multiline comment 
+ /* With nesting! */
+   End of multiline comment */
+
+~environmentVariable = { 3.do(_.postln) };
+
+~environmentVariable.value();
+
+~myFunction = { arg size, offset, freq;
+	postln("Bye!");
+};
+
+// function calls with symbol arguments:
+s.boot(startAliveThread: false, recover: true);
+Array.geom(size: 5, start: 1, grow: 8);
+[ 1, 8, 64, 512, 4096 ].collect { arg n;
+	n.squared
+};
+
+// array unpacking
+#a, b, c = [1, 4, 9];
+
+// some numbers
+// integers
+0;
+10;
+33;
+-235;
+0x15;
+0x159abcdef;
+0x159ABCDEF;
+2r01;
+8r711;
+36rabczyblkgh;
+36rAZ19GH;
+
+// floats
+0.0;
+0.0e5;
+1e5;
+1e-5;
+0.5e-5;
+10r2034.5;
+36r2358.ABCDZ;
+-36r2358.ABCDZ;
+15pi;
+15 pi;
+-10 pi;
+-10pi;
+-1.5e7pi;
+
+// strings
+"abcdefg hijklmnop";
+"\"quoted\"";
+"\ttabbed\t";
+"\\\ttabbed with backslashes\t\\";
+
+// symbols
+\abc;
+\a1;
+\a_symbol;
+'a symbol';
+'a cl3v3r\'_symb0l"';
+
+// characters
+$a;
+$ ;
+$b;
+$0;
+$$;
+$\t;
+$\0;
+$\&;
+$\\;
+
+// curry argument vs underscore in name
+[1, 2, 3].do(_.postln);
+[1, 2, 3].collect(_ + _);
+variable_name.function_name(Class_Name);
+
+// comments
+/* abc */ notComment;
+/* /* */ comment */ notComment;
+/* /* * */ comment */ notComment;
+/* /*/ comment */ comment */ notComment;
+/* /**/ comment */ notComment;
+// /*
+notComment;
+// */

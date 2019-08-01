@@ -2,6 +2,10 @@
 a multiline comment
 ###
 
+###*
+a multiline comment with extra characters
+###
+
 # The following line of hashes does not start a multiline comment
 #################
 

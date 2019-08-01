@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   # A Formatter takes a token stream and formats it for human viewing.
@@ -20,6 +21,26 @@ module Rouge
       REGISTRY[tag]
     end
 
+    def self.with_escape
+      Thread.current[:'rouge/with-escape'] = true
+      yield
+    ensure
+      Thread.current[:'rouge/with-escape'] = false
+    end
+
+    def self.escape_enabled?
+      !!(((defined? @escape_enabled) && @escape_enabled) || Thread.current[:'rouge/with-escape'])
+    end
+
+    def self.enable_escape!
+      @escape_enabled = true
+    end
+
+    def self.disable_escape!
+      @escape_enabled = false
+      Thread.current[:'rouge/with-escape'] = false
+    end
+
     # Format a token stream.  Delegates to {#format}.
     def self.format(tokens, *a, &b)
       new(*a).format(tokens, &b)
@@ -29,11 +50,27 @@ module Rouge
       # pass
     end
 
+    def escape?(tok)
+      tok == Token::Tokens::Escape
+    end
+
+    def filter_escapes(tokens)
+      tokens.each do |t, v|
+        if t == Token::Tokens::Escape
+          yield Token::Tokens::Error, v
+        else
+          yield t, v
+        end
+      end
+    end
+
     # Format a token stream.
     def format(tokens, &b)
+      tokens = enum_for(:filter_escapes, tokens) unless Formatter.escape_enabled?
+
       return stream(tokens, &b) if block_given?
 
-      out = ''
+      out = String.new('')
       stream(tokens) { |piece| out << piece }
 
       out
@@ -57,7 +94,7 @@ module Rouge
 
       out = []
       tokens.each do |tok, val|
-        val.scan /\n|[^\n]+/ do |s|
+        val.scan %r/\n|[^\n]+/ do |s|
           if s == "\n"
             yield out
             out = []

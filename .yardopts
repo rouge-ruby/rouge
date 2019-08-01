@@ -1,3 +1,5 @@
 --no-private
+--protected
 --markup-provider=redcarpet
 --markup=markdown
+- docs/*.*

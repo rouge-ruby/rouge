@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -8,7 +9,7 @@ module Rouge
 
       tag 'plaintext'
       aliases 'text'
-      filenames '*.txt'
+      filenames '*.txt', 'Messages'
       mimetypes 'text/plain'
 
       attr_reader :token

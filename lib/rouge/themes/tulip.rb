@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Themes
@@ -23,7 +24,7 @@ module Rouge
       style Text, :fg => :white, :bg => :dark_purple
 
       style Comment, :fg => :gray, :italic => true
-      style Comment::Preproc, :fg => :lgreen, :bold => true, :italic => true
+      style Comment::Preproc, :fg => :lgreen, :bold => true
       style Error,
             Generic::Error, :fg => :white, :bg => :red
       style Keyword, :fg => :yellow, :bold => true

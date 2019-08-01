@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -214,19 +215,19 @@ module Rouge
       symbol = /(\|[^\|]+\||#{nonmacro}#{constituent}*)/
 
       state :root do
-        rule /\s+/m, Text
-        rule /;.*$/, Comment::Single
-        rule /#\|/, Comment::Multiline, :multiline_comment
+        rule %r/\s+/m, Text
+        rule %r/;.*$/, Comment::Single
+        rule %r/#\|/, Comment::Multiline, :multiline_comment
 
         # encoding comment
-        rule /#\d*Y.*$/, Comment::Special
-        rule /"(\\.|[^"\\])*"/, Str
+        rule %r/#\d*Y.*$/, Comment::Special
+        rule %r/"(\\.|[^"\\])*"/, Str
 
-        rule /[:']#{symbol}/, Str::Symbol
-        rule /['`]/, Operator
+        rule %r/[:']#{symbol}/, Str::Symbol
+        rule %r/['`]/, Operator
 
         # numbers
-        rule /[-+]?\d+\.?#{terminated}/, Num::Integer
+        rule %r/[-+]?\d+\.?#{terminated}/, Num::Integer
         rule %r([-+]?\d+/\d+#{terminated}), Num::Integer
         rule %r(
           [-+]?
@@ -236,65 +237,65 @@ module Rouge
         )x, Num::Float
 
         # sharpsign strings and characters
-        rule /#\\.#{terminated}/, Str::Char
-        rule /#\\#{symbol}/, Str::Char
+        rule %r/#\\.#{terminated}/, Str::Char
+        rule %r/#\\#{symbol}/, Str::Char
 
-        rule /#\(/, Operator, :root
+        rule %r/#\(/, Operator, :root
 
         # bitstring
-        rule /#\d*\*[01]*/, Other
+        rule %r/#\d*\*[01]*/, Other
 
         # uninterned symbol
-        rule /#:#{symbol}/, Str::Symbol
+        rule %r/#:#{symbol}/, Str::Symbol
 
         # read-time and load-time evaluation
-        rule /#[.,]/, Operator
+        rule %r/#[.,]/, Operator
 
         # function shorthand
-        rule /#'/, Name::Function
+        rule %r/#'/, Name::Function
 
         # binary rational
-        rule /#b[+-]?[01]+(\/[01]+)?/i, Num
+        rule %r/#b[+-]?[01]+(\/[01]+)?/i, Num
 
         # octal rational
-        rule /#o[+-]?[0-7]+(\/[0-7]+)?/i, Num::Oct
+        rule %r/#o[+-]?[0-7]+(\/[0-7]+)?/i, Num::Oct
 
         # hex rational
-        rule /#x[+-]?[0-9a-f]+(\/[0-9a-f]+)?/i, Num
+        rule %r/#x[+-]?[0-9a-f]+(\/[0-9a-f]+)?/i, Num
 
         # complex
-        rule /(#c)(\()/i do
+        rule %r/(#c)(\()/i do
           groups Num, Punctuation
           push :root
         end
 
         # arrays and structures
-        rule /(#(?:\d+a|s))(\()/i do
+        rule %r/(#(?:\d+a|s))(\()/i do
           groups Str::Other, Punctuation
           push :root
         end
 
         # path
-        rule /#p?"(\\.|[^"])*"/i, Str::Symbol
+        rule %r/#p?"(\\.|[^"])*"/i, Str::Symbol
 
         # reference
-        rule /#\d+[=#]/, Operator
+        rule %r/#\d+[=#]/, Operator
 
         # read-time comment
-        rule /#+nil#{terminated}\s*\(/, Comment, :commented_form
+        rule %r/#+nil#{terminated}\s*\(/, Comment, :commented_form
 
         # read-time conditional
-        rule /#[+-]/, Operator
+        rule %r/#[+-]/, Operator
 
         # special operators that should have been parsed already
-        rule /(,@|,|\.)/, Operator
+        rule %r/(,@|,|\.)/, Operator
 
         # special constants
-        rule /(t|nil)#{terminated}/, Name::Constant
+        rule %r/(t|nil)#{terminated}/, Name::Constant
 
         # functions and variables
         # note that these get filtered through in stream_tokens
-        rule /\*#{symbol}\*/, Name::Variable::Global
+        rule %r/\*#{symbol}\*/, Name::Variable::Global
         rule symbol do |m|
           sym = m[0]
 
@@ -317,9 +318,9 @@ module Rouge
           end
         end
 
-        rule /\(/, Punctuation, :root
-        rule /\)/, Punctuation do
-          if stack.empty?
+        rule %r/\(/, Punctuation, :root
+        rule %r/\)/, Punctuation do
+          if stack.size == 1
             token Error
           else
             token Punctuation
@@ -329,16 +330,16 @@ module Rouge
       end
 
       state :multiline_comment do
-        rule /#\|/, Comment::Multiline, :multiline_comment
-        rule /\|#/, Comment::Multiline, :pop!
-        rule /[^\|#]+/, Comment::Multiline
-        rule /[\|#]/, Comment::Multiline
+        rule %r/#\|/, Comment::Multiline, :multiline_comment
+        rule %r/\|#/, Comment::Multiline, :pop!
+        rule %r/[^\|#]+/, Comment::Multiline
+        rule %r/[\|#]/, Comment::Multiline
       end
 
       state :commented_form do
-        rule /\(/, Comment, :commented_form
-        rule /\)/, Comment, :pop!
-        rule /[^()]+/, Comment
+        rule %r/\(/, Comment, :commented_form
+        rule %r/\)/, Comment, :pop!
+        rule %r/[^()]+/, Comment
       end
     end
   end

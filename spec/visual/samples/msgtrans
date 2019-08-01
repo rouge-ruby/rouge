@@ -1,0 +1,15 @@
+# Comments require hash in column 0
+Token:Value # this is still part of the value
+# All sorts of nonsense is permitted in token names
+Token!"#$%&'(*+-.;<=>@[\]^_`{|}~:Other value
+# Parameter substitution uses %
+ScaleFill:Scale to fill %0 by %1
+# Literal % characters are represented by %%
+FullSize:Scale to 100%%
+# Multiple tokens can match the same result and be separated by '/' or newline
+Hout3/Hout4/Hout5
+Hout6/Hout7/Hout8:Create a sprite with the given number of colours.
+# '?' is a wildcard in token names
+Hinfo?/Hinfo??:This window displays information about ChangeFSI.
+# But not in values
+OverW:Overwrite source file?

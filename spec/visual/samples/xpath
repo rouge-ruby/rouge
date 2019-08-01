@@ -1,0 +1,120 @@
+(:
+    The following samples have been compiled from examples from the XQuery language specification.
+    The following notice is to comply with the W3C Software and Document Notice and License:
+
+    This software or document includes material copied from or derived from "XML Path Language (XPath)
+    3.1" https://www.w3.org/TR/xpath-31/.
+    Copyright © 2017 W3C® (MIT, ERCIM, Keio, Beihang).
+
+    (:
+        W3C Software and Document Notice and License
+
+        This work is being provided by the copyright holders under the following
+        license.
+
+        License
+        By obtaining and/or copying this work, you (the licensee) agree that you have
+        read, understood, and will comply with the following terms and conditions.
+
+        Permission to copy, modify, and distribute this work, with or without
+        modification, for any purpose and without fee or royalty is hereby granted,
+        provided that you include the following on ALL copies of the work or portions
+        thereof, including modifications:
+
+            1. The full text of this NOTICE in a location viewable to users of the
+               redistributed or derivative work.
+            2. Any pre-existing intellectual property disclaimers, notices, or terms and
+               conditions. If none exist, the W3C Software and Document Short Notice
+               should be included.
+            3. Notice of any changes or modifications, through a copyright statement on
+               the new code or document such as "This software or document includes
+               material copied from or derived from [title and URI of the W3C document].
+               Copyright © [YEAR] W3C® (MIT, ERCIM, Keio, Beihang)."
+
+        Disclaimers
+        THIS WORK IS PROVIDED "AS IS," AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR
+        WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF
+        MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF THE
+        SOFTWARE OR DOCUMENT WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS,
+        TRADEMARKS OR OTHER RIGHTS.
+
+        COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR
+        CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE SOFTWARE OR DOCUMENT.
+        The name and trademarks of copyright holders may NOT be used in advertising or
+        publicity pertaining to the work without specific, written prior permission.
+
+        Title to copyright in this work will at all times remain with copyright holders.
+    :)
+:)
+
+(: XPATH 2.0 :)
+(:   1. Arithmetic :)
+($x div $y) + xs:decimal($z) |
+(1 to 100)[. mod 5 eq 0] |
+xs:decimal($floatvalue * 0.2E-5)
+
+(:   2. Sequences :)
+(10, (1, 2), (), (3, 4))
+(1, 2) = (2, 3) and (2, 3) = (3, 4) and (1, 2) = (3, 4) and (1, 2) != (2, 3) |
+(salary, bonus)  |
+($price, $price) |
+
+(:   3. Path selection :)
+child::chapter[2] |
+descendant::toy[attribute::color = "red"] |
+child::employee[secretary][assistant] |
+/books/book[isbn="1558604820"] is /books/book[call="QA76.9 C3845"] |
+
+(:   4. Functions :)
+fn:error(xs:QName("app:err057"), "Unexpected value", fn:string($v)) |
+
+(:   5. Control flow :)
+if ($x castable as hatsize)
+   then $x cast as hatsize
+   else if ($x castable as IQ)
+       then $x cast as IQ
+       else $x cast as xs:string |
+$N[if (@x castable as xs:date)
+   then xs:date(@x) gt xs:date("2000-01-01")
+   else false()] |
+
+(:   6. Looping :)
+for $a in fn:distinct-values(book/author) return (book/author[. = $a][1], book[author = $a]/title) |
+every $part in /parts/part satisfies $part/@discounted |
+some $emp in /emps/employee satisfies ($emp/bonus > 0.25 * $emp/salary) |
+
+(:   7. Type casts :)
+$myaddress treat as element(*, USAddress) |
+(fn:root(self::node()) treat as document-node())/
+
+(: XPATH 3.0 :)
+(:   8. Functions and let :)
+let $f := function ($seq, $delim) { fn:fold-left($seq, "", fn:concat(?, $delim, ?)) },
+    $paf := $f(?, ".")
+return $paf(1 to 5) |
+
+collection()/(let $a := . return function() { $a }) |
+
+let $x := doc('a.xml')/*, $y := $x//*
+return $y[@value gt $x/@min] |
+
+
+(: XPATH 3.1 :)
+(:   9. Maps :)
+let $m := map {
+  "Monday" : true(),
+  "Wednesday" : true(),
+  "Friday" : true(),
+  "Saturday" : false(),
+  "Sunday" : false()
+},
+$days := ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+return fn:filter($days, $m) |
+
+(:   10. Arrays :)
+let a := array { "licorice", "ginger" }(1),
+    b := [ 1, 2, 5, 7 ](4)
+return a |
+
+(:   11. Arrow operator :)
+$string => upper-case() => normalize-unicode() => tokenize("\s+") |

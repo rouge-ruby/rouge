@@ -61,10 +61,10 @@ module Rouge
       end
 
       state :root do
-        rule %r/(:)( *)(\*)(.*)/ do
+        rule %r/(:+)( *)(\*)(.*)/ do
           groups Punctuation, Text, Keyword, Text # CLI command
         end
-        rule %r/(\n *)(\*)(.*)/ do
+        rule %r/(\n+ *)(\*)(.*)/ do
           groups Text, Keyword, Text # CLI command
         end
         rule %r/(ELSE|OTHERWISE|REPEAT|THEN)( *)(\*)(.*)/ do

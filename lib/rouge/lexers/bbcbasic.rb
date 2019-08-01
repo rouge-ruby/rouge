@@ -44,7 +44,7 @@ module Rouge
       def self.control3 # these can come after a statement and expression,
                         # and must be followed by an expression, if anything
         @control3 ||= %w(
-          GOSUB GOTO OF ON TINT TO STEP
+          GOSUB GOTO OF ON PROC TINT TO STEP
         )
       end
 
@@ -139,7 +139,10 @@ module Rouge
           token Keyword
           goto :no_further_imperatives
         end
-        rule %r/(?:#{BBCBASIC.control2.join('|')}|DEF *(?:FN|PROC)|ON *ERROR(?: *LOCAL)?)/o, Keyword
+        rule %r/(?:#{BBCBASIC.control2.join('|')}|DEF *FN|ON *ERROR(?: *LOCAL)?)/o, Keyword
+        rule %r/(DEF *PROC)([a-z_`][\w`]*)/o do
+          groups Keyword, Name::Variable
+        end
         mixin :expression
       end
 

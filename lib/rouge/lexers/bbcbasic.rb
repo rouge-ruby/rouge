@@ -17,11 +17,11 @@ module Rouge
 
       def self.function
         @function ||= %w(
-          ABS ACS ADVAL ASC ASN ATN BEATS BEAT BGET# CHR\$ COS COUNT DEG EOF#
-          ERL ERR EVAL EXP EXT# GET\$# GET\$ GET HIMEM INKEY\$ INKEY INSTR INT
-          LEFT\$ LEN LN LOG LOMEM MID\$ OPENIN OPENOUT OPENUP PAGE POS PTR# RAD
-          REPORT\$ RIGHT\$ RND SGN SIN SQR STR\$ STRING\$ SUM SUMLEN TAN TEMPO
-          TIME\$ TIME TOP USR VAL VPOS
+          ABS ACS ADVAL ASC ASN ATN BEATS BEAT BGET# CHR\$ COS COUNT DEG DIM
+          EOF# ERL ERR EVAL EXP EXT# GET\$# GET\$ GET HIMEM INKEY\$ INKEY INSTR
+          INT LEFT\$ LEN LN LOG LOMEM MID\$ OPENIN OPENOUT OPENUP PAGE POINT POS
+          PTR# RAD REPORT\$ RIGHT\$ RND SGN SIN SQR STR\$ STRING\$ SUM SUMLEN
+          TAN TEMPO TIME\$ TIME TOP USR VAL VPOS
         )
       end
 
@@ -55,9 +55,9 @@ module Rouge
 
       def self.statement
         @statement ||= %w(
-          BEATS BPUT# CALL CLEAR CLG CLOSE# CLS COLOR COLOUR DATA DIM ENVELOPE
-          GCOL LET MODE OFF ON ORIGIN OSCI PLOT PRINT# PRINT QUIT READ REPORT
-          SOUND STEREO SWAP SYS TINT VDU VOICE VOICES WAIT WIDTH
+          BEATS BPUT# CALL CLEAR CLG CLOSE# CLS COLOR COLOUR DATA ENVELOPE GCOL
+          LET MODE OFF ON ORIGIN OSCI PLOT PRINT# PRINT QUIT READ REPORT SOUND
+          STEREO SWAP SYS TINT VDU VOICE VOICES WAIT WIDTH
         )
       end
 
@@ -73,12 +73,8 @@ module Rouge
         )
       end
 
-      state :builtin_function do
-        rule %r/#{BBCBASIC.function.join('|')}/, Name::Builtin # function or pseudo-variable
-        rule %r/(?:DIM|POINT)(?=\()/, Name::Builtin # function sharing keyword with statement, distinguished by ()
-      end
-
       state :expression do
+        rule %r/#{BBCBASIC.function.join('|')}/, Name::Builtin # function or pseudo-variable
         rule %r/#{BBCBASIC.operator.join('|')}/, Operator
         rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant
         rule %r/"[^"]*"/, Literal::String
@@ -93,7 +89,6 @@ module Rouge
         rule %r/:+/, Punctuation, :pop!
         rule %r/\n+/, Text, :pop!
         rule %r/ +/, Text
-        mixin :builtin_function
         rule %r/#{BBCBASIC.control3.join('|')}/, Keyword
         rule %r/#{BBCBASIC.control4.join('|')}/, Keyword, :pop!
         mixin :expression
@@ -109,11 +104,10 @@ module Rouge
         end
         rule %r/REM *>.*/, Comment::Special
         rule %r/REM.*/, Comment
-        rule %r/ERROR(?: *EXT)?/, Keyword, :no_further_imperatives
-        mixin :builtin_function
-        rule %r/(?:#{BBCBASIC.control.join('|')}|ON *ERROR *OFF)/, Keyword, :no_further_imperatives
+        rule %r//, Keyword, :no_further_imperatives
+        rule %r/(?:#{BBCBASIC.control.join('|')}|ERROR(?: *EXT)?|ON *ERROR *OFF)/, Keyword, :no_further_imperatives
         rule %r/(?:#{BBCBASIC.control2.join('|')}|DEF *(?:FN|PROC)|ON *ERROR(?: *LOCAL)?)/, Keyword
-        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/, Keyword, :no_further_imperatives # other statement
+        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/, Keyword, :no_further_imperatives # other statement
         mixin :expression
       end
 
@@ -141,7 +135,6 @@ module Rouge
         rule %r/ +/, Text
         rule %r/[:\n]/, Punctuation, :pop!
         rule %r/(?:REM|;)[^:\n]*/, Comment, :pop!
-        mixin :builtin_function
         mixin :expression
         rule %r/[!#,@\[\]^{}]/, Punctuation
       end

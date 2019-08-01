@@ -74,23 +74,60 @@ module Rouge
       end
 
       state :expression do
-        rule %r/#{BBCBASIC.function.join('|')}/, Name::Builtin # function or pseudo-variable
-        rule %r/#{BBCBASIC.operator.join('|')}/, Operator
-        rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant
-        rule %r/"[^"]*"/, Literal::String
-        rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
-        rule %r/@%/, Name::Variable
-        rule %r/[\d.]+/, Literal::Number
-        rule %r/%[01]+/, Literal::Number::Bin
-        rule %r/&[\h]+/, Literal::Number::Hex
+        rule %r/#{BBCBASIC.function.join('|')}/ do
+          # function or pseudo-variable
+          token Name::Builtin
+          goto :no_further_imperatives
+        end
+        rule %r/#{BBCBASIC.operator.join('|')}/ do
+          token Operator
+          goto :no_further_imperatives
+        end
+        rule %r/#{BBCBASIC.constant.join('|')}/ do
+          token Name::Constant
+          goto :no_further_imperatives
+        end
+        rule %r/"[^"]*"/ do
+          token Literal::String
+          goto :no_further_imperatives
+        end
+        rule %r/[a-z_`][\w`]*[$%]?/i do
+          token Name::Variable
+          goto :no_further_imperatives
+        end
+        rule %r/@%/ do
+          token Name::Variable
+          goto :no_further_imperatives
+        end
+        rule %r/[\d.]+/ do
+          token Literal::Number
+          goto :no_further_imperatives
+        end
+        rule %r/%[01]+/ do
+          token Literal::Number::Bin
+          goto :no_further_imperatives
+        end
+        rule %r/&[\h]+/ do
+          token Literal::Number::Hex
+          goto :no_further_imperatives
+        end
       end
 
       state :no_further_imperatives do
-        rule %r/:+/, Punctuation, :pop!
-        rule %r/\n+/, Text, :pop!
+        rule %r/:+/ do
+          token Punctuation
+          goto :root
+        end
+        rule %r/\n+/ do
+          token Text
+          goto :root
+        end
         rule %r/ +/, Text
         rule %r/#{BBCBASIC.control3.join('|')}/, Keyword
-        rule %r/#{BBCBASIC.control4.join('|')}/, Keyword, :pop!
+        rule %r/#{BBCBASIC.control4.join('|')}/ do
+          token Keyword
+          goto :root
+        end
         mixin :expression
         rule %r/#{BBCBASIC.punctuation.join('|')}/, Punctuation
       end
@@ -104,10 +141,15 @@ module Rouge
         end
         rule %r/REM *>.*/, Comment::Special
         rule %r/REM.*/, Comment
-        rule %r//, Keyword, :no_further_imperatives
-        rule %r/(?:#{BBCBASIC.control.join('|')}|ERROR(?: *EXT)?|ON *ERROR *OFF)/, Keyword, :no_further_imperatives
+        rule %r/(?:#{BBCBASIC.control.join('|')}|ERROR(?: *EXT)?|ON *ERROR *OFF)/ do
+          token Keyword
+          goto :no_further_imperatives
+        end
         rule %r/(?:#{BBCBASIC.control2.join('|')}|DEF *(?:FN|PROC)|ON *ERROR(?: *LOCAL)?)/, Keyword
-        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/, Keyword, :no_further_imperatives # other statement
+        rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/ do
+          token Keyword
+          goto :no_further_imperatives
+        end
         mixin :expression
       end
 
@@ -135,7 +177,15 @@ module Rouge
         rule %r/ +/, Text
         rule %r/[:\n]/, Punctuation, :pop!
         rule %r/(?:REM|;)[^:\n]*/, Comment, :pop!
-        mixin :expression
+        rule %r/#{BBCBASIC.function.join('|')}/, Name::Builtin # function or pseudo-variable
+        rule %r/#{BBCBASIC.operator.join('|')}/, Operator
+        rule %r/#{BBCBASIC.constant.join('|')}/, Name::Constant
+        rule %r/"[^"]*"/, Literal::String
+        rule %r/[a-z_`][\w`]*[$%]?/i, Name::Variable
+        rule %r/@%/, Name::Variable
+        rule %r/[\d.]+/, Literal::Number
+        rule %r/%[01]+/, Literal::Number::Bin
+        rule %r/&[\h]+/, Literal::Number::Hex
         rule %r/[!#,@\[\]^{}]/, Punctuation
       end
     end

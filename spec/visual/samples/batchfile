@@ -30,6 +30,7 @@ if 5 equ 5 (
   echo are different
 )
 :bye
+echo ^Hello
 echo Bye
 goto :eof
 :a

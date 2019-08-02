@@ -109,7 +109,7 @@ module Rouge
 
         mixin :expansions
 
-        rule %r/[<>&|(){}\[\]\^\-+=;,~?*]/, Operator
+        rule %r/[<>&|(){}\[\]\-+=;,~?*]/, Operator
       end
 
       state :escape do
@@ -152,6 +152,7 @@ module Rouge
         rule %r/[']/, Str::Single, :single_quotes
         rule %r/[`]/, Str::Backtick, :backtick
         rule %r/[^\s&|()\[\]{}\^=;!%+\-,"'`~?*]+/, Text
+        mixin :escape
       end
 
       state :root do

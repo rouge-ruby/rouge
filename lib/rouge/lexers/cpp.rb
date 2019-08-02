@@ -61,7 +61,9 @@ module Rouge
         rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lu]*)?)i, Num::Float
         rule %r(#{dq}e[+-]?#{dq}[lu]*)i, Num::Float
         rule %r/0x\h('?\h)*[lu]*/i, Num::Hex
+        rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r/0[0-7]('?[0-7])*[lu]*/i, Num::Oct
+        rule %r/(?:\d)*?.?\d+(?:h|min|s|ms|us|ns)/, Num::Other
         rule %r/#{dq}[lu]*/i, Num::Integer
         rule %r/\bnullptr\b/, Name::Builtin
         rule %r/(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
@@ -72,6 +74,7 @@ module Rouge
 
         # template specification
         rule %r/\s*(?=>)/m, Text, :pop!
+        rule %r/[.]{3}/, Operator
         mixin :whitespace
       end
     end

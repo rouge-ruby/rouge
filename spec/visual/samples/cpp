@@ -21,6 +21,7 @@ char16_t raw_str3[] = uR"(\w+ \d+)";
 using namespace std::chrono_literals;
 auto oneDay = 24h;
 auto halfAnHour = 30min;
+auto halfAnHour = 0.5h;
 auto oneMin = 60s;
 auto oneSec = 1000ms;
 auto oneMilliSec = 1000us;

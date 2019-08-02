@@ -19,11 +19,11 @@ cdef extern from 'foo.h':
 # Type definitions
 ctypedef int word
 
-# C structs
+# C struct
 cdef struct Foo:
     pass
 
-# C classes
+# C class
 cdef class MyType(ParentType):
     cdef int field
     cpdef foo(self, x=*, int k=*)
@@ -48,10 +48,6 @@ cpdef fib(int n):    # Cython version
         print(a)
         a, b = b, a+b
 
-# Python function
-def foo(int n)
-    return n + 1
-
 # C function with return type
 cpdef unsigned int foo():
     return 1 + 2
@@ -74,6 +70,10 @@ cpdef int sum3d(int[:, :, :] arr) nogil:
 # Inline C function
 cdef inline int something_fast(int a, int b):
     return a*a + b
+
+# Python function with typed parameters
+def foo(int n)
+    return n + 1
 
 # Assignment on declaration
 cdef int n = python_call(foo(x,y), a + b + c) - 32

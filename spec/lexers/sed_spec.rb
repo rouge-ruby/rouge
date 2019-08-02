@@ -23,7 +23,7 @@ describe Rouge::Lexers::Sed do
   describe 'lexing' do
     include Support::Lexing
 
-    it 'parses regex addresses with custom delimiter (issue #860)' do
+    it 'parses regex addresses with custom delimiter' do
       assert_tokens_equal '\#foobar#n',
         ['Keyword.Namespace', '\#'],
         ['Literal.String.Regex', 'foobar'],

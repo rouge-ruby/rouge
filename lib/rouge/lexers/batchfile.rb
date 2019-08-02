@@ -98,7 +98,7 @@ module Rouge
             token Name::Builtin
           elsif self.class.attributes.include? m[1]
             groups Name::Attribute, Error
-          elsif "set" == m[1].downcase
+          elsif "set".casecmp m[1]
             groups Keyword::Declaration, Error
           else
             token Text

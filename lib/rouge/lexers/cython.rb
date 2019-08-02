@@ -20,7 +20,7 @@ module Rouge
 
       def self.keywords
         @keywords ||= super + %w(
-          by except? fused gil nogil 
+          by except? fused gil nogil
         )
       end
 
@@ -32,7 +32,7 @@ module Rouge
 
       identifier = /[a-z_]\w*/i
       dotted_identifier = /[a-z_.][\w.]*/i
-      
+
       prepend :root do
         rule %r/cp?def|ctypedef/ do
           token Keyword
@@ -75,11 +75,11 @@ module Rouge
       state :func_call_fix do
         rule %r/#{identifier}(?=\()/ do |m|
           if self.class.keywords.include? m[0]
-            token Keyword 
+            token Keyword
           elsif self.class.exceptions.include? m[0]
-            token Name::Builtin 
+            token Name::Builtin
           elsif self.class.builtins.include? m[0]
-            token Name::Builtin 
+            token Name::Builtin
           elsif self.class.builtins_pseudo.include? m[0]
             token Name::Builtin::Pseudo
           else
@@ -98,7 +98,7 @@ module Rouge
 
       state :c_start do
         rule %r/[^\S\n]+/, Text
-        
+
         rule %r/cp?def|ctypedef/, Keyword
 
         rule %r/(?:un)?signed/, Keyword::Type
@@ -122,7 +122,7 @@ module Rouge
             pop!
           end
         end
-        
+
         rule(//) { pop! }
       end
 
@@ -143,7 +143,7 @@ module Rouge
             pop! 2 # Pop :c_start and :c_definitions
           end
         end
-        
+
         rule(//) { @indentation = nil; reset_stack }
       end
     end

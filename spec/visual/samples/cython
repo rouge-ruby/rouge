@@ -1,5 +1,37 @@
 # File from https://cython.readthedocs.io/en/latest/src/userguide/memoryviews.html
 
+import numpy
+from numpy cimport abs
+
+cdef extern from 'foo.h':
+    int foo_int
+    struct foo_struct:
+        pass
+
+ctypedef int word
+
+cdef struct Foo:
+    pass
+
+cpdef fib(int n):    # Cython version
+    """Print a Fibonacci series up to n."""
+    cdef int a = 0
+    cdef int b
+
+    b = 1
+
+    while a < n:
+        print(a)
+        a, b = b, a+b
+
+# Python function
+def fib(n):    # Python version
+    """Print a Fibonacci series up to n."""
+    a, b = 0, 1
+    while a < n:
+        print a,
+        a, b = b, a+b
+
 from cython.view cimport array as cvarray
 import numpy as np
 
@@ -47,3 +79,9 @@ cpdef int sum3d(int[:, :, :] arr) nogil:
             for k in range(K):
                 total += arr[i, j, k]
     return total
+            
+for i in range(i]:
+    total = total + 1
+
+# Back out of the block
+1 + 1 = 2

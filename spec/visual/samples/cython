@@ -1,21 +1,45 @@
-# File from https://cython.readthedocs.io/en/latest/src/userguide/memoryviews.html
+# -------------
+# Cython Syntax
+# -------------
 
+# Import statements
 import numpy
 from numpy cimport abs
 
+# Import statements with selection
+import numpy as np
+from cython.view cimport array as cvarray
+
+# Extern values
 cdef extern from 'foo.h':
     int foo_int
     struct foo_struct:
         pass
 
+# Type definitions
 ctypedef int word
 
+# C structs
 cdef struct Foo:
     pass
 
+# C classes
+cdef class MyType(ParentType):
+    cdef int field
+    cpdef foo(self, x=*, int k=*)
+
+# C class with classmethod
+cdef class Blah:
+    def some_method(self):
+        print self
+        some_method = classmethod(some_method)
+        a = 2*3
+        print "hi", a
+
+# C function
 cpdef fib(int n):    # Cython version
     """Print a Fibonacci series up to n."""
-    cdef int a = 0
+    cdef unsigned int a = 0
     cdef int b
 
     b = 1
@@ -25,47 +49,14 @@ cpdef fib(int n):    # Cython version
         a, b = b, a+b
 
 # Python function
-def fib(n):    # Python version
-    """Print a Fibonacci series up to n."""
-    a, b = 0, 1
-    while a < n:
-        print a,
-        a, b = b, a+b
+def foo(int n)
+    return n + 1
 
-from cython.view cimport array as cvarray
-import numpy as np
+# C function with return type
+cpdef unsigned int foo():
+    return 1 + 2
 
-# Memoryview on a NumPy array
-narr = np.arange(27, dtype=np.dtype("i")).reshape((3, 3, 3))
-cdef int [:, :, :] narr_view = narr
-
-# Memoryview on a C array
-cdef:
-    int carr[3][3][3]
-    int [:, :, :] carr_view = carr
-
-# Memoryview on a Cython array
-cyarr = cvarray(shape=(3, 3, 3), itemsize=sizeof(int), format="i")
-cdef int [:, :, :] cyarr_view = cyarr
-
-# Show the sum of all the arrays before altering it
-print("NumPy sum of the NumPy array before assignments: %s" % narr.sum())
-
-# We can copy the values from one memoryview into another using a single
-# statement, by either indexing with ... or (NumPy-style) with a colon.
-carr_view[...] = narr_view
-cyarr_view[:] = narr_view
-# NumPy-style syntax for assigning a single value to all elements.
-narr_view[:, :, :] = 3
-
-# Just to distinguish the arrays
-carr_view[0, 0, 0] = 100
-cyarr_view[0, 0, 0] = 1000
-
-# Assigning into the memoryview on the NumPy array alters the latter
-print("NumPy sum of NumPy array after assignments: %s" % narr.sum())
-
-# A function using a memoryview does not usually need the GIL
+# C function with no GIL
 cpdef int sum3d(int[:, :, :] arr) nogil:
     cdef size_t i, j, k, I, J, K
     cdef int total = 0
@@ -80,8 +71,49 @@ cpdef int sum3d(int[:, :, :] arr) nogil:
                 total += arr[i, j, k]
     return total
             
+# Inline C function
+cdef inline int something_fast(int a, int b):
+    return a*a + b
+
+# Assignment on declaration
+cdef int n = python_call(foo(x,y), a + b + c) - 32
+cdef int [:, :, :] narr_view = narr
+
+# Definition with C-block syntax
+cdef:
+    int carr[3][3][3]
+    int [:, :, :] carr_view = carr
+
+# Iteration with steps
+for i from 0 <= i < 10 by 2:
+    print i
+
+# -------------
+# Python syntax
+# -------------
+
+# Function call
+print("NumPy sum of the NumPy array before assignments: %s" % narr.sum())
+
+# Assignment
+narr = np.arange(27, dtype=np.dtype("i")).reshape((3, 3, 3))
+carr_view[...] = narr_view
+cyarr_view[:] = narr_view
+narr_view[:, :, :] = 3
+carr_view[0, 0, 0] = 100
+
+# Equality test
+1 + 1 == 2
+1 < 2
+
+# For loops
 for i in range(i]:
     total = total + 1
 
-# Back out of the block
-1 + 1 = 2
+# Function definition
+def fib(n):    # Python version
+    """Print a Fibonacci series up to n."""
+    a, b = 0, 1
+    while a < n:
+        print a,
+        a, b = b, a+b

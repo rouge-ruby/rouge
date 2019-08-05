@@ -108,10 +108,12 @@ module Rouge
         rule %r/\s+/m, Text
         rule %r/--.*/, Comment::Single
         rule %r(/\*), Comment::Multiline, :multiline_comments
-        rule %/\d+/, Num::Integer
-        rule %/'/, Str::Single, :single_string
-        rule %/"/, Str::Single, :double_string
-        rule %/`/, Name::Variable, :backtick
+        rule %r/\d+/, Num::Integer
+        rule %r/'/, Str::Single, :single_string
+        # A double-quoted string refers to a database object in our default SQL
+        # dialect, which is apropriate for e.g. MS SQL and PostgreSQL.
+        rule %r/"/, Name::Variable, :double_string
+        rule %r/`/, Name::Variable, :backtick
 
         rule %r/\w[\w\d]*/ do |m|
           if self.class.keywords_type.include? m[0].upcase

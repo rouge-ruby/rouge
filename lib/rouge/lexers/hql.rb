@@ -110,7 +110,11 @@ module Rouge
       end
 
       prepend :root do
-        rule /\$\{/, Name::Variable, :hive_variable
+        # a double-quoted string is a string literal in Hive QL.
+        rule %r/"/, Str::Single, :double_string
+
+        # interpolation of variables through ${...}
+        rule %r/\$\{/, Name::Variable, :hive_variable
       end
 
       prepend :single_string do

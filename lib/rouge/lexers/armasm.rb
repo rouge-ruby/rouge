@@ -7,7 +7,7 @@ module Rouge
       title "ArmAsm"
       desc "Arm assembly syntax"
       tag 'armasm'
-      filenames '*.s'
+      filenames '*.s', 'VersionASM'
 
       def self.preproc_keyword
         @preproc_keyword ||= %w(

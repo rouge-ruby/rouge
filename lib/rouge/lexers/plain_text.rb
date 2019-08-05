@@ -9,7 +9,7 @@ module Rouge
 
       tag 'plaintext'
       aliases 'text'
-      filenames '*.txt', 'Messages'
+      filenames '*.txt', 'Messages', 'VersionASM', 'VersionNum'
       mimetypes 'text/plain'
 
       attr_reader :token

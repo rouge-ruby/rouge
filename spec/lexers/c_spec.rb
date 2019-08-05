@@ -11,6 +11,7 @@ describe Rouge::Lexers::C do
       assert_guess :filename => 'foo.c'
       assert_guess :filename => 'FOO.C'
       assert_guess :filename => 'foo.h', :source => 'foo'
+      assert_guess :filename => 'VersionNum', :source => '#define Version 1'
     end
 
     it 'guesses by mimetype' do

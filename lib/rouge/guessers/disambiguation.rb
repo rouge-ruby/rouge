@@ -126,6 +126,18 @@ module Rouge
 
         next PlainText
       end
+
+      disambiguate 'VersionNum' do
+        next C if matches?(/^#define/)
+
+        next PlainText
+      end
+
+      disambiguate 'VersionASM' do
+        next ArmAsm if matches?(/^ +GBLS +/)
+
+        next PlainText
+      end
     end
   end
 end

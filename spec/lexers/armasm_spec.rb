@@ -9,6 +9,7 @@ describe Rouge::Lexers::ArmAsm do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.s'
+      assert_guess :filename => 'VersionASM', :source => ' GBLS Version'
     end
   end
 end

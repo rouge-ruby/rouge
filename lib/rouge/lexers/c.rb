@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class C < RegexLexer
       tag 'c'
-      filenames '*.c', '*.h', '*.idc'
+      filenames '*.c', '*.h', '*.idc', 'VersionNum'
       mimetypes 'text/x-chdr', 'text/x-csrc'
 
       title "C"

@@ -11,6 +11,8 @@ describe Rouge::Lexers::PlainText do
       assert_guess :filename => 'foo'
       assert_guess :filename => 'foo.txt'
       assert_guess :filename => 'Messages', :source => 'foo'
+      assert_guess :filename => 'VersionASM', :source => 'foo'
+      assert_guess :filename => 'VersionNum', :source => 'foo'
     end
 
     it 'guesses by mimetype' do

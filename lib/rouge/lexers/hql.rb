@@ -114,18 +114,18 @@ module Rouge
       end
 
       prepend :single_string do
-        rule /\$\{/, Name::Variable, :hive_variable
-        rule /[^\\'\$]+/, Str::Single
+        rule %r/\$\{/, Name::Variable, :hive_variable
+        rule %r/[^\\'\$]+/, Str::Single
       end
 
       prepend :double_string do
-        rule /\$\{/, Name::Variable, :hive_variable
-        rule /[^\\"\$]+/, Str::Single
+        rule %r/\$\{/, Name::Variable, :hive_variable
+        rule %r/[^\\"\$]+/, Str::Single
       end
 
       state :hive_variable do
-        rule /\}/, Name::Variable, :pop!
-        rule /[^\}]+/, Name::Variable
+        rule %r/\}/, Name::Variable, :pop!
+        rule %r/[^\}]+/, Name::Variable
       end
 
     end

@@ -1,8 +1,82 @@
 package a.b.c;
 
+// one line comment
+/*
+  multiline
+  comment
+*/
+
+// ** MACRO **
+@:build(TestMacro.build(args))
+
+// ** CUSTOM TYPE **
+typedef NewType = Map<String, Array<Int>>;
+
+// ** INTERFACE **
+interface NewInterface {
+    public function method():String;
+}
 class Main {
 
-  // one line comment
+  // ** VARIABLES **
+  // Types for variables are optional
+  var testInt:Int = 20;
+  var testFloat:Float = 20.30;
+  var testRegex:EReg = ~/haxe/i;
+  var testComplicatedRegex = ~/[A-Z0-9._%-]+@[A-Z0-9.-]+.[A-Z][A-Z][A-Z]?/i;
+  var testString:String = "Haxe";
+  var testArray:Array<Int> = [1, 2, 3, 4, 5];
+  var testStruct = { "a": 1, "b": 2 };
+  var testBool:Bool = true;
+  var testMap:Map<Int, String> = [
+    1 => "one",
+    2 => "two",
+    3 => "three",
+    4 => "four"
+  ];
+
+  public static var testPublicVar:Int = 20;
+  public static var initialColMap:Void->NewType = () -> ["Level-1" => [], "Level-2" => []];
+  public static inline var testPublicInlineVar:Int = 400;
+
+  // ** SWITCH **
+  // No need for break becasue case body expressions never "fall through"
+  switch testInt {
+    case 20:
+      trace(Math.random());
+    default:
+      trace("default");
+  }
+
+  // ** LOOPS **
+  for (i in 0...10) trace(i);
+  for (num in testArray) {
+    trace(num);
+  }
+  for (key => value in testMap) {
+    trace(key, value);
+  }  
+  testArray.map(function(num) {
+    trace(num);
+  })
+  testArray.map((num) -> {
+    trace(num);
+  }) 
+
+  // ** IF STATEMENT **
+  if (testString == "Kha") {
+    trace("It's Kha!");
+  } else if(testString != "Heaps" ) {
+    trace("It's not Heaps!");
+  } else {
+    trace("It's nothing");
+  }
+  
+  // ** SPECIAL VARS **
+  var ternary = (test > 100) ? 1 : 2;
+  var stringInterp = '$testString is cool!!';
+
+  // Class constructor
   public function new() {
     var calculator = new Calculator();
 
@@ -13,6 +87,9 @@ class Main {
 }
 
 class Calculator {
+  /**
+  * Class documentation. Similar to JSDoc without types.
+  */
   public function new() {
     trace("A new calculator instance was created!");
   }
@@ -26,3 +103,12 @@ class Calculator {
   }
 }
 
+class Class implements NewInterface { 
+  public function method():String {
+    var f = 0.0;
+    
+    while (f < 0.5) {
+      return "Test string";
+    }
+  };
+}

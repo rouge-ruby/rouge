@@ -141,7 +141,7 @@ module Rouge
         end
 
         # alternate regex rage delimiters
-        rule %r((\\)(.)(\\.|.)*?(\2)) do |m|
+        rule %r((\\)(.)((?:\\.|.)*?)(\2)) do |m|
           token addr_tok, m[1] + m[2]
           delegate regex, m[3]
           token addr_tok, m[4]

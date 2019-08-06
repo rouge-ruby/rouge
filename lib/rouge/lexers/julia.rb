@@ -199,7 +199,7 @@ module Rouge
         end
 
         # types
-        rule %r/((mutable )?struct|(abstract|primitive) type)((?:\s|\\\s)+)/ do
+        rule %r/((?:mutable )?struct|(?:abstract|primitive) type)((?:\s|\\\s)+)/ do
           groups Keyword, Name::Class
           push :typename
         end

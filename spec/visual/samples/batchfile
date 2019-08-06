@@ -1,0 +1,36 @@
+@echo off
+setlocal enableextensions enabledelayedexpansion
+set result=10
+set /a result +=1
+set /a "row+=1,moved=1"
+echo Hello >nul
+echo %windir%
+echo !windir!
+mode con cp /status
+set /a num=0xff
+set /p "=qwerty." < nul
+echo %~dp0
+rem all okay
+:: this is an empty label
+attrib.exe +r file.txt 2>nul
+for /f "tokens=1" %%a in ('echo hello %username% hi ^'') do echo %%~a
+for /f "tokens=*" %%a in ("hello !username! hi """) do echo %%~a
+for /f "tokens=* usebackq" %%a in (`echo hello !username!`) do (
+for /f %%b in ("%%~a") do echo %%~b
+)
+for /f "usebackq" %%a in (`echo world ^``) do echo %%~a
+for /f %%a in ('echo hi') do echo %%~a
+call :a || goto :bye
+if 5 equ 5 (
+  echo are equal
+  if "z"=="z" (
+    echo "zeta"
+  )
+) else (
+  echo are different
+)
+:bye
+echo ^Hello
+echo Bye
+goto :eof
+:a

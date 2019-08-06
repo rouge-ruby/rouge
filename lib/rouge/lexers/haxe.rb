@@ -11,6 +11,10 @@ module Rouge
       filenames '*.hx'
       mimetypes 'text/haxe', 'text/x-haxe', 'text/x-hx'
 
+      def self.detect?(text)
+        return true if text.shebang? "haxe"
+      end
+
       def self.keywords
         @keywords ||= Set.new %w(
           break case cast catch class continue default do else enum false for

@@ -20,9 +20,9 @@ module Rouge
       end
 
       def self.imports
-          @imports ||= Set.new %w(
-            import using
-          )
+        @imports ||= Set.new %w(
+          import using
+        )
       end
 
       def self.declarations
@@ -41,6 +41,7 @@ module Rouge
       def self.constants
         @constants ||= Set.new %w(true false null)
       end
+
       def self.builtins
         @builtins ||= %w(
           Void Dynamic Math Class Any Float Int UInt String StringTools Sys
@@ -196,4 +197,3 @@ module Rouge
     end
   end
 end
-

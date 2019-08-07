@@ -153,7 +153,7 @@ module Rouge
       state :double_string do
         rule %r/\\./, Str::Escape
         rule %r/""/, Str::Escape
-        rule %r/"/, Str::Single, :pop!
+        rule %r/"/, Name::Variable, :pop!
         rule %r/[^\\"]+/, Name::Variable
       end
     end

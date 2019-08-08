@@ -65,6 +65,8 @@ module Rouge
       state :expr_start do
         mixin :comments_and_whitespace
 
+        rule %r/#(?:if|elseif|else|end).*/, Comment::Preproc
+
         rule %r(~) do
           token Str::Regex
           goto :regex

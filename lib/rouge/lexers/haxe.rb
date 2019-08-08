@@ -120,7 +120,10 @@ module Rouge
       state :root do
         rule %r/\n/, Text, :statement
         rule %r(\{), Text, :expr_start
+        
         mixin :comments_and_whitespace
+
+        rule %r/@/, Name::Decorator, :metadata
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >> | ==
                | != )x,
           Operator, :expr_start
@@ -186,6 +189,13 @@ module Rouge
         end
 
         rule %r/:/, Punctuation
+        mixin :root
+      end
+
+      state :metadata do
+        rule %r/#{id}\(/, Name::Decorator
+        rule %r/:?#{id}/, Name::Decorator, :pop!
+        rule %r/\)/, Name::Decorator, :pop!
         mixin :root
       end
 

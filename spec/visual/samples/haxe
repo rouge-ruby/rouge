@@ -114,3 +114,14 @@ class Class implements NewInterface {
 'The value of x is $x'
 'The value of x is ${1 + 2}'
 'The value of x is $$'
+
+// ** METADATA ** //
+@author("Nicolas")
+@:keep
+class MyClass {
+  @range(1, 8)
+  var value:Int;
+
+  @broken
+  static function method() {}
+}

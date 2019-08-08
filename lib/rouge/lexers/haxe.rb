@@ -159,8 +159,8 @@ module Rouge
         rule %r/\-?\d+\.\d+(?:[eE]\d+)?[fd]?/, Num::Float
         rule %r/0x\h+/, Num::Hex
         rule %r/\-?[0-9]+/, Num::Integer
-        rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
-        rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
+        rule %r/"/, Str::Double, :str_double
+        rule %r/'/, Str::Single, :str_single
       end
 
       # braced parts that aren't object literals
@@ -196,6 +196,34 @@ module Rouge
           goto :expr_start
         end
 
+        mixin :root
+      end
+
+      state :str_double do
+        mixin :str_escape
+        rule %r/"/, Str::Double, :pop!
+        rule %r/[^\\"]+/, Str::Double
+      end
+
+      state :str_single do
+        mixin :str_escape
+        rule %r/'/, Str::Single, :pop!
+        rule %r/\$\$/, Str::Single
+        rule %r/\$[a-z]\w*/, Str::Interpol
+        rule %r/\$\{/, Str::Interpol, :str_interpol
+        rule %r/[^\\$']+/, Str::Single
+      end
+
+      state :str_escape do
+        rule %r/\\[\\tnr'"]/, Str::Escape
+        rule %r/\\[0-7]{3}/, Str::Escape
+        rule %r/\\x\h{2}/, Str::Escape
+        rule %r/\\u\h{4}/, Str::Escape
+        rule %r/\\u\{\h{1,6}\}/, Str::Escape
+      end 
+
+      state :str_interpol do
+        rule %r/\}/, Str::Interpol, :str_single
         mixin :root
       end
     end

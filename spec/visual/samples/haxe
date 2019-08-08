@@ -109,3 +109,8 @@ class Class implements NewInterface {
     }
   };
 }
+
+// ** STRING INTERPOLATION ** //
+'The value of x is $x'
+'The value of x is ${1 + 2}'
+'The value of x is $$'

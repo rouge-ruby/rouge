@@ -140,3 +140,11 @@ class Main {
     #end
   }
 }
+
+// ** ABSTRACT ** //
+abstract Color(Int) from Int to Int {
+  public static inline var TRANSPARENT : Color = 0x00000000;
+  @:from public static inline function fromString(argb : String) : Color {
+    return new Color(Std.parseInt(argb));
+  }
+}

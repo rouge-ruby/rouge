@@ -31,8 +31,8 @@ module Rouge
 
       def self.declarations
         @declarations ||= Set.new %w(
-          abstract dynamic extern extends implements inline
-          static typedef var
+          abstract dynamic extern extends from implements inline static to
+          typedef var
         )
       end
 

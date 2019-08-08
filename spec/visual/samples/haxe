@@ -125,3 +125,5 @@ class MyClass {
   @broken
   static function method() {}
 }
+
+@:some.metadata

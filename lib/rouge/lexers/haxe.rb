@@ -193,8 +193,8 @@ module Rouge
       end
 
       state :metadata do
-        rule %r/#{id}\(/, Name::Decorator
-        rule %r/:?#{id}/, Name::Decorator, :pop!
+        rule %r/#{id}(?:\.#{id})*\(/, Name::Decorator
+        rule %r/#{id}(?:\.#{id})*/, Name::Decorator, :pop!
         rule %r/\)/, Name::Decorator, :pop!
         mixin :root
       end

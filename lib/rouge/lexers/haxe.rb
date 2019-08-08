@@ -209,7 +209,7 @@ module Rouge
         mixin :str_escape
         rule %r/'/, Str::Single, :pop!
         rule %r/\$\$/, Str::Single
-        rule %r/\$[a-z]\w*/, Str::Interpol
+        rule %r/\$#{id}/, Str::Interpol
         rule %r/\$\{/, Str::Interpol, :str_interpol
         rule %r/[^\\$']+/, Str::Single
       end

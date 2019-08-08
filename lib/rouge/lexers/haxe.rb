@@ -119,7 +119,7 @@ module Rouge
 
       state :root do
         rule %r/\n/, Text, :statement
-        rule %r(\{), Text, :expr_start
+        rule %r(\{), Punctuation, :expr_start
         
         mixin :comments_and_whitespace
 
@@ -127,10 +127,10 @@ module Rouge
         rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >> | ==
                | != )x,
           Operator, :expr_start
-        rule %r([-:<>+*%&|\^/!={}]=?), Operator, :expr_start
+        rule %r([-:<>+*%&|\^/!=]=?), Operator, :expr_start
         rule %r/[(\[,]/, Punctuation, :expr_start
         rule %r/;/, Punctuation, :statement
-        rule %r/[)\].]/, Punctuation
+        rule %r/[)\]}.]/, Punctuation
 
         rule %r/[?]/ do
           token Punctuation
@@ -193,8 +193,11 @@ module Rouge
       end
 
       state :metadata do
-        rule %r/#{id}(?:\.#{id})*\(/, Name::Decorator
-        rule %r/#{id}(?:\.#{id})*/, Name::Decorator, :pop!
+        rule %r/(#{id})(\()?/ do |m|
+          groups Name::Decorator, Punctuation
+          pop! unless m[2]
+        end
+        rule %r/:#{id}(?:\.#{id})*/, Name::Decorator, :pop!
         rule %r/\)/, Name::Decorator, :pop!
         mixin :root
       end
@@ -233,7 +236,7 @@ module Rouge
       end 
 
       state :str_interpol do
-        rule %r/\}/, Str::Interpol, :str_single
+        rule %r/\}/, Str::Interpol, :pop!
         mixin :root
       end
     end

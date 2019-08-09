@@ -268,3 +268,8 @@ for (const x of global.foo) {}
 
 var myBin   = 0b10;
 var myOct   = 0o67;
+
+// ES6 regexes
+
+let x = /abc/u;
+let x = /abc/y;

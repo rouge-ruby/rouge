@@ -6,6 +6,8 @@ module Rouge
     include Token::Tokens
 
     class Style < Hash
+      attr_reader :theme
+
       def initialize(theme, hsh={})
         super()
         @theme = theme
@@ -14,8 +16,8 @@ module Rouge
 
       [:fg, :bg].each do |mode|
         define_method mode do
-          return self[mode] unless defined?(@theme) && @theme
-          @theme.palette(self[mode]) if self[mode]
+          return self[mode] unless theme
+          theme.palette(self[mode]) if self[mode]
         end
       end
 
@@ -135,9 +137,9 @@ module Rouge
 
   module HasModes
     def mode(arg=:absent)
-      if arg == :absent
-        return (defined?(@mode) ? @mode : nil)
-      end
+      @mode = nil unless defined? @mode
+
+      return @mode if arg == :absent
 
       @modes ||= {}
       @modes[arg] ||= get_mode(arg)

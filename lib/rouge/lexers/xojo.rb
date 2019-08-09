@@ -36,10 +36,10 @@ module Rouge
       state :root do
         rule %r/\s+/, Text::Whitespace
 
-        rule %r/rem\b.*?$/i, Comment::Single
-        rule %r([//'].*$), Comment::Single
+        rule %r/rem\b.*/i, Comment::Single
+        rule %r((?://|').*), Comment::Single
         rule %r/\#tag Note.*?\#tag EndNote/mi, Comment::Preproc
-        rule %r/\s*[#].*$/x, Comment::Preproc
+        rule %r/\s*#.*/, Comment::Preproc
 
         rule %r/".*?"/, Literal::String::Double
         rule %r/[(){}!#,:]/, Punctuation

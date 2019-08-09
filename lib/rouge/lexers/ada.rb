@@ -155,7 +155,7 @@ module Rouge
         end
 
         # Flag word-like things that don't match the ID pattern.
-        rule %r{\b(\p{Pc}|[[alpha]])\p{Word}*}, Error
+        rule %r{\b(\p{Pc}|[[:alpha:]])\p{Word}*}, Error
       end
     end
   end

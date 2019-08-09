@@ -26,8 +26,8 @@ module Rouge
         # request
         rule %r(
           (#{HTTP.http_methods.join('|')})([ ]+) # method
-          ([^ ]+)([ ]+)                     # path
-          (HTTPS?)(/)(1[.][01])(\r?\n|$)  # http version
+          ([^ ]+)([ ]+)                          # path
+          (HTTPS?)(/)(\d(?:\.\d)?)(\r?\n|$)      # http version
         )ox do
           groups(
             Name::Function, Text,
@@ -40,9 +40,9 @@ module Rouge
 
         # response
         rule %r(
-          (HTTPS?)(/)(1[.][01])([ ]+) # http version
-          (\d{3})([ ]+)               # status
-          ([^\r\n]+)(\r?\n|$)       # status message
+          (HTTPS?)(/)(\d(?:\.\d))([ ]+)  # http version
+          (\d{3})([ ]+)?                 # status
+          ([^\r\n]+)?(\r?\n|$)           # status message
         )x do
           groups(
             Keyword, Operator, Num, Text,

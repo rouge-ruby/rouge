@@ -117,7 +117,7 @@ module Rouge
 
         rule %r/\w[\w\d]*/ do |m|
           if self.class.keywords_type.include? m[0].upcase
-            token Keyword::Type
+            token Name::Builtin
           elsif self.class.keywords.include? m[0].upcase
             token Keyword
           else

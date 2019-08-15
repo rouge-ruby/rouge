@@ -38,11 +38,11 @@ module Rouge
       end
 
       prepend :hash do
-        rule %r/[.,()]/, Punctuation
+        rule %r/[.,()*]/, Punctuation
       end
 
       prepend :array do
-        rule %r/[.,()]/, Punctuation
+        rule %r/[.,()*]/, Punctuation
       end
 
       state :strings do

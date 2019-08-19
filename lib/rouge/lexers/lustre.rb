@@ -50,7 +50,6 @@ module Rouge
           end
         end
 
-        rule /[(){}\[\];]+/, Punctuation
         rule operator, Operator
 
         rule /-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
@@ -61,7 +60,6 @@ module Rouge
 
         rule /'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char
         rule /'[.]'/, Str::Char
-        rule /'/, Keyword
         rule /"/, Str::Double, :string
         rule /[~?]#{id}/, Name::Variable
       end

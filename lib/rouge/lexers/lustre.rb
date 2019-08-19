@@ -33,7 +33,7 @@ module Rouge
 
       state :root do
         rule /\s+/m, Text
-        rule /false|true|[(][)]|\[\]/, Name::Builtin::Pseudo
+        rule /false|true/, Keyword::Constant
         rule %r(\-\-.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule %r(\(\*.*?\*\))m, Comment::Multiline

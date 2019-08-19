@@ -29,20 +29,20 @@ module Rouge
 
         rule open, Comment::Preproc, :elixir
 
-        rule %r/.+?(?=#{open})|.+/m do
+        rule %r/.+?(?=#{open})|.+/mo do
           delegate parent
         end
       end
 
       state :comment do
         rule close, Comment, :pop!
-        rule %r/./, Comment
+        rule %r/.+?(?=#{close})|.+/mo, Comment
       end
 
       state :elixir do
         rule close, Comment::Preproc, :pop!
 
-        rule %r/.+?(?=#{close})|.+/m do
+        rule %r/.+?(?=#{close})|.+/mo do
           delegate @elixir_lexer
         end
       end

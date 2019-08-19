@@ -25,24 +25,24 @@ module Rouge
       close = /%%>|%>/
 
       state :root do
-        rule /<%#/, Comment, :comment
+        rule %r/<%#/, Comment, :comment
 
         rule open, Comment::Preproc, :elixir
 
-        rule /.+?(?=#{open})|.+/m do
+        rule %r/.+?(?=#{open})|.+/m do
           delegate parent
         end
       end
 
       state :comment do
         rule close, Comment, :pop!
-        rule /./, Comment
+        rule %r/./, Comment
       end
 
       state :elixir do
         rule close, Comment::Preproc, :pop!
 
-        rule /.+?(?=#{close})|.+/m do
+        rule %r/.+?(?=#{close})|.+/m do
           delegate @elixir_lexer
         end
       end

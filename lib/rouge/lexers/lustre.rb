@@ -53,9 +53,6 @@ module Rouge
         rule operator, Operator
 
         rule /-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
-        rule /0x\h[\h_]*/i, Num::Hex
-        rule /0o[0-7][0-7_]*/i, Num::Oct
-        rule /0b[01][01_]*/i, Num::Bin
         rule /\d[\d_]*/, Num::Integer
 
         rule /'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char

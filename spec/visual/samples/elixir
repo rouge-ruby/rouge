@@ -20,6 +20,20 @@
 # maps
 %{key: 1}
 
+# strings
+"Hello world"
+"Hello \" world"
+"Hello \n world"
+"Hello #{"world"}"
+"Hello #world"
+
+# charlists
+'Hello world'
+'Hello \' world'
+'Hello \n world'
+'Hello #{'world'}'
+'Hello #world'
+
 # regexes
 ~r()gif
 ~r[]gfi

@@ -1,0 +1,195 @@
+<%doc>
+    This is a mason component. 
+    # This is a comment
+</%doc>
+
+<%args>
+    $color         # this argument is required!
+    $size => 20    # default size
+    $country => undef   # this argument is optional, default value is 'undef'
+    @items => (1, 2, 'something else')
+    %pairs => (name => "John", age => 29)
+    $x => "</%args>"
+</%argS>
+
+<%flags>
+    inherit => "page-framework.mi"
+    inherit => "</%flags>"
+</%flags>
+
+<%attr>
+author => 'maria ines parnisari'
+</%attr>
+
+<%once>
+    $Schema = Apprentice::Data->$schema;
+</%once>
+
+<%shared>
+    my $shared_var = 25;
+</%shared>
+
+<%init>
+    my $cookies = Apache::Cookie->fetch;
+</%init>
+
+% # A random block of Perl code
+<%perl>
+#testing a comment '<%args>..</%args>>'
+    my @people = ('mary' 'john' 'pete' 'david');
+    my $moduloOperation = $totalNumber % $numColumns ? 1 : 0;
+</%perl>
+
+% # Note how each line of code begins with the mandatory %
+% foreach my $person (@people) {
+    Name: <% $person %> age: <& 'path/to/component' &> location: (unkown!)
+% }
+
+%# this is a comment :)
+
+            % this is not perl code. the % is not the first character of the line!
+
+<h1>Here at wally world you will find all the finest accoutrements.</h1>
+
+% my @array = qw(zero one two);
+
+<table>
+%       foreach my $row (0..$#array) {
+            <tr>
+                <td><% $row          %></td>
+                <td><% $array[$row]  %></td>
+            </tr>
+%        }
+</table>
+
+%# These are all component calls
+<& 'path/to/component' &>
+<& $component &>
+<& menu, width => 100, height => 200 &>
+
+%# Special globals $m and $r
+%   my $result = $m->base_comp;
+%   my $apache = $r->name;
+
+%# a PRIVATE subcomponent that renders a hyperlink
+<%def .make_a_link>
+    <a href="<% $url %>"> <% $text %></a>
+<%args>
+    $path
+    %query => ()
+    $text
+</%args>
+<%init>
+    my $url = $path;
+    if (scalar (keys %query) > 0) {
+        $url = $url . "?"
+    }
+    foreach my $queryParam (keys %query) {
+        $url = $url . $queryParam . "=" . $query{$queryParam} . "&";
+    }
+</%init>
+<%perl>
+    my $someothervar = 42;
+</%perl>
+</%def>
+
+<%method getPublic>
+    <%perl>
+        print "<font color=\"red\">some text!</font>";
+        return 42;
+    </%perl>
+    %    my $text = "hello world";
+<b><% $text %></b>
+</%method>
+
+<%text>
+# This is not interpreted and is printed as is
+%   my $variable = "hello";
+</%text>
+
+<%filter>
+    s/(\w+)/\U$1/g #uppercase the entire thing
+</%filter>
+
+<%cleanup>
+# This runs at the end.
+    $db->disconnect();
+</%cleanup>
+
+<!-- BEGIN HTML -->
+<style>
+%   my $wow = "master";
+    .normal {
+        background: url("http://img.url/");
+    }
+
+% # TODO this should work but it doesn't 
+% #   .dashed {
+% #        background: url("<% $someUrl %>");
+% #   }
+
+    .<% $wow %> .normal {
+        background: url("http://img.url/");
+    }
+
+</style>
+
+<script type="text/javascript">
+    alert('hello world');
+%   my $superVar = 2;
+</script>
+
+<!-- END HTML -->
+
+% # Random Perl blocks
+<%perl>my $hello = "world";</%perl>
+<%perl> } </%perl>
+
+% # Components with content (https://masonbook.houseabsolute.com/book/chapter-5.html)
+<&| .top_menu_filter &>
+   <& SELF:top_menu, %ARGS &>
+</&>
+
+<&| .uc &>
+  I am in <% $m->current_comp->name %>
+</&>
+
+<&| .ucfirst &>
+  <&| .reverse &>
+I am in <% $m->current_comp->name %>
+  </&>
+</&>
+
+<table>
+  <tr>
+  <th>Name</th>
+  <th>Age</th>
+  </tr>
+<&| 'query', query => 'SELECT name, age FROM User' &>
+  <tr>
+  <td>%name</td>
+  <td>%age</td>
+  </tr>
+</&>
+</table>
+
+
+<&| /loop, items => ['one', 'two', 'three'] &>
+<% $item %>
+</&>
+
+  <&| /loop, items => ['one', 'two', 'three'] &>
+<% $item %>
+</&>
+
+<table>
+<tr><th>Part Number</th><th>Quantity</th><th>Price</th><th>Total</th></tr>
+<&| /query/order_items:exec, bind => [$OrderID] &>
+    <tr>
+        <td><% $_->{PARTNUM} %></td>
+        <td><% $_->{QUANTITY} %></td>
+        <td><% $_->{PRICE} %></td>
+        <td><% $_->{QUANTITY} * $_->{PRICE} %></td>
+    </tr>
+</&>
+</table>

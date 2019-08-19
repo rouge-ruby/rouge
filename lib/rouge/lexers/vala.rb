@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -23,12 +24,12 @@ module Rouge
       )
 
       keywords_type = %w(
-        bool char double float int int8 int16 int32 int64 long short size_t 
+        bool char double float int int8 int16 int32 int64 long short size_t
         ssize_t string unichar uint uint8 uint16 uint32 uint64 ulong ushort
       )
 
       state :whitespace do
-        rule /\s+/m, Text
+        rule %r/\s+/m, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
       end
@@ -36,30 +37,30 @@ module Rouge
       state :root do
         mixin :whitespace
 
-        rule /^\s*\[.*?\]/, Name::Attribute
+        rule %r/^\s*\[.*?\]/, Name::Attribute
 
-        rule /(<\[)\s*(#{id}:)?/, Keyword
-        rule /\]>/, Keyword
+        rule %r/(<\[)\s*(#{id}:)?/, Keyword
+        rule %r/\]>/, Keyword
 
-        rule /[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
-        rule /@"(\\.|.)*?"/, Str
-        rule /"(\\.|.)*?["\n]/, Str
-        rule /'(\\.|.)'/, Str::Char
-        rule /0x[0-9a-f]+[lu]?/i, Num
+        rule %r/[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
+        rule %r/@"(\\.|.)*?"/, Str
+        rule %r/"(\\.|.)*?["\n]/, Str
+        rule %r/'(\\.|.)'/, Str::Char
+        rule %r/0x[0-9a-f]+[lu]?/i, Num
         rule %r(
           [0-9]
           ([.][0-9]*)? # decimal
           (e[+-][0-9]+)? # exponent
           [fldu]? # type
         )ix, Num
-        rule /\b(#{keywords.join('|')})\b/, Keyword
-        rule /\b(#{keywords_type.join('|')})\b/, Keyword::Type
-        rule /class|struct/, Keyword, :class
-        rule /namespace|using/, Keyword, :namespace
-        rule /#{id}(?=\s*[(])/, Name::Function
+        rule %r/\b(#{keywords.join('|')})\b/, Keyword
+        rule %r/\b(#{keywords_type.join('|')})\b/, Keyword::Type
+        rule %r/class|struct/, Keyword, :class
+        rule %r/namespace|using/, Keyword, :namespace
+        rule %r/#{id}(?=\s*[(])/, Name::Function
         rule id, Name
 
-        rule /#.*/, Comment::Preproc
+        rule %r/#.*/, Comment::Preproc
       end
 
       state :class do
@@ -69,8 +70,8 @@ module Rouge
 
       state :namespace do
         mixin :whitespace
-        rule /(?=[(])/, Text, :pop!
-        rule /(#{id}|[.])+/, Name::Namespace, :pop!
+        rule %r/(?=[(])/, Text, :pop!
+        rule %r/(#{id}|[.])+/, Name::Namespace, :pop!
       end
     end
   end

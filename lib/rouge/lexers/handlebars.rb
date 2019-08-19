@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -17,16 +18,24 @@ module Rouge
         rule(/\\{+/) { delegate parent }
 
         # block comments
-        rule /{{!--/, Comment, :comment
-        rule /{{!.*?}}/, Comment
+        rule %r/{{!--/, Comment, :comment
+        rule %r/{{!.*?}}/, Comment
 
-        rule /{{{?/ do
+        rule %r/{{{?/ do
           token Keyword
           push :stache
           push :open_sym
         end
 
-        rule(/(.+?)(?=\\|{{)/m) { delegate parent }
+        rule(/(.+?)(?=\\|{{)/m) do
+          delegate parent
+
+          # if parent state is attr, then we have an html attribute without quotes
+          # pop the parent state to return to the tag state
+          if parent.state?('attr')
+            parent.pop!
+          end
+        end
 
         # if we get here, there's no more mustache tags, so we eat
         # the rest of the doc
@@ -41,20 +50,23 @@ module Rouge
       end
 
       state :stache do
-        rule /}}}?/, Keyword, :pop!
-        rule /\s+/m, Text
-        rule /[=]/, Operator
-        rule /[\[\]]/, Punctuation
-        rule /[.](?=[}\s])/, Name::Variable
-        rule /[.][.]/, Name::Variable
+        rule %r/}}}?/, Keyword, :pop!
+        rule %r/\|/, Punctuation
+        rule %r/~/, Keyword
+        rule %r/\s+/m, Text
+        rule %r/[=]/, Operator
+        rule %r/[\[\]]/, Punctuation
+        rule %r/[\(\)]/, Punctuation
+        rule %r/[.](?=[}\s])/, Name::Variable
+        rule %r/[.][.]/, Name::Variable
         rule %r([/.]), Punctuation
-        rule /"(\\.|.)*?"/, Str::Double
-        rule /'(\\.|.)*?'/, Str::Single
-        rule /\d+(?=}\s)/, Num
-        rule /(true|false)(?=[}\s])/, Keyword::Constant
-        rule /else(?=[}\s])/, Keyword
-        rule /this(?=[}\s])/, Name::Builtin::Pseudo
-        rule /@#{id}/, Name::Attribute
+        rule %r/"(\\.|.)*?"/, Str::Double
+        rule %r/'(\\.|.)*?'/, Str::Single
+        rule %r/\d+(?=}\s)/, Num
+        rule %r/(true|false)(?=[}\s])/, Keyword::Constant
+        rule %r/else(?=[}\s])/, Keyword
+        rule %r/this(?=[}\s])/, Name::Builtin::Pseudo
+        rule %r/@#{id}/, Name::Attribute
         rule id, Name::Variable
       end
 
@@ -64,13 +76,13 @@ module Rouge
           goto :block_name
         end
 
-        rule /[>^&]/, Keyword
+        rule %r/[>^&~]/, Keyword
 
         rule(//) { pop! }
       end
 
       state :block_name do
-        rule /if(?=[}\s])/, Keyword
+        rule %r/if(?=[}\s])/, Keyword
         rule id, Name::Namespace, :pop!
         rule(//) { pop! }
       end

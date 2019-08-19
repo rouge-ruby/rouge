@@ -1,0 +1,75 @@
+let_automatic_engine_start_unittests_for
+abc| ab de |deffffffffffffffffffffffffffff
+aaaaaaaaaaaaaaaaaa:bbbbbbbbbbbbbbbbbbbbbbbbb
+@abcdefffffffffffffffffffffffffffffff
+@abc:deffffffffffffffffffffffffff
+
+def_slotted_exemplar(
+        :test_object,
+        {
+                {:slot, _unset}
+        },
+        {_class |java.lang.Integer|})
+$
+
+_pragma(classify_level=basic, topic={test_topic, rouge})
+_method test_object.method_name(arg_1, _gather args)
+        _local x << _self.test() + 15
+        _if arg_1 _is :test_symbol _orif
+            arg_1 <> "abc" _orif
+            arg_1 = "def"
+        _then
+                .slot << x
+        _else
+                .slot << write_string("string" + 'string', "test")
+        _endif
+
+        _local l_y << _true
+        l_y _and<< _true
+
+        _while _true
+        _loop
+                _leave
+        _endloop
+
+        # numbers
+        45, 0, -101
+        2r101, -8r123
+        16rA0, 16rFF
+        2e5, 6&6, 6rA0&2, 6rA0&2e4
+        0.5, 45.0, 16rA0.8
+        23.007e5, 0.4E-5, 16rA0.8&2
+
+        # characters
+        %q, %Z, %u
+        %u000A
+        %newline, %space, %tab
+
+        # identifiers
+        identifier, identifier_abc, identifier_0123, |IDENTIFIER|, identifier:identifier
+
+        # symbols
+        :symbol, :symbol_symbol, :|symbol()|, :|Symbol|, :|Symbol^<<__|, :\|test
+
+        # labels
+        @label
+        @ label
+
+        _proc@test(p_args)
+        _endproc
+
+        _proc@ test(p_args)
+        _endproc
+
+        # global references
+        @namespace:identifier
+        @123
+
+        >> l_x
+_endmethod
+$
+
+_block
+        _thisthread.traceback()
+_endblock
+$

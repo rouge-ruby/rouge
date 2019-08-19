@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Formatters
@@ -12,7 +13,9 @@ module Rouge
       end
 
       def span(tok, val)
-        safe_span(tok, val.gsub(/[&<>]/, TABLE_FOR_ESCAPE_HTML))
+        return val if escape?(tok)
+
+        safe_span(tok, escape_special_html_chars(val))
       end
 
       def safe_span(tok, safe_val)
@@ -26,12 +29,28 @@ module Rouge
         end
       end
 
-
       TABLE_FOR_ESCAPE_HTML = {
         '&' => '&amp;',
         '<' => '&lt;',
         '>' => '&gt;',
       }
+
+    private
+      # A performance-oriented helper method to escape `&`, `<` and `>` for the rendered
+      # HTML from this formatter.
+      #
+      # `String#gsub` will always return a new string instance irrespective of whether
+      # a substitution occurs. This method however invokes `String#gsub` only if
+      # a substitution is imminent.
+      #
+      # Returns either the given `value` argument string as is or a new string with the
+      # special characters replaced with their escaped counterparts.
+      def escape_special_html_chars(value)
+        escape_regex = /[&<>]/
+        return value unless value =~ escape_regex
+
+        value.gsub(escape_regex, TABLE_FOR_ESCAPE_HTML)
+      end
     end
   end
 end

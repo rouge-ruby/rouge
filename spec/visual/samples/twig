@@ -12,4 +12,12 @@
   {% flush %}
 {% endif %}
 
+{% verbatim %}
+  {% for item in seq %}
+    <li>{{ item }}</li>
+  {% endfor %}
+{% endverbatim %}
+
+{% verbatim %} One line {{ verbatim }} block {% endverbatim %}
+
 {% include 'footer.html' %}

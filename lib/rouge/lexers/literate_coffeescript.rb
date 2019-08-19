@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -20,11 +21,11 @@ module Rouge
       start { markdown.reset!; coffee.reset! }
 
       state :root do
-        rule /^(    .*?\n)+/m do
+        rule %r/^(    .*?\n)+/m do
           delegate coffee
         end
 
-        rule /^([ ]{0,3}(\S.*?|)\n)*/m do
+        rule %r/^([ ]{0,3}(\S.*?|)\n)*/m do
           delegate markdown
         end
       end

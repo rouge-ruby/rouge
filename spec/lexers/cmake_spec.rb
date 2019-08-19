@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Rouge::Lexers::CMake do
   let(:subject) { Rouge::Lexers::CMake.new }
 

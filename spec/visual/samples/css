@@ -66,6 +66,7 @@ ul#nav li.new {
 #foo {
   unrecognized-prop: 1;
   -moz-prefixed-prop: 2;
+  font-size: 29px ! important;
 }
 
 a[target="_blank"] { 

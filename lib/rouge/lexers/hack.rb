@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -32,7 +33,7 @@ module Rouge
       end
 
       prepend :template do
-        rule /<\?hh(\s*\/\/\s*(strict|decl|partial))?$/, Comment::Preproc, :php
+        rule %r/<\?hh(\s*\/\/\s*(strict|decl|partial))?$/, Comment::Preproc, :php
       end
 
       prepend :php do

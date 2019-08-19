@@ -1,4 +1,3 @@
-sudo: false
 dist: trusty
 language: ruby
 rvm:
@@ -8,13 +7,18 @@ rvm:
   - "2.3"
   - "2.4"
   - "2.5"
-
+  - &latest_ruby "2.6"
 cache:
   bundler: true
 bundler_args: --without development
-before_install:
-  - gem install bundler
-  - gem update --system
 script:
   - bundle exec rake
-  - bundle exec rubocop
+matrix:
+  include:
+    - rvm   : *latest_ruby
+      name  : Profile Memory Allocation
+      script: bundle exec rake check:memory
+    - rvm   : *latest_ruby
+      name  : Interpreter Warnings Test
+      env   : RUBYOPT=-w
+      script: bundle exec rake check:specs

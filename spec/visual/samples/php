@@ -20,12 +20,115 @@ if ( !file_exists( dirname(__FILE__) . '/wp-config.php') ) {
     );
 }
 
+# A comment
+// Another comment
+$a = 1;
+/* another comment */
+$a = 1;
+/* a multi
+line comemnt 
+followed by an empty comment */
+$a = 1;
+/**/
+$a = 1;
+/**
+ * doc block comment
+ */
+$a = 1;
+
 // unicode variable names
 $Δ = 1;
 ++$_Δ;
 echo $ΔΔ;
 
 "thing {$thing->other_thing()}"
+
+function &byref() {
+    $x = array();
+    return $x;
+}
+
+trait SomeTrait {
+  // Some visibility
+  const PUBLIC_CONST_A = 1;
+  public const PUBLIC_CONST_B = 2;
+  protected const PROTECTED_CONST = 3;
+  private const PRIVATE_CONST = 4;
+      
+  function afunc(string $arg, SomeInterface $arg2, callable $arg3, object $arg4): void {
+    echo "hello";
+    if (1 <=> 1) {
+      echo "yep!";
+    }
+  }
+}
+
+interface SomeInterface {
+  function interfaceFunc(bool $arg): iterable;
+  function nullableTypes(?bool $arg): ?iterable;
+}
+
+//Anonymous class example
+$app->setLogger(new class implements Logger {
+    public function log(string $msg) {
+        echo $msg;
+    }
+});
+
+// some uses
+use some\namespace\ClassA;
+use some\namespace\ClassB;
+use some\namespace\ClassC as C;
+
+use function some\namespace\fn_a;
+use function some\namespace\fn_b;
+use function some\namespace\fn_c;
+
+use const some\namespace\ConstA;
+use const some\namespace\ConstB;
+use const some\namespace\ConstC;
+
+// Grouped uses
+use some\namespace\{ClassA, ClassB, ClassC as C};
+use function some\namespace\{fn_a, fn_b, fn_c};
+use const some\namespace\{ConstA, ConstB, ConstC};
+
+namespace some\namespace;
+
+// A generator
+$gen = (function() {
+    yield 1;
+    yield 2;
+
+    return 3;
+})();
+
+// descructuring
+// list() style
+list($id1, $name1) = $data[0];
+
+// [] style
+[$id1, $name1] = $data[0];
+
+// heredoc
+$a = <<<EOF
+Some long string with $values
+EOF;
+
+$b = <<<'EOF'
+Some long string without $values
+EOF;
+
+$c = <<<EOF
+  Hello
+  EOF;
+
+// Flexible heredoc
+callingFunc(<<<EOF
+    With a long string
+    EOF, <<<'EOF'
+    Another string
+    EOF);
 
 /**
  *  Zip class file
@@ -37,7 +140,7 @@ echo $ΔΔ;
 // Unlock?
 if(!defined('UNLOCK') || !UNLOCK)
   die();
-  
+
 // Load the parent archive class
 require_once(ROOT_PATH.'/classes/archive.class.php');
 
@@ -153,7 +256,7 @@ class Zip extends Archive {
       $dir_data .= pack("V", 0);            // Compressed size
       $dir_data .= pack("V", 0);            // Uncompressed size
       */
-      
+  
       // Append dir data to the central directory data
       $cd_data[] = $dir_data;
     }
@@ -162,12 +265,12 @@ class Zip extends Archive {
     foreach($this->files as $name => $file) {
       // Get values
       $content = $file[0];
-    
+
       // File part
 
       // Reset file data
       $fd = '';
-      
+  
       // Detect possible compressions
       // Use deflate
       if(function_exists('gzdeflate')) {
@@ -209,7 +312,7 @@ class Zip extends Archive {
 
       // File data
       $fd .= $compressed_data;
-      
+  
       // Data descriptor
       $fd .= pack("V", crc32($content));          // crc-32
       $fd .= pack("V", strlen($compressed_data)); // Compressed size
@@ -291,11 +394,11 @@ class Zip extends Archive {
     // Return content?
     if(!$filename)
       return $data;
-      
+  
     // Write to file
     return file_put_contents($filename, $data);
   }
-  
+
  /**
   *  Load a zip file
   *
@@ -323,7 +426,7 @@ class Zip extends Archive {
     // Read the zip
     return $this->load_string($content, $reset);
   }
-  
+
  /**
   *  Load a zip string
   *
@@ -523,9 +626,5 @@ class Zip extends Archive {
   }
 }
 
-function &byref() {
-    $x = array();
-    return $x;
-}
 ?>
 <p>it's html here at the end, too.</p>

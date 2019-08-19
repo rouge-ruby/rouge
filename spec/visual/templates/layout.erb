@@ -2,26 +2,75 @@
 <html>
 <head>
   <title><%= @title %></title>
-
   <style type="text/css">
     <%= @theme.render %>
     <%= @theme.render_base('body') %>
     <%= @theme.render_base('a') %>
 
+    * { box-sizing: border-box }
+    html { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif }
+    body, main, h2 { margin: 0 }
     pre, code {
       font-family: 'Source Code Pro', 'Menlo', 'Ubuntu Mono', 'Monaco', monospace;
       font-size: 14px;
       white-space: pre-wrap;
     }
     a { text-decoration: none }
-
+    header {
+      color: <%= @comment_color %>;
+      border-bottom: 1px dotted
+    }
+    #page-header, #page-footer {
+      padding: 15px;
+      text-align: center;
+    }
+    #page-header h1 {
+      margin: 0.25em;
+      font-size: 1.5em;
+    }
+    .section-header {
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+    }
+    #page-footer {
+      color: <%= @comment_color %>;
+      border-top: 1px dotted
+    }
+    .rouge-line-table { border-collapse: collapse }
+    .rouge-line-table tr > td { padding: 0 5px }
+    .rouge-line-table .rouge-gutter { text-align: right; vertical-align: top }
+    .rouge-line-table .rouge-gutter pre { margin: 0 }
   </style>
 </head>
 
 <body>
   <%= yield %>
+  <footer id="page-footer">
+    <small>Rendered with theme:</small>
+    <select id="theme-selector" onchange="switchTheme()">
+      <% Rouge::Theme.registry.each_key do |name|
+        %><option value="<%= name %>"<% if @theme.class.name == name %> selected<% end %>><%= name %></option>
+      <% end %>
+    </select>
+  </footer>
+
+  <script>
+    function switchTheme() {
+      var x, y, z;
+      x = document.getElementById("theme-selector").value;
+      y = location.href;
+
+      if (y.includes('theme=')) {
+        z = y.replace(/theme=.*/, 'theme=' + x);
+      } else if (y.includes('?')) {
+        z = y + '&theme=' + x;
+      } else {
+        z = y + '?theme=' + x;
+      }
+
+      location.assign(z);
+    }
+  </script>
 </body>
-
-
 
 </html>

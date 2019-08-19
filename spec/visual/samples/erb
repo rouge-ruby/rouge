@@ -13,6 +13,7 @@
 </table>
 <% end %>
 
+<%# Sometimes you just need to use a variable or two %>
 <% header_tag = 'h1' %>
 
 <<%= header_tag %>>

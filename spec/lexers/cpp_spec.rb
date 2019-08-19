@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::Cpp do
   let(:subject) { Rouge::Lexers::Cpp.new }
@@ -15,6 +16,11 @@ describe Rouge::Lexers::Cpp do
       assert_guess :filename => 'foo.hpp'
       assert_guess :filename => 'foo.h++'
       assert_guess :filename => 'foo.hxx'
+
+      # Disambiguate with C
+      assert_guess :filename => 'foo.h', :source => 'namespace'
+      deny_guess :filename => 'foo.h', :source => 'namespaces'
+      deny_guess :filename => 'foo.h', :source => 'struct namespace'
 
       # Disambiguate with hacklang.org
       assert_guess :filename => 'foo.hh', :source => 'foo'

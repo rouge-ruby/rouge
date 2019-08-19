@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::PlainText do
   let(:subject) { Rouge::Lexers::PlainText.new }
@@ -9,6 +10,7 @@ describe Rouge::Lexers::PlainText do
     it 'guesses by filename' do
       assert_guess :filename => 'foo'
       assert_guess :filename => 'foo.txt'
+      assert_guess :filename => 'Messages', :source => 'foo'
     end
 
     it 'guesses by mimetype' do

@@ -1,0 +1,50 @@
+/*
+ * Author: BaerMitUmlaut
+ * Generates and dumps a list of all currently available commands.
+ * List can be dumped to clipboard or global variable.
+ *
+ * Arguments:
+ * 0: Dump target (clipboard|var:VARNAME)                 <STRING>
+ * 1: List delimiter (default: new line)                  <STRING>
+ *
+ * Return Value:
+ * None
+ */
+
+#define SORT_ASC  true
+#define SORT_DESC false
+#define MAKE_UNIQUE(arr) (arr arrayIntersect arr)
+
+params [
+    ["_target", "clipboard", [""]],
+    ["_delimiter", endl, [""]]
+];
+
+private _supportInfo = supportInfo "";
+
+// Remove types from list
+private _allCommands = _supportInfo select {_x find "t:" == -1};
+
+// Sort commands into categories for processing
+private _nulars   = _allCommands select {_x find "n:" == 0};
+private _unaries  = _allCommands select {_x find "u:" == 0};
+private _binaries = _allCommands select {_x find "b:" == 0};
+
+// Remove argument types from command description
+_nulars   = _nulars   apply {_x select [2]};
+_unaries  = _unaries  apply {_x select [2]};
+_unaries  = _unaries  apply {_x splitString " " select 0};
+_binaries = _binaries apply {_x splitString " " select 1};
+
+// Merge lists
+private _commandList = _nulars + _unaries + _binaries;
+_commandList = MAKE_UNIQUE(_commandList);
+_commandList sort SORT_ASC;
+
+// Dump list
+if (_target find "var:" == 0) then {
+    missionNamespace setVariable [_target select [4], _commandList];
+} else {
+    _commandList = _commandList joinString _delimiter;
+    copyToClipboard _commandList;
+};

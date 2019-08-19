@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -12,7 +13,7 @@ module Rouge
       id = /[^\s$;{}()#]+/
 
       state :root do
-        rule /(include)(\s+)([^\s;]+)/ do
+        rule %r/(include)(\s+)([^\s;]+)/ do
           groups Keyword, Text, Name
         end
 
@@ -22,49 +23,49 @@ module Rouge
       end
 
       state :block do
-        rule /}/, Punctuation, :pop!
+        rule %r/}/, Punctuation, :pop!
         rule id, Keyword::Namespace, :statement
         mixin :base
       end
 
       state :statement do
-        rule /{/ do
+        rule %r/{/ do
           token Punctuation; pop!; push :block
         end
 
-        rule /;/, Punctuation, :pop!
+        rule %r/;/, Punctuation, :pop!
 
         mixin :base
       end
 
       state :base do
-        rule /\s+/, Text
+        rule %r/\s+/, Text
 
-        rule /#.*?\n/, Comment::Single
-        rule /(?:on|off)\b/, Name::Constant
-        rule /[$][\w-]+/, Name::Variable
+        rule %r/#.*?\n/, Comment::Single
+        rule %r/(?:on|off)\b/, Name::Constant
+        rule %r/[$][\w-]+/, Name::Variable
 
         # host/port
-        rule /([a-z0-9.-]+)(:)([0-9]+)/i do
+        rule %r/([a-z0-9.-]+)(:)([0-9]+)/i do
           groups Name::Function, Punctuation, Num::Integer
         end
 
         # mimetype
         rule %r([a-z-]+/[a-z-]+)i, Name::Class
 
-        rule /[0-9]+[kmg]?\b/i, Num::Integer
-        rule /(~)(\s*)([^\s{]+)/ do
+        rule %r/[0-9]+[kmg]?\b/i, Num::Integer
+        rule %r/(~)(\s*)([^\s{]+)/ do
           groups Punctuation, Text, Str::Regex
         end
 
-        rule /[:=~]/, Punctuation
+        rule %r/[:=~]/, Punctuation
 
         # pathname
         rule %r(/#{id}?), Name
 
-        rule /[^#\s;{}$\\]+/, Str # catchall
+        rule %r/[^#\s;{}$\\]+/, Str # catchall
 
-        rule /[$;]/, Text
+        rule %r/[$;]/, Text
       end
     end
   end

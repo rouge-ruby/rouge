@@ -31,7 +31,7 @@ Feature: Feature Text
       |g|h|
       |e|r|
       |k|i|
-      |n|| 
+      |n||
     And I am done testing these tables
     #Comment on line 29
     Then I am happy
@@ -44,6 +44,16 @@ Feature: Feature Text
       """
     Then crazy
 
+  Scenario Outline: Variable highlighting
+    Given a variable <foo>
+    When <foo> is surrounded by punctuation like (<foo> or <bar>)
+    Then all variables should be highlighted properly.
+
+    Examples:
+      | foo  | bar |
+      | 1    | 2   |
+      | good | bad |
+
 #language:zh-CN
 功能:加法
 
@@ -52,4 +62,3 @@ Feature: Feature Text
     而且我已经在计算器里输入7
     当我按相加按钮
     那么我应该在屏幕上看到的结果是13
-

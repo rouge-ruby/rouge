@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::TOML do
   let(:subject) { Rouge::Lexers::TOML.new }
@@ -8,6 +9,7 @@ describe Rouge::Lexers::TOML do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.toml'
+      assert_guess :filename => 'Pipfile'
     end
 
     it 'guesses by mimetype' do

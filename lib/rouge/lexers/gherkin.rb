@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 module Rouge
   module Lexers
@@ -7,7 +8,7 @@ module Rouge
       aliases 'cucumber', 'behat'
 
       title "Gherkin"
-      desc 'A business-readable spec DSL ( github.com/cucumber/cucumber/wiki/Gherkin )'
+      desc 'A business-readable spec DSL (github.com/cucumber/cucumber/wiki/Gherkin)'
 
       filenames '*.feature'
       mimetypes 'text/x-gherkin'
@@ -18,7 +19,7 @@ module Rouge
 
       # self-modifying method that loads the keywords file
       def self.keywords
-        load Pathname.new(__FILE__).dirname.join('gherkin/keywords.rb')
+        load File.join(__dir__, 'gherkin/keywords.rb')
         keywords
       end
 
@@ -29,6 +30,8 @@ module Rouge
           keywords[:step].map do |w|
             if w.end_with? '<'
               Regexp.escape(w.chop)
+            elsif w.end_with?(' ')
+              Regexp.escape(w)
             else
               "#{Regexp.escape(w)}\\b"
             end
@@ -40,7 +43,7 @@ module Rouge
 
       state :basic do
         rule %r(#.*$), Comment
-        rule /[ \r\t]+/, Text
+        rule %r/[ \r\t]+/, Text
       end
 
       state :root do
@@ -84,8 +87,8 @@ module Rouge
       end
 
       state :table_header do
-        rule /[^|\s]+/, Name::Variable
-        rule /\n/ do
+        rule %r/[^|\s]+/, Name::Variable
+        rule %r/\n/ do
           token Text
           goto :table
         end
@@ -94,9 +97,9 @@ module Rouge
 
       state :table do
         mixin :basic
-        rule /\n/, Text, :table_bol
-        rule /[|]/, Punctuation
-        rule /[^|\s]+/, Name
+        rule %r/\n/, Text, :table_bol
+        rule %r/[|]/, Punctuation
+        rule %r/[^|\s]+/, Name
       end
 
       state :table_bol do
@@ -107,29 +110,29 @@ module Rouge
       state :description do
         mixin :basic
         mixin :has_examples
-        rule /\n/, Text
+        rule %r/\n/, Text
         rule rest_of_line, Text
       end
 
       state :feature_description do
         mixin :basic
         mixin :has_scenarios
-        rule /\n/, Text
+        rule %r/\n/, Text
         rule rest_of_line, Text
       end
 
       state :example_description do
         mixin :basic
         mixin :has_table
-        rule /\n/, Text
+        rule %r/\n/, Text
         rule rest_of_line, Text
       end
 
       state :step do
         mixin :basic
-        rule /<.*?>/, Name::Variable
-        rule /".*?"/, Str
-        rule /\S+/, Text
+        rule %r/<.*?>/, Name::Variable
+        rule %r/".*?"/, Str
+        rule %r/\S[^\s<]*/, Text
         rule rest_of_line, Text, :pop!
       end
     end

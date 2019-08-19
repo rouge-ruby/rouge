@@ -27,6 +27,8 @@ module Rouge
         )
       end
 
+      # These are literal patterns common to the ABC intermediate language and
+      # Clean. Clean has more extensive literal patterns (see :basic below).
       state :common_literals do
         rule %r/'(?:[^'\\]|\\(?:x[0-9a-fA-F]+|\d+|.))'/, Str::Char
 
@@ -42,18 +44,28 @@ module Rouge
 
         rule %r/\/\/\*.*/, Comment::Doc
         rule %r/\/\/.*/, Comment::Single
+        rule %r/\/\*\*/, Comment::Doc, :comment_doc
         rule %r/\/\*/, Comment::Multiline, :comment
 
-        mixin :common_literals
         rule %r/[+~-]?0[0-7]+/, Num::Oct
-        rule %r/[+~-]?0x[0-9a-fA-F]+\b/, Num::Hex
-        rule %r/(\[)(\s*)(')(?=.*'\])/ do
-          groups Punctuation, Str::Single, Punctuation
+        rule %r/[+~-]?0x[0-9a-fA-F]+/, Num::Hex
+        mixin :common_literals
+        rule %r/(\[)(\s*)(')(?=.*?'\])/ do
+          groups Punctuation, Text::Whitespace, Str::Single, Punctuation
           push :charlist
         end
       end
 
       # nested commenting
+      state :comment_doc do
+        rule %r/\*\//, Comment::Doc, :pop!
+        rule %r/\/\/.*/, Comment::Doc # Singleline comments in multiline comments are skipped
+        rule %r/\/\*/, Comment::Doc, :comment
+        rule %r/[^*\/]+/, Comment::Doc
+        rule %r/[*\/]/, Comment::Doc
+      end
+
+      # This is the same as the above, but with Multiline instead of Doc
       state :comment do
         rule %r/\*\//, Comment::Multiline, :pop!
         rule %r/\/\/.*/, Comment::Multiline # Singleline comments in multiline comments are skipped
@@ -87,9 +99,17 @@ module Rouge
         rule %r/_\b/, Punctuation
       end
 
+      state :escapes do
+        rule %r/\\x[0-9a-fA-F]{1,2}/i, Str::Escape
+        rule %r/\\d\d{0,3}/i, Str::Escape
+        rule %r/\\0[0-7]{0,3}/, Str::Escape
+        rule %r/\\[0-7]{1,3}/, Str::Escape
+        rule %r/\\[nrfbtv\\"']/, Str::Escape
+      end
+
       state :string do
         rule %r/"/, Str::Double, :pop!
-        rule %r/\\./, Str::Double
+        mixin :escapes
         rule %r/[^\\"]+/, Str::Double
       end
 
@@ -98,7 +118,7 @@ module Rouge
           groups Str::Single, Punctuation
           pop!
         end
-        rule %r/\\./, Str::Single
+        mixin :escapes
         rule %r/[^\\']/, Str::Single
       end
 
@@ -108,6 +128,9 @@ module Rouge
         mixin :common_literals
       end
 
+      # The ABC intermediate language can be included, similar to C's inline
+      # assembly. For some information about ABC, see:
+      # https://en.wikipedia.org/wiki/Clean_(programming_language)#The_ABC-Machine
       state :abc do
         mixin :abc_basic
 
@@ -123,7 +146,10 @@ module Rouge
           pop!
           pop!
         end
+
         mixin :abc_basic
+
+        rule %r/\S+/, Name
       end
     end
   end

@@ -32,8 +32,8 @@ module Rouge
       id = /[a-z_][\w']*/i
 
       state :root do
-        rule /\s+/m, Text
-        rule /false|true/, Keyword::Constant
+        rule (/\s+/m), Text
+        rule (/false|true/), Keyword::Constant
         rule %r(\-\-.*), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule %r(\(\*.*?\*\))m, Comment::Multiline
@@ -50,35 +50,36 @@ module Rouge
           end
         end
 
+        rule (/[(){}\[\];]+/), Punctuation
         rule operator, Operator
 
-        rule /-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
-        rule /\d[\d_]*/, Num::Integer
+        rule (/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i), Num::Float
+        rule (/\d[\d_]*/), Num::Integer
 
-        rule /'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char
-        rule /'[.]'/, Str::Char
-        rule /"/, Str::Double, :string
-        rule /[~?]#{id}/, Name::Variable
+        rule (/'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/), Str::Char
+        rule (/'[.]'/), Str::Char
+        rule (/"/), Str::Double, :string
+        rule (/[~?]#{id}/), Name::Variable
       end
 
       state :string do
-        rule /[^\\"]+/, Str::Double
+        rule (/[^\\"]+/), Str::Double
         mixin :escape_sequence
-        rule /\\\n/, Str::Double
-        rule /"/, Str::Double, :pop!
+        rule (/\\\n/), Str::Double
+        rule (/"/), Str::Double, :pop!
       end
 
       state :escape_sequence do
-        rule /\\[\\"'ntbr]/, Str::Escape
-        rule /\\\d{3}/, Str::Escape
-        rule /\\x\h{2}/, Str::Escape
+        rule (/\\[\\"'ntbr]/), Str::Escape
+        rule (/\\\d{3}/), Str::Escape
+        rule (/\\x\h{2}/), Str::Escape
       end
 
       state :dotted do
-        rule /\s+/m, Text
-        rule /[.]/, Punctuation
+        rule (/\s+/m), Text
+        rule (/[.]/), Punctuation
         rule id, Name, :pop!
-        rule /[({\[]/, Punctuation, :pop!
+        rule (/[({\[]/), Punctuation, :pop!
       end
     end
   end

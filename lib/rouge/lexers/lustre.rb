@@ -13,8 +13,8 @@ module Rouge
       def self.keywords
         @keywords ||= Set.new %w(
           extern unsafe assert const current enum function
-          false let node operator returns
-          step struct tel type true var  model package needs
+          let node operator returns
+          step struct tel type var  model package needs
           provides uses is body end include merge
         )
       end
@@ -28,7 +28,7 @@ module Rouge
         @primitives ||= Set.new %w(int real bool)
       end
 
-      operator = %r([;,_!$%&*+./:<=>?@^|~#-]+)
+      operator = %r([,!$%&*+./:<=>?@^|~#-]+)
       id = /[a-z_][\w']*/i
 
       state :root do

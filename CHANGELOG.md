@@ -4,6 +4,31 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.9.0: 2019-08-21
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.8.0...v3.9.0)
+
+- EEX Lexer (**NEW**)
+  - Add EEX lexer ([#874](https://github.com/rouge-ruby/rouge/pull/874/) by julp)
+- Elixir Lexer
+  - Fix escaping/interpolating in string and charlist literals in Elixir lexer ([#1308](https://github.com/rouge-ruby/rouge/pull/1308/) by Michael Camilleri)
+- Haxe Lexer (**NEW**)
+  - Add Haxe lexer ([#815](https://github.com/rouge-ruby/rouge/pull/815/) by Josu Igoa)
+- HQL Lexer (**NEW**)
+  - Add HQL lexer and add types to SQL lexer ([#880](https://github.com/rouge-ruby/rouge/pull/880/) by tkluck-booking)
+- HTTP Lexer
+  - Add support for HTTP/2 to HTTP lexer ([#1296](https://github.com/rouge-ruby/rouge/pull/1296/) by Michael Camilleri)
+- JavaScript Lexer
+  - Add new regex flags to JavaScript lexer ([#875](https://github.com/rouge-ruby/rouge/pull/875/) by Brad)
+- MATLAB Lexer
+  - Change method of saving MatLab built-in keywords ([#1300](https://github.com/rouge-ruby/rouge/pull/1300/) by Michael Camilleri)
+- Q Lexer
+  - Fix use of preceding whitespace in comments in Q lexer ([#858](https://github.com/rouge-ruby/rouge/pull/858/) by Mark)
+- SQL Lexer
+  - Add HQL lexer and add types to SQL lexer ([#880](https://github.com/rouge-ruby/rouge/pull/880/) by tkluck-booking)
+- Terraform Lexer
+  - Add support for first-class expressions to Terraform lexer ([#1303](https://github.com/rouge-ruby/rouge/pull/1303/) by Michael Camilleri)
+
 ## version 3.8.0: 2019-08-07
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.7.0...v3.8.0)

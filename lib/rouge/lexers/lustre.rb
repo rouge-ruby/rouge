@@ -75,12 +75,6 @@ module Rouge
         rule (/\\x\h{2}/), Str::Escape
       end
 
-      state :dotted do
-        rule (/\s+/m), Text
-        rule (/[.]/), Punctuation
-        rule id, Name, :pop!
-        rule (/[({\[]/), Punctuation, :pop!
-      end
     end
   end
 end

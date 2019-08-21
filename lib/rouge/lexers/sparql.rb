@@ -10,50 +10,119 @@ module Rouge
       filenames '*.rq'
       mimetypes 'application/sparql-query'
 
-      BUILTINS = Set.new %w[
-        ABS AVG BNODE BOUND CEIL COALESCE CONCAT CONTAINS COUNT DATATYPE DAY
-        ENCODE_FOR_URI FLOOR GROUP_CONCAT HOURS IF IRI isBLANK isIRI isLITERAL
-        isNUMERIC isURI LANG LANGMATCHES LCASE MAX MD5 MIN MINUTES MONTH NOW
-        RAND REGEXP REPLACE ROUND sameTerm SAMPLE SECONDS SEPARATOR SHA1
-        SHA256 SHA384 SHA512 STR STRAFTER STRBEFORE STRDT STRENDS STRLANG
-        STRLEN STRSTARTS STRUUID SUBSTR SUM TIMEZONE TZ UCASE URI UUID YEAR
-      ]
+      def self.builtins
+        @builtins = Set.new %w[
+          ABS AVG BNODE BOUND CEIL COALESCE CONCAT CONTAINS COUNT DATATYPE DAY
+          ENCODE_FOR_URI FLOOR GROUP_CONCAT HOURS IF IRI isBLANK isIRI
+          isLITERAL isNUMERIC isURI LANG LANGMATCHES LCASE MAX MD5 MIN MINUTES
+          MONTH NOW RAND REGEX REPLACE ROUND SAMETERM SAMPLE SECONDS SEPARATOR
+          SHA1 SHA256 SHA384 SHA512 STR STRAFTER STRBEFORE STRDT STRENDS
+          STRLANG STRLEN STRSTARTS STRUUID SUBSTR SUM TIMEZONE TZ UCASE URI
+          UUID YEAR
+        ]
+      end
 
-      KEYWORDS = Set.new %w[
-        ADD ALL AS ASC BIND CLEAR COPY CREATE DATA DEFAULT DELETE DESC
-        DISTINCT DROP EXISTS FILTER GRAPH GROUP\ BY HAVING IN INSERT LIMIT
-        LOAD MINUS MOVE NAMED NOT\ EXISTS NOT\ IN OFFSET OPTIONAL ORDER\ BY
-        SELECT SERVICE SILENT UNDEF UNION USING VALUES WHERE WITH
-      ]
+      def self.keywords
+        @keywords = Set.new %w[
+          ADD ALL AS ASC ASK BASE BIND BINDINGS CLEAR CONSTRUCT COPY CREATE
+          DATA DEFAULT DELETE DESC DESCRIBE DISTINCT DROP EXISTS FILTER FROM
+          GRAPH GROUP\ BY HAVING IN INSERT LIMIT LOAD MINUS MOVE NAMED NOT\
+          EXISTS NOT\ IN OFFSET OPTIONAL ORDER\ BY PREFIX SELECT REDUCED
+          SERVICE SILENT TO UNDEF UNION USING VALUES WHERE WITH
+        ]
+      end
 
       state :root do
-        rule %r("), Str, :string_double
-        rule %r('), Str, :string_single
+        rule %r(\s+)m, Text::Whitespace
         rule %r(#.*), Comment::Single
+        
+        rule %r("""), Str::Double, :string_double_literal
+        rule %r("), Str::Double, :string_double
+        rule %r('''), Str::Single, :string_single_literal
+        rule %r('), Str::Single, :string_single
+       
         rule %r([$?]\w+), Name::Variable
-        rule %r((\w*:)(\w+)) do |m|
+        rule %r((\w*:)(\w+)?) do |m|
           token Name::Namespace, m[1]
           token Str::Symbol, m[2]
         end
         rule %r(<[^>]*>), Name::Namespace
-        rule Regexp.union(KEYWORDS.map{ |str| /\b#{str}\b/i }), Keyword
-        rule Regexp.union(BUILTINS.map{ |str| /\b#{str}\b/i }), Name::Builtin
-        rule %r(-?([0-9]+\.[0-9]+|\.[0-9]+|[0-9]+)([eE][+-]?[0-9]+)?), Num
+        rule %r(true|false)i, Keyword::Constant
+        
+        rule %r([A-Z]\w+(?: [A-Z]\w+(?!:))?\b)i do |m|
+          if self.class.builtins.include? m[0].upcase
+            token Name::Builtin
+          elsif self.class.keywords.include? m[0].upcase
+            token Keyword
+          else
+            token Error
+          end
+        end
+
+        rule %r([+\-]?(?:\d+\.\d*|\.\d+)(?:[e][+\-]?[0-9]+)?)i, Num::Float
+        rule %r([+\-]?\d+), Num::Integer
         rule %r([\]\[(){}.,;=]), Punctuation
-        rule %r([/?*+=!<>]|&&|\|\|), Operator
-        rule %r(\s+), Text::Whitespace
+        rule %r([/?*+=!<>]|&&|\|\||\^\^), Operator
+      end
+
+      state :string_double_common do
+        mixin :string_escapes
+        rule %r(\\), Str::Double
+        rule %r([^"\\]+), Str::Double
       end
 
       state :string_double do
-        rule %r(\\[tbnrf"'\\]), Str::Escape
-        rule %r("), Str, :pop!
-        rule %r(.), Str
+        rule %r(") do
+          token Str::Double
+          goto :string_end
+        end
+        mixin :string_double_common
+      end
+
+      state :string_double_literal do
+        rule %r(""") do
+          token Str::Double
+          goto :string_end
+        end
+        rule %r("), Str::Double
+        mixin :string_double_common
+      end
+
+      state :string_single_common do
+        mixin :string_escapes
+        rule %r(\\), Str::Single
+        rule %r([^'\\]+), Str::Single
       end
 
       state :string_single do
+        rule %r(') do
+          token Str::Single
+          goto :string_end
+        end
+        mixin :string_single_common
+      end
+      
+      state :string_single_literal do
+        rule %r(''') do
+          token Str::Single
+          goto :string_end
+        end
+        rule %r('), Str::Single
+        mixin :string_single_common
+      end
+
+      state :string_escapes do
         rule %r(\\[tbnrf"'\\]), Str::Escape
-        rule %r('), Str, :pop!
-        rule %r(.), Str
+        rule %r(\\u\h{4}), Str::Escape
+        rule %r(\\U\h{8}), Str::Escape
+      end
+
+      state :string_end do
+        rule %r((@)([a-zA-Z]+(?:-[a-zA-Z0-9]+)*)) do
+          groups Operator, Name::Property
+        end
+        rule %r(\^\^), Operator
+        rule(//) { pop! }
       end
     end
   end

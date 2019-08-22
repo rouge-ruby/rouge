@@ -1,0 +1,131 @@
+implementation module Data.GenCompress
+
+// Samples for testing were taken from Clean Platform ...
+// https://gitlab.science.ru.nl/clean-and-itasks/clean-platform
+// ... but cut down for brevity.
+
+// -- The following are some additions to test features not included in the sample:
+
+literals =
+	( 'a', '\x61', '\0141', '\n'
+	, 17.42E3 // lower-case e or no digits before . are invalid!
+	, 17.42
+	, 0x11, 052, 3, 0x3ff
+	, ['charlist sugar'], [   'may start with spaces']
+	,  "escapes:       \x11 \X11 \052 \d17 \D42 \n \" \' ' \\ "
+	, ['in a charlist: \x11 \X11 \052 \d17 \D42 \n \" \' " \\ ']
+	, "unicode: ° →"
+	)
+
+/* Clean comments can be nested: /* like so */
+ * Furthermore, // in multiline comments ignore closing */ on the remainder
+ * Hence this is still part of the comment, and it only closes here: */
+
+/**
+ * By convention, documentation is in comments starting with two asterisks ...
+ */
+
+//* ... or starting with an asterisk in the case of singleline documentation.
+
+// -- end additions
+
+import StdGeneric, StdEnv
+from Data.Maybe import :: Maybe(..)
+import Data._Array, Data.Func
+
+//--------------------------------------------------
+// uncompressor monad
+
+ret :: !.a !u:CompressSt -> (!Maybe .a,!u:CompressSt)
+ret a st = (Just a, st)
+(>>=) infixl 5
+(>>=) pa pb = bind pa pb
+where
+	bind pa pb st
+		#! (ma, st) = pa st
+		= case ma of
+			Nothing -> (Nothing, st)
+			Just x  -> pb x st
+
+//--------------------------------------------------
+
+:: BitVector :== {#Int}
+:: BitPos :== Int
+
+:: CompressSt = { cs_pos :: !Int, cs_bits :: !.{#Int} }
+mkCompressSt arr = { cs_pos = 0, cs_bits = arr}
+
+
+:: Compress a :== a -> *CompressSt -> *CompressSt
+:: Uncompress a :== .CompressSt -> .(.(Maybe a), .CompressSt)
+
+compressBool :: !Bool !*CompressSt -> *CompressSt
+compressBool bit {cs_pos = pos, cs_bits = bits}
+	#! s = size bits
+	#! int_pos = pos >> (IF_INT_64_OR_32 6 5)
+	#! bit_pos = pos bitand (IF_INT_64_OR_32 63 31)
+	| s == int_pos
+		= abort "reallocate"
+		#! int = bits.[int_pos]
+		#! bit_mask = 1 << bit_pos
+		#! new_int = if bit (int bitor bit_mask) (int bitand (bitnot bit_mask))
+		= {cs_pos = inc pos, cs_bits = {bits & [int_pos] = new_int}}
+
+realToBinary32 :: !Real -> (!Int,!Int);
+realToBinary32 _ = code {
+	.d 0 1 r
+	pop_b 0 | don't do anything
+	.o 0 2 ii
+};
+// Alternatively, with inline code:
+realToBinary32 _ = code inline {
+	no_op
+};
+
+uncompressArray :: (u:CompressSt -> ((Maybe v:a),w:CompressSt)) -> .(x:CompressSt -> ((Maybe y:(b v:a)),z:CompressSt)) | Array b a, [x w <= u,y <= v,x w <= z]
+uncompressArray f
+	=	uncompressInt >>= \s -> uncompress_array 0 s (unsafeCreateArray s)
+where
+	uncompress_array i s arr
+		| i == s
+			= ret arr
+			= f >>= \x -> uncompress_array (inc i) s {arr & [i] = x}
+
+compressList :: (a *CompressSt -> *CompressSt) ![a] -> *CompressSt -> *CompressSt
+compressList c xs = compressArray c (list_to_arr xs)
+where
+	list_to_arr :: [b] -> {b} | Array {} b
+	list_to_arr xs = {x \\ x <- xs}
+
+generic gCompress a :: !a -> *CompressSt -> *CompressSt
+gCompress{|Int|} x = compressInt x
+gCompress{|EITHER|} cl cr (LEFT x) = cl x o compressBool False
+gCompress{|{}|} c xs = compressArray c xs
+gCompress{|{!}|} c xs = compressArray c xs
+gCompress{|[]|} c xs = compressList c xs
+
+
+generic gCompressedSize a :: a -> Int
+gCompressedSize{|Int|} _ = IF_INT_64_OR_32 64 32
+gCompressedSize{|PAIR|} cx cy (PAIR x y) = cx x + cy y
+gCompressedSize{|[]|} c xs = foldSt (\x st -> c x + st) xs (IF_INT_64_OR_32 64 32)
+gCompressedSize{|{}|} c xs = foldSt (\x st -> c x + st) [x\\x<-:xs] (IF_INT_64_OR_32 64 32)
+gCompressedSize{|{!}|} c xs = foldSt (\x st -> c x + st) [x\\x<-:xs] (IF_INT_64_OR_32 64 32)
+
+generic gUncompress a :: (u:CompressSt -> ((Maybe a),u:CompressSt))
+gUncompress{|PAIR|} fx fy = fx >>= \x -> fy >>= \y -> ret (PAIR x y)
+gUncompress{|CONS|} f = f >>= ret o CONS
+gUncompress{|FIELD|} f = f >>= \x -> ret $ FIELD x
+gUncompress{|OBJECT|} f = f >>= \x -> ret $ OBJECT x
+
+//-------------------------------------------------------------------------------------
+
+uncompress :: (BitVector -> Maybe a) | gUncompress{|*|} a
+uncompress = fst o gUncompress{|*|} o mkCompressSt
+
+compress :: !a -> BitVector | gCompressedSize{|*|} a & gCompress{|*|} a
+compress x
+	#! compressed_size = gCompressedSize{|*|} x
+	#! arr_size = (compressed_size + (IF_INT_64_OR_32 63 31)) >> (IF_INT_64_OR_32 6 5)
+	#! bits = createArray arr_size 0
+	= (gCompress{|*|} x (mkCompressSt bits)).cs_bits

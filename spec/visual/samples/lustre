@@ -1,6 +1,6 @@
-
 -------------------------------------------------------------------
-(* Compute the roof motion speed *)
+-- The full program can be found here:
+-- https://github.com/jahierwan/lustre-examples/tree/master/verimag-v6/examples/convertible
   
 const period = 0.1;  -- in seconds
 const wheel_girth = 1.4;  -- meter
@@ -29,8 +29,6 @@ let
     (locked    -> 0.0 when locked(st))
     (in_motion -> roof_speed(Tick_on_in_motion));
 tel
-
-type roof_speed_state = enum { wait, fast, slow };
 
 node roof_speed(Tick:bool) returns (Roof_Speed:real);
 var 
@@ -67,82 +65,6 @@ let
 tel
 
 -------------------------------------------------------------------
-
-node speed_kmh(Rot, Tick: bool) returns (Speed:real);
-var
-  d,t,pd,pt,dx,tx:real;
-  TickOrRot:bool;
-let
-  dx = if Rot then wheel_girth else 0.0;
-  tx = if Tick then period else 0.0;
-  TickOrRot = Tick or Rot;
-  pd = 0.0 fby d;
-  pt = 0.0 fby t;
-  d = merge TickOrRot 
-        (true -> sum<<size,0.0>>(dx when TickOrRot))
-        (false -> pd when not TickOrRot);
-  t = maxr(period, merge TickOrRot 
-        (true ->  sum<<size,period>>(tx when TickOrRot))
-        (false -> pt when not TickOrRot));
-  Speed = 0.0 fby ms_to_kmh(d/t);
-tel
-  
-------------------------------------------------------------------------
-type vehicle_state = enum { stationnary, run, anti_col };         --
-
-node main (Start, Parked, Rot, Tick, OnOff, Done: bool ; Dist:real) 
-returns(Danger, Locked : bool; Speed, Roof_Speed :real);
-var
-  St:vehicle_state;
-let
-  assert(not (OnOff and Start)); 
-    -- Allows Lesar to state that:  not(parked)=>locked
-    -- ie, in_motion => parked
-  -- Feedback loop ! 
-  (Locked,Roof_Speed) = roof(Tick, Parked, OnOff, Done);
-  Speed  = speed_kmh(Rot, Tick);
-  St = vehicle(Start, Locked, Speed, Dist);
-  Danger = merge St 
-      (stationnary -> false)
-      (run -> false)
-      (anti_col -> may_collide(Speed when anti_col(St), Dist when anti_col(St)));
-tel
-
-node vehicle(Start, Locked:bool ; Speed, Dist : real)
-returns (st : vehicle_state);
-var
-  pst: vehicle_state;
-  ac_cond : bool;
-let
-  pst = stationnary fby st;
-  ac_cond = Speed >= speed_max ; -- and Dist < max_dist_sensor;
-  st =  merge pst
-    (stationnary ->
-        if (Start and Locked) when stationnary(pst)
-        then run 
-        else stationnary)
-    (run ->
-        if ac_cond when run(pst)
-        then anti_col
-        else if (Speed=0.0) when run(pst)
-        then stationnary
-        else run)
-    (anti_col ->
-        if not ac_cond when anti_col(pst)
-        then run
-        else anti_col);
-tel
-
-node may_collide(Speed, Dist:real) returns (Res:bool);
-var
-  Accel, tChoc, tBrake : real;
-let
-  Accel  = 0.0 -> (Speed-pre(Speed))/period;
-  tBrake = braking_time(Speed);
-  tChoc  = solve_eq_d2(Accel, 2.0*Speed, -2.0 * Dist);
-  Res = tChoc < 2.0 + tBrake;
-tel
-
 -- https://fr.wikipedia.org/wiki/Distance_d%27arr%C3%AAt
 -- k depends on the brakes quality, the vehicle weigth, the adhesion
 -- on the road, etc.  At 110km/h, the braking time is 2.2s on a dry road,
@@ -164,15 +86,6 @@ let
   pre_a = (init^d) fby a;
   a = assign<<d>>(s, i mod d, pre_a);
   res =red<<+; d>>(0.0, a); --- / Lustre::int2real(d) ;
-tel
-
-function ms_to_kmh (x:real) returns(res:real);
-let
-  res = x * 3.6; 
-tel
-function maxr(x,y:real) returns (res:real);
-let
- res = if x<y then y else x;
 tel
 
 ------------------------------------------------------------------------

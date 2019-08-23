@@ -1,19 +1,20 @@
 -------------------------------------------------------------------
--- The full program can be found here:
--- https://github.com/jahierwan/lustre-examples/tree/master/verimag-v6/examples/convertible
-  
-const period = 0.1;  -- in seconds
-const wheel_girth = 1.4;  -- meter
+
+-- Constants
 const size = 50; -- size of the sliding windows used to smooth values
-const max_roof_speed = 10.0;
-const speed_max = 110.0;                                           --
-const speed_hist= 5.0; 
+const period = 0.1;  -- in seconds
+const speed_max = 110.0;                                           -- comment with leading whitespace
 
--- Beyong this value, the sensor can not see any obstacle
-const max_dist_sensor = 200.0;
-
+-- Types
 type roof_state = enum { locked, in_motion };
 
+type update_acc = {
+  i: int; 
+  j: int; 
+  v: real
+};
+
+-- Nodes
 node roof(Tick, Parked, OnOff, Done: bool) returns (Locked:bool; Roof_Speed:real);
 var 
   pst, st : roof_state;
@@ -30,53 +31,6 @@ let
     (in_motion -> roof_speed(Tick_on_in_motion));
 tel
 
-node roof_speed(Tick:bool) returns (Roof_Speed:real);
-var 
-  pst, st : roof_speed_state when Tick;
-  kh, Roof_Percent, pRoof_Percent : real when Tick;
-  slow_it_down : real when slow(st);
-  pRoof_Speed : real;
-let
-  pst = wait fby st;
-  st = merge pst
-    (wait -> fast)
-    (fast -> if pRoof_Percent when fast(pst) < 85.0  then fast else slow)
-    (slow -> if pRoof_Percent when slow(pst) < 100.0 then slow else wait);
-  pRoof_Percent = 0.0 fby Roof_Percent;
-  
-  -- When pRoof_Percent goes from 85 to 100, slow_it_down goes from
-  -- 1 to 0, but not linearly
-  slow_it_down = sqrt(sqrt((100.0 - pRoof_Percent when slow(st))/5.0));
-
-  kh = 100./(5./period); -- so that the roof opens in ~5 seconds
-  pRoof_Speed = 0.0 fby Roof_Speed;
-  Roof_Speed =
-    merge Tick
-     (false -> pRoof_Speed when not Tick)
-     (true ->
-      merge st
-        (wait -> 0.0)
-        (fast -> max_roof_speed)
-        (slow -> max_roof_speed * slow_it_down)); 
-  Roof_Percent = merge st
-    (wait -> 0.0)
-    (fast -> (kh + pRoof_Percent) when fast(st))
-    (slow -> slow_it_down*kh when slow(st) + pRoof_Percent when slow(st)); 
-tel
-
--------------------------------------------------------------------
--- https://fr.wikipedia.org/wiki/Distance_d%27arr%C3%AAt
--- k depends on the brakes quality, the vehicle weigth, the adhesion
--- on the road, etc.  At 110km/h, the braking time is 2.2s on a dry road,
--- hence the k=5500 here.
-const k = 5500.0;
-function braking_time(Speed:real) returns (res:real);
-let
-  res = Speed * Speed / k;
-tel
-
--------------------------------------------------------------------
--- utils 
 node sum<<const d: int; const init:real>>(s: real) returns (res:real);
 var
   a,pre_a: real^d; -- circular array
@@ -88,70 +42,8 @@ let
   res =red<<+; d>>(0.0, a); --- / Lustre::int2real(d) ;
 tel
 
-------------------------------------------------------------------------
--- assign the jth element of an array to a value.
-type update_acc = {
-  i: int; 
-  j: int; 
-  v: real
-};
-  
-function update_cell_do<<const d: int>>(acc: update_acc; cell: real) 
-returns (nacc: update_acc; ncell: real);
+-- Functions
+function braking_time(Speed:real) returns (res:real);
 let
-  ncell = if acc.i = acc.j then acc.v else cell;
-  nacc = update_acc { i = acc.i+1; j = acc.j ; v = acc.v };
-tel
-
-function assign<<const d: int>>(v: real; jv: int;  t: real^d) returns (nt: real^d)
-var
-  dummy: update_acc; 
-let
-  dummy, nt=fillred<<update_cell_do<<d>>; d>>( update_acc { i=0 ; j=jv ; v=v }, t);
-tel
-------------------------------------------------------------------------
-function sqrt(R:real) returns (Sqrt:real);
-let
-	Sqrt = squareR <<5>> (R,1.0);
-tel
-function squareR <<const n : int>>(x,presqrt:real) returns (Sqrt:real);
-var sqrt:real;
-    ecart:bool;
-let
-	ecart =( abs(presqrt-sqrt)<0.0005);
-	sqrt = (0.5*(presqrt + x/presqrt));
-
-	Sqrt = with(n<=1) then sqrt
-			 else (merge ecart
-            (true -> sqrt when ecart)
-            (false -> (squareR<<(n-1)>> ((x when not ecart),(sqrt when not ecart)))));	
-tel
-------------------------------------------------------------------------
--- Returns a positive  solution of the equation a*t²+b*t+c=0 if it exists
--- a negative number otherwise.
-type eq_case = enum { no_sol, deg1, one_sol, two_sol };
-function solve_eq_d2(a,b,c:real) returns (res:real);
-var 
-  delta:real;
-  sol_nb:eq_case;
-  a2,b2,delta_pos : real when two_sol(sol_nb);
-let
-  delta=(b*b)-(4.0*a*c);
-  sol_nb = if a = 0.0 then if b = 0.0 then no_sol else deg1 else 
-            if delta < 0.0 then no_sol else
-            if delta = 0.0 then one_sol else two_sol ;
-  delta_pos = delta when two_sol(sol_nb);
-  a2 = a when two_sol(sol_nb);
-  b2 = b when two_sol(sol_nb);
-  res = merge sol_nb 
-    (no_sol -> -1.0)
-    (deg1 -> (-c/b) when deg1(sol_nb))
-    (one_sol -> (-b/(2.0*a)) when one_sol(sol_nb))
-    (two_sol -> 
-        maxr(-b2+sqrt(delta_pos)/(2.0*a2), 
-             -b2-sqrt(delta_pos)/(2.0*a2)));
-tel
-function abs(x:real) returns (y:real);
-let
-    y = if x >= 0.0 then x else -x;
+  res = Speed * Speed / k;
 tel

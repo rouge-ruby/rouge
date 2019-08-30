@@ -15,19 +15,17 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          extends implements enum interface struct class module dictionary const
-          optional out throws exception local idempotent sequence
-
+          extends implements enum interface struct class module dictionary
+          const optional out throws exception local idempotent sequence
           Object LocalObject Value
         )
       end
 
       def self.keywords_type
         @keywords_type ||= Set.new %w(
-            bool string byte long float double int void short
+          bool string byte long float double int void short
         )
       end
-
     end
   end
 end

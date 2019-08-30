@@ -14,15 +14,12 @@ module Rouge
 
         # messages
         rule %r/(<<)(.*?)(\(|;)/ do |m|
-          token Operator, m[1]
-          token Name::Function, m[2]
-          token Operator, m[3]
+          groups Operator, Name::Function, Operator
         end
 
         # covers built-in and custom functions
         rule %r/([a-z][a-z._\s]*)(\()/i do |m|
-          token Keyword, m[1]
-          token Operator, m[2]
+          groups Keyword, Operator
         end
 
         rule %r(//.*?$), Comment::Single

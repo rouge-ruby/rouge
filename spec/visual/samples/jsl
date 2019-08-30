@@ -5,6 +5,7 @@ dt << Distribution( Column( :age ), Histograms Only( 1 ) );
     Multi-line comment
 */
 
+escapeSequence = "This is an \!b escaped sequence";
 escapeQuote = "This is a \!"
 quotation mark";
 escapeStr = "\[This is """""""

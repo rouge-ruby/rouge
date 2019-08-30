@@ -17,6 +17,7 @@ module Rouge
         @keywords ||= Set.new %w(
           extends implements enum interface struct class module dictionary
           const optional out throws exception local idempotent sequence
+
           Object LocalObject Value
         )
       end

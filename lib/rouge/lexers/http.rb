@@ -42,7 +42,7 @@ module Rouge
         rule %r(
           (HTTPS?)(/)(\d(?:\.\d))([ ]+)  # http version
           (\d{3})([ ]+)?                 # status
-          ([^\r\n]+)?(\r?\n|$)           # status message
+          ([^\r\n]*)?(\r?\n|$)           # status message
         )x do
           groups(
             Keyword, Operator, Num, Text,

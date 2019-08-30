@@ -24,8 +24,8 @@ module Rouge
 
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule %r/"\\\[.*?\]\\"/m, Str              # escaped string
-        rule %r/"(\\!"|[^"])*"/m, Str
+        rule %r/"\\\[.*?\]\\"/m, Str::Double  # escaped string
+        rule %r/"(\\!"|[^"])*"/m, Str::Double
         rule %r/[*!%&\[\](){}<>\|+=:\/-]/, Operator
         rule %r/\b[+-]?([0-9]+(\.[0-9]+)?|\.[0-9]+|\.)(e[+-]?[0-9]+)?i?\b/i, Num
         rule %r/\n/, Text

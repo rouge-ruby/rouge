@@ -24,12 +24,23 @@ module Rouge
 
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule %r/"\\\[.*?\]\\"/m, Str::Double  # escaped string
-        rule %r/"(?:\\!"|[^"])*"/m, Str::Double
+
+        rule %r/(")(\\\[)(.*?)(\]\\)(")/m do
+          groups Str::Double, Str::Escape, Str::Double, Str::Escape, Str::Double  # escaped string
+        end
+        rule %r/"/, Str::Double, :dq
+
         rule %r/[*!%&\[\](){}<>\|+=:\/-]/, Operator
         rule %r/\b[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+|\.)(?:e[+-]?[0-9]+)?i?\b/i, Num
         rule %r/\n/, Text
         rule %r/./, Text
+      end
+
+      state :dq do
+        rule %r/\\![btrnNf0\\"]/, Str::Escape
+        rule %r/\\/, Str::Double
+        rule %r/"/, Str::Double, :pop!
+        rule %r/[^\\"]*/m, Str::Double
       end
     end
   end

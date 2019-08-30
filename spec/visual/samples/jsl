@@ -6,13 +6,12 @@ dt << Distribution( Column( :age ), Histograms Only( 1 ) );
 */
 
 escapeSequence = "This is an \!b escaped sequence";
-escapeQuote = "This is a \!"
-quotation mark";
-escapeStr = "\[This is """""""
-an escaped string]\"
+escapeQuote = "This is a \!" quotation mark";
+escapeStr = "\[This is """"""" an escaped string]\"
 
 list = List( 1, 3, 5 );
 alsoAList = {7,9,11};
+a name with spaces = 5;
 
 scientificNotation = 5e9;
 decimal = 1.234;

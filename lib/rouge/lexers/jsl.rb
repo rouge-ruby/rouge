@@ -13,26 +13,26 @@ module Rouge
       state :root do
 
         # messages
-        rule /(<<)(.*?)(\(|;)/ do |m|
+        rule %r/(<<)(.*?)(\(|;)/ do |m|
           token Operator, m[1]
           token Name::Function, m[2]
           token Operator, m[3]
         end
 
         # covers built-in and custom functions
-        rule /([a-z][a-z._\s]*)(\()/i do |m|
+        rule %r/([a-z][a-z._\s]*)(\()/i do |m|
           token Keyword, m[1]
           token Operator, m[2]
         end
 
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule /"\\\[.*?\]\\"/m, Str              # escaped string
-        rule /"(\\!"|[^"])*"/m, Str
-        rule /[*!%&\[\](){}<>\|+=:\/-]/, Operator
-        rule /\b[+-]?([0-9]+(\.[0-9]+)?|\.[0-9]+|\.)(e[+-]?[0-9]+)?i?\b/i, Num
-        rule /\n/, Text
-        rule /./, Text
+        rule %r/"\\\[.*?\]\\"/m, Str              # escaped string
+        rule %r/"(\\!"|[^"])*"/m, Str
+        rule %r/[*!%&\[\](){}<>\|+=:\/-]/, Operator
+        rule %r/\b[+-]?([0-9]+(\.[0-9]+)?|\.[0-9]+|\.)(e[+-]?[0-9]+)?i?\b/i, Num
+        rule %r/\n/, Text
+        rule %r/./, Text
       end
     end
   end

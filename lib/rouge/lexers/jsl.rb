@@ -11,6 +11,7 @@ module Rouge
       filenames '*.jsl'
 
       state :root do
+        rule %r/\s+/m, Text::Whitespace
 
         # messages
         rule %r/(<<)(.*?)(\(|;)/ do |m|
@@ -32,7 +33,7 @@ module Rouge
 
         rule %r/[*!%&\[\](){}<>\|+=:\/-]/, Operator
         rule %r/\b[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+|\.)(?:e[+-]?[0-9]+)?i?\b/i, Num
-        rule %r/\n/, Text
+        
         rule %r/./, Text
       end
 

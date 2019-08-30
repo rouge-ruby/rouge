@@ -13,28 +13,32 @@ module Rouge
       state :root do
         rule %r/\s+/m, Text::Whitespace
 
+        rule %r(//.*?$), Comment::Single
+        rule %r(/\*.*?\*/)m, Comment::Multiline
+
         # messages
         rule %r/(<<)(.*?)(\(|;)/ do |m|
-          groups Operator, Name::Function, Operator
+          groups Operator, Name::Function, Punctuation
         end
 
         # covers built-in and custom functions
-        rule %r/([a-z][a-z._\s]*)(\()/i do |m|
-          groups Keyword, Operator
+        rule %r/([a-z_][\w\s'%.\\]*)(\()/i do |m|
+          groups Keyword, Punctuation
         end
 
-        rule %r(//.*?$), Comment::Single
-        rule %r(/\*.*?\*/)m, Comment::Multiline
+        rule %r/\b[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+|\.)(?:e[+-]?[0-9]+)?i?\b/i, Num
+
+        rule %r/::[a-z_][\w\s'%.\\]*/i, Name::Variable
+        rule %r/:\w+/, Name
+        rule %r/[a-z_][\w\s'%.\\]*/i, Name::Variable
 
         rule %r/(")(\\\[)(.*?)(\]\\)(")/m do
           groups Str::Double, Str::Escape, Str::Double, Str::Escape, Str::Double  # escaped string
         end
         rule %r/"/, Str::Double, :dq
 
-        rule %r/[*!%&\[\](){}<>\|+=:\/-]/, Operator
-        rule %r/\b[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+|\.)(?:e[+-]?[0-9]+)?i?\b/i, Num
-        
-        rule %r/./, Text
+        rule %r/[-+*\/!%&<>\|=:]/, Operator
+        rule %r/[\[\](){},;]/, Punctuation
       end
 
       state :dq do

@@ -40,6 +40,8 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 SELECT (SUM(?val) AS ?sum) (COUNT(?a) AS ?count)
 WHERE {
     ?a rdf:value ?val .
+} FILTER NOT EXISTS {
+  ?line wdt:P361 wd:Q129612;
 } GROUP BY ?a
 
 # various literals

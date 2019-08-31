@@ -8,7 +8,7 @@ describe Rouge::Lexers::Apex do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.cls'
+      assert_guess :filename => 'foo.cls', :source => '// A comment'
     end
 
     it 'guesses by mimetype' do

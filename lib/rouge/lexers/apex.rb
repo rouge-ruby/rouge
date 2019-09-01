@@ -48,7 +48,8 @@ module Rouge
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       state :root do
-        rule %r/[^\S\n]+/, Text
+        rule %r/\s+/m, Text
+        
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
 
@@ -101,7 +102,6 @@ module Rouge
         rule %r/0x(?:\h_+\h|\h)+/i, Num::Hex
         rule %r/0(?:[0-7]_+[0-7]|[0-7])+/, Num::Oct
         rule %r/#{digit}+L?/, Num::Integer
-        rule %r/\n/, Text
       end
 
       state :class do

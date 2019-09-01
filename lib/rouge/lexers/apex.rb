@@ -61,7 +61,7 @@ module Rouge
           delegate Apex, m[1]
           token Name::Function, m[2]
           token Text, m[3]
-          token Operator, m[4]
+          token Punctuation, m[4]
         end
 
         rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
@@ -91,8 +91,6 @@ module Rouge
           end
         end
 
-        rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
-
         rule %r/"/, Str::Double, :dq
         rule %r/'/, Str::Single, :sq
 
@@ -102,6 +100,9 @@ module Rouge
         rule %r/0x(?:\h_+\h|\h)+/i, Num::Hex
         rule %r/0(?:[0-7]_+[0-7]|[0-7])+/, Num::Oct
         rule %r/#{digit}+L?/, Num::Integer
+
+        rule %r/[-+\/*~^!%&<>|=.?]/, Operator
+        rule %r/[\[\](){},:;]/, Punctuation;
       end
 
       state :class do

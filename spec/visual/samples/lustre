@@ -2,8 +2,8 @@
 
 -- Constants
 const size = 50; -- size of the sliding windows used to smooth values
-const period = 0.1;  -- in seconds
-const speed_max = 110.0;                                           -- comment with leading whitespace
+const period = 0.1; -- in seconds
+const speed_max = 110.0;    -- comment with leading whitespace
 
 -- Types
 type roof_state = enum { locked, in_motion };

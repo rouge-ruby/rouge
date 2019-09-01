@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 
 describe Rouge::Lexers::Lustre do
   let(:subject) { Rouge::Lexers::Lustre.new }
@@ -15,4 +16,3 @@ describe Rouge::Lexers::Lustre do
     end
   end
 end
-

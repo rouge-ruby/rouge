@@ -16,6 +16,12 @@ String sq = 'This is a single-quoted string.';
 String es_dq = "This is a string with \" escape sequences \b.";
 String es_sq = 'This is a string with \' escape sequences \n.';
 
+1;
+1.0;
+0b01;
+0xFFFFFF;
+01;
+
 public virtual class SuperClass {
     public String mySalutation;
     public String myFirstName;

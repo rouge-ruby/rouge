@@ -96,13 +96,10 @@ module Rouge
         rule %r/'/, Str::Single, :sq
 
         digit = /[0-9]_+[0-9]|[0-9]/
-        bin_digit = /[01]_+[01]|[01]/
-        oct_digit = /[0-7]_+[0-7]|[0-7]/
-        hex_digit = /[0-9a-f]_+[0-9a-f]|[0-9a-f]/i
         rule %r/#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
-        rule %r/0b#{bin_digit}+/i, Num::Bin
-        rule %r/0x#{hex_digit}+/i, Num::Hex
-        rule %r/0#{oct_digit}+/, Num::Oct
+        rule %r/0b(?:[01]_+[01]|[01])+/i, Num::Bin
+        rule %r/0x(?:\h_+\h|\h)+/i, Num::Hex
+        rule %r/0(?:[0-7]_+[0-7]|[0-7])+/, Num::Oct
         rule %r/#{digit}+L?/, Num::Integer
         rule %r/\n/, Text
       end

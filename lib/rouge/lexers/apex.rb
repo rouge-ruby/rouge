@@ -67,7 +67,7 @@ module Rouge
             token Keyword::Type
           elsif self.class.constants.include? m[0].downcase
             token Keyword::Constant
-          elsif 'package' == m[0].downcase
+          elsif 'package'.casecmp m[0]
             token Keyword::Namespace
           elsif m[1] == "@"
             token Name::Decorator

@@ -65,8 +65,6 @@ module Rouge
 
         rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
         rule %r/import\b/, Keyword::Namespace, :import
-        rule %r/"(\\\\|\\"|[^"])*"/, Str
-        rule %r/'(\\\\|\\'|[^'])*'/, Str
 
         rule %r/([@$.]?)(#{id})([:]?)/io do |m|
           if self.class.keywords.include? m[0].downcase
@@ -94,6 +92,9 @@ module Rouge
 
         rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
 
+        rule %r/"/, Str::Double, :dq
+        rule %r/'/, Str::Single, :sq
+
         digit = /[0-9]_+[0-9]|[0-9]/
         bin_digit = /[01]_+[01]|[01]/
         oct_digit = /[0-7]_+[0-7]|[0-7]/
@@ -114,6 +115,22 @@ module Rouge
       state :import do
         rule %r/\s+/m, Text
         rule %r/[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
+      end
+
+      state :escape do
+        rule %r/\\[btnfr\\"']/, Str::Escape
+      end
+
+      state :dq do
+        mixin :escape
+        rule %r/[^\\"]+/, Str::Double
+        rule %r/"/, Str::Double, :pop!
+      end
+
+      state :sq do
+        mixin :escape
+        rule %r/[^\\']+/, Str::Double
+        rule %r/'/, Str::Double, :pop!
       end
     end
   end

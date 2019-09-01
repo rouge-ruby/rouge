@@ -45,7 +45,7 @@ module Rouge
         @constants ||= Set.new %w(true false null)
       end
 
-      id = /[a-zA-Z_][a-zA-Z0-9_]*/
+      id = /[a-z_][a-z0-9_]*/i
 
       state :root do
         rule %r/\s+/m, Text
@@ -53,21 +53,10 @@ module Rouge
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
 
-        rule %r(
-          (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
-          ([a-zA-Z_][a-zA-Z0-9_]*)                  # method name
-          (\s*)(\()                                 # signature start
-        )mx do |m|
-          delegate Apex, m[1]
-          token Name::Function, m[2]
-          token Text, m[3]
-          token Punctuation, m[4]
-        end
-
         rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
         rule %r/import\b/, Keyword::Namespace, :import
 
-        rule %r/([@$.]?)(#{id})([:]?)/io do |m|
+        rule %r/([@$.]?)(#{id})([:(]?)/io do |m|
           if self.class.keywords.include? m[0].downcase
             token Keyword
           elsif self.class.soql.include? m[0].upcase
@@ -82,10 +71,12 @@ module Rouge
             token Keyword::Namespace
           elsif m[1] == "@"
             token Name::Decorator
-          elsif m[1] == "."
-            groups Operator, Name::Attribute
           elsif m[3] == ":"
-            token Name::Label
+            groups Operator, Name::Label, Punctuation
+          elsif m[3] == "("
+            groups Operator, Name::Function, Punctuation
+          elsif m[1] == "."
+            groups Operator, Name::Property, Punctuation
           else
             token Name
           end

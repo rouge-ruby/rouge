@@ -11,10 +11,10 @@ Object o = null;
 Boolean result = o instanceof Account;
 System.assertEquals(false, result);
 
-String dq = "This is a double-quoted string."
-String sq = 'This is a single-quoted string.'
-String es_dq = "This is a string with \" escape sequences \b."
-String es_sq = 'This is a string with \' escape sequences \n.'
+String dq = "This is a double-quoted string.";
+String sq = 'This is a single-quoted string.';
+String es_dq = "This is a string with \" escape sequences \b.";
+String es_sq = 'This is a string with \' escape sequences \n.';
 
 public virtual class SuperClass {
     public String mySalutation;

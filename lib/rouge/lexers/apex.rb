@@ -11,25 +11,39 @@ module Rouge
       filenames '*.cls'
       mimetypes 'text/x-apex'
 
-      keywords = %w(
-        assert break case catch continue default do else finally for
-        if goto instanceof new return switch this throw try while insert
-        update delete
-      )
+      def self.keywords
+        @keywords ||= Set.new %w(
+          assert break case catch continue default do else finally for if goto
+          instanceof new return switch this throw try while insert update
+          delete
+        )
+      end
 
-      declarations = %w(
-        abstract const enum extends final implements native private protected
-        public static super synchronized throws transient volatile with
-        sharing without inherited virtual global testmethod
-      )
+      def self.declarations
+        @declarations ||= Set.new %w(
+          abstract const enum extends final implements native private protected
+          public static super synchronized throws transient volatile with
+          sharing without inherited virtual global testmethod
+        )
+      end
 
-      soql = %w(
-        SELECT FROM WHERE  UPDATE LIKE TYPEOF END USING  SCOPE WITH DATA
-        CATEGORY GROUP BY ROLLUP CUBE HAVING  ORDER BY ASC DESC NULLS FIRST LAST
-        LIMIT OFFSET FOR VIEW REFERENCE UPDATE TRACKING VIEWSTAT OR AND
-      )
+      def self.soql
+        @soql ||= Set.new %w(
+          SELECT FROM WHERE UPDATE LIKE TYPEOF END USING SCOPE WITH DATA
+          CATEGORY GROUP BY ROLLUP CUBE HAVING ORDER BY ASC DESC NULLS FIRST
+          LAST LIMIT OFFSET FOR VIEW REFERENCE UPDATE TRACKING VIEWSTAT OR AND
+        )
+      end
 
-      types = %w(String boolean byte char double float int long short var void)
+      def self.types
+        @types ||= Set.new %w(
+          String boolean byte char double float int long short var void
+        )
+      end
+
+      def self.constants
+        @constants ||= Set.new %w(true false null)
+      end
 
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
@@ -37,8 +51,6 @@ module Rouge
         rule %r/[^\S\n]+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword
-        rule %r/(?:#{soql.join('|')})\b/, Keyword
 
         rule %r(
           (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
@@ -51,21 +63,35 @@ module Rouge
           token Operator, m[4]
         end
 
-        rule %r/@#{id}/, Name::Decorator
-        rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
-        rule %r/(?:#{types.join('|')})\b/, Keyword::Type
-        rule %r/package\b/, Keyword::Namespace
-        rule %r/(?:true|false|null)\b/, Keyword::Constant
         rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
         rule %r/import\b/, Keyword::Namespace, :import
         rule %r/"(\\\\|\\"|[^"])*"/, Str
         rule %r/'(\\\\|\\'|[^'])*'/, Str
-        rule %r/(\.)(#{id})/ do
-          groups Operator, Name::Attribute
+
+        rule %r/([@$.]?)(#{id})([:]?)/io do |m|
+          if self.class.keywords.include? m[0].downcase
+            token Keyword
+          elsif self.class.soql.include? m[0].upcase
+            token Keyword
+          elsif self.class.declarations.include? m[0].downcase
+            token Keyword::Declaration
+          elsif self.class.types.include? m[0].downcase
+            token Keyword::Type
+          elsif self.class.constants.include? m[0].downcase
+            token Keyword::Constant
+          elsif 'package' == m[0].downcase
+            token Keyword::Namespace
+          elsif m[1] == "@"
+            token Name::Decorator
+          elsif m[1] == "."
+            groups Operator, Name::Attribute
+          elsif m[3] == ":"
+            token Name::Label
+          else
+            token Name
+          end
         end
 
-        rule %r/#{id}:/, Name::Label
-        rule %r/\$?#{id}/, Name
         rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
 
         digit = /[0-9]_+[0-9]|[0-9]/

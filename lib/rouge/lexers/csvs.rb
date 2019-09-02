@@ -15,8 +15,8 @@ module Rouge
 
       def self.builtins
         @builtins ||= Set.new %w(
-          args call clone do doFile doString else elseif for if list
-          method return super then
+          args call clone do doFile doString else elseif for if list method
+          return super then
         )
       end
 

@@ -7,7 +7,6 @@ module Rouge
       tag 'csvs'
       title "csvs"
       desc 'The CSV Schema Language (digital-preservation.github.io)'
-      mimetypes 'text/x-csvssrc'
       filenames '*.csvs'
 
       def self.detect?(text)

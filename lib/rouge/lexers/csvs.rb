@@ -9,10 +9,6 @@ module Rouge
       desc 'The CSV Schema Language (digital-preservation.github.io)'
       filenames '*.csvs'
 
-      def self.detect?(text)
-        return true if text.shebang? 'csvs'
-      end
-
       def self.constants
         @constants ||= Set.new %w(nil false true)
       end

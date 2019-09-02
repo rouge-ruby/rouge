@@ -10,13 +10,5 @@ describe Rouge::Lexers::CSVS do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.csvs'
     end
-
-    it 'guesses by mimetype' do
-      assert_guess :mimetype => 'text/x-csvssrc'
-    end
-
-    it 'guesses by source' do
-      assert_guess :source => '#!/usr/local/bin/csvs'
-    end
   end
 end

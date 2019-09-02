@@ -28,6 +28,7 @@ module Rouge
         rule %r(/[+]), Comment::Multiline, :nested_comment
 
         rule %r/"[^"]*"/, Str::Double
+        rule %r/'[^\r\n\f']'/, Str::Char
 
         rule %r(:?:=), Keyword
         rule %r/[()]/, Punctuation

@@ -6,7 +6,7 @@ module Rouge
     class CSVS < RegexLexer
       tag 'csvs'
       title "csvs"
-      desc 'The CSV Schema Language (http://digital-preservation.github.io/csv-schema/)'
+      desc 'The CSV Schema Language (digital-preservation.github.io)'
       mimetypes 'text/x-csvssrc'
       filenames '*.csvs'
 

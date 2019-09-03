@@ -9,10 +9,6 @@ module Rouge
       desc 'The CSV Schema Language (digital-preservation.github.io)'
       filenames '*.csvs'
 
-      def self.constants
-        @constants ||= Set.new %w(nil false true)
-      end
-
       def self.builtins
         @builtins ||= Set.new %w(
           args call clone do doFile doString else elseif for if list method
@@ -40,9 +36,7 @@ module Rouge
         rule %r/[a-z_]\w*/ do |m|
           name = m[0]
 
-          if self.class.constants.include? name
-            token Keyword::Constant
-          elsif self.class.builtins.include? name
+          if self.class.builtins.include? name
             token Name::Builtin
           else
             token Name

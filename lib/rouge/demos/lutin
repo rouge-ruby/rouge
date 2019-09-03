@@ -16,4 +16,3 @@ node gen_x_v4()  returns (target:real; x:real=0.0) =
       px = pre x and ppx = pre px and
       x = (px+target) / 2.0+inertia*(px-ppx) 
   }
-

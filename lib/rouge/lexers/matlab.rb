@@ -19,8 +19,10 @@ module Rouge
       end
 
       def self.builtins
-        load File.join(__dir__, 'matlab/builtins.rb')
-        self.builtins
+        # Load Matlab keywords from separate YML file
+        @builtins ||= ::YAML.load_file(File.join(__dir__, 'matlab/builtins.yml')).tap do |a|
+          Set.new a
+        end
       end
 
       state :root do

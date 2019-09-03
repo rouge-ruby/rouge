@@ -1,0 +1,119 @@
+# -------------
+# Cython Syntax
+# -------------
+
+# Import statements
+import numpy
+from numpy cimport abs
+
+# Import statements with selection
+import numpy as np
+from cython.view cimport array as cvarray
+
+# Extern values
+cdef extern from 'foo.h':
+    int foo_int
+    struct foo_struct:
+        pass
+
+# Type definitions
+ctypedef int word
+
+# C struct
+cdef struct Foo:
+    pass
+
+# C class
+cdef class MyType(ParentType):
+    cdef int field
+    cpdef foo(self, x=*, int k=*)
+
+# C class with classmethod
+cdef class Blah:
+    def some_method(self):
+        print self
+        some_method = classmethod(some_method)
+        a = 2*3
+        print "hi", a
+
+# C function
+cpdef fib(int n):    # Cython version
+    """Print a Fibonacci series up to n."""
+    cdef unsigned int a = 0
+    cdef int b
+
+    b = 1
+
+    while a < n:
+        print(a)
+        a, b = b, a+b
+
+# C function with return type
+cpdef unsigned int foo():
+    return 1 + 2
+
+# C function with no GIL
+cpdef int sum3d(int[:, :, :] arr) nogil:
+    cdef size_t i, j, k, I, J, K
+    cdef int total = 0
+    cdef:
+        int I, J, K
+    I = arr.shape[0]
+    J = arr.shape[1]
+    K = arr.shape[2]
+    for i in range(I):
+        for j in range(J):
+            for k in range(K):
+                total += arr[i, j, k]
+    return total
+
+# Inline C function
+cdef inline int something_fast(int a, int b):
+    return a*a + b
+
+# Python function with typed parameters
+def foo(int n)
+    return n + 1
+
+# Assignment on declaration
+cdef int n = python_call(foo(x,y), a + b + c) - 32
+cdef int [:, :, :] narr_view = narr
+
+# Definition with C-block syntax
+cdef:
+    int carr[3][3][3]
+    int [:, :, :] carr_view = carr
+
+# Iteration with steps
+for i from 0 <= i < 10 by 2:
+    print i
+
+# -------------
+# Python syntax
+# -------------
+
+# Function call
+print("NumPy sum of the NumPy array before assignments: %s" % narr.sum())
+
+# Assignment
+narr = np.arange(27, dtype=np.dtype("i")).reshape((3, 3, 3))
+carr_view[...] = narr_view
+cyarr_view[:] = narr_view
+narr_view[:, :, :] = 3
+carr_view[0, 0, 0] = 100
+
+# Equality test
+1 + 1 == 2
+1 < 2
+
+# For loops
+for i in range(i]:
+    total = total + 1
+
+# Function definition
+def fib(n):    # Python version
+    """Print a Fibonacci series up to n."""
+    a, b = 0, 1
+    while a < n:
+        print a,
+        a, b = b, a+b

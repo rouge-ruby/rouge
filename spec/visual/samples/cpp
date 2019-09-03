@@ -2,6 +2,8 @@ int quote_delims = 100'000'000
 int float_delims = 100.00'00
 int hex_delims = 0xFF'Fa12
 
+int binary = 0b1000;
+
 // string literal with encoding-prefix
 char str1[] = u8"UTF-8 string";
 char16_t str2[] = u"UTF-16 string";
@@ -13,6 +15,127 @@ bar
 baz)";
 char raw_str2[] = R"delim(\w+ \d+)delim";
 char16_t raw_str3[] = uR"(\w+ \d+)";
+
+// time literal
+#include <chrono>
+using namespace std::chrono_literals;
+auto oneDay = 24h;
+auto halfAnHour = 30min;
+auto halfAnHour = 0.5h;
+auto oneMin = 60s;
+auto oneSec = 1000ms;
+auto oneMilliSec = 1000us;
+auto oneMicroSec = 1000ns;
+
+// null pointer
+int *a = nullptr;
+
+// bit field
+struct S {
+    // will usually occupy 2 bytes:
+    // 3 bits: value of b1
+    // 2 bits: unused
+    // 6 bits: value of b2
+    // 2 bits: value of b3
+    // 3 bits: unused
+    unsigned char b1 : 3, : 2, b2 : 6, b3 : 2;
+};
+std::cout << sizeof(S) << '\n'; // usually prints 2
+
+// loops
+int n = 10;
+while (n --> 0) {
+  std::cout << n << '\n';
+}
+for (int &i : {1, 2, 3, 4}) {
+  std::cout << i << '\n';
+}
+
+// decltype
+int num = 1;
+decltype(num) total = num;
+struct A { double x; };
+const A *a = A {0};
+decltype(a->x) ax = a->x;
+
+// strongly typed enums
+enum class Day {
+  Mon, Tue, Wed, Thur, Fri, Sat, Sun
+};
+Day today = Day::Mon;
+
+// lambda function
+auto add = [](int x, int y) { return x + y; };
+auto noParam = [] { return 5; };
+auto invokeNow = [](int x) { return x * 5; }(1);
+int captureMe = 5;
+auto byCopy = [captureMe] { return captureMe; };
+auto byRef = [&captureMe] { return captureMe; };
+auto allByCopy = [=] { return captureMe; };
+auto allByRef = [&] { return captureMe; };
+auto increment = [y = 1](int x) { return x + y; };
+double distance = [](double x, double y, double xx, double yy) -> double {
+  return abs(x-xx) + abs(y-yy);
+};
+
+// variadic template
+template<class F, class... Args>
+void forward_args(F f, Args... args) {
+  f(std::forward<Args>(args)...);
+}
+
+// namespace
+namespace printing {
+  inline namespace latest {
+    using std::cout;
+    void print() {
+      cout << "Latest print\n";
+    }
+  }
+  namespace old {
+    void print() {
+      ::printf("Old print\n");
+    }
+  }
+}
+printing::print();
+printing::latest::print();
+printing::old::print();
+namespace oldPrint = printing::old;
+oldPrint::print();
+
+// attribute
+[[noreturn]] void throwError() { throw "error"; }
+[[deprecated("useless")]] void doNothing() {}
+
+namespace std {
+  class thread {
+  public:
+    // types:
+    class id;
+    typedef void *native_handle_type;
+
+    // construct/copy/destroy:
+    thread() noexcept;
+    template <class F, class ...Args> explicit thread(F&& f, Args&&... args);
+    ~thread();
+    thread(const thread&) = delete;
+    thread(thread&&) noexcept;
+    thread& operator=(const thread&) = delete;
+    thread& operator=(thread&&) noexcept;
+
+    // members:
+    void swap(thread&) noexcept;
+    bool joinable() const noexcept;
+    void join();
+    void detach();
+    id get_id() const noexcept;
+    native_handle_type native_handle();
+
+    // static members:
+    static unsigned hardware_concurrency() noexcept;
+  };
+}
 
 // try-block
 try {

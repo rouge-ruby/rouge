@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- #
+# frozen_string_literal: true
 #
 # adapted from lustre.rf (adapted from ocaml.rb), hence some ocaml-ism migth remains
 module Rouge

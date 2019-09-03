@@ -9,13 +9,6 @@ module Rouge
       desc 'The CSV Schema Language (digital-preservation.github.io)'
       filenames '*.csvs'
 
-      def self.builtins
-        @builtins ||= Set.new %w(
-          args call clone do doFile doString else elseif for if list method
-          return super then
-        )
-      end
-
       state :root do
         rule %r/\s+/m, Text
         rule %r(//.*), Comment::Single
@@ -33,15 +26,7 @@ module Rouge
 
         rule %r/[A-Z]\w*/, Name::Class
 
-        rule %r/[a-z_]\w*/ do |m|
-          name = m[0]
-
-          if self.class.builtins.include? name
-            token Name::Builtin
-          else
-            token Name
-          end
-        end
+        rule %r/[a-z_]\w*/, Name
 
         rule %r((\d+[.]?\d*|\d*[.]\d+)(e[+-]?[0-9]+)?)i, Num::Float
         rule %r/\d+/, Num::Integer

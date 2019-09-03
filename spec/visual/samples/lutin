@@ -1,0 +1,64 @@
+-- A simple node
+node gen_x_v2() returns (x:real) = 
+  loop { 0.0<x and x<42.0 fby loop [20] x = pre x }
+
+-- Using run
+node up_and_down(min, max, delta:real) returns (x:real) =   
+   Between(x, min, max)
+ fby
+   loop 
+     exist lmin, lmax, ldelta : real in
+     run lmin   := between(min, pre x) in
+     run lmax   := between(pre x, max) in
+     run ldelta := between(0., delta) in
+      {
+        | run x := up(pre x, ldelta)   in loop { x < lmax }
+        | run x := down(pre x, ldelta) in loop { x > lmin }
+      }     
+
+-- Prioritary choice
+node env2(Speed,Roof_Speed:real) returns(
+Start,Parked,Rot,Tick,OnOff,Done:bool; Dist:real) =
+{
+   loop { not (OnOff and Start) } -- H1
+&> loop { Parked => not Rot     } -- H2
+&> true fby loop {
+      ( Speed > 0.0 => not Parked    ) -- H3
+  and ( Roof_Speed > 0.0 => not Done ) -- H4
+  }
+}
+
+-- Weigths
+let geneRotTick(Start, Rot, Tick,Danger:bool) : trace =
+ let accel =  {{ | 1: not Rot | 5: Rot } &> { | 5: not Tick | 1: Tick } &>
+                 Start &> not Danger }
+ in
+ let decel =  {{ | 5: not Rot | 1: Rot } &> { | 1: not Tick | 5: Tick } } in
+ let stop = not Rot and Tick in
+ loop [50] not Rot fby 
+ loop { loop [0,300] accel fby
+        loop [0,300] decel fby
+        loop [60,300] stop 
+        }
+        
+-- Macros with trace
+let OnceBefore(condition,event:bool) : trace = 
+    loop { not (event and condition)} fby
+    event and condition
+
+let when(condition:bool; BODY:trace) : trace =
+  loop { 
+    | assert condition in BODY
+    | not condition
+  }
+
+let IfThenElse(condition:bool;THEN,ELSE: trace) : trace = { 
+   |> { condition &> THEN }
+   |> ELSE
+}
+
+node test_when(condition:bool) returns (res:int) =
+  when(condition, integers(0,res))
+
+node test_IfThenElse(condition:bool) returns (res:int) =
+  IfThenElse(condition, integers(0,res), integers(-100,res))

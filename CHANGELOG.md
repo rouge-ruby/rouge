@@ -4,6 +4,28 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.10.0: 2019-09-04
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.9.0...v3.10.0)
+
+- General
+  - Remove link to online dingus ([#1317](https://github.com/rouge-ruby/rouge/pull/1317/) by Michael Camilleri)
+- Clean Lexer (**NEW**)
+  - Add Clean lexer ([#1305](https://github.com/rouge-ruby/rouge/pull/1305/) by Camil Staps)
+- Common Lisp Lexer
+  - Add 'lisp' alias to Common Lisp lexer ([#1315](https://github.com/rouge-ruby/rouge/pull/1315/) by Bonnie Eisenman)
+- HTTP Lexer
+  - Permit an empty reason-phrase element in HTTP lexer ([#1313](https://github.com/rouge-ruby/rouge/pull/1313/) by Michael Camilleri)
+- JSL Lexer (**NEW**)
+  - Add JSL lexer ([#871](https://github.com/rouge-ruby/rouge/pull/871/) by justinc11)
+- Lustre Lexer(**NEW**)
+  - Correct minor errors in the Lustre lexer ([#1316](https://github.com/rouge-ruby/rouge/pull/1316/) by Michael Camilleri)
+  - Add Lustre lexer ([#905](https://github.com/rouge-ruby/rouge/pull/905/) by Erwan Jahier)
+- Lutin Lexer(**NEW**)
+  - Add Lutin lexer ([#1307](https://github.com/rouge-ruby/rouge/pull/1307/) by Erwan Jahier)
+- SPARQL Lexer (**NEW**)
+  - Add SPARQL lexer ([#872](https://github.com/rouge-ruby/rouge/pull/872/) by Stefan Daschek)
+
 ## version 3.9.0: 2019-08-21
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.8.0...v3.9.0)

@@ -11,33 +11,33 @@ module Rouge
 
       state :root do
         rule %r/\s+/m, Text
-        rule %r(//.*), Comment::Single
-        rule %r(#.*), Comment::Single
-        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
-        rule %r(/[+]), Comment::Multiline, :nested_comment
 
-        rule %r/"[^"]*"/, Str::Double
-        rule %r/'[^\r\n\f']'/, Str::Char
+        rule %r(//[\S\t ]*), Comment::Single
+        rule %r(/\*[^*]*\*/)m, Comment::Multiline
 
-        rule %r(:?:=), Keyword
-        rule %r/[()]/, Punctuation
+        rule %r/(version)( )(\d+\.\d+)/ do
+          groups Keyword, Text::Whitespace, Num::Float
+        end
 
-        rule %r([-=;,*+><!/|^.%&\[\]{}]), Operator
-
-        rule %r/[A-Z]\w*/, Name::Class
-
-        rule %r/[a-z_]\w*/, Name
+        rule %r/T?\d{2}:\d{2}:\d{2}(\.\d{5})?(Z|(?:[-+]\d{2}:\d{2}))?/, Literal::Date
+        rule %r/\d{4}-\d{2}-\d{2}/, Literal::Date
+        rule %r/\d{2}\/\d{2}\/\d{4}/, Literal::Date
 
         rule %r((\d+[.]?\d*|\d*[.]\d+)(e[+-]?[0-9]+)?)i, Num::Float
         rule %r/\d+/, Num::Integer
 
-        rule %r/@@?|\'|\:/, Keyword
-      end
+        rule %r/@\w+/, Keyword::Pseudo
 
-      state :nested_comment do
-        rule %r([^/+]+)m, Comment::Multiline
-        rule %r(/[+]), Comment::Multiline, :nested_comment
-        rule %r([+]/), Comment::Multiline, :pop!
+        rule %r/[-.\w]+:/, Name::Variable
+        rule %r/^"[^"]+"/, Name::Variable
+        rule %r/\$([-.\w]+|("[^"]+"))\/?/, Name::Variable
+
+        rule %r/[A-Z]+/i, Keyword
+
+        rule %r/"[^"]*"/, Str::Double
+        rule %r/'[^\r\n\f']'/, Str::Char
+
+        rule %r/[,()*]/, Punctuation
       end
     end
   end

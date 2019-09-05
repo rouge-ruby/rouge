@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- #
 
-describe Rouge::Lexers::Robot do
-  let(:subject) { Rouge::Lexers::Robot.new }
+describe Rouge::Lexers::RobotFramework do
+  let(:subject) { Rouge::Lexers::RobotFramework.new }
 
   describe 'guessing' do
     include Support::Guessing

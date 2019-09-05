@@ -3,11 +3,11 @@
 
 module Rouge
   module Lexers
-    class Robot < RegexLexer
-      tag 'robot'
-      aliases 'robotframework'
+    class RobotFramework < RegexLexer
+      tag 'robot_framework'
+      aliases 'robot' 'robot-framework'
 
-      title "Robot"
+      title "Robot Framework"
       desc 'Test DSL ( http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html )'
 
       filenames '*.robot'

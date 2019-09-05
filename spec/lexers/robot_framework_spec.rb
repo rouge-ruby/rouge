@@ -9,9 +9,5 @@ describe Rouge::Lexers::RobotFramework do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.robot'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => '*** Settings ***'
-    end
   end
 end

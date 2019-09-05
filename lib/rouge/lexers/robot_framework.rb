@@ -13,10 +13,6 @@ module Rouge
       filenames '*.robot'
       mimetypes 'text/x-robot'
 
-      def self.analyze_text(text)
-        return 1 if text =~ /\*\*\*\s+Setting(s)?\s+\*\*\*/
-      end
-
       SETTINGS = '(Resource)|(Variables)|(Documentation)|(Metadata)|(Suite Setup)|(Suite Teardown)|(Force Tags)|(Default Tags)|(Test Setup)|(Test Teardown)|(Test Template)|(Test Timeout)|(Library)'
       BDD = 'Given|When|Then|And|But'
       TEST_CASE = 'Documentation|Tags|Setup|Teardown|Template|Timeout'

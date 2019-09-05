@@ -8,7 +8,7 @@ module Rouge
       aliases 'robot' 'robot-framework'
 
       title "Robot Framework"
-      desc 'Test DSL ( http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html )'
+      desc 'Robot Framework is a generic open source automation testing framework (robotframework.org)'
 
       filenames '*.robot'
       mimetypes 'text/x-robot'

@@ -1,109 +1,135 @@
-*** settings ***
+This text should be ignored.
 
-Resource  plone/app/robotframework/server.robot
-
-Suite Setup  Setup
-Suite Teardown  Teardown
-Test Setup  Test Setup
-Test Teardown  Test Teardown
-Library     Selenium2Library
-
-Library     Selenium2Library
-Library     DatabaseLibrary
-Library     kw_common
-
+*** Settings ***
+Documentation    Example using the space separated plain text format.
+Library          OperatingSystem
+Library    Telnet    prompt=$    default_log_level=DEBUG
 
 *** Variables ***
-${HOST}         10.0.1.42
-
+${MESSAGE}       Hello, world!
 
 *** Test Cases ***
+My Test
+    [Documentation]    Example test
+    Log    ${MESSAGE}
+    My Keyword    /tmp
 
-Normal test case with embedded arguments
-    The result of 1 + 1 should be 2
-    The result of 1 + 2 should be 3
+Another Test
+    Should Be Equal    ${MESSAGE}    Hello, world!
 
-Template with embedded arguments
-    [Template]    The result of ${calculation} should be ${expected}
-    1 + 1    2
-    1 + 2    3
+Using backslash
+    Do Something    first arg    \
 
-Scenario: The BDD Test
-    GiveN I have logged in and I have selected to perform template configuration
-    When I do not select a template operation
-    Then page does not contain a no template operation selected error message
-    ANd I press the next button
-    BuT I should not see a template operation selected error message
-# 	Comments with But, Given THen and wheh are not hilighted!
+Templated test case
+    [Template]    Example keyword
+    first argument    second argument
 
-
-
-
-
-*** Keywords ***
-The result of ${calculation} should be ${expected}
-    ${result} =    Calculate    ${calculation}
-    Should Be Equal    ${result}     ${expected}
-
-
-Differnt types of robotframework data ${var}, @{list} and &{hash}
-    ${var} =    list
-    @{result} =    list
-    &{result} =   hash
-
-Timed Keyword
-    [Documentation]    Set only the timeout value and not the custom message.
-    [Timeout]    1 minute 42 seconds
+No teardown
+    [Documentation]    Default setup, no teardown at all
     Do Something
-    Do Something Else
+    [Teardown]
 
-Wrapper With Timeout
-    [Arguments]    @{args}
-    [Documentation]    This keyword is a wrapper that adds a timeout to another keyword.
-    [Timeout]    2 minutes    Original Keyword didn't finish in 2 minutes
-    Original Keyword    @{args}
+Using variables
+    [Documentation]    Setup and teardown specified using variables
+    [Setup]    ${SETUP}
+    Do Something
+    [Teardown]    ${TEARDOWN}
 
-Wrapper With Customizable Timeout
-| [Arguments]    ${timeout}    @{args}
-|     [Documentation]    Same as the above but timeout given as an argument.
-|     [Timeout]    ${timeout}
-|     Original Keyword	@{args} # aaa
+Valid Login
+    Given login page is open
+    When valid username and password are inserted
+    and credentials are submitted
+    Then welcome page should be open
 
+Example
+    Keyword    &{DICT}    named=arg
+    Keyword    positional    @{LIST}    &{DICT}
+    Keyword    &{DICT}    &{ANOTHER}    &{ONE MORE}
 
-# More Keywords
+List variable item
+    Login    ${USER}[0]    ${USER}[1]
+    Title Should Be    Welcome ${USER}[0]!
+
+Negative index
+    Log    ${LIST}[-1]
+
+Index defined as variable
+    Log    ${LIST}[${INDEX}]
+
+Step
+    Keyword    ${LIST}[::2]
+    Keyword    ${LIST}[2:-1:2]
+
+Multiple Values
+    ${a}    ${b}    ${c} =    Return Three Values
+    @{list} =    Return Three Values
+    ${scalar}    @{rest} =    Return Three Values
+
+Example
+    FOR    ${animal}    IN    cat    dog
+        Log    ${animal}
+        Log    2nd keyword
+    END
+    Log    Outside loop
+
+For-in-enumerate with two values per iteration
+    FOR    ${index}    ${en}    ${fi}    IN ENUMERATE
+    ...    cat      kissa
+    ...    dog      koira
+    ...    horse    hevonen
+        Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
+    END
+
+*** Tasks ***
+Process invoice
+    Read information from PDF
+    Validate information
+    Submit information to backend system
+    Validate information is visible in web UI
+
 *** Keywords ***
+My Keyword
+    [Arguments]    ${path}
+    Directory Should Exist    ${path}
 
-I have logged in and I have selected to perform template configuration
-    Log     Given I have logged in and I have selected to perform template configuration
+I execute "${cmd:[^"]+}"
+    Run Process    ${cmd}    shell=True
 
-I do not select a template operation
-    Log     No template operation selected
+| *** Settings ***   |
+| Documentation      | Example using the pipe separated plain text format.
+| Library            | OperatingSystem
 
-page does not contain a no template operation selected error message
-    Page Should Not Contain     'ddTemplateOperation' is required.
+| *** Variables ***  |
+| ${MESSAGE}         | Hello, world!
 
-I press the next button
-    Click Element               xpath=//input[contains(@id,'next')]
+| *** Test Cases *** |                 |              |
+| My Test            | [Documentation] | Example test |
+|                    | Log             | ${MESSAGE}   |
+|                    | My Keyword      | /tmp         |
+| Another Test       | Should Be Equal | ${MESSAGE}   | Hello, world!
 
-I should not see a template operation selected error message
-    Page Should Contain     'ddTemplateOperation' is required.
+| *** Keywords ***   |                        |         |
+| My Keyword         | [Arguments]            | ${path} |
+|                    | Directory Should Exist | ${path} |
 
+| *** Test Cases *** |                 |                 |                      |
+| Escaping Pipe      | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
+|                    | Should Be Equal | ${file count}   | 42                   |
 
-# Comment
-This keyword wtih Tab
-	First Action	plone.app.robotframework.testing.AUTOLOGIN_ROBOT_TESTING
-	Second Action	plone.app.robotframework.testing.AUTOLOGIN_ROBOT_TESTING
-	Third	plone.app.robotframework.testing.AUTOLOGIN_ROBOT_TESTING
+*** Settings ***
+Documentation      This is documentation for this test suite.
+...                This kind of documentation can often be get quite long...
+Default Tags       default tag 1    default tag 2    default tag 3
+...                default tag 4    default tag 5
 
-Test Setup
-    Import library  Remote  ${PLONE_URL}/RobotRemote
-#    Enable autologin as  Site Administrator
-    Set autologin username  test-user-1
+*** Variable ***
+@{LIST}            this     list     is      quite    long     and
+...                items in it could also be long
 
-Test Teardown
-    Set Zope layer  plone.app.robotframework.testing.AUTOLOGIN_ROBOT_TESTING
-    ZODB TearDown
-    ZODB Setupaaa
+*** Test Cases ***
+Example
+    [Tags]    you    probably    do    not    have    this    many
+    ...       tags    in    real   life
+    Do X    first argument    second argument    third argument
+    ...    fourth argument    fifth argument    sixth argument
 
-Teardown
-    Teardown Plone Site

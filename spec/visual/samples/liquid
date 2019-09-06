@@ -82,11 +82,11 @@ Some other {{ output }}!
   </a>
 {% endif %}
 
-{% for page in site.pages %}
+{% tablerow page in site.pages %}
   {% if page.layout == 'home' %}
     {{ page.excerpt }}
   {% endif %}
-{% endfor %}
+{% endtablerow %}
 
 {% for i in (1..5) %}
   {% if i == 4 %}

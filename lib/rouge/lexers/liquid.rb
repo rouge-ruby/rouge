@@ -90,7 +90,7 @@ module Rouge
 
         # iteration
         rule %r/
-          (for)(\s+)
+          (for|tablerow)(\s+)
           ([\w-]+)(\s+)
           (in)(\s+)
           (

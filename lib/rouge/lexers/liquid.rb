@@ -243,6 +243,7 @@ module Rouge
       end
 
       state :number do
+        rule %r/-/, Operator
         rule %r/\d+\.\d+/, Num::Float
         rule %r/\d+/, Num::Integer
       end

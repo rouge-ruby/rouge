@@ -23,11 +23,12 @@ Just regular text - what happens?
 {{ variable | upcase }}
 {{ var.field | textilize | markdownify }}
 {{ var.field.property | textilize | markdownify }}
+{{ -3.14 | abs }}
 {{ 'string' | truncate: 100 param='df"g' }}
 {{ variable.nil? }}
 
 {% capture name %}
-{{ title | downcase }}
+{{ title | downcase | slice: -3, 2 }}
 {% endcapture %}
 
 {% assign life = 'infinite' | upcase %}

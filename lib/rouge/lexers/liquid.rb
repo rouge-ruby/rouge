@@ -41,7 +41,7 @@ module Rouge
 
         # other builtin blocks
         rule %r/(capture)(\s+)([^\s%]+)(\s*)(%\})/ do
-          groups Name::Tag, Text::Whitespace, Name::Attribute, Text::Whitespace, Punctuation
+          groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace, Punctuation
           pop!
         end
 

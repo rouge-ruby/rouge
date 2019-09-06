@@ -40,7 +40,7 @@ Just regular text - what happens?
 {% if a == 'B' %}
 Testing {{ some }} stuff.
 {% elsif a != 'C%}' %}
-{% elsif c and d or e %}
+{% elsif c and d or e == empty %}
 {% else %}
 {% endif %}
 

@@ -287,9 +287,7 @@ module Rouge
       state :include do
         mixin :whitespace
 
-        rule %r/([^\.]+)(\.)(html|liquid)/ do
-          groups Name::Attribute, Punctuation, Name::Attribute
-        end
+        rule %r/[^\s\.]+(\.[^\s\.]+)+\b/, Name::Other
 
         mixin :variable_tag_markup
       end

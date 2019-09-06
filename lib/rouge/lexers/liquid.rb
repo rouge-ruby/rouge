@@ -217,7 +217,7 @@ module Rouge
 
       state :variable do
         rule %r/\.(?=\w)/, Punctuation
-        rule %r/[a-zA-Z_]\w*\??/, Name::Variable
+        rule %r/[a-zA-Z_][\w-]*\??/, Name::Variable
       end
 
       state :string do

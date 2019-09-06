@@ -25,7 +25,7 @@ Just regular text - what happens?
 {{ var.field.property | textilize | markdownify }}
 {{ -3.14 | abs }}
 {{ 'string' | truncate: 100 param='df"g' }}
-{{ variable.nil? }}
+{{ variable-nil? }}
 
 {% capture name %}
 {{ title | downcase | slice: -3, 2 }}
@@ -112,8 +112,8 @@ Some other {{ output }}!
   {{ i }}
 {% endfor %}
 
-{% assign num = 4 %}
-{% for i in (1..num) %}
+{% assign num- = 4 %}
+{% for i in (1..num-) %}
   {{ i }}
 {% endfor %}
 

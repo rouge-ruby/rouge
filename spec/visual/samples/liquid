@@ -58,7 +58,9 @@ Some other {{ output }}!
 {% endcase %}
 
 {% include file.html param = 'value' param2 = object %}
-{% include 'snippet' param = 'value' param2 = object %}
+{% include 'snippet', param: 'value', param2: object %}
+{% include 'product' with products[0] %}
+{% include 'product' for products %}
 
 {% assign page_has_image = false %}
 {% assign img_tag = '<' | append: 'img' %}

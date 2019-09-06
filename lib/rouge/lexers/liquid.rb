@@ -98,7 +98,7 @@ module Rouge
           )(\s*)
         /x do |m|
           groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace,
-                 Keyword::Reserved, Text::Whitespace
+                 Name::Tag, Text::Whitespace
 
           token_class = case m[7]
                         when %r/'[^']*'/ then Str::Single
@@ -287,6 +287,7 @@ module Rouge
       state :include do
         mixin :whitespace
 
+        rule %r/(with|for)\b/, Name::Tag
         rule %r/[^\s\.]+(\.[^\s\.]+)+\b/, Name::Other
 
         mixin :variable_tag_markup

@@ -96,7 +96,7 @@ Some other {{ output }}!
   {% endif %}
 {% endfor %}
 
-{% for item in array limit:2 reversed %}
+{% for item in array reversed limit:2 %}
   {{ item }}
 {% endfor %}
 
@@ -121,6 +121,6 @@ Some other {{ output }}!
   {{ char | upcase }}
 {% endfor %}
 
-{% for char in "Hello World" %}
+{% for char in "Hello World" reversed %}
   {{ char | upcase }}
 {% endfor %}

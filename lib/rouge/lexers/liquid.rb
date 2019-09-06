@@ -201,6 +201,8 @@ module Rouge
       end
 
       state :tag_markup do
+        rule %r/(reversed)\b/, Name::Attribute
+
         mixin :end_of_block
         mixin :default_param_markup
       end

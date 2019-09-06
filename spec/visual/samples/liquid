@@ -39,12 +39,12 @@ Just regular text - what happens?
 
 {% if a == 'B' %}
 Testing {{ some }} stuff.
-{% elsif a == 'C%}' %}
-{% elsif c %}
+{% elsif a != 'C%}' %}
+{% elsif c and d or e %}
 {% else %}
 {% endif %}
 
-{% unless not a %}
+{% unless a %}
 Some {{ output }} right here.
 {% else %}
 {% endunless %}
@@ -89,7 +89,7 @@ Some other {{ output }}!
 {% endtablerow %}
 
 {% for i in (1..5) %}
-  {% if i == 4 %}
+  {% if i > 4 %}
     {% break %}
   {% else %}
     {% continue %}

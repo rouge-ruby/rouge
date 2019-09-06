@@ -149,13 +149,8 @@ module Rouge
         mixin :end_of_block
         mixin :whitespace
 
-        rule %r/([=!><]=?)/, Operator
-
-        rule %r/\b(?:(!)|(not\b))/ do
-          groups Operator, Operator::Word
-        end
-
-        rule %r/(contains)/, Operator::Word
+        rule %r/([=!]=|[<>]=?)/, Operator
+        rule %r/(and|or|contains)\b/, Operator::Word
 
         mixin :generic
         mixin :whitespace
@@ -165,18 +160,6 @@ module Rouge
         mixin :end_of_block
         mixin :whitespace
         mixin :generic
-      end
-
-      state :operator do
-        rule %r/(\s*)((?:=|!|>|<)=?)(\s*)/ do
-          groups Text::Whitespace, Operator, Text::Whitespace
-          pop!
-        end
-
-        rule %r/(\s*)(\bcontains\b)(\s*)/ do
-          groups Text::Whitespace, Operator::Word, Text::Whitespace
-          pop!
-        end
       end
 
       state :end_of_tag do

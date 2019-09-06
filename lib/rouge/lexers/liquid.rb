@@ -27,12 +27,8 @@ module Rouge
 
       state :tag_or_block do
         # builtin logic blocks
-        rule %r/(if|unless|elsif|case)(?=\s+)/, Keyword::Reserved, :condition
-
-        rule %r/(when)(\s+)/ do
-          groups Keyword::Reserved, Text::Whitespace
-          push :when
-        end
+        rule %r/(if|elsif|unless|case)\b/, Keyword::Reserved, :condition
+        rule %r/(when)\b/, Keyword::Reserved, :when
 
         rule %r/(else)(\s*)(%\})/ do
           groups Keyword::Reserved, Text::Whitespace, Punctuation
@@ -55,11 +51,8 @@ module Rouge
           push :raw
         end
 
-        rule %r/assign/, Name::Tag, :assign
-        rule %r/include/, Name::Tag, :include
-
         # end of block
-        rule %r/(end(?:case|unless|if))(\s*)(%\})/ do
+        rule %r/(end(?:if|unless|case))(\s*)(%\})/ do
           groups Keyword::Reserved, Text::Whitespace, Punctuation
           pop!
         end
@@ -70,21 +63,22 @@ module Rouge
         end
 
         # builtin tags
-        rule %r/(cycle)(\s+)(([^\s:]*)(:))?(\s*)/ do |m|
-          token Name::Tag, m[1]
-          token Text::Whitespace, m[2]
+        rule %r/assign\b/, Name::Tag, :assign
+        rule %r/include\b/, Name::Tag, :include
 
-          if m[4] =~ /'[^']*'/
-            token Str::Single, m[4]
-          elsif m[4] =~ /"[^"]*"/
-            token Str::Double, m[4]
-          else
-            token Name::Attribute, m[4]
-          end
+        rule %r/(cycle)(\s+)(?:([^\s:]*)(\s*)(:))?(\s*)/ do |m|
+          groups Name::Tag, Text::Whitespace
 
+          token_class = case m[3]
+                        when %r/'[^']*'/ then Str::Single
+                        when %r/"[^"]*"/ then Str::Double
+                        else
+                          Name::Attribute
+                        end
+          token token_class, m[3]
+          token Text::Whitespace, m[4]
           token Punctuation, m[5]
           token Text::Whitespace, m[6]
-
           push :variable_tag_markup
         end
 
@@ -94,7 +88,7 @@ module Rouge
           ([\w-]+)(\s+)
           (in)(\s+)
           (
-            (?: [^\s,\|'"] | (?:"[^"]*"|'[^']*') )+
+            (?: [^\s%,\|'"] | (?:"[^"]*"|'[^']*') )+
           )(\s*)
         /x do |m|
           groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace,
@@ -119,26 +113,18 @@ module Rouge
       end
 
       state :output do
-        mixin :whitespace
-        mixin :generic
-
-        rule %r/\}\}/, Punctuation, :pop!
         rule %r/\|/, Punctuation, :filters
+
+        mixin :end_of_tag
+        mixin :generic
       end
 
       state :filters do
-        mixin :whitespace
+        rule %r/\|/, Punctuation
 
-        rule(/\}\}/) { token Punctuation; reset_stack }
-
-        rule %r/([^\s\|:]+)(:?)(\s*)/ do
+        rule %r/([a-zA-Z_][^\s\|:]*)(:?)(\s*)/ do
           groups Name::Function, Punctuation, Text::Whitespace
-          push :filter_markup
         end
-      end
-
-      state :filter_markup do
-        rule %r/\|/, Punctuation, :pop!
 
         mixin :end_of_tag
         mixin :end_of_block
@@ -146,19 +132,15 @@ module Rouge
       end
 
       state :condition do
-        mixin :end_of_block
-        mixin :whitespace
-
         rule %r/([=!]=|[<>]=?)/, Operator
         rule %r/(and|or|contains)\b/, Operator::Word
 
+        mixin :end_of_block
         mixin :generic
-        mixin :whitespace
       end
 
       state :when do
         mixin :end_of_block
-        mixin :whitespace
         mixin :generic
       end
 
@@ -173,7 +155,9 @@ module Rouge
       # states for unknown markup
       state :param_markup do
         mixin :whitespace
+        mixin :keyword
         mixin :string
+        mixin :number
 
         rule %r/([^\s=:]+)(\s*)(=|:)/ do
           groups Name::Attribute, Text::Whitespace, Operator
@@ -183,21 +167,20 @@ module Rouge
           groups Punctuation, Text::Whitespace, Text, Text::Whitespace, Punctuation
         end
 
-        mixin :number
-        mixin :keyword
-
         rule %r/,/, Punctuation
       end
 
       state :default_param_markup do
         mixin :param_markup
-        rule %r/./, Text
+
+        rule %r/\S+/, Text
       end
 
       state :variable_param_markup do
         mixin :param_markup
         mixin :variable
-        rule %r/./, Text
+
+        rule %r/\S+/, Text
       end
 
       state :tag_markup do
@@ -214,12 +197,12 @@ module Rouge
 
       # states for different values types
       state :keyword do
-        rule %r/\b(false|true)\b/, Keyword::Constant
+        rule %r/(false|true)\b/, Keyword::Constant
       end
 
       state :variable do
         rule %r/(empty|blank|forloop\.[^\s%}\|:]+)\b/, Name::Builtin
-        rule %r/\.(?=\w)/, Punctuation
+        rule %r/\.(?=\w)|\[|\]/, Punctuation
         rule %r/[a-zA-Z_][\w-]*\??/, Name::Variable
       end
 
@@ -234,17 +217,12 @@ module Rouge
         rule %r/\d+/, Num::Integer
       end
 
-      state :array_index do
-        rule %r/\[/, Punctuation
-        rule %r/\]/, Punctuation
-      end
-
       state :generic do
-        mixin :array_index
+        mixin :whitespace
         mixin :keyword
         mixin :string
-        mixin :variable
         mixin :number
+        mixin :variable
       end
 
       state :whitespace do
@@ -252,12 +230,14 @@ module Rouge
       end
 
       state :comment do
+        rule %r/[^\{]+/, Comment
+
         rule %r/(\{%)(\s*)(endcomment)(\s*)(%\})/ do
           groups Punctuation, Text::Whitespace, Name::Tag, Text::Whitespace, Punctuation
           reset_stack
         end
 
-        rule %r/./, Comment
+        rule %r/\{/, Comment
       end
 
       state :raw do
@@ -272,21 +252,14 @@ module Rouge
       end
 
       state :assign do
-        mixin :whitespace
-        mixin :end_of_block
-
-        rule %r/(\s*)(=)(\s*)/ do
-          groups Text::Whitespace, Operator, Text::Whitespace
-        end
-
+        rule %r/=/, Operator
         rule %r/\|/, Punctuation, :filters
 
+        mixin :end_of_block
         mixin :generic
       end
 
       state :include do
-        mixin :whitespace
-
         rule %r/(with|for)\b/, Name::Tag
         rule %r/[^\s\.]+(\.[^\s\.]+)+\b/, Name::Other
 

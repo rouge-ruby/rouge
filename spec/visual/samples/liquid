@@ -10,7 +10,7 @@ Just regular text - what happens?
 
 {% comment %}
   My lovely {{comment}} that is split
-  accross multiple lines {% comment %}
+  across multiple lines {% comment %}
 {% endcomment %}
 
 {% custom_tag params: true %}

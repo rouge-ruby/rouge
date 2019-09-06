@@ -88,11 +88,11 @@ module Rouge
           push :cell_start
         end
 
-				rule %r/\.\.\. */ do
-					token Text::Whitespace
-					@col = @col + 1
+        rule %r/\.\.\. */ do
+          token Text::Whitespace
+          @col = @col + 1
           push :args
-				end
+        end
         
         rule %r/ ?\|/, Text::Whitespace
       end
@@ -226,7 +226,7 @@ module Rouge
           push :var
         end
 
-				rule %r/[$@&%]+/, Str
+        rule %r/[$@&%]+/, Str
         rule %r/( )(?![ |])/, Str
         rule id, Str
         
@@ -238,11 +238,11 @@ module Rouge
           groups Name::Variable, Text::Whitespace, Punctuation
           pop!
         end
-				rule %r/[$@&%]\{/, Name::Variable, :var
+        rule %r/[$@&%]\{/, Name::Variable, :var
         rule %r/[{\[]/, Name::Variable, :var
         rule %r/[}\]]/, Name::Variable, :pop!
         rule %r/[^$@&%{}\[\]]+/, Name::Variable
-				rule %r/\}\[/, Name::Variable
+        rule %r/\}\[/, Name::Variable
       end
     end
   end

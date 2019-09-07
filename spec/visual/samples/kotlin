@@ -59,6 +59,8 @@ fun next(field: Field): Field {
     }
 }
 
+`maven-publish-plugin`
+
 /** A few colony examples here */
 fun main(args: Array<String>) {
     // Simplistic demo

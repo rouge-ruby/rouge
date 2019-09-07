@@ -12,12 +12,12 @@ module Rouge
       state :root do
         rule %r/[^\{]+/, Text
 
-        rule %r/(\{%)(\s*)/ do
+        rule %r/(\{%-?)(\s*)/ do
           groups Punctuation, Text::Whitespace
           push :tag_or_block
         end
 
-        rule %r/(\{\{)(\s*)/ do
+        rule %r/(\{\{-?)(\s*)/ do
           groups Punctuation, Text::Whitespace
           push :output
         end
@@ -30,34 +30,34 @@ module Rouge
         rule %r/(if|elsif|unless|case)\b/, Keyword::Reserved, :condition
         rule %r/(when)\b/, Keyword::Reserved, :when
 
-        rule %r/(else)(\s*)(%\})/ do
+        rule %r/(else)(\s*)(-?%\})/ do
           groups Keyword::Reserved, Text::Whitespace, Punctuation
           pop!
         end
 
         # other builtin blocks
-        rule %r/(capture)(\s+)([^\s%]+)(\s*)(%\})/ do
+        rule %r/(capture)(\s+)([^\s%]+)(\s*)(-?%\})/ do
           groups Name::Tag, Text::Whitespace, Name::Variable, Text::Whitespace, Punctuation
           pop!
         end
 
-        rule %r/(comment)(\s*)(%\})/ do
+        rule %r/(comment)(\s*)(-?%\})/ do
           groups Name::Tag, Text::Whitespace, Punctuation
           push :comment
         end
 
-        rule %r/(raw)(\s*)(%\})/ do
+        rule %r/(raw)(\s*)(-?%\})/ do
           groups Name::Tag, Text::Whitespace, Punctuation
           push :raw
         end
 
         # end of block
-        rule %r/(end(?:if|unless|case))(\s*)(%\})/ do
+        rule %r/(end(?:if|unless|case))(\s*)(-?%\})/ do
           groups Keyword::Reserved, Text::Whitespace, Punctuation
           pop!
         end
 
-        rule %r/(end(?:[^\s%]+))(\s*)(%\})/ do
+        rule %r/(end(?:[^\s%]+))(\s*)(-?%\})/ do
           groups Name::Tag, Text::Whitespace, Punctuation
           pop!
         end
@@ -145,11 +145,11 @@ module Rouge
       end
 
       state :end_of_tag do
-        rule(/\}\}/) { token Punctuation; reset_stack }
+        rule(/-?\}\}/) { token Punctuation; reset_stack }
       end
 
       state :end_of_block do
-        rule(/%\}/) { token Punctuation; reset_stack }
+        rule(/-?%\}/) { token Punctuation; reset_stack }
       end
 
       # states for unknown markup
@@ -163,7 +163,7 @@ module Rouge
           groups Name::Attribute, Text::Whitespace, Operator
         end
 
-        rule %r/(\{\{)(\s*)([^\s\}])(\s*)(\}\})/ do
+        rule %r/(\{\{-?)(\s*)([^\s\}])(\s*)(-?\}\})/ do
           groups Punctuation, Text::Whitespace, Text, Text::Whitespace, Punctuation
         end
 
@@ -232,7 +232,7 @@ module Rouge
       state :comment do
         rule %r/[^\{]+/, Comment
 
-        rule %r/(\{%)(\s*)(endcomment)(\s*)(%\})/ do
+        rule %r/(\{%-?)(\s*)(endcomment)(\s*)(-?%\})/ do
           groups Punctuation, Text::Whitespace, Name::Tag, Text::Whitespace, Punctuation
           reset_stack
         end
@@ -243,7 +243,7 @@ module Rouge
       state :raw do
         rule %r/[^\{]+/, Text
 
-        rule %r/(\{%)(\s*)(endraw)(\s*)(%\})/ do
+        rule %r/(\{%-?)(\s*)(endraw)(\s*)(-?%\})/ do
           groups Punctuation, Text::Whitespace, Name::Tag, Text::Whitespace, Punctuation
           reset_stack
         end

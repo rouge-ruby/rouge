@@ -28,10 +28,10 @@ Just regular text - what happens?
 {{ variable-nil? }}
 
 {% capture name %}
-{{ title | downcase | slice: -3, 2 }}
+{{- title | downcase | slice: -3, 2 -}}
 {% endcapture %}
 
-{% assign life = 'infinite' | upcase %}
+{%- assign life = 'infinite' | upcase -%}
 
 {% cycle '1', 2, var %}
 {% cycle 'group1': '1', var, 2 %}

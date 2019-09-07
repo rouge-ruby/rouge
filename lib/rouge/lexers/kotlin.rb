@@ -29,6 +29,8 @@ module Rouge
 
       id = %r'(#{name_backtick})'
 
+      upper = /[\p{Lu}$_]/
+
       state :root do
         rule %r'(\s*)(:)(\s+)(#{name_backtick})(<)' do
           groups Text, Punctuation, Text, Name::Class, Punctuation
@@ -48,6 +50,8 @@ module Rouge
           groups Keyword, Text
           push :function
         end
+        rule %r'(#{upper}#{name_backtick})(?=\s*[({])', Name::Class
+        rule %r'(#{name_backtick})(?=\s*[({])', Name::Function
         rule %r'(#{name_backtick})(:)(\s+)(#{name_backtick})(<)' do
           groups Name::Variable, Punctuation, Text, Name::Class, Punctuation
           push :generic_parameters

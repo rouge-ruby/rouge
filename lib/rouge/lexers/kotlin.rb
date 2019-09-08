@@ -29,16 +29,10 @@ module Rouge
 
       id = %r'(#{name_backtick})'
 
-      upper = /[\p{Lu}$_]/
+      lower = %r'[\p{Ll}]'
+      upper = %r'[\p{Lu}]'
 
       state :root do
-        rule %r'(\s*)(:)(\s+)(#{name_backtick})(<)' do
-          groups Text, Punctuation, Text, Name::Class, Punctuation
-          push :generic_parameters
-        end
-        rule %r'(\s*)(:)(\s+)(#{name_backtick})' do
-          groups Text, Punctuation, Text, Name::Class
-        end
         rule %r'\b(companion)(\s+)(object)\b' do
           groups Keyword, Text, Keyword
         end
@@ -49,15 +43,6 @@ module Rouge
         rule %r'\b(fun)(\s+)' do
           groups Keyword, Text
           push :function
-        end
-        rule %r'(#{upper}#{name_backtick})(?=\s*[({])', Name::Class
-        rule %r'(#{name_backtick})(?=\s*[({])', Name::Function
-        rule %r'(#{name_backtick})(:)(\s+)(#{name_backtick})(<)' do
-          groups Name::Variable, Punctuation, Text, Name::Class, Punctuation
-          push :generic_parameters
-        end
-        rule %r'(#{name_backtick})(:)(\s+)(#{name_backtick})' do
-          groups Name::Variable, Punctuation, Text, Name::Class
         end
         rule %r'\b(package|import)(\s+)' do
           groups Keyword, Text
@@ -89,7 +74,13 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
-        rule %r/@#{id}/, Name::Decorator
+        rule %r'(#{lower}#{name_backtick})(?=\s*[({])', Name::Function
+        rule %r/(@#{upper}#{name_backtick})/, Name::Decorator
+        rule %r'(#{upper}#{name_backtick})(<)' do
+          groups Name::Class, Punctuation
+          push :generic_parameters
+        end
+        rule %r'(#{upper}#{name_backtick})', Name::Class
         rule id, Name
       end
 

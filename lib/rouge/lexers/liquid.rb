@@ -197,7 +197,7 @@ module Rouge
 
       # states for different values types
       state :keyword do
-        rule %r/(false|true)\b/, Keyword::Constant
+        rule %r/(false|true|nil)\b/, Keyword::Constant
       end
 
       state :variable do

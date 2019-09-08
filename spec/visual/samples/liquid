@@ -13,7 +13,7 @@ Just regular text - what happens?
   across multiple lines {% comment %}
 {% endcomment %}
 
-{% custom_tag params: true %}
+{% custom_tag param1: true param2 : nil %}
 {% custom_block my="abc" c = false %}
   Just usual {{liquid}}.
 {% endcustom_block %}

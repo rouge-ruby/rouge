@@ -111,7 +111,7 @@ Some other {{ output }}!
 {% endfor %}
 
 {% for i in (3..5) %}
-  {{ i }}
+  {% render "snippet", number: i %}
 {% endfor %}
 
 {% assign num- = 4 %}
@@ -124,5 +124,5 @@ Some other {{ output }}!
 {% endfor %}
 
 {% for char in "Hello World" reversed %}
-  {{ char | upcase }}
+  {% echo char | upcase %}
 {% endfor %}

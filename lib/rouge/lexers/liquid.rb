@@ -63,8 +63,8 @@ module Rouge
         end
 
         # builtin tags
-        rule %r/assign\b/, Name::Tag, :assign
-        rule %r/include\b/, Name::Tag, :include
+        rule %r/(assign|echo)\b/, Name::Tag, :assign
+        rule %r/(include|render)\b/, Name::Tag, :include
 
         rule %r/(cycle)(\s+)(?:([^\s:]*)(\s*)(:))?(\s*)/ do |m|
           groups Name::Tag, Text::Whitespace

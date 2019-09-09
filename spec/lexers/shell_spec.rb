@@ -47,7 +47,10 @@ describe Rouge::Lexers::Shell do
     end
 
     it 'guesses by mimetype' do
+      assert_guess :mimetype => 'application/x-sh'
       assert_guess :mimetype => 'application/x-shellscript'
+      assert_guess :mimetype => 'text/x-sh'
+      assert_guess :mimetype => 'text/x-shellscript'
     end
 
     it 'guesses by source' do

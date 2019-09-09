@@ -164,10 +164,6 @@ module Rouge
           groups Name::Attribute, Text::Whitespace, Operator
         end
 
-        rule %r/(\{\{-?)(\s*)([^\s\}])(\s*)(-?\}\})/ do
-          groups Punctuation, Text::Whitespace, Text, Text::Whitespace, Punctuation
-        end
-
         rule %r/,|:/, Punctuation
       end
 
@@ -266,10 +262,25 @@ module Rouge
       end
 
       state :include do
+        rule %r/(\{\{-?)(\s*)/ do
+          groups Punctuation, Text::Whitespace
+          push :output_embed
+        end
+
         rule %r/(with|for)\b/, Name::Tag
         rule %r/[^\s\.]+(\.[^\s\.]+)+\b/, Name::Other
 
         mixin :variable_tag_markup
+      end
+
+      state :output_embed do
+        rule %r/(\|)(\s*)([a-zA-Z_][^\s}\|:]*)/ do
+          groups Punctuation, Text::Whitespace, Name::Function
+        end
+
+        rule %r/-?\}\}/, Punctuation, :pop!
+        
+        mixin :variable_param_markup
       end
     end
   end

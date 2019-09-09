@@ -9,14 +9,12 @@ module Rouge
 
       tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
-      filenames '*.sh', '*.bash', '*.zsh', '*.ksh',
-                '.bashrc', '.zshrc', '.kshrc', '.profile',
-                'APKBUILD',
-                'PKGBUILD',
-                '*.ebuild', '*.eclass',
-                '*.exheres-0', '*.exlib'
+      filenames '*.sh', '*.bash', '*.zsh', '*.ksh', '.bashrc', '.zshrc',
+                '.kshrc', '.profile', 'APKBUILD', 'PKGBUILD', '*.ebuild',
+                '*.eclass', '*.exheres-0', '*.exlib'
 
-      mimetypes 'application/x-sh', 'application/x-shellscript', 'text/x-sh', 'text/x-shellscript'
+      mimetypes 'application/x-sh', 'application/x-shellscript', 'text/x-sh',
+                'text/x-shellscript'
 
       def self.detect?(text)
         return true if text.shebang?(/(ba|z|k)?sh/)

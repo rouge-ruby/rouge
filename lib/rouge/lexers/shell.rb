@@ -13,7 +13,8 @@ module Rouge
                 '.bashrc', '.zshrc', '.kshrc', '.profile',
                 'APKBUILD',
                 'PKGBUILD',
-                '*.ebuild', '*.eclass'
+                '*.ebuild', '*.eclass',
+                '*.exheres-0', '*.exlib'
 
       mimetypes 'application/x-sh', 'application/x-shellscript', 'text/x-sh', 'text/x-shellscript'
 

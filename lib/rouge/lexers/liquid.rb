@@ -113,22 +113,23 @@ module Rouge
       end
 
       state :output do
-        rule %r/\|/, Punctuation, :filters
+        rule %r/(\|)(\s*)([a-zA-Z_][^\s}\|:]*)/ do
+          groups Punctuation, Text::Whitespace, Name::Function
+          push :filters
+        end
 
         mixin :end_of_tag
         mixin :generic
       end
 
       state :filters do
-        rule %r/\|/, Punctuation
-
-        rule %r/([a-zA-Z_][^\s\|:]*)(:?)(\s*)/ do
-          groups Name::Function, Punctuation, Text::Whitespace
+        rule %r/(\|)(\s*)([a-zA-Z_][^\s%}\|:]*)/ do
+          groups Punctuation, Text::Whitespace, Name::Function
         end
 
         mixin :end_of_tag
         mixin :end_of_block
-        mixin :default_param_markup
+        mixin :variable_param_markup
       end
 
       state :condition do
@@ -167,7 +168,7 @@ module Rouge
           groups Punctuation, Text::Whitespace, Text, Text::Whitespace, Punctuation
         end
 
-        rule %r/,/, Punctuation
+        rule %r/,|:/, Punctuation
       end
 
       state :default_param_markup do
@@ -253,7 +254,11 @@ module Rouge
 
       state :assign do
         rule %r/=/, Operator
-        rule %r/\|/, Punctuation, :filters
+
+        rule %r/(\|)(\s*)([a-zA-Z_][^\s%\|:]*)/ do
+          groups Punctuation, Text::Whitespace, Name::Function
+          push :filters
+        end
 
         mixin :end_of_block
         mixin :generic

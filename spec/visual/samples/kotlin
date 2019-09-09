@@ -112,6 +112,15 @@ fun main(args: Array<String>) {
     """, 10)
 }
 
+data class Point(x: Float, y: Float)
+
+class ExampleChild(x: Int): Parent(x) {
+    fun something(): Thing<MyType> {
+        val thisThing = OtherThing(x)
+        return Thing<MyType>()
+    }
+}
+
 // UTILITIES
 
 fun runGameOfLife(fieldText: String, steps: Int) {

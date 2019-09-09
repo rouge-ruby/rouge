@@ -43,6 +43,10 @@ describe Rouge::Lexers::Shell do
       assert_guess :filename => 'foo.bash'
       assert_guess :filename => 'APKBUILD'
       assert_guess :filename => 'PKGBUILD'
+      assert_guess :filename => 'foo.ebuild'
+      assert_guess :filename => 'foo.eclass'
+      assert_guess :filename => 'foo.exheres-0'
+      assert_guess :filename => 'foo.exlib'
       deny_guess   :filename => 'foo'
     end
 

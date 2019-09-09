@@ -204,6 +204,7 @@ module Rouge
       state :variable do
         rule %r/(empty|blank|forloop\.[^\s%}\|:]+)\b/, Name::Builtin
         rule %r/\.(?=\w)|\[|\]/, Punctuation
+        rule %r/(first|last|size)\b/, Name::Function
         rule %r/[a-zA-Z_][\w-]*\??/, Name::Variable
       end
 

@@ -67,7 +67,7 @@ Some other {{ output }}!
 {% if link.object.content contains img_tag %}
   {% assign src = link.object.content | split: 'src="' %}
   {% assign src = src[1] | split: '"' | first %}
-    {% if src %}
+    {% if src.size %}
       {% assign page_has_image = true %}
       {% assign image_src = src | replace: '_small', '' | replace: '_compact', '' | replace: '_medium', '' |
                                   replace: '_large', '' | replace: '_grande', '' %}

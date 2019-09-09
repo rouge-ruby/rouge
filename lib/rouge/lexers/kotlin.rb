@@ -76,9 +76,9 @@ module Rouge
           groups Name::Class, Punctuation
           push :generic_parameters
         end
-        rule %r'(#{class_name})', Name::Class
+        rule class_name, Name::Class
         rule %r'(#{name})(?=\s*[({])', Name::Function
-        rule %r'#{name}', Name
+        rule name, Name
       end
 
       state :package do
@@ -86,7 +86,7 @@ module Rouge
       end
 
       state :class do
-        rule %r'#{class_name}', Name::Class, :pop!
+        rule class_name, Name::Class, :pop!
       end
 
       state :function do
@@ -95,11 +95,11 @@ module Rouge
         rule %r'(#{class_name})(\.)' do
           groups Name::Class, Punctuation
         end
-        rule %r'#{name}', Name::Function, :pop!
+        rule name, Name::Function, :pop!
       end
 
       state :generic_parameters do
-        rule %r'#{class_name}', Name::Class
+        rule class_name, Name::Class
         rule %r'(<)', Punctuation, :generic_parameters
         rule %r'(,)', Punctuation
         rule %r'(\s+)', Text
@@ -107,14 +107,14 @@ module Rouge
       end
 
       state :property do
-        rule %r'#{name}', Name::Property, :pop!
+        rule name, Name::Property, :pop!
       end
 
       state :destructure do
         rule %r'(,)', Punctuation
         rule %r'(\))', Punctuation, :pop!
         rule %r'(\s+)', Text
-        rule %r'#{name}', Name::Property
+        rule name, Name::Property
       end
 
       state :comment do

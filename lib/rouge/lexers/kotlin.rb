@@ -29,7 +29,6 @@ module Rouge
 
       id = %r'(#{name_backtick})'
 
-      lower = %r'[\p{Ll}]'
       upper = %r'[\p{Lu}]'
 
       state :root do
@@ -74,13 +73,13 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
-        rule %r'(#{lower}#{name_backtick})(?=\s*[({])', Name::Function
         rule %r/(@#{upper}#{name_backtick})/, Name::Decorator
         rule %r'(#{upper}#{name_backtick})(<)' do
           groups Name::Class, Punctuation
           push :generic_parameters
         end
         rule %r'(#{upper}#{name_backtick})', Name::Class
+        rule %r'(#{name_backtick})(?=\s*[({])', Name::Function
         rule id, Name
       end
 

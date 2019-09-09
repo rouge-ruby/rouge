@@ -99,7 +99,7 @@ Some other {{ output }}!
 {% endfor %}
 
 {% for item in array reversed limit:2 %}
-  {{ item }}
+  Item {{ forloop.index }}: {{ item.name }}
 {% endfor %}
 
 {% for item in array offset:2 %}
@@ -116,7 +116,7 @@ Some other {{ output }}!
 
 {% assign num- = 4 %}
 {% for i in (1..num-) %}
-  {{ i }}
+  {%-if forloop.last-%}{{ i }}{%-endif-%}
 {% endfor %}
 
 {% for char in 'The Quick Brown Fox' %}

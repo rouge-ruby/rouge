@@ -218,7 +218,7 @@ module Rouge
       end
 
       state :variable do
-        rule %r/(empty|blank)\b/, Name::Builtin
+        rule %r/(empty|blank|forloop\.[^\s%}\|:]+)\b/, Name::Builtin
         rule %r/\.(?=\w)/, Punctuation
         rule %r/[a-zA-Z_][\w-]*\??/, Name::Variable
       end

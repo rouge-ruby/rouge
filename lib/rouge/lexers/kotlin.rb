@@ -24,9 +24,10 @@ module Rouge
         while yield
       )
 
-      name = %r'@?`?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*`?'
+      name_chars = %r'[\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
 
-      upper = %r'[\p{Lu}]'
+      class_name = %r'`?[\p{Lu}]#{name_chars}`?'
+      name = %r'`?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}]#{name_chars}`?'
 
       state :root do
         rule %r'\b(companion)(\s+)(object)\b' do
@@ -70,12 +71,12 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
-        rule %r'(@#{upper}#{name})', Name::Decorator
-        rule %r'(#{upper}#{name})(<)' do
+        rule %r'(@#{class_name})', Name::Decorator
+        rule %r'(#{class_name})(<)' do
           groups Name::Class, Punctuation
           push :generic_parameters
         end
-        rule %r'(#{upper}#{name})', Name::Class
+        rule %r'(#{class_name})', Name::Class
         rule %r'(#{name})(?=\s*[({])', Name::Function
         rule %r'#{name}', Name
       end
@@ -85,20 +86,20 @@ module Rouge
       end
 
       state :class do
-        rule %r'#{name}', Name::Class, :pop!
+        rule %r'#{class_name}', Name::Class, :pop!
       end
 
       state :function do
         rule %r'(<)', Punctuation, :generic_parameters
         rule %r'(\s+)', Text
-        rule %r'(#{name})(\.)' do
+        rule %r'(#{class_name})(\.)' do
           groups Name::Class, Punctuation
         end
         rule %r'#{name}', Name::Function, :pop!
       end
 
       state :generic_parameters do
-        rule %r'#{name}', Name::Class
+        rule %r'#{class_name}', Name::Class
         rule %r'(<)', Punctuation, :generic_parameters
         rule %r'(,)', Punctuation
         rule %r'(\s+)', Text

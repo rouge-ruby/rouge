@@ -103,11 +103,11 @@ Some other {{ output }}!
 {% endfor %}
 
 {% for item in array offset:2 %}
-  {{ item }}
+  {% increment var %}
 {% endfor %}
 
 {% for item in array reversed %}
-  {{ item }}
+  {% decrement var %}
 {% endfor %}
 
 {% for i in (3..5) %}

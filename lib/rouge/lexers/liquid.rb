@@ -67,18 +67,16 @@ module Rouge
         rule %r/(include|render)\b/, Name::Tag, :include
 
         rule %r/(cycle)(\s+)(?:([^\s:]*)(\s*)(:))?(\s*)/ do |m|
-          groups Name::Tag, Text::Whitespace
-
           token_class = case m[3]
                         when %r/'[^']*'/ then Str::Single
                         when %r/"[^"]*"/ then Str::Double
                         else
                           Name::Attribute
                         end
-          token token_class, m[3]
-          token Text::Whitespace, m[4]
-          token Punctuation, m[5]
-          token Text::Whitespace, m[6]
+          
+          groups Name::Tag, Text::Whitespace, token_class,
+                 Text::Whitespace, Punctuation, Text::Whitespace
+
           push :variable_tag_markup
         end
 

@@ -80,7 +80,7 @@ module Rouge
         rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
-        rule %r/@#{id}(\([^)]+\))?/, Keyword::Declaration
+        rule %r/@#{id}/, Keyword::Declaration
 
         rule %r/(private|internal)(\([ ]*)(\w+)([ ]*\))/ do |m|
           if m[3] == 'set'

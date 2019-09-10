@@ -10,10 +10,10 @@ Just regular text - what happens?
 
 {% comment %}
   My lovely {{comment}} that is split
-  accross multiple lines {% comment %}
+  across multiple lines {% comment %}
 {% endcomment %}
 
-{% custom_tag params: true %}
+{% custom_tag param1: true param2 : nil %}
 {% custom_block my="abc" c = false %}
   Just usual {{liquid}}.
 {% endcustom_block %}
@@ -23,14 +23,15 @@ Just regular text - what happens?
 {{ variable | upcase }}
 {{ var.field | textilize | markdownify }}
 {{ var.field.property | textilize | markdownify }}
+{{ -3.14 | abs }}
 {{ 'string' | truncate: 100 param='df"g' }}
-{{ variable.nil? }}
+{{ variable-nil? }}
 
 {% capture name %}
-{{ title | downcase }}
+{{- title | downcase | slice: -3, 2 -}}
 {% endcapture %}
 
-{% assign life = 'infinite' | upcase %}
+{%- assign life = 'infinite' | upcase -%}
 
 {% cycle '1', 2, var %}
 {% cycle 'group1': '1', var, 2 %}
@@ -38,12 +39,12 @@ Just regular text - what happens?
 
 {% if a == 'B' %}
 Testing {{ some }} stuff.
-{% elsif a == 'C%}' %}
-{% elsif c %}
+{% elsif a != 'C%}' %}
+{% elsif c and d or e == empty %}
 {% else %}
 {% endif %}
 
-{% unless not a %}
+{% unless a %}
 Some {{ output }} right here.
 {% else %}
 {% endunless %}
@@ -57,14 +58,16 @@ Some other {{ output }}!
 {% endcase %}
 
 {% include file.html param = 'value' param2 = object %}
-{% include 'snippet' param = 'value' param2 = object %}
+{% include 'snippet', param: 'value', param2: object %}
+{% include product_page with products[0] %}
+{% include {{product_page | split: "." | first}} for products %}
 
 {% assign page_has_image = false %}
 {% assign img_tag = '<' | append: 'img' %}
 {% if link.object.content contains img_tag %}
   {% assign src = link.object.content | split: 'src="' %}
   {% assign src = src[1] | split: '"' | first %}
-    {% if src %}
+    {% if src.size %}
       {% assign page_has_image = true %}
       {% assign image_src = src | replace: '_small', '' | replace: '_compact', '' | replace: '_medium', '' |
                                   replace: '_large', '' | replace: '_grande', '' %}
@@ -81,45 +84,45 @@ Some other {{ output }}!
   </a>
 {% endif %}
 
-{% for page in site.pages %}
+{% tablerow page in site.pages %}
   {% if page.layout == 'home' %}
     {{ page.excerpt }}
   {% endif %}
-{% endfor %}
+{% endtablerow %}
 
 {% for i in (1..5) %}
-  {% if i == 4 %}
+  {% if i > 4 %}
     {% break %}
   {% else %}
     {% continue %}
   {% endif %}
 {% endfor %}
 
-{% for item in array limit:2 reversed %}
-  {{ item }}
+{% for item in array reversed limit:2 %}
+  Item {{ forloop.index }}: {{ item.name }}
 {% endfor %}
 
 {% for item in array offset:2 %}
-  {{ item }}
+  {% increment var %}
 {% endfor %}
 
 {% for item in array reversed %}
-  {{ item }}
+  {% decrement var %}
 {% endfor %}
 
 {% for i in (3..5) %}
-  {{ i }}
+  {% render "snippet", number: i %}
 {% endfor %}
 
-{% assign num = 4 %}
-{% for i in (1..num) %}
-  {{ i }}
+{% assign num- = 4 %}
+{% for i in (1..num-) %}
+  {%-if forloop.last-%}{{ i }}{%-endif-%}
 {% endfor %}
 
 {% for char in 'The Quick Brown Fox' %}
   {{ char | upcase }}
 {% endfor %}
 
-{% for char in "Hello World" %}
-  {{ char | upcase }}
+{% for char in "Hello World" reversed %}
+  {% echo char | upcase %}
 {% endfor %}

@@ -162,7 +162,7 @@ module Rouge
           groups Name::Attribute, Text::Whitespace, Operator
         end
 
-        rule %r/,|:/, Punctuation
+        rule %r/[,:]/, Punctuation
       end
 
       state :default_param_markup do

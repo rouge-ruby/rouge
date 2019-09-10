@@ -73,7 +73,7 @@ module Rouge
                         else
                           Name::Attribute
                         end
-          
+
           groups Name::Tag, Text::Whitespace, token_class,
                  Text::Whitespace, Punctuation, Text::Whitespace
 
@@ -277,7 +277,7 @@ module Rouge
         end
 
         rule %r/-?\}\}/, Punctuation, :pop!
-        
+
         mixin :variable_param_markup
       end
     end

@@ -109,7 +109,7 @@ module Rouge
         rule %r/(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
         end
-        
+
         rule %r/\\\.(#{id})/, Keyword::Type
 
         rule %r/(let|var)\b(\s*)([(])/ do

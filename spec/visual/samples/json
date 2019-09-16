@@ -140,3 +140,5 @@ null
                (SELECT max(\"ci_builds\".id) FROM \"ci_builds\" WHERE
                \"ci_builds\".\"commit_id\" = $2 GROUP BY
                \"ci_builds\".\"name\", \"ci_builds\".\"commit_id\")" }
+
+{"message":"\\\"retry_count\\\":0}\"}"}

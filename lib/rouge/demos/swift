@@ -3,22 +3,3 @@ func sayHello(personName: String) -> String {
     let greeting = "Hello, " + personName + "!"
     return greeting
 }
-
-func newView() -> some View {
-	ViewRegistry.find(\.MyView.name)
-}
-
-@frozen
-public enum Types {
-	case a, b, c
-	case d
-}
-
-func test(t: Types?) -> Bool {
-	switch t {
-	case .a?: return true
-	case .b?: return true
-	case .c: return true
-	default: return false
-	}
-}

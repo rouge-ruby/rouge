@@ -432,4 +432,23 @@ funcWithLambdaArg { x in x + 5 }
 funcWithLambdaArg { $0 + 5 }
 funcWithLambdaArg({ x in x + 5 })
 
+func newView() -> some View {
+	ViewRegistry.find(\.MyView.name)
+}
+
+@frozen
+public enum Types {
+	case a, b, c
+	case d
+}
+
+func test(t: Types?) -> Bool {
+	switch t {
+	case .a?: return true
+	case .b?: return true
+	case .c: return true
+	default: return false
+	}
+}
+
 foo() // end-of-file comment

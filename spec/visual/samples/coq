@@ -13,3 +13,15 @@ End with_T.
 Definition a_string := "hello\" world".
 
 Notation "A /\ B" := (and A B) : type_scope.
+
+Theorem progress : ∀t T,
+  empty ⊢ t ∈ T →
+  value t ∨ ∃t', t --> t'.
+
+Theorem ev_plus4 : ∀n, even n → even (4 + n).
+Proof.
+  intros n H. simpl.
+  apply ev_SS.
+  apply ev_SS.
+  apply H.
+Qed.

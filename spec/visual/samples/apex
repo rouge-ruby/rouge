@@ -1,0 +1,177 @@
+////// badcase.apex //////
+
+if (Reports.get(0) instanceof CustomReport) {
+    // Can safely cast it back to a custom report object
+   CustomReport c = (CustomReport) Reports.get(0);
+} else {
+   // Do something with the non-custom-report.
+}
+
+Object o = null;
+Boolean result = o instanceof Account;
+System.assertEquals(false, result);
+
+String dq = "This is a double-quoted string.";
+String sq = 'This is a single-quoted string.';
+String es_dq = "This is a string with \" escape sequences \b.";
+String es_sq = 'This is a string with \' escape sequences \n.';
+
+1;
+1.0;
+0b01;
+0xFFFFFF;
+01;
+
+public virtual class SuperClass {
+    public String mySalutation;
+    public String myFirstName;
+    public String myLastName;
+
+    public SuperClass() {
+
+        mySalutation = 'Mr.';
+        myFirstName = 'Carl';
+        myLastName = 'Vonderburg';
+    }
+
+    public SuperClass(String salutation, String firstName, String lastName) {
+
+        mySalutation = salutation;
+        myFirstName = firstName;
+        myLastName = lastName;
+    }
+
+    public virtual void printName() {
+
+        System.debug('My name is ' + mySalutation + myLastName);
+    }
+
+   public virtual String getFirstName() {
+       return myFirstName;
+   }
+}
+
+public class Subclass extends Superclass {
+  public override void printName() {
+        super.printName();
+        System.debug('But you can call me ' + super.getFirstName());
+    }
+}
+
+public Subclass() {
+    super('Madam', 'Brenda', 'Clapentrap');
+}
+
+// using `this`
+public class myTestThis {
+
+    string s;
+    {
+        this.s = 'TestString';
+    }
+}
+
+public class testThis {
+
+    // First constructor for the class. It requires a string parameter.
+    public testThis(string s2) {
+    }
+
+    // Second constructor for the class. It does not require a parameter.
+    // This constructor calls the first constructor using the this keyword.
+    public testThis() {
+        this('None');
+    }
+}
+
+// using transient
+public class ExampleController {
+
+    DateTime t1;
+    transient DateTime t2;
+
+    public String getT1() {
+        if (t1 == null) t1 = System.now();
+        return '' + t1;
+    }
+
+    public String getT2() {
+        if (t2 == null) t2 = System.now();
+        return '' + t2;
+    }
+}
+
+// page controller
+public inherited sharing class InheritedSharingClass{
+    public List<Contact> getAllTheSecrets(){
+        return [SELECT Name FROM Contact];
+    }
+}
+
+// annotations
+global class MyClass {
+
+    @Future(callout=true) @IsTest
+    public static void myMethod(String a)
+    {
+        /* ... */
+    }
+}
+
+// Invokables
+public without sharing class AccountQueryAction {
+    @InvocableMethod(label='Get Account Names' description='Returns the list of account names corresponding to the specified account IDs.')
+        public static List<String> getAccountNames(List<ID> ids) {
+            List<String> accountNames = new List<String>();
+            List<Account> accounts = [SELECT Name FROM Account WHERE Id in :ids];
+            for (Account account : accounts) {
+                accountNames.add(account.Name);
+            }
+            return accountNames;
+        }
+}
+
+public class AccountInsertAction {
+    @InvocableMethod(label='Insert Accounts' description='Inserts the accounts specified and returns the IDs of the new accounts.')
+        public static List<ID> insertAccounts(List<Account> accounts) {
+            Database.SaveResult[] results = Database.insert(accounts);
+            List<ID> accountIds = new List<ID>();
+            for (Database.SaveResult result : results) {
+                if (result.isSuccess()) {
+                    accountIds.add(result.getId());
+                }
+            }
+            return accountIds;
+        }
+}
+
+// test class
+@isTest(SeeAllData=true)
+public class TestDataAccessClass {
+
+    static testmethod void myTestMethod1() {
+        // Query an existing account in the organization. 
+        Account a = [SELECT Id, Name FROM Account WHERE Name='Acme' LIMIT 1];
+        System.assert(a != null);
+
+        // Create a test account based on the queried account.
+        Account testAccount = a.clone();
+        testAccount.Name = 'Acme Test';
+
+        insert testAccount;
+
+        // Query the test account that was inserted.
+        Account testAccount2 = [SELECT Id, Name FROM Account 
+                                WHERE Name='Acme Test' LIMIT 1];
+
+        System.assert(testAccount2 != null);
+    }
+
+    @isTest static void myTestMethod2() {
+        // Can access all data in the organization.
+   }
+
+}
+
+// Soql
+[SELECT Company, toLabel(Status) FROM Lead WHERE toLabel(Status) = 'le Draft']

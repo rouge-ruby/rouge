@@ -126,6 +126,11 @@ module Rouge
 
         next PlainText
       end
+
+      disambiguate '*.cls' do
+        next TeX if matches?(/\A\s*(?:\\|%)/)
+        next Apex
+      end
     end
   end
 end

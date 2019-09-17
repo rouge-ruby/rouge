@@ -12,7 +12,7 @@ describe Rouge::Lexers::TeX do
       assert_guess :filename => 'foo.toc'
       assert_guess :filename => 'foo.aux'
       assert_guess :filename => 'foo.sty'
-      assert_guess :filename => 'foo.cls'
+      assert_guess :filename => 'foo.cls', :source => '\\documentclass'
     end
 
     it 'guesses by mimetype' do

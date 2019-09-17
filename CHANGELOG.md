@@ -4,6 +4,32 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.11.0: 2019-09-18
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.10.0...v3.11.0)
+
+- Apex Lexer (**NEW**)
+  - Add Apex lexer ([#1103](https://github.com/rouge-ruby/rouge/pull/1103/) by Jefersson Nathan)
+- Coq Lexer
+  - Tokenise commonly used logical symbols in Coq lexer
+- CSV Schema Lexer (**NEW**)
+  - Add CSV Schema lexer ([#1039](https://github.com/rouge-ruby/rouge/pull/1039/) by Filipe Garcia)
+- JSON Lexer
+  - Fix pattern for values incorporating backslashes in JSON lexer ([#1331](https://github.com/rouge-ruby/rouge/pull/1331/) by Michael Camilleri)
+- Kotlin Lexer
+  - Improve support for Gradle plugin names in Kotlin lexer ([#1323](https://github.com/rouge-ruby/rouge/pull/1323/) by Andrew Lord)
+  - Simplify regular expressions used in Kotlin lexer ([#1326](https://github.com/rouge-ruby/rouge/pull/1326/) by Andrew Lord)
+  - Highlight constructors/functions in Kotlin lexer ([#1321](https://github.com/rouge-ruby/rouge/pull/1321/) by Andrew Lord)
+  - Fix type highlighting (including nested generics) in Kotlin lexer ([#1322](https://github.com/rouge-ruby/rouge/pull/1322/) by Andrew Lord)
+- Liquid Lexer
+  - Rewrite large portion of Liquid lexer ([#1327](https://github.com/rouge-ruby/rouge/pull/1327/) by Eric Knibbe)
+- Robot Framework Lexer (**NEW**)
+  - Add Robot Framework lexer ([#611](https://github.com/rouge-ruby/rouge/pull/611/) by Iakov Gan)
+- Shell Lexer
+  - Add MIME types and file globs to Shell lexer ([#716](https://github.com/rouge-ruby/rouge/pull/716/) by Jan Chren)
+- Swift Lexer
+  - Improve attribute formatting in Swift lexer ([#806](https://github.com/rouge-ruby/rouge/pull/806/) by John Fairhurst)
+
 ## version 3.10.0: 2019-09-04
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.9.0...v3.10.0)

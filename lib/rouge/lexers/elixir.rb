@@ -51,15 +51,25 @@ module Rouge
       state :strings do
         rule %r/(%[A-Ba-z])?"""(?:.|\n)*?"""/, Str::Doc
         rule %r/'''(?:.|\n)*?'''/, Str::Doc
-        rule %r/"/, Str::Doc, :dqs
-        rule %r/'.*?'/, Str::Single
+        rule %r/"/, Str::Double, :dqs
+        rule %r/'/, Str::Single, :sqs
         rule %r{(?<!\w)\?(\\(x\d{1,2}|\h{1,2}(?!\h)\b|0[0-7]{0,2}(?![0-7])\b[^x0MC])|(\\[MC]-)+\w|[^\s\\])}, Str::Other
-
       end
 
       state :dqs do
+        mixin :escapes
+        mixin :interpoling
+        rule %r/[^#"\\]+/, Str::Double
         rule %r/"/, Str::Double, :pop!
-        mixin :enddoublestr
+        rule %r/[#\\]/, Str::Double
+      end
+
+      state :sqs do
+        mixin :escapes
+        mixin :interpoling
+        rule %r/[^#'\\]+/, Str::Single
+        rule %r/'/, Str::Single, :pop!
+        rule %r/[#\\]/, Str::Single
       end
 
       state :interpoling do
@@ -71,15 +81,16 @@ module Rouge
         mixin :root
       end
 
+      state :escapes do
+        rule %r/\\x\h{2}/, Str::Escape
+        rule %r/\\u\{?\d+\}?/, Str::Escape
+        rule %r/\\[\\abdefnrstv0"']/, Str::Escape
+      end
+
       state :interpoling_symbol do
         rule %r/"/, Str::Symbol, :pop!
         mixin :interpoling
         rule %r/[^#"]+/, Str::Symbol
-      end
-
-      state :enddoublestr do
-        mixin :interpoling
-        rule %r/[^#"]+/, Str::Double
       end
 
       state :sigil_strings do

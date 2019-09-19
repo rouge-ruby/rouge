@@ -1,0 +1,135 @@
+This text should be ignored.
+
+*** Settings ***
+Documentation    Example using the space separated plain text format.
+Library          OperatingSystem
+Library    Telnet    prompt=$    default_log_level=DEBUG
+
+*** Variables ***
+${MESSAGE}       Hello, world!
+
+*** Test Cases ***
+My Test
+    [Documentation]    Example test
+    Log    ${MESSAGE}
+    My Keyword    /tmp
+
+Another Test
+    Should Be Equal    ${MESSAGE}    Hello, world!
+
+Using backslash
+    Do Something    first arg    \
+
+Templated test case
+    [Template]    Example keyword
+    first argument    second argument
+
+No teardown
+    [Documentation]    Default setup, no teardown at all
+    Do Something
+    [Teardown]
+
+Using variables
+    [Documentation]    Setup and teardown specified using variables
+    [Setup]    ${SETUP}
+    Do Something
+    [Teardown]    ${TEARDOWN}
+
+Valid Login
+    Given login page is open
+    When valid username and password are inserted
+    and credentials are submitted
+    Then welcome page should be open
+
+Example
+    Keyword    &{DICT}    named=arg
+    Keyword    positional    @{LIST}    &{DICT}
+    Keyword    &{DICT}    &{ANOTHER}    &{ONE MORE}
+
+List variable item
+    Login    ${USER}[0]    ${USER}[1]
+    Title Should Be    Welcome ${USER}[0]!
+
+Negative index
+    Log    ${LIST}[-1]
+
+Index defined as variable
+    Log    ${LIST}[${INDEX}]
+
+Step
+    Keyword    ${LIST}[::2]
+    Keyword    ${LIST}[2:-1:2]
+
+Multiple Values
+    ${a}    ${b}    ${c} =    Return Three Values
+    @{list} =    Return Three Values
+    ${scalar}    @{rest} =    Return Three Values
+
+Example
+    FOR    ${animal}    IN    cat    dog
+        Log    ${animal}
+        Log    2nd keyword
+    END
+    Log    Outside loop
+
+For-in-enumerate with two values per iteration
+    FOR    ${index}    ${en}    ${fi}    IN ENUMERATE
+    ...    cat      kissa
+    ...    dog      koira
+    ...    horse    hevonen
+        Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
+    END
+
+*** Tasks ***
+Process invoice
+    Read information from PDF
+    Validate information
+    Submit information to backend system
+    Validate information is visible in web UI
+
+*** Keywords ***
+My Keyword
+    [Arguments]    ${path}
+    Directory Should Exist    ${path}
+
+I execute "${cmd:[^"]+}"
+    Run Process    ${cmd}    shell=True
+
+| *** Settings ***   |
+| Documentation      | Example using the pipe separated plain text format.
+| Library            | OperatingSystem
+
+| *** Variables ***  |
+| ${MESSAGE}         | Hello, world!
+
+| *** Test Cases *** |                 |              |
+| My Test            | [Documentation] | Example test |
+|                    | Log             | ${MESSAGE}   |
+|                    | My Keyword      | /tmp         |
+| Another Test       | Should Be Equal | ${MESSAGE}   | Hello, world!
+
+| *** Keywords ***   |                        |         |
+| My Keyword         | [Arguments]            | ${path} |
+|                    | Directory Should Exist | ${path} |
+
+| *** Test Cases *** |                 |                 |                      |
+| Escaping Pipe      | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
+|                    | Should Be Equal | ${file count}   | 42                   |
+
+*** Settings ***
+Documentation      This is documentation for this test suite.
+...                This kind of documentation can often be get quite long...
+Default Tags       default tag 1    default tag 2    default tag 3
+...                default tag 4    default tag 5
+
+*** Variable ***
+@{LIST}            this     list     is      quite    long     and
+...                items in it could also be long
+
+*** Test Cases ***
+Example
+    [Tags]    you    probably    do    not    have    this    many
+    ...       tags    in    real   life
+    Do X    first argument    second argument    third argument
+    ...    fourth argument    fifth argument    sixth argument
+

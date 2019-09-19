@@ -1,0 +1,49 @@
+-------------------------------------------------------------------
+
+-- Constants
+const size = 50; -- size of the sliding windows used to smooth values
+const period = 0.1; -- in seconds
+const speed_max = 110.0;    -- comment with leading whitespace
+
+-- Types
+type roof_state = enum { locked, in_motion };
+
+type update_acc = {
+  i: int; 
+  j: int; 
+  v: real
+};
+
+-- Nodes
+node roof(Tick, Parked, OnOff, Done: bool) returns (Locked:bool; Roof_Speed:real);
+var 
+  pst, st : roof_state;
+  Tick_on_in_motion : bool when in_motion(st);
+let
+  pst = locked fby st;
+  st =  merge pst  
+         (locked    -> if (OnOff and Parked) when locked(pst) then in_motion else locked)
+         (in_motion -> if Done when in_motion(pst) then locked else in_motion);
+  Locked = (st=locked) ;
+  Tick_on_in_motion = Tick when in_motion(st);
+  Roof_Speed = merge st
+    (locked    -> 0.0 when locked(st))
+    (in_motion -> roof_speed(Tick_on_in_motion));
+tel
+
+node sum<<const d: int; const init:real>>(s: real) returns (res:real);
+var
+  a,pre_a: real^d; -- circular array
+  i: int; 
+let
+  i = 0 fby i + 1;
+  pre_a = (init^d) fby a;
+  a = assign<<d>>(s, i mod d, pre_a);
+  res =red<<+; d>>(0.0, a); --- / Lustre::int2real(d) ;
+tel
+
+-- Functions
+function braking_time(Speed:real) returns (res:real);
+let
+  res = Speed * Speed / k;
+tel

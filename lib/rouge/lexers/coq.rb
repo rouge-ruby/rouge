@@ -58,7 +58,7 @@ module Rouge
 
       def self.keyopts
         @keyopts ||= Set.new %w(
-          := => -> /\\ \\/ _ ; :> :
+          := => -> /\\ \\/ _ ; :> : ⇒ → ↔ ⇔ ≔ ≡ ∀ ∃ ∧ ∨ ¬ ⊤ ⊥ ⊢ ⊨ ∈
         )
       end
 
@@ -115,14 +115,6 @@ module Rouge
         end
         rule %r(/\\), Operator
         rule %r/\\\//, Operator
-        rule operator do |m|
-          match = m[0]
-          if self.class.keyopts.include? match
-            token Punctuation
-          else
-            token Operator
-          end
-        end
 
         rule %r/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
         rule %r/\d[\d_]*/, Num::Integer
@@ -131,6 +123,17 @@ module Rouge
         rule %r/'/, Keyword
         rule %r/"/, Str::Double, :string
         rule %r/[~?]#{id}/, Name::Variable
+
+        rule %r/./ do |m|
+          match = m[0]
+          if self.class.keyopts.include? match
+            token Punctuation
+          elsif match =~ operator
+            token Operator
+          else
+            token Error
+          end
+        end
       end
 
       state :comment do

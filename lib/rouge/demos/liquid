@@ -5,7 +5,6 @@
       Only {{ product.price | format_as_money }}
 
       <p>{{ product.description | prettyprint | truncate: 200  }}</p>
-
     </li>
   {% endfor %}
 </ul>

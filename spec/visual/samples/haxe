@@ -1,0 +1,150 @@
+package a.b.c;
+
+// one line comment
+/*
+  multiline
+  comment
+*/
+
+// ** CUSTOM TYPE **
+typedef NewType = Map<String, Array<Int>>;
+
+// ** INTERFACE **
+interface NewInterface {
+    public function method():String;
+}
+class Main {
+
+  // ** VARIABLES **
+  // Types for variables are optional
+  var testInt:Int = 20;
+  var testFloat:Float = 20.30;
+  var testRegex:EReg = ~/haxe/i;
+  var testComplicatedRegex = ~/[A-Z0-9._%-]+.[A-Z][A-Z][A-Z]?/i;
+  var testString:String = "Haxe";
+  var testArray:Array<Int> = [1, 2, 3, 4, 5];
+  var testStruct = { "a": 1, "b": 2 };
+  var testBool:Bool = true;
+  var testMap:Map<Int, String> = [
+    1 => "one",
+    2 => "two",
+    3 => "three",
+    4 => "four"
+  ];
+
+  public static var testPublicVar:Int = 20;
+  public static var initialColMap:Void->NewType = () -> ["Level-1" => [], "Level-2" => []];
+  public static inline var testPublicInlineVar:Int = 400;
+
+  // ** SWITCH **
+  // No need for break becasue case body expressions never "fall through"
+  switch testInt {
+    case 20:
+      trace(Math.random());
+    default:
+      trace("default");
+  }
+
+  // ** LOOPS **
+  for (i in 0...10) trace(i);
+  for (num in testArray) {
+    trace(num);
+  }
+  for (key => value in testMap) {
+    trace(key, value);
+  }  
+  testArray.map(function(num) {
+    trace(num);
+  })
+  testArray.map((num) -> {
+    trace(num);
+  }) 
+
+  // ** IF STATEMENT **
+  if (testString == "Kha") {
+    trace("It's Kha!");
+  } else if(testString != "Heaps" ) {
+    trace("It's not Heaps!");
+  } else {
+    trace("It's nothing");
+  }
+  
+  // ** SPECIAL VARS **
+  var ternary = (test > 100) ? 1 : 2;
+  var stringInterp = '$testString is cool!!';
+
+  // Class constructor
+  public function new() {
+    var calculator = new Calculator();
+
+    trace(calculator.add(1, 2));
+    trace(calculator.multiply(2, 3));
+  }
+
+}
+
+class Calculator {
+  /**
+  * Class documentation. Similar to JSDoc without types.
+  */
+  public function new() {
+    trace("A new calculator instance was created!");
+  }
+
+  public function add(a:Int, b:Int): Int {
+    return a + b;
+  }
+
+  public function multiply(a:Int, b:Int):Int {
+    return a * b;
+  }
+}
+
+class Class implements NewInterface { 
+  public function method():String {
+    var f = 0.0;
+    
+    while (f < 0.5) {
+      return "Test string";
+    }
+  };
+}
+
+// ** STRING INTERPOLATION ** //
+'The value of x is $x'
+'The value of x is ${1 + 2}'
+'The value of x is $$'
+
+// ** METADATA ** //
+@author("Nicolas")
+@:keep
+class MyClass {
+  @range(1, 8)
+  var value:Int;
+
+  @broken
+  static function method() {}
+}
+
+@:some.metadata
+
+// ** CONDITIONAL COMPILATION ** //
+class Main {
+  public static function main() {
+    #if !debug
+    trace("ok");
+    #elseif (debug_level > 3)
+    trace(3);
+    #else
+    trace("debug level too low");
+    #end
+  }
+}
+
+// ** ABSTRACT ** //
+abstract Color(Int) from Int to Int {
+  public static inline var TRANSPARENT : Color = 0x00000000;
+  @:from public static inline function fromString(argb : String) : Color {
+    return new Color(Std.parseInt(argb));
+  }
+}

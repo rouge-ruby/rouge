@@ -127,7 +127,7 @@ module Rouge
         rule %r/(q|qq|qw|qr|qx)\(/, Str::Other, :rb_string
         rule %r/(q|qq|qw|qr|qx)\[/, Str::Other, :sb_string
         rule %r/(q|qq|qw|qr|qx)</, Str::Other, :lt_string
-        rule %r/(q|qq|qw|qr|qx)([^a-zA-Z0-9])(.|\n)*?\2/, Str::Other
+        rule %r/(q|qq|qw|qr|qx)(\W)(.|\n)*?\2/, Str::Other
 
         rule %r/package\s+/, Keyword, :modulename
         rule %r/sub\s+/, Keyword, :funcname

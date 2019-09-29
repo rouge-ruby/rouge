@@ -49,7 +49,6 @@ module Rouge
 
       state :root do
         rule %r(\s+)m, Text::Whitespace
-        rule %r(\n)m, Text::Whitespace
         rule %r(\\\n)m, Text::Whitespace
         rule %r(\%(.*?)\n), Comment::Single
         rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/)m, Comment::Multiline

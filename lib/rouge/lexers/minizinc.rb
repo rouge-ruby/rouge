@@ -54,10 +54,10 @@ module Rouge
         rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/)m, Comment::Multiline
         rule %r/"(\\\\|\\"|[^"])*"/, Literal::String
 
-        rule %r((not|<->|->|<-|\\/|xor|/\\)), Operator
-        rule %r((<|>|<=|>=|==|=|!=)), Operator
-        rule %r((\+|-|\*|/|div|mod)), Operator
-        rule %r((\\|\.\.|\+\+)), Operator
+        rule %r(not|<->|->|<-|\\/|xor|/\\), Operator
+        rule %r(<|>|<=|>=|==|=|!=), Operator
+        rule %r(\+|-|\*|/|div|mod), Operator
+        rule %r(\\|\.\.|\+\+), Operator
         rule %r([|()\[\]{},:;]), Punctuation
         rule %r((true|false)\b), Keyword::Constant
         rule %r(([+-]?)\d+(\.(?!\.)\d*)?([eE][-+]?\d+)?), Literal::Number

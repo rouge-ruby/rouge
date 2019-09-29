@@ -42,3 +42,7 @@ output [ show(roster[i,j]) ++ if j==card(DAY) then "\n" else " " endif
    comment
    test
 */
+
+predicate atmostone(array[int] of var bool:x) =
+          forall(i,j in index_set(x) where i < j)(
+            (not x[i] \/ not x[j]));

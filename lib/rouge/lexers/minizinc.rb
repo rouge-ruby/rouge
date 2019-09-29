@@ -45,7 +45,7 @@ module Rouge
         )
       end
 
-      id = /[$a-zA-Z_][a-zA-Z0-9_]*/
+      id = /[$a-zA-Z_]\w*/
 
       state :root do
         rule %r(\s+)m, Text::Whitespace

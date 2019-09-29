@@ -8,7 +8,7 @@ module Rouge
   module Lexers
     class MiniZinc < RegexLexer
       title "MiniZinc"
-      desc "MiniZinc is a free and open-source constraint modeling language (https://www.minizinc.org)"
+      desc "MiniZinc is a free and open-source constraint modeling language (minizinc.org)"
       tag 'minizinc'
       filenames '*.mzn', '*.fzn', '*.dzn'
       mimetypes 'text/minizinc'

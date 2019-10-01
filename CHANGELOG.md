@@ -4,6 +4,13 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.11.1: 2019-10-02
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.11.0...v3.11.1)
+
+- Perl Lexer
+  - Fix overeager quoting constructs in Perl lexer ([#1335](https://github.com/rouge-ruby/rouge/pull/1335/) by Brent Laabs)
+
 ## version 3.11.0: 2019-09-18
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.10.0...v3.11.0)

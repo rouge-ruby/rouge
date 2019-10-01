@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    module Ttcn3 < RegexLexer
+    class Ttcn3 < RegexLexer
       title "Ttcn3"
       desc "The Ttcn3 programming language (http://www.ttcn-3.org/). See ETSI ES 201 873-1"
 
@@ -11,24 +11,20 @@ module Rouge
       filenames '*.ttcn', '*.ttcn3'
       mimetypes 'text/x-ttcn3', 'text/x-ttcn'
 
-      def self.keywords
-        @keywords ||= super + Set.new(%w(
-          module import group type port component signature external const template function altstep testcase var timer if else select case for while do label goto stop return break int2char int2unichar int2bit int2enum int2hex int2oct int2str int2float float2int char2int char2oct unichar2int unichar2oct bit2int bit2hex bit2oct bit2str hex2int hex2bit hex2oct hex2str oct2int oct2bit oct2hex oct2str oct2char oct2unichar str2int str2hex str2oct str2float enum2int any2unistr lengthof sizeof ispresent ischosen isvalue isbound istemplatekind regexp substr replace encvalue decvalue encvalue_unichar decvalue_unichar encvalue_o decvalue_o get_stringencoding remove_bom rnd hostid
-        ))
-      end
+      keywords = %w(
+          module import group type port component signature external execute const template function altstep testcase var timer if else select case for while do label goto start stop return break int2char int2unichar int2bit int2enum int2hex int2oct int2str int2float float2int char2int char2oct unichar2int unichar2oct bit2int bit2hex bit2oct bit2str hex2int hex2bit hex2oct hex2str oct2int oct2bit oct2hex oct2str oct2char oct2unichar str2int str2hex str2oct str2float enum2int any2unistr lengthof sizeof ispresent ischosen isvalue isbound istemplatekind regexp substr replace encvalue decvalue encvalue_unichar decvalue_unichar encvalue_o decvalue_o get_stringencoding remove_bom rnd hostid send receive setverdict
+        )
 
-      def self.reserved
-        @reserved ||= super + Set.new(%w(
-          all apply assert at configuration conjunct const delta disjunct duration finished history implies inv mode notinv now omit onentry onexit par prev realtime seq setstate static stepsize stream timestamp until values wait
-        ))
-      end
+      reserved = %w(
+          all alt apply assert at configuration conjunct const control delta deterministic disjunct duration fail finished fuzzy history implies inconc inv lazy mod mode notinv now omit onentry onexit par pass prev realtime seq setstate static stepsize stream timestamp until values wait
+        )
 
-      def self.types
-        @types ||= super + Set.new(%w(
+      types = %w(
         anytype address boolean bitstring bytestring charstring component enumerated float integer hexstring octetstring port record set of union universal
-      ))
-      end
+        )
 
+      # optional comment or whitespace
+      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
       const_name = /[A-Z][A-Z0-9_]*\b/
       module_name = /[A-Z][a-zA-Z0-9]*\b/
@@ -40,7 +36,7 @@ module Rouge
         # keywords: go before method names to avoid lexing "throw new XYZ"
         # as a method signature
         rule %r/(?:#{keywords.join('|')})\b/, Keyword
-
+        rule %r{[~!@#\$%\^&\*\(\)\+`\-={}\[\]:;<>\?,\.\/\|\\]}, Punctuation
         rule %r(
           (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
           ([a-zA-Z_][a-zA-Z0-9_]*)                  # method name
@@ -54,11 +50,9 @@ module Rouge
         end
 
         rule %r/@#{id}/, Name::Decorator
-        rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule %r/(?:#{types.join('|')})\b/, Keyword::Type
-        rule %r/package\b/, Keyword::Namespace
         rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/(?:module|interface)\b/, Keyword::Declaration, :module
+        rule %r/(module)\b/, Keyword::Declaration, :module
         rule %r/import\b/, Keyword::Namespace, :import
         rule %r/"(\\\\|\\"|[^"])*"/, Str
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
@@ -68,7 +62,7 @@ module Rouge
 
         rule %r/#{id}:/, Name::Label
         rule const_name, Name::Constant
-        rule module_name, Name::Module
+        rule module_name, Name::Label
         rule %r/\$?#{id}/, Name
         rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
 
@@ -77,9 +71,9 @@ module Rouge
         oct_digit = /[0-7]_+[0-7]|[0-7]/
         hex_digit = /[0-9a-f]_+[0-9a-f]|[0-9a-f]/i
         rule %r/#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
-        rule %r/0b#{bin_digit}+/i, Num::Bin
-        rule %r/0x#{hex_digit}+/i, Num::Hex
-        rule %r/0#{oct_digit}+/, Num::Oct
+        rule %r/'#{bin_digit}+'B/i, Num::Bin
+        rule %r/'#{hex_digit}+'H/i, Num::Hex
+        rule %r/'#{oct_digit}+'O/, Num::Oct
         rule %r/#{digit}+L?/, Num::Integer
         rule %r/\n/, Text
       end

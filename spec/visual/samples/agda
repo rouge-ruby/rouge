@@ -1,0 +1,46 @@
+module agda where
+
+open import Level
+
+data Id {ℓ : Level} (A : Set ℓ) : A → A → Set ℓ where
+  refl : (x : A) → Id A x x
+
+syntax Id A x y = x =[ A ] y
+
+variable
+  ℓ ℓ′ : Level
+
+-- Symmetry of equality.
+sym : {A : Set ℓ} {x y : A} → x =[ A ] y → y =[ A ] x
+sym (refl x) = refl x
+
+-- Transitivity of equality.
+trans : {A : Set ℓ} {x y z : A} → x =[ A ] y → y =[ A ] z → x =[ A ] z
+trans (refl x) (refl x) = refl x
+
+-- Equality is a congruence.
+cong : {A : Set ℓ} {B : Set ℓ′} {x y : A} → (f : A → B) → x =[ A ] y → f x =[ B ] f y
+cong f (refl x) = refl (f x)
+
+data ℕ : Set where
+  Z  : ℕ
+  S  : ℕ → ℕ
+
+_+_ : ℕ → ℕ → ℕ
+Z   + n = n
+S m + n = S (m + n)
+
+-- Left identity for addition.
++-left-id : (n : ℕ) → (Z + n) =[ ℕ ] n
++-left-id n = refl n
+
+-- Right identity for addition.
++-right-id : (n : ℕ) → (n + Z) =[ ℕ ] n
++-right-id Z     = refl Z
++-right-id (S n) = cong S (+-right-id n)
+
+-- Associativity of addition.
+-- Make sure that the ∀ notation is lexed correctly as well.
++-assoc : ∀ m n o → ((m + n) + o) =[ ℕ ] (m + (n + o))
++-assoc Z     n o = refl (n + o)
++-assoc (S m) n o = cong S (+-assoc m n o)

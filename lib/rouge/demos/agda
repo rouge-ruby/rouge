@@ -1,0 +1,7 @@
+data ℕ : Set where
+  Z  : ℕ
+  S  : ℕ → ℕ
+
+_+_ : ℕ → ℕ → ℕ
+Z   + n = n
+S m + n = S (m + n)

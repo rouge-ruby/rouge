@@ -8,7 +8,7 @@ scenario dut.cut_in:
     path_min_driving_lanes(path: path, min_driving_lanes: 2)
      #  require the path to have at least 2 lanes
      #  Define the behavior
-
+#COMPILER_SKIP_FILE
     do serial():
         change_lane: parallel(duration: [2..5]second):
             dut_car.drive(path: path)

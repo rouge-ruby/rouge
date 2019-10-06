@@ -51,8 +51,10 @@ module Rouge
 	rule /\$.*([^.]|#{preProcBody})/, Comment::Preproc
 
 	rule %r(/\*.*\*/)m, Comment::Multiline
-	rule %r(//.*[^.]), Comment::Single
-	rule /#.*[^.]/, Comment::Single
+	rule /(\#)/ do
+	  groups Comment, Text
+	  push :commentOrPreproc
+	end
 
 	rule /(\")/ do
 	  groups Str, Text
@@ -144,6 +146,12 @@ module Rouge
 	rule /(#{floatLiteral})/, Num::Float
 	rule /#{decimalLiteral}/, Num::Integer
 
+      end
+
+      state :commentOrPreproc do
+        rule /\#COMPILER_SKIP_FILE.*/m, Generic::Emph
+	rule /\#COMPILER_IGNORE_BEGIN.*#COMPILER_IGNORE_END/m, Generic::Emph, :pop!
+	rule /.*[^.]/, Comment::Single, :pop!
       end
 
       state :string do

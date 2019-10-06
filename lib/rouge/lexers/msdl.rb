@@ -14,10 +14,14 @@ module Rouge
       def self.keywords
         @keywords ||= %w(
           any call cover def defualt do else emit empty
-          if import in keep like match modifier multi_match
+          if import in keep like match multi_match
           not on outer properties repeat sample soft struct
           then try undefined wait when with
         ) # is, is first, is only, is also and list of are handled later 
+      end
+
+      def self.keywords_pseudo
+        @builtins_pseudo ||= %w(true false null this it)
       end
 
       def self.scenarios
@@ -41,10 +45,6 @@ module Rouge
 	)
       end 
 
-      def self.keywords_pseudo
-        @builtins_pseudo ||= %w(true false null this it)
-      end
-
       identifier = /[a-z_][a-z0-9_]*/i
       state :root do
 	preProcBody = /<<.*$<</
@@ -54,12 +54,10 @@ module Rouge
 	rule %r(//.*[^.]), Comment::Single
 	rule /#.*[^.]/, Comment::Single
 
-	#this removes the " character. needs fix or simplification
-	rule /\"/ do
+	rule /(\")/ do
 	  groups Str, Text
 	  push :string
 	end
-	rule %r/\)\$/, :pop!
 
         rule %r/[^\S\n]+/, Text
         rule %r(#(.*)?\n?), Comment::Single
@@ -98,7 +96,12 @@ module Rouge
 
         rule %r/(event)((?:\s|\\\s)+)/ do
           groups Keyword, Text
-          push :eventName
+          push :variableName
+        end
+
+        rule %r/(modifier)((?:\s|\\\s)+)/ do
+          groups Keyword, Text
+          push :variableName
         end
 
         rule %r/(is)((?:\s|\\\s)+)/ do
@@ -143,13 +146,10 @@ module Rouge
 
       end
 
-      #untested
       state :string do
         rule /\\./, Str::Escape
 	rule /\"/, Str, :pop!
 	rule /[^\\\n\"]+/, Str
-	rule /\$\(/, Punctuation
-	mixin :root
       end
 
       state :funcname do
@@ -158,12 +158,12 @@ module Rouge
 
       state :classname do
         rule identifier, Name::Class
-	rule %r/::/, Punctuation
+	rule %r/\./, Punctuation
 	rule %r/:/, Punctuation, :pop!
 	rule %r/[^\S\n]*{/, Punctuation, :pop!
       end
 
-      state :eventName do
+      state :variableName do
 	rule identifier, Name::Atribute, :pop!
       end
 

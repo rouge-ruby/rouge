@@ -1,103 +1,20 @@
-<'
 
-define V0_MIN 30kph;
-define V0_MAX 35; // kph
-define V1_MIN 40; // kph
-define V1_MAX 45; // kph
-define D 20; // m
+scenario dut.cut_in:
+ #  Define the other car and the road path on which it happens
+    car1: car #  The other car
+    side: av_side #  The side of which car1 cuts in, left or right
+    path: path with(road_path_kind: full) #  A path in the map
+    path_length(path: path, min_path_length: 100meter, max_path_length: 250meter)
+    path_min_driving_lanes(path: path, min_driving_lanes: 2)
+     #  require the path to have at least 2 lanes
+     #  Define the behavior
 
-import $FTX/qa/regression/config/av_sumo_top.sdl;
-
-scenario dut::ttc_scenario { 
-	/* hello
-world! */ "this is a string"
-$preProc comment!
-not preProc
-
-    car1 : car { .color == blue; .category == sedan; };
-    
-    +set_map("$FTX_QA/odr_maps/straight_road_1040m_3x3.xodr");
-    
-    route0 : full path;
-    route1 : full path;
-    +p0 : path_explicit(route0, {
-        map.explicit_point("-1", 0, (10 + D) * meter, 1); 
-        map.explicit_point("-1", 0, 150 * meter, 1);  
-    });
-    +p1 : path_explicit(route1, {
-        map.explicit_point("-1", 0, 10 * meter, 1); 
-        map.explicit_point("-1", 0, 200 * meter, 1);  
-    });
-    
-    do phase {--(duration: in [5]*second) { 
-        dut_car_life : serial { 
-            dut_car.drive(route0) { 
-                +l0 : set_lane(in [1]); // TODO: why do I need to have set_lane()
-                                     // since the path is explicitly chosen
-                                     // on lane=1?
-                +v0 : set_speed(in [V0_MIN..V0_MAX] * kph);
-            };
-        };
-        car1_life : serial { 
-            car1.drive(route1) { 
-                +l1 : set_lane(in [1]);
-                +v1 : set_speed(in [V1_MIN..V1_MAX] * kph);
-            };
-        };
-    };
-};
-
-extend top::main { 
-    do ttc_scenario;
-};
-#COMPILER_SKIP_FILE
-extend av_env {
-    keep require_implicits == FALSE;
-};
-
-extend map {    
-    keep spawn_policy == anywhere;
-};
-
-extend dut {
-    keep dut_car.avoid_collisions == FALSE;
-};
-
-//--
-
-extend traffic {
-    calc_ttc() is also {
-        var exp_ttc : av_time;
-        
-        if (sys.time >= 2 * av_env.av_sim_adapter.step_time()) {
-            if (not cars.all(.dut==TRUE)[0].collision_info.colliding) {
-                exp_ttc = (cars.all(.dut==TRUE)[0].global_position.x - cars.all(.dut==TRUE)[0].length - cars.all(.dut==FALSE)[0].global_position.x) /
-                          (cars.all(.dut==FALSE)[0].global_speed.x_speed - cars.all(.dut==TRUE)[0].global_speed.x_speed);
-            };
-            check that exp_ttc >= 0;
-            check that exp_ttc < ((D * meter) / ((V1_MIN - V0_MAX) * kph)) + 1 * second;
-            for each (c) in cars {
-                check that exp_ttc == c.collision_info.TTC else
-                dut_error("exp_ttc = ", exp_ttc, ", c.min_TTC = ", c.collision_info.TTC);
-                check that c.collision_info.other_car == cars[(index + 1) % 2];
-                check that c.collision_info.side == cars[(index + 1) % 2].collision_info.other_side;
-                check that c.collision_info.other_side == cars[(index + 1) % 2].collision_info.side;
-                if (c.dut) {
-                    check that c.collision_info.side in {back_left; back; back_right};
-                    check that c.collision_info.other_side in {front_left; front; front_right};
-                };
-            };
-        };
-    };
-    
-    check() is also {
-        for each (c) in cars {
-            check that c.collision_info.TTC < env.av_sim_adapter.step_time();
-        };
-    };
-};
-
-extend sys {
-    run() is also { set_check("/dut collision/", IGNORE); };
-};
-'>
+    do serial():
+        change_lane: parallel(duration: [2..5]second):
+            dut_car.drive(path: path)
+            car1.drive(path: path) with:
+                l1: lane(side_of: dut_car, side: side, at: start)
+                p1: position(time: [1.5..2]second, ahead_of: dut_car, at: start)
+                speed(speed: [30..200]kph)
+                l2: lane(same_as: dut_car, at: end)
+                p2: position(time: [1.5..2]second, ahead_of: dut_car, at: end)

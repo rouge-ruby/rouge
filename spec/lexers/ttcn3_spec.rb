@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-describe Rouge::Lexers::Ttcn3 do
-  let(:subject) { Rouge::Lexers::Ttcn3.new }
+describe Rouge::Lexers::TTCN3 do
+  let(:subject) { Rouge::Lexers::TTCN3.new }
 
   describe 'guessing' do
     include Support::Guessing

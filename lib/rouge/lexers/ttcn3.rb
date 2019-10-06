@@ -3,9 +3,9 @@
 
 module Rouge
   module Lexers
-    class Ttcn3 < RegexLexer
-      title "Ttcn3"
-      desc "The Ttcn3 programming language (http://www.ttcn-3.org/). See ETSI ES 201 873-1"
+    class TTCN3 < RegexLexer
+      title "TTCN3"
+      desc "The TTCN3 programming language (http://www.ttcn-3.org/). See ETSI ES 201 873-1"
 
       tag 'ttcn3'
       filenames '*.ttcn', '*.ttcn3'
@@ -43,7 +43,7 @@ module Rouge
           (\s*)(\()                                 # signature start
         )mx do |m|
           # TODO: do this better, this shouldn't need a delegation
-          delegate Ttcn3, m[1]
+          delegate TTCN3, m[1]
           token Name::Function, m[2]
           token Text, m[3]
           token Operator, m[4]

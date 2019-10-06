@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class TTCN3 < RegexLexer
       title "TTCN3"
-      desc "The TTCN3 programming language (http://www.ttcn-3.org/). See ETSI ES 201 873-1"
+      desc "The TTCN3 programming language (ttcn-3.org)"
 
       tag 'ttcn3'
       filenames '*.ttcn', '*.ttcn3'

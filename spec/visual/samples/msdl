@@ -1,75 +1,103 @@
-#import $FTX/tool/foretify_top.sdl
+<'
 
-extend car:
-    !cut_in_occured : bool
+define V0_MIN 30kph;
+define V0_MAX 35; // kph
+define V1_MIN 40; // kph
+define V1_MAX 45; // kph
+define D 20; // m
 
-extend top.main:
- # change to extend when supported
-    do cut_in_and_slow()
+import $FTX/qa/regression/config/av_sumo_top.sdl;
 
-scenario dut.cut_in:
- #  Define the other car and the road path on which it happens
-    car1 : car #  The other car
-    side : av_side #  The side of which car1 cuts in, left or right
-    path : path with(road_path_kind: full) #  A path in the map
-    path_length(path:  path, min_path_length:  100meter, max_path_length:  250meter)
-    path_min_driving_lanes(path:  path, min_driving_lanes:  2)
-     #  require the path to have at least 2 lanes
-     #  Define the behavior
+scenario dut::ttc_scenario { 
+	/* hello
+world! */ "this is a string"
+$preProc comment!
+not preProc
 
-    do serial():
-        change_lane: parallel(duration: default [2..5]second):
-            dut_car.drive(path:  path)
-            car1.drive(path:  path) with:
-                l1: lane(side_of:  dut_car, side:  side, at:  start)
-                position(time: default [1..2]second, ahead_of:  dut_car, at:  start)
-                speed(speed: default [30..200]kph)
-                l2: lane(same_as:  dut_car, at:  end)
-    event locations_exist
-    cover(side)
-    !rel_d_change_lane_start : distance = sample(map.abs_distance_between_locations(dut_car.location, car1.location), @locations_exist) with:
-        cover(it, unit:centimeter, text:"How ahead is car1 relative to dut at change_lane start (in centimeter)", range:[0..3000], every:50, ignore:((it<0)or(it>3000)))
-    !dut_v_change_lane_start : speed = sample(dut_car.speed,@change_lane.start) with:
-        cover(it, unit:kph, text:"Speed of dut at change_lane start (in kph)", range:[10..130], every:10, ignore:((it<10)or(it>130)))
-    !rel_v_change_lane_start : speed = sample(dut_car.speed-car1.speed, @change_lane.start) with:
-        cover(it, unit:(second/meter), text:"How faster is car1 relative to  dut at change_lane start (in meter/second)", range:[-33..33], ignore:((it<-33)or(it>33)))
-    cover([rel_d_change_lane_start, dut_v_change_lane_start, rel_v_change_lane_start], ignore:(((dut_v_change_lane_start<=125)and(rel_v_change_lane_start<-33))or((dut_v_change_lane_start<=120)and(rel_v_change_lane_start<-32))or((dut_v_change_lane_start<=115)and(rel_v_change_lane_start<-30))or((dut_v_change_lane_start<=110)and(rel_v_change_lane_start<-29))or((dut_v_change_lane_start<=105)and(rel_v_change_lane_start<-28))or((dut_v_change_lane_start<=100)and(rel_v_change_lane_start<-26))or((dut_v_change_lane_start<=95)and(rel_v_change_lane_start<-25))or((dut_v_change_lane_start<=90)and(rel_v_change_lane_start<-24))or((dut_v_change_lane_start<=85)and(rel_v_change_lane_start<-22))or((dut_v_change_lane_start<=80)and(rel_v_change_lane_start<-21))or((dut_v_change_lane_start<=75)and(rel_v_change_lane_start<-20))or((dut_v_change_lane_start<=70)and(rel_v_change_lane_start<-18))or((dut_v_change_lane_start<=65)and(rel_v_change_lane_start<-17))or((dut_v_change_lane_start<=60)and(rel_v_change_lane_start<-16))or((dut_v_change_lane_start<=55)and(rel_v_change_lane_start<-14))or((dut_v_change_lane_start<=50)and(rel_v_change_lane_start<-13))or((dut_v_change_lane_start<=45)and(rel_v_change_lane_start<-12))or((dut_v_change_lane_start<=40)and(rel_v_change_lane_start<-10))or((dut_v_change_lane_start<=35)and(rel_v_change_lane_start<-9))or((dut_v_change_lane_start<=30)and(rel_v_change_lane_start<-8))or((dut_v_change_lane_start<=25)and(rel_v_change_lane_start<-6))or((dut_v_change_lane_start<=20)and(rel_v_change_lane_start<-5))or((dut_v_change_lane_start<=15)and(rel_v_change_lane_start<-4))))
-    dut_behavior_coverage(sub_scenario:  change_lane_dut_car)
-    event planned is @start
-    !planned_side : av_side = sample(side, @planned) with:
-        cover(it) # using 
-    !planned_rel_d_change_lane_start : distance = sample(map.distance_between_locations(change_lane_dut_car.get_start_wp().location, change_lane_car1.get_start_wp().location), @change_lane.start) with:
-        cover(it, unit:centimeter, text:"Planned: How ahead is car1 relative to dut at change_lane start (in centimeter)", range:[0..3000], every:50)
+    car1 : car { .color == blue; .category == sedan; };
+    
+    +set_map("$FTX_QA/odr_maps/straight_road_1040m_3x3.xodr");
+    
+    route0 : full path;
+    route1 : full path;
+    +p0 : path_explicit(route0, {
+        map.explicit_point("-1", 0, (10 + D) * meter, 1); 
+        map.explicit_point("-1", 0, 150 * meter, 1);  
+    });
+    +p1 : path_explicit(route1, {
+        map.explicit_point("-1", 0, 10 * meter, 1); 
+        map.explicit_point("-1", 0, 200 * meter, 1);  
+    });
+    
+    do phase {--(duration: in [5]*second) { 
+        dut_car_life : serial { 
+            dut_car.drive(route0) { 
+                +l0 : set_lane(in [1]); // TODO: why do I need to have set_lane()
+                                     // since the path is explicitly chosen
+                                     // on lane=1?
+                +v0 : set_speed(in [V0_MIN..V0_MAX] * kph);
+            };
+        };
+        car1_life : serial { 
+            car1.drive(route1) { 
+                +l1 : set_lane(in [1]);
+                +v1 : set_speed(in [V1_MIN..V1_MAX] * kph);
+            };
+        };
+    };
+};
 
-type rel_lane_pos_cov: [
-    leftmost = 0,
-    middle = 1,
-    rightmost = 2
-]
+extend top::main { 
+    do ttc_scenario;
+};
+#COMPILER_SKIP_FILE
+extend av_env {
+    keep require_implicits == FALSE;
+};
 
- #  In this scenario, car1 gets ahead of the dut, then cuts in front of it,
- #  then slows down
- # /import foretify_defs.sdl;
+extend map {    
+    keep spawn_policy == anywhere;
+};
 
-scenario dut.cut_in_and_slow:
- #  Define the other car and the road path on which it happens
-    car1 : car #  The other car
-    side : av_side #  The side of which car1 cuts in, left or right
-    path : path with(road_path_kind: full) #  A path in the map
-    path_length(path:  path, min_path_length:  105meter, max_path_length:  250meter)
-    path_min_driving_lanes(path:  path, min_driving_lanes:  2)
-     #  require the path to have at least 2 lanes
-     #  Define the behavior
+extend dut {
+    keep dut_car.avoid_collisions == FALSE;
+};
 
-    do serial():
-        start_behind_dut: parallel(duration: default [1..5]second):
-            dut_car.drive(path:  path) with:
-                speed(speed: default [30..70]kph)
-            car1.drive(path:  path, adjust:  (true)) with:
-                position(distance:  [5..100]meter, behind:  dut_car, at:  start)
-        cut_in()
-        slow: parallel(duration: default [1..5]second):
-            dut_car.drive(path:  path)
-            car1.drive(path:  path) with:
-                keep_lane()
-                change_speed(range: default -[10..15]kph)
+//--
+
+extend traffic {
+    calc_ttc() is also {
+        var exp_ttc : av_time;
+        
+        if (sys.time >= 2 * av_env.av_sim_adapter.step_time()) {
+            if (not cars.all(.dut==TRUE)[0].collision_info.colliding) {
+                exp_ttc = (cars.all(.dut==TRUE)[0].global_position.x - cars.all(.dut==TRUE)[0].length - cars.all(.dut==FALSE)[0].global_position.x) /
+                          (cars.all(.dut==FALSE)[0].global_speed.x_speed - cars.all(.dut==TRUE)[0].global_speed.x_speed);
+            };
+            check that exp_ttc >= 0;
+            check that exp_ttc < ((D * meter) / ((V1_MIN - V0_MAX) * kph)) + 1 * second;
+            for each (c) in cars {
+                check that exp_ttc == c.collision_info.TTC else
+                dut_error("exp_ttc = ", exp_ttc, ", c.min_TTC = ", c.collision_info.TTC);
+                check that c.collision_info.other_car == cars[(index + 1) % 2];
+                check that c.collision_info.side == cars[(index + 1) % 2].collision_info.other_side;
+                check that c.collision_info.other_side == cars[(index + 1) % 2].collision_info.side;
+                if (c.dut) {
+                    check that c.collision_info.side in {back_left; back; back_right};
+                    check that c.collision_info.other_side in {front_left; front; front_right};
+                };
+            };
+        };
+    };
+    
+    check() is also {
+        for each (c) in cars {
+            check that c.collision_info.TTC < env.av_sim_adapter.step_time();
+        };
+    };
+};
+
+extend sys {
+    run() is also { set_check("/dut collision/", IGNORE); };
+};
+'>

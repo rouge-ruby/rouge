@@ -70,28 +70,40 @@ module Rouge
 
 	rule %r/list +of/, Keyword
 
-        rule %r/(def)((?:\s|\\\s)+)/ do
+        rule %r/(def)((?:[^\S\n])+)/ do
           groups Keyword, Text
           push :funcname
         end
 
-        rule %r/((?:actor)|(?:scenario)|(?:type)|(?:extend))((?:\s|\\\s)+)/ do
+        rule %r/((?:actor)|(?:scenario)|(?:type)|(?:extend))((?:[^\S\n])+)/ do
           groups Keyword, Text
           push :classname
         end
 
-        rule %r/((?:event)|(?:modifier))((?:\s|\\\s)+)/ do
+#should be variable name?
+        rule %r/((?:event)|(?:modifier))((?:[^\S\n])+)/ do
           groups Keyword, Text
           push :variableName
         end
 
-        rule %r/(is)((?:\s|\\\s)+)/ do
+        rule %r/(is)(?=\W)/ do
           groups Keyword, Text
           push :afterIs
         end
 
+	rule /(#{identifier})(?=\: #{identifier})/ do |m|
+	  if self.class.keywords.include? m[0] or
+	     self.class.keywords_pseudo.include? m[0] or
+	     self.class.scenarios.include? m[0] or
+	     self.class.modifiers.include? m[0] or
+	     self.class.builtin_types.include? m[0]
+	    raise 'cannot use reserved identifier as variable name'
+	  end
+	  token Name::Variable
+	  push :afterVariable
+	end
         # using negative lookbehind so we don't match property names
-        rule %r/(?<!\.)#{identifier}/ do |m|
+        rule /(?<!\.)#{identifier}/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           elsif self.class.keywords_pseudo.include? m[0]
@@ -107,7 +119,7 @@ module Rouge
           end
         end
 
-        rule identifier, Name
+        rule identifier, Name::Variable
 
 	exponentPart = /e [+-]? [0-9]+/ix
 	decimalInteger = /0 | [1-9] [0-9]*/x
@@ -137,7 +149,7 @@ module Rouge
         rule /\\./, Str::Escape
 	rule /\"/, Str, :pop!
 	rule /(\$\()/ do
-	  groups Punctuation
+	  token Punctuation
 	  push :expression
 	end
 	rule /[^\\\n\"\$]+/, Str
@@ -145,10 +157,10 @@ module Rouge
       end
 
       state :expression do
-        rule identifier, Name
+        rule identifier, Name::Variable
 
 	rule /(\()/ do
-	  groups Punctuation
+	  token Punctuation
 	  push :expression
 	end
 	rule /\)/, Punctuation, :pop!
@@ -187,11 +199,17 @@ module Rouge
       end
 
       state :variableName do
-	rule identifier, Name::Atribute, :pop!
+	rule identifier, Name::Attribute, :pop!
+      end
+
+      state :afterVariable do
+	rule /\:/, Punctuation
+	rule /\ /, Text::Whitespace
+	rule identifier, Name::Class, :pop!
       end
 
       state :afterIs do
-	rule %r/[ ]*((first)|(only)|(also))/, Keyword, :pop!
+	rule %r/[ ]+((first)|(only)|(also))/, Keyword, :pop!
 	rule %r//, Generic::Deleted, :pop!
       end
 

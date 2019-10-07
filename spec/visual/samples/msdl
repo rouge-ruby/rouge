@@ -1,7 +1,7 @@
 
 scenario dut.cut_in:
  #  Define the other car and the road path on which it happens
-    isnt: car #  The other car
+    car1: car #  The other car
     side: av_side #  The side of which car1 cuts in, left or right
     path: path with(road_path_kind: full) #  A path in the map
     path_length(path: path, min_path_length: 100meter, max_path_length: 250meter)

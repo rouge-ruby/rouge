@@ -27,7 +27,7 @@ module Rouge
       def self.scenarios
 	@scenarios ||= %w(
 	  first_of match multi_match mix one_of parallel repeat
-	  serial try emit wait_time wait call dut.error end fail
+	  serial try emit wait_time wait call dut.error start end fail
 	  out info debug trace drive if
 	)
       end
@@ -61,9 +61,9 @@ module Rouge
 	  push :string
 	end
 
-        rule %r/[^\S\n]+/, Text::Whitespace
+        rule %r/[^\S\n]+/, Text
         rule %r/[\[\](){}.,:;]/, Punctuation
-        rule %r/[\n]/, Text::Whitespace
+        rule %r/[\n]/, Text
 
         rule %r/(and|or)\b/, Operator::Word
         rule %r/[\~\!\?\$\@\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
@@ -72,7 +72,7 @@ module Rouge
 
         rule %r/(def)((?:[^\S\n])+)/ do
           groups Keyword, Text
-          push :funcname
+          push :funcDef
         end
 
         rule %r/((?:actor)|(?:scenario)|(?:type)|(?:extend))((?:[^\S\n])+)/ do
@@ -100,10 +100,10 @@ module Rouge
 	    raise 'cannot use reserved identifier as variable name'
 	  end
 	  token Name::Variable
-	  push :afterVariable
+	  push :afterVarb
 	end
-        # using negative lookbehind so we don't match property names
-        rule /(?<!\.)#{identifier}/ do |m|
+
+	rule /(#{identifier})(?=\()/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           elsif self.class.keywords_pseudo.include? m[0]
@@ -115,11 +115,12 @@ module Rouge
 	  elsif self.class.builtin_types.include? m[0]
 	    token Keyword::Type
           else
-            token Name
-          end
-        end
+	    token Name::Function
+	  end
+	  push :funcCall
+	end
 
-        rule identifier, Name::Variable
+	mixin :identifier
 
 	exponentPart = /e [+-]? [0-9]+/ix
 	decimalInteger = /0 | [1-9] [0-9]*/x
@@ -187,25 +188,110 @@ module Rouge
 
       end
 
-      state :funcname do
-        rule identifier, Name::Function, :pop!
+      state :funcDef do
+        rule identifier, Name::Function
+	rule /\(/ do
+	  token Punctuation
+	  push :funcVarbDef
+	end
+	rule /\)/, Punctuation, :pop!
       end
+
+      state :funcVarbDef do
+	rule identifier do
+	  token Name::Variable
+	  push :funcDefAfterVarb
+	end
+	rule %r/ +/, Text
+	rule %r/(?=\))/, Generic::Deleted, :pop!
+      end
+
+      state :funcDefAfterVarb do
+          if self.class.keywords.include? m[0]
+            token Keyword
+          elsif self.class.keywords_pseudo.include? m[0]
+            token Keyword::Pseudo
+	  elsif self.class.scenarios.include? m[0]
+	    token Name::Builtin
+	  elsif self.class.modifiers.include? m[0]
+	    token Name::Builtin::Pseudo
+	  elsif self.class.builtin_types.include? m[0]
+	    token Keyword::Type
+          else
+	    token Name::Class
+	  end
+	rule %r/ +/, Text
+	rule %r/\:/, Punctuation
+	rule %r/(\,)|(?=\()/, Punctuation, :pop!
+	mixin :expression
+      end
+
+      state :funcCall do
+	rule %r/\(/, Punctuation
+	rule identifier do
+	  token Name::Variable
+	  push :funcVarbVal
+	end
+	rule %r/ +/, Text
+	rule %r/\)/, Punctuation, :pop!
+      end
+
+      state :funcVarbVal do
+	mixin :identifier
+	rule %r/ +/, Text
+	rule %r/\:/, Punctuation
+	rule %r/(\,)|(?=\))/, Punctuation, :pop!
+	mixin :expression
+      end
+
+      state :identifier do
+        rule identifier do |m|
+          if self.class.keywords.include? m[0]
+            token Keyword
+          elsif self.class.keywords_pseudo.include? m[0]
+            token Keyword::Pseudo
+	  elsif self.class.scenarios.include? m[0]
+	    token Name::Builtin
+	  elsif self.class.modifiers.include? m[0]
+	    token Name::Builtin::Pseudo
+	  elsif self.class.builtin_types.include? m[0]
+	    token Keyword::Type
+          else
+            token Name
+          end
+        end
+      end
+
 
       state :classname do
         rule identifier, Name::Class
 	rule %r/\./, Punctuation
 	rule %r/:/, Punctuation, :pop!
-	rule %r/[^\S\n]*{/, Punctuation, :pop!
       end
 
       state :variableName do
 	rule identifier, Name::Attribute, :pop!
       end
 
-      state :afterVariable do
-	rule /\:/, Punctuation
-	rule /\ /, Text::Whitespace
+      state :afterVarb do
+	rule %r/\:/, Punctuation
+	rule %r/ +/, Text
+	rule %r/#{identifier}(?=\()/ do
+	  token Name::Class
+	  push :constrCall
+	end 
 	rule identifier, Name::Class, :pop!
+	rule %r/\)/, Punctuation, :pop!
+      end
+
+      state :constrCall do
+	rule %r/\(/, Punctuation
+	rule identifier do
+	  token Name::Variable
+	  push :funcVarbVal
+	end
+	rule %r/ +/, Text
+	rule %r/(?=\))/, Punctuation, :pop!
       end
 
       state :afterIs do

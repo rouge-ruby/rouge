@@ -99,15 +99,15 @@ module Rouge
         end
 
         rule %r/"(\\\\|\\"|[^"])*"/, Str
-        rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
+        rule %r/'(?:\\.|[^\\]|\\u\h{4})'/, Str::Char
 
         rule %r/[~^*!%&<>\|+=\/?-]/, Operator
         rule %r/[@#\$()`{}\[\]:;,.\\]/, Punctuation
 
-        digit = /[0-9]_+[0-9]|[0-9]/
+        digit = /\d_+\d|\d/
         bin_digit = /[01]_+[01]|[01]/
         oct_digit = /[0-7]_+[0-7]|[0-7]/
-        hex_digit = /[0-9a-f]_+[0-9a-f]|[0-9a-f]/i
+        hex_digit = /\h_+\h|\h/
         rule %r/#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
         rule %r/'#{bin_digit}+'B/i, Num::Bin
         rule %r/'#{hex_digit}+'H/i, Num::Hex

@@ -47,24 +47,23 @@ module Rouge
 
       identifier = /[a-z_][a-z0-9_]*/i
       state :root do
-	preProcBody = /<<.*$<</
-	rule /\$.*([^.]|#{preProcBody})/, Comment::Preproc
+	rule /\$.*?\<\<[.[^.]]*?\$\<\</, Comment::Preproc #should be multiline?
+	rule /\$.*/, Comment::Preproc
 
 	rule %r(/\*.*\*/)m, Comment::Multiline
 	rule /(\#)/ do
 	  groups Comment, Text
-	  push :commentOrPreproc
+	  push :commentOrIgnore
 	end
 
-	rule /(\")/ do
+	rule /(")/ do
 	  groups Str, Text
 	  push :string
 	end
 
-        rule %r/[^\S\n]+/, Text
-        rule %r(#(.*)?\n?), Comment::Single
+        rule %r/[^\S\n]+/, Text::Whitespace
         rule %r/[\[\](){}.,:;]/, Punctuation
-        rule %r/[\\\n][\\\r]/, Text
+        rule %r/[\n]/, Text::Whitespace
 
         rule %r/(and|or)\b/, Operator::Word
         rule %r/[\~\!\?\$\@\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
@@ -76,32 +75,12 @@ module Rouge
           push :funcname
         end
 
-        rule %r/(actor)((?:\s|\\\s)+)/ do
+        rule %r/((?:actor)|(?:scenario)|(?:type)|(?:extend))((?:\s|\\\s)+)/ do
           groups Keyword, Text
           push :classname
         end
 
-        rule %r/(scenario)((?:\s|\\\s)+)/ do
-          groups Keyword, Text
-          push :classname
-        end
-
-        rule %r/(type)((?:\s|\\\s)+)/ do
-          groups Keyword, Text
-          push :classname
-        end
-
-        rule %r/(extend)((?:\s|\\\s)+)/ do
-          groups Keyword, Text
-          push :classname
-        end
-
-        rule %r/(event)((?:\s|\\\s)+)/ do
-          groups Keyword, Text
-          push :variableName
-        end
-
-        rule %r/(modifier)((?:\s|\\\s)+)/ do
+        rule %r/((?:event)|(?:modifier))((?:\s|\\\s)+)/ do
           groups Keyword, Text
           push :variableName
         end
@@ -148,16 +127,52 @@ module Rouge
 
       end
 
-      state :commentOrPreproc do
-        rule /\#COMPILER_SKIP_FILE.*/m, Generic::Emph
-	rule /\#COMPILER_IGNORE_BEGIN.*#COMPILER_IGNORE_END/m, Generic::Emph, :pop!
+      state :commentOrIgnore do
+#        rule /COMPILER_SKIP_FILE.*/m, Comment::Special
+	rule /COMPILER_IGNORE_BEGIN.*#COMPILER_IGNORE_END/m, Comment::Special, :pop!
 	rule /.*[^.]/, Comment::Single, :pop!
       end
 
       state :string do
         rule /\\./, Str::Escape
 	rule /\"/, Str, :pop!
-	rule /[^\\\n\"]+/, Str
+	rule /(\$\()/ do
+	  groups Punctuation
+	  push :expression
+	end
+	rule /[^\\\n\"\$]+/, Str
+	rule /\$/, Str
+      end
+
+      state :expression do
+        rule identifier, Name
+
+	rule /(\()/ do
+	  groups Punctuation
+	  push :expression
+	end
+	rule /\)/, Punctuation, :pop!
+
+        rule %r/[\[\]{}.,:;]/, Punctuation
+        rule %r/(and|or)\b/, Operator::Word
+        rule %r/[\~\!\?\$\@\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
+
+        rule %r/0b(_?[0-1])+/i, Num::Bin
+        rule %r/0o(_?[0-7])+/i, Num::Oct
+        rule %r/0x(_?[a-f0-9])+/i, Num::Hex
+
+	exponentPart = /e [+-]? [0-9]+/ix
+	decimalInteger = /0 | [1-9] [0-9]*/x
+	decimalNumber = /#{decimalInteger}?\.[0-9]/
+
+        decimalLiteral = %r/([1-9](_?[0-9])*|0)/
+        floatLiteral = /(#{decimalNumber}#{exponentPart}?)|(#{decimalInteger}#{exponentPart})/
+
+	 #quantified number
+	rule /(#{floatLiteral}|#{decimalLiteral})([a-zA-Z&&[^e]])([a-zA-Z]*)/, Num
+	rule /(#{floatLiteral})/, Num::Float
+	rule /#{decimalLiteral}/, Num::Integer
+
       end
 
       state :funcname do

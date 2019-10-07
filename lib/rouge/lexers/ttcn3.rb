@@ -101,7 +101,7 @@ module Rouge
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
 
         rule %r/[~^*!%&<>\|+=\/?-]/, Operator
-        rule %r/[@#\$()`{}\[\]:;<>,.\\]/, Punctuation
+        rule %r/[@#\$()`{}\[\]:;,.\\]/, Punctuation
 
         digit = /[0-9]_+[0-9]|[0-9]/
         bin_digit = /[01]_+[01]|[01]/

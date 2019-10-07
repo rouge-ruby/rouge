@@ -112,7 +112,6 @@ module Rouge
         rule %r/'#{hex_digit}+'H/i, Num::Hex
         rule %r/'#{oct_digit}+'O/, Num::Oct
         rule %r/#{digit}+L?/, Num::Integer
-        rule %r/\n/, Text
       end
 
       state :module do

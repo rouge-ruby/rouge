@@ -55,7 +55,8 @@ module Rouge
 
       state :root do
         rule %r/[^\S\n]+/, Text
-        rule %r(//.*?$), Comment::Single
+
+        rule %r(//.*), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
 
         # keywords: go before method names to avoid lexing "throw new XYZ"

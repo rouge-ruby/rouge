@@ -90,7 +90,7 @@ module Rouge
           if self.class.keywords.include? m[0]
             token Keyword
           elsif self.class.reserved.include? m[0]
-            # Was not used in submitted version
+            token Keyword::Reserved
           elsif self.class.types.include? m[0]
             token Keyword::Type
           else

@@ -60,7 +60,6 @@ module Rouge
 
         # keywords: go before method names to avoid lexing "throw new XYZ"
         # as a method signature
-        rule %r{[~!@#\$%\^&\*\(\)\+`\-={}\[\]:;<>\?,\.\/\|\\]}, Punctuation
         rule %r(
           (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
           ([a-zA-Z_][a-zA-Z0-9_]*)                  # method name
@@ -101,7 +100,8 @@ module Rouge
         rule %r/"(\\\\|\\"|[^"])*"/, Str
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
 
-        rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
+        rule %r/[~^*!%&<>\|+=\/?-]/, Operator
+        rule %r/[@#\$()`{}\[\]:;<>,.\\]/, Punctuation
 
         digit = /[0-9]_+[0-9]|[0-9]/
         bin_digit = /[01]_+[01]|[01]/

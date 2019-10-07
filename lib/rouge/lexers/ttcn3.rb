@@ -57,9 +57,9 @@ module Rouge
         rule %r/[^\S\n]+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
+
         # keywords: go before method names to avoid lexing "throw new XYZ"
         # as a method signature
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword
         rule %r{[~!@#\$%\^&\*\(\)\+`\-={}\[\]:;<>\?,\.\/\|\\]}, Punctuation
         rule %r(
           (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
@@ -73,21 +73,34 @@ module Rouge
           token Operator, m[4]
         end
 
-        rule %r/@#{id}/, Name::Decorator
-        rule %r/(?:#{types.join('|')})\b/, Keyword::Type
         rule %r/(?:true|false|null)\b/, Keyword::Constant
         rule %r/(module)\b/, Keyword::Declaration, :module
         rule %r/import\b/, Keyword::Namespace, :import
-        rule %r/"(\\\\|\\"|[^"])*"/, Str
-        rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
+        rule const_name, Name::Constant
+        rule module_name, Name::Label
+
         rule %r/(\.)(#{id})/ do
           groups Operator, Name::Attribute
         end
-
+        rule %r/@#{id}/, Name::Decorator
         rule %r/#{id}:/, Name::Label
-        rule const_name, Name::Constant
-        rule module_name, Name::Label
-        rule %r/\$?#{id}/, Name
+        rule %r/\$#{id}/, Name
+
+        rule id do |m|
+          if self.class.keywords.include? m[0]
+            token Keyword
+          elsif self.class.reserved.include? m[0]
+            # Was not used in submitted version
+          elsif self.class.types.include? m[0]
+            token Keyword::Type
+          else
+            token Name
+          end
+        end
+
+        rule %r/"(\\\\|\\"|[^"])*"/, Str
+        rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
+
         rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
 
         digit = /[0-9]_+[0-9]|[0-9]/
@@ -104,7 +117,7 @@ module Rouge
 
       state :module do
         rule %r/\s+/m, Text
-        rule id, Name::Module, :pop!
+        rule id, Name::Class, :pop!
       end
 
       state :import do

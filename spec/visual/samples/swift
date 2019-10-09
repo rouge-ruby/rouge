@@ -416,6 +416,7 @@ var `var` = 3
 
 // keypath
 let keypath = \Person.firstName
+var keyPath: KeyPath<String, Bool> = \.isEmpty
 
 // tuple destructuring
 let (t1, t2) = (1, 2)

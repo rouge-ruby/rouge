@@ -67,7 +67,9 @@ module Rouge
 
       state :root do
         mixin :whitespace
+        
         rule %r/\$(([1-9]\d*)?\d)/, Name::Variable
+        rule %r/\\\.(#{id})/, Keyword::Type
 
         rule %r{[()\[\]{}:;,?\\]}, Punctuation
         rule %r([-/=+*%<>!&|^.~]+), Operator
@@ -109,8 +111,6 @@ module Rouge
         rule %r/(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
         end
-
-        rule %r/\\\.(#{id})/, Keyword::Type
 
         rule %r/(let|var)\b(\s*)([(])/ do
           groups Keyword, Text, Punctuation

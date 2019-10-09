@@ -69,7 +69,6 @@ module Rouge
         mixin :whitespace
         
         rule %r/\$(([1-9]\d*)?\d)/, Name::Variable
-        rule %r/\\\.(#{id})/, Keyword::Type
 
         rule %r{[()\[\]{}:;,?\\]}, Punctuation
         rule %r([-/=+*%<>!&|^.~]+), Operator

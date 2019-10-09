@@ -97,4 +97,39 @@ HTML
       assert { output == expected }
     end
   end
+
+  describe 'the rendered table with a data attribute' do
+    let(:options) do
+      {
+        start_line:   15,
+        table_class:  'code-table',
+        gutter_class: 'code-gutter',
+        code_class:   'fenced-code',
+        line_class:   'line-no',
+        line_id:      'L%i',
+        line_attr:    'data-line'
+      }
+    end
+    let(:input_stream) { [[Token['Name'], 'foo'], [Token['Text'], "bar\n"]] }
+
+    it 'is customizable' do
+      expected = <<-HTML
+<table class="code-table">
+  <tbody>
+    <tr data-line="L15" class="line-no">
+      <td class="code-gutter gl" style="#{cell_style}"><pre>15</pre></td>
+      <td class="fenced-code">
+        <pre><span class="n">foo</span>bar\n</pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+HTML
+      expected = expected.gsub(%r{>\s+<(?!/pre)}, '><').rstrip
+
+      refute_includes output, 'id="L1"'
+      refute_includes output, 'data-line="L1"'
+      assert { output == expected }
+    end
+  end
 end

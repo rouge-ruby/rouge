@@ -94,7 +94,8 @@ The built-in formatters are:
   table containing numbered lines, each contained in its own table-row. Options
   are:
     * `start_line: 1` - the number of the first row
-    * `line_id: 'line-%i'` - a `sprintf` template for `id` attribute with
+    * `line_attr: 'id'` - the html attribute used to get the line number
+    * `line_id: 'line-%i'` - a `sprintf` template for `line_attr` attribute with
       current line number
     * `line_class: 'lineno'` - a CSS class for each table-row
     * `table_class: 'rouge-line-table'` - a CSS class for the table

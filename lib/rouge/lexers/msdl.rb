@@ -34,7 +34,12 @@ module Rouge
 
       def self.modifiers
 	@modifiers ||= %w(
-	  in on synchronize until
+	  in on synchronize until acceleration lane speed position keep_lane
+	  keep_speed keep_position change_lane change_speed no_collide path_curve
+	  path_different_dest path_different_origin path_explicit path_facing
+	  path_has_sign path_has_no_signs path_length path_max_lanes path_min_lanes
+	  path_min_driving_lanes path_over_junction path_over_lanes_decrease
+	  path_overlap path_same_dest set_map
 	)
       end
 
@@ -61,9 +66,9 @@ module Rouge
 	  push :string
 	end
 
-        rule %r/[^\S\n]+/, Text
+        rule %r/[^\S\n]+/, Text::Whitespace
         rule %r/[\[\](){}.,:;]/, Punctuation
-        rule %r/[\n]/, Text
+        rule %r/[\n]/, Text::Whitespace
 
         rule %r/(and|or)\b/, Operator::Word
         rule %r/[\~\!\?\$\@\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
@@ -95,11 +100,14 @@ module Rouge
 	  if self.class.keywords.include? m[0] or
 	     self.class.keywords_pseudo.include? m[0] or
 	     self.class.scenarios.include? m[0] or
-	     self.class.modifiers.include? m[0] or
 	     self.class.builtin_types.include? m[0]
 	    raise 'cannot use reserved identifier as variable name'
 	  end
-	  token Name::Variable
+	  if self.class.modifiers.include? m[0]
+	    token Name::Builtin::Pseudo
+	  else
+	    token Name::Variable
+	  end
 	  push :afterVarb
 	end
 
@@ -159,6 +167,7 @@ module Rouge
 
       state :expression do
         rule identifier, Name::Variable
+	rule %r/ /, Text::Whitespace
 
 	rule /(\()/ do
 	  token Punctuation
@@ -202,7 +211,7 @@ module Rouge
 	  token Name::Variable
 	  push :funcDefAfterVarb
 	end
-	rule %r/ +/, Text
+	rule %r/ +/, Text::Whitespace
 	rule %r/(?=\))/, Generic::Deleted, :pop!
       end
 
@@ -220,7 +229,7 @@ module Rouge
           else
 	    token Name::Class
 	  end
-	rule %r/ +/, Text
+	rule %r/ +/, Text::Whitespace
 	rule %r/\:/, Punctuation
 	rule %r/(\,)|(?=\()/, Punctuation, :pop!
 	mixin :expression
@@ -232,13 +241,13 @@ module Rouge
 	  token Name::Variable
 	  push :funcVarbVal
 	end
-	rule %r/ +/, Text
+	rule %r/ +/, Text::Whitespace
 	rule %r/\)/, Punctuation, :pop!
       end
 
       state :funcVarbVal do
 	mixin :identifier
-	rule %r/ +/, Text
+	rule %r/ +/, Text::Whitespace
 	rule %r/\:/, Punctuation
 	rule %r/(\,)|(?=\))/, Punctuation, :pop!
 	mixin :expression
@@ -275,9 +284,15 @@ module Rouge
 
       state :afterVarb do
 	rule %r/\:/, Punctuation
-	rule %r/ +/, Text
-	rule %r/#{identifier}(?=\()/ do
-	  token Name::Class
+	rule %r/ +/, Text::Whitespace
+	rule %r/#{identifier}(?=\()/ do |m|
+          if self.class.keywords_pseudo.include? m[0]
+            token Keyword::Pseudo
+	  elsif self.class.scenarios.include? m[0]
+	    token Name::Builtin
+	  else
+	    token Name::Class
+	  end
 	  push :constrCall
 	end 
 	rule identifier, Name::Class, :pop!
@@ -290,7 +305,7 @@ module Rouge
 	  token Name::Variable
 	  push :funcVarbVal
 	end
-	rule %r/ +/, Text
+	rule %r/ +/, Text::Whitespace
 	rule %r/(?=\))/, Punctuation, :pop!
       end
 

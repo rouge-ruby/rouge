@@ -21,6 +21,9 @@ module Rouge
         rule %r/(call)(\s+)(\d+)/i do
           groups Keyword, Text::Whitespace, Literal::Number::Integer
         end
+        rule %r/(call)(\s+)(\w+)(#)(\d+)/i do
+          groups Keyword, Text::Whitespace, Name::Builtin, Punctuation, Literal::Number::Integer
+        end
 
         # Unconditional jumps
         rule %r/(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do

@@ -13,7 +13,7 @@ module Rouge
       ).join('|')
 
       MISC_KEYWORDS = %w(
-        be16 be32 be64 exit lock
+        be16 be32 be64 exit lock map
       ).join('|')
 
       state :root do

@@ -17,6 +17,17 @@ module Rouge
       ).join('|')
 
       state :root do
+        # Line numbers and hexadecimal output from bpftool/objdump
+        rule %r/(\d+)(:)(\s+)(\(\h{2}\))/i do
+          groups Generic::Lineno, Punctuation, Text::Whitespace, Generic
+        end
+        rule %r/(\d+)(:)(\s+)((?:\h{2} ){8})/i do
+          groups Generic::Lineno, Punctuation, Text::Whitespace, Generic
+        end
+        rule %r/(\d+)(:)(\s+)/i do
+          groups Generic::Lineno, Punctuation, Text::Whitespace
+        end
+
         # Calls to helpers
         rule %r/(call)(\s+)(\d+)/i do
           groups Keyword, Text::Whitespace, Literal::Number::Integer

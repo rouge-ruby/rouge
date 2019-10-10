@@ -28,10 +28,10 @@ module Rouge
         end
 
         # Conditional jumps
-        rule %r/(if)(\s+)(r\d+)(\s*)([s!=<>]+)(\s*)(0x\h+|[-]?\d+)(\s*)(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
+        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)(0x\h+|[-]?\d+)(\s*)(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
           groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Literal::Number, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Integer, Text::Whitespace, Name::Label
         end
-        rule %r/(if)(\s+)(r\d+)(\s*)([s!=<>]+)(\s*)(r\d+)(\s*)(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
+        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)([rw]\d+)(\s*)(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
           groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Name, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Integer, Text::Whitespace, Name::Label
         end
 
@@ -45,7 +45,7 @@ module Rouge
         rule %r/[+-\/\*&|><^s]{0,3}=/i, Operator
 
         # Registers
-        rule %r/([+-]?)(r\d+)/i do
+        rule %r/([+-]?)([rw]\d+)/i do
           groups Punctuation, Name
         end
 
@@ -73,7 +73,7 @@ module Rouge
 
       state :address do
         # Address is offset from register
-        rule %r/(\()(r\d+)(\s*)([+-])(\s*)(\d+)(\))/i do
+        rule %r/(\()([rw]\d+)(\s*)([+-])(\s*)(\d+)(\))/i do
           groups Punctuation, Name, Text::Whitespace, Operator, Text::Whitespace, Literal::Number::Integer, Punctuation
           pop!
         end
@@ -83,7 +83,7 @@ module Rouge
           groups Name, Punctuation, Literal::Number::Integer, Punctuation
           pop!
         end
-        rule %r/(\w+)(\[)(r\d+)(\])/i do
+        rule %r/(\w+)(\[)([rw]\d+)(\])/i do
           groups Name, Punctuation, Name, Punctuation
           pop!
         end

@@ -49,6 +49,9 @@ module Rouge
       #
       #     Lexer.find_fancy('guess', "#!/bin/bash\necho Hello, world")
       #
+      #   If the code matches more than one lexer then Guesser::Ambiguous
+      #   is raised.
+      #
       # This is used in the Redcarpet plugin as well as Rouge's own
       # markdown lexer for highlighting internal code blocks.
       #

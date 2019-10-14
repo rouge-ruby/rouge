@@ -10,7 +10,6 @@ module Rouge
       aliases 'sdl'
       filenames '*.sdl'
 
-
       def self.keywords
         @keywords ||= %w(
           any call cover def defualt do else emit empty

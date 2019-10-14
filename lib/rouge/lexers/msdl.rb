@@ -12,10 +12,9 @@ module Rouge
 
       def self.keywords
         @keywords ||= %w(
-          any call cover def defualt do else emit empty
-          if import in keep like match multi_match
-          not on outer properties repeat sample soft struct
-          then try undefined wait when with
+          any call cover def defualt do else emit empty if import in
+          keep like match multi_match not on outer properties repeat
+          sample soft struct then try undefined wait when with
         ) # is, is first, is only, is also and list of are handled later 
       end
 
@@ -25,20 +24,21 @@ module Rouge
 
       def self.scenarios
         @scenarios ||= %w(
-          first_of match multi_match mix one_of parallel repeat
-          serial try emit wait_time wait call dut.error start end fail
-          out info debug trace drive if
+          first_of match multi_match mix one_of parallel repeat serial
+          try emit wait_time wait call dut.error start end fail out info
+          debug trace drive if
         )
       end
 
       def self.modifiers
         @modifiers ||= %w(
-          in on synchronize until acceleration lane speed position keep_lane
-          keep_speed keep_position change_lane change_speed no_collide path_curve
-          path_different_dest path_different_origin path_explicit path_facing
-          path_has_sign path_has_no_signs path_length path_max_lanes path_min_lanes
-          path_min_driving_lanes path_over_junction path_over_lanes_decrease
-          path_overlap path_same_dest set_map
+          in on synchronize until acceleration lane speed position
+          keep_lane keep_speed keep_position change_lane change_speed
+          no_collide path_curve path_different_dest
+          path_different_origin path_explicit path_facing path_has_sign
+          path_has_no_signs path_length path_max_lanes path_min_lanes
+          path_min_driving_lanes path_over_junction
+          path_over_lanes_decrease path_overlap path_same_dest set_map
         )
       end
 

@@ -4,6 +4,19 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.12.0: 2019-10-16
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.11.1...v3.12.0)
+
+- General
+  - Handle Guesser::Ambiguous in Markdown context ([#1349](https://github.com/rouge-ruby/rouge/pull/1349/) by John Fairhurst)
+  - Ensure XML lexer handles unknown DOCTYPEs ([#1348](https://github.com/rouge-ruby/rouge/pull/1348/) by John Fairhurst)
+  - Remove note about GitHub Pages' version of Rouge ([#1344](https://github.com/rouge-ruby/rouge/pull/1344/) by Andrew Petz)
+- Embedded Elixir Lexer
+  - Add Phoenix Live View file glob to Embedded Elixir lexer ([#1347](https://github.com/rouge-ruby/rouge/pull/1347/) by Maksym Verbovyi)
+- Minizinc Lexer (**NEW**)
+  - Add MiniZinc lexer ([#1329](https://github.com/rouge-ruby/rouge/pull/1329/) by Abe Voelker)
+
 ## version 3.11.1: 2019-10-02
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.11.0...v3.11.1)

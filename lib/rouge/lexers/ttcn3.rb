@@ -12,7 +12,7 @@ module Rouge
       mimetypes 'text/x-ttcn3', 'text/x-ttcn'
 
       def self.keywords
-        @keywords = %w(
+        @keywords ||= %w(
           module import group type port component signature external
           execute const template function altstep testcase var timer if
           else select case for while do label goto start stop return
@@ -30,7 +30,7 @@ module Rouge
       end
 
       def self.reserved
-        @reserved = %w(
+        @reserved ||= %w(
           all alt apply assert at configuration conjunct const control
           delta deterministic disjunct duration fail finished fuzzy from
           history implies inconc inv lazy mod mode notinv now omit
@@ -40,7 +40,7 @@ module Rouge
       end
 
       def self.types
-        @types = %w(
+        @types ||= %w(
           anytype address boolean bitstring charstring hexstring octetstring
           component enumerated float integer port record set of union universal
         )

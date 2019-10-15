@@ -46,24 +46,18 @@ module Rouge
         )
       end
 
-      # optional comment or whitespace
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
       const_name = /[A-Z][a-zA-Z0-9_]*\b/
       module_name = /[A-Z][a-zA-Z0-9_]*\b/
 
       state :root do
         rule %r/\s+/, Text
-
         rule %r(//.*), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
-
-        # keywords: go before method names to avoid lexing "throw new XYZ"
-        # as a method signature
         rule %r(
           (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
-          ([a-zA-Z_][a-zA-Z0-9_]*)                  # method name
-          (\s*)(\()                                 # signature start
+          ([a-zA-Z_][a-zA-Z0-9_]*)                    # method name
+          (\s*)(\()                                   # signature start
         )mx do |m|
           # TODO: do this better, this shouldn't need a delegation
           delegate TTCN3, m[1]

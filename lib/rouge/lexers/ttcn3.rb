@@ -32,7 +32,7 @@ module Rouge
       def self.reserved
         @reserved = %w(
           all alt apply assert at configuration conjunct const control
-          delta deterministic disjunct duration fail finished fuzzy
+          delta deterministic disjunct duration fail finished fuzzy from
           history implies inconc inv lazy mod mode notinv now omit
           onentry onexit par pass prev realtime seq setstate static
           stepsize stream timestamp until values wait
@@ -41,17 +41,16 @@ module Rouge
 
       def self.types
         @types = %w(
-          anytype address boolean bitstring bytestring charstring
-          component enumerated float integer hexstring octetstring port
-          record set of union universal
+          anytype address boolean bitstring charstring hexstring octetstring
+          component enumerated float integer port record set of union universal
         )
       end
 
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
-      const_name = /[A-Z][A-Z0-9_]*\b/
-      module_name = /[A-Z][a-zA-Z0-9]*\b/
+      const_name = /[A-Z][a-zA-Z0-9_]*\b/
+      module_name = /[A-Z][a-zA-Z0-9_]*\b/
 
       state :root do
         rule %r/[^\S\n]+/, Text

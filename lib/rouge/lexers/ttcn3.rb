@@ -53,7 +53,7 @@ module Rouge
       module_name = /[A-Z][a-zA-Z0-9_]*\b/
 
       state :root do
-        rule %r/[^\S\n]+/, Text
+        rule %r/\s+/, Text
 
         rule %r(//.*), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline

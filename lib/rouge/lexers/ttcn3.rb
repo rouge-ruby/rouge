@@ -46,66 +46,108 @@ module Rouge
         )
       end
 
-      id = /[a-zA-Z_][\w]*/
-      const_name = /[A-Z][\w]*\b/
-      module_name = /[A-Z][\w]*\b/
+      def self.builtins
+        @builtins ||= []
+      end
 
-      state :root do
-        rule %r/\s+/, Text
-        rule %r(//.*), Comment::Single
-        rule %r(/\*.*?\*/)m, Comment::Multiline
-        rule %r(
-          (\s*(?:[a-zA-Z_][\w.\[\]<>]*\s+)+?) # return arguments
-          ([a-zA-Z_][\w]*)                    # method name
-          (\s*)(\()                           # signature start
-        )mx do |m|
-          # TODO: do this better, this shouldn't need a delegation
-          delegate TTCN3, m[1]
-          token Name::Function, m[2]
-          token Text, m[3]
-          token Operator, m[4]
-        end
+      # optional comment or whitespace
+      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
+      id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
-        rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/(module)\b/, Keyword::Declaration, :module
-        rule %r/import\b/, Keyword::Namespace, :import
-        rule const_name, Name::Constant
-        rule module_name, Name::Label
+      state :inline_whitespace do
+        rule %r/[ \t\r]+/, Text
+        rule %r/\\\n/, Text # line continuation
+        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
+      end
 
-        rule %r/(\.)(#{id})/ do
-          groups Operator, Name::Attribute
-        end
-        rule %r/@#{id}/, Name::Decorator
-        rule %r/#{id}:/, Name::Label
-        rule %r/\$#{id}/, Name
+      state :whitespace do
+        rule %r/\n+/m, Text
+        rule %r(//(\\.|.)*?$), Comment::Single
+        mixin :inline_whitespace
+      end
 
-        rule id do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.reserved.include? m[0]
-            token Keyword::Reserved
-          elsif self.class.types.include? m[0]
-            token Keyword::Type
-          else
-            token Name
-          end
-        end
+      state :expr_whitespace do
+        rule %r/\n+/m, Text
+        mixin :whitespace
+      end
 
-        rule %r/"(\\\\|\\"|[^"])*"/, Str
-        rule %r/'(?:\\.|[^\\]|\\u\h{4})'/, Str::Char
-
-        rule %r/[~^*!%&<>\|+=\/?-]/, Operator
-        rule %r/[@#\$()`{}\[\]:;,.\\]/, Punctuation
-
+      state :statements do
+        mixin :whitespace
         digit = /\d_+\d|\d/
         bin_digit = /[01]_+[01]|[01]/
         oct_digit = /[0-7]_+[0-7]|[0-7]/
         hex_digit = /\h_+\h|\h/
-        rule %r/#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/, Num::Float
+        rule %r/"/, Str, :string
+        rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
+        rule %r/#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/i, Num::Float
         rule %r/'#{bin_digit}+'B/i, Num::Bin
         rule %r/'#{hex_digit}+'H/i, Num::Hex
-        rule %r/'#{oct_digit}+'O/, Num::Oct
-        rule %r/#{digit}+L?/, Num::Integer
+        rule %r/'#{oct_digit}+'O/i, Num::Oct
+        rule %r/#{digit}+L?/i, Num::Integer
+        rule %r(\*/), Error
+        rule %r([~!%^&*+:=\|?:<>/-]), Operator
+        rule %r/[()\[\],.;]/, Punctuation
+        rule %r/\bcase\b/, Keyword, :case
+        rule %r/(?:true|false|null)\b/, Name::Builtin
+        rule id do |m|
+          name = m[0]
+          if self.class.keywords.include? name
+            token Keyword
+          elsif self.class.types.include? name
+            token Keyword::Type
+          elsif self.class.reserved.include? name
+            token Keyword::Reserved
+          elsif self.class.builtins.include? name
+            token Name::Builtin
+          else
+            token Name
+          end
+        end
+      end
+
+      state :case do
+        rule %r/:/, Punctuation, :pop!
+        mixin :statements
+      end
+
+      state :root do
+        mixin :expr_whitespace
+        rule %r(
+          ([\w*\s]+?[\s*]) # return arguments
+          (#{id})          # function name
+          (\s*\([^;]*?\))  # signature
+          (#{ws}?)({|;)    # open brace or semicolon
+        )mx do |m|
+          recurse m[1]
+          token Name::Function, m[2]
+          recurse m[3]
+          recurse m[4]
+          token Punctuation, m[5]
+        end
+
+        rule %r/\{/, Punctuation, :function
+
+        rule %r/module\b/, Keyword::Declaration, :module
+
+        rule %r/import\b/, Keyword::Namespace, :import
+
+        mixin :statements
+      end
+
+      state :function do
+        mixin :whitespace
+        mixin :statements
+        rule %r/;/, Punctuation
+        rule %r/{/, Punctuation, :function
+        rule %r/}/, Punctuation, :pop!
+      end
+
+      state :string do
+        rule %r/"/, Str, :pop!
+        rule %r/\\([\\abfnrtv"']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})/, Str::Escape
+        rule %r/[^\\"\n]+/, Str
+        rule %r/\\\n/, Str
+        rule %r/\\/, Str # stray backslash
       end
 
       state :module do
@@ -117,6 +159,7 @@ module Rouge
         rule %r/\s+/m, Text
         rule %r/[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
       end
+
     end
   end
 end

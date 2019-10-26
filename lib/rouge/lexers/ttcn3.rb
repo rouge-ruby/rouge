@@ -46,10 +46,6 @@ module Rouge
         )
       end
 
-      def self.builtins
-        @builtins ||= []
-      end
-
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_]\w*/
@@ -97,8 +93,6 @@ module Rouge
             token Keyword::Type
           elsif self.class.reserved.include? name
             token Keyword::Reserved
-          elsif self.class.builtins.include? name
-            token Name::Builtin
           else
             token Name
           end

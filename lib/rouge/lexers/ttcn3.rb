@@ -100,7 +100,6 @@ module Rouge
 
       state :root do
         rule %r/module\b/, Keyword::Declaration, :module
-
         rule %r/import\b/, Keyword::Namespace, :import
 
         mixin :statements

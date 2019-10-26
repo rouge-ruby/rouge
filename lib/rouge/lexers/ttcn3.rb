@@ -74,7 +74,7 @@ module Rouge
         rule %r(\*/), Error
 
         rule %r([~!%^&*+:=\|?:<>/-]), Operator
-        rule %r/[()\[\],.;]/, Punctuation
+        rule %r/[()\[\]{},.;]/, Punctuation
 
         rule %r/\bcase\b/, Keyword, :case
         rule %r/(?:true|false|null)\b/, Name::Builtin
@@ -112,20 +112,11 @@ module Rouge
           token Punctuation, m[5]
         end
 
-        rule %r/\{/, Punctuation, :function
-
         rule %r/module\b/, Keyword::Declaration, :module
 
         rule %r/import\b/, Keyword::Namespace, :import
 
         mixin :statements
-      end
-
-      state :function do
-        mixin :statements
-        rule %r/;/, Punctuation
-        rule %r/{/, Punctuation, :function
-        rule %r/}/, Punctuation, :pop!
       end
 
       state :string do

@@ -49,6 +49,10 @@ module Rouge
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_]\w*/
+      digit = /\d_+\d|\d/
+      bin_digit = /[01]_+[01]|[01]/
+      oct_digit = /[0-7]_+[0-7]|[0-7]/
+      hex_digit = /\h_+\h|\h/
 
       state :statements do
         rule %r/\n+/m, Text
@@ -58,22 +62,23 @@ module Rouge
         rule %r(//(\\.|.)*?$), Comment::Single
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
 
-        digit = /\d_+\d|\d/
-        bin_digit = /[01]_+[01]|[01]/
-        oct_digit = /[0-7]_+[0-7]|[0-7]/
-        hex_digit = /\h_+\h|\h/
         rule %r/"/, Str, :string
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
+        
         rule %r/#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/i, Num::Float
         rule %r/'#{bin_digit}+'B/i, Num::Bin
         rule %r/'#{hex_digit}+'H/i, Num::Hex
         rule %r/'#{oct_digit}+'O/i, Num::Oct
         rule %r/#{digit}+L?/i, Num::Integer
+
         rule %r(\*/), Error
+
         rule %r([~!%^&*+:=\|?:<>/-]), Operator
         rule %r/[()\[\],.;]/, Punctuation
+
         rule %r/\bcase\b/, Keyword, :case
         rule %r/(?:true|false|null)\b/, Name::Builtin
+
         rule id do |m|
           name = m[0]
           if self.class.keywords.include? name
@@ -140,7 +145,6 @@ module Rouge
         rule %r/\s+/m, Text
         rule %r/[\w.]+\*?/, Name::Namespace, :pop!
       end
-
     end
   end
 end

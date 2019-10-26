@@ -99,19 +99,6 @@ module Rouge
       end
 
       state :root do
-        rule %r(
-          ([\w*\s]+?[\s*]) # return arguments
-          (#{id})          # function name
-          (\s*\([^;]*?\))  # signature
-          (#{ws}?)({|;)    # open brace or semicolon
-        )mx do |m|
-          recurse m[1]
-          token Name::Function, m[2]
-          recurse m[3]
-          recurse m[4]
-          token Punctuation, m[5]
-        end
-
         rule %r/module\b/, Keyword::Declaration, :module
 
         rule %r/import\b/, Keyword::Namespace, :import

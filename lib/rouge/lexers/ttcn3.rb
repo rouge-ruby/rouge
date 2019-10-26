@@ -50,25 +50,14 @@ module Rouge
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_]\w*/
 
-      state :inline_whitespace do
+      state :statements do
+        rule %r/\n+/m, Text
         rule %r/[ \t\r]+/, Text
         rule %r/\\\n/, Text # line continuation
-        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
-      end
 
-      state :whitespace do
-        rule %r/\n+/m, Text
         rule %r(//(\\.|.)*?$), Comment::Single
-        mixin :inline_whitespace
-      end
+        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
 
-      state :expr_whitespace do
-        rule %r/\n+/m, Text
-        mixin :whitespace
-      end
-
-      state :statements do
-        mixin :whitespace
         digit = /\d_+\d|\d/
         bin_digit = /[01]_+[01]|[01]/
         oct_digit = /[0-7]_+[0-7]|[0-7]/
@@ -105,7 +94,6 @@ module Rouge
       end
 
       state :root do
-        mixin :expr_whitespace
         rule %r(
           ([\w*\s]+?[\s*]) # return arguments
           (#{id})          # function name
@@ -129,7 +117,6 @@ module Rouge
       end
 
       state :function do
-        mixin :whitespace
         mixin :statements
         rule %r/;/, Punctuation
         rule %r/{/, Punctuation, :function

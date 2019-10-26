@@ -52,7 +52,7 @@ module Rouge
 
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
-      id = /[a-zA-Z_][a-zA-Z0-9_]*/
+      id = /[a-zA-Z_]\w*/
 
       state :inline_whitespace do
         rule %r/[ \t\r]+/, Text
@@ -157,7 +157,7 @@ module Rouge
 
       state :import do
         rule %r/\s+/m, Text
-        rule %r/[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
+        rule %r/[\w.]+\*?/, Name::Namespace, :pop!
       end
 
     end

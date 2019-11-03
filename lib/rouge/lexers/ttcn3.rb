@@ -69,11 +69,9 @@ module Rouge
         rule %r/'#{bin_digit}+'B/i, Num::Bin
         rule %r/'#{hex_digit}+'H/i, Num::Hex
         rule %r/'#{oct_digit}+'O/i, Num::Oct
-        rule %r/#{digit}+L?/i, Num::Integer
+        rule %r/#{digit}+/i, Num::Integer
 
-        rule %r(\*/), Error
-
-        rule %r([~!%^&*+=\|?<>/-]), Operator
+        rule %r([~!%^&*+:=\|?<>/-]), Operator
         rule %r/[()\[\]{},.;:]/, Punctuation
 
         rule %r/(?:true|false|null)\b/, Name::Builtin

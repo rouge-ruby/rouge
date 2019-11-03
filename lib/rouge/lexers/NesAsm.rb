@@ -8,7 +8,7 @@ module Rouge
       desc "Nesasm3 assembly (6502 asm)"
       tag 'NesAsm'
       aliases 'nesasm', 'nes'
-      filenames '*.asm'
+      filenames '*.nesasm'
 
       keywords = %w(
         ADC AND ASL BIT  BRK CMP CPX CPY 

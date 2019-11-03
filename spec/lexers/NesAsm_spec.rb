@@ -8,7 +8,7 @@ describe Rouge::Lexers::NesAsm do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.asm'
+      assert_guess :filename => 'foo.nesasm'
     end
   end
 end

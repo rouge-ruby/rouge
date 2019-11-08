@@ -11,7 +11,7 @@ module Rouge
 
       tag 'freefem'
       aliases 'ff'
-      filenames '*.edp *.idp'
+      filenames '*.edp', '*.idp'
       mimetypes 'text/x-ffhdr', 'text/x-ffsrc'
 
       # Override C/C++ ones (for example, `do` does not exists)
@@ -173,29 +173,29 @@ module Rouge
       state :expr_bol do
         mixin :inline_whitespace
 
-        rule /include/, Comment::Preproc, :macro
-        rule /load/, Comment::Preproc, :macro
-        rule /ENDIFMACRO/, Comment::Preproc, :macro
-        rule /IFMACRO/, Comment::Preproc, :macro
+        rule %r/include/, Comment::Preproc, :macro
+        rule %r/load/, Comment::Preproc, :macro
+        rule %r/ENDIFMACRO/, Comment::Preproc, :macro
+        rule %r/IFMACRO/, Comment::Preproc, :macro
 
         rule(//) { pop! }
       end
 
       state :statements do
         mixin :whitespace
-        rule /(u8|u|U|L)?"/, Str, :string
+        rule %r/(u8|u|U|L)?"/, Str, :string
         rule %r((u8|u|U|L)?'(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
         rule %r((\d+[.]\d*|[.]?\d+)e[+-]?\d+[lu]*)i, Num::Float
         rule %r(\d+e[+-]?\d+[lu]*)i, Num::Float
-        rule /0x[0-9a-f]+[lu]*/i, Num::Hex
-        rule /0[0-7]+[lu]*/i, Num::Oct
-        rule /\d+[lu]*/i, Num::Integer
+        rule %r/0x[0-9a-f]+[lu]*/i, Num::Hex
+        rule %r/0[0-7]+[lu]*/i, Num::Oct
+        rule %r/\d+[lu]*/i, Num::Integer
         rule %r(\*/), Error
         rule %r([~!%^&*+=\|?:<>/-]), Operator
-        rule /'/, Operator
-        rule /[()\[\],.;]/, Punctuation
-        rule /\bcase\b/, Keyword, :case
-        rule /(?:true|false|NaN)\b/, Name::Builtin
+        rule %r/'/, Operator
+        rule %r/[()\[\],.;]/, Punctuation
+        rule %r/\bcase\b/, Keyword, :case
+        rule %r/(?:true|false|NaN)\b/, Name::Builtin
         rule id do |m|
           name = m[0]
 

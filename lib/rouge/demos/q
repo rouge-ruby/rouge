@@ -1,8 +1,6 @@
 / comment
 x: til 10
 
-y: "string with quote \" inside";
-
 tab:([]a:1 2 3;b:`a `b `c);
 
 function:{[table]

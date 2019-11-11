@@ -39,10 +39,9 @@ module Rouge
 
         rule %r/\w*\:/, Name::Function #label:
         rule %r/[\(\)\,\.\[\]]/, Punctuation 
-        rule %r/\#*\%[0-1]+/, Num::Bin # #%00110011 %00110011
-        rule %r/\$\h+/, Num::Hex  # $1f
-        rule %r/\#\$\h+/, Num::Hex  #$1f
-        rule %r/\#*[0-9]+/, Num # 10 #10
+        rule %r/\#?\%[0-1]+/, Num::Bin # #%00110011 %00110011
+        rule %r/\#?\$\h+/, Num::Hex  # $1f #$1f
+        rule %r/\#?\d+/, Num # 10 #10
         rule %r([~&*+=\|?:<>/-]), Operator
 
         rule %r/\b\#?\w+\b/i do |m|

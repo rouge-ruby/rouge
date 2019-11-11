@@ -58,7 +58,7 @@ module Rouge
           end
         end
 
-        rule %r/(?:#*LOW|#*HIGH)\(.*\)/i, Keyword::Reserved # LOW() #HIGH()
+        rule %r/\#?(?:LOW|HIGH)\(.*\)/i, Keyword::Reserved # LOW() #HIGH()
         
         rule %r/\#\(/, Punctuation # #()
 

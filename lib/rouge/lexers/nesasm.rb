@@ -35,7 +35,7 @@ module Rouge
       
       state :root do
         rule %r/\s+/m, Text
-        rule %r(;.*?$), Comment::Single
+        rule %r(;.*), Comment::Single
 
         rule %r/\w*\:/, Name::Function #label:
         rule %r/[\(\)\,\.\[\]]/, Punctuation 

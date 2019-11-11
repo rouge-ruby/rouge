@@ -62,9 +62,14 @@ module Rouge
         
         rule %r/\#\(/, Punctuation # #()
 
-        rule %r/".*"/, Str # ""
+        rule %r/"/, Str, :string
       end
-      
+
+      state :string do
+        rule %r/"/, Str, :pop!
+        rule %r/\\"?/, Str
+        rule %r/[^"\\]+/m, Str
+      end
     end
   end
 end

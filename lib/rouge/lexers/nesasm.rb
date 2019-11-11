@@ -6,30 +6,32 @@ module Rouge
     class NesAsm < RegexLexer
       title "NesAsm"
       desc "Nesasm3 assembly (6502 asm)"
-      tag 'NesAsm'
-      aliases 'nesasm', 'nes'
+      tag 'nesasm'
+      aliases 'nes'
       filenames '*.nesasm'
 
-      keywords = %w(
-        ADC AND ASL BIT  BRK CMP CPX CPY 
-        DEC EOR INC JMP JSR LDA LDX LDY LSR NOP ORA
-        ROL ROR RTI RTS SBC STA STX STY 
-        TAX TXA DEX INX TAY TYA DEY INY 
-        BPL BMI BVC BVS BCC BCS BNE BEQ 
-        CLC SEC CLI SEI CLV CLD SED
-        TXS TSX PHA PLA PHP PLP
-      )
+      def self.keywords
+        @keywords ||= %w(
+          ADC AND ASL BIT BRK CMP CPX CPY DEC EOR INC JMP JSR LDA LDX LDY LSR
+          NOP ORA ROL ROR RTI RTS SBC STA STX STY TAX TXA DEX INX TAY TYA DEY
+          INY BPL BMI BVC BVS BCC BCS BNE BEQ CLC SEC CLI SEI CLV CLD SED TXS
+          TSX PHA PLA PHP PLP
+        )
+      end
 
-      keywords_type = %w(
+      def self.keywords_type
+        @keywords_type ||= %w(
           DB DW BYTE WORD 
-      )
+        )
+      end
 
-      keywords_reserved = %w(
-        INCBIN INCLUDE ORG BANK RSSET RS
-        MACRO ENDM DS PROC ENDP PROCGROUP ENDPROCGROUP
-        INCCHR DEFCHR ZP BSS CODE DATA IF IFDEF IFNDEF 
-        ELSE ENDIF FAIL INESPRG INESCHR INESMAP INESMIR
-      )
+      def self.keywords_reserved
+        @keywords_reserved ||= %w(
+          INCBIN INCLUDE ORG BANK RSSET RS MACRO ENDM DS PROC ENDP PROCGROUP
+          ENDPROCGROUP INCCHR DEFCHR ZP BSS CODE DATA IF IFDEF IFNDEF ELSE
+          ENDIF FAIL INESPRG INESCHR INESMAP INESMIR
+        )
+      end
       
       state :root do
         rule %r/\s+/m, Text
@@ -43,16 +45,25 @@ module Rouge
         rule %r/\#*[0-9]+/, Num # 10 #10
         rule %r([~&*+=\|?:<>/-]), Operator
 
-        rule %r/\b(?:#{keywords.join('|')})\b/i, Keyword
-        rule %r/\b(?:#{keywords_type.join('|')})\b/i, Keyword::Type
-        rule %r/\b(?:#{keywords_reserved.join('|')})\b/i, Keyword::Reserved
+        rule %r/\b\#?\w+\b/i do |m|
+          name = m[0].upcase
+          
+          if self.class.keywords.include? name
+            token Keyword
+          elsif self.class.keywords_type.include? name
+            token Keyword::Type
+          elsif self.class.keywords_reserved.include? name
+            token Keyword::Reserved
+          else
+            token Name::Function
+          end
+        end
+
         rule %r/(?:#*LOW|#*HIGH)\(.*\)/i, Keyword::Reserved # LOW() #HIGH()
         
-        rule %r/\#\w+/, Name::Function # #LABEL
         rule %r/\#\(/, Punctuation # #()
 
         rule %r/".*"/, Str # ""
-        rule %r/\w*/, Name::Function # other labels/variables/names etc
       end
       
     end

@@ -4,6 +4,17 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.13.0: 2019-11-13
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.12.0...v3.13.0)
+
+- BPF Lexer
+  - Support disassembler output in BPF lexer ([#1346](https://github.com/rouge-ruby/rouge/pull/1346/) by Paul Chaignon)
+- Q Lexer
+  - Fix quote escaping in Q lexer ([#1355](https://github.com/rouge-ruby/rouge/pull/1355/) by AngusWilson)
+- TTCN-3 Lexer (**NEW**)
+  - Add TTCN-3 testing language lexer ([#1337](https://github.com/rouge-ruby/rouge/pull/1337/) by Garcia)
+
 ## version 3.12.0: 2019-10-16
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.11.1...v3.12.0)

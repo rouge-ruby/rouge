@@ -66,7 +66,7 @@ module Rouge
 
       state :string do
         rule %r/"/, Str, :pop!
-        rule %r/\\"?/, Str
+        rule %r/\\"?/, Str::Escape
         rule %r/[^"\\]+/m, Str
       end
     end

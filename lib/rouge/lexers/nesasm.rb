@@ -65,7 +65,7 @@ module Rouge
 
         rule %r/'\w'/, Str::Char # 'A' for example
         
-        rule %r/\\\??[1-9\@\#]/, Name::Builtin # builtin parameters for use inside macros and functions:   \1-\9 , \?1-\?9 , \# , \@
+        rule %r/\\\??[\d@#]/, Name::Builtin # builtin parameters for use inside macros and functions:   \1-\9 , \?1-\?9 , \# , \@
       end
 
       state :string do

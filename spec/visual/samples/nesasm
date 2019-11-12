@@ -17,6 +17,24 @@ Reset:
   jsr ClearRAM	; clear RAM
   jsr WaitSync	; wait for VSYNC (and PPU warmup)
 
+SCR_ADDR .func (\1) + ((\2) << 5)
+
+abs    .macro
+  lda   \1
+  bpl   .x\@
+  eor   #$FF
+  inc   A
+  sta   \1
+
+  lda \#
+  sta numberOfParams
+
+  lda \?4
+  sta typeOfParam
+
+  .x\@:
+    .endm
+
 NMI:
   LoadSprites:
   ldx #$00

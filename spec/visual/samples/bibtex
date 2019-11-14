@@ -1,0 +1,130 @@
+@article{Witten:1988hf,
+      author         = "Witten, Edward",
+      title          = "{Quantum Field Theory and the Jones Polynomial}",
+      journal        = "Commun. Math. Phys.",
+      volume         = "121",
+      year           = "1989",
+      pages          = "351-399",
+      doi            = "10.1007/BF01217730",
+      note           = "[,233(1988)]",
+      reportNumber   = "IASSNS-HEP-88-33",
+      SLACcitation   = "%%CITATION = CMPHA,121,351;%%"
+}
+
+@article{Belavin:1984vu,
+      author         = "Belavin, A. A. and Polyakov, Alexander M. and
+                        Zamolodchikov, A. B.",
+      title          = "{Infinite Conformal Symmetry in Two-Dimensional Quantum
+                        Field Theory}",
+      journal        = "Nucl. Phys.",
+      volume         = "B241",
+      year           = "1984",
+      pages          = "333-380",
+      doi            = "10.1016/0550-3213(84)90052-X",
+      note           = "[,605(1984)]",
+      reportNumber   = "CERN-TH-3827",
+      SLACcitation   = "%%CITATION = NUPHA,B241,333;%%"
+}
+
+@article{Kontsevich:1997vb,
+      author         = "Kontsevich, Maxim",
+      title          = "{Deformation quantization of Poisson manifolds. 1.}",
+      journal        = "Lett. Math. Phys.",
+      volume         = "66",
+      year           = "2003",
+      pages          = "157-216",
+      doi            = "10.1023/B:MATH.0000027508.00421.bf",
+      eprint         = "q-alg/9709040",
+      archivePrefix  = "arXiv",
+      primaryClass   = "q-alg",
+      SLACcitation   = "%%CITATION = Q-ALG/9709040;%%"
+}
+
+@article{Borcherds:1983sq,
+      author         = "Borcherds, Richard E.",
+      title          = "{Vertex algebras, Kac-Moody algebras, and the monster}",
+      journal        = "Proc. Nat. Acad. Sci.",
+      volume         = "83",
+      year           = "1986",
+      pages          = "3068-3071",
+      doi            = "10.1073/pnas.83.10.3068",
+      SLACcitation   = "%%CITATION = PNASA,83,3068;%%"
+}
+
+@article{Kontsevich:1992ti,
+      author         = "Kontsevich, M.",
+      title          = "{Intersection theory on the moduli space of curves and
+                        the matrix Airy function}",
+      journal        = "Commun. Math. Phys.",
+      volume         = "147",
+      year           = "1992",
+      pages          = "1-23",
+      doi            = "10.1007/BF02099526",
+      SLACcitation   = "%%CITATION = CMPHA,147,1;%%"
+}
+
+@article{Seiberg:1999vs,
+      author         = "Seiberg, Nathan and Witten, Edward",
+      title          = "{String theory and noncommutative geometry}",
+      journal        = "JHEP",
+      volume         = "09",
+      year           = "1999",
+      pages          = "032",
+      doi            = "10.1088/1126-6708/1999/09/032",
+      eprint         = "hep-th/9908142",
+      archivePrefix  = "arXiv",
+      primaryClass   = "hep-th",
+      reportNumber   = "IASSNS-HEP-99-74",
+      SLACcitation   = "%%CITATION = HEP-TH/9908142;%%"
+}
+
+@book{Baxter:1982zz,
+      author         = "Baxter, R. J.",
+      title          = "{Exactly solved models in statistical mechanics}",
+      url            = "http://www.amazon.com/dp/0486462714",
+      year           = "1982",
+      ISBN           = "0486462714, 9780486462714",
+      SLACcitation   = "%%CITATION = INSPIRE-1120339;%%"
+}
+
+@article{Doplicher:1994tu,
+      author         = "Doplicher, Sergio and Fredenhagen, Klaus and Roberts,
+                        John E.",
+      title          = "{The Quantum structure of space-time at the Planck scale
+                        and quantum fields}",
+      journal        = "Commun. Math. Phys.",
+      volume         = "172",
+      year           = "1995",
+      pages          = "187-220",
+      doi            = "10.1007/BF02104515",
+      eprint         = "hep-th/0303037",
+      archivePrefix  = "arXiv",
+      primaryClass   = "hep-th",
+      SLACcitation   = "%%CITATION = HEP-TH/0303037;%%"
+}
+
+@article{Sklyanin:1988yz,
+      author         = "Sklyanin, E. K.",
+      title          = "{Boundary Conditions for Integrable Quantum Systems}",
+      journal        = "J. Phys.",
+      volume         = "A21",
+      year           = "1988",
+      pages          = "2375-2389",
+      doi            = "10.1088/0305-4470/21/10/015",
+      reportNumber   = "E-11-86",
+      SLACcitation   = "%%CITATION = JPAGA,A21,2375;%%"
+}
+
+@article{Bayen:1977ha,
+      author         = "Bayen, F. and Flato, M. and Fronsdal, C. and
+                        Lichnerowicz, A. and Sternheimer, D.",
+      title          = "{Deformation Theory and Quantization. 1. Deformations of
+                        Symplectic Structures}",
+      journal        = "Annals Phys.",
+      volume         = "111",
+      year           = "1978",
+      pages          = "61",
+      doi            = "10.1016/0003-4916(78)90224-5",
+      reportNumber   = "UCLA/77/TEP/7",
+      SLACcitation   = "%%CITATION = APNYA,111,61;%%"
+}

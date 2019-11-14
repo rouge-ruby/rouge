@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# regex based on https://github.com/SaswatPadhi/prismjs-bibtex
+
 module Rouge
   module Lexers
     class BibTeX < RegexLexer

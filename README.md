@@ -165,7 +165,7 @@ different encoding, please convert it to UTF-8 first.
 
 ## Contributing
 
-We're always exited to welcome new contributors to Rouge. By it's nature, a
+We're always excited to welcome new contributors to Rouge. By it's nature, a
 syntax highlighter relies for its success on submissions from users of the
 languages being highlighted. You can help Rouge by filing bug reports or
 developing new lexers.

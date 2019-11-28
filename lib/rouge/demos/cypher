@@ -1,0 +1,17 @@
+// Cypher Mode for Rouge
+CREATE (john:Person {name: 'John'})
+CREATE (joe:Person {name: 'Joe'})
+CREATE (steve:Person {name: 'Steve'})
+CREATE (sara:Person {name: 'Sara'})
+CREATE (maria:Person {name: 'Maria'})
+CREATE (john)-[:FRIEND]->(joe)-[:FRIEND]->(steve)
+CREATE (john)-[:FRIEND]->(sara)-[:FRIEND]->(maria)
+
+MATCH (user)-[:friend]->(follower)
+WHERE user.name IN ['Joe', 'John', 'Sara', 'Maria', 'Steve'] AND follower.name =~ 'S.*'
+RETURN user.name, follower.name
+
+MATCH (n {name: 'John'})-[:FRIEND]-(friend)
+WITH n, count(friend) AS friendsCount
+WHERE friendsCount > 3
+RETURN n, friendsCount

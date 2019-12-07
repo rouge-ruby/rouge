@@ -5,6 +5,8 @@ import foo.bar.{Foo, Bar => Baz}
 /* This file /* which is totally legal scala */ should be highlighted
    correcty by rouge */
 
+// Single-line comments too
+
 object ⌘ {
   val `interface` = """
 A
@@ -46,6 +48,12 @@ abstract case class Foo[+A, B <: List[A]](a: A) {
   def apply[C >: A](c: Foo[C]): Foo[C]
 }
 
+class // comment 1
+  Test(a: // comment 2
+    Int) {
+
+}
+
 class why_would_you_name_a_class_this_way_oh_well_we_need_to_highlight_it(a: Int) extends Foo(a) {
   def this(b: Float) = this(b.toInt)
 
@@ -55,3 +63,5 @@ class why_would_you_name_a_class_this_way_oh_well_we_need_to_highlight_it(a: Int
   def longs = 4L
   def hex = 0x123
 }
+
+// Comment at EOF

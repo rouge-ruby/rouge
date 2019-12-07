@@ -19,4 +19,16 @@ describe Rouge::Lexers::IO do
       assert_guess :source => '#!/usr/local/bin/io'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'recognizes one-line "//" comments not followed by a newline' do
+      assert_tokens_equal '// comment', ['Comment.Single', '// comment']
+    end
+
+    it 'recognizes one-line "#" comments not followed by a newline' do
+      assert_tokens_equal '# comment', ['Comment.Single', '# comment']
+    end
+  end
 end

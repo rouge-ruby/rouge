@@ -16,3 +16,5 @@ digraph graphname {
 
  testing [some=<pretty <i>nasty<font style="red">HTML</font></i>>];
 }
+
+// comment at eof

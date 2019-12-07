@@ -41,7 +41,7 @@ module Rouge
       state :base do
         rule %r/\s+/, Text
 
-        rule %r/#.*?\n/, Comment::Single
+        rule %r/#.*?$/, Comment::Single
         rule %r/(?:on|off)\b/, Name::Constant
         rule %r/[$][\w-]+/, Name::Variable
 

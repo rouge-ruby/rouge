@@ -46,7 +46,7 @@ module Rouge
       state :root do
         mixin :whitespace
         rule %r/"""/, Str::Doc, :docstring
-        rule %r{//(.*?)$}, Comment::Single
+        rule %r{//.*}, Comment::Single
         rule %r{/(\\\n)?[*](.|\n)*?[*](\\\n)?/}, Comment::Multiline
         rule %r/"/, Str, :string
         rule %r([~!%^&*+=\|?:<>/-]), Operator

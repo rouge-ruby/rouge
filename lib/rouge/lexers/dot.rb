@@ -17,7 +17,7 @@ module Rouge
 
       state :comments_and_whitespace do
         rule %r/\s+/, Text
-        rule %r(#.*?$), Comment::Single
+        rule %r(#.*), Comment::Single
         rule %r(//.*?$), Comment::Single
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
       end

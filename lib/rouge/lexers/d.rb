@@ -48,7 +48,7 @@ module Rouge
       state :root do
         mixin :whitespace
         # Comments
-        rule %r(//(.*?)$), Comment::Single
+        rule %r(//.*), Comment::Single
         rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/), Comment::Multiline
         rule %r(/\+), Comment::Multiline, :nested_comment
         # Keywords

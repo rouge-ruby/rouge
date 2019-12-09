@@ -1584,3 +1584,5 @@ pure nothrow @safe @nogc unittest
     testVal = null;
     assert(testVal.isNull);
 }
+
+// comment at eof

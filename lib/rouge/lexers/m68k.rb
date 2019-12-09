@@ -87,8 +87,8 @@ module Rouge
 
       state :whitespace do
         rule %r/\n+/m, Text, :expr_bol
-        rule %r(^\*(\\.|.)*?\n), Comment::Single, :expr_bol
-        rule %r(;(\\.|.)*?\n), Comment::Single, :expr_bol
+        rule %r(^\*(\\.|.)*?$), Comment::Single, :expr_bol
+        rule %r(;(\\.|.)*?$), Comment::Single, :expr_bol
         mixin :inline_whitespace
       end
 

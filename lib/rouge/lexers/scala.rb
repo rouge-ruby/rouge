@@ -43,7 +43,7 @@ module Rouge
         rule %r/'#{idrest}[^']/, Str::Symbol
         rule %r/[^\S\n]+/, Text
 
-        rule %r(//.*?\n), Comment::Single
+        rule %r(//.*), Comment::Single
         rule %r(/\*), Comment::Multiline, :comment
 
         rule %r/@#{idrest}/, Name::Decorator
@@ -117,7 +117,7 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/{/, Operator, :pop!
         rule %r/\(/, Operator, :pop!
-        rule %r(//.*?\n), Comment::Single, :pop!
+        rule %r(//.*), Comment::Single, :pop!
         rule %r(#{idrest}|#{op}+|`[^`]+`), Name::Class, :pop!
       end
 
@@ -142,7 +142,7 @@ module Rouge
           pop!
         end
 
-        rule %r(//.*?\n), Comment::Single, :pop!
+        rule %r(//.*), Comment::Single, :pop!
         rule %r/\.|#{idrest}|#{op}+|`[^`]+`/, Keyword::Type
       end
 

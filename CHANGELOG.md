@@ -4,6 +4,26 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.14.0: 2019-12-11
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.13.0...v3.14.0)
+
+- General
+  - Fix lexing of comments at the EOF ([#1371](https://github.com/rouge-ruby/rouge/pull/1371/) by Maxime Kjaer)
+  - Fix typo in README.md ([#1367](https://github.com/rouge-ruby/rouge/pull/1367/) by Sven Tennie)
+- JSONDOC Lexer
+  - Update state names in json-doc lexer ([#1364](https://github.com/rouge-ruby/rouge/pull/1364/) by Maxime Kjaer)
+- Liquid Lexer
+  - Add pattern for matching filenames to the Liquid lexer ([#1351](https://github.com/rouge-ruby/rouge/pull/1351/) by Eric Knibbe)
+- Magik Lexer
+  - Add `_finally` keyword to Magik lexer ([#1365](https://github.com/rouge-ruby/rouge/pull/1365/) by Steven Looman)
+- NES Assembly Lexer (**NEW**)
+  - Add NES Assembly lexer ([#1354](https://github.com/rouge-ruby/rouge/pull/1354/) by Yury Sinev)
+- Slice Lexer (**NEW**)
+  - Add Slice lexer ([#867](https://github.com/rouge-ruby/rouge/pull/867/) by jolkdarr)
+- TOML Lexer
+  - Add support for inline tables to TOML lexer ([#1359](https://github.com/rouge-ruby/rouge/pull/1359/) by Michael Camilleri)
+
 ## version 3.13.0: 2019-11-13
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.12.0...v3.13.0)

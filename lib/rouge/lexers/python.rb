@@ -83,7 +83,6 @@ module Rouge
         rule %r/(in|is|and|or|not)\b/, Operator::Word
         rule %r/(<<|>>|\/\/|\*\*)=?/, Operator
         rule %r/[-~+\/*%=<>&^|@]=?|!=/, Operator
-        rule %r/\.(?![0-9])/, Operator  # so it doesn't match float literals
 
         rule %r/(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do
           groups Keyword::Namespace,

@@ -10,7 +10,7 @@ module Rouge
       desc "Intermediate representation of the GHC Haskell compiler."
       tag 'ghc-core'
 
-      filenames '*.dump-simpl'
+      filenames '*.dump-simpl', '*.dump-cse', '*.dump-ds', '*.dump-spec'
 
       state :root do
         # sections

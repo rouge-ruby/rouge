@@ -8,7 +8,10 @@ describe Rouge::Lexers::GhcCore do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => '*.dump-simpl'
+      assert_guess :filename => 'Main.dump-simpl'
+      assert_guess :filename => 'Main.dump-ds'
+      assert_guess :filename => 'Main.dump-cse'
+      assert_guess :filename => 'Main.dump-spec'
     end
   end
 

@@ -142,3 +142,5 @@ float_literals = [
 # PEP 465
 a = b @ c
 x @= y
+
+floats = (19.0, 19.)

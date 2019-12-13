@@ -14,7 +14,7 @@ module Rouge
 
       state :root do
         # sections
-        rule %r/^====================[\w ]+====================$/, Generic::Heading
+        rule %r/^=====.*=====$/, Generic::Heading
         # timestamps
         rule %r/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ UTC$/, Comment::Single
         rule %r/^Result size of .+\s*.*}/, Comment::Multiline

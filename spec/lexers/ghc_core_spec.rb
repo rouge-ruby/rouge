@@ -22,6 +22,9 @@ describe Rouge::Lexers::GhcCore do
     it 'should lex section markers as comments' do
       core = '==================== Tidy Core ===================='
       assert_tokens_equal core, ['Generic.Heading', core]
+
+      core = '==================== Common sub-expression ===================='
+      assert_tokens_equal core, ['Generic.Heading', core]
     end
 
     it 'should lex timestamps as comments' do

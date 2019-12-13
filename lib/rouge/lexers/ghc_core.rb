@@ -58,12 +58,16 @@ module Rouge
       state :common do
         rule %r/\[/, Comment::Special, :annotation
 
-        rule %r/\d+\#{0,2}/, Literal::Number::Integer
-
+        mixin :literal
         mixin :constants
         mixin :punctuation
         mixin :operator
         mixin :name
+      end
+
+      state :literal do
+        rule %r/\d+\#{0,2}/, Literal::Number::Integer
+        rule %r/".*"#/, Literal::String
       end
 
       state :constants do

@@ -294,6 +294,17 @@ describe Rouge::Lexers::GhcCore do
                           ["Keyword.Type", "GHC"], ["Punctuation", "."], ["Keyword.Type", "Real"], ["Punctuation", "."], ['Name.Variable', "$tc':%1"]
     end
 
+    it 'should lex strings' do
+      core = 'lvl_s2UY = "I am a \"String\""#'
+
+      assert_tokens_equal core,
+                          ['Name.Function', "lvl_s2UY"],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Literal.String', "\"I am a \\\"String\\\"\"#"]
+    end
+
     it 'should lex recursive bindings' do
       core = 'Rec {
 

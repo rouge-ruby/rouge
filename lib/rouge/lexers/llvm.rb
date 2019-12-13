@@ -16,26 +16,26 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          addrspace alias align alignstack allocsize alwaysinline appending
-          arcp argmemonly arm_aapcs_vfpcc arm_aapcscc arm_apcscc asm attributes
-          available_externally begin builtin byval c cc ccc cold coldcc common
-          constant convergent datalayout dbg declare default define dllexport
-          dllimport end eq exact extern_weak external false fast fastcc gc
-          global hidden inaccessiblemem_or_argmemonly inaccessiblememonly
-          inbounds inlinehint inreg internal jumptable landingpad
-          linker_private linkonce linkonce_odr minsize module naked ne nest
-          ninf nnan no-jump-tables noalias nobuiltin nocapture nocf_check
-          noduplicate noimplicitfloat noinline nonlazybind norecurse noredzone
-          noredzone noreturn nounwind nsw nsz null nuw oeq oge ogt ole olt one
-          opaque optforfuzzing optnone optsize ord personality private
-          protected ptx_device ptx_kernel readnone readonly returns_twice
-          safestack sanitize_address sanitize_hwaddress sanitize_memory
-          sanitize_thread section sge sgt shadowcallstack sideeffect signext
-          sle slt speculatable speculative_load_hardening sret ssp sspreq
-          sspstrong strictfp tail target thread_local to triple true type ueq
-          uge ugt ule ult undef une unnamed_addr uno uwtable volatile weak
-          weak_odr writeonly x x86_fastcallcc x86_stdcallcc zeroext
-          zeroinitializer
+          addrspace addrspacecast alias align alignstack allocsize alwaysinline
+          appending arcp argmemonly arm_aapcs_vfpcc arm_aapcscc arm_apcscc asm
+          attributes available_externally begin builtin byval c cc ccc cold
+          coldcc common constant convergent datalayout dbg declare default
+          define dllexport dllimport end eq exact extern_weak external false
+          fast fastcc gc global hidden inaccessiblemem_or_argmemonly
+          inaccessiblememonly inbounds inlinehint inreg internal jumptable
+          landingpad linker_private linkonce linkonce_odr minsize module naked
+          ne nest ninf nnan no-jump-tables noalias nobuiltin nocapture
+          nocf_check noduplicate noimplicitfloat noinline nonlazybind norecurse
+          noredzone noredzone noreturn nounwind nsw nsz null nuw oeq oge ogt
+          ole olt one opaque optforfuzzing optnone optsize ord personality
+          private protected ptx_device ptx_kernel readnone readonly
+          returns_twice safestack sanitize_address sanitize_hwaddress
+          sanitize_memory sanitize_thread section sge sgt shadowcallstack
+          sideeffect signext sle slt speculatable speculative_load_hardening
+          sret ssp sspreq sspstrong strictfp tail target thread_local to triple
+          true type ueq uge ugt ule ult undef une unnamed_addr uno uwtable
+          volatile weak weak_odr writeonly x x86_fastcallcc x86_stdcallcc
+          zeroext zeroinitializer
         )
       end
 

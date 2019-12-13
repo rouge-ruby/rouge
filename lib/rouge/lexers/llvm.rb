@@ -16,42 +16,43 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          begin end true false declare define global constant alignstack private
-          landingpad linker_private internal available_externally linkonce_odr
-          linkonce weak weak_odr appending dllimport dllexport common default
-          hidden protected extern_weak external thread_local zeroinitializer
-          undef null to tail target triple datalayout volatile nuw nsw nnan ninf
-          nsz arcp fast exact inbounds align addrspace section alias module asm
-          sideeffect gc dbg ccc fastcc coldcc x86_stdcallcc x86_fastcallcc
-          arm_apcscc arm_aapcscc arm_aapcs_vfpcc ptx_device ptx_kernel cc
-          c signext zeroext inreg sret nounwind noreturn noalias nocapture byval
-          nest readnone readonly inlinehint noinline alwaysinline optsize ssp
-          sspreq noredzone noimplicitfloat naked type opaque eq ne slt sgt sle
-          sge ult ugt ule uge oeq one olt ogt ole oge ord uno unnamed_addr ueq
-          une uwtable x personality allocsize builtin cold convergent
-          inaccessiblememonly inaccessiblemem_or_argmemonly jumptable minsize
-          no-jump-tables nobuiltin noduplicate nonlazybind noredzone norecurse
-          optforfuzzing optnone writeonly argmemonly returns_twice safestack
-          sanitize_address sanitize_memory sanitize_thread sanitize_hwaddress
-          speculative_load_hardening speculatable sspstrong strictfp nocf_check
-          shadowcallstack attributes
+          addrspace alias align alignstack allocsize alwaysinline appending
+          arcp argmemonly arm_aapcs_vfpcc arm_aapcscc arm_apcscc asm attributes
+          available_externally begin builtin byval c cc ccc cold coldcc common
+          constant convergent datalayout dbg declare default define dllexport
+          dllimport end eq exact extern_weak external false fast fastcc gc
+          global hidden inaccessiblemem_or_argmemonly inaccessiblememonly
+          inbounds inlinehint inreg internal jumptable landingpad
+          linker_private linkonce linkonce_odr minsize module naked ne nest
+          ninf nnan no-jump-tables noalias nobuiltin nocapture nocf_check
+          noduplicate noimplicitfloat noinline nonlazybind norecurse noredzone
+          noredzone noreturn nounwind nsw nsz null nuw oeq oge ogt ole olt one
+          opaque optforfuzzing optnone optsize ord personality private
+          protected ptx_device ptx_kernel readnone readonly returns_twice
+          safestack sanitize_address sanitize_hwaddress sanitize_memory
+          sanitize_thread section sge sgt shadowcallstack sideeffect signext
+          sle slt speculatable speculative_load_hardening sret ssp sspreq
+          sspstrong strictfp tail target thread_local to triple true type ueq
+          uge ugt ule ult undef une unnamed_addr uno uwtable volatile weak
+          weak_odr writeonly x x86_fastcallcc x86_stdcallcc zeroext
+          zeroinitializer
         )
       end
 
       def self.instructions
         @instructions ||= Set.new %w(
-          add fadd sub fsub mul fmul udiv sdiv fdiv urem srem frem shl lshr ashr
-          and or xor icmp fcmp phi call catch trunc zext sext fptrunc fpext
-          uitofp sitofp fptoui fptosi inttoptr ptrtoint bitcast select va_arg ret
-          br switch invoke unwind unreachable malloc alloca free load store
-          getelementptr extractelement insertelement shufflevector getresult
-          extractvalue insertvalue cleanup resume
+          add alloca and ashr bitcast br call catch cleanup extractelement
+          extractvalue fadd fcmp fdiv fmul fpext fptosi fptoui fptrunc free
+          frem fsub getelementptr getresult icmp insertelement insertvalue
+          inttoptr invoke load lshr malloc mul or phi ptrtoint resume ret sdiv
+          select sext shl shufflevector sitofp srem store sub switch trunc udiv
+          uitofp unreachable unwind urem va_arg xor zext
         )
       end
 
       def self.types
         @types ||= Set.new %w(
-          void float double half x86_fp80 x86mmx fp128 ppc_fp128 label metadata
+          double float fp128 half label metadata ppc_fp128 void x86_fp80 x86mmx
         )
       end
 

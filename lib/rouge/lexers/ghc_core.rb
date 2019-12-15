@@ -69,6 +69,7 @@ module Rouge
       end
 
       state :literal do
+        rule %r/\d+\.\d+\#{0,2}/, Literal::Number::Float
         rule %r/\d+\#{0,2}/, Literal::Number::Integer
         rule %r/".*"#/, Literal::String
         rule %r/'.'#/, Literal::String::Char

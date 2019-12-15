@@ -264,7 +264,7 @@ describe Rouge::Lexers::GhcCore do
       assert_tokens_equal core, ['Comment.Special', core]
     end
 
-    it 'should lex integers as literals' do
+    it 'should lex integers' do
       core = "GHC.Real.$tc':%
   = GHC.Types.TyCon
       11952989868638128372##
@@ -292,6 +292,26 @@ describe Rouge::Lexers::GhcCore do
                           ['Literal.Number.Integer', '1#'],
                           ['Text', "\n      "],
                           ["Keyword.Type", "GHC"], ["Punctuation", "."], ["Keyword.Type", "Real"], ["Punctuation", "."], ['Name.Variable', "$tc':%1"]
+    end
+
+    it 'should lex floats' do
+      core = 'number = ghc-prim-0.5.3:GHC.Types.D# 1.5##'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'number'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'ghc-prim-0.5.3'],
+                          ['Punctuation', ':'],
+                          ['Keyword.Type', 'GHC'],
+                          ['Punctuation', '.'],
+                          ['Keyword.Type', 'Types'],
+                          ['Punctuation', '.'],
+                          ['Keyword.Type', 'D#'],
+                          ['Text', ' '],
+                          ['Literal.Number.Float', '1.5##']
+
     end
 
     it 'should lex strings' do

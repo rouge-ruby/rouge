@@ -302,11 +302,7 @@ describe Rouge::Lexers::GhcCore do
                           ['Text', ' '],
                           ['Name.Namespace', 'ghc-prim-0.5.3'],
                           ['Punctuation', ':'],
-                          ['Keyword.Type', 'GHC'],
-                          ['Punctuation', '.'],
-                          ['Keyword.Type', 'Types'],
-                          ['Punctuation', '.'],
-                          ['Keyword.Type', 'D#'],
+                          ['Keyword.Type', 'GHC'], ['Punctuation', '.'], ['Keyword.Type', 'Types'], ['Punctuation', '.'], ['Keyword.Type', 'D#'],
                           ['Text', ' '],
                           ['Literal.Number.Float', '1.5##']
 
@@ -331,17 +327,11 @@ describe Rouge::Lexers::GhcCore do
                           ['Text', ' '],
                           ['Operator', '='],
                           ['Text', ' '],
-                          ['Keyword.Type', 'GHC'],
-                          ['Punctuation', '.'],
-                          ['Keyword.Type', 'Show'],
-                          ['Punctuation', '.'],
-                          ['Name.Variable', '$wshowLitChar'],
+                          ['Keyword.Type', 'GHC'], ['Punctuation', '.'], ['Keyword.Type', 'Show'], ['Punctuation', '.'], ['Name.Variable', '$wshowLitChar'],
                           ['Text', ' '],
                           ['Literal.String.Char', "'C'#"],
                           ['Text', ' '],
-                          ['Keyword.Type', 'Main'],
-                          ['Punctuation', '.'],
-                          ['Name.Variable', 'main5']
+                          ['Keyword.Type', 'Main'], ['Punctuation', '.'], ['Name.Variable', 'main5']
     end
 
     it 'should lex recursive bindings' do
@@ -382,11 +372,7 @@ end Rec }'
                           ['Keyword.Type', 'Integer'],
                           ['Punctuation', ').'],
                           ['Text', "\n      "],
-                          ['Keyword.Type', 'GHC'],
-                          ['Punctuation', '.'],
-                          ['Keyword.Type', 'Real'],
-                          ['Punctuation', '.'],
-                          ['Name.Variable', '$fEqRatio_$c=='],
+                          ['Keyword.Type', 'GHC'], ['Punctuation', '.'], ['Keyword.Type', 'Real'], ['Punctuation', '.'], ['Name.Variable', '$fEqRatio_$c=='],
                           ['Text', ' '],
                           ['Operator', '@'],
                           ['Text', ' '],
@@ -396,11 +382,7 @@ end Rec }'
                           ['Text', "\n      "],
                           ['Operator', '='],
                           ['Text', ' '],
-                          ['Keyword.Type', 'GHC'],
-                          ['Punctuation', '.'],
-                          ['Keyword.Type', 'Real'],
-                          ['Punctuation', '.'],
-                          ['Name.Variable', '$fEqRatio_$s$c==']
+                          ['Keyword.Type', 'GHC'], ['Punctuation', '.'], ['Keyword.Type', 'Real'], ['Punctuation', '.'], ['Name.Variable', '$fEqRatio_$s$c==']
     end
 
     it 'should lex names with numbers' do
@@ -414,25 +396,15 @@ end Rec }'
                           ['Text', " "],
                           ['Name.Namespace', 'ghc-prim-0.5.3'],
                           ['Punctuation', ':'],
-                          ['Keyword.Type', 'GHC'],
-                          ['Punctuation', '.'],
-                          ['Keyword.Type', 'Types'],
-                          ['Punctuation', '.'],
-                          ['Name.Variable', ':'],
+                          ['Keyword.Type', 'GHC'], ['Punctuation', '.'], ['Keyword.Type', 'Types'], ['Punctuation', '.'], ['Name.Variable', ':'],
                           ['Text', ' '],
                           ['Operator', '@'],
                           ['Text', " "],
                           ['Keyword.Type', 'Char'],
                           ['Text', " "],
-                          ['Keyword.Type', 'GHC'],
-                          ['Punctuation', '.'],
-                          ['Keyword.Type', 'Show'],
-                          ['Punctuation', '.'],
-                          ['Name.Variable', '$fShow(,)3'],
+                          ['Keyword.Type', 'GHC'], ['Punctuation', '.'], ['Keyword.Type', 'Show'], ['Punctuation', '.'], ['Name.Variable', '$fShow(,)3'],
                           ['Text', " "],
-                          ['Keyword.Type', 'Main'],
-                          ['Punctuation', '.'],
-                          ['Name.Variable', 'main2']
+                          ['Keyword.Type', 'Main'], ['Punctuation', '.'], ['Name.Variable', 'main2']
     end
 
     it 'should lex array types' do

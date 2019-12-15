@@ -109,6 +109,7 @@ module Rouge
         rule %r/forall/, Keyword
         rule %r/case/, Keyword
         rule %r/of/, Keyword
+        rule %r/letrec/, Keyword
         rule %r/let/, Keyword
         rule %r/join/, Keyword
         rule %r/@/, Operator

@@ -68,6 +68,7 @@ module Rouge
       state :literal do
         rule %r/\d+\#{0,2}/, Literal::Number::Integer
         rule %r/".*"#/, Literal::String
+        rule %r/'.'#/, Literal::String::Char
       end
 
       state :constants do

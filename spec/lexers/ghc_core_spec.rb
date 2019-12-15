@@ -305,6 +305,27 @@ describe Rouge::Lexers::GhcCore do
                           ['Literal.String', "\"I am a \\\"String\\\"\"#"]
     end
 
+    it 'should lex character literals' do
+      core = "Main.main4 = GHC.Show.$wshowLitChar 'C'# Main.main5"
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'Main.main4'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Keyword.Type', 'GHC'],
+                          ['Punctuation', '.'],
+                          ['Keyword.Type', 'Show'],
+                          ['Punctuation', '.'],
+                          ['Name.Variable', '$wshowLitChar'],
+                          ['Text', ' '],
+                          ['Literal.String.Char', "'C'#"],
+                          ['Text', ' '],
+                          ['Keyword.Type', 'Main'],
+                          ['Punctuation', '.'],
+                          ['Name.Variable', 'main5']
+    end
+
     it 'should lex recursive bindings' do
       core = 'Rec {
 

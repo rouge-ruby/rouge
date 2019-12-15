@@ -133,16 +133,16 @@ module Rouge
       end
 
       state :ghc_rule do
-        rule %r/^(?<name>".*?")/m do |m|
-          token Name::Label, m[:name]
+        rule %r/^(".*?")/m do |m|
+          token Name::Label, m[0]
 
           push :expression
         end
       end
 
       state :function do
-        rule %r/^(?<name>\S+)(?=.*?(=|::))/m do |m|
-          token Name::Function, m[:name]
+        rule %r/^(\S+)(?=.*?(=|::))/m do |m|
+          token Name::Function, m[0]
 
           push :expression
         end

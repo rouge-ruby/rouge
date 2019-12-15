@@ -56,6 +56,9 @@ module Rouge
       end
 
       state :common do
+        # array, e.g. '[]' or '[Char]'
+        rule %r/\[[^=]*\]/, Keyword::Type
+
         rule %r/\[/, Comment::Special, :annotation
 
         mixin :literal

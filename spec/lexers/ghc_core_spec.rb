@@ -416,5 +416,16 @@ end Rec }'
                           ['Punctuation', '.'],
                           ['Name.Variable', 'main2']
     end
+
+    it 'should lex array types' do
+      core = 'Main.main5 :: [Char]'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'Main.main5'],
+                          ['Text', ' '],
+                          ['Operator', '::'],
+                          ['Text', ' '],
+                          ['Keyword.Type', '[Char]']
+    end
   end
 end

@@ -98,7 +98,7 @@ module Rouge
       end
 
       state :punctuation do
-        rule %r/[.,(){}]/, Punctuation
+        rule %r/[.,(){};]/, Punctuation
       end
 
       state :operator do

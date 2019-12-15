@@ -363,5 +363,37 @@ end Rec }'
                           ['Punctuation', '.'],
                           ['Name.Variable', '$fEqRatio_$s$c==']
     end
+
+    it 'should lex names with numbers' do
+      core = 'Main.main1
+  = ghc-prim-0.5.3:GHC.Types.: @ Char GHC.Show.$fShow(,)3 Main.main2'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'Main.main1'],
+                          ['Text', "\n  "],
+                          ['Operator', '='],
+                          ['Text', " "],
+                          ['Name.Namespace', 'ghc-prim-0.5.3'],
+                          ['Punctuation', ':'],
+                          ['Keyword.Type', 'GHC'],
+                          ['Punctuation', '.'],
+                          ['Keyword.Type', 'Types'],
+                          ['Punctuation', '.'],
+                          ['Name.Variable', ':'],
+                          ['Text', ' '],
+                          ['Operator', '@'],
+                          ['Text', " "],
+                          ['Keyword.Type', 'Char'],
+                          ['Text', " "],
+                          ['Keyword.Type', 'GHC'],
+                          ['Punctuation', '.'],
+                          ['Keyword.Type', 'Show'],
+                          ['Punctuation', '.'],
+                          ['Name.Variable', '$fShow(,)3'],
+                          ['Text', " "],
+                          ['Keyword.Type', 'Main'],
+                          ['Punctuation', '.'],
+                          ['Name.Variable', 'main2']
+    end
   end
 end

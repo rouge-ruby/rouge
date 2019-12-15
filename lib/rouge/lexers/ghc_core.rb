@@ -81,6 +81,14 @@ module Rouge
         end
 
         rule %r/[A-Z][^\s.,(){}]*/, Keyword::Type
+
+        # packages, e.g. 'ghc-prim-0.5.3:'
+        rule %r/(^[a-z].*?\d+\.\d+\.\d+)(:)(?=\S+)/ do |m|
+          token Name::Namespace, m[1]
+          token Punctuation, m[2]
+        end
+
+        rule %r/\S*\(,\)\S*/, Name::Variable # '(,)' is a name, not punctuation
         rule %r/\S[^\s.,(){}]*/, Name::Variable
       end
 

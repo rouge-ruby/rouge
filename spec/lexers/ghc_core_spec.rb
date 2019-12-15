@@ -182,8 +182,6 @@ describe Rouge::Lexers::GhcCore do
                           ['Operator', '=']
     end
 
-    # TODO : 'Unf=OtherCon []' shouldn't his be *in* the brackets? Error in Core ppr?
-
     it 'should lex full functions' do
       core = 'GHC.Real.$p1RealFrac
   = \ (@ a_a1S3) (v_B1 :: RealFrac a_a1S3) ->

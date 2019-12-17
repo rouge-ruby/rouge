@@ -31,6 +31,8 @@ module Rouge
       def end_chars
         @end_chars ||= if @prompt.any?
           @prompt.reject { |c| c.empty? }
+        elsif allow_comments?
+          %w($ > ;)
         else
           %w($ # > ;)
         end

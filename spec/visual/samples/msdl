@@ -8,7 +8,6 @@ extend top.main:
     do cut_in_and_slow()
 
 scenario dut.cut_in:
- #  Define the other car and the road path on which it happens
     car1 : car #  The other car
     side : av_side #  The side of which car1 cuts in, left or right
     path : path with(road_path_kind: full) #  A path in the map

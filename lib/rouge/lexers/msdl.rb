@@ -108,7 +108,7 @@ module Rouge
       state :commentOrIgnore do
         rule /COMPILER_SKIP_FILE.*/m, Comment::Special, :pop!
 	rule /COMPILER_IGNORE_BEGIN.*#COMPILER_IGNORE_END/m, Comment::Special, :pop!
-	rule /.*[^.]/, Comment::Single, :pop!
+	rule /.*(?=\n)/, Comment::Single, :pop!
       end
 
       state :string do
@@ -167,12 +167,18 @@ module Rouge
         end
       end
 
+      state :scopeDependantIdentifier do
+        rule identifier do |m|
+          parseIdentifier(m[0], getTokenByScope)
+        end
+      end
+
       def parseIdentifier(identifier, tk)
         if self.class.keywords.include? identifier
           token Keyword, identifier
           if identifier == "with"
             @@scope = :with
-            push :sceAndModBlock
+            push :withBlockOrBrackets
           elsif self.class.class_defs.include? identifier
             @@isScenarioDef = identifier == "scenario" or identifier == "modifier"
             @@isExtend = identifier == "extend"
@@ -194,7 +200,7 @@ module Rouge
       end
 
       def getTokenByScope()
-        token Generic::Traceback, @@scope.to_s
+        #token Generic::Traceback, @@scope.to_s
         case @@scope
         when :none
           Name
@@ -206,6 +212,20 @@ module Rouge
           Name::Entity
         when :with
           Name::Attribute
+        end
+      end
+
+      state :withBlockOrBrackets do
+        rule %r/ /, Text::Whitespace
+        rule %r/\:/ do
+          token Punctuation
+          pop!
+          push :sceAndModBlock
+        end
+        rule %r/\(/ do
+          token Punctuation
+          pop!
+          push :modifierBrackets
         end
       end
 
@@ -259,7 +279,7 @@ module Rouge
 
 	mixin :whitespaceCountIndent
         rule identifier do |m|
-          token Error, m[0]
+          #token Error, m[0]
           parseIdentifier(m[0], Name)
         end
         mixin :baseRules
@@ -293,7 +313,7 @@ module Rouge
       end
 
       state :whitespaceCountIndent do
-        rule %r/((?: *\n)+)( *)(?!\s)/ do |m|
+        rule /((?: *\n)+)( *)(?![\s\#])/ do |m|
           token Text::Whitespace, m[1]
           updateIndentStack(m[2].length, indents)
           token Text::Whitespace, m[2]
@@ -348,6 +368,22 @@ module Rouge
       state :brackets do
         rule /\)/, Punctuation, :pop!
         mixin :baseRules
+        mixin :whitespace
+      end
+
+      state :modifierBrackets do
+        rule /\)/ do
+          token Punctuation
+          pop!
+          @@scope = indents[0][1]
+        end
+        rule /\(/ do
+          token Punctuation
+          push :brackets
+        end
+        mixin :label
+        mixin :scopeDependantIdentifier
+        rule %r/[\[\]{}.,:;\@]/, Punctuation
         mixin :whitespace
       end
 

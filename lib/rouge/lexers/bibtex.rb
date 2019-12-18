@@ -11,7 +11,8 @@ module Rouge
       tag 'bibtex'
       filenames '*.bib'
 
-      valid_name = /[a-z\_\@\!\$\&\*\+\-\.\/\:\;\<\>\?\[\\\]\^\`\|\~][\w\@\!\$\&\*\+\-\.\/\:\;\<\>\?\[\\\]\^\`\|\~]*/i
+      valid_punctuation = /@\!\$\&\*\+\-\.\/\:\;\<\>\?\[\\\]\^\`\|\~/
+      valid_name = /[a-z\_#{valid_punctuation}][\w#{valid_punctuation}]*/io
 
       state :root do
         mixin :whitespace
@@ -28,7 +29,7 @@ module Rouge
           push :field
           push :opening_brace
         end
-        rule %r/@#{valid_name}/i do
+        rule %r/@#{valid_name}/io do
           token Name::Class
           push :closing_brace
           push :command_body
@@ -64,7 +65,7 @@ module Rouge
 
       state :field do
         mixin :whitespace
-        rule(/#{valid_name}/i) { token Name::Attribute; push :value; push :equal_sign }
+        rule(/#{valid_name}/io) { token Name::Attribute; push :value; push :equal_sign }
         rule(//) { pop! }
       end
 
@@ -75,7 +76,7 @@ module Rouge
 
       state :value do
         mixin :whitespace
-        rule %r/#{valid_name}/i, Name::Variable
+        rule %r/#{valid_name}/io, Name::Variable
         rule %r/"/i, Literal::String, :quoted_string
         rule %r/\{/i, Literal::String, :braced_string
         rule %r/[\d]+/i, Literal::Number

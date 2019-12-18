@@ -62,3 +62,6 @@ test_string = "You'll hate me after this - #"          # " Annoying, isn't it?
             ]
 
 東京都 = 123
+
+name = { first = "Tom", last = "Preston-Werner" }
+point = { x = 1, y = 2 }

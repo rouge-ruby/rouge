@@ -57,8 +57,8 @@ Some other {{ output }}!
 {% else %}
 {% endcase %}
 
-{% include file.html param = 'value' param2 = object %}
-{% include 'snippet', param: 'value', param2: object %}
+{% include dir/file.html param = 'example.com' param2 = object %}
+{% include 'snippet', param: 'example.com', param2: object %}
 {% include product_page with products[0] %}
 {% include {{product_page | split: "." | first}} for products %}
 

@@ -40,17 +40,6 @@ Rouge::Theme.find('base16.light').render(scope: '.highlight')
 
 ### Jekyll
 
-**NOTE**: If you're using GitHub Pages, you're stuck with [version
-2.2.1][ghp-versions] of Rouge. Although GitHub Pages uses an up to date version
-of Jekyll, it locks the version of Rouge. There is [an open issue][ghp-issue] to
-upgrade this to a more current release.
-
-[ghp-versions]: https://pages.github.com/versions/
-"Version of the dependencies used by GitHub Pages"
-
-[ghp-issue]: https://github.com/github/pages-gem/issues/601
-"pages-gem Issue #601"
-
 Rouge is Jekyll's default syntax highlighter. Out of the box, Rouge will be
 used to highlight text wrapped in the `{% highlight %}` template tags. The
 `{% highlight %}` tag provides minimal options: you can specify the language to
@@ -176,7 +165,7 @@ different encoding, please convert it to UTF-8 first.
 
 ## Contributing
 
-We're always exited to welcome new contributors to Rouge. By it's nature, a
+We're always excited to welcome new contributors to Rouge. By it's nature, a
 syntax highlighter relies for its success on submissions from users of the
 languages being highlighted. You can help Rouge by filing bug reports or
 developing new lexers.

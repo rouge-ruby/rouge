@@ -34,7 +34,13 @@ module Rouge
 
         rule %r/^([ \t]*)(```|~~~)([^\n]*\n)((.*?)(\2))?/m do |m|
           name = m[3].strip
-          sublexer = Lexer.find_fancy(name.empty? ? "guess" : name, m[5], @options)
+          sublexer =
+            begin
+              Lexer.find_fancy(name.empty? ? "guess" : name, m[5], @options)
+            rescue Guesser::Ambiguous => e
+              e.alternatives.first.new(@options)
+            end
+
           sublexer ||= PlainText.new(@options.merge(:token => Str::Backtick))
           sublexer.reset!
 

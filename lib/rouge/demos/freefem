@@ -12,22 +12,5 @@ func Pk = P2;
 fespace Uh(Th, Pk);
 Uh u;
 
-// Macro
-macro grad(A) [dx(A), dy(A)] //
-
-// Problem
-varf vLaplacian (u, uh)
-	= int2d(Th)(
-		  grad(u)' * grad(uh)
-	)
-	- int2d(Th)(
-		  f * uh
-	)
-	+ on(1, 2, 3, 4, u=0)
-	;
-matrix<real> Laplacian = vLaplacian(Uh, Uh, solver=sparsesolver);
-real[int] LaplacianBoundary = vLaplacian(0, Uh);
-u[] = Laplacian^-1 * LaplacianBoundary;
-
 // Plot
-plot(u, nbiso=30, fill=true, value=true, cmm="A"); 
+plot(u, nbiso=30, fill=true, value=true, cmm="A");

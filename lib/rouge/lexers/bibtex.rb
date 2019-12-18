@@ -29,28 +29,28 @@ module Rouge
           push :field
           push :opening_brace
         end
-        rule %r/@#{valid_name}/io do
+        rule %r/@#{valid_name}/o do
           token Name::Class
           push :closing_brace
           push :command_body
           push :opening_brace
         end
-        rule %r/.+/i, Comment
+        rule %r/.+/, Comment
       end
 
       state :opening_brace do
         mixin :whitespace
-        rule %r/[{(]/i, Punctuation, :pop!
+        rule %r/[{(]/, Punctuation, :pop!
       end
 
       state :closing_brace do
         mixin :whitespace
-        rule %r/[})]/i, Punctuation, :pop!
+        rule %r/[})]/, Punctuation, :pop!
       end
 
       state :command_body do
         mixin :whitespace
-        rule %r/[^\s\,\}]+/i do
+        rule %r/[^\s\,\}]+/ do
           token Name::Label
           pop!
           push :fields
@@ -59,45 +59,45 @@ module Rouge
 
       state :fields do
         mixin :whitespace
-        rule %r/,/i, Punctuation, :field
+        rule %r/,/, Punctuation, :field
         rule(//) { pop! }
       end
 
       state :field do
         mixin :whitespace
-        rule(/#{valid_name}/io) { token Name::Attribute; push :value; push :equal_sign }
+        rule(/#{valid_name}/o) { token Name::Attribute; push :value; push :equal_sign }
         rule(//) { pop! }
       end
 
       state :equal_sign do
         mixin :whitespace
-        rule %r/=/i, Punctuation, :pop!
+        rule %r/=/, Punctuation, :pop!
       end
 
       state :value do
         mixin :whitespace
-        rule %r/#{valid_name}/io, Name::Variable
-        rule %r/"/i, Literal::String, :quoted_string
-        rule %r/\{/i, Literal::String, :braced_string
-        rule %r/[\d]+/i, Literal::Number
-        rule %r/#/i, Punctuation
+        rule %r/#{valid_name}/o, Name::Variable
+        rule %r/"/, Literal::String, :quoted_string
+        rule %r/\{/, Literal::String, :braced_string
+        rule %r/[\d]+/, Literal::Number
+        rule %r/#/, Punctuation
         rule(//) { pop! }
       end
 
       state :quoted_string do
-        rule %r/\{/i, Literal::String, :braced_string
-        rule %r/"/i, Literal::String, :pop!
-        rule %r/[^\{\"]+/i, Literal::String
+        rule %r/\{/, Literal::String, :braced_string
+        rule %r/"/, Literal::String, :pop!
+        rule %r/[^\{\"]+/, Literal::String
       end
 
       state :braced_string do
-        rule %r/\{/i, Literal::String, :braced_string
-        rule %r/\}/i, Literal::String, :pop!
-        rule %r/[^\{\}]+/i, Literal::String
+        rule %r/\{/, Literal::String, :braced_string
+        rule %r/\}/, Literal::String, :pop!
+        rule %r/[^\{\}]+/, Literal::String
       end
 
       state :whitespace do
-        rule %r/\s+/i, Text
+        rule %r/\s+/, Text
       end
     end
   end

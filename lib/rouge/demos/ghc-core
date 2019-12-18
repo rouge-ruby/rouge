@@ -1,55 +1,26 @@
--- RHS size: {terms: 23, types: 50, coercions: 0, joins: 0/0}
-even [InlPrag=INLINABLE] :: forall a. Integral a => a -> Bool
-[GblId,
- Arity=2,
- Caf=NoCafRefs,
- Str=<S(S(LS(S(C(C(S))L)LLLLLLL)L)LLLLLLLL),U(1*U(U(A,A,A,A,A,A,C(U)),1*U(1*U(1*C1(C1(U)),A),A,A,A,A,A,A,A),A),A,A,1*C1(C1(U)),A,A,A,A,A)><L,U>,
- Unf=Unf{Src=InlineStable, TopLvl=True, Value=True, ConLike=True,
-         WorkFree=True, Expandable=True, Guidance=IF_ARGS [60] 470 60
-         Tmpl= \ (@ a_a3Go) ($dIntegral_a3Gq :: Integral a_a3Go) ->
-                 let {
-                   $dReal_a4kJ :: Real a_a3Go
-                   [LclId]
-                   $dReal_a4kJ = GHC.Real.$p1Integral @ a_a3Go $dIntegral_a3Gq } in
-                 let {
-                   $dNum_a4kK :: Num a_a3Go
-                   [LclId]
-                   $dNum_a4kK = GHC.Real.$p1Real @ a_a3Go $dReal_a4kJ } in
-                 let {
-                   $dEq_s5wm [Occ=OnceL] :: Ord a_a3Go
-                   [LclId]
-                   $dEq_s5wm = GHC.Real.$p2Real @ a_a3Go $dReal_a4kJ } in
-                 let {
-                   $dEq1_a3Gs [Occ=OnceL] :: Eq a_a3Go
-                   [LclId]
-                   $dEq1_a3Gs = GHC.Classes.$p1Ord @ a_a3Go $dEq_s5wm } in
-                 \ (n_a2BL [Occ=Once] :: a_a3Go) ->
-                   ==
-                     @ a_a3Go
-                     $dEq1_a3Gs
-                     (rem
-                        @ a_a3Go
-                        $dIntegral_a3Gq
-                        n_a2BL
-                        (fromInteger @ a_a3Go $dNum_a4kK 2))
-                     (fromInteger @ a_a3Go $dNum_a4kK 0)}]
-even
-  = \ (@ a_a3Go)
-      ($dIntegral_a3Gq :: Integral a_a3Go)
-      (eta_B1 :: a_a3Go) ->
-      case GHC.Real.$p1Integral @ a_a3Go $dIntegral_a3Gq of
-      { GHC.Real.C:Real ww1_s7wN ww2_s7wO ww3_s7x5 ->
-      case ww2_s7wO of
-      { GHC.Classes.C:Ord ww5_s7wR ww6_s7wX ww7_s7wY ww8_s7wZ ww9_s7x0
-                          ww10_s7x1 ww11_s7x2 ww12_s7x3 ->
-      case ww5_s7wR of { GHC.Classes.C:Eq ww14_s7wU ww15_s7wV ->
-      ww14_s7wU
-        (rem
-           @ a_a3Go
-           $dIntegral_a3Gq
-           eta_B1
-           (fromInteger @ a_a3Go ww1_s7wN GHC.Real.even2))
-        (fromInteger @ a_a3Go ww1_s7wN GHC.Real.even1)
+Rec {
+-- RHS size: {terms: 24, types: 3, coercions: 0, joins: 0/0}
+Main.fib_fib [Occ=LoopBreaker] :: Integer -> Integer
+[GblId, Arity=1, Str=<S,U>, Unf=OtherCon []]
+Main.fib_fib
+  = \ (ds_d2OU :: Integer) ->
+      case integer-gmp-1.0.2.0:GHC.Integer.Type.eqInteger#
+             ds_d2OU Main.fib1
+      of {
+        __DEFAULT ->
+          case integer-gmp-1.0.2.0:GHC.Integer.Type.eqInteger#
+                 ds_d2OU Main.fib3
+          of {
+            __DEFAULT ->
+              integer-gmp-1.0.2.0:GHC.Integer.Type.plusInteger
+                (Main.fib_fib
+                   (integer-gmp-1.0.2.0:GHC.Integer.Type.minusInteger
+                      ds_d2OU Main.fib3))
+                (Main.fib_fib
+                   (integer-gmp-1.0.2.0:GHC.Integer.Type.minusInteger
+                      ds_d2OU Main.fib2));
+            1# -> Main.fib3
+          };
+        1# -> Main.fib1
       }
-      }
-      }
+end Rec }

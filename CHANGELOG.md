@@ -4,6 +4,50 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.14.0: 2019-12-11
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.13.0...v3.14.0)
+
+- General
+  - Fix lexing of comments at the EOF ([#1371](https://github.com/rouge-ruby/rouge/pull/1371/) by Maxime Kjaer)
+  - Fix typo in README.md ([#1367](https://github.com/rouge-ruby/rouge/pull/1367/) by Sven Tennie)
+- JSONDOC Lexer
+  - Update state names in json-doc lexer ([#1364](https://github.com/rouge-ruby/rouge/pull/1364/) by Maxime Kjaer)
+- Liquid Lexer
+  - Add pattern for matching filenames to the Liquid lexer ([#1351](https://github.com/rouge-ruby/rouge/pull/1351/) by Eric Knibbe)
+- Magik Lexer
+  - Add `_finally` keyword to Magik lexer ([#1365](https://github.com/rouge-ruby/rouge/pull/1365/) by Steven Looman)
+- NES Assembly Lexer (**NEW**)
+  - Add NES Assembly lexer ([#1354](https://github.com/rouge-ruby/rouge/pull/1354/) by Yury Sinev)
+- Slice Lexer (**NEW**)
+  - Add Slice lexer ([#867](https://github.com/rouge-ruby/rouge/pull/867/) by jolkdarr)
+- TOML Lexer
+  - Add support for inline tables to TOML lexer ([#1359](https://github.com/rouge-ruby/rouge/pull/1359/) by Michael Camilleri)
+
+## version 3.13.0: 2019-11-13
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.12.0...v3.13.0)
+
+- BPF Lexer
+  - Support disassembler output in BPF lexer ([#1346](https://github.com/rouge-ruby/rouge/pull/1346/) by Paul Chaignon)
+- Q Lexer
+  - Fix quote escaping in Q lexer ([#1355](https://github.com/rouge-ruby/rouge/pull/1355/) by AngusWilson)
+- TTCN-3 Lexer (**NEW**)
+  - Add TTCN-3 testing language lexer ([#1337](https://github.com/rouge-ruby/rouge/pull/1337/) by Garcia)
+
+## version 3.12.0: 2019-10-16
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.11.1...v3.12.0)
+
+- General
+  - Handle Guesser::Ambiguous in Markdown context ([#1349](https://github.com/rouge-ruby/rouge/pull/1349/) by John Fairhurst)
+  - Ensure XML lexer handles unknown DOCTYPEs ([#1348](https://github.com/rouge-ruby/rouge/pull/1348/) by John Fairhurst)
+  - Remove note about GitHub Pages' version of Rouge ([#1344](https://github.com/rouge-ruby/rouge/pull/1344/) by Andrew Petz)
+- Embedded Elixir Lexer
+  - Add Phoenix Live View file glob to Embedded Elixir lexer ([#1347](https://github.com/rouge-ruby/rouge/pull/1347/) by Maksym Verbovyi)
+- Minizinc Lexer (**NEW**)
+  - Add MiniZinc lexer ([#1329](https://github.com/rouge-ruby/rouge/pull/1329/) by Abe Voelker)
+
 ## version 3.11.1: 2019-10-02
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.11.0...v3.11.1)

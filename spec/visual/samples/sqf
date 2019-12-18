@@ -48,3 +48,5 @@ if (_target find "var:" == 0) then {
     _commandList = _commandList joinString _delimiter;
     copyToClipboard _commandList;
 };
+
+// comment at eof

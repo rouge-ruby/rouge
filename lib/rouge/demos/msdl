@@ -1,5 +1,5 @@
 # Example 2: A two-phase scenario
-scenario traffic::two_phases:    // Scenario name
+scenario traffic::two_phases:    # Scenario name
 
          # Define the car (with specific attributes)
          car1: car with:

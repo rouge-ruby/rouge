@@ -15,4 +15,16 @@ describe Rouge::Lexers::Dot do
       assert_guess :mimetype => 'text/vnd.graphviz'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'recognizes one-line "//" comments not followed by a newline' do
+      assert_tokens_equal '// comment', ['Comment.Single', '// comment']
+    end
+
+    it 'recognizes one-line "#" comments not followed by a newline' do
+      assert_tokens_equal '# comment', ['Comment.Single', '# comment']
+    end
+  end
 end

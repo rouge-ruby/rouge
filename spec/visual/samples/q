@@ -39,6 +39,7 @@ iasc|idesc|inv|keys|load|log|lsq|ltime|ltrim|maxs|md5|meta|mins|next|parse|plist
 
 / Strings
 ("";"x\n";"\007")
+y: "string with quote \" inside";
 
 a:1 2 3   / comment with leading whitespaces
 b:3 4 5 5 / to bring in line with this comment

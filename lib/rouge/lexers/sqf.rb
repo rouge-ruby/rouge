@@ -65,7 +65,7 @@ module Rouge
 
         # Preprocessor instructions
         rule %r"/\*.*?\*/"m, Comment::Multiline
-        rule %r"//.*\n", Comment::Single
+        rule %r"//.*", Comment::Single
         rule %r"#(define|undef|if(n)?def|else|endif|include)", Comment::Preproc
         rule %r"\\\r?\n", Comment::Preproc
         rule %r"__(EVAL|EXEC|LINE__|FILE__)", Name::Builtin

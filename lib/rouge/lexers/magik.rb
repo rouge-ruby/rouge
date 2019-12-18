@@ -22,7 +22,7 @@ module Rouge
            _throw
            _lock _endlock
            _if _then _elif _else _endif
-           _for _over _while _loop _endloop _loopbody _continue _leave
+           _for _over _while _loop _finally _endloop _loopbody _continue _leave
            _return
            _class
            _local _constant _recursive _global _dynamic _import

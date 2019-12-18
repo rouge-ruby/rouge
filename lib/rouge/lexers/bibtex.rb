@@ -65,7 +65,11 @@ module Rouge
 
       state :field do
         mixin :whitespace
-        rule(/#{valid_name}/o) { token Name::Attribute; push :value; push :equal_sign }
+        rule %r/#{valid_name}/o do
+          token Name::Attribute
+          push :value
+          push :equal_sign
+        end
         rule(//) { pop! }
       end
 

@@ -189,7 +189,7 @@ module Rouge
         ))
       end
 
-      id = /[a-zA-Z_][a-zA-Z0-9_]*/
+      id = /[a-z_]\w*/i
 
       state :expr_bol do
         mixin :inline_whitespace

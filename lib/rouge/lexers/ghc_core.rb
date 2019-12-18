@@ -52,7 +52,6 @@ module Rouge
         rule %r/\]/, Comment::Special, :pop!
         rule %r/\[/, Comment::Special, :annotation
         rule %r/[^\[\]]+/, Comment::Special
-        rule %r/\s+/, Comment::Special
       end
 
       state :common do

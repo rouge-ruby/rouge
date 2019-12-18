@@ -7,7 +7,7 @@ module Rouge
 
     class FreeFEM < Cpp
       title "FreeFEM"
-      desc "The FreeFEM programming language"
+      desc "The FreeFEM programming language (freefem.org)"
 
       tag 'freefem'
       aliases 'ff'

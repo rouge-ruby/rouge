@@ -1,20 +1,16 @@
+/*
+This is the first line of a block comment.
+/* This is a nested comment. */
+# This is also a nested comment.
+This is the last line of the block comment.
+*/
 
-scenario dut.cut_in:
- #  Define the other car and the road path on which it happens
-    car1: car #  The other car
-    side: av_side #  The side of which car1 cuts in, left or right
-    path: path with(road_path_kind: full) #  A path in the map
-    path_length(path: path, min_path_length: 100meter, max_path_length: 250meter)
-    path_min_driving_lanes(path: path, min_driving_lanes: 2)
-     #  require the path to have at least 2 lanes
-     #  Define the behavior
+struct s:
+    a: int
 
-    do serial():
-        change_lane: parallel(duration: [2..5]second):
-            dut_car.drive(path: path)
-            car1.drive(path: path) with:
-                l1: lane(side_of: dut_car, side: side, at: start)
-                p1: position(time: [1.5..2]second, ahead_of: dut_car, at: start)
-                speed(speed: [30..200]kph)
-                l2: lane(same_as: dut_car, at: end)
-                p2: position(time: [1.5..2]second, ahead_of: dut_car, at: end)
+
+
+extend top.main:
+    do dut.cut_in with: # This is an inline comment
+        kept(it.get_ahead.duration == 3s)
+        keep(it.change_lane.duration == 4s)

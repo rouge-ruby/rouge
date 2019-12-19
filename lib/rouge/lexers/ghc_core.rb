@@ -5,7 +5,7 @@
 # of the language and https://www.aosabook.org/en/ghc.html for a high level overview.
 module Rouge
   module Lexers
-    class GhcCore < RegexLexer
+    class GHCCore < RegexLexer
       title "GHC Core"
       desc "Intermediate representation of the GHC Haskell compiler."
       tag 'ghc-core'

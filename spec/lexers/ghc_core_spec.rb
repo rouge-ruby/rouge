@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-describe Rouge::Lexers::GhcCore do
-  let(:subject) { Rouge::Lexers::GhcCore.new }
+describe Rouge::Lexers::GHCCore do
+  let(:subject) { Rouge::Lexers::GHCCore.new }
 
   describe 'guessing' do
     include Support::Guessing

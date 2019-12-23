@@ -318,7 +318,7 @@ module Rouge
 
     def as_bool(val)
       case val
-      when nil, false, 0, '0', 'off'
+      when nil, false, 0, '0', 'false', 'off'
         false
       when Array
         val.empty? ? true : as_bool(val.last)

@@ -201,6 +201,35 @@ describe Rouge::Lexers::GHCCmm do
                           ['Name.Label', 'c4tF'],
                           ['Punctuation', ';']
     end
+
+    it 'should lex Hp and HpLim as global variables' do
+      core = 'if (Hp > HpLim) (likely: False) goto c4vy; else goto c4vx;'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'if'],
+                          ['Text', ' '],
+                          ['Punctuation', '('],
+                          ['Name.Variable.Global', 'Hp'],
+                          ['Text', ' '],
+                          ['Operator', '>'],
+                          ['Text', ' '],
+                          ['Name.Variable.Global', 'HpLim'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Comment', '(likely: False)'],
+                          ['Text', ' '],
+                          ['Keyword', 'goto'],
+                          ['Text', ' '],
+                          ['Name.Label', 'c4vy'],
+                          ['Punctuation', ';'],
+                          ['Text', ' '],
+                          ['Keyword', 'else'],
+                          ['Text', ' '],
+                          ['Keyword', 'goto'],
+                          ['Text', ' '],
+                          ['Name.Label', 'c4vx'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

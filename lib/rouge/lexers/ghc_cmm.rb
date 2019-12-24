@@ -25,12 +25,12 @@ module Rouge
       end
 
       state :section do
-        rule %r/\/{2}.*/, Comment::Single
+        mixin :comments
+
         rule %r/-?[0-9]+/, Literal::Number::Integer
 
         rule %r/[+\-*\/<>=!&]/, Operator
 
-        rule %r/\(likely.*?\)/, Comment
 
         rule %r/[\[\].{}:;,()]/, Punctuation
         rule %r/section/, Keyword::Reserved
@@ -51,6 +51,11 @@ module Rouge
         mixin :names
 
         rule %r/\s/m, Text
+      end
+
+      state :comments do
+        rule %r/\/{2}.*/, Comment::Single
+        rule %r/\(likely.*?\)/, Comment
       end
 
       state :infos do

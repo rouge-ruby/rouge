@@ -28,7 +28,7 @@ module Rouge
         rule %r/[\[\].{}:;,()]/, Punctuation
         rule %r/\/{2}.*/, Comment::Single
         rule %r/section/, Keyword::Reserved
-        rule %r/const/, Keyword::Reserved
+        rule %r/const/, Keyword::Constant
         rule %r/"data"/, Name::Builtin
         rule %r/"cstring"/, Name::Builtin
         rule %r/"/, Literal::String::Double

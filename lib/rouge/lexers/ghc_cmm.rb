@@ -28,7 +28,7 @@ module Rouge
         rule %r/\/{2}.*/, Comment::Single
         rule %r/-?[0-9]+/, Literal::Number::Integer
 
-        rule %r/(Sp|SpLim|Hp|HpLim|R\d{1,2})(?![a-zA-Z0-9#\$])/, Name::Variable::Global
+        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|R\d{1,2})(?![a-zA-Z0-9#\$])/, Name::Variable::Global
         rule %r/[+\-*\/<>=!&]/, Operator
 
         rule %r/\(likely.*?\)/, Comment

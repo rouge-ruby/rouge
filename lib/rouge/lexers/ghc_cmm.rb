@@ -48,6 +48,16 @@ module Rouge
           token Keyword, m[3]
         end
 
+        mixin :infos
+
+        rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
+        rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type
+        rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
+        rule %r/[\w#\$]+/, Name::Label
+        rule %r/\s/m, Text
+      end
+
+      state :infos do
         rule %r/(args|res|upd|label|rep|srt|arity|fun_type|arg_space|updfr_space)(:)/ do |m|
           token Name::Property, m[1]
           token Punctuation, m[2]
@@ -57,12 +67,6 @@ module Rouge
           token Name::Entity, m[1]
           token Punctuation, m[2]
         end
-
-        rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
-        rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type
-        rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
-        rule %r/[\w#\$]+/, Name::Label
-        rule %r/\s/m, Text
       end
     end
   end

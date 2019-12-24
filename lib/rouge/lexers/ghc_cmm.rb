@@ -12,10 +12,14 @@ module Rouge
       state :root do
         # sections
         rule %r/^=====.*=====$/, Generic::Heading
+        # timestamps
+        rule %r/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ UTC$/, Comment::Single
+
+        rule %r/[\[\]]/, Punctuation
 
         # rest is Text
         rule %r/\s/m, Text
-        rule %r/.*/, Text
+        rule %r/./, Text
       end
     end
   end

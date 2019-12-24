@@ -30,6 +30,15 @@ describe Rouge::Lexers::GHCCmm do
       assert_tokens_equal core, ['Generic.Heading', core]
     end
 
+    it 'should lex timestamps as comments' do
+      core = '2019-12-24 13:23:29.666399 UTC'
+      assert_tokens_equal core, ['Comment.Single', core]
+    end
+
+    it 'should lex brackets as punctuation' do
+      core = '[]'
+      assert_tokens_equal core, ['Punctuation', '[]']
+    end
   end
 end
 

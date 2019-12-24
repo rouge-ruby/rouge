@@ -167,6 +167,40 @@ describe Rouge::Lexers::GHCCmm do
                           ['Text', "\n "],
                           ['Punctuation', '}]']
     end
+
+    it 'should lex operators and comparisons' do
+      core = 'if ((Sp + -16) < SpLim) (likely: False) goto c4tE; else goto c4tF;'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'if'],
+                          ['Text', ' '],
+                          ['Punctuation', '(('],
+                          ['Name.Variable.Global', 'Sp'],
+                          ['Text', ' '],
+                          ['Operator', '+'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '-16'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Operator', '<'],
+                          ['Text', ' '],
+                          ['Name.Variable.Global', 'SpLim'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Comment', '(likely: False)'],
+                          ['Text', ' '],
+                          ['Keyword', 'goto'],
+                          ['Text', ' '],
+                          ['Name.Label', 'c4tE'],
+                          ['Punctuation', ';'],
+                          ['Text', ' '],
+                          ['Keyword', 'else'],
+                          ['Text', ' '],
+                          ['Keyword', 'goto'],
+                          ['Text', ' '],
+                          ['Name.Label', 'c4tF'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

@@ -25,15 +25,27 @@ module Rouge
       end
 
       state :section do
-        rule %r/[\[\].{}:;,()]/, Punctuation
         rule %r/\/{2}.*/, Comment::Single
+        rule %r/-?[0-9]+/, Literal::Number::Integer
+
+        rule %r/Sp(?![a-zA-Z0-9#\$])/, Name::Variable::Global
+        rule %r/SpLim(?![a-zA-Z0-9#\$])/, Name::Variable::Global
+        rule %r/[+\-*\/<>=]/, Operator
+
+        rule %r/\(likely.*?\)/, Comment
+
+        rule %r/[\[\].{}:;,()]/, Punctuation
         rule %r/section/, Keyword::Reserved
         rule %r/const/, Keyword::Constant
         rule %r/"data"/, Name::Builtin
         rule %r/"cstring"/, Name::Builtin
         rule %r/"/, Literal::String::Double
+
+        rule %r/if/, Keyword
+        rule %r/else/, Keyword
+        rule %r/goto/, Keyword
+
         rule %r/I\d{1,2}\[\]/, Keyword::Type
-        rule %r/[0-9]+/, Literal::Number::Integer
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
         rule %r/[\w#\$]+/, Name::Label
         rule %r/\s/m, Text

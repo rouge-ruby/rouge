@@ -57,7 +57,7 @@ module Rouge
         end
 
         rule %r/(args|res|upd)(:)/ do |m|
-          token Keyword, m[1]
+          token Name::Property, m[1]
           token Punctuation, m[2]
         end
 

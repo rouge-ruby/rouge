@@ -283,6 +283,12 @@ describe Rouge::Lexers::GHCCmm do
                           ['Literal.Number.Integer', '8'],
                           ['Punctuation', ';']
     end
+
+    it 'should lex offset' do
+      core = 'offset'
+
+      assert_tokens_equal core, ['Keyword', 'offset']
+    end
   end
 end
 

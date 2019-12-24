@@ -48,6 +48,7 @@ module Rouge
         rule %r/else/, Keyword
         rule %r/goto/, Keyword
         rule %r/call/, Keyword
+        rule %r/offset/, Keyword
 
         rule %r/(returns)( +?)(to)/ do |m|
           token Keyword, m[1]

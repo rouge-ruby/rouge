@@ -27,7 +27,23 @@ module Rouge
       state :section do
         mixin :comments
         mixin :literals
+        mixin :operators_and_keywords
+        mixin :infos
+        mixin :names
 
+        rule %r/\s/m, Text
+      end
+
+      state :comments do
+        rule %r/\/{2}.*/, Comment::Single
+        rule %r/\(likely.*?\)/, Comment
+      end
+
+      state :literals do
+        rule %r/-?[0-9]+/, Literal::Number::Integer
+      end
+
+      state :operators_and_keywords do
         rule %r/[+\-*\/<>=!&]/, Operator
 
         rule %r/[\[\].{}:;,()]/, Punctuation
@@ -44,20 +60,6 @@ module Rouge
           token Text, m[2]
           token Keyword, m[3]
         end
-
-        mixin :infos
-        mixin :names
-
-        rule %r/\s/m, Text
-      end
-
-      state :comments do
-        rule %r/\/{2}.*/, Comment::Single
-        rule %r/\(likely.*?\)/, Comment
-      end
-
-      state :literals do
-        rule %r/-?[0-9]+/, Literal::Number::Integer
       end
 
       state :infos do

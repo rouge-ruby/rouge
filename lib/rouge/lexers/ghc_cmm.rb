@@ -30,7 +30,7 @@ module Rouge
 
         rule %r/Sp(?![a-zA-Z0-9#\$])/, Name::Variable::Global
         rule %r/SpLim(?![a-zA-Z0-9#\$])/, Name::Variable::Global
-        rule %r/[+\-*\/<>=]/, Operator
+        rule %r/[+\-*\/<>=!]/, Operator
 
         rule %r/\(likely.*?\)/, Comment
 

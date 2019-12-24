@@ -242,6 +242,47 @@ describe Rouge::Lexers::GHCCmm do
                           ['Name.Variable.Global', 'R2'],
                           ['Punctuation', ';']
     end
+
+    it 'should lex calls' do
+      core = 'call GHC.Integer.Type.eqInteger#_info(R3,
+                     R2) returns to c4ty, args: 8, res: 8, upd: 8;'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'call'],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'GHC'], ['Punctuation', '.'], ['Name.Namespace', 'Integer'], ['Punctuation', '.'], ['Name.Namespace', 'Type'], ['Punctuation', '.'], ['Name.Label', 'eqInteger#_info'],
+                          ['Punctuation', '('],
+                          ['Name.Variable.Global', 'R3'],
+                          ['Punctuation', ','],
+                          ['Text', "\n                     "],
+                          ['Name.Variable.Global', 'R2'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Keyword', 'returns'],
+                          ['Text', ' '],
+                          ['Keyword', 'to'],
+                          ['Text', ' '],
+                          ['Name.Label', 'c4ty'],
+                          ['Punctuation', ','],
+                          ['Text', ' '],
+                          ['Keyword', 'args'],
+                          ['Punctuation', ':'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '8'],
+                          ['Punctuation', ','],
+                          ['Text', ' '],
+                          ['Keyword', 'res'],
+                          ['Punctuation', ':'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '8'],
+                          ['Punctuation', ','],
+                          ['Text', ' '],
+                          ['Keyword', 'upd'],
+                          ['Punctuation', ':'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '8'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

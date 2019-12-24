@@ -47,6 +47,18 @@ module Rouge
         rule %r/if/, Keyword
         rule %r/else/, Keyword
         rule %r/goto/, Keyword
+        rule %r/call/, Keyword
+
+        rule %r/(returns)( +?)(to)/ do |m|
+          token Keyword, m[1]
+          token Text, m[2]
+          token Keyword, m[3]
+        end
+
+        rule %r/(args|res|upd)(:)/ do |m|
+          token Keyword, m[1]
+          token Punctuation, m[2]
+        end
 
         rule %r/I\d{1,2}\[\]/, Keyword::Type
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace

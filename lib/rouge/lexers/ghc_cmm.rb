@@ -17,21 +17,15 @@ module Rouge
 
         rule %r/\[\]/, Punctuation
 
-        mixin :section
-
-        # rest is Text
-        rule %r/\s/m, Text
-        rule %r/./, Text
-      end
-
-      state :section do
         mixin :comments
         mixin :literals
         mixin :operators_and_keywords
         mixin :infos
         mixin :names
 
+        # rest is Text
         rule %r/\s/m, Text
+        rule %r/./, Text
       end
 
       state :comments do

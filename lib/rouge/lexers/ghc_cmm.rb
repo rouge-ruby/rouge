@@ -56,8 +56,13 @@ module Rouge
           token Keyword, m[3]
         end
 
-        rule %r/(args|res|upd)(:)/ do |m|
+        rule %r/(args|res|upd|label|rep|srt|arity|fun_type|arg_space|updfr_space)(:)/ do |m|
           token Name::Property, m[1]
+          token Punctuation, m[2]
+        end
+
+        rule %r/(info_tbls|stack_info)(:)/ do |m|
+          token Name::Entity, m[1]
           token Punctuation, m[2]
         end
 

@@ -21,6 +21,16 @@ describe Rouge::Lexers::GHCCmm do
       assert_guess :filename => 'Main.dump-cmm-caf'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'should lex section markers as headings' do
+      core = '==================== Output Cmm ===================='
+      assert_tokens_equal core, ['Generic.Heading', core]
+    end
+
+  end
 end
 
 

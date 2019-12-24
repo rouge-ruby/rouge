@@ -10,6 +10,8 @@ module Rouge
       filenames '*.dump-cmm', '*.dump-cmm-*'
 
       state :root do
+        # sections
+        rule %r/^=====.*=====$/, Generic::Heading
 
         # rest is Text
         rule %r/\s/m, Text

@@ -62,8 +62,8 @@ module Rouge
           token Punctuation, m[2]
         end
 
-        rule %r/[IPF]\d{1,2}\[\]/, Keyword::Type
-        rule %r/[IPF]\d{1,2}(?=[\[\]()\s])/, Keyword::Type
+        rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
+        rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
         rule %r/[\w#\$]+/, Name::Label
         rule %r/\s/m, Text

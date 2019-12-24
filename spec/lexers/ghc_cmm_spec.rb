@@ -230,6 +230,18 @@ describe Rouge::Lexers::GHCCmm do
                           ['Name.Label', 'c4vx'],
                           ['Punctuation', ';']
     end
+
+    it 'should lex registers as global variables' do
+      core = 'R2 = R2;'
+
+      assert_tokens_equal core,
+                          ['Name.Variable.Global', 'R2'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Name.Variable.Global', 'R2'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

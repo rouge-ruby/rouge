@@ -32,6 +32,7 @@ module Rouge
         rule %r/SpLim(?![a-zA-Z0-9#\$])/, Name::Variable::Global
         rule %r/Hp(?![a-zA-Z0-9#\$])/, Name::Variable::Global
         rule %r/HpLim(?![a-zA-Z0-9#\$])/, Name::Variable::Global
+        rule %r/R\d{1,2}(?![a-zA-Z0-9#\$])/, Name::Variable::Global
         rule %r/[+\-*\/<>=!]/, Operator
 
         rule %r/\(likely.*?\)/, Comment

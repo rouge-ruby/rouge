@@ -44,11 +44,7 @@ module Rouge
         rule %r/"cstring"/, Name::Builtin
         rule %r/"/, Literal::String::Double
 
-        rule %r/if/, Keyword
-        rule %r/else/, Keyword
-        rule %r/goto/, Keyword
-        rule %r/call/, Keyword
-        rule %r/offset/, Keyword
+        rule %r/if|else|goto|call|offset/, Keyword
 
         rule %r/(returns)( +?)(to)/ do |m|
           token Keyword, m[1]

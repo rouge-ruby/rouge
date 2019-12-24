@@ -289,6 +289,22 @@ describe Rouge::Lexers::GHCCmm do
 
       assert_tokens_equal core, ['Keyword', 'offset']
     end
+
+    it 'should lex array accesses' do
+      core = 'I64[Sp] = c4tZ;'
+
+      assert_tokens_equal core,
+                          ['Keyword.Type', 'I64'],
+                          ['Punctuation', '['],
+                          ['Name.Variable.Global', 'Sp'],
+                          ['Punctuation', ']'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Name.Label', 'c4tZ'],
+                          ['Punctuation', ';']
+
+    end
   end
 end
 

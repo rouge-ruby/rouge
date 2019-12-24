@@ -28,7 +28,6 @@ module Rouge
         rule %r/\/{2}.*/, Comment::Single
         rule %r/-?[0-9]+/, Literal::Number::Integer
 
-        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|R\d{1,2})(?![a-zA-Z0-9#\$])/, Name::Variable::Global
         rule %r/[+\-*\/<>=!&]/, Operator
 
         rule %r/\(likely.*?\)/, Comment
@@ -49,11 +48,8 @@ module Rouge
         end
 
         mixin :infos
+        mixin :names
 
-        rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
-        rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type
-        rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
-        rule %r/[\w#\$]+/, Name::Label
         rule %r/\s/m, Text
       end
 
@@ -67,6 +63,14 @@ module Rouge
           token Name::Entity, m[1]
           token Punctuation, m[2]
         end
+      end
+
+      state :names do
+        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|R\d{1,2})(?![a-zA-Z0-9#\$])/, Name::Variable::Global
+        rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
+        rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type
+        rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
+        rule %r/[\w#\$]+/, Name::Label
       end
     end
   end

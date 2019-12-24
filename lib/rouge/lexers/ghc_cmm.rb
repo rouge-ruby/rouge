@@ -17,6 +17,12 @@ module Rouge
 
         rule %r/\[\]/, Punctuation
 
+        rule %r/(#include)( +)(".*?")/ do |m|
+          token Comment::Preproc, m[1]
+          token Text, m[2]
+          token Comment::Preproc, m[3]
+        end
+
         mixin :comments
         mixin :literals
         mixin :operators_and_keywords

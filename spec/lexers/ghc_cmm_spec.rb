@@ -324,6 +324,15 @@ describe Rouge::Lexers::GHCCmm do
                           ['Literal.Number.Integer', '-1'],
                           ['Punctuation', ');']
     end
+
+    it 'should lex includes' do
+      core = '#include "Cmm.h"'
+
+      assert_tokens_equal core,
+                          ['Comment.Preproc', '#include'],
+                          ['Text', ' '],
+                          ['Comment.Preproc', '"Cmm.h"']
+    end
   end
 end
 

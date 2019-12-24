@@ -39,6 +39,134 @@ describe Rouge::Lexers::GHCCmm do
       core = '[]'
       assert_tokens_equal core, ['Punctuation', '[]']
     end
+
+    it 'should lex a simple section' do
+      core = '[section ""data" . Main.fib1_closure" {
+     Main.fib1_closure:
+         const GHC.Integer.Type.S#_con_info;
+         const 0;
+ }]'
+
+      assert_tokens_equal core,
+                          ['Punctuation', '['],
+                          ['Keyword.Reserved', 'section'],
+                          ['Text', ' '],
+                          ['Literal.String.Double', '"'],
+                          ['Name.Builtin', '"data"'],
+                          ['Text', ' '],
+                          ['Punctuation', '.'],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'Main'], ['Punctuation', '.'], ['Name.Label', 'fib1_closure'],
+                          ['Literal.String.Double', '"'],
+                          ['Text', ' '],
+                          ['Punctuation', '{'],
+                          ['Text', "\n     "],
+                          ['Name.Namespace', 'Main'], ['Punctuation', '.'], ['Name.Label', 'fib1_closure'],
+                          ['Punctuation', ':'],
+                          ['Text', "\n         "],
+                          ['Keyword.Reserved', 'const'],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'GHC'], ['Punctuation', '.'], ['Name.Namespace', 'Integer'], ['Punctuation', '.'], ['Name.Namespace', 'Type'], ['Punctuation', '.'], ['Name.Label', 'S#_con_info'],
+                          ['Punctuation', ';'],
+                          ['Text', "\n         "],
+                          ['Keyword.Reserved', 'const'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '0'],
+                          ['Punctuation', ';'],
+                          ['Text', "\n "],
+                          ['Punctuation', '}]']
+    end
+
+    it 'should lex sections with function definitions' do
+      core = '[section ""data" . u4uh_srt" {
+     u4uh_srt:
+         const stg_SRT_1_info;
+         const GHC.Integer.Type.plusInteger_closure;
+         const 0;
+ },
+ Main.fib_fib_entry() //  [R2]'
+
+      assert_tokens_equal core,
+                          ['Punctuation', '['],
+                          ['Keyword.Reserved', 'section'],
+                          ['Text', ' '],
+                          ['Literal.String.Double', '"'],
+                          ['Name.Builtin', '"data"'],
+                          ['Text', ' '],
+                          ['Punctuation', '.'],
+                          ['Text', ' '],
+                          ['Name.Label', 'u4uh_srt'],
+                          ['Literal.String.Double', '"'],
+                          ['Text', ' '],
+                          ['Punctuation', '{'],
+
+                          ['Text', "\n     "],
+                          ['Name.Label', 'u4uh_srt'],
+                          ['Punctuation', ':'],
+                          ['Text', "\n         "],
+                          ['Keyword.Reserved', 'const'],
+                          ['Text', ' '],
+                          ['Name.Label', 'stg_SRT_1_info'],
+                          ['Punctuation', ';'],
+
+                          ['Text', "\n         "],
+                          ['Keyword.Reserved', 'const'],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'GHC'], ['Punctuation', '.'], ['Name.Namespace', 'Integer'], ['Punctuation', '.'], ['Name.Namespace', 'Type'], ['Punctuation', '.'], ['Name.Label', 'plusInteger_closure'],
+                          ['Punctuation', ';'],
+
+                          ['Text', "\n         "],
+                          ['Keyword.Reserved', 'const'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '0'],
+                          ['Punctuation', ';'],
+
+                          ['Text', "\n "],
+                          ['Punctuation', '},'],
+
+                          ['Text', "\n "],
+                          ['Name.Namespace', 'Main'], ['Punctuation', '.'], ['Name.Label', 'fib_fib_entry'],
+                          ['Punctuation', '()'],
+                          ['Text', ' '],
+                          ['Comment.Single', '//  [R2]']
+    end
+
+    it 'should lex cstring sections' do
+      core = '[section ""cstring" . Main.$trModule2_bytes" {
+     Main.$trModule2_bytes:
+         I8[] [77,97,105,110]
+ }]'
+      assert_tokens_equal core,
+                          ['Punctuation', '['],
+                          ['Keyword.Reserved', 'section'],
+                          ['Text', ' '],
+                          ['Literal.String.Double', '"'],
+                          ['Name.Builtin', '"cstring"'],
+                          ['Text', ' '],
+                          ['Punctuation', '.'],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'Main'], ['Punctuation', '.'], ['Name.Label', '$trModule2_bytes'],
+                          ['Literal.String.Double', '"'],
+                          ['Text', ' '],
+                          ['Punctuation', '{'],
+                          ['Text', "\n     "],
+                          ['Name.Namespace', 'Main'], ['Punctuation', '.'], ['Name.Label', '$trModule2_bytes'],
+                          ['Punctuation', ':'],
+                          ['Text', "\n         "],
+                          ['Keyword.Type', 'I8[]'],
+                          ['Text', ' '],
+                          ['Punctuation', '['],
+                          ['Literal.Number.Integer', '77'],
+                          ['Punctuation', ','],
+                          ['Literal.Number.Integer', '97'],
+                          ['Punctuation', ','],
+                          ['Literal.Number.Integer', '105'],
+                          ['Punctuation', ','],
+                          ['Literal.Number.Integer', '110'],
+                          ['Punctuation', ']'],
+                          ['Text', "\n "],
+                          ['Punctuation', '}]']
+    end
   end
 end
 

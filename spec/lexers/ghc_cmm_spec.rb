@@ -305,6 +305,15 @@ describe Rouge::Lexers::GHCCmm do
                           ['Punctuation', ';']
 
     end
+
+    it 'should lex multi-line comments' do
+      core = '/* for objects that are *less* than the size of a word, make sure we
+ * round up to the nearest word for the size of the array.
+ */'
+
+      assert_tokens_equal core,
+                          ['Comment.Multiline', core]
+    end
   end
 end
 

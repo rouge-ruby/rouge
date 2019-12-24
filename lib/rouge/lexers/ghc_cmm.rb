@@ -31,6 +31,7 @@ module Rouge
       state :comments do
         rule %r/\/{2}.*/, Comment::Single
         rule %r/\(likely.*?\)/, Comment
+        rule %r/\/\*.*?\*\//m, Comment::Multiline
       end
 
       state :literals do
@@ -69,7 +70,7 @@ module Rouge
       end
 
       state :names do
-        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|R\d{1,2})(?![a-zA-Z0-9#\$])/, Name::Variable::Global
+        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2})(?![a-zA-Z0-9#\$])/, Name::Variable::Global
         rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
         rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace

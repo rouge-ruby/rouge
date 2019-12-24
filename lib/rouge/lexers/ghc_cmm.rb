@@ -70,7 +70,7 @@ module Rouge
       end
 
       state :names do
-        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2})(?![a-zA-Z0-9#\$])/, Name::Variable::Global
+        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2})(?![a-zA-Z0-9#\$_])/, Name::Variable::Global
         rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
         rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace

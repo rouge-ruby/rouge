@@ -314,6 +314,16 @@ describe Rouge::Lexers::GHCCmm do
       assert_tokens_equal core,
                           ['Comment.Multiline', core]
     end
+
+    it 'should lex function calls that start with a register name "prefix"' do
+      core = 'Sp_adj(-1);'
+
+      assert_tokens_equal core,
+                          ['Name.Label', 'Sp_adj'],
+                          ['Punctuation', '('],
+                          ['Literal.Number.Integer', '-1'],
+                          ['Punctuation', ');']
+    end
   end
 end
 

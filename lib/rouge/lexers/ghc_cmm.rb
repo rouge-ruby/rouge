@@ -26,11 +26,9 @@ module Rouge
 
       state :section do
         mixin :comments
-
-        rule %r/-?[0-9]+/, Literal::Number::Integer
+        mixin :literals
 
         rule %r/[+\-*\/<>=!&]/, Operator
-
 
         rule %r/[\[\].{}:;,()]/, Punctuation
         rule %r/section/, Keyword::Reserved
@@ -56,6 +54,10 @@ module Rouge
       state :comments do
         rule %r/\/{2}.*/, Comment::Single
         rule %r/\(likely.*?\)/, Comment
+      end
+
+      state :literals do
+        rule %r/-?[0-9]+/, Literal::Number::Integer
       end
 
       state :infos do

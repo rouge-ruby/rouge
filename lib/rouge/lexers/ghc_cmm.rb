@@ -26,12 +26,27 @@ module Rouge
         mixin :comments
         mixin :literals
         mixin :operators_and_keywords
+
+        rule %r/(?=[\w#\$]+\s*\()/ do
+          push :function
+        end
+
+        rule %r/(^[\w#\$_]+)(?=(\s|\/\/.*?\n|\/[*].*?[*]\/)+[\w#\$_]+(\s|\/\/.*?\n|\/[*].*?[*]\/)*[),;])/ do |m|
+          token Keyword::Type, m[1]
+        end
+
         mixin :infos
         mixin :names
 
         # rest is Text
         rule %r/\s/m, Text
         rule %r/./, Text
+      end
+
+      state :function do
+        rule %r/[\w#\$_]+/, Name::Function
+        rule %r/\s+/, Text
+        rule %r/[()]/, Punctuation, :pop!
       end
 
       state :preprocessor_macros do
@@ -82,13 +97,13 @@ module Rouge
         rule %r/const/, Keyword::Constant
         rule %r/"/, Literal::String::Double
 
-        rule %r/if|else|goto|call|offset|import/, Keyword
-
         rule %r/(returns)( +?)(to)/ do |m|
           token Keyword, m[1]
           token Text, m[2]
           token Keyword, m[3]
         end
+
+        rule %r/if|else|goto|call|offset|import|return/, Keyword
       end
 
       state :infos do
@@ -106,9 +121,9 @@ module Rouge
       state :names do
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2})(?![a-zA-Z0-9#\$_])/, Name::Variable::Global
         rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
-        rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type
+        rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type # todo still needed?
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
-        rule %r/[\w#\$]+/, Name::Label
+        rule %r/[\w#\$]+/, Name::Label # todo extract constant, this appears in some positions
       end
     end
   end

@@ -126,7 +126,7 @@ describe Rouge::Lexers::GHCCmm do
                           ['Punctuation', '},'],
 
                           ['Text', "\n "],
-                          ['Name.Namespace', 'Main'], ['Punctuation', '.'], ['Name.Label', 'fib_fib_entry'],
+                          ['Name.Namespace', 'Main'], ['Punctuation', '.'], ['Name.Function', 'fib_fib_entry'],
                           ['Punctuation', '()'],
                           ['Text', ' '],
                           ['Comment.Single', '//  [R2]']
@@ -251,7 +251,7 @@ describe Rouge::Lexers::GHCCmm do
       assert_tokens_equal core,
                           ['Keyword', 'call'],
                           ['Text', ' '],
-                          ['Name.Namespace', 'GHC'], ['Punctuation', '.'], ['Name.Namespace', 'Integer'], ['Punctuation', '.'], ['Name.Namespace', 'Type'], ['Punctuation', '.'], ['Name.Label', 'eqInteger#_info'],
+                          ['Name.Namespace', 'GHC'], ['Punctuation', '.'], ['Name.Namespace', 'Integer'], ['Punctuation', '.'], ['Name.Namespace', 'Type'], ['Punctuation', '.'], ['Name.Function', 'eqInteger#_info'],
                           ['Punctuation', '('],
                           ['Name.Variable.Global', 'R3'],
                           ['Punctuation', ','],
@@ -320,7 +320,7 @@ describe Rouge::Lexers::GHCCmm do
       core = 'Sp_adj(-1);'
 
       assert_tokens_equal core,
-                          ['Name.Label', 'Sp_adj'],
+                          ['Name.Function', 'Sp_adj'],
                           ['Punctuation', '('],
                           ['Literal.Number.Integer', '-1'],
                           ['Punctuation', ');']
@@ -380,6 +380,68 @@ import pthread_mutex_unlock;
                           ['Name.Label', 'BA_ALIGN'],
                           ['Text', ' '],
                           ['Literal.Number.Integer', '16']
+    end
+
+    it 'should lex functions and return statements' do
+      core = 'stg_isEmptyMVarzh ( P_ mvar /* :: MVar a */ )
+{
+    if (StgMVar_value(mvar) == stg_END_TSO_QUEUE_closure) {
+        return (1);
+    } else {
+        return (0);
+    }
+}'
+      assert_tokens_equal core,
+                          ['Name.Function', 'stg_isEmptyMVarzh'],
+                          ['Text', ' '],
+                          ['Punctuation', '('],
+                          ['Text', ' '],
+                          ['Keyword.Type', 'P_'],
+                          ['Text', ' '],
+                          ['Name.Label', 'mvar'],
+                          ['Text', ' '],
+                          ['Comment.Multiline', '/* :: MVar a */'],
+                          ['Text', ' '],
+                          ['Punctuation', ')'],
+                          ['Text', "\n"],
+                          ['Punctuation', '{'],
+                          ['Text', "\n    "],
+                          ['Keyword', 'if'],
+                          ['Text', ' '],
+                          ['Punctuation', '('],
+                          ['Name.Function', 'StgMVar_value'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'mvar'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Operator', '=='],
+                          ['Text', ' '],
+                          ['Name.Label', 'stg_END_TSO_QUEUE_closure'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Punctuation', '{'],
+                          ['Text', "\n        "],
+                          ['Keyword', 'return'],
+                          ['Text', ' '],
+                          ['Punctuation', '('],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', ');'],
+                          ['Text', "\n    "],
+                          ['Punctuation', '}'],
+                          ['Text', ' '],
+                          ['Keyword', 'else'],
+                          ['Text', ' '],
+                          ['Punctuation', '{'],
+                          ['Text', "\n        "],
+                          ['Keyword', 'return'],
+                          ['Text', ' '],
+                          ['Punctuation', '('],
+                          ['Literal.Number.Integer', '0'],
+                          ['Punctuation', ');'],
+                          ['Text', "\n    "],
+                          ['Punctuation', '}'],
+                          ['Text', "\n"],
+                          ['Punctuation', '}']
     end
   end
 end

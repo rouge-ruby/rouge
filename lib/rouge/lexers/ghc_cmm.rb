@@ -86,6 +86,7 @@ module Rouge
 
       state :operators_and_keywords do
         rule %r/[+\-*\/<>=!&]/, Operator
+        rule %r/\.\./, Operator
 
         rule %r/[\[\].{}:;,()]/, Punctuation
         rule %r/const/, Keyword::Constant
@@ -97,7 +98,7 @@ module Rouge
           token Keyword, m[3]
         end
 
-        rule %r/if|else|goto|call|offset|import|return|jump|ccall|foreign|prim/, Keyword
+        rule %r/if|else|goto|call|offset|import|return|jump|ccall|foreign|prim|switch|case|default/, Keyword
       end
 
       state :infos do

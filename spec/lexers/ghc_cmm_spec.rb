@@ -522,6 +522,97 @@ import pthread_mutex_unlock;
                           ['Name.Label', 'SIZEOF_W'],
                           ['Punctuation', ');']
     end
+
+    it 'should lex switch statements and .. operators' do
+      core = 'switch [INVALID_OBJECT .. N_CLOSURE_TYPES]
+        (TO_W_( %INFO_TYPE(%STD_INFO(info)) )) {
+        case
+            IND,
+            IND_STATIC:
+        {
+            fun = StgInd_indirectee(fun);
+            goto again;
+        }
+        default:
+        {
+            jump %ENTRY_CODE(info) (UNTAG(fun));
+        }
+    }'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'switch'],
+                          ['Text', ' '],
+                          ['Punctuation', '['],
+                          ['Name.Label', 'INVALID_OBJECT'],
+                          ['Text', ' '],
+                          ['Operator', '..'],
+                          ['Text', ' '],
+                          ['Name.Label', 'N_CLOSURE_TYPES'],
+                          ['Punctuation', ']'],
+                          ['Text', "\n        "],
+                          ['Punctuation', '('],
+                          ['Name.Function', 'TO_W_'],
+                          ['Punctuation', '('],
+                          ['Text', ' '],
+                          ['Name.Function', '%INFO_TYPE'],
+                          ['Punctuation', '('],
+                          ['Name.Function', '%STD_INFO'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'info'],
+                          ['Punctuation', '))'],
+                          ['Text', ' '],
+                          ['Punctuation', '))'],
+                          ['Text', ' '],
+                          ['Punctuation', '{'],
+                          ['Text', "\n        "],
+                          ['Keyword', 'case'],
+                          ['Text', "\n            "],
+                          ['Name.Label', 'IND'],
+                          ['Punctuation', ','],
+                          ['Text', "\n            "],
+                          ['Name.Label', 'IND_STATIC'],
+                          ['Punctuation', ':'],
+                          ['Text', "\n        "],
+                          ['Punctuation', '{'],
+                          ['Text', "\n            "],
+                          ['Name.Label', 'fun'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Name.Function', 'StgInd_indirectee'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'fun'],
+                          ['Punctuation', ');'],
+                          ['Text', "\n            "],
+                          ['Keyword', 'goto'],
+                          ['Text', ' '],
+                          ['Name.Label', 'again'],
+                          ['Punctuation', ';'],
+                          ['Text', "\n        "],
+                          ['Punctuation', '}'],
+                          ['Text', "\n        "],
+                          ['Keyword', 'default'],
+                          ['Punctuation', ':'],
+                          ['Text', "\n        "],
+                          ['Punctuation', '{'],
+                          ['Text', "\n            "],
+                          ['Keyword', 'jump'],
+                          ['Text', ' '],
+                          ['Name.Function', '%ENTRY_CODE'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'info'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Punctuation', '('],
+                          ['Name.Function', 'UNTAG'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'fun'],
+                          ['Punctuation', '));'],
+                          ['Text', "\n        "],
+                          ['Punctuation', '}'],
+                          ['Text', "\n    "],
+                          ['Punctuation', '}']
+    end
   end
 end
 

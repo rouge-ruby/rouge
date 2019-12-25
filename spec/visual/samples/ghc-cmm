@@ -1,748 +1,634 @@
 /* -----------------------------------------------------------------------------
  *
- * (c) The University of Glasgow 2004
+ * (c) The GHC Team, 1998-2004
  *
- * Application-related bits.
+ * Exception support
  *
  * This file is written in a subset of C--, extended with various
  * features specific to GHC.  It is compiled by GHC directly.  For the
  * syntax of .cmm files, see the parser in ghc/compiler/cmm/CmmParse.y.
  *
- * -------------------------------------------------------------------------- */
+ * ---------------------------------------------------------------------------*/
 
 #include "Cmm.h"
+#include "RaiseAsync.h"
 
-/* ----------------------------------------------------------------------------
- * Evaluate a closure and return it.
+import CLOSURE ghczmprim_GHCziTypes_True_closure;
+
+/* -----------------------------------------------------------------------------
+   Exception Primitives
+
+   A thread can request that asynchronous exceptions not be delivered
+   ("masked") for the duration of an I/O computation.  The primitives
+
+        maskAsyncExceptions# :: IO a -> IO a
+
+   and
+
+        maskUninterruptible# :: IO a -> IO a
+
+   are used for this purpose.  During a masked section, asynchronous
+   exceptions may be unmasked again temporarily:
+
+        unmaskAsyncExceptions# :: IO a -> IO a
+
+   Furthermore, asynchronous exceptions are masked automatically during
+   the execution of an exception handler.  All three of these primitives
+   leave a continuation on the stack which reverts to the previous
+   state (masked interruptible, masked non-interruptible, or unmasked)
+   on exit.
+
+   A thread which wants to raise an exception in another thread (using
+   killThread#) must block until the target thread is ready to receive
+   it.  The action of unmasking exceptions in a thread will release all
+   the threads waiting to deliver exceptions to that thread.
+
+   NB. there's a bug in here.  If a thread is inside an
+   unsafePerformIO, and inside maskAsyncExceptions# (there is an
+   unmaskAsyncExceptions_ret on the stack), and it is blocked in an
+   interruptible operation, and it receives an exception, then the
+   unsafePerformIO thunk will be updated with a stack object
+   containing the unmaskAsyncExceptions_ret frame.  Later, when
+   someone else evaluates this thunk, the original masking state is
+   not restored.
+
+   -------------------------------------------------------------------------- */
+
+
+INFO_TABLE_RET(stg_unmaskAsyncExceptionszh_ret, RET_SMALL, W_ info_ptr)
+    /* explicit stack */
+{
+    unwind Sp = Sp + WDS(1);
+    CInt r;
+
+    P_ ret;
+    ret = R1;
+
+    StgTSO_flags(CurrentTSO) = %lobits32(
+      TO_W_(StgTSO_flags(CurrentTSO)) & ~(TSO_BLOCKEX|TSO_INTERRUPTIBLE));
+
+    /* Eagerly raise a masked exception, if there is one */
+    if (StgTSO_blocked_exceptions(CurrentTSO) != END_TSO_QUEUE) {
+
+        STK_CHK_P_LL (WDS(2), stg_unmaskAsyncExceptionszh_ret_info, R1);
+        /*
+         * We have to be very careful here, as in killThread#, since
+         * we are about to raise an async exception in the current
+         * thread, which might result in the thread being killed.
+         */
+        Sp_adj(-2);
+        Sp(1) = ret;
+        Sp(0) = stg_ret_p_info;
+        SAVE_THREAD_STATE();
+        (r) = ccall maybePerformBlockedException (MyCapability() "ptr",
+                                                      CurrentTSO "ptr");
+        if (r != 0::CInt) {
+            if (StgTSO_what_next(CurrentTSO) == ThreadKilled::I16) {
+                jump stg_threadFinished [];
+            } else {
+                LOAD_THREAD_STATE();
+                ASSERT(StgTSO_what_next(CurrentTSO) == ThreadRunGHC::I16);
+                R1 = ret;
+                jump %ENTRY_CODE(Sp(0)) [R1];
+            }
+        }
+        else {
+            /*
+               the thread might have been removed from the
+               blocked_exception list by someone else in the meantime.
+               Just restore the stack pointer and continue.
+            */
+            Sp_adj(2);
+        }
+    }
+
+    Sp_adj(1);
+    R1 = ret;
+    jump %ENTRY_CODE(Sp(0)) [R1];
+}
+
+INFO_TABLE_RET(stg_maskAsyncExceptionszh_ret, RET_SMALL, W_ info_ptr)
+    return (P_ ret)
+{
+    unwind Sp = Sp + WDS(1);
+    StgTSO_flags(CurrentTSO) =
+       %lobits32(
+         TO_W_(StgTSO_flags(CurrentTSO))
+          | TSO_BLOCKEX | TSO_INTERRUPTIBLE
+      );
+
+    return (ret);
+}
+
+INFO_TABLE_RET(stg_maskUninterruptiblezh_ret, RET_SMALL, W_ info_ptr)
+    return (P_ ret)
+{
+    unwind Sp = Sp + WDS(1);
+    StgTSO_flags(CurrentTSO) =
+       %lobits32(
+        (TO_W_(StgTSO_flags(CurrentTSO))
+          | TSO_BLOCKEX)
+          & ~TSO_INTERRUPTIBLE
+       );
+
+    return (ret);
+}
+
+stg_maskAsyncExceptionszh /* explicit stack */
+{
+    /* Args: R1 :: IO a */
+    STK_CHK_P_LL (WDS(1)/* worst case */, stg_maskAsyncExceptionszh, R1);
+
+    if ((TO_W_(StgTSO_flags(CurrentTSO)) & TSO_BLOCKEX) == 0) {
+        /* avoid growing the stack unnecessarily */
+        if (Sp(0) == stg_maskAsyncExceptionszh_ret_info) {
+            Sp_adj(1);
+        } else {
+            Sp_adj(-1);
+            Sp(0) = stg_unmaskAsyncExceptionszh_ret_info;
+        }
+    } else {
+        if ((TO_W_(StgTSO_flags(CurrentTSO)) & TSO_INTERRUPTIBLE) == 0) {
+            Sp_adj(-1);
+            Sp(0) = stg_maskUninterruptiblezh_ret_info;
+        }
+    }
+
+    StgTSO_flags(CurrentTSO) = %lobits32(
+        TO_W_(StgTSO_flags(CurrentTSO)) | TSO_BLOCKEX | TSO_INTERRUPTIBLE);
+
+    TICK_UNKNOWN_CALL();
+    TICK_SLOW_CALL_fast_v();
+    jump stg_ap_v_fast [R1];
+}
+
+stg_maskUninterruptiblezh /* explicit stack */
+{
+    /* Args: R1 :: IO a */
+    STK_CHK_P_LL (WDS(1)/* worst case */, stg_maskUninterruptiblezh, R1);
+
+    if ((TO_W_(StgTSO_flags(CurrentTSO)) & TSO_BLOCKEX) == 0) {
+        /* avoid growing the stack unnecessarily */
+        if (Sp(0) == stg_maskUninterruptiblezh_ret_info) {
+            Sp_adj(1);
+        } else {
+            Sp_adj(-1);
+            Sp(0) = stg_unmaskAsyncExceptionszh_ret_info;
+        }
+    } else {
+        if ((TO_W_(StgTSO_flags(CurrentTSO)) & TSO_INTERRUPTIBLE) != 0) {
+            Sp_adj(-1);
+            Sp(0) = stg_maskAsyncExceptionszh_ret_info;
+        }
+    }
+
+    StgTSO_flags(CurrentTSO) = %lobits32(
+        (TO_W_(StgTSO_flags(CurrentTSO)) | TSO_BLOCKEX) & ~TSO_INTERRUPTIBLE);
+
+    TICK_UNKNOWN_CALL();
+    TICK_SLOW_CALL_fast_v();
+    jump stg_ap_v_fast [R1];
+}
+
+stg_unmaskAsyncExceptionszh /* explicit stack */
+{
+    CInt r;
+    W_ level;
+
+    /* Args: R1 :: IO a */
+    P_ io;
+    io = R1;
+
+    STK_CHK_P_LL (WDS(4), stg_unmaskAsyncExceptionszh, io);
+    /* 4 words: one for the unmask frame, 3 for setting up the
+     * stack to call maybePerformBlockedException() below.
+     */
+
+    /* If exceptions are already unmasked, there's nothing to do */
+    if ((TO_W_(StgTSO_flags(CurrentTSO)) & TSO_BLOCKEX) != 0) {
+
+        /* avoid growing the stack unnecessarily */
+        if (Sp(0) == stg_unmaskAsyncExceptionszh_ret_info) {
+            Sp_adj(1);
+        } else {
+            Sp_adj(-1);
+            if ((TO_W_(StgTSO_flags(CurrentTSO)) & TSO_INTERRUPTIBLE) != 0) {
+                Sp(0) = stg_maskAsyncExceptionszh_ret_info;
+            } else {
+                Sp(0) = stg_maskUninterruptiblezh_ret_info;
+            }
+        }
+
+        StgTSO_flags(CurrentTSO) = %lobits32(
+            TO_W_(StgTSO_flags(CurrentTSO)) & ~(TSO_BLOCKEX|TSO_INTERRUPTIBLE));
+
+        /* Eagerly raise a masked exception, if there is one */
+        if (StgTSO_blocked_exceptions(CurrentTSO) != END_TSO_QUEUE) {
+            /*
+             * We have to be very careful here, as in killThread#, since
+             * we are about to raise an async exception in the current
+             * thread, which might result in the thread being killed.
+             *
+             * Now, if we are to raise an exception in the current
+             * thread, there might be an update frame above us on the
+             * stack due to unsafePerformIO.  Hence, the stack must
+             * make sense, because it is about to be snapshotted into
+             * an AP_STACK.
+             */
+            Sp_adj(-3);
+            Sp(2) = stg_ap_v_info;
+            Sp(1) = io;
+            Sp(0) = stg_enter_info;
+
+            SAVE_THREAD_STATE();
+            (r) = ccall maybePerformBlockedException (MyCapability() "ptr",
+                                                      CurrentTSO "ptr");
+
+            if (r != 0::CInt) {
+                if (StgTSO_what_next(CurrentTSO) == ThreadKilled::I16) {
+                    jump stg_threadFinished [];
+                } else {
+                    LOAD_THREAD_STATE();
+                    ASSERT(StgTSO_what_next(CurrentTSO) == ThreadRunGHC::I16);
+                    R1 = io;
+                    jump %ENTRY_CODE(Sp(0)) [R1];
+                }
+            } else {
+                /* we'll just call R1 directly, below */
+                Sp_adj(3);
+            }
+        }
+
+    }
+    TICK_UNKNOWN_CALL();
+    TICK_SLOW_CALL_fast_v();
+    R1 = io;
+    jump stg_ap_v_fast [R1];
+}
+
+
+stg_getMaskingStatezh ()
+{
+    /* args: none */
+    /*
+       returns: 0 == unmasked,
+                1 == masked, non-interruptible,
+                2 == masked, interruptible
+    */
+    return (((TO_W_(StgTSO_flags(CurrentTSO)) & TSO_BLOCKEX) != 0) +
+            ((TO_W_(StgTSO_flags(CurrentTSO)) & TSO_INTERRUPTIBLE) != 0));
+}
+
+stg_killThreadzh (P_ target, P_ exception)
+{
+    W_ why_blocked;
+
+    /* Needs 3 words because throwToSingleThreaded uses some stack */
+    STK_CHK_PP (WDS(3), stg_killThreadzh, target, exception);
+    /* We call allocate in throwTo(), so better check for GC */
+    MAYBE_GC_PP (stg_killThreadzh, target, exception);
+
+    /*
+     * We might have killed ourselves.  In which case, better be *very*
+     * careful.  If the exception killed us, then return to the scheduler.
+     * If the exception went to a catch frame, we'll just continue from
+     * the handler.
+     */
+    if (target == CurrentTSO) {
+        /*
+         * So what should happen if a thread calls "throwTo self" inside
+         * unsafePerformIO, and later the closure is evaluated by another
+         * thread?  Presumably it should behave as if throwTo just returned,
+         * and then continue from there.  See #3279, #3288.  This is what
+         * happens: on resumption, we will just jump to the next frame on
+         * the stack, which is the return point for stg_killThreadzh.
+         */
+        R1 = target;
+        R2 = exception;
+        jump stg_killMyself [R1,R2];
+    } else {
+        W_ msg;
+
+        ("ptr" msg) = ccall throwTo(MyCapability() "ptr",
+                                    CurrentTSO "ptr",
+                                    target "ptr",
+                                    exception "ptr");
+
+        if (msg == NULL) {
+            return ();
+        } else {
+            StgTSO_why_blocked(CurrentTSO) = BlockedOnMsgThrowTo;
+            updateRemembSetPushPtr(StgTSO_block_info(CurrentTSO));
+            StgTSO_block_info(CurrentTSO) = msg;
+            // we must block, and unlock the message before returning
+            jump stg_block_throwto (target, exception);
+        }
+    }
+}
+
+/*
+ * We must switch into low-level Cmm in order to raise an exception in
+ * the current thread, hence this is in a separate proc with arguments
+ * passed explicitly in R1 and R2.
+ */
+stg_killMyself
+{
+    P_ target, exception;
+    target = R1;
+    exception = R2;
+
+    SAVE_THREAD_STATE();
+    /* ToDo: what if the current thread is masking exceptions? */
+    ccall throwToSingleThreaded(MyCapability() "ptr",
+                                target "ptr", exception "ptr");
+    if (StgTSO_what_next(CurrentTSO) == ThreadKilled::I16) {
+        jump stg_threadFinished [];
+    } else {
+        LOAD_THREAD_STATE();
+        ASSERT(StgTSO_what_next(CurrentTSO) == ThreadRunGHC::I16);
+        jump %ENTRY_CODE(Sp(0)) [];
+    }
+}
+
+/* -----------------------------------------------------------------------------
+   Catch frames
+   -------------------------------------------------------------------------- */
+
+/* Catch frames are very similar to update frames, but when entering
+ * one we just pop the frame off the stack and perform the correct
+ * kind of return to the activation record underneath us on the stack.
+ */
+
+#define CATCH_FRAME_FIELDS(w_,p_,info_ptr,p1,p2,exceptions_blocked,handler)   \
+  w_ info_ptr,                                                          \
+  PROF_HDR_FIELDS(w_,p1,p2)                                             \
+  w_ exceptions_blocked,                                                \
+  p_ handler
+
+
+INFO_TABLE_RET(stg_catch_frame, CATCH_FRAME,
+               CATCH_FRAME_FIELDS(W_,P_,info_ptr, p1, p2,
+                                  exceptions_blocked,handler))
+    return (P_ ret)
+{
+    return (ret);
+}
+
+/* -----------------------------------------------------------------------------
+ * The catch infotable
  *
- * There isn't an info table / return address version of stg_ap_0, because
- * everything being returned is guaranteed evaluated, so it would be a no-op.
- */
+ * This should be exactly the same as would be generated by this STG code
+ *
+ * catch = {x,h} \n {} -> catch#{x,h}
+ *
+ * It is used in deleteThread when reverting blackholes.
+ * -------------------------------------------------------------------------- */
 
-STRING(stg_ap_0_ret_str,"stg_ap_0_ret... ")
-
-stg_ap_0_fast ( P_ fun )
+INFO_TABLE(stg_catch,2,0,FUN,"catch","catch")
+    (P_ node)
 {
-    IF_DEBUG(apply,
-        ccall debugBelch(stg_ap_0_ret_str);
-        ccall printClosure(R1 "ptr"));
+    jump stg_catchzh(StgClosure_payload(node,0),StgClosure_payload(node,1));
+}
 
-    IF_DEBUG(sanity,
-        ccall checkStackFrame(Sp "ptr"));
+stg_catchzh ( P_ io,      /* :: IO a */
+              P_ handler  /* :: Exception -> IO a */ )
+{
+    W_ exceptions_blocked;
 
-#if !defined(PROFILING)
+    STK_CHK_GEN();
 
-    ENTER(fun);
+    exceptions_blocked =
+        TO_W_(StgTSO_flags(CurrentTSO)) & (TSO_BLOCKEX | TSO_INTERRUPTIBLE);
+    TICK_CATCHF_PUSHED();
 
-#else
+    /* Apply R1 to the realworld token */
+    TICK_UNKNOWN_CALL();
+    TICK_SLOW_CALL_fast_v();
 
-/*
-  Note [Evaluating functions with profiling]
-
-  If we evaluate something like
-
-    let f = {-# SCC "f" #-} g
-
-  where g is a function, then updating the thunk for f to point to g
-  would be incorrect: we've lost the SCC annotation.  In general, when
-  we evaluate a function and the current CCS is different from the one
-  stored in the function, we need to return a function with the
-  correct CCS in it.
-
-  The mechanism we use to wrap the function is to create a
-  zero-argument PAP as a proxy object to hold the new CCS, and return
-  that.
-
-  If the closure we evaluated is itself a PAP, we cannot make a nested
-  PAP, so we copy the original PAP and set the CCS in the new PAP to
-  enterFunCCS(pap->header.prof.ccs).
-*/
-
-again:
-    W_  info;
-    P_ untaggedfun;
-    W_ arity;
-    // We must obey the correct heap object observation pattern in
-    // Note [Heap memory barriers] in SMP.h.
-    untaggedfun = UNTAG(fun);
-    info = %INFO_PTR(untaggedfun);
-    switch [INVALID_OBJECT .. N_CLOSURE_TYPES]
-        (TO_W_( %INFO_TYPE(%STD_INFO(info)) )) {
-        case
-            IND,
-            IND_STATIC:
-        {
-            fun = StgInd_indirectee(fun);
-            goto again;
-        }
-        case BCO:
-        {
-            arity = TO_W_(StgBCO_arity(untaggedfun));
-            goto dofun;
-        }
-        case
-            FUN,
-            FUN_1_0,
-            FUN_0_1,
-            FUN_2_0,
-            FUN_1_1,
-            FUN_0_2,
-            FUN_STATIC:
-        {
-            arity = TO_W_(StgFunInfoExtra_arity(%FUN_INFO(info)));
-        dofun:
-            if (CCCS == StgHeader_ccs(untaggedfun)) {
-                return (fun);
-            } else {
-                // We're going to build a new PAP, with zero extra
-                // arguments and therefore the same arity as the
-                // original function.  In other words, we're using a
-                // zero-argument PAP as an indirection to the
-                // function, so that we can attach a different CCS to
-                // it.
-                HP_CHK_GEN(SIZEOF_StgPAP);
-                TICK_ALLOC_PAP(SIZEOF_StgPAP, 0);
-                // attribute this allocation to the "overhead of profiling"
-                CCS_ALLOC(BYTES_TO_WDS(SIZEOF_StgPAP), CCS_OVERHEAD);
-                P_ pap;
-                pap = Hp - SIZEOF_StgPAP + WDS(1);
-                SET_HDR(pap, stg_PAP_info, CCCS);
-                StgPAP_arity(pap) = arity;
-                if (arity <= TAG_MASK) {
-                  // TODO: Shouldn't this already be tagged? If not why did we
-                  // untag it at the beginning of this function?
-                  fun = untaggedfun + arity;
-                }
-                StgPAP_fun(pap)   = fun;
-                StgPAP_n_args(pap) = 0;
-                return (pap);
-            }
-        }
-        case PAP:
-        {
-            if (CCCS == StgHeader_ccs(untaggedfun)) {
-                return (fun);
-            } else {
-                // We're going to copy this PAP, and put the new CCS in it
-                W_ size;
-                size = SIZEOF_StgPAP + WDS(TO_W_(StgPAP_n_args(untaggedfun)));
-                HP_CHK_GEN(size);
-                TICK_ALLOC_PAP(size, 0);
-                // attribute this allocation to the "overhead of profiling"
-                CCS_ALLOC(BYTES_TO_WDS(SIZEOF_StgPAP), CCS_OVERHEAD);
-                P_ pap;
-                pap = Hp - size + WDS(1);
-                // We'll lose the original PAP, so we should enter its CCS
-                ccall enterFunCCS(BaseReg "ptr", StgHeader_ccs(untaggedfun) "ptr");
-                SET_HDR(pap, stg_PAP_info, CCCS);
-                StgPAP_arity(pap) = StgPAP_arity(untaggedfun);
-                StgPAP_n_args(pap) = StgPAP_n_args(untaggedfun);
-                StgPAP_fun(pap)   = StgPAP_fun(fun);
-                W_ i;
-                i = TO_W_(StgPAP_n_args(untaggedfun));
-            loop:
-                if (i == 0) {
-                    return (pap);
-                }
-                i = i - 1;
-                StgPAP_payload(pap,i) = StgPAP_payload(fun,i);
-                goto loop;
-            }
-        }
-        case AP,
-             AP_STACK,
-             BLACKHOLE,
-             WHITEHOLE,
-             THUNK,
-             THUNK_1_0,
-             THUNK_0_1,
-             THUNK_2_0,
-             THUNK_1_1,
-             THUNK_0_2,
-             THUNK_STATIC,
-             THUNK_SELECTOR:
-        {
-            // We have a thunk of some kind, so evaluate it.
-
-            // The thunk might evaluate to a function, so we have to
-            // come back here again to adjust its CCS if necessary.
-            // Therefore we need to push a stack frame to look at the
-            // function that gets returned (a stg_restore_ccs_eval
-            // frame), and therefore we need a stack check.
-            STK_CHK_GEN();
-
-            // We can't use the value of 'info' any more, because if
-            // STK_CHK_GEN() did a GC then the closure we're looking
-            // at may have changed, e.g. a THUNK_SELECTOR may have
-            // been evaluated by the GC.  So we reload the info
-            // pointer now.
-            untaggedfun = UNTAG(fun);
-            info = %INFO_PTR(untaggedfun);
-
-            jump %ENTRY_CODE(info)
-                (stg_restore_cccs_eval_info, CCCS)
-                (untaggedfun);
-        }
-        default:
-        {
-            jump %ENTRY_CODE(info) (UNTAG(fun));
-        }
-    }
-#endif
+    jump stg_ap_v_fast
+        (CATCH_FRAME_FIELDS(,,stg_catch_frame_info, CCCS, 0,
+                            exceptions_blocked, handler))
+        (io);
 }
 
 /* -----------------------------------------------------------------------------
-   Entry Code for a PAP.
+ * The raise infotable
+ *
+ * This should be exactly the same as would be generated by this STG code
+ *
+ *   raise = {err} \n {} -> raise#{err}
+ *
+ * It is used in stg_raisezh to update thunks on the update list
+ * -------------------------------------------------------------------------- */
 
-   This entry code is *only* called by one of the stg_ap functions.
-   On entry: Sp points to the remaining arguments on the stack.  If
-   the stack check fails, we can just push the PAP on the stack and
-   return to the scheduler.
-
-   On entry: R1 points to the PAP.  The rest of the function's
-   arguments (apart from those that are already in the PAP) are on the
-   stack, starting at Sp(0).  R2 contains an info table which
-   describes these arguments, which is used in the event that the
-   stack check in the entry code below fails.  The info table is
-   currently one of the stg_ap_*_ret family, as this code is always
-   entered from those functions.
-
-   The idea is to copy the chunk of stack from the PAP object onto the
-   stack / into registers, and enter the function.
-   -------------------------------------------------------------------------- */
-
-INFO_TABLE(stg_PAP,/*special layout*/0,0,PAP,"PAP","PAP")
-{  ccall barf("PAP object (%p) entered!", R1) never returns; }
-
-stg_PAP_apply /* no args => explicit stack */
+INFO_TABLE(stg_raise,1,0,THUNK_1_0,"raise","raise")
 {
-  W_ Words;
-  W_ pap;
+    jump stg_raisezh(StgThunk_payload(R1,0));
+}
 
-  pap = R1;
+section "data" {
+  no_break_on_exception: W_[1];
+}
 
-  Words = TO_W_(StgPAP_n_args(pap));
+INFO_TABLE_RET(stg_raise_ret, RET_SMALL, W_ info_ptr, P_ exception)
+    return (P_ ret)
+{
+    unwind Sp = Sp + WDS(2);
+    W_[no_break_on_exception] = 1;
+    jump stg_raisezh (exception);
+}
 
-  //
-  // Check for stack overflow and bump the stack pointer.
-  // We have a hand-rolled stack check fragment here, because none of
-  // the canned ones suit this situation.
-  //
-  if (Sp - (WDS(Words) + 2/* see ARG_BCO below */) < SpLim) {
-      // there is a return address in R2 in the event of a
-      // stack check failure.  The various stg_apply functions arrange
-      // this before calling stg_PAP_entry.
-      Sp_adj(-1);
-      Sp(0) = R2;
-      jump stg_gc_unpt_r1 [R1];
-  }
-  Sp_adj(-Words);
+stg_raisezh /* explicit stack */
+/*
+ * args : R1 :: Exception
+ *
+ * Here we assume that the NativeNodeCall convention always puts the
+ * first argument in R1 (which it does).  We cannot use high-level cmm
+ * due to all the LOAD_THREAD_STATE()/SAVE_THREAD_STATE() and stack
+ * walking that happens in here.
+ */
+{
+    W_ handler;
+    W_ frame_type;
+    W_ exception;
 
-  // profiling
-  TICK_ENT_PAP();
-  LDV_ENTER(pap);
+   exception = R1;
+
 #if defined(PROFILING)
-  ccall enterFunCCS(BaseReg "ptr", StgHeader_ccs(pap) "ptr");
-#endif
+    /* Debugging tool: on raising an  exception, show where we are. */
 
-  // Reload the stack
-  W_ i;
-  W_ p;
-  p = pap + SIZEOF_StgHeader + OFFSET_StgPAP_payload;
-  i = 0;
-for:
-  if (i < Words) {
-    Sp(i) = W_[p];
-    p = p + WDS(1);
-    i = i + 1;
-    goto for;
-  }
-
-  R1 = StgPAP_fun(pap);
-
-/* DEBUGGING CODE, ensures that arity 1 and 2 functions are entered tagged
-  if (TO_W_(StgFunInfoExtra_arity(%FUN_INFO(%INFO_PTR(UNTAG(R1))))) == 1 ) {
-    if (GETTAG(R1)!=1) {
-        W_[0]=1;
+    /* ToDo: currently this is a hack.  Would be much better if
+     * the info was only displayed for an *uncaught* exception.
+     */
+    if (RtsFlags_ProfFlags_showCCSOnException(RtsFlags) != 0::CBool) {
+        SAVE_THREAD_STATE();
+        ccall fprintCCS_stderr(CCCS "ptr",
+                                     exception "ptr",
+                                     CurrentTSO "ptr");
+        LOAD_THREAD_STATE();
     }
-  }
+#endif
 
-  if (TO_W_(StgFunInfoExtra_arity(%FUN_INFO(%INFO_PTR(UNTAG(R1))))) == 2 ) {
-    if (GETTAG(R1)!=2) {
-        W_[0]=1;
+retry_pop_stack:
+    SAVE_THREAD_STATE();
+    (frame_type) = ccall raiseExceptionHelper(BaseReg "ptr", CurrentTSO "ptr", exception "ptr");
+    LOAD_THREAD_STATE();
+    if (frame_type == ATOMICALLY_FRAME) {
+      /* The exception has reached the edge of a memory transaction.  Check that
+       * the transaction is valid.  If not then perhaps the exception should
+       * not have been thrown: re-run the transaction.  "trec" will either be
+       * a top-level transaction running the atomic block, or a nested
+       * transaction running an invariant check.  In the latter case we
+       * abort and de-allocate the top-level transaction that encloses it
+       * as well (we could just abandon its transaction record, but this makes
+       * sure it's marked as aborted and available for re-use). */
+      W_ trec, outer;
+      W_ r;
+      trec = StgTSO_trec(CurrentTSO);
+      (r) = ccall stmValidateNestOfTransactions(MyCapability() "ptr", trec "ptr");
+      outer  = StgTRecHeader_enclosing_trec(trec);
+      ccall stmAbortTransaction(MyCapability() "ptr", trec "ptr");
+      ccall stmFreeAbortedTRec(MyCapability() "ptr", trec "ptr");
+
+      // No need to push `trec` to update remembered set; it will be no longer
+      // reachable after we overwrite StgTSO.trec.
+      StgTSO_trec(CurrentTSO) = NO_TREC;
+      if (r != 0) {
+        // Transaction was valid: continue searching for a catch frame
+        Sp = Sp + SIZEOF_StgAtomicallyFrame;
+        goto retry_pop_stack;
+      } else {
+        // Transaction was not valid: we retry the exception (otherwise continue
+        // with a further call to raiseExceptionHelper)
+        ("ptr" trec) = ccall stmStartTransaction(MyCapability() "ptr", NO_TREC "ptr");
+        StgTSO_trec(CurrentTSO) = trec;
+        R1 = StgAtomicallyFrame_code(Sp);
+        jump stg_ap_v_fast [R1];
+      }
     }
-  }
-*/
 
-  // Off we go!
-  TICK_ENT_VIA_NODE();
+    // After stripping the stack, see whether we should break here for
+    // GHCi (c.f. the -fbreak-on-exception flag).  We do this after
+    // stripping the stack for a reason: we'll be inspecting values in
+    // GHCi, and it helps if all the thunks under evaluation have
+    // already been updated with the exception, rather than being left
+    // as blackholes.
+    if (W_[no_break_on_exception] != 0) {
+        W_[no_break_on_exception] = 0;
+    } else {
+        if (TO_W_(CInt[rts_stop_on_exception]) != 0) {
+            W_ ioAction;
+            // we don't want any further exceptions to be caught,
+            // until GHCi is ready to handle them.  This prevents
+            // deadlock if an exception is raised in InteractiveUI,
+            // for exmplae.  Perhaps the stop_on_exception flag should
+            // be per-thread.
+            CInt[rts_stop_on_exception] = 0;
+            ("ptr" ioAction) = ccall deRefStablePtr (W_[rts_breakpoint_io_action] "ptr");
+            Sp = Sp - WDS(9);
+            Sp(8) = exception;
+            Sp(7) = stg_raise_ret_info;
+            Sp(6) = exception;
+            Sp(5) = ghczmprim_GHCziTypes_True_closure; // True <=> an exception
+            Sp(4) = stg_ap_ppv_info;
+            Sp(3) = 0;
+            Sp(2) = stg_ap_n_info;
+            Sp(1) = 0;
+            R1 = ioAction;
+            jump RET_LBL(stg_ap_n) [R1];
+        }
+    }
 
-#if defined(NO_ARG_REGS)
-  jump %GET_ENTRY(UNTAG(R1)) [R1];
-#else
-      W_ info;
-      info = %GET_FUN_INFO(UNTAG(R1));
-      W_ type;
-      type = TO_W_(StgFunInfoExtra_fun_type(info));
-      if (type == ARG_GEN) {
-          jump StgFunInfoExtra_slow_apply(info) [R1];
+    if (frame_type == STOP_FRAME) {
+        /*
+         * We've stripped the entire stack, the thread is now dead.
+         * We will leave the stack in a GC'able state, see the stg_stop_thread
+         * entry code in StgStartup.cmm.
+         */
+        W_ stack;
+        stack = StgTSO_stackobj(CurrentTSO);
+        Sp = stack + OFFSET_StgStack_stack
+                + WDS(TO_W_(StgStack_stack_size(stack))) - WDS(2);
+        Sp(1) = exception;      /* save the exception */
+        Sp(0) = stg_enter_info; /* so that GC can traverse this stack */
+        StgTSO_what_next(CurrentTSO) = ThreadKilled::I16;
+        SAVE_THREAD_STATE();    /* inline! */
+
+        jump stg_threadFinished [];
+    }
+
+    /* Ok, Sp points to the enclosing CATCH_FRAME or CATCH_STM_FRAME.
+     * Pop everything down to and including this frame, update Su,
+     * push R1, and enter the handler.
+     */
+    if (frame_type == CATCH_FRAME) {
+      handler = StgCatchFrame_handler(Sp);
+    } else {
+      handler = StgCatchSTMFrame_handler(Sp);
+    }
+
+    /* Restore the masked/unmasked state for asynchronous exceptions
+     * at the CATCH_FRAME.
+     *
+     * If exceptions were unmasked, arrange that they are unmasked
+     * again after executing the handler by pushing an
+     * unmaskAsyncExceptions_ret stack frame.
+     *
+     * If we've reached an STM catch frame then roll back the nested
+     * transaction we were using.
+     */
+    W_ frame;
+    frame = Sp;
+    if (frame_type == CATCH_FRAME)
+    {
+      Sp = Sp + SIZEOF_StgCatchFrame;
+      if ((StgCatchFrame_exceptions_blocked(frame) & TSO_BLOCKEX) == 0) {
+          Sp_adj(-1);
+          Sp(0) = stg_unmaskAsyncExceptionszh_ret_info;
       }
-      if (type == ARG_GEN_BIG) {
-          jump StgFunInfoExtra_slow_apply(info) [R1];
+
+      /* Ensure that async exceptions are masked when running the handler.
+      */
+      StgTSO_flags(CurrentTSO) = %lobits32(
+          TO_W_(StgTSO_flags(CurrentTSO)) | TSO_BLOCKEX | TSO_INTERRUPTIBLE);
+
+      /* The interruptible state is inherited from the context of the
+       * catch frame, but note that TSO_INTERRUPTIBLE is only meaningful
+       * if TSO_BLOCKEX is set.  (we got this wrong earlier, and #4988
+       * was a symptom of the bug).
+       */
+      if ((StgCatchFrame_exceptions_blocked(frame) &
+           (TSO_BLOCKEX | TSO_INTERRUPTIBLE)) == TSO_BLOCKEX) {
+          StgTSO_flags(CurrentTSO) = %lobits32(
+              TO_W_(StgTSO_flags(CurrentTSO)) & ~TSO_INTERRUPTIBLE);
       }
-      if (type == ARG_BCO) {
-          Sp_adj(-2);
-          Sp(1) = R1;
-          Sp(0) = stg_apply_interp_info;
-          jump stg_yield_to_interpreter [];
-      }
-      jump W_[stg_ap_stack_entries +
-                WDS(TO_W_(StgFunInfoExtra_fun_type(info)))] [R1];
-#endif
+    }
+    else /* CATCH_STM_FRAME */
+    {
+      W_ trec, outer;
+      trec = StgTSO_trec(CurrentTSO);
+      outer  = StgTRecHeader_enclosing_trec(trec);
+      ccall stmAbortTransaction(MyCapability() "ptr", trec "ptr");
+      ccall stmFreeAbortedTRec(MyCapability() "ptr", trec "ptr");
+      // No need to push `trec` to update remembered set since we just freed
+      // it; it is no longer reachable.
+      StgTSO_trec(CurrentTSO) = outer;
+      Sp = Sp + SIZEOF_StgCatchSTMFrame;
+    }
+
+    /* Call the handler, passing the exception value and a realworld
+     * token as arguments.
+     */
+    Sp_adj(-1);
+    Sp(0) = exception;
+    R1 = handler;
+    Sp_adj(-1);
+    TICK_UNKNOWN_CALL();
+    TICK_SLOW_CALL_fast_pv();
+    jump RET_LBL(stg_ap_pv) [R1];
 }
 
-/* -----------------------------------------------------------------------------
-   Entry Code for an AP (a PAP with arity zero).
-
-   The entry code is very similar to a PAP, except there are no
-   further arguments on the stack to worry about, so the stack check
-   is simpler.  We must also push an update frame on the stack before
-   applying the function.
-   -------------------------------------------------------------------------- */
-
-INFO_TABLE(stg_AP,/*special layout*/0,0,AP,"AP","AP")
- /* no args => explicit stack */
+stg_raiseIOzh (P_ exception)
 {
-  W_ Words;
-  W_ ap;
-
-  ap = R1;
-
-  Words = TO_W_(StgAP_n_args(ap));
-
-  /*
-   * Check for stack overflow.  IMPORTANT: use a _ENTER check here,
-   * because if the check fails, we might end up blackholing this very
-   * closure, in which case we must enter the blackhole on return rather
-   * than continuing to evaluate the now-defunct closure.
-   */
-  STK_CHK_ENTER(WDS(Words) +
-                SIZEOF_StgUpdateFrame +
-                2/* see ARG_BCO below */, R1);
-
-  PUSH_UPD_FRAME(Sp - SIZEOF_StgUpdateFrame, R1);
-  Sp = Sp - SIZEOF_StgUpdateFrame - WDS(Words);
-
-  TICK_ENT_AP();
-  LDV_ENTER(ap);
-  ENTER_CCS_THUNK(ap);
-
-  // Reload the stack
-  W_ i;
-  W_ p;
-  p = ap + SIZEOF_StgHeader + OFFSET_StgAP_payload;
-  i = 0;
-for:
-  if (i < Words) {
-    Sp(i) = W_[p];
-    p = p + WDS(1);
-    i = i + 1;
-    goto for;
-  }
-
-  R1 = StgAP_fun(ap);
-
-  // Off we go!
-  TICK_ENT_VIA_NODE();
-
-#if defined(NO_ARG_REGS)
-  jump %GET_ENTRY(UNTAG(R1)) [R1];
-#else
-      W_ info;
-      info = %GET_FUN_INFO(UNTAG(R1));
-      W_ type;
-      type = TO_W_(StgFunInfoExtra_fun_type(info));
-      if (type == ARG_GEN) {
-          jump StgFunInfoExtra_slow_apply(info) [R1];
-      }
-      if (type == ARG_GEN_BIG) {
-          jump StgFunInfoExtra_slow_apply(info) [R1];
-      }
-      if (type == ARG_BCO) {
-          Sp_adj(-2);
-          Sp(1) = R1;
-          Sp(0) = stg_apply_interp_info;
-          jump stg_yield_to_interpreter [];
-      }
-      jump W_[stg_ap_stack_entries +
-                WDS(TO_W_(StgFunInfoExtra_fun_type(info)))] [R1];
-#endif
-}
-
-/* AP_NOUPD is exactly like AP, except that no update frame is pushed.
-   Use for thunks that are guaranteed to be entered once only, such as
-   those generated by the byte-code compiler for inserting breakpoints. */
-
-INFO_TABLE(stg_AP_NOUPD,/*special layout*/0,0,AP,"AP_NOUPD","AP_NOUPD")
-   /* no args => explicit stack */
-{
-  W_ Words;
-  W_ ap;
-
-  ap = R1;
-
-  Words = TO_W_(StgAP_n_args(ap));
-
-  /*
-   * Check for stack overflow.  IMPORTANT: use a _ENTER check here,
-   * because if the check fails, we might end up blackholing this very
-   * closure, in which case we must enter the blackhole on return rather
-   * than continuing to evaluate the now-defunct closure.
-   */
-  STK_CHK_ENTER(WDS(Words) +
-                2/* see ARG_BCO below */, R1);
-  Sp = Sp - WDS(Words);
-
-  TICK_ENT_AP();
-  LDV_ENTER(ap);
-  ENTER_CCS_THUNK(ap);
-
-  // Reload the stack
-  W_ i;
-  W_ p;
-  p = ap + SIZEOF_StgHeader + OFFSET_StgAP_payload;
-  i = 0;
-for:
-  if (i < Words) {
-    Sp(i) = W_[p];
-    p = p + WDS(1);
-    i = i + 1;
-    goto for;
-  }
-
-  R1 = StgAP_fun(ap);
-
-  // Off we go!
-  TICK_ENT_VIA_NODE();
-
-#if defined(NO_ARG_REGS)
-  jump %GET_ENTRY(UNTAG(R1)) [R1];
-#else
-      W_ info;
-      info = %GET_FUN_INFO(UNTAG(R1));
-      W_ type;
-      type = TO_W_(StgFunInfoExtra_fun_type(info));
-      if (type == ARG_GEN) {
-          jump StgFunInfoExtra_slow_apply(info) [R1];
-      }
-      if (type == ARG_GEN_BIG) {
-          jump StgFunInfoExtra_slow_apply(info) [R1];
-      }
-      if (type == ARG_BCO) {
-          Sp_adj(-2);
-          Sp(1) = R1;
-          Sp(0) = stg_apply_interp_info;
-          jump stg_yield_to_interpreter [];
-      }
-      jump W_[stg_ap_stack_entries +
-                WDS(TO_W_(StgFunInfoExtra_fun_type(info)))] [R1];
-#endif
-}
-
-/* -----------------------------------------------------------------------------
-   Entry Code for an AP_STACK.
-
-   Very similar to a PAP and AP.  The layout is the same as PAP
-   and AP, except that the payload is a chunk of stack instead of
-   being described by the function's info table.  Like an AP,
-   there are no further arguments on the stack to worry about.
-   However, the function closure (ap->fun) does not necessarily point
-   directly to a function, so we have to enter it using stg_ap_0.
-   -------------------------------------------------------------------------- */
-
-/*
- Note [AP_STACKs must be eagerly blackholed]
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#13615 describes a nasty concurrency issue where we can enter into the
-middle of an ST action multiple times, resulting in duplication of effects.
-In short, the construction of an AP_STACK allows us to suspend a computation
-which should not be duplicated. When running with lazy blackholing, we can then
-enter this AP_STACK multiple times, duplicating the computation with potentially
-disastrous consequences.
-
-For instance, consider the case of a simple ST program which computes a sum
-using in─place mutation,
-
-   inplaceSum :: Num a => [a] ─> a
-   inplaceSum xs0 = runST $ do
-     y <─ newSTRef 0
-     let go [] = readSTRef y
-         go (x : xs) = do
-           modifySTRef y (+x)
-           go xs
-     go xs0
-
-Of course, it is fine if we enter an inplaceSum thunk more than once: the two
-threads will inhabit different worlds with different STRefs. However, if we
-suspend some part of inplaceSum (for instance, due to the heap check at the
-beginning of go) and then multiple threads resume that suspension (as is safe in
-pure computation) we will have multiple threads concurrently mutating the same
-STRef. Disaster!
-
-Let's consider how this might happen: Consider this situation,
-
-  ┌─────────┐            ┌───────┐      ┌───────┐          ┌─────────┐
-  │  TSO 1  │      ╭────→│ go    │      │ fun   │          │  TSO 2  │
-  └─────────┘      │     └───────┘      └───────┘          └─────────┘
-                   │                        │
-  ┌─────────┐      │                        │              ┌─────────┐
-  │         │──────╯                        ╰──────────────│         │
-  ├─────────┤           ┌─────────┐                        ├─────────┤
-  │ UPDATE_ │──────────→│ THUNK A │               ╭────────│ UPDATE_ │
-  │ FRAME   │ updatee   └─────────┘               │updatee │ FRAME   │
-  ├─────────┤                                     │        ├─────────┤
-  │ ...     │                                     │        │ etc.    │
-  ├─────────┤ updatee              ┌─────────┐    │
-  │ UPDATE_ │─────────────────────→│ THUNK B │←───╯
-  │ FRAME   │                      └─────────┘
-  ├─────────┤
-  │ etc.    │
-
-Here we have two threads (TSO 1 and TSO 2) which are in currently pausing (e.g.
-in threadPaused). Since they are pausing, their stacks are headed by a pointer
-to the continuation code which we will run on resumption (go and fun,
-respectively). We also see that there are two thunks on the heap: THUNK A and
-THUNK B where THUNK B depends upon THUNK A (as in, evaluation of B will force
-A). We see that thread 1 has THUNK A under evaluation, and both threads have
-THUNK B under evaluation.
-
-As each thread enters threadPaused, threadPaused will walk its stack looking for
-duplicate computation (see Note [suspend duplicate work], although there is some
-background described below as well). Let's consider what this check does:
-
-Say that TSO 2 begins this check first. The check will walk TSO 2's stack, until
-it finds the first update frame, which updates THUNK B. Upon finding this frame,
-it will try to lock THUNK B, replacing it with a BLACKHOLE owned by its TSO. We
-now have,
-
-  ┌─────────┐            ┌───────┐   ┌───────┐             ┌─────────┐
-  │  TSO 1  │      ╭────→│ go    │   │ fun   │   ╭────────→│  TSO 2  │
-  └─────────┘      │     └───────┘   └───────┘   │         └─────────┘
-                   │                     ↑ ╭─────╯
-  ┌─────────┐      │                     │ │               ┌─────────┐
-  │         │──────╯                     ╰─────────────────│         │
-  ├─────────┤ updatee   ┌─────────┐        │               ├─────────┤
-  │ UPDATE_ │──────────→│ THUNK A │        │    ╭──────────│ UPDATE_ │
-  │ FRAME   │           └─────────┘        │    │  updatee │ FRAME   │
-  ├─────────┤                              │    │          ├─────────┤
-  │ ...     │                         owner│    │          │ etc.    │
-  ├─────────┤ updatee           ┌────────────┐  │
-  │ UPDATE_ │──────────────────→│ BLACKHOLE  │←─╯
-  │ FRAME   │                   └────────────┘
-  ├─────────┤
-  │ etc.    │
-
-Now consider what happens when TSO 1 runs its duplicate-computation check.
-Again, we start walking the stack from the top, where we find the update
-frame updating THUNK A. We will lock this thunk, replacing it with a BLACKHOLE
-owned by its TSO. We now have,
-
-  ┌─────────┐            ┌───────┐   ┌───────┐             ┌─────────┐
-  │  TSO 1  │←──╮  ╭────→│ go    │   │ fun   │   ╭────────→│  TSO 2  │
-  └─────────┘   │  │     └───────┘   └───────┘   │         └─────────┘
-                │  │                     ↑ ╭─────╯
-  ┌─────────┐   ╰──│─────────╮           │ │               ┌─────────┐
-  │         │──────╯         │owner      ╰─────────────────│         │
-  ├─────────┤           ┌───────────┐      │               ├─────────┤
-  │ UPDATE_ │──────────→│ BLACKHOLE │      │    ╭──────────│ UPDATE_ │
-  │ FRAME   │ updatee   └───────────┘      │    │  updatee │ FRAME   │
-  ├─────────┤                              │    │          ├─────────┤
-  │ ...     │                         owner│    │          │ etc.    │
-  ├─────────┤ updatee           ┌────────────┐  │
-  │ UPDATE_ │──────────────────→│ BLACKHOLE  │←─╯
-  │ FRAME   │                   └────────────┘
-  ├─────────┤
-  │ etc.    │
-
-Now we will continue walking down TSO 1's stack, next coming across the second
-update frame, pointing to the now-BLACKHOLE'd THUNK B. At this point
-threadPaused will correctly conclude that TSO 1 is duplicating a computation
-being carried out by TSO 2 and attempt to suspend it.
-
-The suspension process proceeds by invoking raiseAsync, which walks the stack
-from the top looking for update frames. For each update frame we take any stack
-frames preceeding it and construct an AP_STACK heap object from them. We then
-replace the updatee of the frame with an indirection pointing to the AP_STACK.
-So, after suspending the first update frame we have,
-
-  ┌─────────┐            ┌───────┐    ┌───────┐            ┌─────────┐
-  │  TSO 1  │  ╭────────→│ go    │←─╮ │ fun   │   ╭───────→│  TSO 2  │
-  └─────────┘  │         └───────┘  │ └───────┘   │        └─────────┘
-               │      ┌───────────┐ │     ↑ ╭─────╯
-  ┌─────────┐  │      │ AP_STACK  │ │     │ │              ┌─────────┐
-  │         │──╯      ├───────────┤ │     ╰────────────────│         │
-  ├─────────┤         │           │─╯       │              ├─────────┤
-  │ UPDATE_ │───────╮ └───────────┘         │   ╭──────────│ UPDATE_ │
-  │ FRAME   │updatee│     ↑                 │   │  updatee │ FRAME   │
-  ├─────────┤       │     │indirectee       │   │          ├─────────┤
-  │ ...     │       ╰→┌───────────┐         │   │          │ etc.    │
-  ├─────────┤updatee  │ BLACKHOLE │         │   │
-  │ UPDATE_ │──╮      └───────────┘    owner│   │
-  │ FRAME   │  │                ┌────────────┐  │
-  ├─────────┤  ╰───────────────→│ BLACKHOLE  │←─╯
-  │ etc.    │                   └────────────┘
-
-Finally, we will replace the second update frame with a blackhole so that TSO 1
-will block on TSO 2's computation of THUNK B,
-
-  ┌─────────┐            ┌───────┐    ┌───────┐            ┌─────────┐
-  │  TSO 1  │  ╭────────→│ go    │←─╮ │ fun   │   ╭───────→│  TSO 2  │
-  └─────────┘  │         └───────┘  │ └───────┘   │        └─────────┘
-               │      ┌───────────┐ │     ↑ ╭─────╯
-  ┌─────────┐  │      │ AP_STACK  │ │     │ │              ┌─────────┐
-  │         │──╯      ├───────────┤ │     ╰────────────────│         │
-  ├─────────┤         │           │─╯       │              ├─────────┤
-  │ UPDATE_ │───────╮ └───────────┘         │   ╭──────────│ UPDATE_ │
-  │ FRAME   │updatee│     ↑                 │   │  updatee │ FRAME   │
-  ├─────────┤       │     │indirectee       │   │          ├─────────┤
-  │ ...     │       ╰→┌───────────┐         │   │          │ etc.    │
-  ├─────────┤         │ BLACKHOLE │         │   │
-  │ BLACK   │         └───────────┘    owner│   │
-  │ HOLE    │───────────╮       ┌────────────┐  │
-  ├─────────┤indirectee ╰──────→│ BLACKHOLE  │←─╯
-  │ etc.    │                   └────────────┘
-
-At first glance there's still nothing terribly alarming here. However, consider
-what would happen if some other closure held a reference to THUNK A. We would
-now have leaked an AP_STACK capturing the state of a potentially
-non-duplicatable computation to heap. Even worse, if two threads had references
-to THUNK A and both attempted to enter at the same time, they would both succeed
-if we allowed AP_STACKs to be lazily blackholed. This is the reason why we must
-be very careful when entering AP_STACKS: they introduce the possibility that we
-duplicate a computation which could never otherwise be duplicated.
-
-For this reason we employ an atomic blackholing strategy when entering AP_STACK
-closures.
- */
-
-
-INFO_TABLE(stg_AP_STACK,/*special layout*/0,0,AP_STACK,"AP_STACK","AP_STACK")
-  /* no args => explicit stack */
-{
-  W_ Words;
-  W_ ap;
-
-  ap = R1;
-
-  Words = StgAP_STACK_size(ap);
-
-  /*
-   * Check for stack overflow.  IMPORTANT: use a _ENTER check here,
-   * because if the check fails, we might end up blackholing this very
-   * closure, in which case we must enter the blackhole on return rather
-   * than continuing to evaluate the now-defunct closure.
-   */
-  STK_CHK_ENTER(WDS(Words) + SIZEOF_StgUpdateFrame + WDS(AP_STACK_SPLIM), R1);
-
-  /*
-   * It is imperative that we blackhole lest we may duplicate computation which
-   * must not be duplicated. See Note [AP_STACKs must be eagerly blackholed].
-   */
-  W_ old_info;
-  (old_info) = prim %cmpxchgW(ap, stg_AP_STACK_info, stg_WHITEHOLE_info);
-  if (old_info != stg_AP_STACK_info) {
-    /* someone else beat us to it */
-    jump ENTRY_LBL(stg_WHITEHOLE) (ap);
-  }
-  // Can't add StgInd_indirectee(ap) to UpdRemSet here because the old value is
-  // not reachable.
-  StgInd_indirectee(ap) = CurrentTSO;
-  prim_write_barrier;
-  SET_INFO(ap, __stg_EAGER_BLACKHOLE_info);
-
-  /* ensure there is at least AP_STACK_SPLIM words of headroom available
-   * after unpacking the AP_STACK. See bug #1466 */
-  PUSH_UPD_FRAME(Sp - SIZEOF_StgUpdateFrame, R1);
-  Sp = Sp - SIZEOF_StgUpdateFrame - WDS(Words);
-
-  TICK_ENT_AP();
-  LDV_ENTER(ap);
-  ENTER_CCS_THUNK(ap);
-
-  // Reload the stack
-  W_ i;
-  W_ p;
-  p = ap + SIZEOF_StgHeader + OFFSET_StgAP_STACK_payload;
-  i = 0;
-for:
-  if (i < Words) {
-    Sp(i) = W_[p];
-    p = p + WDS(1);
-    i = i + 1;
-    goto for;
-  }
-
-  // Off we go!
-  TICK_ENT_VIA_NODE();
-
-  R1 = StgAP_STACK_fun(ap);
-
-  // Because of eager blackholing the closure no longer has correct size so
-  // threadPaused() can't correctly zero the slop, so we do it here. See #15571
-  // and Note [zeroing slop].
-  OVERWRITING_CLOSURE_SIZE(ap, BYTES_TO_WDS(SIZEOF_StgThunkHeader) + 2 + Words);
-
-  ENTER_R1();
-}
-
-/* -----------------------------------------------------------------------------
-   AP_STACK_NOUPD - exactly like AP_STACK, but doesn't push an update frame.
-   -------------------------------------------------------------------------- */
-
-INFO_TABLE(stg_AP_STACK_NOUPD,/*special layout*/0,0,AP_STACK,
-                                        "AP_STACK_NOUPD","AP_STACK_NOUPD")
-   /* no args => explicit stack */
-{
-  W_ Words;
-  W_ ap;
-
-  ap = R1;
-
-  Words = StgAP_STACK_size(ap);
-
-  /*
-   * Check for stack overflow.  IMPORTANT: use a _NP check here,
-   * because if the check fails, we might end up blackholing this very
-   * closure, in which case we must enter the blackhole on return rather
-   * than continuing to evaluate the now-defunct closure.
-   */
-  STK_CHK_ENTER(WDS(Words) + WDS(AP_STACK_SPLIM), R1);
-  /* ensure there is at least AP_STACK_SPLIM words of headroom available
-   * after unpacking the AP_STACK. See bug #1466 */
-
-  Sp = Sp - WDS(Words);
-
-  TICK_ENT_AP();
-  LDV_ENTER(ap);
-  ENTER_CCS_THUNK(ap);
-
-  // Reload the stack
-  W_ i;
-  W_ p;
-  p = ap + SIZEOF_StgHeader + OFFSET_StgAP_STACK_payload;
-  i = 0;
-for:
-  if (i < Words) {
-    Sp(i) = W_[p];
-    p = p + WDS(1);
-    i = i + 1;
-    goto for;
-  }
-
-  // Off we go!
-  TICK_ENT_VIA_NODE();
-
-  R1 = StgAP_STACK_fun(ap);
-
-  ENTER_R1();
+    jump stg_raisezh (exception);
 }

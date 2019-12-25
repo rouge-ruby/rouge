@@ -88,6 +88,11 @@ module Rouge
       state :operators_and_keywords do
         rule %r/[+\-*\/<>=!&]/, Operator
         rule %r/\.\./, Operator
+        rule %r/(::)(\s*)([A-Z]\w+)/ do |m|
+          token Operator, m[1]
+          token Text, m[2]
+          token Keyword::Type, m[3]
+        end
 
         rule %r/[\[\].{}:;,()]/, Punctuation
         rule %r/const/, Keyword::Constant
@@ -122,7 +127,7 @@ module Rouge
 
       state :names do
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2})(?![a-zA-Z0-9#\$_])/, Name::Variable::Global
-        rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
+        rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type # todo still needed?
         rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type # todo still needed?
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
         rule %r/[\w#\$%]+/, Name::Label # todo extract constant, this appears in some positions

@@ -637,6 +637,15 @@ import pthread_mutex_unlock;
                           ['Keyword', 'returns'],
                           ['Punctuation', ';']
     end
+
+    it 'should lex type annotations' do
+      core = '0::CBool'
+
+      assert_tokens_equal core,
+                          ['Literal.Number.Integer', '0'],
+                          ['Operator', '::'],
+                          ['Keyword.Type', 'CBool']
+    end
   end
 end
 

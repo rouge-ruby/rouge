@@ -50,13 +50,7 @@ module Rouge
       end
 
       state :preprocessor_macros do
-        rule %r/(#if)( +)(defined)/ do |m|
-          token Comment::Preproc, m[1]
-          token Text, m[2]
-          token Comment::Preproc, m[3]
-        end
-
-        rule %r/#include|#endif|#else|#define/, Comment::Preproc
+        rule %r/#include|#endif|#else|#define|#if/, Comment::Preproc
       end
 
       state :comments do

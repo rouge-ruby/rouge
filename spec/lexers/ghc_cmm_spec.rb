@@ -337,7 +337,7 @@ describe Rouge::Lexers::GHCCmm do
                           ['Literal.String.Delimiter', '"']
     end
 
-    it 'should lex #if defined' do
+    it 'should lex #if' do
       core = '#if defined(__PIC__)
 import pthread_mutex_lock;
 import pthread_mutex_unlock;
@@ -346,7 +346,7 @@ import pthread_mutex_unlock;
       assert_tokens_equal core,
                           ['Comment.Preproc', '#if'],
                           ['Text', ' '],
-                          ['Comment.Preproc', 'defined'],
+                          ['Name.Function', 'defined'],
                           ['Punctuation', '('],
                           ['Name.Label', '__PIC__'],
                           ['Punctuation', ')'],

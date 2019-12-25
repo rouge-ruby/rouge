@@ -1,2608 +1,748 @@
-/* -*- tab-width: 8 -*- */
 /* -----------------------------------------------------------------------------
  *
- * (c) The GHC Team, 1998-2012
+ * (c) The University of Glasgow 2004
  *
- * Out-of-line primitive operations
- *
- * This file contains the implementations of all the primitive
- * operations ("primops") which are not expanded inline.  See
- * ghc/compiler/prelude/primops.txt.pp for a list of all the primops;
- * this file contains code for most of those with the attribute
- * out_of_line=True.
- *
- * Entry convention: the entry convention for a primop is the
- * NativeNodeCall convention, and the return convention is
- * NativeReturn.  (see compiler/cmm/CmmCallConv.hs)
+ * Application-related bits.
  *
  * This file is written in a subset of C--, extended with various
  * features specific to GHC.  It is compiled by GHC directly.  For the
  * syntax of .cmm files, see the parser in ghc/compiler/cmm/CmmParse.y.
  *
- * ---------------------------------------------------------------------------*/
+ * -------------------------------------------------------------------------- */
 
 #include "Cmm.h"
-#include "MachDeps.h"
-#include "SMPClosureOps.h"
 
-#if defined(__PIC__)
-import pthread_mutex_lock;
-import pthread_mutex_unlock;
-#endif
-import CLOSURE base_ControlziExceptionziBase_nestedAtomically_closure;
-import CLOSURE base_GHCziIOziException_heapOverflow_closure;
-import EnterCriticalSection;
-import LeaveCriticalSection;
-import CLOSURE ghczmprim_GHCziTypes_False_closure;
-#if defined(PROFILING)
-import CLOSURE CCS_MAIN;
-#endif
-
-/*-----------------------------------------------------------------------------
-  Array Primitives
-
-  Basically just new*Array - the others are all inline macros.
-
-  The slow entry point is for returning from a heap check, the saved
-  size argument must be re-loaded from the stack.
-  -------------------------------------------------------------------------- */
-
-/* for objects that are *less* than the size of a word, make sure we
- * round up to the nearest word for the size of the array.
+/* ----------------------------------------------------------------------------
+ * Evaluate a closure and return it.
+ *
+ * There isn't an info table / return address version of stg_ap_0, because
+ * everything being returned is guaranteed evaluated, so it would be a no-op.
  */
 
-stg_newByteArrayzh ( W_ n )
+STRING(stg_ap_0_ret_str,"stg_ap_0_ret... ")
+
+stg_ap_0_fast ( P_ fun )
 {
-    W_ words, payload_words;
-    gcptr p;
+    IF_DEBUG(apply,
+        ccall debugBelch(stg_ap_0_ret_str);
+        ccall printClosure(R1 "ptr"));
 
-    MAYBE_GC_N(stg_newByteArrayzh, n);
+    IF_DEBUG(sanity,
+        ccall checkStackFrame(Sp "ptr"));
 
-    payload_words = ROUNDUP_BYTES_TO_WDS(n);
-    words = BYTES_TO_WDS(SIZEOF_StgArrBytes) + payload_words;
-    ("ptr" p) = ccall allocateMightFail(MyCapability() "ptr", words);
-    if (p == NULL) {
-        jump stg_raisezh(base_GHCziIOziException_heapOverflow_closure);
-    }
-    TICK_ALLOC_PRIM(SIZEOF_StgArrBytes,WDS(payload_words),0);
-    SET_HDR(p, stg_ARR_WORDS_info, CCCS);
-    StgArrBytes_bytes(p) = n;
-    return (p);
-}
+#if !defined(PROFILING)
 
-#define BA_ALIGN 16
-#define BA_MASK  (BA_ALIGN-1)
+    ENTER(fun);
 
-stg_newPinnedByteArrayzh ( W_ n )
-{
-    W_ words, bytes, payload_words;
-    gcptr p;
+#else
 
-    MAYBE_GC_N(stg_newPinnedByteArrayzh, n);
+/*
+  Note [Evaluating functions with profiling]
 
-    bytes = n;
-    /* payload_words is what we will tell the profiler we had to allocate */
-    payload_words = ROUNDUP_BYTES_TO_WDS(bytes);
-    /* When we actually allocate memory, we need to allow space for the
-       header: */
-    bytes = bytes + SIZEOF_StgArrBytes;
-    /* And we want to align to BA_ALIGN bytes, so we need to allow space
-       to shift up to BA_ALIGN - 1 bytes: */
-    bytes = bytes + BA_ALIGN - 1;
-    /* Now we convert to a number of words: */
-    words = ROUNDUP_BYTES_TO_WDS(bytes);
+  If we evaluate something like
 
-    ("ptr" p) = ccall allocatePinned(MyCapability() "ptr", words);
-    if (p == NULL) {
-        jump stg_raisezh(base_GHCziIOziException_heapOverflow_closure);
-    }
-    TICK_ALLOC_PRIM(SIZEOF_StgArrBytes,WDS(payload_words),0);
+    let f = {-# SCC "f" #-} g
 
-    /* Now we need to move p forward so that the payload is aligned
-       to BA_ALIGN bytes: */
-    p = p + ((-p - SIZEOF_StgArrBytes) & BA_MASK);
+  where g is a function, then updating the thunk for f to point to g
+  would be incorrect: we've lost the SCC annotation.  In general, when
+  we evaluate a function and the current CCS is different from the one
+  stored in the function, we need to return a function with the
+  correct CCS in it.
 
-    /* No write barrier needed since this is a new allocation. */
-    SET_HDR(p, stg_ARR_WORDS_info, CCCS);
-    StgArrBytes_bytes(p) = n;
-    return (p);
-}
+  The mechanism we use to wrap the function is to create a
+  zero-argument PAP as a proxy object to hold the new CCS, and return
+  that.
 
-stg_newAlignedPinnedByteArrayzh ( W_ n, W_ alignment )
-{
-    W_ words, bytes, payload_words;
-    gcptr p;
-
-    again: MAYBE_GC(again);
-
-    /* we always supply at least word-aligned memory, so there's no
-       need to allow extra space for alignment if the requirement is less
-       than a word.  This also prevents mischief with alignment == 0. */
-    if (alignment <= SIZEOF_W) { alignment = 1; }
-
-    bytes = n;
-
-    /* payload_words is what we will tell the profiler we had to allocate */
-    payload_words = ROUNDUP_BYTES_TO_WDS(bytes);
-
-    /* When we actually allocate memory, we need to allow space for the
-       header: */
-    bytes = bytes + SIZEOF_StgArrBytes;
-    /* And we want to align to <alignment> bytes, so we need to allow space
-       to shift up to <alignment - 1> bytes: */
-    bytes = bytes + alignment - 1;
-    /* Now we convert to a number of words: */
-    words = ROUNDUP_BYTES_TO_WDS(bytes);
-
-    ("ptr" p) = ccall allocatePinned(MyCapability() "ptr", words);
-    if (p == NULL) {
-        jump stg_raisezh(base_GHCziIOziException_heapOverflow_closure);
-    }
-    TICK_ALLOC_PRIM(SIZEOF_StgArrBytes,WDS(payload_words),0);
-
-    /* Now we need to move p forward so that the payload is aligned
-       to <alignment> bytes. Note that we are assuming that
-       <alignment> is a power of 2, which is technically not guaranteed */
-    p = p + ((-p - SIZEOF_StgArrBytes) & (alignment - 1));
-
-    /* No write barrier needed since this is a new allocation. */
-    SET_HDR(p, stg_ARR_WORDS_info, CCCS);
-    StgArrBytes_bytes(p) = n;
-    return (p);
-}
-
-stg_isByteArrayPinnedzh ( gcptr ba )
-// ByteArray# s -> Int#
-{
-    W_ bd, flags;
-    bd = Bdescr(ba);
-    // Pinned byte arrays live in blocks with the BF_PINNED flag set.
-    // We also consider BF_LARGE objects to be immovable. See #13894.
-    // See the comment in Storage.c:allocatePinned.
-    // We also consider BF_COMPACT objects to be immovable. See #14900.
-    flags = TO_W_(bdescr_flags(bd));
-    return (flags & (BF_PINNED | BF_LARGE | BF_COMPACT) != 0);
-}
-
-stg_isMutableByteArrayPinnedzh ( gcptr mba )
-// MutableByteArray# s -> Int#
-{
-    jump stg_isByteArrayPinnedzh(mba);
-}
-
-// shrink size of MutableByteArray in-place
-stg_shrinkMutableByteArrayzh ( gcptr mba, W_ new_size )
-// MutableByteArray# s -> Int# -> State# s -> State# s
-{
-   ASSERT(new_size <= StgArrBytes_bytes(mba));
-
-   OVERWRITING_CLOSURE_OFS(mba, (BYTES_TO_WDS(SIZEOF_StgArrBytes) +
-                                 ROUNDUP_BYTES_TO_WDS(new_size)));
-   StgArrBytes_bytes(mba) = new_size;
-   // See the comments in overwritingClosureOfs for an explanation
-   // of the interaction with LDV profiling.
-   LDV_RECORD_CREATE(mba);
-
-   return ();
-}
-
-// resize MutableByteArray
-//
-// The returned MutableByteArray is either the original
-// MutableByteArray resized in-place or, if not possible, a newly
-// allocated (unpinned) MutableByteArray (with the original content
-// copied over)
-stg_resizzeMutableByteArrayzh ( gcptr mba, W_ new_size )
-// MutableByteArray# s -> Int# -> State# s -> (# State# s,MutableByteArray# s #)
-{
-   W_ new_size_wds;
-
-   ASSERT(new_size >= 0);
-
-   new_size_wds = ROUNDUP_BYTES_TO_WDS(new_size);
-
-   if (new_size_wds <= BYTE_ARR_WDS(mba)) {
-      OVERWRITING_CLOSURE_OFS(mba, (BYTES_TO_WDS(SIZEOF_StgArrBytes) +
-                                    new_size_wds));
-      StgArrBytes_bytes(mba) = new_size;
-      LDV_RECORD_CREATE(mba);
-
-      return (mba);
-   } else {
-      (P_ new_mba) = call stg_newByteArrayzh(new_size);
-
-      // maybe at some point in the future we may be able to grow the
-      // MBA in-place w/o copying if we know the space after the
-      // current MBA is still available, as often we want to grow the
-      // MBA shortly after we allocated the original MBA. So maybe no
-      // further allocations have occurred by then.
-
-      // copy over old content
-      prim %memcpy(BYTE_ARR_CTS(new_mba), BYTE_ARR_CTS(mba),
-                   StgArrBytes_bytes(mba), SIZEOF_W);
-
-      return (new_mba);
-   }
-}
-
-// shrink size of SmallMutableArray in-place
-stg_shrinkSmallMutableArrayzh ( gcptr mba, W_ new_size )
-// SmallMutableArray# s -> Int# -> State# s -> State# s
-{
-   ASSERT(new_size <= StgSmallMutArrPtrs_ptrs(mba));
-
-   OVERWRITING_CLOSURE_OFS(mba, (BYTES_TO_WDS(SIZEOF_StgSmallMutArrPtrs) +
-                                 new_size));
-   StgSmallMutArrPtrs_ptrs(mba) = new_size;
-   // See the comments in overwritingClosureOfs for an explanation
-   // of the interaction with LDV profiling.
-   LDV_RECORD_CREATE(mba);
-
-   return ();
-}
-
-// RRN: This one does not use the "ticketing" approach because it
-// deals in unboxed scalars, not heap pointers.
-stg_casIntArrayzh( gcptr arr, W_ ind, W_ old, W_ new )
-/* MutableByteArray# s -> Int# -> Int# -> Int# -> State# s -> (# State# s, Int# #) */
-{
-    W_ p, h;
-
-    p = arr + SIZEOF_StgArrBytes + WDS(ind);
-    (h) = prim %cmpxchgW(p, old, new);
-
-    return(h);
-}
-
-
-stg_newArrayzh ( W_ n /* words */, gcptr init )
-{
-    W_ words, size, p;
-    gcptr arr;
-
-    again: MAYBE_GC(again);
-
-    // the mark area contains one byte for each 2^MUT_ARR_PTRS_CARD_BITS words
-    // in the array, making sure we round up, and then rounding up to a whole
-    // number of words.
-    size = n + mutArrPtrsCardWords(n);
-    words = BYTES_TO_WDS(SIZEOF_StgMutArrPtrs) + size;
-    ("ptr" arr) = ccall allocateMightFail(MyCapability() "ptr",words);
-    if (arr == NULL) {
-        jump stg_raisezh(base_GHCziIOziException_heapOverflow_closure);
-    }
-    TICK_ALLOC_PRIM(SIZEOF_StgMutArrPtrs, WDS(size), 0);
-
-    /* No write barrier needed since this is a new allocation. */
-    SET_HDR(arr, stg_MUT_ARR_PTRS_DIRTY_info, CCCS);
-    StgMutArrPtrs_ptrs(arr) = n;
-    StgMutArrPtrs_size(arr) = size;
-
-    // Initialise all elements of the array with the value in R2
-    p = arr + SIZEOF_StgMutArrPtrs;
-  for:
-    if (p < arr + SIZEOF_StgMutArrPtrs + WDS(n)) (likely: True) {
-        W_[p] = init;
-        p = p + WDS(1);
-        goto for;
-    }
-
-    return (arr);
-}
-
-stg_unsafeThawArrayzh ( gcptr arr )
-{
-    // A MUT_ARR_PTRS always lives on a mut_list, but a MUT_ARR_PTRS_FROZEN
-    // doesn't. To decide whether to add the thawed array to a mut_list we check
-    // the info table. MUT_ARR_PTRS_FROZEN_DIRTY means it's already on a
-    // mut_list so no need to add it again. MUT_ARR_PTRS_FROZEN_CLEAN means it's
-    // not and we should add it to a mut_list.
-    if (StgHeader_info(arr) != stg_MUT_ARR_PTRS_FROZEN_DIRTY_info) {
-        SET_INFO(arr,stg_MUT_ARR_PTRS_DIRTY_info);
-        // must be done after SET_INFO, because it ASSERTs closure_MUTABLE():
-        recordMutable(arr);
-        return (arr);
-    } else {
-        SET_INFO(arr,stg_MUT_ARR_PTRS_DIRTY_info);
-        return (arr);
-    }
-}
-
-stg_copyArrayzh ( gcptr src, W_ src_off, gcptr dst, W_ dst_off, W_ n )
-{
-    copyArray(src, src_off, dst, dst_off, n)
-}
-
-stg_copyMutableArrayzh ( gcptr src, W_ src_off, gcptr dst, W_ dst_off, W_ n )
-{
-    copyMutableArray(src, src_off, dst, dst_off, n)
-}
-
-stg_copyArrayArrayzh ( gcptr src, W_ src_off, gcptr dst, W_ dst_off, W_ n )
-{
-    copyArray(src, src_off, dst, dst_off, n)
-}
-
-stg_copyMutableArrayArrayzh ( gcptr src, W_ src_off, gcptr dst, W_ dst_off, W_ n )
-{
-    copyMutableArray(src, src_off, dst, dst_off, n)
-}
-
-stg_cloneArrayzh ( gcptr src, W_ offset, W_ n )
-{
-    cloneArray(stg_MUT_ARR_PTRS_FROZEN_CLEAN_info, src, offset, n)
-}
-
-stg_cloneMutableArrayzh ( gcptr src, W_ offset, W_ n )
-{
-    cloneArray(stg_MUT_ARR_PTRS_DIRTY_info, src, offset, n)
-}
-
-// We have to escape the "z" in the name.
-stg_freezzeArrayzh ( gcptr src, W_ offset, W_ n )
-{
-    cloneArray(stg_MUT_ARR_PTRS_FROZEN_CLEAN_info, src, offset, n)
-}
-
-stg_thawArrayzh ( gcptr src, W_ offset, W_ n )
-{
-    cloneArray(stg_MUT_ARR_PTRS_DIRTY_info, src, offset, n)
-}
-
-// RRN: Uses the ticketed approach; see casMutVar
-stg_casArrayzh ( gcptr arr, W_ ind, gcptr old, gcptr new )
-/* MutableArray# s a -> Int# -> a -> a -> State# s -> (# State# s, Int#, Any a #) */
-{
-    gcptr h;
-    W_ p, len;
-
-    p = arr + SIZEOF_StgMutArrPtrs + WDS(ind);
-    (h) = prim %cmpxchgW(p, old, new);
-
-    if (h != old) {
-        // Failure, return what was there instead of 'old':
-        return (1,h);
-    } else {
-        // Compare and Swap Succeeded:
-        SET_HDR(arr, stg_MUT_ARR_PTRS_DIRTY_info, CCCS);
-        len = StgMutArrPtrs_ptrs(arr);
-
-        // The write barrier.  We must write a byte into the mark table:
-        I8[arr + SIZEOF_StgMutArrPtrs + WDS(len) + (ind >> MUT_ARR_PTRS_CARD_BITS )] = 1;
-
-        // Concurrent GC write barrier
-        updateRemembSetPushPtr(old);
-
-        return (0,new);
-    }
-}
-
-stg_newArrayArrayzh ( W_ n /* words */ )
-{
-    W_ words, size, p;
-    gcptr arr;
-
-    MAYBE_GC_N(stg_newArrayArrayzh, n);
-
-    // the mark area contains one byte for each 2^MUT_ARR_PTRS_CARD_BITS words
-    // in the array, making sure we round up, and then rounding up to a whole
-    // number of words.
-    size = n + mutArrPtrsCardWords(n);
-    words = BYTES_TO_WDS(SIZEOF_StgMutArrPtrs) + size;
-    ("ptr" arr) = ccall allocateMightFail(MyCapability() "ptr",words);
-    if (arr == NULL) {
-        jump stg_raisezh(base_GHCziIOziException_heapOverflow_closure);
-    }
-    TICK_ALLOC_PRIM(SIZEOF_StgMutArrPtrs, WDS(size), 0);
-
-    SET_HDR(arr, stg_MUT_ARR_PTRS_DIRTY_info, W_[CCCS]);
-    StgMutArrPtrs_ptrs(arr) = n;
-    StgMutArrPtrs_size(arr) = size;
-
-    // Initialise all elements of the array with a pointer to the new array
-    p = arr + SIZEOF_StgMutArrPtrs;
-  for:
-    if (p < arr + SIZEOF_StgMutArrPtrs + WDS(n)) (likely: True) {
-        W_[p] = arr;
-        p = p + WDS(1);
-        goto for;
-    }
-
-    return (arr);
-}
-
-
-/* -----------------------------------------------------------------------------
-   SmallArray primitives
-   -------------------------------------------------------------------------- */
-
-stg_newSmallArrayzh ( W_ n /* words */, gcptr init )
-{
-    W_ words, size, p;
-    gcptr arr;
-
-    again: MAYBE_GC(again);
-
-    words = BYTES_TO_WDS(SIZEOF_StgSmallMutArrPtrs) + n;
-    ("ptr" arr) = ccall allocateMightFail(MyCapability() "ptr",words);
-    if (arr == NULL) (likely: False) {
-        jump stg_raisezh(base_GHCziIOziException_heapOverflow_closure);
-    }
-    TICK_ALLOC_PRIM(SIZEOF_StgSmallMutArrPtrs, WDS(n), 0);
-
-    /* No write barrier needed since this is a new allocation. */
-    SET_HDR(arr, stg_SMALL_MUT_ARR_PTRS_DIRTY_info, CCCS);
-    StgSmallMutArrPtrs_ptrs(arr) = n;
-
-    // Initialise all elements of the array with the value in R2
-    p = arr + SIZEOF_StgSmallMutArrPtrs;
-    // Avoid the shift for `WDS(n)` in the inner loop
-    W_ limit;
-    limit = arr + SIZEOF_StgSmallMutArrPtrs + WDS(n);
-  for:
-    if (p < limit) (likely: True) {
-        W_[p] = init;
-        p = p + WDS(1);
-        goto for;
-    }
-
-    return (arr);
-}
-
-stg_unsafeThawSmallArrayzh ( gcptr arr )
-{
-    // See stg_unsafeThawArrayzh
-    if (StgHeader_info(arr) != stg_SMALL_MUT_ARR_PTRS_FROZEN_DIRTY_info) {
-        SET_INFO(arr, stg_SMALL_MUT_ARR_PTRS_DIRTY_info);
-        recordMutable(arr);
-        // must be done after SET_INFO, because it ASSERTs closure_MUTABLE()
-        return (arr);
-    } else {
-        SET_INFO(arr, stg_SMALL_MUT_ARR_PTRS_DIRTY_info);
-        return (arr);
-    }
-}
-
-stg_cloneSmallArrayzh ( gcptr src, W_ offset, W_ n )
-{
-    cloneSmallArray(stg_SMALL_MUT_ARR_PTRS_FROZEN_CLEAN_info, src, offset, n)
-}
-
-stg_cloneSmallMutableArrayzh ( gcptr src, W_ offset, W_ n )
-{
-    cloneSmallArray(stg_SMALL_MUT_ARR_PTRS_DIRTY_info, src, offset, n)
-}
-
-// We have to escape the "z" in the name.
-stg_freezzeSmallArrayzh ( gcptr src, W_ offset, W_ n )
-{
-    cloneSmallArray(stg_SMALL_MUT_ARR_PTRS_FROZEN_CLEAN_info, src, offset, n)
-}
-
-stg_thawSmallArrayzh ( gcptr src, W_ offset, W_ n )
-{
-    cloneSmallArray(stg_SMALL_MUT_ARR_PTRS_DIRTY_info, src, offset, n)
-}
-
-// Concurrent GC write barrier for pointer array copies
-//
-// hdr_size in bytes. dst_off in words, n in words.
-stg_copyArray_barrier ( W_ hdr_size, gcptr dst, W_ dst_off, W_ n)
-{
-    W_ end, p;
-    ASSERT(n > 0);  // Assumes n==0 is handled by caller
-    p = dst + hdr_size + WDS(dst_off);
-    end = p + WDS(n);
+  If the closure we evaluated is itself a PAP, we cannot make a nested
+  PAP, so we copy the original PAP and set the CCS in the new PAP to
+  enterFunCCS(pap->header.prof.ccs).
+*/
 
 again:
-    IF_NONMOVING_WRITE_BARRIER_ENABLED {
-        ccall updateRemembSetPushClosure_(BaseReg "ptr", W_[p] "ptr");
+    W_  info;
+    P_ untaggedfun;
+    W_ arity;
+    // We must obey the correct heap object observation pattern in
+    // Note [Heap memory barriers] in SMP.h.
+    untaggedfun = UNTAG(fun);
+    info = %INFO_PTR(untaggedfun);
+    switch [INVALID_OBJECT .. N_CLOSURE_TYPES]
+        (TO_W_( %INFO_TYPE(%STD_INFO(info)) )) {
+        case
+            IND,
+            IND_STATIC:
+        {
+            fun = StgInd_indirectee(fun);
+            goto again;
+        }
+        case BCO:
+        {
+            arity = TO_W_(StgBCO_arity(untaggedfun));
+            goto dofun;
+        }
+        case
+            FUN,
+            FUN_1_0,
+            FUN_0_1,
+            FUN_2_0,
+            FUN_1_1,
+            FUN_0_2,
+            FUN_STATIC:
+        {
+            arity = TO_W_(StgFunInfoExtra_arity(%FUN_INFO(info)));
+        dofun:
+            if (CCCS == StgHeader_ccs(untaggedfun)) {
+                return (fun);
+            } else {
+                // We're going to build a new PAP, with zero extra
+                // arguments and therefore the same arity as the
+                // original function.  In other words, we're using a
+                // zero-argument PAP as an indirection to the
+                // function, so that we can attach a different CCS to
+                // it.
+                HP_CHK_GEN(SIZEOF_StgPAP);
+                TICK_ALLOC_PAP(SIZEOF_StgPAP, 0);
+                // attribute this allocation to the "overhead of profiling"
+                CCS_ALLOC(BYTES_TO_WDS(SIZEOF_StgPAP), CCS_OVERHEAD);
+                P_ pap;
+                pap = Hp - SIZEOF_StgPAP + WDS(1);
+                SET_HDR(pap, stg_PAP_info, CCCS);
+                StgPAP_arity(pap) = arity;
+                if (arity <= TAG_MASK) {
+                  // TODO: Shouldn't this already be tagged? If not why did we
+                  // untag it at the beginning of this function?
+                  fun = untaggedfun + arity;
+                }
+                StgPAP_fun(pap)   = fun;
+                StgPAP_n_args(pap) = 0;
+                return (pap);
+            }
+        }
+        case PAP:
+        {
+            if (CCCS == StgHeader_ccs(untaggedfun)) {
+                return (fun);
+            } else {
+                // We're going to copy this PAP, and put the new CCS in it
+                W_ size;
+                size = SIZEOF_StgPAP + WDS(TO_W_(StgPAP_n_args(untaggedfun)));
+                HP_CHK_GEN(size);
+                TICK_ALLOC_PAP(size, 0);
+                // attribute this allocation to the "overhead of profiling"
+                CCS_ALLOC(BYTES_TO_WDS(SIZEOF_StgPAP), CCS_OVERHEAD);
+                P_ pap;
+                pap = Hp - size + WDS(1);
+                // We'll lose the original PAP, so we should enter its CCS
+                ccall enterFunCCS(BaseReg "ptr", StgHeader_ccs(untaggedfun) "ptr");
+                SET_HDR(pap, stg_PAP_info, CCCS);
+                StgPAP_arity(pap) = StgPAP_arity(untaggedfun);
+                StgPAP_n_args(pap) = StgPAP_n_args(untaggedfun);
+                StgPAP_fun(pap)   = StgPAP_fun(fun);
+                W_ i;
+                i = TO_W_(StgPAP_n_args(untaggedfun));
+            loop:
+                if (i == 0) {
+                    return (pap);
+                }
+                i = i - 1;
+                StgPAP_payload(pap,i) = StgPAP_payload(fun,i);
+                goto loop;
+            }
+        }
+        case AP,
+             AP_STACK,
+             BLACKHOLE,
+             WHITEHOLE,
+             THUNK,
+             THUNK_1_0,
+             THUNK_0_1,
+             THUNK_2_0,
+             THUNK_1_1,
+             THUNK_0_2,
+             THUNK_STATIC,
+             THUNK_SELECTOR:
+        {
+            // We have a thunk of some kind, so evaluate it.
+
+            // The thunk might evaluate to a function, so we have to
+            // come back here again to adjust its CCS if necessary.
+            // Therefore we need to push a stack frame to look at the
+            // function that gets returned (a stg_restore_ccs_eval
+            // frame), and therefore we need a stack check.
+            STK_CHK_GEN();
+
+            // We can't use the value of 'info' any more, because if
+            // STK_CHK_GEN() did a GC then the closure we're looking
+            // at may have changed, e.g. a THUNK_SELECTOR may have
+            // been evaluated by the GC.  So we reload the info
+            // pointer now.
+            untaggedfun = UNTAG(fun);
+            info = %INFO_PTR(untaggedfun);
+
+            jump %ENTRY_CODE(info)
+                (stg_restore_cccs_eval_info, CCCS)
+                (untaggedfun);
+        }
+        default:
+        {
+            jump %ENTRY_CODE(info) (UNTAG(fun));
+        }
     }
+#endif
+}
+
+/* -----------------------------------------------------------------------------
+   Entry Code for a PAP.
+
+   This entry code is *only* called by one of the stg_ap functions.
+   On entry: Sp points to the remaining arguments on the stack.  If
+   the stack check fails, we can just push the PAP on the stack and
+   return to the scheduler.
+
+   On entry: R1 points to the PAP.  The rest of the function's
+   arguments (apart from those that are already in the PAP) are on the
+   stack, starting at Sp(0).  R2 contains an info table which
+   describes these arguments, which is used in the event that the
+   stack check in the entry code below fails.  The info table is
+   currently one of the stg_ap_*_ret family, as this code is always
+   entered from those functions.
+
+   The idea is to copy the chunk of stack from the PAP object onto the
+   stack / into registers, and enter the function.
+   -------------------------------------------------------------------------- */
+
+INFO_TABLE(stg_PAP,/*special layout*/0,0,PAP,"PAP","PAP")
+{  ccall barf("PAP object (%p) entered!", R1) never returns; }
+
+stg_PAP_apply /* no args => explicit stack */
+{
+  W_ Words;
+  W_ pap;
+
+  pap = R1;
+
+  Words = TO_W_(StgPAP_n_args(pap));
+
+  //
+  // Check for stack overflow and bump the stack pointer.
+  // We have a hand-rolled stack check fragment here, because none of
+  // the canned ones suit this situation.
+  //
+  if (Sp - (WDS(Words) + 2/* see ARG_BCO below */) < SpLim) {
+      // there is a return address in R2 in the event of a
+      // stack check failure.  The various stg_apply functions arrange
+      // this before calling stg_PAP_entry.
+      Sp_adj(-1);
+      Sp(0) = R2;
+      jump stg_gc_unpt_r1 [R1];
+  }
+  Sp_adj(-Words);
+
+  // profiling
+  TICK_ENT_PAP();
+  LDV_ENTER(pap);
+#if defined(PROFILING)
+  ccall enterFunCCS(BaseReg "ptr", StgHeader_ccs(pap) "ptr");
+#endif
+
+  // Reload the stack
+  W_ i;
+  W_ p;
+  p = pap + SIZEOF_StgHeader + OFFSET_StgPAP_payload;
+  i = 0;
+for:
+  if (i < Words) {
+    Sp(i) = W_[p];
     p = p + WDS(1);
-    if (p < end) {
-        goto again;
+    i = i + 1;
+    goto for;
+  }
+
+  R1 = StgPAP_fun(pap);
+
+/* DEBUGGING CODE, ensures that arity 1 and 2 functions are entered tagged
+  if (TO_W_(StgFunInfoExtra_arity(%FUN_INFO(%INFO_PTR(UNTAG(R1))))) == 1 ) {
+    if (GETTAG(R1)!=1) {
+        W_[0]=1;
     }
+  }
 
-    return ();
-}
-
-stg_copySmallArrayzh ( gcptr src, W_ src_off, gcptr dst, W_ dst_off, W_ n)
-{
-    W_ dst_p, src_p, bytes;
-
-    if (n > 0) {
-        IF_NONMOVING_WRITE_BARRIER_ENABLED {
-            call stg_copyArray_barrier(SIZEOF_StgSmallMutArrPtrs,
-                                      dst, dst_off, n);
-        }
-
-        SET_INFO(dst, stg_SMALL_MUT_ARR_PTRS_DIRTY_info);
-
-        dst_p = dst + SIZEOF_StgSmallMutArrPtrs + WDS(dst_off);
-        src_p = src + SIZEOF_StgSmallMutArrPtrs + WDS(src_off);
-        bytes = WDS(n);
-        prim %memcpy(dst_p, src_p, bytes, SIZEOF_W);
+  if (TO_W_(StgFunInfoExtra_arity(%FUN_INFO(%INFO_PTR(UNTAG(R1))))) == 2 ) {
+    if (GETTAG(R1)!=2) {
+        W_[0]=1;
     }
+  }
+*/
 
-    return ();
+  // Off we go!
+  TICK_ENT_VIA_NODE();
+
+#if defined(NO_ARG_REGS)
+  jump %GET_ENTRY(UNTAG(R1)) [R1];
+#else
+      W_ info;
+      info = %GET_FUN_INFO(UNTAG(R1));
+      W_ type;
+      type = TO_W_(StgFunInfoExtra_fun_type(info));
+      if (type == ARG_GEN) {
+          jump StgFunInfoExtra_slow_apply(info) [R1];
+      }
+      if (type == ARG_GEN_BIG) {
+          jump StgFunInfoExtra_slow_apply(info) [R1];
+      }
+      if (type == ARG_BCO) {
+          Sp_adj(-2);
+          Sp(1) = R1;
+          Sp(0) = stg_apply_interp_info;
+          jump stg_yield_to_interpreter [];
+      }
+      jump W_[stg_ap_stack_entries +
+                WDS(TO_W_(StgFunInfoExtra_fun_type(info)))] [R1];
+#endif
 }
-
-stg_copySmallMutableArrayzh ( gcptr src, W_ src_off, gcptr dst, W_ dst_off, W_ n)
-{
-    W_ dst_p, src_p, bytes;
-
-    if (n > 0) {
-        IF_NONMOVING_WRITE_BARRIER_ENABLED {
-            call stg_copyArray_barrier(SIZEOF_StgSmallMutArrPtrs,
-                                      dst, dst_off, n);
-        }
-
-        SET_INFO(dst, stg_SMALL_MUT_ARR_PTRS_DIRTY_info);
-
-        dst_p = dst + SIZEOF_StgSmallMutArrPtrs + WDS(dst_off);
-        src_p = src + SIZEOF_StgSmallMutArrPtrs + WDS(src_off);
-        bytes = WDS(n);
-        if (src == dst) {
-            prim %memmove(dst_p, src_p, bytes, SIZEOF_W);
-        } else {
-            prim %memcpy(dst_p, src_p, bytes, SIZEOF_W);
-        }
-    }
-
-    return ();
-}
-
-// RRN: Uses the ticketed approach; see casMutVar
-stg_casSmallArrayzh ( gcptr arr, W_ ind, gcptr old, gcptr new )
-/* SmallMutableArray# s a -> Int# -> a -> a -> State# s -> (# State# s, Int#, Any a #) */
-{
-    gcptr h;
-    W_ p, len;
-
-    p = arr + SIZEOF_StgSmallMutArrPtrs + WDS(ind);
-    (h) = prim %cmpxchgW(p, old, new);
-
-    if (h != old) {
-        // Failure, return what was there instead of 'old':
-        return (1,h);
-    } else {
-        // Compare and Swap Succeeded:
-        SET_HDR(arr, stg_SMALL_MUT_ARR_PTRS_DIRTY_info, CCCS);
-
-        // Concurrent GC write barrier
-        updateRemembSetPushPtr(old);
-
-        return (0,new);
-    }
-}
-
 
 /* -----------------------------------------------------------------------------
-   MutVar primitives
+   Entry Code for an AP (a PAP with arity zero).
+
+   The entry code is very similar to a PAP, except there are no
+   further arguments on the stack to worry about, so the stack check
+   is simpler.  We must also push an update frame on the stack before
+   applying the function.
    -------------------------------------------------------------------------- */
 
-stg_newMutVarzh ( gcptr init )
+INFO_TABLE(stg_AP,/*special layout*/0,0,AP,"AP","AP")
+ /* no args => explicit stack */
 {
-    W_ mv;
+  W_ Words;
+  W_ ap;
 
-    ALLOC_PRIM_P (SIZEOF_StgMutVar, stg_newMutVarzh, init);
+  ap = R1;
 
-    mv = Hp - SIZEOF_StgMutVar + WDS(1);
-    /* No write barrier needed since this is a new allocation. */
-    SET_HDR(mv,stg_MUT_VAR_DIRTY_info,CCCS);
-    StgMutVar_var(mv) = init;
+  Words = TO_W_(StgAP_n_args(ap));
 
-    return (mv);
+  /*
+   * Check for stack overflow.  IMPORTANT: use a _ENTER check here,
+   * because if the check fails, we might end up blackholing this very
+   * closure, in which case we must enter the blackhole on return rather
+   * than continuing to evaluate the now-defunct closure.
+   */
+  STK_CHK_ENTER(WDS(Words) +
+                SIZEOF_StgUpdateFrame +
+                2/* see ARG_BCO below */, R1);
+
+  PUSH_UPD_FRAME(Sp - SIZEOF_StgUpdateFrame, R1);
+  Sp = Sp - SIZEOF_StgUpdateFrame - WDS(Words);
+
+  TICK_ENT_AP();
+  LDV_ENTER(ap);
+  ENTER_CCS_THUNK(ap);
+
+  // Reload the stack
+  W_ i;
+  W_ p;
+  p = ap + SIZEOF_StgHeader + OFFSET_StgAP_payload;
+  i = 0;
+for:
+  if (i < Words) {
+    Sp(i) = W_[p];
+    p = p + WDS(1);
+    i = i + 1;
+    goto for;
+  }
+
+  R1 = StgAP_fun(ap);
+
+  // Off we go!
+  TICK_ENT_VIA_NODE();
+
+#if defined(NO_ARG_REGS)
+  jump %GET_ENTRY(UNTAG(R1)) [R1];
+#else
+      W_ info;
+      info = %GET_FUN_INFO(UNTAG(R1));
+      W_ type;
+      type = TO_W_(StgFunInfoExtra_fun_type(info));
+      if (type == ARG_GEN) {
+          jump StgFunInfoExtra_slow_apply(info) [R1];
+      }
+      if (type == ARG_GEN_BIG) {
+          jump StgFunInfoExtra_slow_apply(info) [R1];
+      }
+      if (type == ARG_BCO) {
+          Sp_adj(-2);
+          Sp(1) = R1;
+          Sp(0) = stg_apply_interp_info;
+          jump stg_yield_to_interpreter [];
+      }
+      jump W_[stg_ap_stack_entries +
+                WDS(TO_W_(StgFunInfoExtra_fun_type(info)))] [R1];
+#endif
 }
 
-// RRN: To support the "ticketed" approach, we return the NEW rather
-// than old value if the CAS is successful.  This is received in an
-// opaque form in the Haskell code, preventing the compiler from
-// changing its pointer identity.  The ticket can then be safely used
-// in future CAS operations.
-stg_casMutVarzh ( gcptr mv, gcptr old, gcptr new )
- /* MutVar# s a -> a -> a -> State# s -> (# State#, Int#, Any a #) */
+/* AP_NOUPD is exactly like AP, except that no update frame is pushed.
+   Use for thunks that are guaranteed to be entered once only, such as
+   those generated by the byte-code compiler for inserting breakpoints. */
+
+INFO_TABLE(stg_AP_NOUPD,/*special layout*/0,0,AP,"AP_NOUPD","AP_NOUPD")
+   /* no args => explicit stack */
 {
-#if defined(THREADED_RTS)
-    gcptr h;
+  W_ Words;
+  W_ ap;
 
-    (h) = prim %cmpxchgW(mv + SIZEOF_StgHeader + OFFSET_StgMutVar_var, old, new);
-    if (h != old) {
-        return (1,h);
-    } else {
-        if (GET_INFO(mv) == stg_MUT_VAR_CLEAN_info) {
-            ccall dirty_MUT_VAR(BaseReg "ptr", mv "ptr", old);
-        }
-        return (0,new);
-    }
+  ap = R1;
+
+  Words = TO_W_(StgAP_n_args(ap));
+
+  /*
+   * Check for stack overflow.  IMPORTANT: use a _ENTER check here,
+   * because if the check fails, we might end up blackholing this very
+   * closure, in which case we must enter the blackhole on return rather
+   * than continuing to evaluate the now-defunct closure.
+   */
+  STK_CHK_ENTER(WDS(Words) +
+                2/* see ARG_BCO below */, R1);
+  Sp = Sp - WDS(Words);
+
+  TICK_ENT_AP();
+  LDV_ENTER(ap);
+  ENTER_CCS_THUNK(ap);
+
+  // Reload the stack
+  W_ i;
+  W_ p;
+  p = ap + SIZEOF_StgHeader + OFFSET_StgAP_payload;
+  i = 0;
+for:
+  if (i < Words) {
+    Sp(i) = W_[p];
+    p = p + WDS(1);
+    i = i + 1;
+    goto for;
+  }
+
+  R1 = StgAP_fun(ap);
+
+  // Off we go!
+  TICK_ENT_VIA_NODE();
+
+#if defined(NO_ARG_REGS)
+  jump %GET_ENTRY(UNTAG(R1)) [R1];
 #else
-    gcptr prev_val;
-
-    prev_val = StgMutVar_var(mv);
-    if (prev_val != old) {
-        return (1,prev_val);
-    } else {
-        StgMutVar_var(mv) = new;
-        if (GET_INFO(mv) == stg_MUT_VAR_CLEAN_info) {
-            ccall dirty_MUT_VAR(BaseReg "ptr", mv "ptr", old);
-        }
-        return (0,new);
-    }
+      W_ info;
+      info = %GET_FUN_INFO(UNTAG(R1));
+      W_ type;
+      type = TO_W_(StgFunInfoExtra_fun_type(info));
+      if (type == ARG_GEN) {
+          jump StgFunInfoExtra_slow_apply(info) [R1];
+      }
+      if (type == ARG_GEN_BIG) {
+          jump StgFunInfoExtra_slow_apply(info) [R1];
+      }
+      if (type == ARG_BCO) {
+          Sp_adj(-2);
+          Sp(1) = R1;
+          Sp(0) = stg_apply_interp_info;
+          jump stg_yield_to_interpreter [];
+      }
+      jump W_[stg_ap_stack_entries +
+                WDS(TO_W_(StgFunInfoExtra_fun_type(info)))] [R1];
 #endif
 }
-
-stg_atomicModifyMutVar2zh ( gcptr mv, gcptr f )
-{
-    W_ z, x, y, h;
-
-    /* If x is the current contents of the MutVar#, then
-       We want to make the new contents point to
-
-         (sel_0 (f x))
-
-       and the return value is
-
-         (# x, (f x) #)
-
-        obviously we can share (f x).
-
-         z = [stg_ap_2 f x]  (max (HS + 2) MIN_UPD_SIZE)
-         y = [stg_sel_0 z]   (max (HS + 1) MIN_UPD_SIZE)
-    */
-
-#if defined(MIN_UPD_SIZE) && MIN_UPD_SIZE > 1
-#define THUNK_1_SIZE (SIZEOF_StgThunkHeader + WDS(MIN_UPD_SIZE))
-#define TICK_ALLOC_THUNK_1() TICK_ALLOC_UP_THK(WDS(1),WDS(MIN_UPD_SIZE-1))
-#else
-#define THUNK_1_SIZE (SIZEOF_StgThunkHeader + WDS(1))
-#define TICK_ALLOC_THUNK_1() TICK_ALLOC_UP_THK(WDS(1),0)
-#endif
-
-#if defined(MIN_UPD_SIZE) && MIN_UPD_SIZE > 2
-#define THUNK_2_SIZE (SIZEOF_StgThunkHeader + WDS(MIN_UPD_SIZE))
-#define TICK_ALLOC_THUNK_2() TICK_ALLOC_UP_THK(WDS(2),WDS(MIN_UPD_SIZE-2))
-#else
-#define THUNK_2_SIZE (SIZEOF_StgThunkHeader + WDS(2))
-#define TICK_ALLOC_THUNK_2() TICK_ALLOC_UP_THK(WDS(2),0)
-#endif
-
-#define SIZE (THUNK_2_SIZE + THUNK_1_SIZE)
-
-    HP_CHK_GEN_TICKY(SIZE);
-
-    TICK_ALLOC_THUNK_2();
-    CCCS_ALLOC(THUNK_2_SIZE);
-    z = Hp - THUNK_2_SIZE + WDS(1);
-    SET_HDR(z, stg_ap_2_upd_info, CCCS);
-    LDV_RECORD_CREATE(z);
-    StgThunk_payload(z,0) = f;
-
-    TICK_ALLOC_THUNK_1();
-    CCCS_ALLOC(THUNK_1_SIZE);
-    y = z - THUNK_1_SIZE;
-    SET_HDR(y, stg_sel_0_upd_info, CCCS);
-    LDV_RECORD_CREATE(y);
-    StgThunk_payload(y,0) = z;
-
-  retry:
-    x = StgMutVar_var(mv);
-    StgThunk_payload(z,1) = x;
-#if defined(THREADED_RTS)
-    (h) = prim %cmpxchgW(mv + SIZEOF_StgHeader + OFFSET_StgMutVar_var, x, y);
-    if (h != x) { goto retry; }
-#else
-    h = StgMutVar_var(mv);
-    StgMutVar_var(mv) = y;
-#endif
-
-    if (GET_INFO(mv) == stg_MUT_VAR_CLEAN_info) {
-        ccall dirty_MUT_VAR(BaseReg "ptr", mv "ptr", h);
-    }
-
-    return (x,z);
-}
-
-stg_atomicModifyMutVarzuzh ( gcptr mv, gcptr f )
-{
-    W_ z, x, h;
-
-    /* If x is the current contents of the MutVar#, then
-       We want to make the new contents point to
-
-         (f x)
-
-       and the return value is
-
-         (# x, (f x) #)
-
-        obviously we can share (f x).
-
-         z = [stg_ap_2 f x]  (max (HS + 2) MIN_UPD_SIZE)
-    */
-
-#if defined(MIN_UPD_SIZE) && MIN_UPD_SIZE > 2
-#define THUNK_SIZE (SIZEOF_StgThunkHeader + WDS(MIN_UPD_SIZE))
-#define TICK_ALLOC_THUNK() TICK_ALLOC_UP_THK(WDS(2),WDS(MIN_UPD_SIZE-2))
-#else
-#define THUNK_SIZE (SIZEOF_StgThunkHeader + WDS(2))
-#define TICK_ALLOC_THUNK() TICK_ALLOC_UP_THK(WDS(2),0)
-#endif
-
-    HP_CHK_GEN_TICKY(THUNK_SIZE);
-
-    TICK_ALLOC_THUNK();
-    CCCS_ALLOC(THUNK_SIZE);
-    z = Hp - THUNK_SIZE + WDS(1);
-    SET_HDR(z, stg_ap_2_upd_info, CCCS);
-    LDV_RECORD_CREATE(z);
-    StgThunk_payload(z,0) = f;
-
-  retry:
-    x = StgMutVar_var(mv);
-    StgThunk_payload(z,1) = x;
-#if defined(THREADED_RTS)
-    (h) = prim %cmpxchgW(mv + SIZEOF_StgHeader + OFFSET_StgMutVar_var, x, z);
-    if (h != x) { goto retry; }
-#else
-    StgMutVar_var(mv) = z;
-#endif
-
-    if (GET_INFO(mv) == stg_MUT_VAR_CLEAN_info) {
-        ccall dirty_MUT_VAR(BaseReg "ptr", mv "ptr");
-    }
-
-    return (x,z);
-}
-
 
 /* -----------------------------------------------------------------------------
-   Weak Pointer Primitives
+   Entry Code for an AP_STACK.
+
+   Very similar to a PAP and AP.  The layout is the same as PAP
+   and AP, except that the payload is a chunk of stack instead of
+   being described by the function's info table.  Like an AP,
+   there are no further arguments on the stack to worry about.
+   However, the function closure (ap->fun) does not necessarily point
+   directly to a function, so we have to enter it using stg_ap_0.
    -------------------------------------------------------------------------- */
 
-stg_mkWeakzh ( gcptr key,
-               gcptr value,
-               gcptr finalizer /* or stg_NO_FINALIZER_closure */ )
-{
-    gcptr w;
-
-    ALLOC_PRIM (SIZEOF_StgWeak)
-
-    w = Hp - SIZEOF_StgWeak + WDS(1);
-    // No memory barrier needed as this is a new allocation.
-    SET_HDR(w, stg_WEAK_info, CCCS);
-
-    StgWeak_key(w)         = key;
-    StgWeak_value(w)       = value;
-    StgWeak_finalizer(w)   = finalizer;
-    StgWeak_cfinalizers(w) = stg_NO_FINALIZER_closure;
-
-    StgWeak_link(w) = Capability_weak_ptr_list_hd(MyCapability());
-    Capability_weak_ptr_list_hd(MyCapability()) = w;
-    if (Capability_weak_ptr_list_tl(MyCapability()) == NULL) {
-        Capability_weak_ptr_list_tl(MyCapability()) = w;
-    }
-
-    IF_DEBUG(weak, ccall debugBelch("New weak pointer at %p\n",w));
-
-    return (w);
-}
-
-stg_mkWeakNoFinalizzerzh ( gcptr key, gcptr value )
-{
-    jump stg_mkWeakzh (key, value, stg_NO_FINALIZER_closure);
-}
-
-stg_addCFinalizzerToWeakzh ( W_ fptr,   // finalizer
-                             W_ ptr,
-                             W_ flag,   // has environment (0 or 1)
-                             W_ eptr,
-                             gcptr w )
-{
-    W_ c, info;
-
-    ALLOC_PRIM (SIZEOF_StgCFinalizerList)
-
-    c = Hp - SIZEOF_StgCFinalizerList + WDS(1);
-    SET_HDR(c, stg_C_FINALIZER_LIST_info, CCCS);
-
-    StgCFinalizerList_fptr(c) = fptr;
-    StgCFinalizerList_ptr(c) = ptr;
-    StgCFinalizerList_eptr(c) = eptr;
-    StgCFinalizerList_flag(c) = flag;
-
-    LOCK_CLOSURE(w, info);
-
-    if (info == stg_DEAD_WEAK_info) {
-        // Already dead.
-        unlockClosure(w, info);
-        return (0);
-    }
-
-    // Write barrier for concurrent non-moving collector
-    updateRemembSetPushPtr(StgWeak_cfinalizers(w))
-
-    StgCFinalizerList_link(c) = StgWeak_cfinalizers(w);
-    StgWeak_cfinalizers(w) = c;
-
-    unlockClosure(w, info);
-
-    recordMutable(w);
-
-    IF_DEBUG(weak, ccall debugBelch("Adding a finalizer to %p\n",w));
-
-    return (1);
-}
-
-stg_finalizzeWeakzh ( gcptr w )
-{
-    gcptr f, list;
-    W_ info;
-
-    LOCK_CLOSURE(w, info);
-
-    // already dead?
-    if (info == stg_DEAD_WEAK_info) {
-        unlockClosure(w, info);
-        return (0,stg_NO_FINALIZER_closure);
-    }
-
-    f    = StgWeak_finalizer(w);
-    list = StgWeak_cfinalizers(w);
-
-    // kill it
-#if defined(PROFILING)
-    // @LDV profiling
-    // A weak pointer is inherently used, so we do not need to call
-    // LDV_recordDead_FILL_SLOP_DYNAMIC():
-    //    LDV_recordDead_FILL_SLOP_DYNAMIC((StgClosure *)w);
-    // or, LDV_recordDead():
-    //    LDV_recordDead((StgClosure *)w, sizeofW(StgWeak) - sizeofW(StgProfHeader));
-    // Furthermore, when PROFILING is turned on, dead weak pointers are exactly as
-    // large as weak pointers, so there is no need to fill the slop, either.
-    // See stg_DEAD_WEAK_info in StgMiscClosures.cmm.
-#endif
-
-    //
-    // Todo: maybe use SET_HDR() and remove LDV_recordCreate()?
-    //
-    unlockClosure(w, stg_DEAD_WEAK_info);
-
-    LDV_RECORD_CREATE(w);
-
-    if (list != stg_NO_FINALIZER_closure) {
-      ccall runCFinalizers(list);
-    }
-
-    /* return the finalizer */
-    if (f == stg_NO_FINALIZER_closure) {
-        return (0,stg_NO_FINALIZER_closure);
-    } else {
-        return (1,f);
-    }
-}
-
-stg_deRefWeakzh ( gcptr w )
-{
-    W_ code, info;
-    gcptr val;
-
-    info = GET_INFO(w);
-    prim_read_barrier;
-
-    if (info == stg_WHITEHOLE_info) {
-        // w is locked by another thread. Now it's not immediately clear if w is
-        // alive or not. We use lockClosure to wait for the info pointer to become
-        // something other than stg_WHITEHOLE_info.
-
-        LOCK_CLOSURE(w, info);
-        unlockClosure(w, info);
-    }
-
-    if (info == stg_WEAK_info) {
-        code = 1;
-        val = StgWeak_value(w);
-        // See Note [Concurrent read barrier on deRefWeak#] in NonMovingMark.c
-        updateRemembSetPushPtr(val);
-    } else {
-        code = 0;
-        val = w;
-    }
-    return (code,val);
-}
-
-/* -----------------------------------------------------------------------------
-   Floating point operations.
-   -------------------------------------------------------------------------- */
-
-stg_decodeFloatzuIntzh ( F_ arg )
-{
-    W_ p;
-    W_ tmp, mp_tmp1, mp_tmp_w, r1, r2;
-
-    STK_CHK_GEN_N (WDS(2));
-
-    reserve 2 = tmp {
-
-        mp_tmp1  = tmp + WDS(1);
-        mp_tmp_w = tmp;
-
-        /* Perform the operation */
-        ccall __decodeFloat_Int(mp_tmp1 "ptr", mp_tmp_w "ptr", arg);
-
-        r1 = W_[mp_tmp1];
-        r2 = W_[mp_tmp_w];
-    }
-
-    /* returns: (Int# (mantissa), Int# (exponent)) */
-    return (r1, r2);
-}
-
-stg_decodeDoublezu2Intzh ( D_ arg )
-{
-    W_ p, tmp;
-    W_ mp_tmp1, mp_tmp2, mp_result1, mp_result2;
-    W_ r1, r2, r3, r4;
-
-    STK_CHK_GEN_N (WDS(4));
-
-    reserve 4 = tmp {
-
-        mp_tmp1    = tmp + WDS(3);
-        mp_tmp2    = tmp + WDS(2);
-        mp_result1 = tmp + WDS(1);
-        mp_result2 = tmp;
-
-        /* Perform the operation */
-        ccall __decodeDouble_2Int(mp_tmp1 "ptr", mp_tmp2 "ptr",
-                                  mp_result1 "ptr", mp_result2 "ptr",
-                                  arg);
-
-        r1 = W_[mp_tmp1];
-        r2 = W_[mp_tmp2];
-        r3 = W_[mp_result1];
-        r4 = W_[mp_result2];
-    }
-
-    /* returns:
-       (Int# (mant sign), Word# (mant high), Word# (mant low), Int# (expn)) */
-    return (r1, r2, r3, r4);
-}
-
-/* Double# -> (# Int64#, Int# #) */
-stg_decodeDoublezuInt64zh ( D_ arg )
-{
-    CInt exp;
-    I64  mant;
-    W_   mant_ptr;
-
-    STK_CHK_GEN_N (SIZEOF_INT64);
-    reserve BYTES_TO_WDS(SIZEOF_INT64) = mant_ptr {
-        (exp) = ccall __decodeDouble_Int64(mant_ptr "ptr", arg);
-        mant = I64[mant_ptr];
-    }
-
-    return (mant, TO_W_(exp));
-}
-
-/* -----------------------------------------------------------------------------
- * Concurrency primitives
- * -------------------------------------------------------------------------- */
-
-stg_forkzh ( gcptr closure )
-{
-    MAYBE_GC_P(stg_forkzh, closure);
-
-    gcptr threadid;
-
-    ("ptr" threadid) = ccall createIOThread( MyCapability() "ptr",
-                                  TO_W_(RtsFlags_GcFlags_initialStkSize(RtsFlags)),
-                                  closure "ptr");
-
-    /* start blocked if the current thread is blocked */
-    StgTSO_flags(threadid) = %lobits16(
-        TO_W_(StgTSO_flags(threadid)) |
-        TO_W_(StgTSO_flags(CurrentTSO)) & (TSO_BLOCKEX | TSO_INTERRUPTIBLE));
-
-    ccall scheduleThread(MyCapability() "ptr", threadid "ptr");
-
-    // context switch soon, but not immediately: we don't want every
-    // forkIO to force a context-switch.
-    Capability_context_switch(MyCapability()) = 1 :: CInt;
-
-    return (threadid);
-}
-
-stg_forkOnzh ( W_ cpu, gcptr closure )
-{
-again: MAYBE_GC(again);
-
-    gcptr threadid;
-
-    ("ptr" threadid) = ccall createIOThread(
-        MyCapability() "ptr",
-        TO_W_(RtsFlags_GcFlags_initialStkSize(RtsFlags)),
-        closure "ptr");
-
-    /* start blocked if the current thread is blocked */
-    StgTSO_flags(threadid) = %lobits16(
-        TO_W_(StgTSO_flags(threadid)) |
-        TO_W_(StgTSO_flags(CurrentTSO)) & (TSO_BLOCKEX | TSO_INTERRUPTIBLE));
-
-    ccall scheduleThreadOn(MyCapability() "ptr", cpu, threadid "ptr");
-
-    // context switch soon, but not immediately: we don't want every
-    // forkIO to force a context-switch.
-    Capability_context_switch(MyCapability()) = 1 :: CInt;
-
-    return (threadid);
-}
-
-stg_yieldzh ()
-{
-    // when we yield to the scheduler, we have to tell it to put the
-    // current thread to the back of the queue by setting the
-    // context_switch flag.  If we don't do this, it will run the same
-    // thread again.
-    Capability_context_switch(MyCapability()) = 1 :: CInt;
-    jump stg_yield_noregs();
-}
-
-stg_labelThreadzh ( gcptr threadid, W_ addr )
-{
-#if defined(DEBUG) || defined(TRACING) || defined(DTRACE)
-    ccall labelThread(MyCapability() "ptr", threadid "ptr", addr "ptr");
-#endif
-    return ();
-}
-
-stg_isCurrentThreadBoundzh (/* no args */)
-{
-    W_ r;
-    (r) = ccall isThreadBound(CurrentTSO);
-    return (r);
-}
-
-stg_threadStatuszh ( gcptr tso )
-{
-    W_ why_blocked;
-    W_ what_next;
-    W_ ret, cap, locked;
-
-    what_next   = TO_W_(StgTSO_what_next(tso));
-    why_blocked = TO_W_(StgTSO_why_blocked(tso));
-    // Note: these two reads are not atomic, so they might end up
-    // being inconsistent.  It doesn't matter, since we
-    // only return one or the other.  If we wanted to return the
-    // contents of block_info too, then we'd have to do some synchronisation.
-
-    if (what_next == ThreadComplete) {
-        ret = 16;  // NB. magic, matches up with GHC.Conc.threadStatus
-    } else {
-        if (what_next == ThreadKilled) {
-            ret = 17;
-        } else {
-            ret = why_blocked;
-        }
-    }
-
-    cap = TO_W_(Capability_no(StgTSO_cap(tso)));
-
-    if ((TO_W_(StgTSO_flags(tso)) & TSO_LOCKED) != 0) {
-        locked = 1;
-    } else {
-        locked = 0;
-    }
-
-    return (ret,cap,locked);
-}
-
-/* -----------------------------------------------------------------------------
- * TVar primitives
- * -------------------------------------------------------------------------- */
-
-stg_abort /* no arg list: explicit stack layout */
-{
-    W_ frame_type;
-    W_ frame;
-    W_ trec;
-    W_ outer;
-    W_ r;
-
-    // STM operations may allocate
-    MAYBE_GC_ (stg_abort); // NB. not MAYBE_GC(), we cannot make a
-                           // function call in an explicit-stack proc
-
-    // Find the enclosing ATOMICALLY_FRAME
-    SAVE_THREAD_STATE();
-    (frame_type) = ccall findAtomicallyFrameHelper(MyCapability(), CurrentTSO "ptr");
-    LOAD_THREAD_STATE();
-    frame = Sp;
-    trec = StgTSO_trec(CurrentTSO);
-    outer  = StgTRecHeader_enclosing_trec(trec);
-
-    // We've reached the ATOMICALLY_FRAME
-    ASSERT(frame_type == ATOMICALLY_FRAME);
-    ASSERT(outer == NO_TREC);
-
-    // Restart the transaction.
-    ("ptr" trec) = ccall stmStartTransaction(MyCapability() "ptr", outer "ptr");
-    StgTSO_trec(CurrentTSO) = trec;
-    Sp = frame;
-    R1 = StgAtomicallyFrame_code(frame);
-    jump stg_ap_v_fast [R1];
-}
-// Catch retry frame -----------------------------------------------------------
-
-#define CATCH_RETRY_FRAME_FIELDS(w_,p_,info_ptr,        \
-                                 p1, p2,                \
-                                 running_alt_code,      \
-                                 first_code,            \
-                                 alt_code)              \
-  w_ info_ptr,                                          \
-  PROF_HDR_FIELDS(w_,p1,p2)                             \
-  w_ running_alt_code,                                  \
-  p_ first_code,                                        \
-  p_ alt_code
-
-
-INFO_TABLE_RET(stg_catch_retry_frame, CATCH_RETRY_FRAME,
-               CATCH_RETRY_FRAME_FIELDS(W_,P_,
-                                        info_ptr, p1, p2,
-                                        running_alt_code,
-                                        first_code,
-                                        alt_code))
-    return (P_ ret)
-{
-    unwind Sp = Sp + SIZEOF_StgCatchRetryFrame;
-    W_ r;
-    gcptr trec, outer, arg;
-
-    trec = StgTSO_trec(CurrentTSO);
-    outer  = StgTRecHeader_enclosing_trec(trec);
-    (r) = ccall stmCommitNestedTransaction(MyCapability() "ptr", trec "ptr");
-    if (r != 0) {
-        // Succeeded (either first branch or second branch)
-        StgTSO_trec(CurrentTSO) = outer;
-        return (ret);
-    } else {
-        // Did not commit: abort and restart.
-        StgTSO_trec(CurrentTSO) = outer;
-        jump stg_abort();
-    }
-}
-
-// Atomically frame ------------------------------------------------------------
-
-// This must match StgAtomicallyFrame in Closures.h
-#define ATOMICALLY_FRAME_FIELDS(w_,p_,info_ptr,p1,p2,code,result)  \
-    w_ info_ptr,                                                        \
-    PROF_HDR_FIELDS(w_,p1,p2)                                           \
-    p_ code,                                                            \
-    p_ result
-
-
-INFO_TABLE_RET(stg_atomically_frame, ATOMICALLY_FRAME,
-               // layout of the frame, and bind the field names
-               ATOMICALLY_FRAME_FIELDS(W_,P_,
-                                       info_ptr, p1, p2,
-                                       code,
-                                       frame_result))
-    return (P_ result) // value returned to the frame
-{
-    W_ valid;
-    gcptr trec;
-
-    trec = StgTSO_trec(CurrentTSO);
-
-    /* Back at the atomically frame */
-    frame_result = result;
-
-    /* try to commit */
-    (valid) = ccall stmCommitTransaction(MyCapability() "ptr", trec "ptr");
-    if (valid != 0) {
-        /* Transaction was valid: commit succeeded */
-        StgTSO_trec(CurrentTSO) = NO_TREC;
-        return (frame_result);
-    } else {
-        /* Transaction was not valid: try again */
-        ("ptr" trec) = ccall stmStartTransaction(MyCapability() "ptr",
-                                                 NO_TREC "ptr");
-        StgTSO_trec(CurrentTSO) = trec;
-
-        jump stg_ap_v_fast
-            // push the StgAtomicallyFrame again: the code generator is
-            // clever enough to only assign the fields that have changed.
-            (ATOMICALLY_FRAME_FIELDS(,,info_ptr,p1,p2,
-                                     code,frame_result))
-            (code);
-    }
-}
-
-
-INFO_TABLE_RET(stg_atomically_waiting_frame, ATOMICALLY_FRAME,
-               // layout of the frame, and bind the field names
-               ATOMICALLY_FRAME_FIELDS(W_,P_,
-                                       info_ptr, p1, p2,
-                                       code,
-                                       frame_result))
-    return (/* no return values */)
-{
-    W_ trec, valid;
-
-    /* The TSO is currently waiting: should we stop waiting? */
-    (valid) = ccall stmReWait(MyCapability() "ptr", CurrentTSO "ptr");
-    if (valid != 0) {
-        /* Previous attempt is still valid: no point trying again yet */
-        jump stg_block_noregs
-            (ATOMICALLY_FRAME_FIELDS(,,info_ptr, p1, p2,
-                                     code,frame_result))
-            ();
-    } else {
-        /* Previous attempt is no longer valid: try again */
-        ("ptr" trec) = ccall stmStartTransaction(MyCapability() "ptr", NO_TREC "ptr");
-        StgTSO_trec(CurrentTSO) = trec;
-
-        // change the frame header to stg_atomically_frame_info
-        jump stg_ap_v_fast
-            (ATOMICALLY_FRAME_FIELDS(,,stg_atomically_frame_info, p1, p2,
-                                     code,frame_result))
-            (code);
-    }
-}
-
-// STM catch frame -------------------------------------------------------------
-
-/* Catch frames are very similar to update frames, but when entering
- * one we just pop the frame off the stack and perform the correct
- * kind of return to the activation record underneath us on the stack.
+/*
+ Note [AP_STACKs must be eagerly blackholed]
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#13615 describes a nasty concurrency issue where we can enter into the
+middle of an ST action multiple times, resulting in duplication of effects.
+In short, the construction of an AP_STACK allows us to suspend a computation
+which should not be duplicated. When running with lazy blackholing, we can then
+enter this AP_STACK multiple times, duplicating the computation with potentially
+disastrous consequences.
+
+For instance, consider the case of a simple ST program which computes a sum
+using in─place mutation,
+
+   inplaceSum :: Num a => [a] ─> a
+   inplaceSum xs0 = runST $ do
+     y <─ newSTRef 0
+     let go [] = readSTRef y
+         go (x : xs) = do
+           modifySTRef y (+x)
+           go xs
+     go xs0
+
+Of course, it is fine if we enter an inplaceSum thunk more than once: the two
+threads will inhabit different worlds with different STRefs. However, if we
+suspend some part of inplaceSum (for instance, due to the heap check at the
+beginning of go) and then multiple threads resume that suspension (as is safe in
+pure computation) we will have multiple threads concurrently mutating the same
+STRef. Disaster!
+
+Let's consider how this might happen: Consider this situation,
+
+  ┌─────────┐            ┌───────┐      ┌───────┐          ┌─────────┐
+  │  TSO 1  │      ╭────→│ go    │      │ fun   │          │  TSO 2  │
+  └─────────┘      │     └───────┘      └───────┘          └─────────┘
+                   │                        │
+  ┌─────────┐      │                        │              ┌─────────┐
+  │         │──────╯                        ╰──────────────│         │
+  ├─────────┤           ┌─────────┐                        ├─────────┤
+  │ UPDATE_ │──────────→│ THUNK A │               ╭────────│ UPDATE_ │
+  │ FRAME   │ updatee   └─────────┘               │updatee │ FRAME   │
+  ├─────────┤                                     │        ├─────────┤
+  │ ...     │                                     │        │ etc.    │
+  ├─────────┤ updatee              ┌─────────┐    │
+  │ UPDATE_ │─────────────────────→│ THUNK B │←───╯
+  │ FRAME   │                      └─────────┘
+  ├─────────┤
+  │ etc.    │
+
+Here we have two threads (TSO 1 and TSO 2) which are in currently pausing (e.g.
+in threadPaused). Since they are pausing, their stacks are headed by a pointer
+to the continuation code which we will run on resumption (go and fun,
+respectively). We also see that there are two thunks on the heap: THUNK A and
+THUNK B where THUNK B depends upon THUNK A (as in, evaluation of B will force
+A). We see that thread 1 has THUNK A under evaluation, and both threads have
+THUNK B under evaluation.
+
+As each thread enters threadPaused, threadPaused will walk its stack looking for
+duplicate computation (see Note [suspend duplicate work], although there is some
+background described below as well). Let's consider what this check does:
+
+Say that TSO 2 begins this check first. The check will walk TSO 2's stack, until
+it finds the first update frame, which updates THUNK B. Upon finding this frame,
+it will try to lock THUNK B, replacing it with a BLACKHOLE owned by its TSO. We
+now have,
+
+  ┌─────────┐            ┌───────┐   ┌───────┐             ┌─────────┐
+  │  TSO 1  │      ╭────→│ go    │   │ fun   │   ╭────────→│  TSO 2  │
+  └─────────┘      │     └───────┘   └───────┘   │         └─────────┘
+                   │                     ↑ ╭─────╯
+  ┌─────────┐      │                     │ │               ┌─────────┐
+  │         │──────╯                     ╰─────────────────│         │
+  ├─────────┤ updatee   ┌─────────┐        │               ├─────────┤
+  │ UPDATE_ │──────────→│ THUNK A │        │    ╭──────────│ UPDATE_ │
+  │ FRAME   │           └─────────┘        │    │  updatee │ FRAME   │
+  ├─────────┤                              │    │          ├─────────┤
+  │ ...     │                         owner│    │          │ etc.    │
+  ├─────────┤ updatee           ┌────────────┐  │
+  │ UPDATE_ │──────────────────→│ BLACKHOLE  │←─╯
+  │ FRAME   │                   └────────────┘
+  ├─────────┤
+  │ etc.    │
+
+Now consider what happens when TSO 1 runs its duplicate-computation check.
+Again, we start walking the stack from the top, where we find the update
+frame updating THUNK A. We will lock this thunk, replacing it with a BLACKHOLE
+owned by its TSO. We now have,
+
+  ┌─────────┐            ┌───────┐   ┌───────┐             ┌─────────┐
+  │  TSO 1  │←──╮  ╭────→│ go    │   │ fun   │   ╭────────→│  TSO 2  │
+  └─────────┘   │  │     └───────┘   └───────┘   │         └─────────┘
+                │  │                     ↑ ╭─────╯
+  ┌─────────┐   ╰──│─────────╮           │ │               ┌─────────┐
+  │         │──────╯         │owner      ╰─────────────────│         │
+  ├─────────┤           ┌───────────┐      │               ├─────────┤
+  │ UPDATE_ │──────────→│ BLACKHOLE │      │    ╭──────────│ UPDATE_ │
+  │ FRAME   │ updatee   └───────────┘      │    │  updatee │ FRAME   │
+  ├─────────┤                              │    │          ├─────────┤
+  │ ...     │                         owner│    │          │ etc.    │
+  ├─────────┤ updatee           ┌────────────┐  │
+  │ UPDATE_ │──────────────────→│ BLACKHOLE  │←─╯
+  │ FRAME   │                   └────────────┘
+  ├─────────┤
+  │ etc.    │
+
+Now we will continue walking down TSO 1's stack, next coming across the second
+update frame, pointing to the now-BLACKHOLE'd THUNK B. At this point
+threadPaused will correctly conclude that TSO 1 is duplicating a computation
+being carried out by TSO 2 and attempt to suspend it.
+
+The suspension process proceeds by invoking raiseAsync, which walks the stack
+from the top looking for update frames. For each update frame we take any stack
+frames preceeding it and construct an AP_STACK heap object from them. We then
+replace the updatee of the frame with an indirection pointing to the AP_STACK.
+So, after suspending the first update frame we have,
+
+  ┌─────────┐            ┌───────┐    ┌───────┐            ┌─────────┐
+  │  TSO 1  │  ╭────────→│ go    │←─╮ │ fun   │   ╭───────→│  TSO 2  │
+  └─────────┘  │         └───────┘  │ └───────┘   │        └─────────┘
+               │      ┌───────────┐ │     ↑ ╭─────╯
+  ┌─────────┐  │      │ AP_STACK  │ │     │ │              ┌─────────┐
+  │         │──╯      ├───────────┤ │     ╰────────────────│         │
+  ├─────────┤         │           │─╯       │              ├─────────┤
+  │ UPDATE_ │───────╮ └───────────┘         │   ╭──────────│ UPDATE_ │
+  │ FRAME   │updatee│     ↑                 │   │  updatee │ FRAME   │
+  ├─────────┤       │     │indirectee       │   │          ├─────────┤
+  │ ...     │       ╰→┌───────────┐         │   │          │ etc.    │
+  ├─────────┤updatee  │ BLACKHOLE │         │   │
+  │ UPDATE_ │──╮      └───────────┘    owner│   │
+  │ FRAME   │  │                ┌────────────┐  │
+  ├─────────┤  ╰───────────────→│ BLACKHOLE  │←─╯
+  │ etc.    │                   └────────────┘
+
+Finally, we will replace the second update frame with a blackhole so that TSO 1
+will block on TSO 2's computation of THUNK B,
+
+  ┌─────────┐            ┌───────┐    ┌───────┐            ┌─────────┐
+  │  TSO 1  │  ╭────────→│ go    │←─╮ │ fun   │   ╭───────→│  TSO 2  │
+  └─────────┘  │         └───────┘  │ └───────┘   │        └─────────┘
+               │      ┌───────────┐ │     ↑ ╭─────╯
+  ┌─────────┐  │      │ AP_STACK  │ │     │ │              ┌─────────┐
+  │         │──╯      ├───────────┤ │     ╰────────────────│         │
+  ├─────────┤         │           │─╯       │              ├─────────┤
+  │ UPDATE_ │───────╮ └───────────┘         │   ╭──────────│ UPDATE_ │
+  │ FRAME   │updatee│     ↑                 │   │  updatee │ FRAME   │
+  ├─────────┤       │     │indirectee       │   │          ├─────────┤
+  │ ...     │       ╰→┌───────────┐         │   │          │ etc.    │
+  ├─────────┤         │ BLACKHOLE │         │   │
+  │ BLACK   │         └───────────┘    owner│   │
+  │ HOLE    │───────────╮       ┌────────────┐  │
+  ├─────────┤indirectee ╰──────→│ BLACKHOLE  │←─╯
+  │ etc.    │                   └────────────┘
+
+At first glance there's still nothing terribly alarming here. However, consider
+what would happen if some other closure held a reference to THUNK A. We would
+now have leaked an AP_STACK capturing the state of a potentially
+non-duplicatable computation to heap. Even worse, if two threads had references
+to THUNK A and both attempted to enter at the same time, they would both succeed
+if we allowed AP_STACKs to be lazily blackholed. This is the reason why we must
+be very careful when entering AP_STACKS: they introduce the possibility that we
+duplicate a computation which could never otherwise be duplicated.
+
+For this reason we employ an atomic blackholing strategy when entering AP_STACK
+closures.
  */
 
-#define CATCH_STM_FRAME_FIELDS(w_,p_,info_ptr,p1,p2,code,handler) \
-    w_ info_ptr,                                                  \
-    PROF_HDR_FIELDS(w_,p1,p2)                                     \
-    p_ code,                                                      \
-    p_ handler
 
-INFO_TABLE_RET(stg_catch_stm_frame, CATCH_STM_FRAME,
-               // layout of the frame, and bind the field names
-               CATCH_STM_FRAME_FIELDS(W_,P_,info_ptr,p1,p2,code,handler))
-    return (P_ ret)
+INFO_TABLE(stg_AP_STACK,/*special layout*/0,0,AP_STACK,"AP_STACK","AP_STACK")
+  /* no args => explicit stack */
 {
-    W_ r, trec, outer;
-
-    trec = StgTSO_trec(CurrentTSO);
-    outer  = StgTRecHeader_enclosing_trec(trec);
-    (r) = ccall stmCommitNestedTransaction(MyCapability() "ptr", trec "ptr");
-    if (r != 0) {
-        /* Commit succeeded */
-        StgTSO_trec(CurrentTSO) = outer;
-        return (ret);
-    } else {
-        /* Commit failed */
-        W_ new_trec;
-        ("ptr" new_trec) = ccall stmStartTransaction(MyCapability() "ptr", outer "ptr");
-        StgTSO_trec(CurrentTSO) = new_trec;
-
-        jump stg_ap_v_fast
-            (CATCH_STM_FRAME_FIELDS(,,info_ptr,p1,p2,code,handler))
-            (code);
-    }
-}
-
-
-// Primop definition -----------------------------------------------------------
-
-stg_atomicallyzh (P_ stm)
-{
-    P_ old_trec;
-    P_ new_trec;
-    P_ code, frame_result;
-
-    // stmStartTransaction may allocate
-    MAYBE_GC_P(stg_atomicallyzh, stm);
-
-    STK_CHK_GEN();
-
-    old_trec = StgTSO_trec(CurrentTSO);
-
-    /* Nested transactions are not allowed; raise an exception */
-    if (old_trec != NO_TREC) {
-        jump stg_raisezh(base_ControlziExceptionziBase_nestedAtomically_closure);
-    }
-
-    code = stm;
-    frame_result = NO_TREC;
-
-    /* Start the memory transcation */
-    ("ptr" new_trec) = ccall stmStartTransaction(MyCapability() "ptr", old_trec "ptr");
-    StgTSO_trec(CurrentTSO) = new_trec;
-
-    jump stg_ap_v_fast
-        (ATOMICALLY_FRAME_FIELDS(,,stg_atomically_frame_info, CCCS, 0,
-                                 code,frame_result))
-        (stm);
-}
-
-// A closure representing "atomically x".  This is used when a thread
-// inside a transaction receives an asynchronous exception; see #5866.
-// It is somewhat similar to the stg_raise closure.
-//
-INFO_TABLE(stg_atomically,1,0,THUNK_1_0,"atomically","atomically")
-    (P_ thunk)
-{
-    jump stg_atomicallyzh(StgThunk_payload(thunk,0));
-}
-
-
-stg_catchSTMzh (P_ code    /* :: STM a */,
-                P_ handler /* :: Exception -> STM a */)
-{
-    STK_CHK_GEN();
-
-    /* Start a nested transaction to run the body of the try block in */
-    W_ cur_trec;
-    W_ new_trec;
-    cur_trec = StgTSO_trec(CurrentTSO);
-    ("ptr" new_trec) = ccall stmStartTransaction(MyCapability() "ptr",
-                                                 cur_trec "ptr");
-    StgTSO_trec(CurrentTSO) = new_trec;
-
-    jump stg_ap_v_fast
-        (CATCH_STM_FRAME_FIELDS(,,stg_catch_stm_frame_info, CCCS, 0,
-                                code, handler))
-        (code);
-}
-
-
-stg_catchRetryzh (P_ first_code, /* :: STM a */
-                  P_ alt_code    /* :: STM a */)
-{
-    W_ new_trec;
-
-    // stmStartTransaction may allocate
-    MAYBE_GC_PP (stg_catchRetryzh, first_code, alt_code);
-
-    STK_CHK_GEN();
-
-    /* Start a nested transaction within which to run the first code */
-    ("ptr" new_trec) = ccall stmStartTransaction(MyCapability() "ptr",
-                                                 StgTSO_trec(CurrentTSO) "ptr");
-    StgTSO_trec(CurrentTSO) = new_trec;
-
-    // push the CATCH_RETRY stack frame, and apply first_code to realWorld#
-    jump stg_ap_v_fast
-        (CATCH_RETRY_FRAME_FIELDS(,, stg_catch_retry_frame_info, CCCS, 0,
-                                  0, /* not running_alt_code */
-                                  first_code,
-                                  alt_code))
-        (first_code);
-}
-
-stg_retryzh /* no arg list: explicit stack layout */
-{
-    W_ frame_type;
-    W_ frame;
-    W_ trec;
-    W_ outer;
-    W_ r;
-
-    // STM operations may allocate
-    MAYBE_GC_ (stg_retryzh); // NB. not MAYBE_GC(), we cannot make a
-                             // function call in an explicit-stack proc
-
-    // Find the enclosing ATOMICALLY_FRAME or CATCH_RETRY_FRAME
-retry_pop_stack:
-    SAVE_THREAD_STATE();
-    (frame_type) = ccall findRetryFrameHelper(MyCapability(), CurrentTSO "ptr");
-    LOAD_THREAD_STATE();
-    frame = Sp;
-    trec = StgTSO_trec(CurrentTSO);
-    outer  = StgTRecHeader_enclosing_trec(trec);
-
-    if (frame_type == CATCH_RETRY_FRAME) {
-        // The retry reaches a CATCH_RETRY_FRAME before the atomic frame
-        ASSERT(outer != NO_TREC);
-        // Abort the transaction attempting the current branch
-        ccall stmAbortTransaction(MyCapability() "ptr", trec "ptr");
-        ccall stmFreeAbortedTRec(MyCapability() "ptr", trec "ptr");
-        if (!StgCatchRetryFrame_running_alt_code(frame) != 0) {
-            // Retry in the first branch: try the alternative
-            ("ptr" trec) = ccall stmStartTransaction(MyCapability() "ptr", outer "ptr");
-            StgTSO_trec(CurrentTSO) = trec;
-            StgCatchRetryFrame_running_alt_code(frame) = 1 :: CInt; // true;
-            R1 = StgCatchRetryFrame_alt_code(frame);
-            jump stg_ap_v_fast [R1];
-        } else {
-            // Retry in the alternative code: propagate the retry
-            StgTSO_trec(CurrentTSO) = outer;
-            Sp = Sp + SIZEOF_StgCatchRetryFrame;
-            goto retry_pop_stack;
-        }
-    }
-
-    // We've reached the ATOMICALLY_FRAME: attempt to wait
-    ASSERT(frame_type == ATOMICALLY_FRAME);
-    ASSERT(outer == NO_TREC);
-
-    (r) = ccall stmWait(MyCapability() "ptr", CurrentTSO "ptr", trec "ptr");
-    if (r != 0) {
-        // Transaction was valid: stmWait put us on the TVars' queues, we now block
-        StgHeader_info(frame) = stg_atomically_waiting_frame_info;
-        Sp = frame;
-        R3 = trec; // passing to stmWaitUnblock()
-        jump stg_block_stmwait [R3];
-    } else {
-        // Transaction was not valid: retry immediately
-        ("ptr" trec) = ccall stmStartTransaction(MyCapability() "ptr", outer "ptr");
-        StgTSO_trec(CurrentTSO) = trec;
-        Sp = frame;
-        R1 = StgAtomicallyFrame_code(frame);
-        jump stg_ap_v_fast [R1];
-    }
-}
-
-stg_newTVarzh (P_ init)
-{
-    W_ tv;
-
-    ALLOC_PRIM_P (SIZEOF_StgTVar, stg_newTVarzh, init);
-
-    tv = Hp - SIZEOF_StgTVar + WDS(1);
-    SET_HDR (tv, stg_TVAR_DIRTY_info, CCCS);
-
-    StgTVar_current_value(tv) = init;
-    StgTVar_first_watch_queue_entry(tv) = stg_END_STM_WATCH_QUEUE_closure;
-    StgTVar_num_updates(tv) = 0;
-
-    return (tv);
-}
-
-
-stg_readTVarzh (P_ tvar)
-{
-    P_ trec;
-    P_ result;
-
-    // Call to stmReadTVar may allocate
-    MAYBE_GC_P (stg_readTVarzh, tvar);
-
-    trec = StgTSO_trec(CurrentTSO);
-    ("ptr" result) = ccall stmReadTVar(MyCapability() "ptr", trec "ptr",
-                                       tvar "ptr");
-    return (result);
-}
-
-stg_readTVarIOzh ( P_ tvar /* :: TVar a */ )
-{
-    W_ result, resultinfo;
-
-again:
-    result = StgTVar_current_value(tvar);
-    resultinfo = %INFO_PTR(result);
-    prim_read_barrier;
-    if (resultinfo == stg_TREC_HEADER_info) {
-        goto again;
-    }
-    return (result);
-}
-
-stg_writeTVarzh (P_ tvar,     /* :: TVar a */
-                 P_ new_value /* :: a      */)
-{
-    W_ trec;
-
-    // Call to stmWriteTVar may allocate
-    MAYBE_GC_PP (stg_writeTVarzh, tvar, new_value);
-
-    trec = StgTSO_trec(CurrentTSO);
-    ccall stmWriteTVar(MyCapability() "ptr", trec "ptr", tvar "ptr",
-                       new_value "ptr");
-    return ();
-}
-
-
-/* -----------------------------------------------------------------------------
- * MVar primitives
- *
- * take & putMVar work as follows.  Firstly, an important invariant:
- *
- *    If the MVar is full, then the blocking queue contains only
- *    threads blocked on putMVar, and if the MVar is empty then the
- *    blocking queue contains only threads blocked on takeMVar.
- *
- * takeMvar:
- *    MVar empty : then add ourselves to the blocking queue
- *    MVar full  : remove the value from the MVar, and
- *                 blocking queue empty     : return
- *                 blocking queue non-empty : perform the first blocked putMVar
- *                                            from the queue, and wake up the
- *                                            thread (MVar is now full again)
- *
- * putMVar is just the dual of the above algorithm.
- *
- * How do we "perform a putMVar"?  Well, we have to fiddle around with
- * the stack of the thread waiting to do the putMVar.  See
- * stg_block_putmvar and stg_block_takemvar in HeapStackCheck.c for
- * the stack layout, and the PerformPut and PerformTake macros below.
- *
- * It is important that a blocked take or put is woken up with the
- * take/put already performed, because otherwise there would be a
- * small window of vulnerability where the thread could receive an
- * exception and never perform its take or put, and we'd end up with a
- * deadlock.
- *
- * -------------------------------------------------------------------------- */
-
-stg_isEmptyMVarzh ( P_ mvar /* :: MVar a */ )
-{
-    if (StgMVar_value(mvar) == stg_END_TSO_QUEUE_closure) {
-        return (1);
-    } else {
-        return (0);
-    }
-}
-
-stg_newMVarzh ()
-{
-    W_ mvar;
-
-    ALLOC_PRIM_ (SIZEOF_StgMVar, stg_newMVarzh);
-
-    mvar = Hp - SIZEOF_StgMVar + WDS(1);
-    // No memory barrier needed as this is a new allocation.
-    SET_HDR(mvar,stg_MVAR_DIRTY_info,CCCS);
-        // MVARs start dirty: generation 0 has no mutable list
-    StgMVar_head(mvar)  = stg_END_TSO_QUEUE_closure;
-    StgMVar_tail(mvar)  = stg_END_TSO_QUEUE_closure;
-    StgMVar_value(mvar) = stg_END_TSO_QUEUE_closure;
-    return (mvar);
-}
-
-
-#define PerformTake(stack, value)               \
-    W_ sp;                                      \
-    sp = StgStack_sp(stack);                    \
-    W_[sp + WDS(1)] = value;                    \
-    W_[sp + WDS(0)] = stg_ret_p_info;
-
-#define PerformPut(stack,lval)                  \
-    W_ sp;                                      \
-    sp = StgStack_sp(stack) + WDS(3);           \
-    StgStack_sp(stack) = sp;                    \
-    lval = W_[sp - WDS(1)];
-
-
-stg_takeMVarzh ( P_ mvar /* :: MVar a */ )
-{
-    W_ val, info, tso, q, qinfo;
-
-    LOCK_CLOSURE(mvar, info);
-
-    /* If the MVar is empty, put ourselves on its blocking queue,
-     * and wait until we're woken up.
-     */
-    if (StgMVar_value(mvar) == stg_END_TSO_QUEUE_closure) {
-        if (info == stg_MVAR_CLEAN_info) {
-            ccall dirty_MVAR(BaseReg "ptr", mvar "ptr", StgMVar_value(mvar) "ptr");
-        }
-
-        // We want to put the heap check down here in the slow path,
-        // but be careful to unlock the closure before returning to
-        // the RTS if the check fails.
-        ALLOC_PRIM_WITH_CUSTOM_FAILURE
-            (SIZEOF_StgMVarTSOQueue,
-             unlockClosure(mvar, stg_MVAR_DIRTY_info);
-             GC_PRIM_P(stg_takeMVarzh, mvar));
-
-        q = Hp - SIZEOF_StgMVarTSOQueue + WDS(1);
-
-        StgMVarTSOQueue_link(q) = END_TSO_QUEUE;
-        StgMVarTSOQueue_tso(q)  = CurrentTSO;
-        SET_HDR(q, stg_MVAR_TSO_QUEUE_info, CCS_SYSTEM);
-        // Write barrier before we make the new MVAR_TSO_QUEUE
-        // visible to other cores.
-        prim_write_barrier;
-
-        if (StgMVar_head(mvar) == stg_END_TSO_QUEUE_closure) {
-            StgMVar_head(mvar) = q;
-        } else {
-            StgMVarTSOQueue_link(StgMVar_tail(mvar)) = q;
-            ccall recordClosureMutated(MyCapability() "ptr",
-                                             StgMVar_tail(mvar));
-        }
-        StgTSO__link(CurrentTSO)       = q;
-        StgTSO_block_info(CurrentTSO)  = mvar;
-        StgTSO_why_blocked(CurrentTSO) = BlockedOnMVar::I16;
-        StgMVar_tail(mvar)             = q;
-
-        jump stg_block_takemvar(mvar);
-    }
-
-    /* we got the value... */
-    val = StgMVar_value(mvar);
-
-    q = StgMVar_head(mvar);
-loop:
-    if (q == stg_END_TSO_QUEUE_closure) {
-        /* No further putMVars, MVar is now empty */
-        StgMVar_value(mvar) = stg_END_TSO_QUEUE_closure;
-        // If the MVar is not already dirty, then we don't need to make
-        // it dirty, as it is empty with nothing blocking on it.
-        unlockClosure(mvar, info);
-        // However, we do need to ensure that the nonmoving collector
-        // knows about the reference to the value that we just removed...
-        updateRemembSetPushPtr(val);
-        return (val);
-    }
-    qinfo = StgHeader_info(q);
-    prim_read_barrier;
-    if (qinfo == stg_IND_info ||
-        qinfo == stg_MSG_NULL_info) {
-        q = StgInd_indirectee(q);
-        goto loop;
-    }
-
-    // There are putMVar(s) waiting... wake up the first thread on the queue
-
-    if (info == stg_MVAR_CLEAN_info) {
-        ccall dirty_MVAR(BaseReg "ptr", mvar "ptr", val "ptr");
-    }
-
-    tso = StgMVarTSOQueue_tso(q);
-    StgMVar_head(mvar) = StgMVarTSOQueue_link(q);
-    if (StgMVar_head(mvar) == stg_END_TSO_QUEUE_closure) {
-        StgMVar_tail(mvar) = stg_END_TSO_QUEUE_closure;
-    }
-
-    ASSERT(StgTSO_why_blocked(tso) == BlockedOnMVar::I16);
-    ASSERT(StgTSO_block_info(tso) == mvar);
-
-    // actually perform the putMVar for the thread that we just woke up
-    W_ stack;
-    stack = StgTSO_stackobj(tso);
-    PerformPut(stack, StgMVar_value(mvar));
-
-    // indicate that the MVar operation has now completed.
-    StgTSO__link(tso) = stg_END_TSO_QUEUE_closure;
-
-    // no need to mark the TSO dirty, we have only written END_TSO_QUEUE.
-
-    ccall tryWakeupThread(MyCapability() "ptr", tso);
-
-    unlockClosure(mvar, stg_MVAR_DIRTY_info);
-    return (val);
-}
-
-stg_tryTakeMVarzh ( P_ mvar /* :: MVar a */ )
-{
-    W_ val, info, tso, q, qinfo;
-
-    LOCK_CLOSURE(mvar, info);
-
-    /* If the MVar is empty, return 0. */
-    if (StgMVar_value(mvar) == stg_END_TSO_QUEUE_closure) {
-#if defined(THREADED_RTS)
-        unlockClosure(mvar, info);
-#endif
-        /* HACK: we need a pointer to pass back,
-         * so we abuse NO_FINALIZER_closure
-         */
-        return (0, stg_NO_FINALIZER_closure);
-    }
-
-    /* we got the value... */
-    val = StgMVar_value(mvar);
-
-    q = StgMVar_head(mvar);
-loop:
-    if (q == stg_END_TSO_QUEUE_closure) {
-        /* No further putMVars, MVar is now empty */
-        StgMVar_value(mvar) = stg_END_TSO_QUEUE_closure;
-        unlockClosure(mvar, info);
-        return (1, val);
-    }
-
-    qinfo = StgHeader_info(q);
-    prim_read_barrier;
-
-    if (qinfo == stg_IND_info ||
-        qinfo == stg_MSG_NULL_info) {
-        q = StgInd_indirectee(q);
-        goto loop;
-    }
-
-    // There are putMVar(s) waiting... wake up the first thread on the queue
-
-    if (info == stg_MVAR_CLEAN_info) {
-        ccall dirty_MVAR(BaseReg "ptr", mvar "ptr", val "ptr");
-    }
-
-    tso = StgMVarTSOQueue_tso(q);
-    StgMVar_head(mvar) = StgMVarTSOQueue_link(q);
-    if (StgMVar_head(mvar) == stg_END_TSO_QUEUE_closure) {
-        StgMVar_tail(mvar) = stg_END_TSO_QUEUE_closure;
-    }
-
-    ASSERT(StgTSO_why_blocked(tso) == BlockedOnMVar::I16);
-    ASSERT(StgTSO_block_info(tso) == mvar);
-
-    // actually perform the putMVar for the thread that we just woke up
-    W_ stack;
-    stack = StgTSO_stackobj(tso);
-    PerformPut(stack, StgMVar_value(mvar));
-
-    // indicate that the MVar operation has now completed.
-    StgTSO__link(tso) = stg_END_TSO_QUEUE_closure;
-
-    // no need to mark the TSO dirty, we have only written END_TSO_QUEUE.
-
-    ccall tryWakeupThread(MyCapability() "ptr", tso);
-
-    unlockClosure(mvar, stg_MVAR_DIRTY_info);
-    return (1,val);
-}
-
-stg_putMVarzh ( P_ mvar, /* :: MVar a */
-                P_ val,  /* :: a */ )
-{
-    W_ info, tso, q, qinfo;
-
-    LOCK_CLOSURE(mvar, info);
-
-    if (StgMVar_value(mvar) != stg_END_TSO_QUEUE_closure) {
-
-        if (info == stg_MVAR_CLEAN_info) {
-            ccall dirty_MVAR(BaseReg "ptr", mvar "ptr", StgMVar_value(mvar) "ptr");
-        }
-
-        // We want to put the heap check down here in the slow path,
-        // but be careful to unlock the closure before returning to
-        // the RTS if the check fails.
-        ALLOC_PRIM_WITH_CUSTOM_FAILURE
-            (SIZEOF_StgMVarTSOQueue,
-             unlockClosure(mvar, stg_MVAR_DIRTY_info);
-             GC_PRIM_PP(stg_putMVarzh, mvar, val));
-
-        q = Hp - SIZEOF_StgMVarTSOQueue + WDS(1);
-
-        StgMVarTSOQueue_link(q) = END_TSO_QUEUE;
-        StgMVarTSOQueue_tso(q)  = CurrentTSO;
-
-        SET_HDR(q, stg_MVAR_TSO_QUEUE_info, CCS_SYSTEM);
-        prim_write_barrier;
-
-        if (StgMVar_head(mvar) == stg_END_TSO_QUEUE_closure) {
-            StgMVar_head(mvar) = q;
-        } else {
-            StgMVarTSOQueue_link(StgMVar_tail(mvar)) = q;
-            ccall recordClosureMutated(MyCapability() "ptr",
-                                             StgMVar_tail(mvar));
-        }
-        StgTSO__link(CurrentTSO)       = q;
-        StgTSO_block_info(CurrentTSO)  = mvar;
-        StgTSO_why_blocked(CurrentTSO) = BlockedOnMVar::I16;
-        StgMVar_tail(mvar)             = q;
-
-        jump stg_block_putmvar(mvar,val);
-    }
-
-    // We are going to mutate the closure, make sure its current pointers
-    // are marked.
-    if (info == stg_MVAR_CLEAN_info) {
-        ccall update_MVAR(BaseReg "ptr", mvar "ptr", StgMVar_value(mvar) "ptr");
-    }
-
-    q = StgMVar_head(mvar);
-loop:
-    if (q == stg_END_TSO_QUEUE_closure) {
-        /* No further takes, the MVar is now full. */
-        StgMVar_value(mvar) = val;
-        if (info == stg_MVAR_CLEAN_info) {
-            ccall dirty_MVAR(BaseReg "ptr", mvar "ptr", StgMVar_value(mvar) "ptr");
-        }
-        unlockClosure(mvar, stg_MVAR_DIRTY_info);
-        return ();
-    }
-
-    qinfo = StgHeader_info(q);
-    prim_read_barrier;
-
-    if (qinfo == stg_IND_info ||
-        qinfo == stg_MSG_NULL_info) {
-        q = StgInd_indirectee(q);
-        goto loop;
-    }
-
-    // There are readMVar/takeMVar(s) waiting: wake up the first one
-
-    tso = StgMVarTSOQueue_tso(q);
-    StgMVar_head(mvar) = StgMVarTSOQueue_link(q);
-    if (StgMVar_head(mvar) == stg_END_TSO_QUEUE_closure) {
-        StgMVar_tail(mvar) = stg_END_TSO_QUEUE_closure;
-    }
-
-    ASSERT(StgTSO_block_info(tso) == mvar);
-    // save why_blocked here, because waking up the thread destroys
-    // this information
-    W_ why_blocked;
-    why_blocked = TO_W_(StgTSO_why_blocked(tso));
-
-    // actually perform the takeMVar
-    W_ stack;
-    stack = StgTSO_stackobj(tso);
-    PerformTake(stack, val);
-
-    // indicate that the MVar operation has now completed.
-    StgTSO__link(tso) = stg_END_TSO_QUEUE_closure;
-
-    if ((TO_W_(StgStack_dirty(stack)) & STACK_DIRTY) == 0) {
-        ccall dirty_STACK(MyCapability() "ptr", stack "ptr");
-    }
-
-    ccall tryWakeupThread(MyCapability() "ptr", tso);
-
-    // If it was a readMVar, then we can still do work,
-    // so loop back. (XXX: This could take a while)
-    if (why_blocked == BlockedOnMVarRead) {
-        q = StgMVarTSOQueue_link(q);
-        goto loop;
-    }
-
-    ASSERT(why_blocked == BlockedOnMVar);
-
-    unlockClosure(mvar, info);
-    return ();
-}
-
-
-// NOTE: there is another implementation of this function in
-// Threads.c:performTryPutMVar().  Keep them in sync!  It was
-// measurably slower to call the C function from here (70% for a
-// tight loop doing tryPutMVar#).
-//
-// TODO: we could kill the duplication by making tryPutMVar# into an
-// inline primop that expands into a C call to performTryPutMVar().
-stg_tryPutMVarzh ( P_ mvar, /* :: MVar a */
-                   P_ val,  /* :: a */ )
-{
-    W_ info, tso, q, qinfo;
-
-    LOCK_CLOSURE(mvar, info);
-
-    if (StgMVar_value(mvar) != stg_END_TSO_QUEUE_closure) {
-#if defined(THREADED_RTS)
-        unlockClosure(mvar, info);
-#endif
-        return (0);
-    }
-
-    q = StgMVar_head(mvar);
-loop:
-    if (q == stg_END_TSO_QUEUE_closure) {
-        /* No further takes, the MVar is now full. */
-        if (info == stg_MVAR_CLEAN_info) {
-            ccall dirty_MVAR(BaseReg "ptr", mvar "ptr", StgMVar_value(mvar) "ptr");
-        }
-
-        StgMVar_value(mvar) = val;
-        unlockClosure(mvar, stg_MVAR_DIRTY_info);
-        return (1);
-    }
-
-    qinfo = StgHeader_info(q);
-    prim_read_barrier;
-
-    if (qinfo == stg_IND_info ||
-        qinfo == stg_MSG_NULL_info) {
-        q = StgInd_indirectee(q);
-        goto loop;
-    }
-
-    // There are takeMVar(s) waiting: wake up the first one
-
-    tso = StgMVarTSOQueue_tso(q);
-    StgMVar_head(mvar) = StgMVarTSOQueue_link(q);
-    if (StgMVar_head(mvar) == stg_END_TSO_QUEUE_closure) {
-        StgMVar_tail(mvar) = stg_END_TSO_QUEUE_closure;
-    }
-
-    ASSERT(StgTSO_block_info(tso) == mvar);
-    // save why_blocked here, because waking up the thread destroys
-    // this information
-    W_ why_blocked;
-    why_blocked = TO_W_(StgTSO_why_blocked(tso));
-
-    // actually perform the takeMVar
-    W_ stack;
-    stack = StgTSO_stackobj(tso);
-    PerformTake(stack, val);
-
-    // indicate that the MVar operation has now completed.
-    StgTSO__link(tso) = stg_END_TSO_QUEUE_closure;
-
-    if ((TO_W_(StgStack_dirty(stack)) & STACK_DIRTY) == 0) {
-        ccall dirty_STACK(MyCapability() "ptr", stack "ptr");
-    }
-
-    ccall tryWakeupThread(MyCapability() "ptr", tso);
-
-    // If it was a readMVar, then we can still do work,
-    // so loop back. (XXX: This could take a while)
-    if (why_blocked == BlockedOnMVarRead) {
-        q = StgMVarTSOQueue_link(q);
-        goto loop;
-    }
-
-    ASSERT(why_blocked == BlockedOnMVar);
-
-    unlockClosure(mvar, info);
-    return (1);
-}
-
-
-stg_readMVarzh ( P_ mvar, /* :: MVar a */ )
-{
-    W_ val, info, tso, q;
-
-    LOCK_CLOSURE(mvar, info);
-
-    /* If the MVar is empty, put ourselves on the blocked readers
-     * list and wait until we're woken up.
-     */
-    if (StgMVar_value(mvar) == stg_END_TSO_QUEUE_closure) {
-
-        if (info == stg_MVAR_CLEAN_info) {
-            ccall dirty_MVAR(BaseReg "ptr", mvar "ptr", StgMVar_value(mvar));
-        }
-
-        ALLOC_PRIM_WITH_CUSTOM_FAILURE
-            (SIZEOF_StgMVarTSOQueue,
-             unlockClosure(mvar, stg_MVAR_DIRTY_info);
-             GC_PRIM_P(stg_readMVarzh, mvar));
-
-        q = Hp - SIZEOF_StgMVarTSOQueue + WDS(1);
-
-        // readMVars are pushed to the front of the queue, so
-        // they get handled immediately
-        StgMVarTSOQueue_link(q) = StgMVar_head(mvar);
-        StgMVarTSOQueue_tso(q)  = CurrentTSO;
-
-        SET_HDR(q, stg_MVAR_TSO_QUEUE_info, CCS_SYSTEM);
-        prim_write_barrier;
-
-        StgTSO__link(CurrentTSO)       = q;
-        StgTSO_block_info(CurrentTSO)  = mvar;
-        StgTSO_why_blocked(CurrentTSO) = BlockedOnMVarRead::I16;
-        StgMVar_head(mvar) = q;
-
-        if (StgMVar_tail(mvar) == stg_END_TSO_QUEUE_closure) {
-            StgMVar_tail(mvar) = q;
-        }
-
-        jump stg_block_readmvar(mvar);
-    }
-
-    val = StgMVar_value(mvar);
-
-    unlockClosure(mvar, info);
-    return (val);
-}
-
-stg_tryReadMVarzh ( P_ mvar, /* :: MVar a */ )
-{
-    W_ val, info, tso, q;
-
-    LOCK_CLOSURE(mvar, info);
-
-    if (StgMVar_value(mvar) == stg_END_TSO_QUEUE_closure) {
-        unlockClosure(mvar, info);
-        return (0, stg_NO_FINALIZER_closure);
-    }
-
-    val = StgMVar_value(mvar);
-
-    unlockClosure(mvar, info);
-    return (1, val);
-}
-
-/* -----------------------------------------------------------------------------
-   Stable pointer primitives
-   -------------------------------------------------------------------------  */
-
-stg_makeStableNamezh ( P_ obj )
-{
-    W_ index, sn_obj;
-
-    MAYBE_GC_P(stg_makeStableNamezh, obj);
-
-    (index) = ccall lookupStableName(obj "ptr");
-
-    /* Is there already a StableName for this heap object?
-     *  stable_name_table is a pointer to an array of snEntry structs.
-     */
-    if ( snEntry_sn_obj(W_[stable_name_table] + index*SIZEOF_snEntry) == NULL ) {
-        // At this point we have a snEntry, but it doesn't look as used to the
-        // GC yet because we don't have a StableName object for the sn_obj field
-        // (remember that sn_obj == NULL means the entry is free). So if we call
-        // GC here we end up skipping the snEntry in gcStableNameTable(). This
-        // caused #15906. Solution: use allocate(), which does not call GC.
-        //
-        // (Alternatively we could use a special value for the sn_obj field to
-        // indicate that the entry is being allocated and not free, but that's
-        // too complicated and doesn't buy us much. See D5342?id=18700.)
-        ("ptr" sn_obj) = ccall allocate(MyCapability() "ptr",
-                                        BYTES_TO_WDS(SIZEOF_StgStableName));
-        SET_HDR(sn_obj, stg_STABLE_NAME_info, CCCS);
-        StgStableName_sn(sn_obj) = index;
-        // This will make the StableName# object visible to other threads;
-        // be sure that its completely visible to other cores.
-        // See Note [Heap memory barriers] in SMP.h.
-        prim_write_barrier;
-        snEntry_sn_obj(W_[stable_name_table] + index*SIZEOF_snEntry) = sn_obj;
-    } else {
-        sn_obj = snEntry_sn_obj(W_[stable_name_table] + index*SIZEOF_snEntry);
-    }
-
-    return (sn_obj);
-}
-
-stg_makeStablePtrzh ( P_ obj )
-{
-    W_ sp;
-
-    ("ptr" sp) = ccall getStablePtr(obj "ptr");
-    return (sp);
-}
-
-stg_deRefStablePtrzh ( P_ sp )
-{
-    W_ r;
-    r = spEntry_addr(W_[stable_ptr_table] + sp*SIZEOF_spEntry);
-    return (r);
-}
-
-/* -----------------------------------------------------------------------------
-   Bytecode object primitives
-   -------------------------------------------------------------------------  */
-
-stg_newBCOzh ( P_ instrs,
-               P_ literals,
-               P_ ptrs,
-               W_ arity,
-               P_ bitmap_arr )
-{
-    W_ bco, bytes, words;
-
-    words = BYTES_TO_WDS(SIZEOF_StgBCO) + BYTE_ARR_WDS(bitmap_arr);
-    bytes = WDS(words);
-
-    ALLOC_PRIM (bytes);
-
-    bco = Hp - bytes + WDS(1);
-    // No memory barrier necessary as this is a new allocation.
-    SET_HDR(bco, stg_BCO_info, CCS_MAIN);
-
-    StgBCO_instrs(bco)     = instrs;
-    StgBCO_literals(bco)   = literals;
-    StgBCO_ptrs(bco)       = ptrs;
-    StgBCO_arity(bco)      = HALF_W_(arity);
-    StgBCO_size(bco)       = HALF_W_(words);
-
-    // Copy the arity/bitmap info into the BCO
-    W_ i;
-    i = 0;
+  W_ Words;
+  W_ ap;
+
+  ap = R1;
+
+  Words = StgAP_STACK_size(ap);
+
+  /*
+   * Check for stack overflow.  IMPORTANT: use a _ENTER check here,
+   * because if the check fails, we might end up blackholing this very
+   * closure, in which case we must enter the blackhole on return rather
+   * than continuing to evaluate the now-defunct closure.
+   */
+  STK_CHK_ENTER(WDS(Words) + SIZEOF_StgUpdateFrame + WDS(AP_STACK_SPLIM), R1);
+
+  /*
+   * It is imperative that we blackhole lest we may duplicate computation which
+   * must not be duplicated. See Note [AP_STACKs must be eagerly blackholed].
+   */
+  W_ old_info;
+  (old_info) = prim %cmpxchgW(ap, stg_AP_STACK_info, stg_WHITEHOLE_info);
+  if (old_info != stg_AP_STACK_info) {
+    /* someone else beat us to it */
+    jump ENTRY_LBL(stg_WHITEHOLE) (ap);
+  }
+  // Can't add StgInd_indirectee(ap) to UpdRemSet here because the old value is
+  // not reachable.
+  StgInd_indirectee(ap) = CurrentTSO;
+  prim_write_barrier;
+  SET_INFO(ap, __stg_EAGER_BLACKHOLE_info);
+
+  /* ensure there is at least AP_STACK_SPLIM words of headroom available
+   * after unpacking the AP_STACK. See bug #1466 */
+  PUSH_UPD_FRAME(Sp - SIZEOF_StgUpdateFrame, R1);
+  Sp = Sp - SIZEOF_StgUpdateFrame - WDS(Words);
+
+  TICK_ENT_AP();
+  LDV_ENTER(ap);
+  ENTER_CCS_THUNK(ap);
+
+  // Reload the stack
+  W_ i;
+  W_ p;
+  p = ap + SIZEOF_StgHeader + OFFSET_StgAP_STACK_payload;
+  i = 0;
 for:
-    if (i < BYTE_ARR_WDS(bitmap_arr)) {
-        StgBCO_bitmap(bco,i) = StgArrBytes_payload(bitmap_arr,i);
-        i = i + 1;
-        goto for;
-    }
+  if (i < Words) {
+    Sp(i) = W_[p];
+    p = p + WDS(1);
+    i = i + 1;
+    goto for;
+  }
 
-    return (bco);
-}
+  // Off we go!
+  TICK_ENT_VIA_NODE();
 
-stg_mkApUpd0zh ( P_ bco )
-{
-    W_ ap;
+  R1 = StgAP_STACK_fun(ap);
 
-    // This function is *only* used to wrap zero-arity BCOs in an
-    // updatable wrapper (see ByteCodeLink.hs).  An AP thunk is always
-    // saturated and always points directly to a FUN or BCO.
-    ASSERT(%INFO_TYPE(%GET_STD_INFO(bco)) == HALF_W_(BCO) &&
-           StgBCO_arity(bco) == HALF_W_(0));
+  // Because of eager blackholing the closure no longer has correct size so
+  // threadPaused() can't correctly zero the slop, so we do it here. See #15571
+  // and Note [zeroing slop].
+  OVERWRITING_CLOSURE_SIZE(ap, BYTES_TO_WDS(SIZEOF_StgThunkHeader) + 2 + Words);
 
-    HP_CHK_P(SIZEOF_StgAP, stg_mkApUpd0zh, bco);
-    TICK_ALLOC_UP_THK(0, 0);
-    CCCS_ALLOC(SIZEOF_StgAP);
-
-    ap = Hp - SIZEOF_StgAP + WDS(1);
-    // No memory barrier necessary as this is a new allocation.
-    SET_HDR(ap, stg_AP_info, CCS_MAIN);
-
-    StgAP_n_args(ap) = HALF_W_(0);
-    StgAP_fun(ap) = bco;
-
-    return (ap);
-}
-
-stg_unpackClosurezh ( P_ closure )
-{
-    W_ info, ptrs, nptrs, p, ptrs_arr, dat_arr;
-    info  = %GET_STD_INFO(UNTAG(closure));
-    prim_read_barrier;
-
-    ptrs  = TO_W_(%INFO_PTRS(info));
-    nptrs = TO_W_(%INFO_NPTRS(info));
-
-    W_ clos;
-    clos = UNTAG(closure);
-
-    W_ len;
-    // The array returned is the raw data for the entire closure.
-    // The length is variable based upon the closure type, ptrs, and non-ptrs
-    (len) = foreign "C" heap_view_closureSize(clos "ptr");
-
-    W_ ptrs_arr_sz, ptrs_arr_cards, dat_arr_sz;
-    dat_arr_sz = SIZEOF_StgArrBytes + WDS(len);
-
-    ALLOC_PRIM_P (dat_arr_sz, stg_unpackClosurezh, closure);
-
-    dat_arr = Hp - dat_arr_sz + WDS(1);
-
-
-    SET_HDR(dat_arr, stg_ARR_WORDS_info, CCCS);
-    StgArrBytes_bytes(dat_arr) = WDS(len);
-    p = 0;
-for:
-    if(p < len) {
-         W_[BYTE_ARR_CTS(dat_arr) + WDS(p)] = W_[clos + WDS(p)];
-         p = p + 1;
-         goto for;
-    }
-
-    W_ ptrArray;
-
-    // Follow the pointers
-    ("ptr" ptrArray) = foreign "C" heap_view_closurePtrs(MyCapability() "ptr", clos "ptr");
-
-    return (info, dat_arr, ptrArray);
-}
-
-stg_closureSizzezh (P_ clos)
-{
-    W_ len;
-    (len) = foreign "C" heap_view_closureSize(UNTAG(clos) "ptr");
-    return (len);
+  ENTER_R1();
 }
 
 /* -----------------------------------------------------------------------------
-   Thread I/O blocking primitives
+   AP_STACK_NOUPD - exactly like AP_STACK, but doesn't push an update frame.
    -------------------------------------------------------------------------- */
 
-/* Add a thread to the end of the blocked queue. (C-- version of the C
- * macro in Schedule.h).
- */
-#define APPEND_TO_BLOCKED_QUEUE(tso)                    \
-    ASSERT(StgTSO__link(tso) == END_TSO_QUEUE);         \
-    if (W_[blocked_queue_hd] == END_TSO_QUEUE) {        \
-        W_[blocked_queue_hd] = tso;                     \
-    } else {                                            \
-        ccall setTSOLink(MyCapability() "ptr", W_[blocked_queue_tl] "ptr", tso); \
-    }                                                   \
-    W_[blocked_queue_tl] = tso;
-
-stg_waitReadzh ( W_ fd )
+INFO_TABLE(stg_AP_STACK_NOUPD,/*special layout*/0,0,AP_STACK,
+                                        "AP_STACK_NOUPD","AP_STACK_NOUPD")
+   /* no args => explicit stack */
 {
-#if defined(THREADED_RTS)
-    ccall barf("waitRead# on threaded RTS") never returns;
-#else
+  W_ Words;
+  W_ ap;
 
-    ASSERT(StgTSO_why_blocked(CurrentTSO) == NotBlocked::I16);
-    StgTSO_why_blocked(CurrentTSO) = BlockedOnRead::I16;
-    StgTSO_block_info(CurrentTSO) = fd;
-    // No locking - we're not going to use this interface in the
-    // threaded RTS anyway.
-    APPEND_TO_BLOCKED_QUEUE(CurrentTSO);
-    jump stg_block_noregs();
-#endif
-}
+  ap = R1;
 
-stg_waitWritezh ( W_ fd )
-{
-#if defined(THREADED_RTS)
-    ccall barf("waitWrite# on threaded RTS") never returns;
-#else
+  Words = StgAP_STACK_size(ap);
 
-    ASSERT(StgTSO_why_blocked(CurrentTSO) == NotBlocked::I16);
-    StgTSO_why_blocked(CurrentTSO) = BlockedOnWrite::I16;
-    StgTSO_block_info(CurrentTSO) = fd;
-    // No locking - we're not going to use this interface in the
-    // threaded RTS anyway.
-    APPEND_TO_BLOCKED_QUEUE(CurrentTSO);
-    jump stg_block_noregs();
-#endif
-}
+  /*
+   * Check for stack overflow.  IMPORTANT: use a _NP check here,
+   * because if the check fails, we might end up blackholing this very
+   * closure, in which case we must enter the blackhole on return rather
+   * than continuing to evaluate the now-defunct closure.
+   */
+  STK_CHK_ENTER(WDS(Words) + WDS(AP_STACK_SPLIM), R1);
+  /* ensure there is at least AP_STACK_SPLIM words of headroom available
+   * after unpacking the AP_STACK. See bug #1466 */
 
-stg_delayzh ( W_ us_delay )
-{
-#if defined(mingw32_HOST_OS)
-    W_ ares;
-    CInt reqID;
-#else
-    W_ t, prev, target;
-#endif
+  Sp = Sp - WDS(Words);
 
-#if defined(THREADED_RTS)
-    ccall barf("delay# on threaded RTS") never returns;
-#else
+  TICK_ENT_AP();
+  LDV_ENTER(ap);
+  ENTER_CCS_THUNK(ap);
 
-    ASSERT(StgTSO_why_blocked(CurrentTSO) == NotBlocked::I16);
-    StgTSO_why_blocked(CurrentTSO) = BlockedOnDelay::I16;
+  // Reload the stack
+  W_ i;
+  W_ p;
+  p = ap + SIZEOF_StgHeader + OFFSET_StgAP_STACK_payload;
+  i = 0;
+for:
+  if (i < Words) {
+    Sp(i) = W_[p];
+    p = p + WDS(1);
+    i = i + 1;
+    goto for;
+  }
 
-#if defined(mingw32_HOST_OS)
+  // Off we go!
+  TICK_ENT_VIA_NODE();
 
-    /* could probably allocate this on the heap instead */
-    ("ptr" ares) = ccall stgMallocBytes(SIZEOF_StgAsyncIOResult,
-                                        "stg_delayzh");
-    (reqID) = ccall addDelayRequest(us_delay);
-    StgAsyncIOResult_reqID(ares)   = reqID;
-    StgAsyncIOResult_len(ares)     = 0;
-    StgAsyncIOResult_errCode(ares) = 0;
-    StgTSO_block_info(CurrentTSO)  = ares;
+  R1 = StgAP_STACK_fun(ap);
 
-    /* Having all async-blocked threads reside on the blocked_queue
-     * simplifies matters, so change the status to OnDoProc put the
-     * delayed thread on the blocked_queue.
-     */
-    StgTSO_why_blocked(CurrentTSO) = BlockedOnDoProc::I16;
-    APPEND_TO_BLOCKED_QUEUE(CurrentTSO);
-    jump stg_block_async_void();
-
-#else
-
-
-    (target) = ccall getDelayTarget(us_delay);
-
-    StgTSO_block_info(CurrentTSO) = target;
-
-    /* Insert the new thread in the sleeping queue. */
-    prev = NULL;
-    t = W_[sleeping_queue];
-while:
-    if (t != END_TSO_QUEUE && StgTSO_block_info(t) < target) {
-        prev = t;
-        t = StgTSO__link(t);
-        goto while;
-    }
-
-    StgTSO__link(CurrentTSO) = t;
-    if (prev == NULL) {
-        W_[sleeping_queue] = CurrentTSO;
-    } else {
-        ccall setTSOLink(MyCapability() "ptr", prev "ptr", CurrentTSO);
-    }
-    jump stg_block_noregs();
-#endif
-#endif /* !THREADED_RTS */
-}
-
-
-#if defined(mingw32_HOST_OS)
-stg_asyncReadzh ( W_ fd, W_ is_sock, W_ len, W_ buf )
-{
-    W_ ares;
-    CInt reqID;
-
-#if defined(THREADED_RTS)
-    ccall barf("asyncRead# on threaded RTS") never returns;
-#else
-
-    ASSERT(StgTSO_why_blocked(CurrentTSO) == NotBlocked::I16);
-    StgTSO_why_blocked(CurrentTSO) = BlockedOnRead::I16;
-
-    /* could probably allocate this on the heap instead */
-    ("ptr" ares) = ccall stgMallocBytes(SIZEOF_StgAsyncIOResult,
-                                        "stg_asyncReadzh");
-    (reqID) = ccall addIORequest(fd, 0/*FALSE*/,is_sock,len,buf "ptr");
-    StgAsyncIOResult_reqID(ares)   = reqID;
-    StgAsyncIOResult_len(ares)     = 0;
-    StgAsyncIOResult_errCode(ares) = 0;
-    StgTSO_block_info(CurrentTSO)  = ares;
-    APPEND_TO_BLOCKED_QUEUE(CurrentTSO);
-    jump stg_block_async();
-#endif
-}
-
-stg_asyncWritezh ( W_ fd, W_ is_sock, W_ len, W_ buf )
-{
-    W_ ares;
-    CInt reqID;
-
-#if defined(THREADED_RTS)
-    ccall barf("asyncWrite# on threaded RTS") never returns;
-#else
-
-    ASSERT(StgTSO_why_blocked(CurrentTSO) == NotBlocked::I16);
-    StgTSO_why_blocked(CurrentTSO) = BlockedOnWrite::I16;
-
-    ("ptr" ares) = ccall stgMallocBytes(SIZEOF_StgAsyncIOResult,
-                                        "stg_asyncWritezh");
-    (reqID) = ccall addIORequest(fd, 1/*TRUE*/,is_sock,len,buf "ptr");
-
-    StgAsyncIOResult_reqID(ares)   = reqID;
-    StgAsyncIOResult_len(ares)     = 0;
-    StgAsyncIOResult_errCode(ares) = 0;
-    StgTSO_block_info(CurrentTSO)  = ares;
-    APPEND_TO_BLOCKED_QUEUE(CurrentTSO);
-    jump stg_block_async();
-#endif
-}
-
-stg_asyncDoProczh ( W_ proc, W_ param )
-{
-    W_ ares;
-    CInt reqID;
-
-#if defined(THREADED_RTS)
-    ccall barf("asyncDoProc# on threaded RTS") never returns;
-#else
-
-    ASSERT(StgTSO_why_blocked(CurrentTSO) == NotBlocked::I16);
-    StgTSO_why_blocked(CurrentTSO) = BlockedOnDoProc::I16;
-
-    /* could probably allocate this on the heap instead */
-    ("ptr" ares) = ccall stgMallocBytes(SIZEOF_StgAsyncIOResult,
-                                        "stg_asyncDoProczh");
-    (reqID) = ccall addDoProcRequest(proc "ptr",param "ptr");
-    StgAsyncIOResult_reqID(ares)   = reqID;
-    StgAsyncIOResult_len(ares)     = 0;
-    StgAsyncIOResult_errCode(ares) = 0;
-    StgTSO_block_info(CurrentTSO) = ares;
-    APPEND_TO_BLOCKED_QUEUE(CurrentTSO);
-    jump stg_block_async();
-#endif
-}
-#endif
-
-/* -----------------------------------------------------------------------------
- * noDuplicate#
- *
- * noDuplicate# tries to ensure that none of the thunks under
- * evaluation by the current thread are also under evaluation by
- * another thread.  It relies on *both* threads doing noDuplicate#;
- * the second one will get blocked if they are duplicating some work.
- *
- * The idea is that noDuplicate# is used within unsafePerformIO to
- * ensure that the IO operation is performed at most once.
- * noDuplicate# calls threadPaused which acquires an exclusive lock on
- * all the thunks currently under evaluation by the current thread.
- *
- * Consider the following scenario.  There is a thunk A, whose
- * evaluation requires evaluating thunk B, where thunk B is an
- * unsafePerformIO.  Two threads, 1 and 2, bother enter A.  Thread 2
- * is pre-empted before it enters B, and claims A by blackholing it
- * (in threadPaused).  Thread 1 now enters B, and calls noDuplicate#.
- *
- *      thread 1                      thread 2
- *   +-----------+                 +---------------+
- *   |    -------+-----> A <-------+-------        |
- *   |  update   |   BLACKHOLE     | marked_update |
- *   +-----------+                 +---------------+
- *   |           |                 |               |
- *        ...                             ...
- *   |           |                 +---------------+
- *   +-----------+
- *   |     ------+-----> B
- *   |  update   |   BLACKHOLE
- *   +-----------+
- *
- * At this point: A is a blackhole, owned by thread 2.  noDuplicate#
- * calls threadPaused, which walks up the stack and
- *  - claims B on behalf of thread 1
- *  - then it reaches the update frame for A, which it sees is already
- *    a BLACKHOLE and is therefore owned by another thread.  Since
- *    thread 1 is duplicating work, the computation up to the update
- *    frame for A is suspended, including thunk B.
- *  - thunk B, which is an unsafePerformIO, has now been reverted to
- *    an AP_STACK which could be duplicated - BAD!
- *  - The solution is as follows: before calling threadPaused, we
- *    leave a frame on the stack (stg_noDuplicate_info) that will call
- *    noDuplicate# again if the current computation is suspended and
- *    restarted.
- *
- * See the test program in concurrent/prog003 for a way to demonstrate
- * this.  It needs to be run with +RTS -N3 or greater, and the bug
- * only manifests occasionally (once very 10 runs or so).
- * -------------------------------------------------------------------------- */
-
-INFO_TABLE_RET(stg_noDuplicate, RET_SMALL, W_ info_ptr)
-    return (/* no return values */)
-{
-    jump stg_noDuplicatezh();
-}
-
-stg_noDuplicatezh /* no arg list: explicit stack layout */
-{
-    // With a single capability there's no chance of work duplication.
-    if (CInt[n_capabilities] == 1 :: CInt) {
-        jump %ENTRY_CODE(Sp(0)) [];
-    }
-
-    STK_CHK_LL (WDS(1), stg_noDuplicatezh);
-
-    // leave noDuplicate frame in case the current
-    // computation is suspended and restarted (see above).
-    Sp_adj(-1);
-    Sp(0) = stg_noDuplicate_info;
-
-    SAVE_THREAD_STATE();
-    ASSERT(StgTSO_what_next(CurrentTSO) == ThreadRunGHC::I16);
-    ccall threadPaused (MyCapability() "ptr", CurrentTSO "ptr");
-
-    if (StgTSO_what_next(CurrentTSO) == ThreadKilled::I16) {
-        jump stg_threadFinished [];
-    } else {
-        LOAD_THREAD_STATE();
-        ASSERT(StgTSO_what_next(CurrentTSO) == ThreadRunGHC::I16);
-        // remove the stg_noDuplicate frame if it is still there.
-        if (Sp(0) == stg_noDuplicate_info) {
-            Sp_adj(1);
-        }
-        jump %ENTRY_CODE(Sp(0)) [];
-    }
-}
-
-/* -----------------------------------------------------------------------------
-   Misc. primitives
-   -------------------------------------------------------------------------- */
-
-stg_getApStackValzh ( P_ ap_stack, W_ offset )
-{
-   W_ ap_stackinfo;
-   ap_stackinfo = %INFO_PTR(UNTAG(ap_stack));
-   prim_read_barrier;
-   if (ap_stackinfo == stg_AP_STACK_info) {
-       return (1,StgAP_STACK_payload(ap_stack,offset));
-   } else {
-       return (0,ap_stack);
-   }
-}
-
-// Write the cost center stack of the first argument on stderr; return
-// the second.  Possibly only makes sense for already evaluated
-// things?
-stg_traceCcszh ( P_ obj, P_ ret )
-{
-    W_ ccs;
-
-#if defined(PROFILING)
-    ccs = StgHeader_ccs(UNTAG(obj));
-    ccall fprintCCS_stderr(ccs "ptr");
-#endif
-
-    jump stg_ap_0_fast(ret);
-}
-
-stg_getSparkzh ()
-{
-    W_ spark;
-
-#if !defined(THREADED_RTS)
-    return (0,ghczmprim_GHCziTypes_False_closure);
-#else
-    ("ptr" spark) = ccall findSpark(MyCapability() "ptr");
-    if (spark != 0) {
-        return (1,spark);
-    } else {
-        return (0,ghczmprim_GHCziTypes_False_closure);
-    }
-#endif
-}
-
-stg_clearCCSzh (P_ arg)
-{
-#if defined(PROFILING)
-    CCCS = CCS_MAIN;
-#endif
-    jump stg_ap_v_fast(arg);
-}
-
-stg_numSparkszh ()
-{
-    W_ n;
-#if defined(THREADED_RTS)
-    (n) = ccall dequeElements(Capability_sparks(MyCapability()));
-#else
-    n = 0;
-#endif
-    return (n);
-}
-
-stg_traceEventzh ( W_ msg )
-{
-#if defined(TRACING) || defined(DEBUG)
-
-    ccall traceUserMsg(MyCapability() "ptr", msg "ptr");
-
-#elif defined(DTRACE)
-
-    W_ enabled;
-
-    // We should go through the macro HASKELLEVENT_USER_MSG_ENABLED from
-    // RtsProbes.h, but that header file includes unistd.h, which doesn't
-    // work in Cmm
-#if !defined(solaris2_HOST_OS)
-   (enabled) = ccall __dtrace_isenabled$HaskellEvent$user__msg$v1();
-#else
-    // Solaris' DTrace can't handle the
-    //     __dtrace_isenabled$HaskellEvent$user__msg$v1
-    // call above. This call is just for testing whether the user__msg
-    // probe is enabled, and is here for just performance optimization.
-    // Since preparation for the probe is not that complex I disable usage of
-    // this test above for Solaris and enable the probe usage manually
-    // here. Please note that this does not mean that the probe will be
-    // used during the runtime! You still need to enable it by consumption
-    // in your dtrace script as you do with any other probe.
-    enabled = 1;
-#endif
-    if (enabled != 0) {
-      ccall dtraceUserMsgWrapper(MyCapability() "ptr", msg "ptr");
-    }
-
-#endif
-    return ();
-}
-
-stg_traceBinaryEventzh ( W_ msg, W_ len )
-{
-#if defined(TRACING) || defined(DEBUG)
-    ccall traceUserBinaryMsg(MyCapability() "ptr", msg "ptr", len);
-#endif
-    return ();
-}
-
-// Same code as stg_traceEventzh above but a different kind of event
-// Before changing this code, read the comments in the impl above
-stg_traceMarkerzh ( W_ msg )
-{
-#if defined(TRACING) || defined(DEBUG)
-
-    ccall traceUserMarker(MyCapability() "ptr", msg "ptr");
-
-#elif defined(DTRACE)
-
-    W_ enabled;
-
-#if !defined(solaris2_HOST_OS)
-    (enabled) = ccall __dtrace_isenabled$HaskellEvent$user__marker$v1();
-#else
-    enabled = 1;
-#endif
-    if (enabled != 0) {
-        ccall dtraceUserMarkerWrapper(MyCapability() "ptr", msg "ptr");
-    }
-
-#endif
-    return ();
-}
-
-
-stg_getThreadAllocationCounterzh ()
-{
-    // Account for the allocation in the current block
-    W_ offset;
-    offset = Hp - bdescr_start(CurrentNursery);
-    return (StgTSO_alloc_limit(CurrentTSO) - TO_I64(offset));
-}
-
-stg_setThreadAllocationCounterzh ( I64 counter )
-{
-    // Allocation in the current block will be subtracted by
-    // getThreadAllocationCounter#, so we have to offset any existing
-    // allocation here.  See also openNursery/closeNursery in
-    // GHC.StgToCmm.Foreign.
-    W_ offset;
-    offset = Hp - bdescr_start(CurrentNursery);
-    StgTSO_alloc_limit(CurrentTSO) = counter + TO_I64(offset);
-    return ();
+  ENTER_R1();
 }

@@ -362,6 +362,13 @@ import pthread_mutex_unlock;
                           ['Text', "\n"],
                           ['Comment.Preproc', '#endif']
     end
+
+    it 'should lex #else' do
+      core = '#else'
+
+      assert_tokens_equal core,
+                          ['Comment.Preproc', '#else']
+    end
   end
 end
 

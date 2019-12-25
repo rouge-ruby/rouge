@@ -41,7 +41,7 @@ module Rouge
           token Comment::Preproc, m[3]
         end
 
-        rule %r/#include|#endif/, Comment::Preproc
+        rule %r/#include|#endif|#else/, Comment::Preproc
       end
 
       state :comments do

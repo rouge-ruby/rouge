@@ -325,13 +325,42 @@ describe Rouge::Lexers::GHCCmm do
                           ['Punctuation', ');']
     end
 
-    it 'should lex includes' do
+    it 'should lex #include' do
       core = '#include "Cmm.h"'
 
       assert_tokens_equal core,
                           ['Comment.Preproc', '#include'],
                           ['Text', ' '],
-                          ['Comment.Preproc', '"Cmm.h"']
+                          ['Literal.String.Delimiter', '"'],
+                          ['Literal.String', 'Cmm.h'],
+                          ['Literal.String.Delimiter', '"']
+    end
+
+    it 'should lex #if defined' do
+      core = '#if defined(__PIC__)
+import pthread_mutex_lock;
+import pthread_mutex_unlock;
+#endif'
+
+      assert_tokens_equal core,
+                          ['Comment.Preproc', '#if'],
+                          ['Text', ' '],
+                          ['Comment.Preproc', 'defined'],
+                          ['Punctuation', '('],
+                          ['Name.Label', '__PIC__'],
+                          ['Punctuation', ')'],
+                          ['Text', "\n"],
+                          ['Keyword', 'import'],
+                          ['Text', ' '],
+                          ['Name.Label', 'pthread_mutex_lock'],
+                          ['Punctuation', ';'],
+                          ['Text', "\n"],
+                          ['Keyword', 'import'],
+                          ['Text', ' '],
+                          ['Name.Label', 'pthread_mutex_unlock'],
+                          ['Punctuation', ';'],
+                          ['Text', "\n"],
+                          ['Comment.Preproc', '#endif']
     end
   end
 end

@@ -15,13 +15,13 @@ module Rouge
         # timestamps
         rule %r/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ UTC$/, Comment::Single
 
+        rule %r/(?=section\s+"")/ do
+          push :section
+        end
+
         rule %r/\[\]/, Punctuation
 
-        rule %r/(#include)( +)(".*?")/ do |m|
-          token Comment::Preproc, m[1]
-          token Text, m[2]
-          token Comment::Preproc, m[3]
-        end
+        mixin :preprocessor_macros
 
         mixin :comments
         mixin :literals
@@ -34,6 +34,16 @@ module Rouge
         rule %r/./, Text
       end
 
+      state :preprocessor_macros do
+        rule %r/(#if)( +)(defined)/ do |m|
+          token Comment::Preproc, m[1]
+          token Text, m[2]
+          token Comment::Preproc, m[3]
+        end
+
+        rule %r/#include|#endif/, Comment::Preproc
+      end
+
       state :comments do
         rule %r/\/{2}.*/, Comment::Single
         rule %r/\(likely.*?\)/, Comment
@@ -42,19 +52,37 @@ module Rouge
 
       state :literals do
         rule %r/-?[0-9]+/, Literal::Number::Integer
+        rule %r/"/, Literal::String::Delimiter, :literal_string
+      end
+
+      state :literal_string do
+        # quotes
+        rule %r/\\./, Literal::String::Escape
+        rule %r/"/, Literal::String::Delimiter, :pop!
+        rule %r/./, Literal::String
+      end
+
+      state :section do
+        rule %r/section/, Keyword::Reserved
+        rule %r/"data"/, Name::Builtin
+        rule %r/"cstring"/, Name::Builtin
+
+        rule %r/{/, Punctuation, :pop!
+
+        mixin :names
+        mixin :operators_and_keywords
+
+        rule %r/\s/, Text
       end
 
       state :operators_and_keywords do
         rule %r/[+\-*\/<>=!&]/, Operator
 
         rule %r/[\[\].{}:;,()]/, Punctuation
-        rule %r/section/, Keyword::Reserved
         rule %r/const/, Keyword::Constant
-        rule %r/"data"/, Name::Builtin
-        rule %r/"cstring"/, Name::Builtin
         rule %r/"/, Literal::String::Double
 
-        rule %r/if|else|goto|call|offset/, Keyword
+        rule %r/if|else|goto|call|offset|import/, Keyword
 
         rule %r/(returns)( +?)(to)/ do |m|
           token Keyword, m[1]

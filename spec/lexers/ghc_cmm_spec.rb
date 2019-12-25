@@ -443,6 +443,28 @@ import pthread_mutex_unlock;
                           ['Text', "\n"],
                           ['Punctuation', '}']
     end
+
+    it 'should lex ccall' do
+      core = 'ccall runCFinalizers(list);'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'ccall'],
+                          ['Text', ' '],
+                          ['Name.Function', 'runCFinalizers'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'list'],
+                          ['Punctuation', ');']
+    end
+
+    it 'should lex jump' do
+      core = 'jump stg_yield_noregs();'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'jump'],
+                          ['Text', ' '],
+                          ['Name.Function', 'stg_yield_noregs'],
+                          ['Punctuation', '();']
+    end
   end
 end
 

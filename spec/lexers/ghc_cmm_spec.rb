@@ -369,6 +369,17 @@ import pthread_mutex_unlock;
       assert_tokens_equal core,
                           ['Comment.Preproc', '#else']
     end
+
+    it 'should lex #define' do
+      core = '#define BA_ALIGN 16'
+
+      assert_tokens_equal core,
+                          ['Comment.Preproc', '#define'],
+                          ['Text', ' '],
+                          ['Name.Label', 'BA_ALIGN'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '16']
+    end
   end
 end
 

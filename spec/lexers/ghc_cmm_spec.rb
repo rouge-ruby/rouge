@@ -8,6 +8,7 @@ describe Rouge::Lexers::GHCCmm do
     include Support::Guessing
 
     it 'guesses by filename' do
+      assert_guess :filename => 'Main.cmm'
       assert_guess :filename => 'Main.dump-cmm'
       assert_guess :filename => 'Main.dump-cmm-switch'
       assert_guess :filename => 'Main.dump-cmm-sp'

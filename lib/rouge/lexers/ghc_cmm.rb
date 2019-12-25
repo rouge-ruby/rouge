@@ -7,7 +7,7 @@ module Rouge
       title "GHC Cmm (C--)"
       desc "Intermediate representation of the GHC Haskell compiler."
       tag 'ghc-cmm'
-      filenames '*.dump-cmm', '*.dump-cmm-*'
+      filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
       state :root do
         # sections

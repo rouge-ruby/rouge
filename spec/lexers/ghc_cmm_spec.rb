@@ -646,6 +646,26 @@ import pthread_mutex_unlock;
                           ['Operator', '::'],
                           ['Keyword.Type', 'CBool']
     end
+
+    it 'should lex unwind' do
+      core = 'unwind Sp = Sp + WDS(1);'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'unwind'],
+                          ['Text', ' '],
+                          ['Name.Variable.Global', 'Sp'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Name.Variable.Global', 'Sp'],
+                          ['Text', ' '],
+                          ['Operator', '+'],
+                          ['Text', ' '],
+                          ['Name.Function', 'WDS'],
+                          ['Punctuation', '('],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', ');']
+    end
   end
 end
 

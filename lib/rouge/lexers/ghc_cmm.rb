@@ -110,7 +110,7 @@ module Rouge
           token Keyword, m[3]
         end
 
-        rule %r/if|else|goto|call|offset|import|return|jump|ccall|foreign|prim|switch|case|default/, Keyword
+        rule %r/if|else|goto|call|offset|import|return|jump|ccall|foreign|prim|switch|case|default|unwind/, Keyword
       end
 
       state :infos do

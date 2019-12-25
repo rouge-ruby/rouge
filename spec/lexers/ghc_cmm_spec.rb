@@ -613,6 +613,28 @@ import pthread_mutex_unlock;
                           ['Text', "\n    "],
                           ['Punctuation', '}']
     end
+
+    it 'should lex a "never returns" ccall' do
+      core = 'ccall barf("PAP object (%p) entered!", R1) never returns;'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'ccall'],
+                          ['Text', ' '],
+                          ['Name.Function', 'barf'],
+                          ['Punctuation', '('],
+                          ['Literal.String.Delimiter', '"'],
+                          ['Literal.String', 'PAP object (%p) entered!'],
+                          ['Literal.String.Delimiter', '"'],
+                          ['Punctuation', ','],
+                          ['Text', ' '],
+                          ['Name.Variable.Global', 'R1'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Keyword', 'never'],
+                          ['Text', ' '],
+                          ['Keyword', 'returns'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

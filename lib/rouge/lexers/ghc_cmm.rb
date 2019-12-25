@@ -92,7 +92,13 @@ module Rouge
         rule %r/const/, Keyword::Constant
         rule %r/"/, Literal::String::Double
 
-        rule %r/(returns)( +?)(to)/ do |m|
+        rule %r/(returns)(\s+?)(to)/ do |m|
+          token Keyword, m[1]
+          token Text, m[2]
+          token Keyword, m[3]
+        end
+
+        rule %r/(never)(\s+?)(returns)/ do |m|
           token Keyword, m[1]
           token Text, m[2]
           token Keyword, m[3]

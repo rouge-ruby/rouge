@@ -67,6 +67,7 @@ module Rouge
       state :literal_string do
         # quotes
         rule %r/\\./, Literal::String::Escape
+        rule %r/%./, Literal::String::Symbol
         rule %r/"/, Literal::String::Delimiter, :pop!
         rule %r/./, Literal::String
       end

@@ -465,6 +465,35 @@ import pthread_mutex_unlock;
                           ['Name.Function', 'stg_yield_noregs'],
                           ['Punctuation', '();']
     end
+
+    it 'should lex foreign calls' do
+      core = '(len) = foreign "C" heap_view_closureSize(UNTAG(clos) "ptr");'
+
+      assert_tokens_equal core,
+                          ['Punctuation', '('],
+                          ['Name.Label', 'len'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Keyword', 'foreign'],
+                          ['Text', ' '],
+                          ['Literal.String.Delimiter', '"'],
+                          ['Literal.String', 'C'],
+                          ['Literal.String.Delimiter', '"'],
+                          ['Text', ' '],
+                          ['Name.Function', 'heap_view_closureSize'],
+                          ['Punctuation', '('],
+                          ['Name.Function', 'UNTAG'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'clos'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Literal.String.Delimiter', '"'],
+                          ['Literal.String', 'ptr'],
+                          ['Literal.String.Delimiter', '"'],
+                          ['Punctuation', ');']
+    end
   end
 end
 

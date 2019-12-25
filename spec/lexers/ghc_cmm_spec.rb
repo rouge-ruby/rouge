@@ -494,6 +494,34 @@ import pthread_mutex_unlock;
                           ['Literal.String.Delimiter', '"'],
                           ['Punctuation', ');']
     end
+
+    it 'should lex prim calls' do
+      core = 'prim %memcpy(BYTE_ARR_CTS(new_mba), BYTE_ARR_CTS(mba),
+             StgArrBytes_bytes(mba), SIZEOF_W);'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'prim'],
+                          ['Text', ' '],
+                          ['Name.Function', '%memcpy'],
+                          ['Punctuation', '('],
+                          ['Name.Function', 'BYTE_ARR_CTS'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'new_mba'],
+                          ['Punctuation', '),'],
+                          ['Text', ' '],
+                          ['Name.Function', 'BYTE_ARR_CTS'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'mba'],
+                          ['Punctuation', '),'],
+                          ['Text', "\n             "],
+                          ['Name.Function', 'StgArrBytes_bytes'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'mba'],
+                          ['Punctuation', '),'],
+                          ['Text', ' '],
+                          ['Name.Label', 'SIZEOF_W'],
+                          ['Punctuation', ');']
+    end
   end
 end
 

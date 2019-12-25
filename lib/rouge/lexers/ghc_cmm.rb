@@ -27,7 +27,7 @@ module Rouge
         mixin :literals
         mixin :operators_and_keywords
 
-        rule %r/(?=[\w#\$]+\s*\()/ do
+        rule %r/(?=[\w#\$%]+\s*\()/ do
           push :function
         end
 
@@ -44,7 +44,7 @@ module Rouge
       end
 
       state :function do
-        rule %r/[\w#\$_]+/, Name::Function
+        rule %r/[\w#\$_%]+/, Name::Function
         rule %r/\s+/, Text
         rule %r/[()]/, Punctuation, :pop!
       end
@@ -103,7 +103,7 @@ module Rouge
           token Keyword, m[3]
         end
 
-        rule %r/if|else|goto|call|offset|import|return|jump|ccall|foreign/, Keyword
+        rule %r/if|else|goto|call|offset|import|return|jump|ccall|foreign|prim/, Keyword
       end
 
       state :infos do
@@ -123,7 +123,7 @@ module Rouge
         rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type
         rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type # todo still needed?
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
-        rule %r/[\w#\$]+/, Name::Label # todo extract constant, this appears in some positions
+        rule %r/[\w#\$%]+/, Name::Label # todo extract constant, this appears in some positions
       end
     end
   end

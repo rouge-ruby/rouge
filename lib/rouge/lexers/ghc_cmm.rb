@@ -27,8 +27,12 @@ module Rouge
         mixin :literals
         mixin :operators_and_keywords
 
-        rule %r/(?=[\w#\$%]+\s*\()/ do
+        rule %r/(?=[\w#\$%_]+\s*\()/ do
           push :function
+        end
+
+        rule %r/(?=[\w#\$%_]+(\s|\/\/.*?\n|\/[*].*?[*]\/)+{)/ do
+          push :function_explicit_stack
         end
 
         rule %r/(^[\w#\$_]+)(?=(\s|\/\/.*?\n|\/[*].*?[*]\/)+[\w#\$_]+(\s|\/\/.*?\n|\/[*].*?[*]\/)*[),;])/ do |m|
@@ -48,6 +52,13 @@ module Rouge
         rule %r/[\w#\$_%]+/, Name::Function
         rule %r/\s+/, Text
         rule %r/[()]/, Punctuation, :pop!
+      end
+
+      state :function_explicit_stack do
+        rule %r/[\w#\$_%]+/, Name::Function
+        mixin :comments
+        rule %r/\s+/, Text
+        rule %r/[{]/, Punctuation, :pop!
       end
 
       state :preprocessor_macros do

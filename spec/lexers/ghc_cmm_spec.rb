@@ -666,6 +666,18 @@ import pthread_mutex_unlock;
                           ['Literal.Number.Integer', '1'],
                           ['Punctuation', ');']
     end
+
+    it 'should lex functions with explicit stack handling' do
+      core = 'stg_maskAsyncExceptionszh /* explicit stack */
+{'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'stg_maskAsyncExceptionszh'],
+                          ['Text', ' '],
+                          ['Comment.Multiline', '/* explicit stack */'],
+                          ['Text', "\n"],
+                          ['Punctuation', '{']
+    end
   end
 end
 

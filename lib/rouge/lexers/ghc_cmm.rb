@@ -73,8 +73,20 @@ module Rouge
         rule %r/[{]/, Punctuation, :pop!
       end
 
+      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
+
       state :preprocessor_macros do
-        rule %r/#include|#endif|#else|#define|#if/, Comment::Preproc
+        rule %r/#include|#endif|#else|#if/, Comment::Preproc
+
+        rule %r{
+            (\#define)
+            (#{ws}?)
+            ([\w#\$_%']+)
+          }mx do |m|
+          token Comment::Preproc, m[1]
+          recurse m[2]
+          token Name::Label, m[3]
+        end
       end
 
       state :comments do

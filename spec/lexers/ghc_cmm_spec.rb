@@ -372,7 +372,7 @@ import pthread_mutex_unlock;
                           ['Comment.Preproc', '#else']
     end
 
-    it 'should lex #define' do
+    it 'should lex a simple #define statement' do
       core = '#define BA_ALIGN 16'
 
       assert_tokens_equal core,
@@ -381,6 +381,35 @@ import pthread_mutex_unlock;
                           ['Name.Label', 'BA_ALIGN'],
                           ['Text', ' '],
                           ['Literal.Number.Integer', '16']
+    end
+
+    it 'should lex a simple #define statement with comment' do
+      core = '#define /* comment */ BA_ALIGN /* comment */ 16'
+
+      assert_tokens_equal core,
+                          ['Comment.Preproc', '#define'],
+                          ['Text', ' '],
+                          ['Comment.Multiline', '/* comment */'],
+                          ['Text', ' '],
+                          ['Name.Label', 'BA_ALIGN'],
+                          ['Text', ' '],
+                          ['Comment.Multiline', '/* comment */'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '16']
+    end
+
+    it 'should lex a #define statement with an expression' do
+      core = '#define BA_MASK  (BA_ALIGN-1)'
+
+      assert_tokens_equal core,
+                          ['Comment.Preproc', '#define'],
+                          ['Text', ' '],
+                          ['Name.Label', 'BA_MASK'],
+                          ['Text', '  '],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'BA_ALIGN'],
+                          ['Literal.Number.Integer', '-1'],
+                          ['Punctuation', ')']
     end
 
     it 'should lex functions and return statements' do

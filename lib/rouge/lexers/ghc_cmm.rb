@@ -122,8 +122,9 @@ module Rouge
           token Keyword, m[3]
         end
 
-        rule %r/if|else|goto|call|offset|import|return|jump|ccall|foreign|prim|switch|case|default|unwind/, Keyword
-        rule %r/export|reserve|push/, Keyword
+        rule %r/(if|else|goto|call|offset|import|return|jump|ccall|foreign|prim|switch|case|unwind)(?=\s)/, Keyword
+        rule %r/(export|reserve|push)(?=\s)/, Keyword
+        rule %r/(default)(?=\s*:)/, Keyword
       end
 
       state :infos do
@@ -152,6 +153,8 @@ module Rouge
 
       state :names do
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2})(?![a-zA-Z0-9#\$_]|gcptr)/, Name::Variable::Global
+        rule %r/CLOSURE/, Keyword::Type
+        rule %r/True|False/, Name::Builtin
         rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type # todo still needed?
         rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type # todo still needed?
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace

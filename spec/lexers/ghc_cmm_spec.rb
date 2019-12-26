@@ -286,9 +286,10 @@ describe Rouge::Lexers::GHCCmm do
     end
 
     it 'should lex offset' do
-      core = 'offset'
+      core = 'offset
+'
 
-      assert_tokens_equal core, ['Keyword', 'offset']
+      assert_tokens_equal core, ['Keyword', 'offset'], ['Text', "\n"]
     end
 
     it 'should lex array accesses' do

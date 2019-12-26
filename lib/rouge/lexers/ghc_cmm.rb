@@ -150,18 +150,6 @@ module Rouge
         end
       end
 
-      #        'section'       { L _ (CmmT_section) }
-      #        'bits8'         { L _ (CmmT_bits8) }
-      #        'bits16'        { L _ (CmmT_bits16) }
-      #        'bits32'        { L _ (CmmT_bits32) }
-      #        'bits64'        { L _ (CmmT_bits64) }
-      #        'bits128'       { L _ (CmmT_bits128) }
-      #        'bits256'       { L _ (CmmT_bits256) }
-      #        'bits512'       { L _ (CmmT_bits512) }
-      #        'float32'       { L _ (CmmT_float32) }
-      #        'float64'       { L _ (CmmT_float64) }
-      #        'gcptr'         { L _ (CmmT_gcptr) }
-
       state :names do
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2})(?![a-zA-Z0-9#\$_]|gcptr)/, Name::Variable::Global
         rule %r/CLOSURE/, Keyword::Type

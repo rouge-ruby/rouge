@@ -697,6 +697,23 @@ import pthread_mutex_unlock;
                           ['Name.Variable.Global', 'R1'],
                           ['Punctuation', '];']
     end
+
+    it 'should lex typed memory accesses' do
+      core = 'Sp(i) = W_[p];'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'Sp'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'i'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Keyword.Type', 'W_'],
+                          ['Punctuation', '['],
+                          ['Name.Label', 'p'],
+                          ['Punctuation', '];']
+    end
   end
 end
 

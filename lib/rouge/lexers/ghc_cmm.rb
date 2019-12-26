@@ -31,6 +31,16 @@ module Rouge
           push :function
         end
 
+        # Memory access
+        rule %r/([\w#\$%_']+)(?=\[[^\]])/ do |m|
+          token Keyword::Type, m[1]
+        end
+
+        # Array type
+        rule %r/([\w#\$%_']+\[\])/ do |m|
+          token Keyword::Type, m[1]
+        end
+
         rule %r/(?=[\w#\$%_']+(\s|\/\/.*?\n|\/[*].*?[*]\/)+{)/ do
           push :function_explicit_stack
         end
@@ -156,8 +166,6 @@ module Rouge
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2})(?![a-zA-Z0-9#\$_]|gcptr)/, Name::Variable::Global
         rule %r/CLOSURE/, Keyword::Type
         rule %r/True|False/, Name::Builtin
-        rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type # todo still needed?
-        rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type # todo still needed?
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
         rule %r/[\w#\$%_']+/, Name::Label # todo extract constant, this appears in some positions
       end

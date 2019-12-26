@@ -503,7 +503,7 @@ import pthread_mutex_unlock;
       assert_tokens_equal core,
                           ['Keyword', 'prim'],
                           ['Text', ' '],
-                          ['Name.Function', '%memcpy'],
+                          ['Name.Builtin', '%memcpy'],
                           ['Punctuation', '('],
                           ['Name.Function', 'BYTE_ARR_CTS'],
                           ['Punctuation', '('],
@@ -555,9 +555,9 @@ import pthread_mutex_unlock;
                           ['Name.Function', 'TO_W_'],
                           ['Punctuation', '('],
                           ['Text', ' '],
-                          ['Name.Function', '%INFO_TYPE'],
+                          ['Name.Builtin', '%INFO_TYPE'],
                           ['Punctuation', '('],
-                          ['Name.Function', '%STD_INFO'],
+                          ['Name.Builtin', '%STD_INFO'],
                           ['Punctuation', '('],
                           ['Name.Label', 'info'],
                           ['Punctuation', '))'],
@@ -599,7 +599,7 @@ import pthread_mutex_unlock;
                           ['Text', "\n            "],
                           ['Keyword', 'jump'],
                           ['Text', ' '],
-                          ['Name.Function', '%ENTRY_CODE'],
+                          ['Name.Builtin', '%ENTRY_CODE'],
                           ['Punctuation', '('],
                           ['Name.Label', 'info'],
                           ['Punctuation', ')'],
@@ -678,6 +678,24 @@ import pthread_mutex_unlock;
                           ['Comment.Multiline', '/* explicit stack */'],
                           ['Text', "\n"],
                           ['Punctuation', '{']
+    end
+
+    it 'should lex functions that are prefixed with % as builtin' do
+      core = 'jump %GET_ENTRY(UNTAG(R1)) [R1];'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'jump'],
+                          ['Text', ' '],
+                          ['Name.Builtin', '%GET_ENTRY'],
+                          ['Punctuation', '('],
+                          ['Name.Function', 'UNTAG'],
+                          ['Punctuation', '('],
+                          ['Name.Variable.Global', 'R1'],
+                          ['Punctuation', '))'],
+                          ['Text', ' '],
+                          ['Punctuation', '['],
+                          ['Name.Variable.Global', 'R1'],
+                          ['Punctuation', '];']
     end
   end
 end

@@ -49,12 +49,14 @@ module Rouge
 
       state :function do
         rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
+        rule %r/%[\w#\$_%']+/, Name::Builtin
         rule %r/[\w#\$_%']+/, Name::Function
         rule %r/\s+/, Text
         rule %r/[()]/, Punctuation, :pop!
       end
 
       state :function_explicit_stack do
+        rule %r/%[\w#\$_%']+/, Name::Builtin
         rule %r/[\w#\$_%']+/, Name::Function
         mixin :comments
         rule %r/\s+/, Text

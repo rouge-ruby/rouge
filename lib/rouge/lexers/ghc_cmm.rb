@@ -86,8 +86,7 @@ module Rouge
 
       state :section do
         rule %r/section/, Keyword::Reserved
-        rule %r/"data"/, Name::Builtin
-        rule %r/"cstring"/, Name::Builtin
+        rule %r/"(data|cstring|text|rodata|relrodata|bss)"/, Name::Builtin
 
         rule %r/{/, Punctuation, :pop!
 

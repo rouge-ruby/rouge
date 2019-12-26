@@ -723,6 +723,13 @@ import pthread_mutex_unlock;
                           ['Punctuation', '('],
                           ['Name.Label', 'h'],
                           ['Punctuation', ');']
+
+      core = 'return ();'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'return'],
+                          ['Text', ' '],
+                          ['Punctuation', '();']
     end
   end
 end

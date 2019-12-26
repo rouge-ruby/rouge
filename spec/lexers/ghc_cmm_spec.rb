@@ -714,6 +714,16 @@ import pthread_mutex_unlock;
                           ['Name.Label', 'p'],
                           ['Punctuation', '];']
     end
+
+    it 'should lex return' do
+      core = 'return(h);'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'return'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'h'],
+                          ['Punctuation', ');']
+    end
   end
 end
 

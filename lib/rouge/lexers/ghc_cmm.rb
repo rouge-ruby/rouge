@@ -27,15 +27,15 @@ module Rouge
         mixin :literals
         mixin :operators_and_keywords
 
-        rule %r/(?=[\w#\$%_]+\s*\()/ do
+        rule %r/(?=[\w#\$%_']+\s*\()/ do
           push :function
         end
 
-        rule %r/(?=[\w#\$%_]+(\s|\/\/.*?\n|\/[*].*?[*]\/)+{)/ do
+        rule %r/(?=[\w#\$%_']+(\s|\/\/.*?\n|\/[*].*?[*]\/)+{)/ do
           push :function_explicit_stack
         end
 
-        rule %r/(^[\w#\$_]+)(?=(\s|\/\/.*?\n|\/[*].*?[*]\/)+[\w#\$_]+(\s|\/\/.*?\n|\/[*].*?[*]\/)*[),;])/ do |m|
+        rule %r/(^[\w#\$_']+)(?=(\s|\/\/.*?\n|\/[*].*?[*]\/)+[\w#\$_]+(\s|\/\/.*?\n|\/[*].*?[*]\/)*[),;])/ do |m|
           token Keyword::Type, m[1]
         end
 
@@ -49,13 +49,13 @@ module Rouge
 
       state :function do
         rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
-        rule %r/[\w#\$_%]+/, Name::Function
+        rule %r/[\w#\$_%']+/, Name::Function
         rule %r/\s+/, Text
         rule %r/[()]/, Punctuation, :pop!
       end
 
       state :function_explicit_stack do
-        rule %r/[\w#\$_%]+/, Name::Function
+        rule %r/[\w#\$_%']+/, Name::Function
         mixin :comments
         rule %r/\s+/, Text
         rule %r/[{]/, Punctuation, :pop!
@@ -158,7 +158,7 @@ module Rouge
         rule %r/[IPF]\d{1,3}\[\]/, Keyword::Type # todo still needed?
         rule %r/[IPF]\d{1,3}(?=[\[\]()\s])/, Keyword::Type # todo still needed?
         rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
-        rule %r/[\w#\$%]+/, Name::Label # todo extract constant, this appears in some positions
+        rule %r/[\w#\$%_']+/, Name::Label # todo extract constant, this appears in some positions
       end
     end
   end

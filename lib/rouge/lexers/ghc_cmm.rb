@@ -9,8 +9,8 @@ module Rouge
       tag 'ghc-cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
-      # todo use this pattern where ever possible
       ws = %r(\s|//.*?\n|/[*].*?[*]/)
+      id = %r([\w#\$%_']+)
 
       state :root do
         rule %r/\s+/m, Text
@@ -34,26 +34,27 @@ module Rouge
 
         # Function: `name /* optional whitespace */ (`
         rule %r{(?=
-                  [\w#\$%_']+
-                  #{ws}*
+                  #{id}
+             #{ws}*
                   \(
                 )}mx do
           push :function
         end
 
-        # Memory access: `type[`
-        rule %r/([\w#\$%_']+)(?=\[[^\]])/ do |m|
+        # Memory access: `type[42]`
+        # Note: Only a token for type is produced.
+        rule %r/(#{id})(?=\[[^\]])/ do |m|
           token Keyword::Type, m[1]
         end
 
         # Array type: `type[]`
-        rule %r/([\w#\$%_']+\[\])/ do |m|
+        rule %r/(#{id}\[\])/ do |m|
           token Keyword::Type, m[1]
         end
 
         # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
         rule %r{(?=
-                  [\w#\$%_']+
+                  #{id}
                   #{ws}*
                   \{)
                 }mx do
@@ -66,7 +67,7 @@ module Rouge
         #   `(type /* optional whitespace */ var_name /* optional whitespace */)`
         # Note: Only the token for type is produced here.
         rule %r{
-                (^[\w#\$_']+)
+                (^#{id})
                 (?=
                   (#{ws})+
                   [\w#\$_]+
@@ -86,16 +87,16 @@ module Rouge
 
       state :function do
         rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
-        rule %r/%[\w#\$_%']+/, Name::Builtin
-        rule %r/[\w#\$_%']+/, Name::Function
+        rule %r/%#{id}/, Name::Builtin
+        rule %r/#{id}/, Name::Function
         rule %r/\s+/, Text
         rule %r/[()]/, Punctuation, :pop!
         mixin :comments
       end
 
       state :function_explicit_stack do
-        rule %r/%[\w#\$_%']+/, Name::Builtin
-        rule %r/[\w#\$_%']+/, Name::Function
+        rule %r/%#{id}/, Name::Builtin
+        rule %r/#{id}/, Name::Function
         mixin :comments
         rule %r/\s+/, Text
         rule %r/[{]/, Punctuation, :pop!
@@ -107,7 +108,7 @@ module Rouge
         rule %r{
             (\#define)
             (#{ws}*)
-            ([\w#\$_%']+)
+            (#{id})
           }mx do |m|
           token Comment::Preproc, m[1]
           recurse m[2]
@@ -190,11 +191,11 @@ module Rouge
       end
 
       state :names do
-        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2}|gcptr)(?![a-zA-Z0-9#\$_])/, Name::Variable::Global
+        rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2}|gcptr)(?!#{id})/, Name::Variable::Global
         rule %r/CLOSURE/, Keyword::Type
         rule %r/True|False/, Name::Builtin
-        rule %r/[A-Z]\w+(?=\.)/, Name::Namespace
-        rule %r/[\w#\$%_']+/, Name::Label # todo extract constant, this appears in some positions
+        rule %r/[A-Z]#{id}(?=\.)/, Name::Namespace
+        rule %r/#{id}/, Name::Label
       end
     end
   end

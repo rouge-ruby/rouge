@@ -48,43 +48,16 @@ module Rouge
         rule %r/./, Text
       end
 
-      state :types do
-        # Memory access: `type[42]`
-        # Note: Only a token for type is produced.
-        rule %r/(#{id})(?=\[[^\]])/ do |m|
-          token Keyword::Type, m[1]
-        end
+      state :section do
+        rule %r/section/, Keyword::Reserved
+        rule %r/"(data|cstring|text|rodata|relrodata|bss)"/, Name::Builtin
 
-        # Array type: `type[]`
-        rule %r/(#{id}\[\])/ do |m|
-          token Keyword::Type, m[1]
-        end
+        rule %r/{/, Punctuation, :pop!
 
-        # Type in variable or parameter declaration:
-        #   `type /* optional whitespace */ var_name /* optional whitespace */;`
-        #   `type /* optional whitespace */ var_name /* optional whitespace */, var_name2`
-        #   `(type /* optional whitespace */ var_name /* optional whitespace */)`
-        # Note: Only the token for type is produced here.
-        rule %r{
-                (^#{id})
-                (?=
-                  (#{ws})+
-                  [\w#\$_]+
-                  (#{ws})*
-                  [),;]
-                )
-              }mx do |m|
-          token Keyword::Type, m[1]
-        end
-      end
+        mixin :names
+        mixin :operators_and_keywords
 
-      state :function do
-        rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
-        rule %r/%#{id}/, Name::Builtin
-        rule %r/#{id}/, Name::Function
-        rule %r/\s+/, Text
-        rule %r/[({]/, Punctuation, :pop!
-        mixin :comments
+        rule %r/\s/, Text
       end
 
       state :preprocessor_macros do
@@ -120,18 +93,6 @@ module Rouge
         rule %r/./, Literal::String
       end
 
-      state :section do
-        rule %r/section/, Keyword::Reserved
-        rule %r/"(data|cstring|text|rodata|relrodata|bss)"/, Name::Builtin
-
-        rule %r/{/, Punctuation, :pop!
-
-        mixin :names
-        mixin :operators_and_keywords
-
-        rule %r/\s/, Text
-      end
-
       state :operators_and_keywords do
         rule %r/\.\./, Operator
         rule %r/[+\-*\/<>=!&|~]/, Operator
@@ -161,6 +122,45 @@ module Rouge
         rule %r{(if|else|goto|call|offset|import|jump|ccall|foreign|prim|switch|case|unwind)(?=#{ws})}, Keyword
         rule %r{(export|reserve|push)(?=#{ws})}, Keyword
         rule %r{(default)(?=#{ws}*:)}, Keyword
+      end
+
+      state :function do
+        rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
+        rule %r/%#{id}/, Name::Builtin
+        rule %r/#{id}/, Name::Function
+        rule %r/\s+/, Text
+        rule %r/[({]/, Punctuation, :pop!
+        mixin :comments
+      end
+
+      state :types do
+        # Memory access: `type[42]`
+        # Note: Only a token for type is produced.
+        rule %r/(#{id})(?=\[[^\]])/ do |m|
+          token Keyword::Type, m[1]
+        end
+
+        # Array type: `type[]`
+        rule %r/(#{id}\[\])/ do |m|
+          token Keyword::Type, m[1]
+        end
+
+        # Type in variable or parameter declaration:
+        #   `type /* optional whitespace */ var_name /* optional whitespace */;`
+        #   `type /* optional whitespace */ var_name /* optional whitespace */, var_name2`
+        #   `(type /* optional whitespace */ var_name /* optional whitespace */)`
+        # Note: Only the token for type is produced here.
+        rule %r{
+                (^#{id})
+                (?=
+                  (#{ws})+
+                  [\w#\$_]+
+                  (#{ws})*
+                  [),;]
+                )
+              }mx do |m|
+          token Keyword::Type, m[1]
+        end
       end
 
       state :infos do

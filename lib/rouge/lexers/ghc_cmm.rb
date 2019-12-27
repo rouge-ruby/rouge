@@ -33,10 +33,11 @@ module Rouge
         mixin :operators_and_keywords
 
         # Function: `name /* optional whitespace */ (`
+        # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
         rule %r{(?=
                   #{id}
              #{ws}*
-                  \(
+                  [\{\(]
                 )}mx do
           push :function
         end
@@ -50,15 +51,6 @@ module Rouge
         # Array type: `type[]`
         rule %r/(#{id}\[\])/ do |m|
           token Keyword::Type, m[1]
-        end
-
-        # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
-        rule %r{(?=
-                  #{id}
-                  #{ws}*
-                  \{)
-                }mx do
-          push :function_explicit_stack
         end
 
         # Type in variable or parameter declaration:
@@ -90,16 +82,8 @@ module Rouge
         rule %r/%#{id}/, Name::Builtin
         rule %r/#{id}/, Name::Function
         rule %r/\s+/, Text
-        rule %r/[()]/, Punctuation, :pop!
+        rule %r/[({]/, Punctuation, :pop!
         mixin :comments
-      end
-
-      state :function_explicit_stack do
-        rule %r/%#{id}/, Name::Builtin
-        rule %r/#{id}/, Name::Function
-        mixin :comments
-        rule %r/\s+/, Text
-        rule %r/[{]/, Punctuation, :pop!
       end
 
       state :preprocessor_macros do

@@ -32,25 +32,48 @@ module Rouge
         mixin :literals
         mixin :operators_and_keywords
 
-        rule %r{(?=[\w#\$%_']+#{ws}*\()} do
+        # Function: `name /* optional whitespace */ (`
+        rule %r{(?=
+                  [\w#\$%_']+
+                  #{ws}*
+                  \(
+                )}mx do
           push :function
         end
 
-        # Memory access
+        # Memory access: `type[`
         rule %r/([\w#\$%_']+)(?=\[[^\]])/ do |m|
           token Keyword::Type, m[1]
         end
 
-        # Array type
+        # Array type: `type[]`
         rule %r/([\w#\$%_']+\[\])/ do |m|
           token Keyword::Type, m[1]
         end
 
-        rule %r/(?=[\w#\$%_']+(\s|\/\/.*?\n|\/[*].*?[*]\/)+{)/ do
+        # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
+        rule %r{(?=
+                  [\w#\$%_']+
+                  #{ws}*
+                  \{)
+                }mx do
           push :function_explicit_stack
         end
 
-        rule %r/(^[\w#\$_']+)(?=(\s|\/\/.*?\n|\/[*].*?[*]\/)+[\w#\$_]+(\s|\/\/.*?\n|\/[*].*?[*]\/)*[),;])/ do |m|
+        # Type in variable or parameter declaration:
+        #   `type /* optional whitespace */ var_name /* optional whitespace */;`
+        #   `type /* optional whitespace */ var_name /* optional whitespace */, var_name2`
+        #   `(type /* optional whitespace */ var_name /* optional whitespace */)`
+        # Note: Only the token for type is produced here.
+        rule %r{
+                (^[\w#\$_']+)
+                (?=
+                  (#{ws})+
+                  [\w#\$_]+
+                  (#{ws})*
+                  [),;]
+                )
+              }mx do |m|
           token Keyword::Type, m[1]
         end
 

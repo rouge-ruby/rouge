@@ -9,6 +9,9 @@ module Rouge
       tag 'ghc-cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
+      # todo use this pattern where ever possible
+      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
+
       state :root do
         # sections
         rule %r/^=====.*=====$/, Generic::Heading
@@ -72,8 +75,6 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/[{]/, Punctuation, :pop!
       end
-
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
 
       state :preprocessor_macros do
         rule %r/#include|#endif|#else|#if/, Comment::Preproc

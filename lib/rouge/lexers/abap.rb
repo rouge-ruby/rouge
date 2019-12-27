@@ -9,6 +9,7 @@ module Rouge
       title "ABAP"
       desc "SAP - Advanced Business Application Programming"
       tag 'abap'
+      aliases 'ABAP'
       filenames '*.abap'
       mimetypes 'text/x-abap'
 

@@ -412,6 +412,33 @@ import pthread_mutex_unlock;
                           ['Punctuation', ')']
     end
 
+    it 'should lex functions with comments' do
+      core = '/* comment */ stg_isEmptyMVarzh /* comment */ ( /* comment */ P_ mvar /* comment */ ) // single line comment
+{'
+      assert_tokens_equal core,
+                          ['Comment.Multiline', '/* comment */'],
+                          ['Text', ' '],
+                          ['Name.Function', 'stg_isEmptyMVarzh'],
+                          ['Text', ' '],
+                          ['Comment.Multiline', '/* comment */'],
+                          ['Text', ' '],
+                          ['Punctuation', '('],
+                          ['Text', ' '],
+                          ['Comment.Multiline', '/* comment */'],
+                          ['Text', ' '],
+                          ['Keyword.Type', 'P_'],
+                          ['Text', ' '],
+                          ['Name.Label', 'mvar'],
+                          ['Text', ' '],
+                          ['Comment.Multiline', '/* comment */'],
+                          ['Text', ' '],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Comment.Single', '// single line comment'],
+                          ['Text', "\n"],
+                          ['Punctuation', '{']
+    end
+
     it 'should lex functions and return statements' do
       core = 'stg_isEmptyMVarzh ( P_ mvar /* :: MVar a */ )
 {

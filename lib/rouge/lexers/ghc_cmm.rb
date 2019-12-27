@@ -10,9 +10,11 @@ module Rouge
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
       # todo use this pattern where ever possible
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
+      ws = %r(\s|//.*?\n|/[*].*?[*]/)
 
       state :root do
+        rule %r/\s+/m, Text
+
         # sections
         rule %r/^=====.*=====$/, Generic::Heading
         # timestamps
@@ -30,7 +32,7 @@ module Rouge
         mixin :literals
         mixin :operators_and_keywords
 
-        rule %r/(?=[\w#\$%_']+\s*\()/ do
+        rule %r{(?=[\w#\$%_']+#{ws}*\()} do
           push :function
         end
 
@@ -56,7 +58,6 @@ module Rouge
         mixin :names
 
         # rest is Text
-        rule %r/\s/m, Text
         rule %r/./, Text
       end
 
@@ -66,6 +67,7 @@ module Rouge
         rule %r/[\w#\$_%']+/, Name::Function
         rule %r/\s+/, Text
         rule %r/[()]/, Punctuation, :pop!
+        mixin :comments
       end
 
       state :function_explicit_stack do
@@ -81,7 +83,7 @@ module Rouge
 
         rule %r{
             (\#define)
-            (#{ws}?)
+            (#{ws}*)
             ([\w#\$_%']+)
           }mx do |m|
           token Comment::Preproc, m[1]
@@ -124,9 +126,9 @@ module Rouge
       state :operators_and_keywords do
         rule %r/\.\./, Operator
         rule %r/[+\-*\/<>=!&|~]/, Operator
-        rule %r/(::)(\s*)([A-Z]\w+)/ do |m|
+        rule %r/(::)(#{ws}*)([A-Z]\w+)/ do |m|
           token Operator, m[1]
-          token Text, m[2]
+          recurse m[2]
           token Keyword::Type, m[3]
         end
 
@@ -134,22 +136,22 @@ module Rouge
         rule %r/const/, Keyword::Constant
         rule %r/"/, Literal::String::Double
 
-        rule %r/(returns)(\s+?)(to)/ do |m|
+        rule %r/(returns)(#{ws}*)(to)/ do |m|
           token Keyword, m[1]
-          token Text, m[2]
+          recurse m[2]
           token Keyword, m[3]
         end
 
-        rule %r/(never)(\s+?)(returns)/ do |m|
+        rule %r/(never)(#{ws}*)(returns)/ do |m|
           token Keyword, m[1]
-          token Text, m[2]
+          recurse m[2]
           token Keyword, m[3]
         end
 
-        rule %r/return(?=[\s(])/, Keyword
-        rule %r/(if|else|goto|call|offset|import|jump|ccall|foreign|prim|switch|case|unwind)(?=\s)/, Keyword
-        rule %r/(export|reserve|push)(?=\s)/, Keyword
-        rule %r/(default)(?=\s*:)/, Keyword
+        rule %r{return(?=(#{ws}*)\()}, Keyword
+        rule %r{(if|else|goto|call|offset|import|jump|ccall|foreign|prim|switch|case|unwind)(?=#{ws})}, Keyword
+        rule %r{(export|reserve|push)(?=#{ws})}, Keyword
+        rule %r{(default)(?=#{ws}*:)}, Keyword
       end
 
       state :infos do

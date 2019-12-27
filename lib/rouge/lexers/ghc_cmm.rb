@@ -24,8 +24,6 @@ module Rouge
           push :section
         end
 
-        rule %r/\[\]/, Punctuation
-
         mixin :preprocessor_macros
 
         mixin :comments
@@ -42,6 +40,15 @@ module Rouge
           push :function
         end
 
+        mixin :types
+        mixin :infos
+        mixin :names
+
+        # rest is Text
+        rule %r/./, Text
+      end
+
+      state :types do
         # Memory access: `type[42]`
         # Note: Only a token for type is produced.
         rule %r/(#{id})(?=\[[^\]])/ do |m|
@@ -69,12 +76,6 @@ module Rouge
               }mx do |m|
           token Keyword::Type, m[1]
         end
-
-        mixin :infos
-        mixin :names
-
-        # rest is Text
-        rule %r/./, Text
       end
 
       state :function do

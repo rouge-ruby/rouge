@@ -10,124 +10,97 @@ module Rouge
       aliases 'sdl'
       filenames '*.sdl'
 
+      @@indents = [[0, :none]]
+      @@scope = :none
+      @@isClassDef = false
+      @@isScenarioDef = false
+      @@isExtend = false
+      @@hasDot = false
+      @@expectingIndent = false
 
       def self.keywords
         @keywords ||= %w(
-          any call cover def defualt do else emit empty
-          if import in keep like match multi_match
-          not on outer properties repeat sample soft struct
-          then try undefined wait when with
-        ) # is, is first, is only, is also and list of are handled later 
+          any cover def default do empty
+          import actor scenario type event modifier extend
+          is keep like label
+          not outer properties sample soft struct
+          undefined when with
+        ) # is first, is only, is also and list of are handled later 
+      end
+
+      def self.class_defs
+        @class_defs ||= %w(actor scenario modifier extend)
       end
 
       def self.keywords_pseudo
         @builtins_pseudo ||= %w(true false null this it)
       end
 
-      def self.scenarios
-	@scenarios ||= %w(
-	  first_of match multi_match mix one_of parallel repeat
-	  serial try emit wait_time wait call dut.error start end fail
-	  out info debug trace drive if
-	)
+      def self.operator_scenarios
+        @operator_scenarios ||= %w(
+          first_of if else match multi_match mix one_of parallel repeat serial try
+        )
       end
 
-      def self.modifiers
-	@modifiers ||= %w(
-	  in on synchronize until acceleration lane speed position keep_lane
-	  keep_speed keep_position change_lane change_speed no_collide path_curve
-	  path_different_dest path_different_origin path_explicit path_facing
-	  path_has_sign path_has_no_signs path_length path_max_lanes path_min_lanes
-	  path_min_driving_lanes path_over_junction path_over_lanes_decrease
-	  path_overlap path_same_dest set_map
-	)
+      def self.annoying_scenarios
+        @annoying_scenarios ||= %w(emit wait call)
       end
 
-      def self.builtin_types
-	@builtin_types ||= %w(
-	  uint64 int64 uint int acceleration angle angular_speed
-	  distance speed temprature time weight bool junction segment
-	)
-      end 
+      def self.annoying_modifiers
+        @annoying_modifiers ||= %w(in on)
+      end
 
       identifier = /[a-z_][a-z0-9_]*/i
+
       state :root do
-	rule /\$.*?\<\<[.[^.]]*?\$\<\</, Comment::Preproc #should be multiline?
-	rule /\$.*/, Comment::Preproc
+        rule(//) do
+          reset_lexer
+          push :top
+        end
+      end
+
+      def reset_lexer()
+        @@indents = [[0, :none]]
+        @@scope = :none
+        @@isClassDef = false
+        @@isScenarioDef = false
+        @@isExtend = false
+        @@hasDot = false
+        @@expectingIndent = false
+        reset_stack
+      end
+
+      state :top do
+        mixin :baseRules
+        mixin :whitespaceCountIndent
+      end
+
+      state :baseRules do
+	rule(/(?<=^|\n)\h*\$.*?[.[^.]]*?\$end/, Comment::Preproc)
+	rule(/(?<=^|\n)\h*\$.*/, Comment::Preproc)
 
 	rule %r(/\*.*\*/)m, Comment::Multiline
-	rule /(\#)/ do
-	  groups Comment, Text
+	rule(/(\#)/) do
+	  token Comment
 	  push :commentOrIgnore
 	end
 
-	rule /(")/ do
+	rule(/(")/) do
 	  groups Str, Text
 	  push :string
 	end
 
-        rule %r/[^\S\n]+/, Text::Whitespace
-        rule %r/[\[\](){}.,:;]/, Punctuation
-        rule %r/[\n]/, Text::Whitespace
-
         rule %r/(and|or)\b/, Operator::Word
-        rule %r/[\~\!\?\$\@\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
+        rule %r/[\~\!\?\$\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
 
 	rule %r/list +of/, Keyword
 
         rule %r/(def)((?:[^\S\n])+)/ do
           groups Keyword, Text
-          push :funcDef
+          @@scope = :none
         end
 
-        rule %r/((?:actor)|(?:scenario)|(?:type)|(?:extend))((?:[^\S\n])+)/ do
-          groups Keyword, Text
-          push :classname
-        end
-
-#should be variable name?
-        rule %r/((?:event)|(?:modifier))((?:[^\S\n])+)/ do
-          groups Keyword, Text
-          push :variableName
-        end
-
-        rule %r/(is)(?=\W)/ do
-          groups Keyword, Text
-          push :afterIs
-        end
-
-	rule /(#{identifier})(?=\: #{identifier})/ do |m|
-	  if self.class.keywords.include? m[0] or
-	     self.class.keywords_pseudo.include? m[0] or
-	     self.class.scenarios.include? m[0] or
-	     self.class.builtin_types.include? m[0]
-	    raise 'cannot use reserved identifier as variable name'
-	  end
-	  if self.class.modifiers.include? m[0]
-	    token Name::Builtin::Pseudo
-	  else
-	    token Name::Variable
-	  end
-	  push :afterVarb
-	end
-
-	rule /(#{identifier})(?=\()/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.keywords_pseudo.include? m[0]
-            token Keyword::Pseudo
-	  elsif self.class.scenarios.include? m[0]
-	    token Name::Builtin
-	  elsif self.class.modifiers.include? m[0]
-	    token Name::Builtin::Pseudo
-	  elsif self.class.builtin_types.include? m[0]
-	    token Keyword::Type
-          else
-	    token Name::Function
-	  end
-	  push :funcCall
-	end
-
+	mixin :label
 	mixin :identifier
 
 	exponentPart = /e [+-]? [0-9]+/ix
@@ -142,42 +115,50 @@ module Rouge
         decimalLiteral = %r/([1-9](_?[0-9])*|0)/
 
 	 #quantified number
-	rule /(#{floatLiteral}|#{decimalLiteral})([a-zA-Z&&[^e]])([a-zA-Z]*)/, Num
-	rule /(#{floatLiteral})/, Num::Float
-	rule /#{decimalLiteral}/, Num::Integer
+	rule(/(#{floatLiteral}|#{decimalLiteral})([a-zA-Z&&[^e]])([a-zA-Z]*)/, Num)
+	rule(/(#{floatLiteral})/, Num::Float)
+	rule(/#{decimalLiteral}/, Num::Integer)
+
+        rule(/\(/) do
+          token Punctuation
+          push :brackets
+        end
+        rule %r/\.\./, Punctuation
+        rule %r/[\[\]){}.,:;\\\@]/, Punctuation
 
       end
 
       state :commentOrIgnore do
-#        rule /COMPILER_SKIP_FILE.*/m, Comment::Special
-	rule /COMPILER_IGNORE_BEGIN.*#COMPILER_IGNORE_END/m, Comment::Special, :pop!
-	rule /.*[^.]/, Comment::Single, :pop!
+        rule(/COMPILER_SKIP_FILE.*/m, Comment::Special, :pop!)
+	rule(/COMPILER_IGNORE_BEGIN.*#COMPILER_IGNORE_END/m, Comment::Special, :pop!)
+	rule(/.*$/, Comment::Single, :pop!)
       end
 
       state :string do
-        rule /\\./, Str::Escape
-	rule /\"/, Str, :pop!
-	rule /(\$\()/ do
+        rule(/\\./, Str::Escape)
+	rule(/\"/, Str, :pop!)
+	rule(/(\$\()/) do
 	  token Punctuation
 	  push :expression
 	end
-	rule /[^\\\n\"\$]+/, Str
-	rule /\$/, Str
+	rule(/[^\\\n\"\$]+/, Str)
+	rule(/\$/, Str)
       end
 
       state :expression do
         rule identifier, Name::Variable
 	rule %r/ /, Text::Whitespace
 
-	rule /(\()/ do
+	rule(/(\()/) do
 	  token Punctuation
 	  push :expression
 	end
-	rule /\)/, Punctuation, :pop!
+	rule(/\)/, Punctuation, :pop!)
 
-        rule %r/[\[\]{}.,:;]/, Punctuation
+        rule %r/\.\./, Punctuation
+        rule %r/[\[\]{}.,:;\@]/, Punctuation
         rule %r/(and|or)\b/, Operator::Word
-        rule %r/[\~\!\?\$\@\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
+        rule %r/[\~\!\?\$\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
 
         rule %r/0b(_?[0-1])+/i, Num::Bin
         rule %r/0o(_?[0-7])+/i, Num::Oct
@@ -191,127 +172,302 @@ module Rouge
         floatLiteral = /(#{decimalNumber}#{exponentPart}?)|(#{decimalInteger}#{exponentPart})/
 
 	 #quantified number
-	rule /(#{floatLiteral}|#{decimalLiteral})([a-zA-Z&&[^e]])([a-zA-Z]*)/, Num
-	rule /(#{floatLiteral})/, Num::Float
-	rule /#{decimalLiteral}/, Num::Integer
+	rule(/(#{floatLiteral}|#{decimalLiteral})([a-zA-Z&&[^e]])([a-zA-Z]*)/, Num)
+	rule(/(#{floatLiteral})/, Num::Float)
+	rule(/#{decimalLiteral}/, Num::Integer)
 
       end
 
-      state :funcDef do
-        rule identifier, Name::Function
-	rule /\(/ do
-	  token Punctuation
-	  push :funcVarbDef
-	end
-	rule /\)/, Punctuation, :pop!
-      end
-
-      state :funcVarbDef do
-	rule identifier do
-	  token Name::Variable
-	  push :funcDefAfterVarb
-	end
-	rule %r/ +/, Text::Whitespace
-	rule %r/(?=\))/, Generic::Deleted, :pop!
-      end
-
-      state :funcDefAfterVarb do
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.keywords_pseudo.include? m[0]
-            token Keyword::Pseudo
-	  elsif self.class.scenarios.include? m[0]
-	    token Name::Builtin
-	  elsif self.class.modifiers.include? m[0]
-	    token Name::Builtin::Pseudo
-	  elsif self.class.builtin_types.include? m[0]
-	    token Keyword::Type
-          else
-	    token Name::Class
-	  end
-	rule %r/ +/, Text::Whitespace
-	rule %r/\:/, Punctuation
-	rule %r/(\,)|(?=\()/, Punctuation, :pop!
-	mixin :expression
-      end
-
-      state :funcCall do
-	rule %r/\(/, Punctuation
-	rule identifier do
-	  token Name::Variable
-	  push :funcVarbVal
-	end
-	rule %r/ +/, Text::Whitespace
-	rule %r/\)/, Punctuation, :pop!
-      end
-
-      state :funcVarbVal do
-	mixin :identifier
-	rule %r/ +/, Text::Whitespace
-	rule %r/\:/, Punctuation
-	rule %r/(\,)|(?=\))/, Punctuation, :pop!
-	mixin :expression
+      state :label do
+        rule(/#{identifier}(?=\:)/) do |m|
+          parseIdentifier(m[0], Name::Label)
+        end
+        rule(/\:/, Punctuation)
       end
 
       state :identifier do
         rule identifier do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.keywords_pseudo.include? m[0]
-            token Keyword::Pseudo
-	  elsif self.class.scenarios.include? m[0]
-	    token Name::Builtin
-	  elsif self.class.modifiers.include? m[0]
-	    token Name::Builtin::Pseudo
-	  elsif self.class.builtin_types.include? m[0]
-	    token Keyword::Type
+          parseIdentifier(m[0], Name)
+        end
+      end
+
+      state :scopeDependantIdentifier do
+        rule identifier do |m|
+          parseIdentifier(m[0], getTokenByScope)
+        end
+      end
+
+      def parseIdentifier(identifier, tk, sceOrModContext = false)
+        if self.class.keywords.include? identifier
+          token Keyword, identifier
+          if identifier == "with"
+            @@scope = :with
+            push :withBlockOrBrackets
+          elsif self.class.class_defs.include? identifier
+            @@isScenarioDef = identifier == "scenario" or identifier == "modifier"
+            @@isExtend = identifier == "extend"
+            @@hasDot = false
+            push :classname
+          elsif identifier == "do"
+            @@scope = :do
+             push :do
+          elsif identifier == "is"
+            push :afterIs
+          elsif identifier == "label"
+            push :labelBracketsStart
+          end
+        elsif self.class.keywords_pseudo.include? identifier
+          token Keyword::Pseudo, identifier
+	elsif self.class.operator_scenarios.include? identifier
+          token Keyword::Declaration, identifier
+          @@scope = :op
+          @@expectingIndent = true
+          push :sceAndModBlock
+	elsif self.class.annoying_scenarios.include? identifier and sceOrModContext
+          token Name::Entity, identifier
+	elsif self.class.annoying_modifiers.include? identifier and sceOrModContext
+          token Name::Attribute, identifier
+          if identifier == "on"
+            @@scope = :op
+            @@expectingIndent = true
+            push :sceAndModBlock
+          end
+        else
+          token tk, identifier
+        end
+      end
+
+      def getTokenByScope()
+        case @@scope
+        when :none
+          Name
+        when :scenarioBody
+          Name::Attribute
+        when :do
+          Name::Entity
+        when :op
+          Name::Entity
+        when :with
+          Name::Attribute
+        end
+      end
+
+      state :withBlockOrBrackets do
+        rule %r/ /, Text::Whitespace
+        rule %r/\(/ do
+          token Punctuation
+          goto :modifierBrackets
+        end
+        rule %r/\:/ do
+          token Punctuation
+        end
+        rule %r/ *(?=\n|\#)/ do
+          token Text::Whitespace
+          @@expectingIndent = true
+          goto :sceAndModBlock
+        end
+        rule %r// do
+          goto :modifierLines
+        end
+      end
+
+      state :sceAndModBlock do
+        rule(/((?: *\n)+)( *)(#{identifier})\:( *)(#{identifier})(?=\()/) do |m|
+          token Text::Whitespace, m[1]
+          updateIndentStack(m[2].length, @@indents)
+          token Text::Whitespace, m[2]
+
+          parseIdentifier(m[3], Name::Label)
+
+          token Punctuation, ":"
+          token Text::Whitespace, m[4]
+
+          parseIdentifier(m[5], getTokenByScope())
+        end
+
+
+        rule(/((?: *\n)+)( *)(#{identifier})(?=\()/) do |m|
+          token Text::Whitespace, m[1]
+          updateIndentStack(m[2].length, @@indents)
+          token Text::Whitespace, m[2]
+          parseIdentifier(m[3], getTokenByScope())
+        end
+
+        rule(/((?: *\n)+)( *)(#{identifier})\:( *)(#{identifier})\.(?!\.)/) do |m|
+          token Text::Whitespace, m[1]
+          updateIndentStack(m[2].length, @@indents)
+          token Text::Whitespace, m[2]
+
+          parseIdentifier(m[3], Name::Label)
+
+          token Punctuation, ":"
+          token Text::Whitespace, m[4]
+
+          parseIdentifier(m[5], Name)
+          token Punctuation, "."
+          push :path
+        end
+
+
+        rule(/((?: *\n)+)( *)(#{identifier})\.(?!\.)/) do |m|
+          token Text::Whitespace, m[1]
+          updateIndentStack(m[2].length, @@indents)
+          token Text::Whitespace, m[2]
+          parseIdentifier(m[3], Name)
+          token Punctuation, "."
+          push :path
+        end
+
+        rule(/list +of/, Keyword)
+
+        mixin :label
+        rule identifier do |m|
+          parseIdentifier(m[0], Name, true)
+        end
+
+	mixin :whitespaceCountIndent
+        mixin :baseRules
+      end
+
+      state :do do
+        rule %r/ /, Text::Whitespace
+        rule(/#{identifier}(?=\.[^\.])/) do |m|
+          goto :path
+          parseIdentifier(m[0], Name)
+        end
+        rule identifier do |m|
+          pop!
+          if self.class.operator_scenarios.include? m[0]
+            token Keyword::Declaration
+            @@scope = :op
+            @@expectingIndent = true
+            push :sceAndModBlock
           else
-            token Name
+            token Name::Entity
           end
         end
       end
 
+      state :whitespace do
+        rule(/\n+/) do
+          token Text::Whitespace
+        end
+        rule %r/ +/, Text::Whitespace
+      end
+
+      state :whitespaceCountIndent do
+        rule(/((?: *\n)+)( *)(?![\s\#])/) do |m|
+          token Text::Whitespace, m[1]
+          updateIndentStack(m[2].length, @@indents)
+          token Text::Whitespace, m[2]
+        end
+        rule(/(?: *\n)+ *(?=\#)/, Text::Whitespace)
+        rule %r/ +/, Text::Whitespace
+      end
+
+      def updateIndentStack(indent, indentStack)
+        if indent < indentStack[0][0]
+          while indent < indentStack[0][0]
+            if indentStack[0][1] != :none
+              pop!
+            end
+            indentStack.shift
+          end
+          @@scope = indentStack[0][1]
+        elsif indent > indentStack[0][0] and @@expectingIndent
+          indentStack.unshift([indent, @@scope])
+          @@scope = indentStack[0][1]
+          @@expectingIndent=false
+        end
+      end
+
+      state :path do
+        rule(/#{identifier}(?=\.[^\.])/) do |m|
+          parseIdentifier(m[0], Name)
+        end
+        rule %r/\./, Punctuation
+        rule identifier do |m|
+          parseIdentifier(m[0], getTokenByScope())
+          pop!
+        end
+      end
 
       state :classname do
+        rule %r/ /, Text::Whitespace
         rule identifier, Name::Class
-	rule %r/\./, Punctuation
-	rule %r/:/, Punctuation, :pop!
+        rule %r/\./ do
+          token Punctuation
+          @@hasDot = true
+        end
+        rule %r/:/ do
+          token Punctuation
+          pop!
+          if @@isScenarioDef or (@@isExtend and @@hasDot)
+            @@scope = :scenarioBody
+            @@expectingIndent = true
+            push :sceAndModBlock
+          end
+        end
       end
 
-      state :variableName do
-	rule identifier, Name::Attribute, :pop!
+      state :brackets do
+        rule(/\)/, Punctuation, :pop!)
+        mixin :baseRules
+        mixin :whitespace
       end
 
-      state :afterVarb do
-	rule %r/\:/, Punctuation
-	rule %r/ +/, Text::Whitespace
-	rule %r/#{identifier}(?=\()/ do |m|
-          if self.class.keywords_pseudo.include? m[0]
-            token Keyword::Pseudo
-	  elsif self.class.scenarios.include? m[0]
-	    token Name::Builtin
-	  else
-	    token Name::Class
-	  end
-	  push :constrCall
-	end 
-	rule identifier, Name::Class, :pop!
-	rule %r/\)/, Punctuation, :pop!
+      state :labelBrackets do
+        rule(/\)/, Punctuation, :pop!)
+        rule identifier, Name
+        mixin :baseRules
+        mixin :whitespace
       end
 
-      state :constrCall do
-	rule %r/\(/, Punctuation
-	rule identifier do
-	  token Name::Variable
-	  push :funcVarbVal
-	end
-	rule %r/ +/, Text::Whitespace
-	rule %r/(?=\))/, Punctuation, :pop!
+      state :modifierBrackets do
+        rule(/\)/) do
+          token Punctuation
+          pop!
+          @@scope = @@indents[0][1]
+        end
+        rule(/\(/) do
+          token Punctuation
+          push :brackets
+        end
+        mixin :label
+        mixin :scopeDependantIdentifier
+        rule %r/\.\./, Punctuation
+        rule %r/[\[\]{}.,:;\@]/, Punctuation
+        mixin :whitespace
+      end
+
+      state :modifierLines do
+        rule %r/\n/ do
+          token Text::Whitespace
+          @@scope = @@indents[0][1]
+          pop!
+        end
+        rule(/\#/) do
+          token Comment
+          @@scope = @@indents[0][1]
+          goto :commentOrIgnore
+        end
+        rule %r/ +/, Text::Whitespace
+        mixin :label
+        mixin :scopeDependantIdentifier
+        mixin :baseRules
       end
 
       state :afterIs do
 	rule %r/[ ]+((first)|(only)|(also))/, Keyword, :pop!
 	rule %r//, Generic::Deleted, :pop!
+      end
+
+      state :labelBracketsStart do
+        rule %r/ /, Text::Whitespace
+        rule %r/\(/ do
+          token Punctuation
+          goto :labelBrackets
+        end
       end
 
     end

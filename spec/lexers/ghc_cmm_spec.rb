@@ -778,6 +778,21 @@ import pthread_mutex_unlock;
                           ['Punctuation', '{']
     end
 
+    it 'should lex functions with explicit stack handling and multiline comment' do
+      core = 'stg_raisezh
+/*
+ * comment
+ */
+{'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'stg_raisezh'],
+                          ['Text', "\n"],
+                          ['Comment.Multiline', "/*\n * comment\n */"],
+                          ['Text', "\n"],
+                          ['Punctuation', '{']
+    end
+
     it 'should lex functions that are prefixed with % as builtin' do
       core = 'jump %GET_ENTRY(UNTAG(R1)) [R1];'
 

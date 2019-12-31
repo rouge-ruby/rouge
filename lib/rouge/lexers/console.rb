@@ -3,6 +3,38 @@
 
 module Rouge
   module Lexers
+    # The {ConsoleLexer} class is intended to lex content that represents the
+    # text that would display in a console/terminal. As distinct from the
+    # {Shell} lexer, {ConsoleLexer} will try to parse out the prompt from each
+    # line before passing the remainder of the line to the language lexer for
+    # the shell (by default, the {Shell} lexer).
+    #
+    # The {ConsoleLexer} class accepts four options:
+    # 1. **lang**: the shell language to lex (default: `shell`);
+    # 2. **output**: the output language (default: `plaintext?token=Generic.Output`);
+    # 3. **prompt**: comma-separated list of strings that indicate the end of a
+    #    prompt (default: `$,#,>,;`);
+    # 4. **comments**: whether to enable comments.
+    #
+    # The comments option, if enabled, will lex lines that begin with a `#` as a
+    # comment. Please note that this option will only work if the prompt is
+    # either not manually specified or, if manually specified, does not include
+    # the `#` character.
+    #
+    # Most Markdown lexers that recognise GitHub-Flavored Markdown syntax, will
+    # pass the language string to Rouge as written in the original document.
+    # This allows an end user to pass options to {ConsoleLexer} by passing them
+    # as CGI-style parameters as in the example below.
+    #
+    # @example
+    # <pre>Here's some regular text.
+    #
+    # ```console?comments=true
+    # # This is a comment
+    # $ cp foo bar
+    # ```
+    #
+    # Some more regular text.</pre>
     class ConsoleLexer < Lexer
       tag 'console'
       aliases 'terminal', 'shell_session', 'shell-session'
@@ -31,6 +63,8 @@ module Rouge
       def end_chars
         @end_chars ||= if @prompt.any?
           @prompt.reject { |c| c.empty? }
+        elsif allow_comments?
+          %w($ > ;)
         else
           %w($ # > ;)
         end
@@ -100,6 +134,9 @@ module Rouge
       def process_line(input, &output)
         input.scan(line_regex)
 
+        # As a nicety, support the use of elisions in input text. A user can
+        # write a line with only `<...>` or one or more `.` characters and
+        # Rouge will treat it as a comment.
         if input[0] =~ /\A\s*(?:<[.]+>|[.]+)\s*\z/
           puts "console: matched snip #{input[0].inspect}" if @debug
           output_lexer.reset!

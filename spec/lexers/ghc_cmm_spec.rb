@@ -50,7 +50,7 @@ describe Rouge::Lexers::GHCCmm do
 
       assert_tokens_equal core,
                           ['Punctuation', '['],
-                          ['Keyword.Reserved', 'section'],
+                          ['Keyword', 'section'],
                           ['Text', ' '],
                           ['Literal.String.Double', '"'],
                           ['Name.Builtin', '"data"'],
@@ -89,7 +89,7 @@ describe Rouge::Lexers::GHCCmm do
 
       assert_tokens_equal core,
                           ['Punctuation', '['],
-                          ['Keyword.Reserved', 'section'],
+                          ['Keyword', 'section'],
                           ['Text', ' '],
                           ['Literal.String.Double', '"'],
                           ['Name.Builtin', '"data"'],
@@ -139,7 +139,7 @@ describe Rouge::Lexers::GHCCmm do
  }]'
       assert_tokens_equal core,
                           ['Punctuation', '['],
-                          ['Keyword.Reserved', 'section'],
+                          ['Keyword', 'section'],
                           ['Text', ' '],
                           ['Literal.String.Double', '"'],
                           ['Name.Builtin', '"cstring"'],
@@ -167,6 +167,29 @@ describe Rouge::Lexers::GHCCmm do
                           ['Punctuation', ']'],
                           ['Text', "\n "],
                           ['Punctuation', '}]']
+    end
+
+    it 'should lex handwritten sections' do
+      core = 'section "data" {
+  no_break_on_exception: W_[1];
+}'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'section'],
+                          ['Text', ' '],
+                          ['Name.Builtin', '"data"'],
+                          ['Text', ' '],
+                          ['Punctuation', '{'],
+                          ['Text', "\n  "],
+                          ['Name.Label', 'no_break_on_exception'],
+                          ['Punctuation', ':'],
+                          ['Text', ' '],
+                          ['Keyword.Type', 'W_'],
+                          ['Punctuation', '['],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', '];'],
+                          ['Text', "\n"],
+                          ['Punctuation', '}']
     end
 
     it 'should lex operators and comparisons' do

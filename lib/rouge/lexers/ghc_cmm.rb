@@ -20,7 +20,7 @@ module Rouge
         # timestamps
         rule %r/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ UTC$/, Comment::Single
 
-        rule %r/(?=section\s+"")/ do
+        rule %r/(?=section\s+)/ do
           push :section
         end
 
@@ -49,7 +49,7 @@ module Rouge
       end
 
       state :section do
-        rule %r/section/, Keyword::Reserved
+        rule %r/section/, Keyword
         rule %r/"(data|cstring|text|rodata|relrodata|bss)"/, Name::Builtin
 
         rule %r/{/, Punctuation, :pop!

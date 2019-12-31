@@ -154,9 +154,7 @@ module Rouge
                 (^#{id})
                 (?=
                   (#{ws})+
-                  [\w#\$_]+
-                  (#{ws})*
-                  [),;]
+                  (#{id})
                 )
               }mx do |m|
           token Keyword::Type, m[1]

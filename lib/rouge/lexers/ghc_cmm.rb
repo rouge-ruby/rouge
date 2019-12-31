@@ -106,6 +106,12 @@ module Rouge
         rule %r/const/, Keyword::Constant
         rule %r/"/, Literal::String::Double
 
+        rule %r/(switch)([^{]*)({)/ do |m|
+          token Keyword, m[1]
+          recurse m[2]
+          token Punctuation, m[3]
+        end
+
         rule %r/(returns)(#{ws}*)(to)/ do |m|
           token Keyword, m[1]
           recurse m[2]
@@ -119,7 +125,7 @@ module Rouge
         end
 
         rule %r{return(?=(#{ws}*)\()}, Keyword
-        rule %r{(if|else|goto|call|offset|import|jump|ccall|foreign|prim|switch|case|unwind)(?=#{ws})}, Keyword
+        rule %r{(if|else|goto|call|offset|import|jump|ccall|foreign|prim|case|unwind)(?=#{ws})}, Keyword
         rule %r{(export|reserve|push)(?=#{ws})}, Keyword
         rule %r{(default)(?=#{ws}*:)}, Keyword
       end

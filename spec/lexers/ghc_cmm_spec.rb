@@ -671,6 +671,25 @@ import pthread_mutex_unlock;
                           ['Punctuation', '}']
     end
 
+    it 'should lex switch statements with two expressions' do
+      core = 'switch [0 .. N_CLOSURE_TYPES] type {'
+
+      assert_tokens_equal core,
+                          ['Keyword', 'switch'],
+                          ['Text', ' '],
+                          ['Punctuation', '['],
+                          ['Literal.Number.Integer', '0'],
+                          ['Text', ' '],
+                          ['Operator', '..'],
+                          ['Text', ' '],
+                          ['Name.Label', 'N_CLOSURE_TYPES'],
+                          ['Punctuation', ']'],
+                          ['Text', ' '],
+                          ['Name.Label', 'type'],
+                          ['Text', ' '],
+                          ['Punctuation', '{']
+    end
+
     it 'should lex a "never returns" ccall' do
       core = 'ccall barf("PAP object (%p) entered!", R1) never returns;'
 

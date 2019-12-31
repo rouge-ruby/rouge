@@ -93,7 +93,7 @@ module Rouge
         rule %r/(and|or)\b/, Operator::Word
         rule %r/[\~\!\?\$\*\/\+\-\<\>\=\&\^\%|]|!=/, Operator
 
-	rule %r/list +of/, Keyword
+        rule %r/list +of/, Keyword
 
         rule %r/(def)((?:[^\S\n])+)/ do
           groups Keyword, Text
@@ -103,9 +103,9 @@ module Rouge
 	mixin :label
 	mixin :identifier
 
-	exponentPart = /e [+-]? [0-9]+/ix
-	decimalInteger = /0 | [1-9] [0-9]*/x
-	decimalNumber = /#{decimalInteger}?\.[0-9]/
+        exponentPart = /e [+-]? [0-9]+/ix
+        decimalInteger = /0 | [1-9] [0-9]*/x
+        decimalNumber = /#{decimalInteger}?\.[0-9]/
 
         floatLiteral = /(#{decimalNumber}#{exponentPart}?)|(#{decimalInteger}#{exponentPart})/
 
@@ -147,7 +147,7 @@ module Rouge
 
       state :expression do
         rule identifier, Name::Variable
-	rule %r/ /, Text::Whitespace
+        rule %r/ /, Text::Whitespace
 
 	rule(/(\()/) do
 	  token Punctuation
@@ -164,9 +164,9 @@ module Rouge
         rule %r/0o(_?[0-7])+/i, Num::Oct
         rule %r/0x(_?[a-f0-9])+/i, Num::Hex
 
-	exponentPart = /e [+-]? [0-9]+/ix
-	decimalInteger = /0 | [1-9] [0-9]*/x
-	decimalNumber = /#{decimalInteger}?\.[0-9]/
+        exponentPart = /e [+-]? [0-9]+/ix
+        decimalInteger = /0 | [1-9] [0-9]*/x
+        decimalNumber = /#{decimalInteger}?\.[0-9]/
 
         decimalLiteral = %r/([1-9](_?[0-9])*|0)/
         floatLiteral = /(#{decimalNumber}#{exponentPart}?)|(#{decimalInteger}#{exponentPart})/
@@ -458,8 +458,8 @@ module Rouge
       end
 
       state :afterIs do
-	rule %r/[ ]+((first)|(only)|(also))/, Keyword, :pop!
-	rule %r//, Generic::Deleted, :pop!
+        rule %r/[ ]+((first)|(only)|(also))/, Keyword, :pop!
+        rule %r//, Generic::Deleted, :pop!
       end
 
       state :labelBracketsStart do

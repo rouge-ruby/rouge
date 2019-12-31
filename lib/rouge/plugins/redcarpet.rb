@@ -9,7 +9,13 @@ module Rouge
   module Plugins
     module Redcarpet
       def block_code(code, language)
-        lexer = Lexer.find_fancy(language, code) || Lexers::PlainText
+        lexer =
+          begin
+            Lexer.find_fancy(language, code)
+          rescue Guesser::Ambiguous => e
+            e.alternatives.first
+          end
+        lexer ||= Lexers::PlainText
 
         # XXX HACK: Redcarpet strips hard tabs out of code blocks,
         # so we assume you're not using leading spaces that aren't tabs,

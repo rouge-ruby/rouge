@@ -110,7 +110,8 @@ module Rouge
       end
 
       state :string do
-        rule(/"/, Str, :pop!)
+        rule %r/\\"/, Str
+        rule %r/"/, Str, :pop!
         rule %r/\\([\\nr]|[01][0-7]{2})/, Str::Escape
         rule %r/[^\\"\n]+/, Str
         rule %r/\\/, Str # stray backslash

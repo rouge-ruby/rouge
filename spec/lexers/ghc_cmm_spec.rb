@@ -844,6 +844,20 @@ import pthread_mutex_unlock;
                           ['Text', ' '],
                           ['Punctuation', '();']
     end
+
+    it 'should lex literal floating point numbers' do
+      core = 'const 1.5 :: W64;'
+
+      assert_tokens_equal core,
+                          ['Keyword.Constant', 'const'],
+                          ['Text', ' '],
+                          ['Literal.Number.Float', '1.5'],
+                          ['Text', ' '],
+                          ['Operator', '::'],
+                          ['Text', ' '],
+                          ['Keyword.Type', 'W64'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

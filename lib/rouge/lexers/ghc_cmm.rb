@@ -81,6 +81,7 @@ module Rouge
       end
 
       state :literals do
+        rule %r/-?[0-9]+\.[0-9]+/, Literal::Number::Float
         rule %r/-?[0-9]+/, Literal::Number::Integer
         rule %r/"/, Literal::String::Delimiter, :literal_string
       end

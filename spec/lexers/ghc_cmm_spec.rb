@@ -928,6 +928,54 @@ import pthread_mutex_unlock;
                           ['Text', "\n"],
                           ['Punctuation', '}']
     end
+
+    it 'should lex a ccall with hints' do
+      core = '(_c3zB::I64) = call "ccall" arg hints:  [PtrHint, PtrHint]  result hints:  [PtrHint] newCAF(BaseReg, R1);'
+
+      assert_tokens_equal core,
+                          ['Punctuation', '('],
+                          ['Name.Label', '_c3zB'],
+                          ['Operator', '::'],
+                          ['Keyword.Type', 'I64'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Keyword', 'call'],
+                          ['Text', ' '],
+                          ['Literal.String.Delimiter', '"'],
+                          ['Literal.String', 'ccall'],
+                          ['Literal.String.Delimiter', '"'],
+                          ['Text', ' '],
+                          ['Name.Property', 'arg'],
+                          ['Text', ' '],
+                          ['Name.Property', 'hints'],
+                          ['Punctuation', ':'],
+                          ['Text', '  '],
+                          ['Punctuation', '['],
+                          ['Name.Label', 'PtrHint'],
+                          ['Punctuation', ','],
+                          ['Text', ' '],
+                          ['Name.Label', 'PtrHint'],
+                          ['Punctuation', ']'],
+                          ['Text', '  '],
+                          ['Name.Property', 'result'],
+                          ['Text', ' '],
+                          ['Name.Property', 'hints'],
+                          ['Punctuation', ':'],
+                          ['Text', '  '],
+                          ['Punctuation', '['],
+                          ['Name.Label', 'PtrHint'],
+                          ['Punctuation', ']'],
+                          ['Text', ' '],
+                          ['Name.Function', 'newCAF'],
+                          ['Punctuation', '('],
+                          ['Name.Variable.Global', 'BaseReg'],
+                          ['Punctuation', ','],
+                          ['Text', ' '],
+                          ['Name.Variable.Global', 'R1'],
+                          ['Punctuation', ');']
+    end
   end
 end
 

@@ -121,6 +121,13 @@ module Rouge
           token Punctuation, m[3]
         end
 
+        rule %r/(arg|result)(#{ws}+)(hints)(:)/ do |m|
+          token Name::Property, m[1]
+          recurse m[2]
+          token Name::Property, m[3]
+          token Punctuation, m[4]
+        end
+
         rule %r/(returns)(#{ws}*)(to)/ do |m|
           token Keyword, m[1]
           recurse m[2]

@@ -9,7 +9,7 @@ module Rouge
       tag 'ghc-cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
-      ws = %r(\s|//.*?\n|/[*][\w\W]*?[*]/)
+      ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
       id = %r([\w#\$%_']+)
 
       state :root do

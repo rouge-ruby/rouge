@@ -858,6 +858,24 @@ import pthread_mutex_unlock;
                           ['Keyword.Type', 'W64'],
                           ['Punctuation', ';']
     end
+
+    it 'should lex names in statements correctly' do
+      core = 'R4 = GHC.Types.True_closure+2;'
+
+      assert_tokens_equal core,
+                          ['Name.Variable.Global', 'R4'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'GHC'],
+                          ['Punctuation', '.'],
+                          ['Name.Namespace', 'Types'],
+                          ['Punctuation', '.'],
+                          ['Name.Label', 'True_closure'],
+                          ['Operator', '+'],
+                          ['Literal.Number.Integer', '2'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

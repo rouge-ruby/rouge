@@ -183,7 +183,7 @@ module Rouge
       state :names do
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2}|gcptr)(?!#{id})/, Name::Variable::Global
         rule %r/CLOSURE/, Keyword::Type
-        rule %r/True|False/, Name::Builtin
+        rule %r/(True|False)(?!#{id})/, Name::Builtin
         rule %r/[A-Z]#{id}(?=\.)/, Name::Namespace
         rule %r/#{id}/, Name::Label
       end

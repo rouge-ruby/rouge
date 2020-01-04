@@ -26,6 +26,14 @@ module Rouge
 
         mixin :preprocessor_macros
 
+        rule %r/({ )(info_tbls)(:)/ do |m|
+          token Punctuation, m[1]
+          token Name::Entity, m[2]
+          token Punctuation, m[3]
+
+          push :info_tbls
+        end
+
         mixin :comments
         mixin :literals
         mixin :operators_and_keywords
@@ -140,6 +148,36 @@ module Rouge
         mixin :comments
       end
 
+      state :label do
+        mixin :infos
+        mixin :names
+        mixin :operators_and_keywords
+        rule %r/[^\S\n]/, Text # Tab, space, etc. but not newline!
+        rule %r/\n/, Text, :pop!
+      end
+
+      state :info_tbls do
+        rule %r/}/, Punctuation, :pop!
+        rule %r/{/, Punctuation, :info_tbls
+
+        rule %r/(?=label:)/ do
+          push :label
+        end
+
+        rule %r{(\()(#{id})(,)}mx do |m|
+          token Punctuation, m[1]
+          token Name::Label, m[2]
+          token Punctuation, m[3]
+        end
+
+        mixin :literals
+        mixin :infos
+        mixin :operators_and_keywords
+
+        rule %r/#{id}/, Text
+        rule %r/\s/, Text
+      end
+
       state :types do
         # Memory access: `type[42]`
         # Note: Only a token for type is produced.
@@ -174,7 +212,7 @@ module Rouge
           token Punctuation, m[2]
         end
 
-        rule %r/(info_tbls|stack_info)(:)/ do |m|
+        rule %r/(stack_info)(:)/ do |m|
           token Name::Entity, m[1]
           token Punctuation, m[2]
         end
@@ -183,7 +221,6 @@ module Rouge
       state :names do
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2}|gcptr)(?!#{id})/, Name::Variable::Global
         rule %r/CLOSURE/, Keyword::Type
-        rule %r/(True|False)(?!#{id})/, Name::Builtin
         rule %r/[A-Z]#{id}(?=\.)/, Name::Namespace
         rule %r/#{id}/, Name::Label
       end

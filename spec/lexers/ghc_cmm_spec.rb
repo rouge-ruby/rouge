@@ -876,6 +876,58 @@ import pthread_mutex_unlock;
                           ['Literal.Number.Integer', '2'],
                           ['Punctuation', ';']
     end
+
+    it 'should lex info_tbls' do
+      core =
+          '{ info_tbls: [(c3zg,
+  label: Main.string_info
+  rep: HeapRep static { Thunk }
+  srt: Nothing)]
+  stack_info: arg_space: 8 updfr_space: Just 8
+}'
+      assert_tokens_equal core,
+                          ['Punctuation', '{ '],
+                          ['Name.Entity', 'info_tbls'],
+                          ['Punctuation', ':'],
+                          ['Text', ' '],
+                          ['Punctuation', '[('],
+                          ['Name.Label', 'c3zg'],
+                          ['Punctuation', ','],
+                          ['Text', "\n  "],
+                          ['Name.Property', 'label'],
+                          ['Punctuation', ':'],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'Main'],
+                          ['Punctuation', '.'],
+                          ['Name.Label', 'string_info'],
+                          ['Text', "\n  "],
+                          ['Name.Property', 'rep'],
+                          ['Punctuation', ':'],
+                          ['Text', ' HeapRep static '],
+                          ['Punctuation', '{'],
+                          ['Text', ' Thunk '],
+                          ['Punctuation', '}'],
+                          ['Text', "\n  "],
+                          ['Name.Property', 'srt'],
+                          ['Punctuation', ':'],
+                          ['Text', ' Nothing'],
+                          ['Punctuation', ')]'],
+                          ['Text', "\n  "],
+                          ['Name.Entity', 'stack_info'],
+                          ['Punctuation', ':'],
+                          ['Text', ' '],
+                          ['Name.Property', 'arg_space'],
+                          ['Punctuation', ':'],
+                          ['Text', ' '],
+                          ['Literal.Number.Integer', '8'],
+                          ['Text', ' '],
+                          ['Name.Property', 'updfr_space'],
+                          ['Punctuation', ':'],
+                          ['Text', ' Just '],
+                          ['Literal.Number.Integer', '8'],
+                          ['Text', "\n"],
+                          ['Punctuation', '}']
+    end
   end
 end
 

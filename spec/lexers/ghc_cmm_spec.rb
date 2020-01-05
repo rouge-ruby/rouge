@@ -990,6 +990,24 @@ import pthread_mutex_unlock;
                           ['Text', '                                     '],
                           ['Comment.Preproc', "\\\n"]
     end
+
+    it 'should respect #define when it lexes types' do
+      core = '#define Char_hash_con_info _imp__ghczmprim_GHCziTypes_Czh_con_info
+#define Int_hash_con_info _imp__ghczmprim_GHCziTypes_Izh_con_info'
+
+      assert_tokens_equal core,
+                          ['Comment.Preproc', '#define'],
+                          ['Text', ' '],
+                          ['Name.Label', 'Char_hash_con_info'],
+                          ['Text', ' '],
+                          ['Name.Label', '_imp__ghczmprim_GHCziTypes_Czh_con_info'],
+                          ['Text', "\n"],
+                          ['Comment.Preproc', '#define'],
+                          ['Text', ' '],
+                          ['Name.Label', 'Int_hash_con_info'],
+                          ['Text', ' '],
+                          ['Name.Label', '_imp__ghczmprim_GHCziTypes_Izh_con_info']
+    end
   end
 end
 

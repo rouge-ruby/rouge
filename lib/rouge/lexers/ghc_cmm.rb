@@ -17,8 +17,10 @@ module Rouge
       tag 'ghc-cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
+      macros = %r(#(?:define|include|endif|else|if))
+
       ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
-      id = %r([\w#\$%_']+)
+      id = %r((?!#{macros})[\w#\$%_']+)
 
       state :root do
         rule %r/\s+/m, Text
@@ -67,7 +69,7 @@ module Rouge
       end
 
       state :preprocessor_macros do
-        rule %r/#include|#endif|#else|#if/, Comment::Preproc
+        rule %r/#(include|endif|else|if)/, Comment::Preproc
 
         rule %r{
             (\#define)

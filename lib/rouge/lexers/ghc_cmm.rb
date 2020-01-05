@@ -41,6 +41,9 @@ module Rouge
         mixin :infos
         mixin :names
 
+        # escaped newline
+        rule %r/\\\n/, Comment::Preproc
+
         # rest is Text
         rule %r/./, Text
       end

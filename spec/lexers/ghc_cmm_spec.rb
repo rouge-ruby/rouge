@@ -976,6 +976,20 @@ import pthread_mutex_unlock;
                           ['Name.Variable.Global', 'R1'],
                           ['Punctuation', ');']
     end
+
+    it 'should lex escaped newlines' do
+      core = '#define SELECTOR_CODE_NOUPD(offset)                                     \
+'
+      assert_tokens_equal core,
+                          ['Comment.Preproc', '#define'],
+                          ['Text', ' '],
+                          ['Name.Label', 'SELECTOR_CODE_NOUPD'],
+                          ['Punctuation', '('],
+                          ['Name.Label', 'offset'],
+                          ['Punctuation', ')'],
+                          ['Text', '                                     '],
+                          ['Comment.Preproc', "\\\n"]
+    end
   end
 end
 

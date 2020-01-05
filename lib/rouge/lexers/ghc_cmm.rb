@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# C minus minus (Cmm) is a pun on the name C++. It's an intermediate language of the Glasgow Haskell Compiler (GHC) that
+# is very similar to C, but with many features missing and some special constructs.
+#
+# Cmm is a dialect of C--. The goal of this lexer is to use what GHC produces and parses (Cmm); C-- itself is not
+# supported.
+#
+# https://gitlab.haskell.org/ghc/ghc/wikis/commentary/compiler/cmm-syntax
+#
 module Rouge
   module Lexers
     class GHCCmm < RegexLexer
@@ -20,40 +28,27 @@ module Rouge
         # timestamps
         rule %r/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ UTC$/, Comment::Single
 
-        rule %r/(?=section\s+)/ do
-          push :section
-        end
-
+        mixin :detect_section
         mixin :preprocessor_macros
 
-        rule %r/({ )(info_tbls)(:)/ do |m|
-          token Punctuation, m[1]
-          token Name::Entity, m[2]
-          token Punctuation, m[3]
-
-          push :info_tbls
-        end
-
+        mixin :info_tbls
         mixin :comments
         mixin :literals
         mixin :operators_and_keywords
 
-        # Function: `name /* optional whitespace */ (`
-        # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
-        rule %r{(?=
-                  #{id}
-             #{ws}*
-                  [\{\(]
-                )}mx do
-          push :function
-        end
-
+        mixin :detect_function
         mixin :types
         mixin :infos
         mixin :names
 
         # rest is Text
         rule %r/./, Text
+      end
+
+      state :detect_section do
+        rule %r/(?=section\s+)/ do
+          push :section
+        end
       end
 
       state :section do
@@ -146,6 +141,18 @@ module Rouge
         rule %r{(default)(?=#{ws}*:)}, Keyword
       end
 
+      state :detect_function do
+        # Function: `name /* optional whitespace */ (`
+        # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
+        rule %r{(?=
+                  #{id}
+             #{ws}*
+                  [\{\(]
+                )}mx do
+          push :function
+        end
+      end
+
       state :function do
         rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
         rule %r/%#{id}/, Name::Builtin
@@ -164,8 +171,18 @@ module Rouge
       end
 
       state :info_tbls do
+        rule %r/({ )(info_tbls)(:)/ do |m|
+          token Punctuation, m[1]
+          token Name::Entity, m[2]
+          token Punctuation, m[3]
+
+          push :info_tbls_body
+        end
+      end
+
+      state :info_tbls_body do
         rule %r/}/, Punctuation, :pop!
-        rule %r/{/, Punctuation, :info_tbls
+        rule %r/{/, Punctuation, :info_tbls_body
 
         rule %r/(?=label:)/ do
           push :label

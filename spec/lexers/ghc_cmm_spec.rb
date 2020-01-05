@@ -1008,6 +1008,17 @@ import pthread_mutex_unlock;
                           ['Text', ' '],
                           ['Name.Label', '_imp__ghczmprim_GHCziTypes_Izh_con_info']
     end
+
+    it 'should respect functions when it lexes types' do
+      core = 'SAVE_STGREGS
+SAVE_THREAD_STATE();'
+
+      assert_tokens_equal core,
+                          ['Name.Label', 'SAVE_STGREGS'],
+                          ['Text', "\n"],
+                          ['Name.Function', 'SAVE_THREAD_STATE'],
+                          ['Punctuation', '();']
+    end
   end
 end
 

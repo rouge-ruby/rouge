@@ -219,6 +219,22 @@ module Rouge
           token Keyword::Type, m[1]
         end
 
+        # Capture macro substitutions before lexing typed declarations
+        # I.e. there is no type in `PREPROCESSOR_MACRO_VARIABLE someFun()`
+        rule %r{
+                (^#{id})
+                (#{ws}+)
+                (#{id})
+                (#{ws}*)
+                (\()
+              }mx do |m|
+          token Name::Label, m[1]
+          recurse m[2]
+          token Name::Function, m[3]
+          recurse m[4]
+          token Punctuation, m[5]
+        end
+
         # Type in variable or parameter declaration:
         #   `type /* optional whitespace */ var_name /* optional whitespace */;`
         #   `type /* optional whitespace */ var_name /* optional whitespace */, var_name2`
@@ -226,12 +242,12 @@ module Rouge
         # Note: Only the token for type is produced here.
         rule %r{
                 (^#{id})
-                (?=
-                  (#{ws})+
-                  (#{id})
-                )
+                (#{ws}+)
+                (#{id})
               }mx do |m|
           token Keyword::Type, m[1]
+          recurse m[2]
+          token Name::Label, m[3]
         end
       end
 

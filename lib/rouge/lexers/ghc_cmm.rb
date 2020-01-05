@@ -77,6 +77,46 @@ module Rouge
         end
       end
 
+      state :info_tbls do
+        rule %r/({ )(info_tbls)(:)/ do |m|
+          token Punctuation, m[1]
+          token Name::Entity, m[2]
+          token Punctuation, m[3]
+
+          push :info_tbls_body
+        end
+      end
+
+      state :info_tbls_body do
+        rule %r/}/, Punctuation, :pop!
+        rule %r/{/, Punctuation, :info_tbls_body
+
+        rule %r/(?=label:)/ do
+          push :label
+        end
+
+        rule %r{(\()(#{id})(,)}mx do |m|
+          token Punctuation, m[1]
+          token Name::Label, m[2]
+          token Punctuation, m[3]
+        end
+
+        mixin :literals
+        mixin :infos
+        mixin :operators_and_keywords
+
+        rule %r/#{id}/, Text
+        rule %r/\s/, Text
+      end
+
+      state :label do
+        mixin :infos
+        mixin :names
+        mixin :operators_and_keywords
+        rule %r/[^\S\n]/, Text # Tab, space, etc. but not newline!
+        rule %r/\n/, Text, :pop!
+      end
+
       state :comments do
         rule %r/\/{2}.*/, Comment::Single
         rule %r/\(likely.*?\)/, Comment
@@ -160,46 +200,6 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/[({]/, Punctuation, :pop!
         mixin :comments
-      end
-
-      state :label do
-        mixin :infos
-        mixin :names
-        mixin :operators_and_keywords
-        rule %r/[^\S\n]/, Text # Tab, space, etc. but not newline!
-        rule %r/\n/, Text, :pop!
-      end
-
-      state :info_tbls do
-        rule %r/({ )(info_tbls)(:)/ do |m|
-          token Punctuation, m[1]
-          token Name::Entity, m[2]
-          token Punctuation, m[3]
-
-          push :info_tbls_body
-        end
-      end
-
-      state :info_tbls_body do
-        rule %r/}/, Punctuation, :pop!
-        rule %r/{/, Punctuation, :info_tbls_body
-
-        rule %r/(?=label:)/ do
-          push :label
-        end
-
-        rule %r{(\()(#{id})(,)}mx do |m|
-          token Punctuation, m[1]
-          token Name::Label, m[2]
-          token Punctuation, m[3]
-        end
-
-        mixin :literals
-        mixin :infos
-        mixin :operators_and_keywords
-
-        rule %r/#{id}/, Text
-        rule %r/\s/, Text
       end
 
       state :types do

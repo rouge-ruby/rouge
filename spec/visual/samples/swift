@@ -416,6 +416,7 @@ var `var` = 3
 
 // keypath
 let keypath = \Person.firstName
+var keyPath: KeyPath<String, Bool> = \.isEmpty
 
 // tuple destructuring
 let (t1, t2) = (1, 2)
@@ -431,5 +432,24 @@ func funcWithLambdaArg(_ fn: (Int) -> Int) -> Int {
 funcWithLambdaArg { x in x + 5 }
 funcWithLambdaArg { $0 + 5 }
 funcWithLambdaArg({ x in x + 5 })
+
+func newView() -> some View {
+	ViewRegistry.find(\.MyView.name)
+}
+
+@frozen
+public enum Types {
+	case a, b, c
+	case d
+}
+
+func test(t: Types?) -> Bool {
+	switch t {
+	case .a?: return true
+	case .b?: return true
+	case .c: return true
+	default: return false
+	}
+}
 
 foo() // end-of-file comment

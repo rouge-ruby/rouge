@@ -1019,6 +1019,26 @@ SAVE_THREAD_STATE();'
                           ['Name.Function', 'SAVE_THREAD_STATE'],
                           ['Punctuation', '();']
     end
+
+    it 'should lex inline function calls' do
+      core = 'StgTSO_alloc_limit(CurrentTSO) `lt` (0::I64)'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'StgTSO_alloc_limit'],
+                          ['Punctuation', '('],
+                          ['Name.Variable.Global', 'CurrentTSO'],
+                          ['Punctuation', ')'],
+                          ['Text', ' '],
+                          ['Punctuation', '`'],
+                          ['Name.Function', 'lt'],
+                          ['Punctuation', '`'],
+                          ['Text', ' '],
+                          ['Punctuation', '('],
+                          ['Literal.Number.Integer', '0'],
+                          ['Operator', '::'],
+                          ['Keyword.Type', 'I64'],
+                          ['Punctuation', ')']
+    end
   end
 end
 

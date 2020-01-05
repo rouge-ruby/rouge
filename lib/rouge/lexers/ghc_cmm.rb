@@ -196,6 +196,16 @@ module Rouge
                 )}mx do
           push :function
         end
+
+        # Inline function calls:
+        # ```
+        #  arg1 `lt` arg2
+        # ```
+        rule %r/(`)(#{id})(`)/ do |m|
+          token Punctuation, m[1]
+          token Name::Function, m[2]
+          token Punctuation, m[3]
+        end
       end
 
       state :function do

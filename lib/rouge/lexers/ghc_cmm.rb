@@ -144,7 +144,11 @@ module Rouge
 
       state :operators_and_keywords do
         rule %r/\.\./, Operator
+
+        rule %r/<(#{id})>/, Name::Builtin
+
         rule %r/[+\-*\/<>=!&|~]/, Operator
+
         rule %r/(::)(#{ws}*)([A-Z]\w+)/ do |m|
           token Operator, m[1]
           recurse m[2]

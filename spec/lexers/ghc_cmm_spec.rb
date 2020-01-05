@@ -1039,6 +1039,13 @@ SAVE_THREAD_STATE();'
                           ['Keyword.Type', 'I64'],
                           ['Punctuation', ')']
     end
+
+    it 'should lex <highSp> (codegen variables)' do
+      core = '<highSp>'
+
+      assert_tokens_equal core,
+                          ['Name.Builtin', '<highSp>']
+    end
   end
 end
 

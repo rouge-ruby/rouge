@@ -1070,6 +1070,33 @@ SAVE_THREAD_STATE();'
                           ['Literal.Number.Integer', '1'],
                           ['Punctuation', ');']
     end
+
+    it 'should lex complex function names' do
+      core = 'foo()_(1);'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'foo()_'],
+                          ['Punctuation', '('],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', ');']
+
+      core = 'foo(,)3_(1);'
+
+      assert_tokens_equal core,
+                          ['Name.Function', 'foo(,)3_'],
+                          ['Punctuation', '('],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', ');']
+
+      core = '()_closure+1;'
+
+      assert_tokens_equal core,
+                          ['Punctuation', '()'],
+                          ['Name.Label', '_closure'],
+                          ['Operator', '+'],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

@@ -57,7 +57,7 @@ module Rouge
 
       state :filter do
         # Filters are called like variable|foo(arg1, ...)
-        rule %r/(\|)(\w+)/ do
+        rule %r/(\|\s*)(\w+)/ do
           groups Operator, Name::Function
         end
       end

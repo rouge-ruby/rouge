@@ -1046,6 +1046,20 @@ SAVE_THREAD_STATE();'
       assert_tokens_equal core,
                           ['Name.Builtin', '<highSp>']
     end
+
+    it 'should lex special character ids in names with module prefix' do
+      core = 'GHC.Tuple.()_closure+1;'
+
+      assert_tokens_equal core,
+                          ['Name.Namespace', 'GHC'],
+                          ['Punctuation', '.'],
+                          ['Name.Namespace', 'Tuple'],
+                          ['Punctuation', '.'],
+                          ['Name.Label', '()_closure'],
+                          ['Operator', '+'],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

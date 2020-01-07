@@ -22,6 +22,12 @@ module Rouge
       ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
       id = %r((?!#{macros})[\w#\$%_']+)
 
+      # This seems to slow down lexing by a factor of 2!
+      complex_id = %r(
+        (?:[\w#$%_']|\(\)|\(,\)|[0-9])*
+        (?:[\w#$%_']+)
+      )mx
+
       state :root do
         rule %r/\s+/m, Text
 
@@ -280,8 +286,27 @@ module Rouge
       state :names do
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2}|gcptr)(?!#{id})/, Name::Variable::Global
         rule %r/CLOSURE/, Keyword::Type
+        rule %r/[A-Z]#{id}(?=\.)/, Name::Namespace, :namespace_name
+        rule %r/#{complex_id}/, Name::Label
+      end
+
+      state :namespace_name do
+        rule %r/[.]/, Punctuation
         rule %r/[A-Z]#{id}(?=\.)/, Name::Namespace
-        rule %r/#{id}/, Name::Label
+
+        rule %r{(#{complex_id})(#{ws}*)([\{\(])}mx do |m|
+          token Name::Function, m[1]
+          recurse m[2]
+          token Punctuation, m[3]
+          pop!
+        end
+
+
+        rule %r/#{complex_id}/, Name::Label, :pop!
+
+        rule %r/(?=.)/m do
+          pop!
+        end
       end
     end
   end

@@ -200,7 +200,7 @@ module Rouge
         # Function: `name /* optional whitespace */ (`
         # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
         rule %r{(?=
-                  #{id}
+                  #{complex_id}
              #{ws}*
                   [\{\(]
                 )}mx do
@@ -221,7 +221,7 @@ module Rouge
       state :function do
         rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
         rule %r/%#{id}/, Name::Builtin
-        rule %r/#{id}/, Name::Function
+        rule %r/#{complex_id}/, Name::Function
         rule %r/\s+/, Text
         rule %r/[({]/, Punctuation, :pop!
         mixin :comments

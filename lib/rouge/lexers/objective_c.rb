@@ -7,7 +7,7 @@ module Rouge
     load_lexer 'objective_c/common.rb'
 
     class ObjectiveC < C
-      include ObjectiveCCommon
+      extend ObjectiveCCommon
 
       tag 'objective_c'
       title "Objective-C"

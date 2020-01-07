@@ -7,7 +7,7 @@ module Rouge
     load_lexer 'objective_c/common.rb'
 
     class ObjectiveCpp < Cpp
-      include ObjectiveCCommon
+      extend ObjectiveCCommon
 
       tag 'objective_cpp'
       title "Objective-C++"

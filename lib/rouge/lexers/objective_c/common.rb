@@ -6,23 +6,23 @@ module Rouge
     module ObjectiveCCommon
       id = /[a-z$_][a-z0-9$_]*/i
 
-      def self.included(base)
-        base.define_singleton_method(:at_keywords) do
-          @at_keywords ||= %w(
-            selector private protected public encode synchronized try
-            throw catch finally end property synthesize dynamic optional
-            interface implementation import
-          )
-        end
+      def at_keywords
+        @at_keywords ||= %w(
+          selector private protected public encode synchronized try
+          throw catch finally end property synthesize dynamic optional
+          interface implementation import
+        )
+      end
 
-        base.define_singleton_method(:at_builtins) do
-          @at_builtins ||= %w(true false YES NO)
-        end
+      def at_builtins
+        @at_builtins ||= %w(true false YES NO)
+      end
 
-        base.define_singleton_method(:builtins) do
-          @builtins ||= %w(YES NO nil)
-        end
+      def builtins
+        @builtins ||= %w(YES NO nil)
+      end
 
+      def self.extended(base)
         base.prepend :statements do
           rule %r/@"/, base::Str, :string
           rule %r/@'(\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|\\.|[^\\'\n]')/,

@@ -12,7 +12,9 @@
 
 {# A comment #}
 
-Hello {{ user.name|capitalize }} !
+Hello {{ user.name|capitalize | upper }} !
+
+Cool list filter {{ listx | join(', ') }}
 
 {% if user.admin is true %}
   <span>You're an admin !</span>

@@ -38,6 +38,7 @@ module Rouge
       state :root do
         # Comments
         rule %r/{#/, Comment, :comment
+        rule %r/##.*/, Comment
 
         # Statements
         rule %r/\{\%/ do
@@ -51,7 +52,7 @@ module Rouge
           push :expression
         end
 
-        rule(/(.+?)(?=\\|{{|{%|{#)/m) { delegate parent }
+        rule(/(.+?)(?=\\|{{|{%|{#|##)/m) { delegate parent }
         rule(/.+/m) { delegate parent }
       end
 

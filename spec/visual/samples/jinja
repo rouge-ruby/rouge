@@ -12,7 +12,7 @@
 
 {# A comment #}
 
-Hello {{ user.name|capitalize }} !
+Hello {{ user.name|capitalize }} ! ## Comment
 
 {% if user.admin is true %}
   <span>You're an admin !</span>

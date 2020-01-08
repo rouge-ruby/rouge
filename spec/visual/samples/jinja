@@ -14,6 +14,8 @@
 
 Hello {{ user.name|capitalize }} ! ## Comment
 
+Cool list filter {{ listx | join(', ') }}
+
 {% if user.admin is true %}
   <span>You're an admin !</span>
 {% else %}

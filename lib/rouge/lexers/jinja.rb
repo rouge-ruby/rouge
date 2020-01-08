@@ -97,8 +97,9 @@ module Rouge
       end
 
       state :comment do
-        rule(/[^#]+/m) { token Comment }
+        rule %r/[^#]+/m, Comment
         rule(/#}/) { token Comment; pop! }
+        rule %r/#/, Comment
       end
 
       state :expression do

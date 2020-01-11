@@ -44,7 +44,6 @@ module Rouge
         mixin :keywords
         mixin :types
         mixin :infos
-        mixin :detect_function
         mixin :names
         mixin :operators
 
@@ -56,13 +55,14 @@ module Rouge
       end
 
       state :detect_section do
-        rule %r/(?=section\s+)/ do
+        rule %r/(section)(\s+)/ do |m|
+          token Keyword, m[1]
+          token Text, m[2]
           push :section
         end
       end
 
       state :section do
-        rule %r/section/, Keyword
         rule %r/"(data|cstring|text|rodata|relrodata|bss)"/, Name::Builtin
 
         rule %r/{/, Punctuation, :pop!
@@ -186,10 +186,22 @@ module Rouge
           token Keyword, m[3]
         end
 
-        rule %r{return(?=(#{ws}*)\()}, Keyword
-        rule %r{(if|else|goto|call|offset|import|jump|ccall|foreign|prim|case|unwind)(?=#{ws})}, Keyword
-        rule %r{(export|reserve|push)(?=#{ws})}, Keyword
-        rule %r{(default)(?=#{ws}*:)}, Keyword
+        rule %r{(return)(#{ws}*)(\()} do |m|
+          token Keyword, m[1]
+          recurse m[2]
+          token Punctuation, m[3]
+        end
+
+        rule %r{(if|else|goto|call|offset|import|jump|ccall|foreign|prim|case|unwind|export|reserve|push)(#{ws})} do |m|
+          token Keyword, m[1]
+          recurse m[2]
+        end
+
+        rule %r{(default)(#{ws}*)(:)} do |m|
+          token Keyword, m[1]
+          recurse m[2]
+          token Punctuation, m[3]
+        end
       end
 
       state :detect_function do
@@ -280,6 +292,8 @@ module Rouge
       end
 
       state :names do
+        mixin :detect_function
+
         rule %r/(::)(#{ws}*)([A-Z]\w+)/ do |m|
           token Operator, m[1]
           recurse m[2]
@@ -290,13 +304,20 @@ module Rouge
 
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2}|gcptr)(?!#{id})/, Name::Variable::Global
         rule %r/CLOSURE/, Keyword::Type
-        rule %r/[A-Z]#{id}(?=\.)/, Name::Namespace, :namespace_name
+        rule %r/([A-Z]#{id})(\.)/ do |m|
+          token Name::Namespace, m[1]
+          token Punctuation, m[2]
+          push :namespace_name
+        end
+
         rule %r/#{complex_id}/, Name::Label
       end
 
       state :namespace_name do
-        rule %r/[.]/, Punctuation
-        rule %r/[A-Z]#{id}(?=\.)/, Name::Namespace
+        rule %r/([A-Z]#{id})(\.)/ do |m|
+          token Name::Namespace, m[1]
+          token Punctuation, m[2]
+        end
 
         rule %r{(#{complex_id})(#{ws}*)([\{\(])}mx do |m|
           token Name::Function, m[1]

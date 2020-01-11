@@ -204,37 +204,6 @@ module Rouge
         end
       end
 
-      state :detect_function do
-        # Function: `name /* optional whitespace */ (`
-        # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
-        rule %r{(?=
-                  #{complex_id}
-             #{ws}*
-                  [\{\(]
-                )}mx do
-          push :function
-        end
-
-        # Inline function calls:
-        # ```
-        #  arg1 `lt` arg2
-        # ```
-        rule %r/(`)(#{id})(`)/ do |m|
-          token Punctuation, m[1]
-          token Name::Function, m[2]
-          token Punctuation, m[3]
-        end
-      end
-
-      state :function do
-        rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
-        rule %r/%#{id}/, Name::Builtin
-        rule %r/#{complex_id}/, Name::Function
-        rule %r/\s+/, Text
-        rule %r/[({]/, Punctuation, :pop!
-        mixin :comments
-      end
-
       state :types do
         # Memory access: `type[42]`
         # Note: Only a token for type is produced.
@@ -292,8 +261,6 @@ module Rouge
       end
 
       state :names do
-        mixin :detect_function
-
         rule %r/(::)(#{ws}*)([A-Z]\w+)/ do |m|
           token Operator, m[1]
           recurse m[2]
@@ -308,6 +275,26 @@ module Rouge
           token Name::Namespace, m[1]
           token Punctuation, m[2]
           push :namespace_name
+        end
+
+        # Inline function calls:
+        # ```
+        #  arg1 `lt` arg2
+        # ```
+        rule %r/(`)(#{id})(`)/ do |m|
+          token Punctuation, m[1]
+          token Name::Function, m[2]
+          token Punctuation, m[3]
+        end
+
+        # Function: `name /* optional whitespace */ (`
+        # Function (arguments via explicit stack handling): `name /* optional whitespace */ {`
+        rule %r{(?=
+                  #{complex_id}
+             #{ws}*
+                  [\{\(]
+                )}mx do
+          push :function
         end
 
         rule %r/#{complex_id}/, Name::Label
@@ -331,6 +318,15 @@ module Rouge
         rule %r/(?=.)/m do
           pop!
         end
+      end
+
+      state :function do
+        rule %r/INFO_TABLE_FUN|INFO_TABLE_CONSTR|INFO_TABLE_SELECTOR|INFO_TABLE_RET|INFO_TABLE/, Name::Builtin
+        rule %r/%#{id}/, Name::Builtin
+        rule %r/#{complex_id}/, Name::Function
+        rule %r/\s+/, Text
+        rule %r/[({]/, Punctuation, :pop!
+        mixin :comments
       end
     end
   end

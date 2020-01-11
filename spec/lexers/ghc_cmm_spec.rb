@@ -815,7 +815,7 @@ import pthread_mutex_unlock;
       core = 'Sp(i) = W_[p];'
 
       assert_tokens_equal core,
-                          ['Name.Function', 'Sp'],
+                          ['Name.Variable.Global', 'Sp'],
                           ['Punctuation', '('],
                           ['Name.Label', 'i'],
                           ['Punctuation', ')'],

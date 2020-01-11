@@ -1,14 +1,265 @@
+/*
+ * Handwritten Code Examples
+ * Extracted from https://gitlab.haskell.org/ghc/ghc/blob/master/rts/HeapStackCheck.cmm
+ */
 
-           (_c3zd::I64) = call "ccall" arg hints:  [PtrHint,
-                                                    PtrHint]  result hints:  [PtrHint] newCAF(BaseReg, R1);
+#include "Cmm.h"
+#include "Updates.h"
+#include "SMPClosureOps.h"
+
+#if defined(__PIC__)
+import pthread_mutex_unlock;
+#endif
+import EnterCriticalSection;
+import LeaveCriticalSection;
+
+#define PRE_RETURN(why,what_next)                       \
+  StgTSO_what_next(CurrentTSO) = what_next::I16;        \
+  StgRegTable_rRet(BaseReg) = why;                      \
+  R1 = BaseReg;
+
+/* Remember that the return address is *removed* when returning to a
+ * ThreadRunGHC thread.
+ */
+
+stg_gc_noregs
+{
+    W_ ret;
+
+    DEBUG_ONLY(foreign "C" heapCheckFail());
+    if (Hp > HpLim) {
+        Hp = Hp - HpAlloc/*in bytes*/;
+        if (HpLim == 0) {
+                ret = ThreadYielding;
+                goto sched;
+        }
+        if (HpAlloc <= BLOCK_SIZE
+            && bdescr_link(CurrentNursery) != NULL) {
+            HpAlloc = 0;
+            CLOSE_NURSERY();
+            Capability_total_allocated(MyCapability()) =
+              Capability_total_allocated(MyCapability()) +
+              BYTES_TO_WDS(bdescr_free(CurrentNursery) -
+                           bdescr_start(CurrentNursery));
+            CurrentNursery = bdescr_link(CurrentNursery);
+            bdescr_free(CurrentNursery) = bdescr_start(CurrentNursery);
+            OPEN_NURSERY();
+            if (Capability_context_switch(MyCapability()) != 0 :: CInt ||
+                Capability_interrupt(MyCapability())      != 0 :: CInt ||
+                (StgTSO_alloc_limit(CurrentTSO) `lt` (0::I64) &&
+                 (TO_W_(StgTSO_flags(CurrentTSO)) & TSO_ALLOC_LIMIT) != 0)) {
+                ret = ThreadYielding;
+                goto sched;
+            } else {
+                jump %ENTRY_CODE(Sp(0)) [];
+            }
+        } else {
+            ret = HeapOverflow;
+            goto sched;
+        }
+    } else {
+        if (CHECK_GC()) {
+            ret = HeapOverflow;
+        } else {
+            ret = StackOverflow;
+        }
+    }
+  sched:
+    PRE_RETURN(ret,ThreadRunGHC);
+    jump stg_returnToSched [R1];
+}
+
+#define HP_GENERIC                              \
+    PRE_RETURN(HeapOverflow, ThreadRunGHC)      \
+    jump stg_returnToSched [R1];
+
+#define BLOCK_GENERIC                           \
+    PRE_RETURN(ThreadBlocked,  ThreadRunGHC)    \
+    jump stg_returnToSched [R1];
+
+#define YIELD_GENERIC                           \
+    PRE_RETURN(ThreadYielding, ThreadRunGHC)    \
+    jump stg_returnToSched [R1];
+
+#define BLOCK_BUT_FIRST(c)                      \
+    PRE_RETURN(ThreadBlocked, ThreadRunGHC)     \
+    R2 = c;                                     \
+    jump stg_returnToSchedButFirst [R1,R2,R3];
+
+#define YIELD_TO_INTERPRETER                    \
+    PRE_RETURN(ThreadYielding, ThreadInterpret) \
+    jump stg_returnToSchedNotPaused [R1];
+
+/* -----------------------------------------------------------------------------
+   Heap checks in thunks/functions.
+
+   In these cases, node always points to the function closure.  This gives
+   us an easy way to return to the function: just leave R1 on the top of
+   the stack, and have the scheduler enter it to return.
+
+   There are canned sequences for 'n' pointer values in registers.
+   -------------------------------------------------------------------------- */
+
+INFO_TABLE_RET ( stg_enter, RET_SMALL, W_ info_ptr, P_ closure )
+    return (/* no return values */)
+{
+    ENTER(closure);
+}
+
+__stg_gc_enter_1 (P_ node)
+{
+    jump stg_gc_noregs (stg_enter_info, node) ();
+}
+
+/* -----------------------------------------------------------------------------
+   Canned heap checks for primitives.
+
+   We can't use stg_gc_fun because primitives are not functions, so
+   these fragments let us save some boilerplate heap-check-failure
+   code in a few common cases.
+   -------------------------------------------------------------------------- */
+
+stg_gc_prim (W_ fun)
+{
+    call stg_gc_noregs ();
+    jump fun();
+}
+
+stg_gc_prim_p (P_ arg, W_ fun)
+{
+    call stg_gc_noregs ();
+    jump fun(arg);
+}
+
+stg_gc_prim_pp (P_ arg1, P_ arg2, W_ fun)
+{
+    call stg_gc_noregs ();
+    jump fun(arg1,arg2);
+}
+
+stg_gc_prim_n (W_ arg, W_ fun)
+{
+    call stg_gc_noregs ();
+    jump fun(arg);
+}
+
+__stg_gc_fun /* explicit stack */
+{
+    W_ size;
+    W_ info;
+    W_ type;
+
+    info = %GET_FUN_INFO(UNTAG(R1));
+
+    // cache the size
+    type = TO_W_(StgFunInfoExtra_fun_type(info));
+    if (type == ARG_GEN) {
+        size = BITMAP_SIZE(StgFunInfoExtra_bitmap(info));
+    } else {
+        if (type == ARG_GEN_BIG) {
+#if defined(TABLES_NEXT_TO_CODE)
+            // bitmap field holds an offset
+            size = StgLargeBitmap_size(
+                      TO_W_(StgFunInfoExtraRev_bitmap_offset(info))
+                      + %GET_ENTRY(UNTAG(R1)) /* ### */ );
+#else
+            size = StgLargeBitmap_size( StgFunInfoExtra_bitmap(info) );
+#endif
+        } else {
+            size = BITMAP_SIZE(W_[stg_arg_bitmaps + WDS(type)]);
+        }
+    }
+
+#if defined(NO_ARG_REGS)
+    // we don't have to save any registers away
+    Sp_adj(-3);
+    Sp(2) = R1;
+    Sp(1) = size;
+    Sp(0) = stg_gc_fun_info;
+    jump stg_gc_noregs [];
+#else
+    W_ type;
+    type = TO_W_(StgFunInfoExtra_fun_type(info));
+    // cache the size
+    if (type == ARG_GEN || type == ARG_GEN_BIG) {
+        // regs already saved by the heap check code
+        Sp_adj(-3);
+        Sp(2) = R1;
+        Sp(1) = size;
+        Sp(0) = stg_gc_fun_info;
+        // DEBUG_ONLY(foreign "C" debugBelch("stg_fun_gc_gen(ARG_GEN)"););
+        jump stg_gc_noregs [];
+    } else {
+        jump W_[stg_stack_save_entries + WDS(type)] [*]; // all regs live
+            // jumps to stg_gc_noregs after saving stuff
+    }
+#endif /* !NO_ARG_REGS */
+}
+
+stg_block_stmwait
+{
+    ccall stmWaitUnlock(MyCapability() "ptr", R3 "ptr");
+    BLOCK_GENERIC;
+}
+
+/*
+ * Generated Code Examples
+ */
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.90905 UTC
+
+[]
 
 
 ==================== Output Cmm ====================
-2020-01-04 12:58:09.932229 UTC
+2020-01-04 12:58:09.910624 UTC
 
-[section ""data" . u3zH_srt" {
-     u3zH_srt:
-         const stg_SRT_2_info;
+[section ""data" . Main.double_closure" {
+     Main.double_closure:
+         const GHC.Types.D#_con_info;
+         const 1.5 :: W64;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.91168 UTC
+
+[section ""data" . Main.character_closure" {
+     Main.character_closure:
+         const GHC.Types.C#_con_info;
+         const 99;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.912616 UTC
+
+[section ""cstring" . Main.string1_bytes" {
+     Main.string1_bytes:
+         I8[] [77,121,32,10,32,115,116,114,105,110,103,33]
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.918188 UTC
+
+[Main.string_entry() //  [R1]
+         { info_tbls: [(c3zg,
+                        label: Main.string_info
+                        rep: HeapRep static { Thunk }
+                        srt: Nothing)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c3zg: // global
+           if ((Sp + -16) < SpLim) (likely: False) goto c3zh; else goto c3zi;
+       c3zh: // global
+           R1 = R1;
+           call (stg_gc_enter_1)(R1) args: 8, res: 0, upd: 8;
+       c3zi: // global
+           (_c3zd::I64) = call "ccall" arg hints:  [PtrHint,
+                                                    PtrHint]  result hints:  [PtrHint] newCAF(BaseReg, R1);
            if (_c3zd::I64 == 0) goto c3zf; else goto c3ze;
        c3zf: // global
            call (I64[R1])() args: 8, res: 0, upd: 8;
@@ -121,6 +372,14 @@
          const Main.$trModule1_closure+1;
          const 3;
  }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.932229 UTC
+
+[section ""data" . u3zH_srt" {
+     u3zH_srt:
+         const stg_SRT_2_info;
          const Main.string_closure;
          const GHC.Show.showLitString_closure;
          const 0;
@@ -249,4 +508,3 @@
          const :Main.main_info;
          const 0;
  }]
-

@@ -22,7 +22,6 @@ module Rouge
       ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
       id = %r((?!#{macros})[\w#\$%_']+)
 
-      # This seems to slow down lexing by a factor of 2!
       complex_id = %r(
         (?:[\w#$%_']|\(\)|\(,\)|[0-9])*
         (?:[\w#$%_']+)

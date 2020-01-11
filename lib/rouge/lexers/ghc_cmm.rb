@@ -105,7 +105,7 @@ module Rouge
           push :label
         end
 
-        rule %r{(\()(#{id})(,)}mx do |m|
+        rule %r{(\()(#{complex_id})(,)}mx do |m|
           token Punctuation, m[1]
           token Name::Label, m[2]
           token Punctuation, m[3]

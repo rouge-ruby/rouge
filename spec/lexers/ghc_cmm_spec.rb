@@ -1091,8 +1091,7 @@ SAVE_THREAD_STATE();'
       core = '()_closure+1;'
 
       assert_tokens_equal core,
-                          ['Punctuation', '()'],
-                          ['Name.Label', '_closure'],
+                          ['Name.Label', '()_closure'],
                           ['Operator', '+'],
                           ['Literal.Number.Integer', '1'],
                           ['Punctuation', ';']
@@ -1109,6 +1108,18 @@ SAVE_THREAD_STATE();'
                           ['Name.Namespace', 'Types'],
                           ['Punctuation', '.'],
                           ['Name.Label', '[]_closure'],
+                          ['Operator', '+'],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', ';']
+
+      core = 'R1 = ()_closure+1;'
+
+      assert_tokens_equal core,
+                          ['Name.Variable.Global', 'R1'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Name.Label', '()_closure'],
                           ['Operator', '+'],
                           ['Literal.Number.Integer', '1'],
                           ['Punctuation', ';']

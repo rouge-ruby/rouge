@@ -41,12 +41,12 @@ module Rouge
         mixin :info_tbls
         mixin :comments
         mixin :literals
-        mixin :operators_and_keywords
-
-        mixin :detect_function
+        mixin :keywords
         mixin :types
         mixin :infos
+        mixin :detect_function
         mixin :names
+        mixin :operators
 
         # escaped newline
         rule %r/\\\n/, Comment::Preproc
@@ -68,7 +68,8 @@ module Rouge
         rule %r/{/, Punctuation, :pop!
 
         mixin :names
-        mixin :operators_and_keywords
+        mixin :operators
+        mixin :keywords
 
         rule %r/\s/, Text
       end
@@ -113,7 +114,8 @@ module Rouge
 
         mixin :literals
         mixin :infos
-        mixin :operators_and_keywords
+        mixin :keywords
+        mixin :operators
 
         rule %r/#{id}/, Text
         rule %r/\s/, Text
@@ -122,7 +124,9 @@ module Rouge
       state :label do
         mixin :infos
         mixin :names
-        mixin :operators_and_keywords
+        mixin :keywords
+        mixin :operators
+
         rule %r/[^\S\n]/, Text # Tab, space, etc. but not newline!
         rule %r/\n/, Text, :pop!
       end
@@ -147,20 +151,13 @@ module Rouge
         rule %r/./, Literal::String
       end
 
-      state :operators_and_keywords do
+      state :operators do
         rule %r/\.\./, Operator
-
-        rule %r/<(#{id})>/, Name::Builtin
-
         rule %r/[+\-*\/<>=!&|~]/, Operator
-
-        rule %r/(::)(#{ws}*)([A-Z]\w+)/ do |m|
-          token Operator, m[1]
-          recurse m[2]
-          token Keyword::Type, m[3]
-        end
-
         rule %r/[\[\].{}:;,()]/, Punctuation
+
+      end
+      state :keywords do
         rule %r/const/, Keyword::Constant
         rule %r/"/, Literal::String::Double
 
@@ -283,6 +280,14 @@ module Rouge
       end
 
       state :names do
+        rule %r/(::)(#{ws}*)([A-Z]\w+)/ do |m|
+          token Operator, m[1]
+          recurse m[2]
+          token Keyword::Type, m[3]
+        end
+
+        rule %r/<(#{id})>/, Name::Builtin
+
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2}|gcptr)(?!#{id})/, Name::Variable::Global
         rule %r/CLOSURE/, Keyword::Type
         rule %r/[A-Z]#{id}(?=\.)/, Name::Namespace, :namespace_name
@@ -299,7 +304,6 @@ module Rouge
           token Punctuation, m[3]
           pop!
         end
-
 
         rule %r/#{complex_id}/, Name::Label, :pop!
 

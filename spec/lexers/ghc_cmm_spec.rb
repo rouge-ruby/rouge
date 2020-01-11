@@ -1097,6 +1097,22 @@ SAVE_THREAD_STATE();'
                           ['Literal.Number.Integer', '1'],
                           ['Punctuation', ';']
     end
+
+    it 'should lex complex names in an expression' do
+      core = 'const GHC.Types.[]_closure+1;'
+
+      assert_tokens_equal core,
+                          ['Keyword.Constant', 'const'],
+                          ['Text', ' '],
+                          ['Name.Namespace', 'GHC'],
+                          ['Punctuation', '.'],
+                          ['Name.Namespace', 'Types'],
+                          ['Punctuation', '.'],
+                          ['Name.Label', '[]_closure'],
+                          ['Operator', '+'],
+                          ['Literal.Number.Integer', '1'],
+                          ['Punctuation', ';']
+    end
   end
 end
 

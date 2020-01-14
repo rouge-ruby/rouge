@@ -4,6 +4,32 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.15.0: 2020-01-15
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.14.0...v3.15.0)
+
+- General
+  - Fix parsing of 'false' as Boolean option value ([#1382](https://github.com/rouge-ruby/rouge/pull/1382/) by Michael Camilleri)
+- Console Lexer
+  - Fix comment parsing in Console lexer ([#1379](https://github.com/rouge-ruby/rouge/pull/1379/) by Michael Camilleri)
+- FreeFEM Lexer (**NEW**)
+  - Add FreeFEM lexer ([#1356](https://github.com/rouge-ruby/rouge/pull/1356/) by Simon Garnotel)
+- GHC Lexer (**NEW**)
+  - Add GHC Core lexer ([#1377](https://github.com/rouge-ruby/rouge/pull/1377/) by Sven Tennie)
+- Jinja Lexer
+  - Improve comments in Jinja lexer ([#1386](https://github.com/rouge-ruby/rouge/pull/1386/) by Rick Sherman)
+  - Allow spaces after filter pipes in Jinja lexer ([#1385](https://github.com/rouge-ruby/rouge/pull/1385/) by Rick Sherman)
+- LLVM Lexer
+  - Add addrspacecast keyword, change keyword matching system in LLVM lexer ([#1376](https://github.com/rouge-ruby/rouge/pull/1376/) by Michael Camilleri)
+- Objective-C++ Lexer (**NEW**)
+  - Add Objective-C++ lexer ([#1378](https://github.com/rouge-ruby/rouge/pull/1378/) by Saagar Jha)
+- Python Lexer
+  - Add Starlark support to Python lexer ([#1369](https://github.com/rouge-ruby/rouge/pull/1369/) by zoidbergwill)
+- Rust Lexer
+  - Add division operator to Rust lexer ([#1384](https://github.com/rouge-ruby/rouge/pull/1384/) by Hugo Peixoto)
+- Swift Lexer
+  - Add some keyword and key-path syntax to Swift lexer ([#1332](https://github.com/rouge-ruby/rouge/pull/1332/) by Jim Dovey)
+
 ## version 3.14.0: 2019-12-11
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.13.0...v3.14.0)

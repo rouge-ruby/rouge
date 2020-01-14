@@ -50,10 +50,9 @@ module Rouge
         rule %r/@#{id}/, Name::Decorator
         rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule %r/(?:#{types.join('|')})\b/, Keyword::Type
-        rule %r/package\b/, Keyword::Namespace
         rule %r/(?:true|false|null)\b/, Keyword::Constant
         rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
-        rule %r/import\b/, Keyword::Namespace, :import
+        rule %r/(?:import|package)\b/, Keyword::Namespace, :import
         rule %r/"(\\\\|\\"|[^"])*"/, Str
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
         rule %r/(\.)(#{id})/ do

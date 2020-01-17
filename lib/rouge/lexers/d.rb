@@ -22,7 +22,7 @@ module Rouge
         module new nothrow out override package pragma
         private protected public pure ref return scope
         shared static struct super switch synchronized
-        template this throw try typedef typeid typeof
+        template this throw try typeid typeof
         union unittest version volatile while with
         __gshared __traits __vector __parameters
       )
@@ -99,7 +99,7 @@ module Rouge
         # Attributes
         rule %r/@([a-zA-Z_]\w*)?/, Name::Decorator
         # Tokens
-        rule %r`(~=|\^=|%=|\*=|==|!>=|!<=|!<>=|!<>|!<|!>|!=|>>>=|>>>|>>=|>>|>=|<>=|<>|<<=|<<|<=|\+\+|\+=|--|-=|\|\||\|=|&&|&=|\.\.\.|\.\.|/=)|[/.&|\-+<>!()\[\]{}?,;:$=*%^~]`, Punctuation
+        rule %r`(~=|\^=|%=|\*=|==|!=|>>>=|>>>|>>=|>>|>=|<<=|<<|<=|\+\+|\+=|--|-=|\|\||\|=|&&|&=|\.\.\.|\.\.|/=)|[/.&|\-+<>!()\[\]{}?,;:$=*%^~]`, Punctuation
         # Identifier
         rule %r/[a-zA-Z_]\w*/, Name
         # Line

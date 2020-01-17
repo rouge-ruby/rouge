@@ -35,9 +35,9 @@ module Rouge
       )
 
       keywords_pseudo = %w(
-        __FILE__ __MODULE__ __LINE__ __FUNCTION__ __PRETTY_FUNCTION__
-         __DATE__ __EOF__ __TIME__ __TIMESTAMP__ __VENDOR__
-        __VERSION__
+        __FILE__ __FILE_FULL_PATH__ __MODULE__ __LINE__ __FUNCTION__
+        __PRETTY_FUNCTION__ __DATE__ __EOF__ __TIME__ __TIMESTAMP__
+        __VENDOR__ __VERSION__
       )
 
       state :whitespace do

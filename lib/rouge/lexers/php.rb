@@ -44,6 +44,9 @@ module Rouge
         end
       end
 
+      LNUM = '\d+(?:_\d+)*'
+      DNUM = '(?:(?:#{LNUM}?\.#{LNUM})|(?:#{LNUM}\.#{LNUM}?))'
+      WHITESPACE = '[ \n\r\t]+'
       # source: http://php.net/manual/en/language.variables.basics.php
       # the given regex is invalid utf8, so... we're using the unicode
       # "Letter" property instead.
@@ -69,10 +72,13 @@ module Rouge
           print for require continue foreach require_once declare return
           default static do switch die stdClass echo else TRUE elseif
           var empty if xor enddeclare include virtual endfor include_once
-          while endforeach global __FILE__ endif list __LINE__ endswitch
+          while endforeach global __file__ endif list __line__ endswitch
           new __sleep endwhile not array __wakeup E_ALL NULL final
           php_user_filter interface implements public private protected
           abstract clone try catch finally throw this use namespace yield
+          fn callable insteadof trait __trait__ goto __namespace__ __dir__
+          instanceof __class__ __function__ __method__ __halt_compiler
+          self
         )
       end
 
@@ -85,13 +91,13 @@ module Rouge
       state :root do
         # some extremely rough heuristics to decide whether to start inline or not
         rule(/\s*(?=<)/m) { delegate parent; push :template }
-        rule(/[^$]+(?=<\?(php|=))/) { delegate parent; push :template }
+        rule(/[^$]+(?=<\?(php|=))/i) { delegate parent; push :template }
 
         rule(//) { push :template; push :php }
       end
 
       state :template do
-        rule %r/<\?(php|=)?/, Comment::Preproc, :php
+        rule %r/<\?(php|=)?/i, Comment::Preproc, :php
         rule(/.*?(?=<\?)|.*/m) { delegate parent }
       end
 
@@ -137,12 +143,17 @@ module Rouge
         end
 
         rule %r/(true|false|null)\b/, Keyword::Constant
+        rule /(?:void|\??(?:int|float|bool|string|iterable))\b/i, Keyword::Type
+        rule /\??(?:self|callable)\b/i, Keyword::Type
         rule %r/\$\{\$+#{id}\}/i, Name::Variable
         rule %r/\$+#{id}/i, Name::Variable
+        rule /(yield)(#{WHITESPACE})(from)/io do
+          groups Keyword, Text, Keyword
+        end
 
         # may be intercepted for builtin highlighting
         rule %r/\\?#{nsid}/i do |m|
-          name = m[0]
+          name = m[0].downcase
 
           if self.class.keywords.include? name
             token Keyword
@@ -153,11 +164,12 @@ module Rouge
           end
         end
 
-        rule %r/(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, Num::Float
-        rule %r/\d+e[+-]?\d+/i, Num::Float
-        rule %r/0[0-7]+/, Num::Oct
-        rule %r/0x[a-f0-9]+/i, Num::Hex
-        rule %r/\d+/, Num::Integer
+        rule %r/(?:(?:#{LNUM}|#{DNUM})[eE][+-]?#{LNUM})/o, Num::Float
+        rule %r/#{DNUM}/o, Num::Float
+        rule %r/0[0-7]+(?:_[0-7]+)*/, Num::Oct
+        rule %r/0[bB][01]+(?:_[01]+)*/, Num::Bin
+        rule %r/0x[a-f0-9]+(?:_[a-f0-9]+)*/i, Num::Hex
+        rule %r/#{LNUM}/o, Num::Integer
         rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string
@@ -189,7 +201,8 @@ module Rouge
       state :string do
         rule %r/"/, Str::Double, :pop!
         rule %r/[^\\{$"]+/, Str::Double
-        rule %r/\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
+        rule /\\u\{[0-9a-fA-F]+\}/, Str::Escape
+        rule %r/\\([efrntv\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
           Str::Escape
         rule %r/\$#{id}(\[\S+\]|->#{id})?/, Name::Variable
 

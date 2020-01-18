@@ -104,7 +104,7 @@ module Rouge
       state :php do
         rule %r/\?>/, Comment::Preproc, :pop!
         # heredocs
-        rule %r/<<<('?)(#{id})\1\n.*?\n\s*\2;?/im, Str::Heredoc
+        rule %r/<<<(["']?)(#{id})\1\n.*?\n\s*\2;?/im, Str::Heredoc
         rule %r/\s+/, Text
         rule %r/#.*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single

@@ -68,12 +68,12 @@ module Rouge
       def self.keywords
         @keywords ||= Set.new %w(
           and E_PARSE old_function E_ERROR or as E_WARNING parent eval
-          PHP_OS break exit case extends PHP_VERSION cfunction FALSE
+          PHP_OS break exit case extends PHP_VERSION cfunction false
           print for require continue foreach require_once declare return
-          default static do switch die stdClass echo else TRUE elseif
+          default static do switch die stdclass echo else true elseif
           var empty if xor enddeclare include virtual endfor include_once
           while endforeach global __file__ endif list __line__ endswitch
-          new __sleep endwhile not array __wakeup E_ALL NULL final
+          new __sleep endwhile not array __wakeup E_ALL null final
           php_user_filter interface implements public private protected
           abstract clone try catch finally throw this use namespace yield
           fn callable insteadof trait __trait__ goto __namespace__ __dir__

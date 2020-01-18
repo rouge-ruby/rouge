@@ -78,7 +78,7 @@ module Rouge
           abstract clone try catch finally throw this use namespace yield
           fn callable insteadof trait __trait__ goto __namespace__ __dir__
           instanceof __class__ __function__ __method__ __halt_compiler
-          self
+          class self
         )
       end
 

@@ -30,6 +30,14 @@ println!("a\\");
 println!("a\n");
 println!("a\"b");
 println!("a\'");
+println!(r"");
+println!(r"\n\");
+println!(r#"a"b\"#);
+println!(r##"r#""#"##);
+println!(r###"r##"r#""#"##"###);
+println!(r#"
+  "New line in a raw string"
+"#);
 
 debug!("test %?", a.b);
 debug!("test %u", a.c);

@@ -31,13 +31,6 @@ println!("a\n");
 println!("a\"b");
 println!("a\'");
 
-debug!("test %?", a.b);
-debug!("test %u", a.c);
-debug!("test %i", a.d);
-debug!("test %c", a.e);
-debug!("test %f", a.f);
-debug!("test %b", a.g);
-
 trait iterable<A> {
     fn iterate(blk: fn(x: &A) -> bool);
 }

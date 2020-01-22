@@ -71,7 +71,7 @@ module Rouge
         rule %r((function)\b), Keyword, :function_name
 
         rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?) do |m|
-          name = m[0].downcase
+          name = m[0]
           if name == "gsub"
             token Name::Builtin
             push :gsub
@@ -122,7 +122,7 @@ module Rouge
         rule %r/./, Str::Regex
       end
 
-			state :regex_end do
+      state :regex_end do
         rule %r/[$]+/, Str::Regex, :pop!
         rule(//) { pop! }
       end

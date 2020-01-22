@@ -258,3 +258,6 @@ end
 acc = Account.create(1000)
 acc:withdraw(100)
 
+if
+   url = url:gsub("^['\"]", ""):gsub("['\"]$", "")
+end

@@ -44,9 +44,6 @@ module Rouge
         end
       end
 
-      LNUM = '\d+(?:_\d+)*'
-      DNUM = '(?:(?:#{LNUM}?\.#{LNUM})|(?:#{LNUM}\.#{LNUM}?))'
-      WHITESPACE = '[ \n\r\t]+'
       # source: http://php.net/manual/en/language.variables.basics.php
       # the given regex is invalid utf8, so... we're using the unicode
       # "Letter" property instead.
@@ -143,11 +140,10 @@ module Rouge
         end
 
         rule %r/(true|false|null)\b/, Keyword::Constant
-        rule /(?:void|\??(?:int|float|bool|string|iterable))\b/i, Keyword::Type
-        rule /\??(?:self|callable)\b/i, Keyword::Type
+        rule %r/(?:void|\??(?:int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
         rule %r/\$\{\$+#{id}\}/i, Name::Variable
         rule %r/\$+#{id}/i, Name::Variable
-        rule /(yield)(#{WHITESPACE})(from)/io do
+        rule %r/(yield)([ \n\r\t]+)(from)/i do
           groups Keyword, Text, Keyword
         end
 
@@ -164,19 +160,19 @@ module Rouge
           end
         end
 
-        rule %r/(?:(?:#{LNUM}|#{DNUM})[eE][+-]?#{LNUM})/o, Num::Float
-        rule %r/#{DNUM}/o, Num::Float
+        rule %r/(?:(?:(?:\d+(?:_\d+)*)|(?:(?:(?:\d+(?:_\d+)*)?\.(?:\d+(?:_\d+)*))|(?:(?:\d+(?:_\d+)*)\.(?:\d+(?:_\d+)*)?)))e[+-]?(?:\d+(?:_\d+)*))/i, Num::Float
+        rule %r/(?:(?:\d+(?:_\d+)*)?\.(?:\d+(?:_\d+)*))|(?:(?:\d+(?:_\d+)*)\.(?:\d+(?:_\d+)*)?)/, Num::Float
         rule %r/0[0-7]+(?:_[0-7]+)*/, Num::Oct
-        rule %r/0[bB][01]+(?:_[01]+)*/, Num::Bin
+        rule %r/0b[01]+(?:_[01]+)*/i, Num::Bin
         rule %r/0x[a-f0-9]+(?:_[a-f0-9]+)*/i, Num::Hex
-        rule %r/#{LNUM}/o, Num::Integer
+        rule %r/\d+(?:_\d+)*/, Num::Integer
         rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string
       end
       
       state :use do
-        rule %r/(\s+)(as)(\s+)(#{id})/ do
+        rule %r/(\s+)(as)(\s+)(#{id})/i do
           groups Text, Keyword, Text, Name
           :pop!
         end
@@ -188,7 +184,7 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/,/, Operator
         rule %r/\}/, Operator, :pop!
-        rule %r/(as)(\s+)(#{id})/ do
+        rule %r/(as)(\s+)(#{id})/i do
           groups Keyword, Text, Name
         end
         rule %r/#{id}/, Name::Namespace
@@ -201,8 +197,8 @@ module Rouge
       state :string do
         rule %r/"/, Str::Double, :pop!
         rule %r/[^\\{$"]+/, Str::Double
-        rule /\\u\{[0-9a-fA-F]+\}/, Str::Escape
-        rule %r/\\([efrntv\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
+        rule %r/\\u\{[0-9a-fA-F]+\}/, Str::Escape
+        rule %r/\\([efrntv\"$\\]|[0-7]{1,3}|[xX][0-9a-fA-F]{1,2})/,
           Str::Escape
         rule %r/\$#{id}(\[\S+\]|->#{id})?/, Name::Variable
 

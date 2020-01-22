@@ -17,10 +17,13 @@ describe Rouge::Lexers::Escape do
 
   describe 'terminal256' do
     let(:formatter) { Rouge::Formatters::Terminal256.new }
-    let(:text) { %({ "foo": <!\e123!> }) }
+    let(:text) { %({ "foo": \n <!\e123!> }) }
 
     it 'unescapes' do
       assert { result =~ /\e123/ }
+
+      # shouldn't escape the term codes around \n
+      assert { result =~ /\n\e/ }
     end
   end
 end

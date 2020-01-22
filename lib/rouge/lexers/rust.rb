@@ -185,16 +185,7 @@ module Rouge
       state :string do
         rule %r/"/, Str, :pop!
         rule escapes, Str::Escape
-        rule %r/%%/, Str::Interpol
-        rule %r(
-          %
-          ( [0-9]+ [$] )?  # Parameter
-          [0#+-]*          # Flag
-          ( [0-9]+ [$]? )? # Width
-          ( [.] [0-9]+ )?  # Precision
-          [bcdfiostuxX?]   # Type
-        )x, Str::Interpol
-        rule %r/[^%"\\]+/m, Str
+        rule %r/[^"\\]+/m, Str
       end
     end
   end

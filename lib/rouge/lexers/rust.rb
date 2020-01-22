@@ -159,6 +159,7 @@ module Rouge
         )x, Str::Char
 
         rule %r/"/, Str, :string
+        rule %r/r(#*)".*?"\1/m, Str
 
         # numbers
         dot = /[.][0-9_]+/

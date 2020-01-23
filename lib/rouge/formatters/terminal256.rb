@@ -85,8 +85,8 @@ module Rouge
 
         def stream_value(val, &b)
           yield style_string
-          yield val.gsub("\n", "#{reset_string}\n#{style_string}")
-                   .gsub("\e", "\\e")
+          yield val.gsub("\e", "\\e")
+                   .gsub("\n", "#{reset_string}\n#{style_string}")
           yield reset_string
         end
 

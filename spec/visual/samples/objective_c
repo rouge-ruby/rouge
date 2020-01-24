@@ -173,3 +173,6 @@ ViewController *controller = [[ViewController alloc] initWithDocument:document c
     builder.thumbnailBarMode = ThumbnailBarModeScrollable;
     builder.pageLabelEnabled = NO;
 }]];
+
+// Invalid Objective-C keyword
+@FOO

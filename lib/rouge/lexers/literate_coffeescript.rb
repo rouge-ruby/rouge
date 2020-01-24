@@ -11,11 +11,11 @@ module Rouge
       filenames '*.litcoffee'
 
       def markdown
-        @markdown ||= Markdown.new(options)
+        @markdown ||= Lexers::Markdown.new(options)
       end
 
       def coffee
-        @coffee ||= Coffeescript.new(options)
+        @coffee ||= Lexers::Coffeescript.new(options)
       end
 
       start { markdown.reset!; coffee.reset! }

@@ -4,6 +4,7 @@ AllCops:
   Exclude:
     - "tasks/**/*"
     - "vendor/**/*"
+    - "lib/rouge/langspec_cache.rb"
 
 Style:
   Enabled: false

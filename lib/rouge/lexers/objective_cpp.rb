@@ -3,8 +3,8 @@
 
 module Rouge
   module Lexers
-    load_lexer 'cpp.rb'
-    load_lexer 'objective_c/common.rb'
+    preload 'cpp'
+    load_helper 'objective_c/common'
 
     class ObjectiveCpp < Cpp
       extend ObjectiveCCommon

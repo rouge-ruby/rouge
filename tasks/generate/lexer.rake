@@ -4,14 +4,15 @@ namespace :generate do
     language = args.lang
     sh "touch lib/rouge/demos/#{language}"
     sh "touch spec/visual/samples/#{language}"
-    sh "echo \"#{lexer_template(language)}\" > lib/rouge/lexers/#{language}.rb"
-    sh "echo \"#{spec_template(language)}\" > spec/lexers/#{language}_spec.rb"
+    File.open("lib/rouge/lexers/#{language}.rb", 'w') { |f| f << lexer_template(language) }
+    File.open("spec/lexers/#{language}.rb", 'w') { |f| f << spec_template(language) }
+    Rake::Task['generate:cache'].invoke
   end
 end
 
 def lexer_template(language)
   <<-LEX
-# frozen_string_literal: true"
+# frozen_string_literal: true
 
 module Rouge
   module Lexers

@@ -8,7 +8,8 @@ module Rouge
     class GHCCore < RegexLexer
       title "GHC Core"
       desc "Intermediate representation of the GHC Haskell compiler."
-      tag 'ghc-core'
+      tag 'ghc_core'
+      aliases 'ghc-core'
 
       filenames '*.dump-simpl', '*.dump-cse', '*.dump-ds', '*.dump-spec'
 

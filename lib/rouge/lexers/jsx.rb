@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'javascript.rb'
+    preload 'javascript'
 
     class JSX < Javascript
       title 'JSX'

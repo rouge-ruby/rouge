@@ -4,7 +4,7 @@
 # adapted from lustre.rf (adapted from ocaml.rb), hence some ocaml-ism migth remains
 module Rouge
   module Lexers
-    load_lexer 'lustre.rb'
+    preload 'lustre'
 
     class Lutin < Lustre
       title "Lutin"

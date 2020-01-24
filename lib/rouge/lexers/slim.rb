@@ -32,13 +32,13 @@ module Rouge
       def filters
         @filters ||= {
           'ruby' => ruby,
-          'erb' => ERB.new(options),
-          'javascript' => Javascript.new(options),
-          'css' => CSS.new(options),
-          'coffee' => Coffeescript.new(options),
-          'markdown' => Markdown.new(options),
-          'scss' => Scss.new(options),
-          'sass' => Sass.new(options)
+          'erb' => Lexers::ERB.new(options),
+          'javascript' => Lexers::Javascript.new(options),
+          'css' => Lexers::CSS.new(options),
+          'coffee' => Lexers::Coffeescript.new(options),
+          'markdown' => Lexers::Markdown.new(options),
+          'scss' => Lexers::Scss.new(options),
+          'sass' => Lexers::Sass.new(options)
         }
       end
 

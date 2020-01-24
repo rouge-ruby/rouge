@@ -7,6 +7,7 @@ Bundler.require
 require 'rouge'
 require 'minitest/spec'
 require 'minitest/autorun'
+require 'pry'
 
 Token = Rouge::Token
 

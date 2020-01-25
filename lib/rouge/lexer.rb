@@ -433,8 +433,9 @@ module Rouge
     GLOBAL_OPTIONS = %w(debug)
     def sub_options(prefix)
       prefix = prefix.to_s
+      out = {}
 
-      out = @options.slice(*GLOBAL_OPTIONS)
+      GLOBAL_OPTIONS.each { |k| out[k] = @options[k] }
 
       @options.keys.each do |k|
         head, rest = k.split('.', 2)

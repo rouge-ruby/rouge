@@ -363,16 +363,16 @@ module Rouge
       end
     end
 
-    def as_lexer(val)
+    def as_lexer(val, opts={})
       return as_lexer(val.last) if val.is_a?(Array)
-      return val.new(@options) if val.is_a?(Class) && val < Lexer
+      return val.new(opts) if val.is_a?(Class) && val < Lexer
 
       case val
       when Lexer
         val
       when String
         lexer_class = Lexer.find(val)
-        lexer_class && lexer_class.new(@options)
+        lexer_class && lexer_class.new(opts)
       end
     end
 
@@ -401,7 +401,7 @@ module Rouge
     end
 
     def lexer_option(name, &default)
-      as_lexer(@options.delete(name.to_s, &default))
+      as_lexer(@options.delete(name.to_s, &default), sub_options(name))
     end
 
     def list_option(name, &default)
@@ -425,6 +425,20 @@ module Rouge
         value = @options.delete(key)
 
         out[$2] = val_cast ? val_cast.call(value) : value
+      end
+
+      out
+    end
+
+    GLOBAL_OPTIONS = %w(debug)
+    def sub_options(prefix)
+      out = @options.slice(*GLOBAL_OPTIONS)
+
+      @options.keys.each do |k|
+        head, rest = k.split('.', 2)
+        next unless rest && head == prefix
+
+        out[rest] = @options.delete(k)
       end
 
       out

@@ -44,7 +44,7 @@ module Rouge
             elsif base.at_builtins.include? m[1]
               token base::Name::Builtin
             else
-              token Error
+              token base::Error
             end
           end
 

@@ -21,7 +21,7 @@ module Rouge
           when 3 then color.chars.map { |c| c.to_i(16) * 2 }
           when 6 then color.scan(/../).map { |cc| cc.to_i(16) }
           else
-            raise 'oh no'
+            raise "invalid color: #{color.inspect}"
           end
         end
       end

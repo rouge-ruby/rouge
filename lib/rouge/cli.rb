@@ -301,6 +301,7 @@ module Rouge
 
         @formatter = case opts[:formatter]
         when 'terminal256' then Formatters::Terminal256.new(theme)
+        when 'terminal_truecolor' then Formatters::TerminalTruecolor.new(theme)
         when 'html' then Formatters::HTML.new
         when 'html-pygments' then Formatters::HTMLPygments.new(Formatters::HTML.new, opts[:css_class])
         when 'html-inline' then Formatters::HTMLInline.new(theme)

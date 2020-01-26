@@ -202,7 +202,7 @@ module Rouge
 
       # TODO: find a better way to do this?
       def self.supports_truecolor?
-        ENV['TERM'] == 'xterm'
+        ENV['TERM'] == 'xterm' || %w(24bit truecolor).include?(ENV['COLORTERM'])
       end
 
       def self.parse(argv)

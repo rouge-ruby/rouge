@@ -200,9 +200,14 @@ module Rouge
         yield %[                            delimiters. implies --escape]
       end
 
+      # TODO: find a better way to do this?
+      def self.supports_truecolor?
+        ENV['TERM'] == 'xterm'
+      end
+
       def self.parse(argv)
         opts = {
-          :formatter => 'terminal256',
+          :formatter => supports_truecolor? ? 'terminal-truecolor' : 'terminal256',
           :theme => 'thankful_eyes',
           :css_class => 'codehilite',
           :input_file => '-',
@@ -299,9 +304,10 @@ module Rouge
 
         theme = Theme.find(opts[:theme]).new or error! "unknown theme #{opts[:theme]}"
 
+        # TODO: document this in --help
         @formatter = case opts[:formatter]
         when 'terminal256' then Formatters::Terminal256.new(theme)
-        when 'terminal_truecolor' then Formatters::TerminalTruecolor.new(theme)
+        when 'terminal-truecolor' then Formatters::TerminalTruecolor.new(theme)
         when 'html' then Formatters::HTML.new
         when 'html-pygments' then Formatters::HTMLPygments.new(Formatters::HTML.new, opts[:css_class])
         when 'html-inline' then Formatters::HTMLInline.new(theme)

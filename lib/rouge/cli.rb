@@ -4,6 +4,8 @@
 # not required by the main lib.
 # to use this module, require 'rouge/cli'.
 
+require 'rbconfig'
+
 module Rouge
   class FileReader
     attr_reader :input

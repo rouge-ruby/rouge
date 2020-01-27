@@ -174,7 +174,11 @@ module Rouge
         return Unescape.new if escape?(token)
         @escape_sequences ||= {}
         @escape_sequences[token.qualname] ||=
-          EscapeSequence.new(get_style(token))
+          make_escape_sequence(get_style(token))
+      end
+
+      def make_escape_sequence(style)
+        EscapeSequence.new(style)
       end
 
       def get_style(token)

@@ -72,6 +72,7 @@ load_relative 'rouge/formatters/html_linewise'
 load_relative 'rouge/formatters/html_line_table'
 load_relative 'rouge/formatters/html_inline'
 load_relative 'rouge/formatters/terminal256'
+load_relative 'rouge/formatters/terminal_truecolor'
 load_relative 'rouge/formatters/tex'
 load_relative 'rouge/formatters/null'
 

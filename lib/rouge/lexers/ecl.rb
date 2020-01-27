@@ -9,7 +9,7 @@ module Rouge
       mimetypes 'application/x-ecl'
 
       title "ECL"
-      desc "Enterprise Control Language"
+      desc "Enterprise Control Language (hpccsystems.com)"
       
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
@@ -33,12 +33,12 @@ module Rouge
 
       keywords = %w(
         and or in not all any as from 
-        atmost before beginc best between case const counter 
-        csv descend embed encrypt end endc endembed endmacro 
+        atmost before best between case const counter 
+        csv descend embed encrypt end endembed endmacro
         enum except exclusive expire export extend fail few 
         first flat full function functionmacro group heading hole 
         ifblock import joined keep keyed last left limit 
-        load local locale lookup macro many maxcount maxlength 
+        load local locale lookup many maxcount maxlength 
         _token module interface named nocase noroot noscan nosort 
         of only opt outer overwrite packed partition penalty 
         physicallength pipe quote record repeat return right rows 
@@ -83,13 +83,9 @@ module Rouge
         debug email job log thorlib util workunit
       )
 
-      state :string_character_escape do
-        rule %r/\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)/, Text
-      end
-
       state :single_quote do
         rule %r([xDQUV]?'([^'\\]*(?:\\.[^'\\]*)*)'), Str::Single
-        mixin :string_character_escape
+        rule %r/\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)/, Text
       end
 
       state :inline_whitespace do
@@ -100,7 +96,7 @@ module Rouge
 
       state :whitespace do
         rule %r/\n+/m, Text
-        rule %r(//.*?$), Comment::Single
+        rule %r(//.*), Comment::Single
         mixin :inline_whitespace
       end
 
@@ -108,7 +104,7 @@ module Rouge
 	mixin :whitespace
 	mixin :single_quote
 
-        rule %r(\b(?i:(#{functions.join('|')}))\s*(\()), Name::Function
+        rule %r(\b(?i:(begin|end)c\+\+)), Keyword
         rule %r(\b(?i:(#{keywords.join('|')}))\b), Keyword
         rule %r(#(?i:(#{template.join('|')}))\b), Keyword::Declaration
         rule %r(\b(?i:(std)\.(#{class1.join('|')})\.(#{class2.join('|')}))\b), Name::Class
@@ -123,16 +119,16 @@ module Rouge
         rule %r([:=||>|<|<>|/|\\|+|-|=]), Operator 
 
         rule %r(\d+\.\d+(e[\+\-]?\d+)?), Num::Float
-        rule %r(x[0-9a-fA-F]+), Num::Hex
+        rule %r/x[0-9a-f]+/i, Num::Hex
 
-        rule %r(0[xX][0-9a-fA-F]+), Num::Hex
-        rule %r(0[0-9a-fA-F]+[xX]), Num::Hex
+        rule %r/0x[0-9a-f]+/i, Num::Hex
+        rule %r/0[0-9a-f]+x/i, Num::Hex
         rule %r(0[bB][01]+), Num::Bin
         rule %r([01]+[bB]), Num::Bin
         rule %r(\d+), Num::Integer
-        rule %r(\b(?i:(false|true))\b), Name
+        rule %r(\b(?i:(false|true))\b), Keyword::Constant
 
-        rule %r([\[\]{}();,]), Punctuation
+        rule %r([\[\]{}();,\&,\.,\%]), Punctuation
 	rule %r(#{id}), Name
       end
     end

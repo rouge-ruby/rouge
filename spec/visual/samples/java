@@ -680,3 +680,6 @@ public class PlatformManagerImpl implements PlatformManager
     {
     }
 }
+
+// Permit Unicode characters in identifiers
+getHauptadresse().setStraßePostfach("Am Hundsacker 6");

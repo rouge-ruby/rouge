@@ -345,8 +345,8 @@ module Rouge
     end
 
     def as_lexer(val, opts={})
-      return as_lexer(val.last) if val.is_a?(Array)
-      return val.new(opts) if val.is_a?(Class) && val < Lexer
+      return as_lexer(val.last, opts) if val.is_a?(Array)
+      return val.new(opts) if val.respond_to?(:tag) && val.respond_to?(:new)
 
       case val
       when Lexer

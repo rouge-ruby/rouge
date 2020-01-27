@@ -200,9 +200,17 @@ module Rouge
         yield %[                            delimiters. implies --escape]
       end
 
-      # TODO: find a better way to do this?
+      # There is no consistent way to do this, but this is used elsewhere,
+      # and we provide explicit opt-in and opt-out with $COLORTERM
       def self.supports_truecolor?
-        ENV['TERM'] == 'xterm' || %w(24bit truecolor).include?(ENV['COLORTERM'])
+        return true if %w(24bit truecolor).include?(ENV['COLORTERM'])
+        return false if ENV['COLORTERM'] && ENV['COLORTERM'] =~ /256/
+
+        if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
+          ENV['ConEmuANSI'] == 'ON' && !ENV['ANSICON']
+        else
+          ENV['TERM'] !~ /(^rxvt)|(-color$)/
+        end
       end
 
       def self.parse(argv)

@@ -117,6 +117,53 @@ The built-in formatters are:
   highlighted text for use in the terminal. `theme` must be an instance of
   `Rouge::Theme`, or a `Hash` structure with `:theme` entry.
 
+#### Writing your own HTML formatter
+
+If the above formatters are not sufficient, and you wish to customize the layout of the HTML document, we suggest writing your own HTML formatter. This can be accomplished by subclassing `Rouge::Formatters::HTML` and overriding specific methods:
+
+
+``` ruby
+class MyFormatter < Rouge::Formatters::HTML
+
+  # this is the main entry method. override this
+  # to customize the behavior of the HTML blob as
+  # a whole
+  def stream(tokens, &block)
+    yield "<div class='my-outer-div'>"
+
+    tokens.each do |token, value|
+      # for every token in the output, we render a span
+      yield span(token, value)
+    end
+
+    yield "</div>"
+  end
+
+  # or, if you need linewise processing, try:
+  def stream(tokens, &block)
+    token_lines(tokens).each do |line_tokens|
+      yield "<div class='my-cool-line'>"
+      line_tokens.each do |token, value|
+        yield span(token, value)
+      end
+      yield "</div>"
+    end
+  end
+
+  # Override this method to control how individual spans are rendered.
+  # The value `safe_value` will already be HTML-escaped.
+  def safe_span(token, safe_value)
+    # in this case, "text" tokens don't get surrounded by a span
+    if token == Token::Tokens::Text
+      safe_value
+    else
+      "<span class=\"#{token.shortname}\">#{safe_value}</span>"
+    end
+  end
+end
+```
+
+
 ### Lexer Options
 
 * `debug: false` will print a trace of the lex on stdout.

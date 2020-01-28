@@ -125,9 +125,10 @@ If the above formatters are not sufficient, and you wish to customize the layout
 ``` ruby
 class MyFormatter < Rouge::Formatters::HTML
 
-  # this is the main entry method. override this
-  # to customize the behavior of the HTML blob as
-  # a whole
+  # this is the main entry method. override this to customize the behavior of
+  # the HTML blob as a whole. it should receive an Enumerable of (token, value)
+  # pairs and yield out fragments of the resulting html string. see the docs
+  # for the methods available on Token.
   def stream(tokens, &block)
     yield "<div class='my-outer-div'>"
 

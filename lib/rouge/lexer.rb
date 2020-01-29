@@ -505,12 +505,13 @@ module Rouge
   end
 
   module Lexers
+    BASE_DIR = "#{__dir__}/lexers".freeze
     @_loaded_lexers = {}
 
     def self.load_lexer(relpath)
       return if @_loaded_lexers.key?(relpath)
       @_loaded_lexers[relpath] = true
-      load File.join(__dir__, 'lexers', relpath)
+      load File.join(BASE_DIR, relpath)
     end
   end
 end

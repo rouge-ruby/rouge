@@ -19,7 +19,7 @@ module Rouge
 
       # self-modifying method that loads the keywords file
       def self.keywords
-        load File.join(__dir__, 'gherkin/keywords.rb')
+        load File.join(Lexers::BASE_DIR, 'gherkin/keywords.rb')
         keywords
       end
 

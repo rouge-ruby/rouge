@@ -48,7 +48,10 @@ module Rouge
 
       state :content do
         mixin :basic
+        rule %r/"""/, Str, :mdq
         rule %r/"/, Str, :dq
+        rule %r/'''/, Str, :msq
+        rule %r/'/, Str, :sq
         mixin :esc_str
         rule %r/\,/, Punctuation
         rule %r/\[/, Punctuation, :array
@@ -56,8 +59,28 @@ module Rouge
 
       state :dq do
         rule %r/"/, Str, :pop!
+        rule %r/\n/, Error, :pop!
+        mixin :esc_str
+        rule %r/[^\\"\n]+/, Str
+      end
+
+      state :mdq do
+        rule %r/"""/, Str, :pop!
         mixin :esc_str
         rule %r/[^\\"]+/, Str
+        rule %r/"+/, Str
+      end
+
+      state :sq do
+        rule %r/'/, Str, :pop!
+        rule %r/\n/, Error, :pop!
+        rule %r/[^'\n]+/, Str
+      end
+
+      state :msq do
+        rule %r/'''/, Str, :pop!
+        rule %r/[^']+/, Str
+        rule %r/'+/, Str
       end
 
       state :esc_str do

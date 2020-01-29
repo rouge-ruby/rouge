@@ -34,15 +34,10 @@ module Rouge
         push :lasso if start_inline?
       end
 
-      class << self
-        attr_reader :keywords
-      end
-
-      # Load Lasso keywords from separate YML file
-      @keywords = ::YAML.load_file(File.join(__dir__, 'lasso/keywords.yml')).tap do |h|
-        h.each do |k,v|
-          h[k] = Set.new v
-        end
+      # self-modifying method that loads the keywords file
+      def self.keywords
+        load File.join(__dir__, 'lasso/keywords.rb')
+        keywords
       end
 
       id = /[a-z_][\w.]*/i

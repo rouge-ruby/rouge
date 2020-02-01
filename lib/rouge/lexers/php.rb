@@ -28,6 +28,10 @@ module Rouge
         @disabledmodules = list_option(:disabledmodules)
       end
 
+      def start_inline?
+        !!@start_inline
+      end
+
       def self.builtins
         load File.join(__dir__, 'php/builtins.rb')
         self.builtins

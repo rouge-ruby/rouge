@@ -231,14 +231,11 @@ module Rouge
         self
       end
 
-      attr_reader :last_registered
-
     protected
       # @private
       def register(name, lexer)
         # reset an existing list of lexers
         @all = nil if defined?(@all)
-        @last_registered = lexer
         registry[name.to_s] = lexer
       end
 

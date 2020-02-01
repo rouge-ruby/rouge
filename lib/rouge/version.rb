@@ -3,6 +3,6 @@
 
 module Rouge
   def self.version
-    "3.15.0"
+    "4.0.0-beta-1"
   end
 end

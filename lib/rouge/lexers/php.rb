@@ -48,6 +48,10 @@ module Rouge
         )
       end
 
+      def start_inline?
+        !!@start_inline
+      end
+
       def self.builtins
         Kernel::load File.join(Lexers::BASE_DIR, 'php/keywords.rb')
         builtins

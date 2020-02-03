@@ -47,6 +47,8 @@ MyInt3 := 0Ax; // value of MyInt3 is the INTEGER value 10
 MyInt4 := 0b1010; // value of MyInt4 is the INTEGER value 10
 MyInt5 := 1010b; // value of MyInt5 is the INTEGER value 10
 MyReal := 10.0; // value of MyReal is the REAL value 10.0
+MyRea2 := 1.0e1; // value of MyReal2 is the REAL value 10.0
+MyRea3 := 1.0E1; // value of MyReal3 is the REAL value 10.0
 
 MyFunc(STRING1 val, SET OF STRING1 S=ALL) := val IN S;
 

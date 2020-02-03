@@ -91,7 +91,7 @@ module Rouge
       state :inline_whitespace do
         rule %r/[ \t\r]+/, Text
         rule %r/\\\n/, Text # line continuation
-        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
+        rule %r(/[*].*?[*]/)m, Comment::Multiline
       end
 
       state :whitespace do
@@ -116,9 +116,9 @@ module Rouge
         rule %r(\b(?i:(u)?decimal)(\d+(_\d+)?)\b), Keyword::Type
 
         rule %r(\b(?i:(and|not|or|in))\b), Operator::Word
-        rule %r([:=||>|<|<>|/|\\|+|-|=]), Operator 
+        rule %r([:=|>|<|<>|/|\\|+|-|=]), Operator 
 
-        rule %r(\d+\.\d+(e[\+\-]?\d+)?), Num::Float
+        rule %r/\d+\.\d+(e[\+\-]?\d+)?/i, Num::Float
         rule %r/x[0-9a-f]+/i, Num::Hex
 
         rule %r/0x[0-9a-f]+/i, Num::Hex

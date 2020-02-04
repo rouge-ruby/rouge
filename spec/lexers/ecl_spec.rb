@@ -9,7 +9,6 @@ describe Rouge::Lexers::ECL do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.ecl'
-      assert_guess :filename => 'FOO.ECL'
     end
 
     it 'guesses by mimetype' do

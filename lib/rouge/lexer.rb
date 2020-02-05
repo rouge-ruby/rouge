@@ -209,7 +209,8 @@ module Rouge
       # Determine if a lexer has a method named +:detect?+ defined in its
       # singleton class.
       def detectable?
-        @detectable ||= methods(false).include?(:detect?)
+        return @detectable if defined?(@detectable)
+        @detectable = singleton_methods(false).include?(:detect?)
       end
 
     protected

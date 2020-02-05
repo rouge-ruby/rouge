@@ -1,9 +1,4 @@
 ; Simple test of the NASM parser
-;
-; Sample compilation (requires 32-bit support from NASM and GCC).
-;   nasm -f elf32 spec/visual/samples/nasm -o nasm.o
-;   gcc -m32 nasm.o -o nasm
-;   ./nasm
 
 ; Data section, initialized variables
 SECTION .data

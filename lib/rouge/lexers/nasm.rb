@@ -189,8 +189,7 @@ module Rouge
         rule %r/\d+[lu]*/i, Num::Integer
         rule %r(\*/), Error
         rule %r([~&*+=\|?:<>/-]), Operator
-        rule %r/[(),.]/, Punctuation
-        rule %r/\[[a-zA-Z0-9]*\]/, Punctuation
+        rule %r/[(),.\[\]]/, Punctuation
         rule %r/%[0-9]+/, Keyword::Reserved
         rule %r/[a-zA-Z]+%[0-9]+/, Name::Function  #labels/subroutines/functions
 

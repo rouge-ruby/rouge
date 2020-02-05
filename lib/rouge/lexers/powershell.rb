@@ -207,7 +207,7 @@ module Rouge
           push :bracket
         end
 
-        rule %r/([\/\\~\w][-.:\/\\~\w]*)(\[)?(\n)?/ do |m|
+        rule %r/([\/\\~\w][-.:\/\\~\w]*)(\n)?/ do |m|
           groups Name::Function, Text::Whitespace
           push :parameters unless m[2]
         end

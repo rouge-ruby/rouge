@@ -52,3 +52,9 @@ irq_common_stub:
 IRQ i, i+32
 %assign i i+1
 %endrep
+
+mov eax, [eax]
+mov eax, [eax + ebx]
+mov eax, [eax + ebx*2]
+mov eax, [eax + 10]
+mov eax, [eax + ebx*2 + 10]

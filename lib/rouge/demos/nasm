@@ -10,12 +10,12 @@
 extern irq_handler
 
 irq_common_stub:
-    pusha           ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
-    mov ax, ds      ; Lower 16-bits of eax = ds.
-    push eax        ; save the data segment descriptor
-    mov ax, 0x10    ; load the kernel data segment descriptor
-    mov edx, eax
-    call irq_handler
+    pusha             ; push all general-purpose registers
+    mov   ax, ds      ; lower 16-bits of eax = ds
+    push  eax         ; save the data segment descriptor
+    mov   ax, 0x10    ; load the kernel data segment descriptor
+    mov   edx, eax
+    call  irq_handler
 
 %assign i 0
 %rep 8

@@ -119,8 +119,10 @@ The built-in formatters are:
 
 #### Writing your own HTML formatter
 
-If the above formatters are not sufficient, and you wish to customize the layout of the HTML document, we suggest writing your own HTML formatter. This can be accomplished by subclassing `Rouge::Formatters::HTML` and overriding specific methods:
-
+If the above formatters are not sufficient, and you wish to customize the layout
+of the HTML document, we suggest writing your own HTML formatter. This can be
+accomplished by subclassing `Rouge::Formatters::HTML` and overriding specific
+methods:
 
 ``` ruby
 class MyFormatter < Rouge::Formatters::HTML
@@ -163,7 +165,6 @@ class MyFormatter < Rouge::Formatters::HTML
   end
 end
 ```
-
 
 ### Lexer Options
 

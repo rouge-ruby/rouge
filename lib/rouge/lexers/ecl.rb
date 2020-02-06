@@ -108,8 +108,8 @@ module Rouge
       typenum = /${id}\d+/
 
       state :root do
-	mixin :whitespace
-	mixin :single_quote
+        mixin :whitespace
+        mixin :single_quote
 
         rule %r(\b(?i:(and|not|or|in))\b), Operator::Word
         rule %r([:=|>|<|<>|/|\\|+|-|=]), Operator 

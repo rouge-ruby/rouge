@@ -204,7 +204,7 @@ module Rouge
             @@scope = :with
             push :withBlockOrBrackets
           elsif self.class.class_defs.include? identifier
-            @@isScenarioDef = identifier == "scenario" or identifier == "modifier"
+            @@isScenarioDef = ((identifier == "scenario") or (identifier == "modifier"))
             @@isExtend = identifier == "extend"
             @@hasDot = false
             push :classname
@@ -256,7 +256,7 @@ module Rouge
         rule %r/ /, Text::Whitespace
         rule %r/\(/ do
           token Punctuation
-          goto :modifierBrackets
+          push :modifierBrackets
         end
         rule %r/\:/ do
           token Punctuation
@@ -334,6 +334,18 @@ module Rouge
         rule(/#{identifier}(?=\.[^\.])/) do |m|
           goto :path
           parseIdentifier(m[0], Name)
+        end
+        rule(/(#{identifier})(\:)/) do |m|
+          if self.class.operator_scenarios.include? m[1]
+            pop!
+            token Keyword::Declaration, m[1]
+            @@scope = :op
+            @@expectingIndent = true
+            push :sceAndModBlock
+          else
+            token Name::Label, m[1]
+          end
+          token Punctuation, m[2]
         end
         rule identifier do |m|
           pop!
@@ -427,14 +439,13 @@ module Rouge
         rule(/\)/) do
           token Punctuation
           pop!
-          @@scope = @@indents[0][1]
         end
         rule(/\(/) do
           token Punctuation
           push :brackets
         end
         mixin :label
-        mixin :scopeDependantIdentifier
+        mixin :identifier
         rule %r/\.\./, Punctuation
         rule %r/[\[\]{}.,:;\@]/, Punctuation
         mixin :whitespace

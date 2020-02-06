@@ -38,59 +38,60 @@ module Rouge
   end
 end
 
-def rouge_relative(path)
-  File.join(Rouge::LIB_DIR, "rouge/#{path}.rb")
+# mimic Kernel#require_relative API
+def load_relative(path)
+  load File.join(Rouge::LIB_DIR, "#{path}.rb")
 end
 
 def lexer_dir(path = '')
   File.join(Rouge::LIB_DIR, 'rouge/lexers', path)
 end
 
-load rouge_relative 'version'
-load rouge_relative 'util'
-load rouge_relative 'text_analyzer'
-load rouge_relative 'token'
+load_relative 'rouge/version'
+load_relative 'rouge/util'
+load_relative 'rouge/text_analyzer'
+load_relative 'rouge/token'
 
-load rouge_relative 'lexer'
-load rouge_relative 'regex_lexer'
-load rouge_relative 'template_lexer'
+load_relative 'rouge/lexer'
+load_relative 'rouge/regex_lexer'
+load_relative 'rouge/template_lexer'
 
 Dir.glob(lexer_dir('*rb')).each { |f| Rouge::Lexers.load_lexer(f.sub(lexer_dir, '')) }
 
-load rouge_relative 'guesser'
-load rouge_relative 'guessers/util'
-load rouge_relative 'guessers/glob_mapping'
-load rouge_relative 'guessers/modeline'
-load rouge_relative 'guessers/filename'
-load rouge_relative 'guessers/mimetype'
-load rouge_relative 'guessers/source'
-load rouge_relative 'guessers/disambiguation'
+load_relative 'rouge/guesser'
+load_relative 'rouge/guessers/util'
+load_relative 'rouge/guessers/glob_mapping'
+load_relative 'rouge/guessers/modeline'
+load_relative 'rouge/guessers/filename'
+load_relative 'rouge/guessers/mimetype'
+load_relative 'rouge/guessers/source'
+load_relative 'rouge/guessers/disambiguation'
 
-load rouge_relative 'formatter'
-load rouge_relative 'formatters/html'
-load rouge_relative 'formatters/html_table'
-load rouge_relative 'formatters/html_pygments'
-load rouge_relative 'formatters/html_legacy'
-load rouge_relative 'formatters/html_linewise'
-load rouge_relative 'formatters/html_line_table'
-load rouge_relative 'formatters/html_inline'
-load rouge_relative 'formatters/terminal256'
-load rouge_relative 'formatters/terminal_truecolor'
-load rouge_relative 'formatters/tex'
-load rouge_relative 'formatters/null'
+load_relative 'rouge/formatter'
+load_relative 'rouge/formatters/html'
+load_relative 'rouge/formatters/html_table'
+load_relative 'rouge/formatters/html_pygments'
+load_relative 'rouge/formatters/html_legacy'
+load_relative 'rouge/formatters/html_linewise'
+load_relative 'rouge/formatters/html_line_table'
+load_relative 'rouge/formatters/html_inline'
+load_relative 'rouge/formatters/terminal256'
+load_relative 'rouge/formatters/terminal_truecolor'
+load_relative 'rouge/formatters/tex'
+load_relative 'rouge/formatters/null'
 
-load rouge_relative 'theme'
-load rouge_relative 'tex_theme_renderer'
-load rouge_relative 'themes/thankful_eyes'
-load rouge_relative 'themes/colorful'
-load rouge_relative 'themes/base16'
-load rouge_relative 'themes/github'
-load rouge_relative 'themes/igor_pro'
-load rouge_relative 'themes/monokai'
-load rouge_relative 'themes/molokai'
-load rouge_relative 'themes/monokai_sublime'
-load rouge_relative 'themes/gruvbox'
-load rouge_relative 'themes/tulip'
-load rouge_relative 'themes/pastie'
-load rouge_relative 'themes/bw'
-load rouge_relative 'themes/magritte'
+load_relative 'rouge/theme'
+load_relative 'rouge/tex_theme_renderer'
+load_relative 'rouge/themes/thankful_eyes'
+load_relative 'rouge/themes/colorful'
+load_relative 'rouge/themes/base16'
+load_relative 'rouge/themes/github'
+load_relative 'rouge/themes/igor_pro'
+load_relative 'rouge/themes/monokai'
+load_relative 'rouge/themes/molokai'
+load_relative 'rouge/themes/monokai_sublime'
+load_relative 'rouge/themes/gruvbox'
+load_relative 'rouge/themes/tulip'
+load_relative 'rouge/themes/pastie'
+load_relative 'rouge/themes/bw'
+load_relative 'rouge/themes/magritte'

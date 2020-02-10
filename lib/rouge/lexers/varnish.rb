@@ -145,40 +145,40 @@ module Rouge
             }
 
             state :default do
-                rule /\r\n?|\n/ do
+                rule(/\r\n?|\n/) do
                     token STATES_MAP[state.name.to_sym]
                 end
-                rule /./ do
+                rule(/./) do
                     token STATES_MAP[state.name.to_sym]
                 end
             end
 
             state :root do
                 # long strings ({" ... "})
-                rule %r'\{".*?"}'m, Str::Single
+                rule(%r'\{".*?"}'m, Str::Single)
 
                 # comments
-                rule %r'/\*.*?\*/'m, Comment::Multiline
-                rule %r'(?://|#).*', Comment::Single
+                rule(%r'/\*.*?\*/'m, Comment::Multiline)
+                rule(%r'(?://|#).*', Comment::Single)
 
-                rule /true|false/, Keyword::Constant
+                rule(/true|false/, Keyword::Constant)
 
                 # "wildcard variables"
-                rule /(?:(?:be)?re(?:sp|q)|obj)\.http\.[a-zA-Z0-9_.-]+/ do
+                rule(/(?:(?:be)?re(?:sp|q)|obj)\.http\.[a-zA-Z0-9_.-]+/) do
                     token Name::Variable
                 end
 
-                rule /(sub)(#{SPACE})([a-zA-Z0-9_-]+)/ do
+                rule(/(sub)(#{SPACE})([a-zA-Z0-9_-]+)/) do
                     groups Keyword, Text, Name::Function
                 end
 
                 # inline C (C{ ... }C)
-                rule /C\{/ do
+                rule(/C\{/) do
                     token Comment::Preproc
                     push :inline_c
                 end
 
-                rule /[a-zA-Z_.-]+/ do |m|
+                rule(/[a-zA-Z_.-]+/) do |m|
                     next token Keyword if KEYWORDS.include? m[0]
                     next token Name::Function if BUILTIN_FUNCTIONS.include? m[0]
                     next token Name::Variable if BUILTIN_VARIABLES.include? m[0]
@@ -186,36 +186,36 @@ module Rouge
                 end
 
                 # duration
-                rule /(?:#{LNUM}|#{DNUM})(?:ms|[smhdwy])/, Literal::Number::Other
+                rule(/(?:#{LNUM}|#{DNUM})(?:ms|[smhdwy])/, Literal::Number::Other)
                 # size in bytes
-                rule /#{LNUM}[KMGT]?B/, Literal::Number::Other
+                rule(/#{LNUM}[KMGT]?B/, Literal::Number::Other)
                 # literal numeric values (integer/float)
-                rule /#{LNUM}/, Num::Integer
-                rule /#{DNUM}/, Num::Float
+                rule(/#{LNUM}/, Num::Integer)
+                rule(/#{DNUM}/, Num::Float)
 
                 # standard strings
-                rule /"/ do |m|
+                rule(/"/) do |m|
                     token Str::Double
                     push :string
                 end
 
-                rule %r'[&|+-]{2}|[<=>!*/+-]=|<<|>>|!~|[-+*/%><=!&|~]', Operator
+                rule(%r'[&|+-]{2}|[<=>!*/+-]=|<<|>>|!~|[-+*/%><=!&|~]', Operator)
 
-                rule /[{}();.,]/, Punctuation
+                rule(/[{}();.,]/, Punctuation)
 
                 mixin :default
             end
 
             state :string do
-                rule /"/, Str::Double, :pop!
-                rule /\\[\\"nt]/, Str::Escape
+                rule(/"/, Str::Double, :pop!)
+                rule(/\\[\\"nt]/, Str::Escape)
 
                 mixin :default
             end
 
             state :inline_c do
-                rule /}C/, Comment::Preproc, :pop!
-                rule /.*?(?=}C)/m do
+                rule(/}C/, Comment::Preproc, :pop!)
+                rule(/.*?(?=}C)/m) do
                     delegate C
                 end
             end

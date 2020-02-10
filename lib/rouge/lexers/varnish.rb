@@ -18,7 +18,7 @@ module Rouge
 #             VAR = IDENT | '.'
 
             # backend acl
-            KEYWORDS = Set.new %w[vcl set unset include import if else elseif elif elsif]
+            KEYWORDS = Set.new %w[vcl set unset include import if else elseif elif elsif director probe backend acl]
 
             BUILTIN_FUNCTIONS = Set.new %w[
                 ban

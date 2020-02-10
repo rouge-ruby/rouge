@@ -6,7 +6,6 @@ describe Rouge::Lexers::Varnish do
 
     it 'guesses by filename' do
       assert_guess :filename => 'varnish.vcl'
-      assert_guess :filename => 'builtin.vcl'
     end
 
     it 'guesses by mimetype' do

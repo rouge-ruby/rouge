@@ -19,7 +19,8 @@ module Rouge
       # backend acl
       def self.keywords
         @keywords ||= Set.new %w[
-          vcl set unset include import if else elseif elif elsif
+          vcl set unset include import if else elseif elif elsif director probe
+          backend acl
         ]
       end
 

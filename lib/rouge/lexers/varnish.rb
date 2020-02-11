@@ -67,7 +67,7 @@ module Rouge
 
         # comments
         rule %r'/\*.*?\*/'m, Comment::Multiline
-        rule %r'(?:/|#).*', Comment::Single
+        rule %r'(?://|#).*', Comment::Single
 
         rule %r/true|false/, Keyword::Constant
 

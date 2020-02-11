@@ -112,13 +112,13 @@ module Rouge
         mixin :single_quote
 
         rule %r(\b(?i:(and|not|or|in))\b), Operator::Word
-        rule %r(:=|>|<|<>|/|\\|+|-|=), Operator 
+        rule %r([:=|>|<|<>|/|\\|+|-|=]), Operator 
         rule %r([\[\]{}();,\&,\.,\%]), Punctuation
 
         rule %r(\b(?i:(begin|end)c\+\+)), Keyword
         rule %r(\b(?i:(std)\.(#{class1.join('|')})\.(#{class2.join('|')}))\b), Name::Class
 
-        rule %r(\b(?i:#{template.join('|')})\b), Keyword::Type
+        rule %r(#\b(?i:#{template.join('|')})\b), Keyword::Type
         rule %r(\b(?i:#{typed.join('|')})\d+\b), Keyword::Type
         rule %r(\b(?i:(integer|unsigned))[1-8]\b), Keyword::Type
         rule %r(\b(?i:real)(4|8)\b), Keyword::Type

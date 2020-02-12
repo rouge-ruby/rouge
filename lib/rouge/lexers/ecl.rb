@@ -10,7 +10,7 @@ module Rouge
 
       title "ECL"
       desc "Enterprise Control Language (hpccsystems.com)"
-      
+
       id = /[a-z_][a-z0-9_]*/i
 
       template = %w(
@@ -36,7 +36,7 @@ module Rouge
         @keywords ||= Set.new %w(
           and or in not all any as from 
           atmost before best between case const counter 
-          csv descend embed encrypt end endembed endmacro
+          csv descend encrypt end endmacro
           enum except exclusive expire export extend fail few 
           first flat full function functionmacro group heading hole 
           ifblock import joined keep keyed last left limit 
@@ -115,7 +115,8 @@ module Rouge
         rule %r([:=|>|<|<>|/|\\|\+|-|=]), Operator 
         rule %r([\[\]{}();,\&,\.,\%]), Punctuation
 
-        rule %r(\b(?i:(begin|end)c\+\+)), Keyword
+        rule %r(\b(?i:(beginc\+\+.*?endc\+\+)))m, Str::Single
+        rule %r(\b(?i:(embed.*?endembed)))m, Str::Single
         rule %r(\b(?i:(std)\.(#{class1.join('|')})\.(#{class2.join('|')}))\b), Name::Class
 
         rule %r(#\b(?i:#{template.join('|')})\b), Keyword::Type

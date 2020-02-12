@@ -112,7 +112,7 @@ module Rouge
         mixin :single_quote
 
         rule %r(\b(?i:(and|not|or|in))\b), Operator::Word
-        rule %r([:=|>|<|<>|/|\\|+|-|=]), Operator 
+        rule %r([:=|>|<|<>|/|\\|\+|-|=]), Operator 
         rule %r([\[\]{}();,\&,\.,\%]), Punctuation
 
         rule %r(\b(?i:(begin|end)c\+\+)), Keyword

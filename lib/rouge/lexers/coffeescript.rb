@@ -59,8 +59,8 @@ module Rouge
       end
 
       state :regex_comment do
-        rule /^#(?!\{).*$/, Comment::Single
-        rule /(\s+)(#(?!\{).*)$/ do
+        rule %r/^#(?!\{).*$/, Comment::Single
+        rule %r/(\s+)(#(?!\{).*)$/ do
           groups Text, Comment::Single
         end
       end
@@ -106,8 +106,6 @@ module Rouge
         rule(%r(^(?=\s|/|<!--))) { push :slash_starts_regex }
         mixin :comments
         mixin :whitespace
-
-        rule /#{id}(?=\s*:)/, Name::Attribute
 
         rule %r(
           [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\bin\b|\bof\b|

@@ -11,18 +11,22 @@ module Rouge
       title "ECL"
       desc "Enterprise Control Language (hpccsystems.com)"
 
-      id = /[a-z_][a-z0-9_]*/i
+      id = /(#?)\b([a-z_][\w]*?)(\d*)\b/i
 
-      template = %w(
-        append apply break constant debug declare demangle else elseif
-        end endregion error expand export exportxml for forall getdatatype if
-        ifdefined inmodule isdefined isvalid line link loop mangle onwarning option
-        region set stored text trace uniquename warning webservice workunit loadxml
-      )
+      def self.template
+        @template ||= Set.new %w(
+          append apply break constant debug declare demangle else elseif
+          end endregion error expand export exportxml for forall getdatatype if
+          ifdefined inmodule isdefined isvalid line link loop mangle onwarning option
+          region set stored text trace uniquename warning webservice workunit loadxml
+        )
+      end
 
-      typed = %w(
-        data string qstring varstring varunicode unicode utf8
-      )
+      def self.typed
+        @typed ||= Set.new %w(
+          data string qstring varstring varunicode unicode utf8
+        )
+      end
 
       def self.type
         @type ||= Set.new %w(
@@ -80,13 +84,17 @@ module Rouge
         )
       end
 
-      class1 = %w(
-        file date str math metaphone metaphone3 uni audit blas system
-      )
+      def self.first_class
+        @class1 ||= Set.new %w(
+          file date str math metaphone metaphone3 uni audit blas system
+        )
+      end
 
-      class2 = %w(
-        debug email job log thorlib util workunit
-      )
+      def self.second_class
+        @class2 ||= Set.new %w(
+          debug email job log thorlib util workunit
+        )
+      end
 
       state :single_quote do
         rule %r([xDQUV]?'([^'\\]*(?:\\.[^'\\]*)*)'), Str::Single
@@ -115,12 +123,16 @@ module Rouge
 
         rule %r(\b(?i:(beginc\+\+.*?endc\+\+)))m, Str::Single
         rule %r(\b(?i:(embed.*?endembed)))m, Str::Single
-        rule %r(\b(?i:(std)\.(#{class1.join('|')})\.(#{class2.join('|')}))\b), Name::Class
+        rule %r(\b(\w+)\.(\w+)\.(\w+)) do |m|
+          if m[1] == "std" &&
+             self.class.first_class.include?(m[2]) &&
+             self.class.second_class.include?(m[3])
+            token Name::Class
+          else
+            token Name::Variable
+          end
+        end
 
-        rule %r(#\b(?i:#{template.join('|')})\b), Keyword::Type
-        rule %r(\b(?i:#{typed.join('|')})\d+\b), Keyword::Type
-        rule %r(\b(?i:(integer|unsigned))[1-8]\b), Keyword::Type
-        rule %r(\b(?i:real)(4|8)\b), Keyword::Type
         rule %r(\b(?i:(u)?decimal)(\d+(_\d+)?)\b), Keyword::Type
 
         rule %r/\d+\.\d+(e[\+\-]?\d+)?/i, Num::Float
@@ -131,18 +143,33 @@ module Rouge
         rule %r(0[bB][01]+), Num::Bin
         rule %r([01]+[bB]), Num::Bin
         rule %r(\d+), Num::Integer
-        rule %r(\b(?i:(false|true))\b), Keyword::Constant
 
         rule id do |m|
-          name = m[0].downcase
-          if self.class.keywords.include? name
-            token Keyword 
-          elsif self.class.functions.include? name
-            token Name::Function
+          name_only = m[2].downcase
+          name      = name_only + m[3]
+          number    = (m[3] == "") ? nil : m[3].to_i
+          if m[1] == "#"
+            if self.class.template.include? name
+              token Keyword::Type
+            else
+              token Error
+            end
+          elsif self.class.typed.include?(name_only) && number != nil
+            token Keyword::Type
           elsif self.class.type.include? name
             token Keyword::Type
-          else 
-            token Name::Other 
+          elsif self.class.keywords.include? name
+            token Keyword
+          elsif self.class.functions.include? name
+            token Name::Function
+          elsif ["integer", "unsigned"].include?(name_only) && (1..8).cover?(number)
+            token Keyword::Type
+          elsif name_only == "real" && [4, 8].include?(number)
+            token Keyword::Type
+          elsif ["true", "false"].include? name
+            token Keyword::Constant
+          else
+            token Name::Other
           end
         end
       end

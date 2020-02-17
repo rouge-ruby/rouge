@@ -27,66 +27,62 @@ module Rouge
 
       def self.functions
         @functions ||= Set.new %w(
-          abs acos aggregate allnodes apply ascii asin asstring 
-          atan _token ave case catch choose choosen choosesets 
-          clustersize combine correlation cos cosh count covariance cron 
-          dataset dedup define denormalize dictionary distribute distributed distribution 
-          ebcdic enth error evaluate event eventextra eventname exists 
-          exp failcode failmessage fetch fromunicode fromxml getenv getisvalid 
-          global graph group hash hashcrc having httpcall httpheader 
-          if iff index intformat isvalid iterate join keyunicode 
-          length library limit ln local log loop map 
-          matched matchlength matchposition matchtext matchunicode max merge mergejoin 
-          min nofold nolocal nonempty normalize parse pipe power 
-          preload process project pull random range rank ranked 
-          realformat recordof regexfind regexreplace regroup rejected rollup round 
-          roundup row rowdiff sample set sin sinh sizeof 
-          soapcall sort sorted sqrt stepped stored sum table 
-          tan tanh thisnode topn tounicode toxml transfer transform 
-          trim truncate typeof ungroup unicodeorder variance which workunit 
-          xmldecode xmlencode xmltext xmlunicode apply assert build buildindex 
-          evaluate fail keydiff keypatch loadxml nothor notify output 
-          parallel sequential soapcall wait
+          abs acos aggregate allnodes apply ascii asin asstring atan _token ave
+          case catch choose choosen choosesets clustersize combine correlation
+          cos cosh count covariance cron dataset dedup define denormalize
+          dictionary distribute distributed distribution ebcdic enth error
+          evaluate event eventextra eventname exists exp failcode failmessage
+          fetch fromunicode fromxml getenv getisvalid global graph group hash
+          hashcrc having httpcall httpheader if iff index intformat isvalid
+          iterate join keyunicode length library limit ln local log loop map
+          matched matchlength matchposition matchtext matchunicode max merge
+          mergejoin min nofold nolocal nonempty normalize parse pipe power
+          preload process project pull random range rank ranked realformat
+          recordof regexfind regexreplace regroup rejected rollup round roundup
+          row rowdiff sample set sin sinh sizeof soapcall sort sorted sqrt
+          stepped stored sum table tan tanh thisnode topn tounicode toxml
+          transfer transform trim truncate typeof ungroup unicodeorder variance
+          which workunit xmldecode xmlencode xmltext xmlunicode apply assert
+          build buildindex evaluate fail keydiff keypatch loadxml nothor notify
+          output parallel sequential soapcall wait
         )
       end
 
       def self.keywords
         @keywords ||= Set.new %w(
-          and or in not all any as from 
-          atmost before best between case const counter 
-          csv descend encrypt end endmacro
-          enum except exclusive expire export extend fail few 
-          first flat full function functionmacro group heading hole 
-          ifblock import joined keep keyed last left limit 
-          load local locale lookup many maxcount maxlength 
-          _token module interface named nocase noroot noscan nosort 
-          of only opt outer overwrite packed partition penalty 
-          physicallength pipe quote record repeat return right rows 
-          scan self separator service shared skew skip sql 
-          store terminator thor threshold token transform trim type 
-          unicodeorder unsorted validate virtual whole wild within xml 
-          xpath after cluster compressed compression default encoding escape 
-          fileposition forward grouped inner internal linkcounted literal lzw 
-          mofn multiple namespace wnotrim noxpath onfail prefetch retry 
-          rowset scope smart soapaction stable timelimit timeout unordered 
-          unstable update use width
+          and or in not all any as from atmost before best between case const
+          counter csv descend encrypt end endmacro enum except exclusive expire
+          export extend fail few first flat full function functionmacro group
+          heading hole ifblock import joined keep keyed last left limit load
+          local locale lookup many maxcount maxlength _token module interface
+          named nocase noroot noscan nosort of only opt outer overwrite packed
+          partition penalty physicallength pipe quote record repeat return
+          right rows scan self separator service shared skew skip sql store
+          terminator thor threshold token transform trim type unicodeorder
+          unsorted validate virtual whole wild within xml xpath after cluster
+          compressed compression default encoding escape fileposition forward
+          grouped inner internal linkcounted literal lzw mofn multiple
+          namespace wnotrim noxpath onfail prefetch retry rowset scope smart
+          soapaction stable timelimit timeout unordered unstable update use
+          width
         )
       end
 
       def self.template
         @template ||= Set.new %w(
-          append apply break constant debug declare demangle else elseif
-          end endregion error expand export exportxml for forall getdatatype if
-          ifdefined inmodule isdefined isvalid line link loop mangle onwarning option
-          region set stored text trace uniquename warning webservice workunit loadxml
+          append apply break constant debug declare demangle else elseif end
+          endregion error expand export exportxml for forall getdatatype if
+          ifdefined inmodule isdefined isvalid line link loop mangle onwarning
+          option region set stored text trace uniquename warning webservice
+          workunit loadxml
         )
       end
 
       def self.type
         @type ||= Set.new %w(
           ascii big_endian boolean data decimal ebcdic grouped integer
-          linkcounted pattern qstring real record rule set of streamed
-          string token udecimal unicode utf8 unsigned varstring varunicode
+          linkcounted pattern qstring real record rule set of streamed string
+          token udecimal unicode utf8 unsigned varstring varunicode
         )
       end
 
@@ -118,7 +114,7 @@ module Rouge
         mixin :single_quote
 
         rule %r(\b(?i:(and|not|or|in))\b), Operator::Word
-        rule %r([:=|>|<|<>|/|\\|\+|-|=]), Operator 
+        rule %r([:=|>|<|<>|/|\\|\+|-|=]), Operator
         rule %r([\[\]{}();,\&,\.,\%]), Punctuation
 
         rule %r(\b(?i:(beginc\+\+.*?endc\+\+)))m, Str::Single

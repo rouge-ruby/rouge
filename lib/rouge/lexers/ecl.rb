@@ -13,49 +13,15 @@ module Rouge
 
       id = /(#?)\b([a-z_][\w]*?)(\d*)\b/i
 
-      def self.template
-        @template ||= Set.new %w(
-          append apply break constant debug declare demangle else elseif
-          end endregion error expand export exportxml for forall getdatatype if
-          ifdefined inmodule isdefined isvalid line link loop mangle onwarning option
-          region set stored text trace uniquename warning webservice workunit loadxml
+      def self.class_first
+        @class1 ||= Set.new %w(
+          file date str math metaphone metaphone3 uni audit blas system
         )
       end
 
-      def self.typed
-        @typed ||= Set.new %w(
-          data string qstring varstring varunicode unicode utf8
-        )
-      end
-
-      def self.type
-        @type ||= Set.new %w(
-          ascii big_endian boolean data decimal ebcdic grouped integer
-          linkcounted pattern qstring real record rule set of streamed
-          string token udecimal unicode utf8 unsigned varstring varunicode
-        )
-      end
-
-      def self.keywords
-        @keywords ||= Set.new %w(
-          and or in not all any as from 
-          atmost before best between case const counter 
-          csv descend encrypt end endmacro
-          enum except exclusive expire export extend fail few 
-          first flat full function functionmacro group heading hole 
-          ifblock import joined keep keyed last left limit 
-          load local locale lookup many maxcount maxlength 
-          _token module interface named nocase noroot noscan nosort 
-          of only opt outer overwrite packed partition penalty 
-          physicallength pipe quote record repeat return right rows 
-          scan self separator service shared skew skip sql 
-          store terminator thor threshold token transform trim type 
-          unicodeorder unsorted validate virtual whole wild within xml 
-          xpath after cluster compressed compression default encoding escape 
-          fileposition forward grouped inner internal linkcounted literal lzw 
-          mofn multiple namespace wnotrim noxpath onfail prefetch retry 
-          rowset scope smart soapaction stable timelimit timeout unordered 
-          unstable update use width
+      def self.class_second
+        @class2 ||= Set.new %w(
+          debug email job log thorlib util workunit
         )
       end
 
@@ -84,15 +50,49 @@ module Rouge
         )
       end
 
-      def self.first_class
-        @class1 ||= Set.new %w(
-          file date str math metaphone metaphone3 uni audit blas system
+      def self.keywords
+        @keywords ||= Set.new %w(
+          and or in not all any as from 
+          atmost before best between case const counter 
+          csv descend encrypt end endmacro
+          enum except exclusive expire export extend fail few 
+          first flat full function functionmacro group heading hole 
+          ifblock import joined keep keyed last left limit 
+          load local locale lookup many maxcount maxlength 
+          _token module interface named nocase noroot noscan nosort 
+          of only opt outer overwrite packed partition penalty 
+          physicallength pipe quote record repeat return right rows 
+          scan self separator service shared skew skip sql 
+          store terminator thor threshold token transform trim type 
+          unicodeorder unsorted validate virtual whole wild within xml 
+          xpath after cluster compressed compression default encoding escape 
+          fileposition forward grouped inner internal linkcounted literal lzw 
+          mofn multiple namespace wnotrim noxpath onfail prefetch retry 
+          rowset scope smart soapaction stable timelimit timeout unordered 
+          unstable update use width
         )
       end
 
-      def self.second_class
-        @class2 ||= Set.new %w(
-          debug email job log thorlib util workunit
+      def self.template
+        @template ||= Set.new %w(
+          append apply break constant debug declare demangle else elseif
+          end endregion error expand export exportxml for forall getdatatype if
+          ifdefined inmodule isdefined isvalid line link loop mangle onwarning option
+          region set stored text trace uniquename warning webservice workunit loadxml
+        )
+      end
+
+      def self.type
+        @type ||= Set.new %w(
+          ascii big_endian boolean data decimal ebcdic grouped integer
+          linkcounted pattern qstring real record rule set of streamed
+          string token udecimal unicode utf8 unsigned varstring varunicode
+        )
+      end
+
+      def self.typed
+        @typed ||= Set.new %w(
+          data string qstring varstring varunicode unicode utf8
         )
       end
 
@@ -125,8 +125,8 @@ module Rouge
         rule %r(\b(?i:(embed.*?endembed)))m, Str::Single
         rule %r(\b(\w+)\.(\w+)\.(\w+)) do |m|
           if m[1] == "std" &&
-             self.class.first_class.include?(m[2]) &&
-             self.class.second_class.include?(m[3])
+             self.class.class_first.include?(m[2]) &&
+             self.class.class_second.include?(m[3])
             token Name::Class
           else
             token Name::Variable

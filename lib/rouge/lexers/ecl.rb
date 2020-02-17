@@ -105,8 +105,6 @@ module Rouge
         mixin :inline_whitespace
       end
 
-      typenum = /${id}\d+/
-
       state :root do
         mixin :whitespace
         mixin :single_quote

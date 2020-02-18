@@ -32,7 +32,7 @@ module Rouge
         rule %r/^#(?=[^#]).*?$/, Generic::Heading
         rule %r/^##*.*?$/, Generic::Subheading
 
-        rule %r/^([ \t]*)(`{3,}|~{3,})([^\n]*\n)((.*?)(\n)(\2))?/m do |m|
+        rule %r/^([ \t]*)(`{3,}|~{3,})([^\n]*\n)((.*?)(\n\1)(\2))?/m do |m|
           name = m[3].strip
           sublexer =
             begin

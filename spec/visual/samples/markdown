@@ -1074,3 +1074,7 @@ can't highlight me
 ``` json
 "a string": "with a triple backtick: ```"
 ```
+
+```` console
+$ hello "world"
+````

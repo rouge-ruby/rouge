@@ -13,17 +13,13 @@ module Rouge
 
       id = /(#?)\b([a-z_][\w]*?)(\d*)\b/i
 
-      def self.class_first
-        @class1 ||= Set.new %w(
-          file date str math metaphone metaphone3 uni audit blas system
-        )
-      end
+     class1 = %w(
+        file date str math metaphone metaphone3 uni audit blas system
+      )
 
-      def self.class_second
-        @class2 ||= Set.new %w(
-          debug email job log thorlib util workunit
-        )
-      end
+      class2 = %w(
+        debug email job log thorlib util workunit
+      )
 
       def self.functions
         @functions ||= Set.new %w(

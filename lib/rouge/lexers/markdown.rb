@@ -32,7 +32,7 @@ module Rouge
         rule %r/^#(?=[^#]).*?$/, Generic::Heading
         rule %r/^##*.*?$/, Generic::Subheading
 
-        rule %r/^([ \t]*)(```|~~~)([^\n]*\n)((.*?)(\2))?/m do |m|
+        rule %r/^([ \t]*)(`{3,}|~{3,})([^\n]*\n)((.*?)(\n\1)(\2))?/m do |m|
           name = m[3].strip
           sublexer =
             begin
@@ -51,8 +51,10 @@ module Rouge
             delegate sublexer, m[5]
           end
 
-          if m[6]
-            token Punctuation, m[6]
+          token Text, m[6]
+
+          if m[7]
+            token Punctuation, m[7]
           else
             push do
               rule %r/^([ \t]*)(#{m[2]})/ do |mb|

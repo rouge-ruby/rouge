@@ -118,9 +118,8 @@ module Rouge
         rule %r([\[\]{}();,\&,\.,\%]), Punctuation
 
         rule %r(\b(?i:(beginc\+\+.*?endc\+\+)))m, Str::Single
-        rule %r(\b(embed)([(])(.*?)([)])(.*?)(endembed))im do |m|
-          groups Keyword, Punctuation, Name::Other, Punctuation, Name::Other, Keyword
-        end
+        rule %r(\b(?i:(embed.*?endembed)))m, Str::Single
+        rule %r(\b(?i:(std)\.(#{class1.join('|')})\.(#{class2.join('|')}))\b), Name::Class
 
         rule %r(\b(\w+)\.(\w+)\.(\w+)) do |m|
           if m[1] == "std" &&

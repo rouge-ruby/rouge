@@ -13,13 +13,17 @@ module Rouge
 
       id = /(#?)\b([a-z_][\w]*?)(\d*)\b/i
 
-     class1 = %w(
-        file date str math metaphone metaphone3 uni audit blas system
-      )
+      def self.class_first
+        @class_first ||= Set.new %w(
+          file date str math metaphone metaphone3 uni audit blas system
+        )
+      end
 
-      class2 = %w(
-        debug email job log thorlib util workunit
-      )
+      def self.class_second
+        @class_second ||= Set.new %w(
+          debug email job log thorlib util workunit
+        )
+      end
 
       def self.functions
         @functions ||= Set.new %w(
@@ -115,7 +119,6 @@ module Rouge
 
         rule %r(\b(?i:(beginc\+\+.*?endc\+\+)))m, Str::Single
         rule %r(\b(?i:(embed.*?endembed)))m, Str::Single
-        rule %r(\b(?i:(std)\.(#{class1.join('|')})\.(#{class2.join('|')}))\b), Name::Class
 
         rule %r(\b(\w+)\.(\w+)\.(\w+)) do |m|
           if m[1] == "std" &&

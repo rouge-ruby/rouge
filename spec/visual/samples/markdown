@@ -1090,3 +1090,4 @@ $ echo "Sample feature output"
 [This is a link `with backticks`](example.com)
 [This is a link to a TOML section `[with brackets]` (and backticks)](example.com)
 [This is a link to a TOML section `[[with double brackets]]` (and backticks)](example.com)
+[This is not a link `with backticks`] (example.com)

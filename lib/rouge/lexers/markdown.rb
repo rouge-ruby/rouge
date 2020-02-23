@@ -102,7 +102,7 @@ module Rouge
         end
 
         # links and images
-        rule %r/(!?\[)(#{edot}*?)(\])/ do
+        rule %r/(!?\[)(#{edot}*?)(\])(?=[\[(])/ do
           groups Punctuation, Name::Variable, Punctuation
           push :link
         end
@@ -117,13 +117,15 @@ module Rouge
         rule %r/<.*?@.+[.].+>/, Name::Variable
         rule %r[<(https?|mailto|ftp)://#{edot}*?>], Name::Variable
 
-
         rule %r/[^\\`\[*\n&<]+/, Text
 
         # inline html
         rule(/&\S*;/) { delegate html }
         rule(/<#{edot}*?>/) { delegate html }
         rule %r/[&<]/, Text
+
+        # An opening square bracket that is not a link
+        rule %r/\[/, Text
 
         rule %r/\n/, Text
       end

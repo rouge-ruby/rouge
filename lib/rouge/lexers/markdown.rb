@@ -136,10 +136,9 @@ module Rouge
           pop!
         end
 
-        rule %r/[(]/ do
-          token Punctuation
-          push :inline_title
-          push :inline_url
+        rule %r/(\()(#{edot}*?)(\))/ do
+          groups Punctuation, Str::Other, Punctuation
+          pop!
         end
 
         rule %r/[ \t]+/, Text
@@ -167,16 +166,6 @@ module Rouge
         rule(//) { pop! }
       end
 
-      state :inline_title do
-        rule %r/[)]/, Punctuation, :pop!
-        mixin :title
-      end
-
-      state :inline_url do
-        rule %r/[^<\s)]+/, Str::Other, :pop!
-        rule %r/\s+/m, Text
-        mixin :url
-      end
     end
   end
 end

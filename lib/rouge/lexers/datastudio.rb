@@ -97,14 +97,14 @@ module Rouge
 
       state :string do
         rule %r/%(\\.|.)+?%/, Str::Escape
-        rule %r/"/, Str, :pop!
-        rule %r/./, Str
+        rule %r/"/, Str::Double, :pop!
+        rule %r/.|\n/, Str::Double
       end
 
       state :string_s do
         rule %r/%(\\.|.)+?%/, Str::Escape
-        rule %r/'/, Str, :pop!
-        rule %r/./, Str
+        rule %r/'/, Str::Single, :pop!
+        rule %r/.|\n/, Str::Single
       end
 
       state :root do
@@ -114,8 +114,8 @@ module Rouge
         rule %r/@#{id}(\.#{id})?/m, Name::Entity
         rule %r/%(\\.|.)+?%/, Name::Variable
         rule %r/[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
-        rule %r/"(\\.|.|\n)*?/, Str, :string
-        rule %r/'(\\.|.|\n)*?/, Str, :string_s
+        rule %r/"/, Str::Double, :string
+        rule %r/'/, Str::Single, :string_s
         rule %r(
           [0-9]
           ([.][0-9]*)? # decimal

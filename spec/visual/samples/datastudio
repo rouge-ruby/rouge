@@ -1,0 +1,51 @@
+
+Get_Variable("EUSER","ENV","USERNAME");
+
+Message("Le Login Windows est : %EUSER%");
+
+Get_Variable("st","JOB","FOLDER1.date_err.SYSTEM.STATUS");
+
+
+AFFECT("filter1", '%%/"t"');
+AFFECT("filter2", '%%/"pi"');
+JSONTOSQL("%{jsonpath}%/file.json", "",
+        " JSONPATH like '%filter1%' ", "a = JSONVALUE",
+        " JSONPATH like '%filter2%' ", "b = JSONVALUE; output(json_data, a, b)");
+
+GOTO("There");
+/*
+skipped
+*/
+:There;
+
+Cursor("select * from IOUSER",,)
+{
+  Message("%USR%");
+}
+
+Affect(VAR1,'%TEST%'); //Créer et affecter la variable VAR1 avec une chaîne
+select * from [TABLE1] where COL1 like %VAR1%; //utiliser la variable VAR1 dans une requête
+
+select * from @DATAZONE1.TEST_TABLE; //exécution d'une requête Select pour ramener des valeurs
+Affect_LastColumns("TEST1", 0, 0); //création du paramètre TEST1
+
+Affect("xslt", '<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="/">
+  <root>
+    <xsl:for-each select="root/set/row">
+      <tr>
+        <xsl:for-each select="cell">
+          <td><xsl:value-of select="name" />: <xsl:value-of select="value" /> (<xsl:value-of select="type" />)</td>
+
+        </xsl:for-each>
+      </tr>
+    </xsl:for-each>
+  </root>
+</xsl:template>
+</xsl:stylesheet>');
+
+XSLT_MEM_SQL("out","select USRCODE, LOGONAT, NUMSESS from IOUSERS where rownum <= 2","%xslt%","CHARSET=ISO-8859-1");
+
+Open_Sql("select *
+	from bar");

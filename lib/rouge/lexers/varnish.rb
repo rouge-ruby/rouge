@@ -12,8 +12,12 @@ module Rouge
       filenames '*.vcl'
       mimetypes 'text/x-varnish'
 
-      LNUM = '[0-9]+'
-      DNUM = '([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)'
+      INUM = %r/[0-9]+/
+      FNUM = %r/#{INUM}+(?:\.#{INUM}(?:e[\+\-]?#{INUM})?|e[\+\-]?#{INUM})/i
+      HNUM = %r/[0-9a-f]+/i
+      HINUM = %r/0x#{HNUM}/i
+      HFNUM = %r/0x#{HNUM}(?:\.#{HNUM}(?:p[\+\-]?#{HNUM})?|(?:p[\+\-]?#{HNUM})?)/i
+
       SPACE = '[ \f\n\r\t\v]+'
 
       # backend acl
@@ -21,6 +25,9 @@ module Rouge
         @keywords ||= Set.new %w[
           vcl set unset include import if else elseif elif elsif director probe
           backend acl
+
+          declare local
+          BOOL FLOAT INTEGER IP RTIME STRING TIME
         ]
       end
 
@@ -65,6 +72,9 @@ module Rouge
         # long strings ({" ... "})
         rule %r/\{".*?"}/m, Str::Single
 
+        # heredoc style long strings ({xyz"..."xyz})
+        rule %r/\{(\w+)".*?"(\1)}/m, Str::Single
+
         # comments
         rule %r'/\*.*?\*/'m, Comment::Multiline
         rule %r'(?://|#).*', Comment::Single
@@ -72,7 +82,13 @@ module Rouge
         rule %r/true|false/, Keyword::Constant
 
         # "wildcard variables"
-        rule %r/(?:(?:be)?re(?:sp|q)|obj)\.http\.[\w.-]+/ do
+        var_prefix = Regexp.union(%w(beresp bereq resp req obj))
+        rule %r/(?:#{var_prefix})\.http\.[\w.-]+/ do
+          token Name::Variable
+        end
+
+        # local variables (var.*)
+        rule %r/(?:var)\.[\w.-]+/ do
           token Name::Variable
         end
 
@@ -86,7 +102,7 @@ module Rouge
           push :inline_c
         end
 
-        rule %r/[a-z_.-]+/i do |m|
+        rule %r/\.?[a-z_][a-z_0-9\.\-]*/i do |m|
           next token Keyword if self.class.keywords.include? m[0]
           next token Name::Function if self.class.functions.include? m[0]
           next token Name::Variable if self.class.variables.include? m[0]
@@ -94,12 +110,15 @@ module Rouge
         end
 
         # duration
-        rule %r/(?:#{LNUM}|#{DNUM})(?:ms|[smhdwy])/, Num::Other
+        duration_suffix = Regexp.union(%w(ms s m h d w y))
+        rule %r/(?:#{INUM}|#{FNUM}|#{HINUM}|#{HFNUM})(?:#{duration_suffix})/, Num::Other
         # size in bytes
-        rule %r/#{LNUM}[KMGT]?B/, Num::Other
+        rule %r/#{INUM}[KMGT]?B/, Num::Other
         # literal numeric values (integer/float)
-        rule %r/#{LNUM}/, Num::Integer
-        rule %r/#{DNUM}/, Num::Float
+        rule %r/#{FNUM}/, Num::Float
+        rule %r/#{HFNUM}/, Num::Float
+        rule %r/#{INUM}/, Num::Integer
+        rule %r/#{HINUM}/, Num::Integer
 
         # standard strings
         rule %r/"/, Str::Double, :string

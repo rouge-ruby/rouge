@@ -170,8 +170,11 @@ module Rouge
         rule %r/0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule %r/0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
-        rule %r/\d+\.\d+(e[\+\-]?\d+)?/, Num::Float
-        rule %r/[\d]+(?:_\d+)*/, Num::Integer
+
+        decimal = %r/[\d]+(?:_\d+)*/
+        exp = %r/e[\+\-]?\d+/i
+        rule %r/#{decimal}(?:\.#{decimal}#{exp}?|#{exp})/, Num::Float
+        rule decimal, Num::Integer
 
         # names
         rule %r/@@[a-z_]\w*/i, Name::Variable::Class

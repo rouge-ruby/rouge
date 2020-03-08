@@ -1,0 +1,1527 @@
+//see https://github.com/YangModels/yang/blob/master/standard/ietf/RFC/ietf-alarms%402019-09-11.yang
+module ietf-alarms {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-alarms";
+  prefix al;
+
+  import ietf-yang-types {
+    prefix yang;
+    reference
+      "RFC 6991: Common YANG Data Types.";
+  }
+
+  organization
+    "IETF CCAMP Working Group";
+  contact
+    "WG Web:   <https://trac.ietf.org/trac/ccamp>
+     WG List:  <mailto:ccamp@ietf.org>
+
+     Editor:   Stefan Vallin
+               <mailto:stefan@wallan.se>
+
+     Editor:   Martin Bjorklund
+               <mailto:mbj@tail-f.com>";
+  description
+    "This module defines an interface for managing alarms.  Main
+     inputs to the module design are the 3GPP Alarm Integration
+     Reference Point (IRP), ITU-T X.733, and ANSI/ISA-18.2 alarm
+     standards.
+     Main features of this module include:
+
+       * Alarm list:
+                 A list of all alarms.  Cleared alarms stay in
+                 the list until explicitly purged.
+
+       * Operator actions on alarms:
+                 Acknowledging and closing alarms.
+
+       * Administrative actions on alarms:
+                 Purging alarms from the list according to specific
+                 criteria.
+
+       * Alarm inventory:
+                 A management application can read all
+                 alarm types implemented by the system.
+
+       * Alarm shelving:
+                 Shelving (blocking) alarms according
+                 to specific criteria.
+
+       * Alarm profiles:
+                 A management system can attach further
+                 information to alarm types, for example,
+                 overriding system-default severity
+                 levels.
+
+     This module uses a stateful view on alarms.  An alarm is a state
+     for a specific resource (note that an alarm is not a
+     notification).  An alarm type is a possible alarm state for a
+     resource.  For example, the tuple:
+
+       ('link-alarm', 'GigabitEthernet0/25')
+
+     is an alarm of type 'link-alarm' on the resource
+     'GigabitEthernet0/25'.
+
+     Alarm types are identified using YANG identities and an optional
+     string-based qualifier.  The string-based qualifier allows for
+     dynamic extension of the statically defined alarm types.  Alarm
+     types identify a possible alarm state and not the individual
+     notifications.  For example, the traditional 'link-down' and
+     'link-up' notifications are two notifications referring to the
+     same alarm type 'link-alarm'.
+
+     With this design, there is no ambiguity about how alarm and
+     alarm clear correlation should be performed; notifications that
+     report the same resource and alarm type are considered updates
+     of the same alarm, e.g., clearing an active alarm or changing
+     the severity of an alarm.  The instrumentation can update the
+     severity and alarm text on an existing alarm.  The above alarm
+     example can therefore look like the following:
+
+       (('link-alarm', 'GigabitEthernet0/25'),
+        warning,
+        'interface down while interface admin state is up')
+
+     There is a clear separation between updates on the alarm from
+     the underlying resource, like clear, and updates from an
+     operator, like acknowledging or closing an alarm:
+
+       (('link-alarm', 'GigabitEthernet0/25'),
+        warning,
+        'interface down while interface admin state is up',
+        cleared,
+        closed)
+
+     Administrative actions like removing closed alarms older than a
+     given time is supported.
+
+     This YANG module does not define how the underlying
+     instrumentation detects and clears the specific alarms.  That
+     belongs to the Standards Development Organization (SDO) or
+     enterprise that owns that specific technology.
+
+     The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
+     NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
+     'MAY', and 'OPTIONAL' in this document are to be interpreted as
+     described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
+     they appear in all capitals, as shown here.
+
+     Copyright (c) 2019 IETF Trust and the persons identified as
+     authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject to
+     the license terms contained in, the Simplified BSD License set
+     forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
+
+     This version of this YANG module is part of RFC 8632; see
+     the RFC itself for full legal notices.";
+
+  revision 2019-09-11 {
+    description
+      "Initial revision.";
+    reference
+      "RFC 8632: A YANG Data Model for Alarm Management";
+  }
+
+  /*
+   * Features
+   */
+
+  feature operator-actions {
+    description
+      "This feature indicates that the system supports operator
+       states on alarms.";
+  }
+
+  feature alarm-shelving {
+    description
+      "This feature indicates that the system supports shelving
+       (blocking) alarms.
+
+       Alarm shelving may have an impact on server processing
+       resources in order to match alarms against shelf
+       criteria.";
+  }
+
+  feature alarm-history {
+    description
+      "This feature indicates that the server maintains a history
+       of state changes for each alarm.  For example, if an alarm
+       toggles between cleared and active 10 times, these state
+       changes are present in a separate list in the alarm.
+
+       Keeping the alarm history may have an impact on server
+       memory resources.";
+  }
+
+  feature alarm-summary {
+    description
+      "This feature indicates that the server summarizes the number
+       of alarms per severity and operator state.";
+  }
+
+  feature alarm-profile {
+    description
+      "The system enables clients to configure further information
+       to each alarm type.";
+  }
+
+  feature severity-assignment {
+    description
+      "The system supports configurable alarm severity levels.";
+    reference
+      "ITU-T Recommendation M.3100:
+         Generic network information model
+       ITU-T Recommendation M.3160:
+         Generic, protocol-neutral management information model";
+  }
+
+  feature root-cause-analysis {
+    description
+      "The system supports identifying candidate root-cause
+       resources for an alarm, for example, a disk partition
+       root cause for a logger failure alarm.";
+  }
+
+  feature service-impact-analysis {
+    description
+      "The system supports identifying candidate-impacted
+       resources for an alarm, for example, an interface state change
+       resulting in a link alarm, which can refer to a link as being
+       impacted.";
+  }
+
+  feature alarm-correlation {
+    description
+      "The system supports correlating/grouping alarms
+       that belong together.";
+  }
+
+  /*
+   * Identities
+   */
+
+  identity alarm-type-id {
+    description
+      "Base identity for alarm types.  A unique identification of
+       the alarm, not including the resource.  Different resources
+       can share alarm types.  If the resource reports the same
+       alarm type, it is considered to be the same alarm.  The alarm
+       type is a simplification of the different X.733 and 3GPP Alarm
+       IRP correlation mechanisms, and it allows for
+       hierarchical extensions.
+
+       A string-based qualifier can be used in addition to the
+       identity in order to have different alarm types based on
+       information not known at design time, such as values in
+       textual SNMP Notification varbinds.
+
+       Standards and vendors can define sub-identities to clearly
+       identify specific alarm types.
+
+       This identity is abstract and MUST NOT be used for alarms.";
+  }
+
+  /*
+   * Common types
+   */
+
+  typedef resource {
+    type union {
+      type instance-identifier {
+        require-instance false;
+      }
+      type yang:object-identifier;
+      type string;
+      type yang:uuid;
+    }
+    description
+      "This is an identification of the alarming resource, such as an
+       interface.  It should be as fine-grained as possible to both
+       guide the operator and guarantee uniqueness of the alarms.
+
+       If the alarming resource is modeled in YANG, this type will
+       be an instance-identifier.
+
+       If the resource is an SNMP object, the type will be an
+       'object-identifier'.
+
+       If the resource is anything else, for example, a distinguished
+       name or a Common Information Model (CIM) path, this type will
+       be a string.
+
+       If the alarming object is identified by a Universally Unique
+       Identifier (UUID), use the uuid type.  Be cautious when using
+       this type, since a UUID is hard to use for an operator.
+
+       If the server supports several models, the precedence should
+       be in the order as given in the union definition.";
+  }
+
+  typedef resource-match {
+    type union {
+      type yang:xpath1.0;
+      type yang:object-identifier;
+      type string;
+    }
+    description
+      "This type is used to match resources of type 'resource'.
+       Since the type 'resource' is a union of different types, the
+       'resource-match' type is also a union of corresponding types.
+
+       If the type is given as an XPath 1.0 expression, a resource
+       of type 'instance-identifier' matches if the instance is part
+       of the node set that is the result of evaluating the XPath 1.0
+       expression.  For example, the XPath 1.0 expression:
+
+        /ietf-interfaces:interfaces/ietf-interfaces:interface
+            [ietf-interfaces:type='ianaift:ethernetCsmacd']
+
+       would match the resource instance-identifier:
+
+        /if:interfaces/if:interface[if:name='eth1'],
+
+       assuming that the interface 'eth1' is of type
+       'ianaift:ethernetCsmacd'.
+
+       If the type is given as an object identifier, a resource of
+       type 'object-identifier' matches if the match object
+       identifier is a prefix of the resource's object identifier.
+       For example, the value:
+
+        1.3.6.1.2.1.2.2
+
+       would match the resource object identifier:
+
+        1.3.6.1.2.1.2.2.1.1.5
+
+       If the type is given as an UUID or a string, it is interpreted
+       as an XML Schema regular expression, which matches a resource
+       of type 'yang:uuid' or 'string' if the given regular
+       expression matches the resource string.
+
+       If the type is given as an XPath expression, it is evaluated
+       in the following XPath context:
+
+         o  The set of namespace declarations is the set of prefix
+            and namespace pairs for all YANG modules implemented by
+            the server, where the prefix is the YANG module name and
+            the namespace is as defined by the 'namespace' statement
+            in the YANG module.
+
+            If a leaf of this type is encoded in XML, all namespace
+            declarations in scope on the leaf element are added to
+            the set of namespace declarations.  If a prefix found in
+            the XML is already present in the set of namespace
+            declarations, the namespace in the XML is used.
+
+         o  The set of variable bindings is empty.
+
+         o  The function library is the core function library, and
+            the functions are defined in Section 10 of RFC 7950.
+
+         o  The context node is the root node in the data tree.";
+    reference
+      "XML Schema Part 2: Datatypes Second Edition,
+         World Wide Web Consortium Recommendation
+         REC-xmlschema-2-20041028";
+  }
+
+  typedef alarm-text {
+    type string;
+    description
+      "The string used to inform operators about the alarm.  This
+       MUST contain enough information for an operator to be able to
+       understand the problem and how to resolve it.  If this string
+       contains structure, this format should be clearly documented
+       for programs to be able to parse that information.";
+  }
+
+  typedef severity {
+    type enumeration {
+      enum indeterminate {
+        value 2;
+        description
+          "Indicates that the severity level could not be
+           determined.  This level SHOULD be avoided.";
+      }
+      enum warning {
+        value 3;
+        description
+          "The 'warning' severity level indicates the detection of a
+           potential or impending service-affecting fault, before any
+           significant effects have been felt.  Action should be
+           taken to further diagnose (if necessary) and correct the
+           problem in order to prevent it from becoming a more
+           serious service-affecting fault.";
+      }
+      enum minor {
+        value 4;
+        description
+          "The 'minor' severity level indicates the existence of a
+           non-service-affecting fault condition and that corrective
+           action should be taken in order to prevent a more serious
+           (for example, service-affecting) fault.  Such a severity
+           can be reported, for example, when the detected alarm
+           condition is not currently degrading the capacity of the
+           resource.";
+      }
+      enum major {
+        value 5;
+        description
+          "The 'major' severity level indicates that a service-
+           affecting condition has developed and an urgent corrective
+           action is required.  Such a severity can be reported, for
+           example, when there is a severe degradation in the
+           capability of the resource and its full capability must be
+           restored.";
+      }
+      enum critical {
+        value 6;
+        description
+          "The 'critical' severity level indicates that a service-
+           affecting condition has occurred and an immediate
+           corrective action is required.  Such a severity can be
+           reported, for example, when a resource becomes totally out
+           of service and its capability must be restored.";
+      }
+    }
+    description
+      "The severity level of the alarm.  Note well that the value
+       'clear' is not included.  Whether or not an alarm is cleared
+       is a separate boolean flag.";
+    reference
+      "ITU-T Recommendation X.733: Information Technology
+         - Open Systems Interconnection
+         - System Management: Alarm Reporting Function";
+  }
+
+  typedef severity-with-clear {
+    type union {
+      type enumeration {
+        enum cleared {
+          value 1;
+          description
+            "The alarm is cleared by the instrumentation.";
+        }
+      }
+      type severity;
+    }
+    description
+      "The severity level of the alarm including clear.  This is used
+       only in notifications reporting state changes for an alarm.";
+  }
+
+  typedef writable-operator-state {
+    type enumeration {
+      enum none {
+        value 1;
+        description
+          "The alarm is not being taken care of.";
+      }
+      enum ack {
+        value 2;
+        description
+          "The alarm is being taken care of.  Corrective action not
+           taken yet or has failed";
+      }
+      enum closed {
+        value 3;
+        description
+          "Corrective action taken successfully.";
+      }
+    }
+    description
+      "Operator states on an alarm.  The 'closed' state indicates
+       that an operator considers the alarm being resolved.  This is
+       separate from the alarm's 'is-cleared' leaf.";
+  }
+
+  typedef operator-state {
+    type union {
+      type writable-operator-state;
+      type enumeration {
+        enum shelved {
+          value 4;
+          description
+            "The alarm is shelved.  Alarms in /alarms/shelved-alarms/
+             MUST be assigned this operator state by the server as
+             the last entry in the 'operator-state-change' list.  The
+             text for that entry SHOULD include the shelf name.";
+        }
+        enum un-shelved {
+          value 5;
+          description
+            "The alarm is moved back to 'alarm-list' from a shelf.
+             Alarms that are moved from /alarms/shelved-alarms/ to
+             /alarms/alarm-list MUST be assigned this state by the
+             server as the last entry in the 'operator-state-change'
+             list.  The text for that entry SHOULD include the shelf
+             name.";
+        }
+      }
+    }
+    description
+      "Operator states on an alarm.  The 'closed' state indicates
+       that an operator considers the alarm being resolved.  This is
+       separate from the alarm's 'is-cleared' leaf.";
+  }
+
+  /* Alarm type */
+
+  typedef alarm-type-id {
+    type identityref {
+      base alarm-type-id;
+    }
+    description
+      "Identifies an alarm type.  The description of the alarm type
+       id MUST indicate whether or not the alarm type is abstract.
+       An abstract alarm type is used as a base for other alarm type
+       ids and will not be used as a value for an alarm or be present
+       in the alarm inventory.";
+  }
+
+  typedef alarm-type-qualifier {
+    type string;
+    description
+      "If an alarm type cannot be fully specified at design time by
+       'alarm-type-id', this string qualifier is used in addition to
+       fully define a unique alarm type.
+
+       The definition of alarm qualifiers is considered to be part of
+       the instrumentation and is out of scope for this module.  An
+       empty string is used when this is part of a key.";
+  }
+
+  /*
+   * Groupings
+   */
+
+  grouping common-alarm-parameters {
+    description
+      "Common parameters for an alarm.
+
+       This grouping is used both in the alarm list and in the
+       notification representing an alarm-state change.";
+    leaf resource {
+      type resource;
+      mandatory true;
+      description
+        "The alarming resource.  See also 'alt-resource'.  This could
+         be, for example, a reference to the alarming interface";
+    }
+    leaf alarm-type-id {
+      type alarm-type-id;
+      mandatory true;
+      description
+        "This leaf and the leaf 'alarm-type-qualifier' together
+         provide a unique identification of the alarm type.";
+    }
+    leaf alarm-type-qualifier {
+      type alarm-type-qualifier;
+      description
+        "This leaf is used when the 'alarm-type-id' leaf cannot
+         uniquely identify the alarm type.  Normally, this is not the
+         case, and this leaf is the empty string.";
+    }
+    leaf-list alt-resource {
+      type resource;
+      description
+        "Used if the alarming resource is available over other
+         interfaces.  This field can contain SNMP OIDs, CIM paths, or
+         3GPP distinguished names, for example.";
+    }
+    list related-alarm {
+      if-feature "alarm-correlation";
+      key "resource alarm-type-id alarm-type-qualifier";
+      description
+        "References to related alarms.  Note that the related alarm
+         might have been purged from the alarm list.";
+      leaf resource {
+        type leafref {
+          path "/alarms/alarm-list/alarm/resource";
+          require-instance false;
+        }
+        description
+          "The alarming resource for the related alarm.";
+      }
+      leaf alarm-type-id {
+        type leafref {
+          path "/alarms/alarm-list/alarm"
+             + "[resource=current()/../resource]"
+             + "/alarm-type-id";
+          require-instance false;
+        }
+        description
+          "The alarm type identifier for the related alarm.";
+      }
+      leaf alarm-type-qualifier {
+        type leafref {
+          path "/alarms/alarm-list/alarm"
+             + "[resource=current()/../resource]"
+             + "[alarm-type-id=current()/../alarm-type-id]"
+             + "/alarm-type-qualifier";
+          require-instance false;
+        }
+        description
+          "The alarm qualifier for the related alarm.";
+      }
+    }
+    leaf-list impacted-resource {
+      if-feature "service-impact-analysis";
+      type resource;
+      description
+        "Resources that might be affected by this alarm.  If the
+         system creates an alarm on a resource and also has a mapping
+         to other resources that might be impacted, these resources
+         can be listed in this leaf-list.  In this way, the system
+         can create one alarm instead of several.  For example, if an
+         interface has an alarm, the 'impacted-resource' can
+         reference the aggregated port channels.";
+    }
+    leaf-list root-cause-resource {
+      if-feature "root-cause-analysis";
+      type resource;
+      description
+        "Resources that are candidates for causing the alarm.  If the
+         system has a mechanism to understand the candidate root
+         causes of an alarm, this leaf-list can be used to list the
+         root-cause candidate resources.  In this way, the system can
+         create one alarm instead of several.  An example might be a
+         logging system (alarm resource) that fails; the alarm can
+         reference the file system in the 'root-cause-resource'
+         leaf-list.  Note that the intended use is not to also send
+         an alarm with the 'root-cause-resource' as an alarming
+         resource.  The 'root-cause-resource' leaf-list is a hint and
+         should not also generate an alarm for the same problem.";
+    }
+  }
+
+  grouping alarm-state-change-parameters {
+    description
+      "Parameters for an alarm-state change.
+
+       This grouping is used both in the alarm list's status-change
+       list and in the notification representing an alarm-state
+       change.";
+    leaf time {
+      type yang:date-and-time;
+      mandatory true;
+      description
+        "The time the status of the alarm changed.  The value
+         represents the time the real alarm-state change appeared in
+         the resource and not when it was added to the alarm
+         list.  The /alarm-list/alarm/last-changed MUST be set to the
+         same value.";
+    }
+    leaf perceived-severity {
+      type severity-with-clear;
+      mandatory true;
+      description
+        "The severity of the alarm as defined by X.733.  Note that
+         this may not be the original severity since the alarm may
+         have changed severity.";
+      reference
+        "ITU-T Recommendation X.733: Information Technology
+           - Open Systems Interconnection
+           - System Management: Alarm Reporting Function";
+    }
+    leaf alarm-text {
+      type alarm-text;
+      mandatory true;
+      description
+        "A user-friendly text describing the alarm-state change.";
+      reference
+        "ITU-T Recommendation X.733: Information Technology
+           - Open Systems Interconnection
+           - System Management: Alarm Reporting Function";
+    }
+  }
+
+  grouping operator-parameters {
+    description
+      "This grouping defines parameters that can be changed by an
+       operator.";
+    leaf time {
+      type yang:date-and-time;
+      mandatory true;
+      description
+        "Timestamp for operator action on the alarm.";
+    }
+    leaf operator {
+      type string;
+      mandatory true;
+      description
+        "The name of the operator that has acted on this alarm.";
+    }
+    leaf state {
+      type operator-state;
+      mandatory true;
+      description
+        "The operator's view of the alarm state.";
+    }
+    leaf text {
+      type string;
+      description
+        "Additional optional textual information provided by the
+         operator.";
+    }
+  }
+
+  grouping resource-alarm-parameters {
+    description
+      "Alarm parameters that originate from the resource view.";
+    leaf is-cleared {
+      type boolean;
+      mandatory true;
+      description
+        "Indicates the current clearance state of the alarm.  An
+         alarm might toggle from active alarm to cleared alarm and
+         back to active again.";
+    }
+    leaf last-raised {
+      type yang:date-and-time;
+      mandatory true;
+      description
+        "An alarm may change severity level and toggle between
+         active and cleared during its lifetime.  This leaf indicates
+         the last time it was raised ('is-cleared' = 'false').";
+    }
+    leaf last-changed {
+      type yang:date-and-time;
+      mandatory true;
+      description
+        "A timestamp when the 'status-change' or
+         'operator-state-change' list was last changed.";
+    }
+    leaf perceived-severity {
+      type severity;
+      mandatory true;
+      description
+        "The last severity of the alarm.
+
+         If an alarm was raised with severity 'warning' but later
+         changed to 'major', this leaf will show 'major'.";
+    }
+    leaf alarm-text {
+      type alarm-text;
+      mandatory true;
+      description
+        "The last reported alarm text.  This text should contain
+         information for an operator to be able to understand the
+         problem and how to resolve it.";
+    }
+    list status-change {
+      if-feature "alarm-history";
+      key "time";
+      min-elements 1;
+      description
+        "A list of status-change events for this alarm.
+
+         The entry with latest timestamp in this list MUST
+         correspond to the leafs 'is-cleared', 'perceived-severity',
+         and 'alarm-text' for the alarm.
+
+         This list is ordered according to the timestamps of alarm
+         state changes.  The first item corresponds to the latest
+         state change.
+
+         The following state changes create an entry in this
+         list:
+         - changed severity (warning, minor, major, critical)
+         - clearance status; this also updates the 'is-cleared'
+           leaf
+         - alarm-text update";
+      uses alarm-state-change-parameters;
+    }
+  }
+
+  grouping filter-input {
+    description
+      "Grouping to specify a filter construct on alarm information.";
+    leaf alarm-clearance-status {
+      type enumeration {
+        enum any {
+          description
+            "Ignore alarm-clearance status.";
+        }
+        enum cleared {
+          description
+            "Filter cleared alarms.";
+        }
+        enum not-cleared {
+          description
+            "Filter not-cleared alarms.";
+        }
+      }
+      mandatory true;
+      description
+        "The clearance status of the alarm.";
+    }
+    container older-than {
+      presence "Age specification";
+      description
+        "Matches the 'last-status-change' leaf in the alarm.";
+      choice age-spec {
+        description
+          "Filter using date and time age.";
+        case seconds {
+          leaf seconds {
+            type uint16;
+            description
+              "Age expressed in seconds.";
+          }
+        }
+        case minutes {
+          leaf minutes {
+            type uint16;
+            description
+              "Age expressed in minutes.";
+          }
+        }
+        case hours {
+          leaf hours {
+            type uint16;
+            description
+              "Age expressed in hours.";
+          }
+        }
+        case days {
+          leaf days {
+            type uint16;
+            description
+              "Age expressed in days.";
+          }
+        }
+        case weeks {
+          leaf weeks {
+            type uint16;
+            description
+              "Age expressed in weeks.";
+          }
+        }
+      }
+    }
+    container severity {
+      presence "Severity filter";
+      choice sev-spec {
+        description
+          "Filter based on severity level.";
+        leaf below {
+          type severity;
+          description
+            "Severity less than this leaf.";
+        }
+        leaf is {
+          type severity;
+          description
+            "Severity level equal to this leaf.";
+        }
+        leaf above {
+          type severity;
+          description
+            "Severity level higher than this leaf.";
+        }
+      }
+      description
+        "Filter based on severity.";
+    }
+    container operator-state-filter {
+      if-feature "operator-actions";
+      presence "Operator state filter";
+      leaf state {
+        type operator-state;
+        description
+          "Filter on operator state.";
+      }
+      leaf user {
+        type string;
+        description
+          "Filter based on which operator.";
+      }
+      description
+        "Filter based on operator state.";
+    }
+  }
+
+  /*
+   * The /alarms data tree
+   */
+
+  container alarms {
+    description
+      "The top container for this module.";
+    container control {
+      description
+        "Configuration to control the alarm behavior.";
+      leaf max-alarm-status-changes {
+        type union {
+          type uint16;
+          type enumeration {
+            enum infinite {
+              description
+                "The status-change entries are accumulated
+                 infinitely.";
+            }
+          }
+        }
+        default "32";
+        description
+          "The 'status-change' entries are kept in a circular list
+           per alarm.  When this number is exceeded, the oldest
+           status change entry is automatically removed.  If the
+           value is 'infinite', the status-change entries are
+           accumulated infinitely.";
+      }
+      leaf notify-status-changes {
+        type enumeration {
+          enum all-state-changes {
+            description
+              "Send notifications for all status changes.";
+          }
+          enum raise-and-clear {
+            description
+              "Send notifications only for raise, clear, and
+               re-raise.  Notifications for severity-level changes or
+               alarm-text changes are not sent.";
+          }
+          enum severity-level {
+            description
+              "Only send notifications for alarm-state changes
+               crossing the level specified in
+               'notify-severity-level'.  Always send clear
+               notifications.";
+          }
+        }
+        must '. != "severity-level" or ../notify-severity-level' {
+          description
+            "When notify-status-changes is 'severity-level', a value
+             must be given for 'notify-severity-level'.";
+        }
+        default "all-state-changes";
+        description
+          "This leaf controls the notifications sent for alarm status
+           updates.  There are three options:
+
+           1.  Notifications are sent for all updates, severity-level
+               changes, and alarm-text changes.
+
+           2.  Notifications are only sent for alarm raise and clear.
+
+           3.  Notifications are sent for status changes equal to or
+               above the specified severity level.  Clear
+               notifications shall always be sent.  Notifications
+               shall also be sent for state changes that make an
+               alarm less severe than the specified level.
+
+           For example, in option 3, assume that the severity level
+           is set to major and that the alarm has the following state
+           changes:
+
+           [(Time, severity, clear)]:
+           [(T1, major, -), (T2, minor, -), (T3, warning, -),
+            (T4, minor, -), (T5, major, -), (T6, critical, -),
+            (T7, major.  -), (T8, major, clear)]
+
+           In that case, notifications will be sent at times
+           T1, T2, T5, T6, T7, and T8.";
+      }
+      leaf notify-severity-level {
+        when '../notify-status-changes = "severity-level"';
+        type severity;
+        description
+          "Only send notifications for alarm-state changes crossing
+           the specified level.  Always send clear notifications.";
+      }
+      container alarm-shelving {
+        if-feature "alarm-shelving";
+        description
+          "The 'alarm-shelving/shelf' list is used to shelve
+           (block/filter) alarms.  The conditions in the shelf
+           criteria are logically ANDed.  The first matching shelf is
+           used, and an alarm is shelved only for this first match.
+           Matching alarms MUST appear in the
+           /alarms/shelved-alarms/shelved-alarm list, and
+           non-matching /alarms MUST appear in the
+           /alarms/alarm-list/alarm list.  The server does not send
+           any notifications for shelved alarms.
+
+           The server MUST maintain states (e.g., severity
+           changes) for the shelved alarms.
+
+           Alarms that match the criteria shall have an
+           operator state 'shelved'.  When the shelf
+           configuration removes an alarm from the shelf, the server
+           shall add the operator state 'un-shelved'.";
+        list shelf {
+          key "name";
+          ordered-by user;
+          leaf name {
+            type string;
+            description
+              "An arbitrary name for the alarm shelf.";
+          }
+          description
+            "Each entry defines the criteria for shelving alarms.
+             Criteria are ANDed.  If no criteria are specified,
+             all alarms will be shelved.";
+          leaf-list resource {
+            type resource-match;
+            description
+              "Shelve alarms for matching resources.";
+          }
+          list alarm-type {
+            key "alarm-type-id alarm-type-qualifier-match";
+            description
+              "Any alarm matching the combined criteria of
+               'alarm-type-id' and 'alarm-type-qualifier-match'
+               MUST be matched.";
+            leaf alarm-type-id {
+              type alarm-type-id;
+              description
+                "Shelve all alarms that have an 'alarm-type-id' that
+                 is equal to or derived from the given
+                 'alarm-type-id'.";
+            }
+            leaf alarm-type-qualifier-match {
+              type string;
+              description
+                "An XML Schema regular expression that is used to
+                 match an alarm type qualifier.  Shelve all alarms
+                 that match this regular expression for the alarm
+                 type qualifier.";
+              reference
+                "XML Schema Part 2: Datatypes Second Edition,
+                   World Wide Web Consortium Recommendation
+                   REC-xmlschema-2-20041028";
+            }
+          }
+          leaf description {
+            type string;
+            description
+              "An optional textual description of the shelf.  This
+               description should include the reason for shelving
+               these alarms.";
+          }
+        }
+      }
+    }
+    container alarm-inventory {
+      config false;
+      description
+        "The 'alarm-inventory/alarm-type' list contains all possible
+         alarm types for the system.
+
+         If the system knows for which resources a specific alarm
+         type can appear, it is also identified in the inventory.
+         The list also tells if each alarm type has a corresponding
+         clear state.  The inventory shall only contain concrete
+         alarm types.
+
+         The alarm inventory MUST be updated by the system when new
+         alarms can appear.  This can be the case when installing new
+         software modules or inserting new card types.  A
+         notification 'alarm-inventory-changed' is sent when the
+         inventory is changed.";
+      list alarm-type {
+        key "alarm-type-id alarm-type-qualifier";
+        description
+          "An entry in this list defines a possible alarm.";
+        leaf alarm-type-id {
+          type alarm-type-id;
+          description
+            "The statically defined alarm type identifier for this
+             possible alarm.";
+        }
+        leaf alarm-type-qualifier {
+          type alarm-type-qualifier;
+          description
+            "The optionally dynamically defined alarm type identifier
+             for this possible alarm.";
+        }
+        leaf-list resource {
+          type resource-match;
+          description
+            "Optionally, specifies for which resources the alarm type
+             is valid.";
+        }
+        leaf will-clear {
+          type boolean;
+          mandatory true;
+          description
+            "This leaf tells the operator if the alarm will be
+             cleared when the correct corrective action has been
+             taken.  Implementations SHOULD strive for detecting the
+             cleared state for all alarm types.
+
+             If this leaf is 'true', the operator can monitor the
+             alarm until it becomes cleared after the corrective
+             action has been taken.
+
+             If this leaf is 'false', the operator needs to validate
+             that the alarm is no longer active using other
+             mechanisms.  Alarms can lack a corresponding clear due
+             to missing instrumentation or no logical
+             corresponding clear state.";
+        }
+        leaf-list severity-level {
+          type severity;
+          description
+            "This leaf-list indicates the possible severity levels of
+             this alarm type.  Note well that 'clear' is not part of
+             the severity type.  In general, the severity level
+             should be defined by the instrumentation based on the
+             dynamic state, rather than being defined statically by
+             the alarm type, in order to provide a relevant severity
+             level based on dynamic state and context.  However, most
+             alarm types have a defined set of possible severity
+             levels, and this should be provided here.";
+        }
+        leaf description {
+          type string;
+          mandatory true;
+          description
+            "A description of the possible alarm.  It SHOULD include
+             information on possible underlying root causes and
+             corrective actions.";
+        }
+      }
+    }
+    container summary {
+      if-feature "alarm-summary";
+      config false;
+      description
+        "This container gives a summary of the number of alarms.";
+      list alarm-summary {
+        key "severity";
+        description
+          "A global summary of all alarms in the system.  The summary
+           does not include shelved alarms.";
+        leaf severity {
+          type severity;
+          description
+            "Alarm summary for this severity level.";
+        }
+        leaf total {
+          type yang:gauge32;
+          description
+            "Total number of alarms of this severity level.";
+        }
+        leaf not-cleared {
+          type yang:gauge32;
+          description
+            "Total number of alarms of this severity level
+             that are not cleared.";
+        }
+        leaf cleared {
+          type yang:gauge32;
+          description
+            "For this severity level, the number of alarms that are
+             cleared.";
+        }
+        leaf cleared-not-closed {
+          if-feature "operator-actions";
+          type yang:gauge32;
+          description
+            "For this severity level, the number of alarms that are
+             cleared but not closed.";
+        }
+        leaf cleared-closed {
+          if-feature "operator-actions";
+          type yang:gauge32;
+          description
+            "For this severity level, the number of alarms that are
+             cleared and closed.";
+        }
+        leaf not-cleared-closed {
+          if-feature "operator-actions";
+          type yang:gauge32;
+          description
+            "For this severity level, the number of alarms that are
+             not cleared but closed.";
+        }
+        leaf not-cleared-not-closed {
+          if-feature "operator-actions";
+          type yang:gauge32;
+          description
+            "For this severity level, the number of alarms that are
+             not cleared and not closed.";
+        }
+      }
+      leaf shelves-active {
+        if-feature "alarm-shelving";
+        type empty;
+        description
+          "This is a hint to the operator that there are active
+           alarm shelves.  This leaf MUST exist if the
+           /alarms/shelved-alarms/number-of-shelved-alarms is > 0.";
+      }
+    }
+    container alarm-list {
+      config false;
+      description
+        "The alarms in the system.";
+      leaf number-of-alarms {
+        type yang:gauge32;
+        description
+          "This object shows the total number of
+           alarms in the system, i.e., the total number
+           of entries in the alarm list.";
+      }
+      leaf last-changed {
+        type yang:date-and-time;
+        description
+          "A timestamp when the alarm list was last
+           changed.  The value can be used by a manager to
+           initiate an alarm resynchronization procedure.";
+      }
+      list alarm {
+        key "resource alarm-type-id alarm-type-qualifier";
+        description
+          "The list of alarms.  Each entry in the list holds one
+           alarm for a given alarm type and resource.  An alarm can
+           be updated from the underlying resource or by the user.
+           The following leafs are maintained by the resource:
+           'is-cleared', 'last-change', 'perceived-severity', and
+           'alarm-text'.  An operator can change 'operator-state' and
+           'operator-text'.
+
+           Entries appear in the alarm list the first time an alarm
+           becomes active for a given alarm type and resource.
+           Entries do not get deleted when the alarm is cleared.
+           Clear status is represented as a boolean flag.
+
+           Alarm entries are removed, i.e., purged, from the list by
+           an explicit purge action.  For example, purge all alarms
+           that are cleared and in closed operator state that are
+           older than 24 hours.  Purged alarms are removed from the
+           alarm list.  If the alarm resource state changes after a
+           purge, the alarm will reappear in the alarm list.
+
+           Systems may also remove alarms based on locally configured
+           policies; this is out of scope for this module.";
+        uses common-alarm-parameters;
+        leaf time-created {
+          type yang:date-and-time;
+          mandatory true;
+          description
+            "The timestamp when this alarm entry was created.  This
+             represents the first time the alarm appeared; it can
+             also represent that the alarm reappeared after a purge.
+             Further state changes of the same alarm do not change
+             this leaf; these changes will update the 'last-changed'
+             leaf.";
+        }
+        uses resource-alarm-parameters;
+        list operator-state-change {
+          if-feature "operator-actions";
+          key "time";
+          description
+            "This list is used by operators to indicate the state of
+             human intervention on an alarm.  For example, if an
+             operator has seen an alarm, the operator can add a new
+             item to this list indicating that the alarm is
+             acknowledged.";
+          uses operator-parameters;
+        }
+        action set-operator-state {
+          if-feature "operator-actions";
+          description
+            "This is a means for the operator to indicate the level
+             of human intervention on an alarm.";
+          input {
+            leaf state {
+              type writable-operator-state;
+              mandatory true;
+              description
+                "Set this operator state.";
+            }
+            leaf text {
+              type string;
+              description
+                "Additional optional textual information.";
+            }
+          }
+        }
+        notification operator-action {
+          if-feature "operator-actions";
+          description
+            "This notification is used to report that an operator
+             acted upon an alarm.";
+          uses operator-parameters;
+        }
+      }
+      action purge-alarms {
+        description
+          "This operation requests that the server delete entries
+           from the alarm list according to the supplied criteria.
+
+           Typically, this operation is used to delete alarms that
+           are in closed operator state and older than a specified
+           time.
+
+           The number of purged alarms is returned as an output
+           parameter.";
+        input {
+          uses filter-input;
+        }
+        output {
+          leaf purged-alarms {
+            type uint32;
+            description
+              "Number of purged alarms.";
+          }
+        }
+      }
+      action compress-alarms {
+        if-feature "alarm-history";
+        description
+          "This operation requests that the server compress
+           entries in the alarm list by removing all but the
+           latest 'status-change' entry for all matching alarms.
+           Conditions in the input are logically ANDed.  If no
+           input condition is given, all alarms are compressed.";
+        input {
+          leaf resource {
+            type resource-match;
+            description
+              "Compress the alarms matching this resource.";
+          }
+          leaf alarm-type-id {
+            type leafref {
+              path "/alarms/alarm-list/alarm/alarm-type-id";
+              require-instance false;
+            }
+            description
+              "Compress alarms with this 'alarm-type-id'.";
+          }
+          leaf alarm-type-qualifier {
+            type leafref {
+              path "/alarms/alarm-list/alarm/alarm-type-qualifier";
+              require-instance false;
+            }
+            description
+              "Compress the alarms with this
+               'alarm-type-qualifier'.";
+          }
+        }
+        output {
+          leaf compressed-alarms {
+            type uint32;
+            description
+              "Number of compressed alarm entries.";
+          }
+        }
+      }
+    }
+    container shelved-alarms {
+      if-feature "alarm-shelving";
+      config false;
+      description
+        "The shelved alarms.  Alarms appear here if they match the
+         criteria in /alarms/control/alarm-shelving.  This list does
+         not generate any notifications.  The list represents alarms
+         that are considered not relevant by the operator.  Alarms in
+         this list have an 'operator-state' of 'shelved'.  This
+         cannot be changed.";
+      leaf number-of-shelved-alarms {
+        type yang:gauge32;
+        description
+          "This object shows the total number of current
+           alarms, i.e., the total number of entries
+           in the alarm list.";
+      }
+      leaf shelved-alarms-last-changed {
+        type yang:date-and-time;
+        description
+          "A timestamp when the shelved-alarm list was last changed.
+           The value can be used by a manager to initiate an alarm
+           resynchronization procedure.";
+      }
+      list shelved-alarm {
+        key "resource alarm-type-id alarm-type-qualifier";
+        description
+          "The list of shelved alarms.  Shelved alarms can only be
+           updated from the underlying resource; no operator actions
+           are supported.";
+        uses common-alarm-parameters;
+        leaf shelf-name {
+          type leafref {
+            path "/alarms/control/alarm-shelving/shelf/name";
+            require-instance false;
+          }
+          description
+            "The name of the shelf.";
+        }
+        uses resource-alarm-parameters;
+        list operator-state-change {
+          if-feature "operator-actions";
+          key "time";
+          description
+            "This list is used by operators to indicate the state of
+             human intervention on an alarm.  For shelved alarms, the
+             system has set the list item in the list to 'shelved'.";
+          uses operator-parameters;
+        }
+      }
+      action purge-shelved-alarms {
+        description
+          "This operation requests that the server delete entries from
+           the shelved-alarm list according to the supplied criteria.
+           In the shelved-alarm list, it makes sense to delete alarms
+           that are not relevant anymore.
+
+           The number of purged alarms is returned as an output
+           parameter.";
+        input {
+          uses filter-input;
+        }
+        output {
+          leaf purged-alarms {
+            type uint32;
+            description
+              "Number of purged alarms.";
+          }
+        }
+      }
+      action compress-shelved-alarms {
+        if-feature "alarm-history";
+        description
+          "This operation requests that the server compress entries
+           in the shelved-alarm list by removing all but the latest
+           'status-change' entry for all matching shelved alarms.
+           Conditions in the input are logically ANDed.  If no input
+           condition is given, all alarms are compressed.";
+        input {
+          leaf resource {
+            type leafref {
+              path "/alarms/shelved-alarms/shelved-alarm/resource";
+              require-instance false;
+            }
+            description
+              "Compress the alarms with this resource.";
+          }
+          leaf alarm-type-id {
+            type leafref {
+              path "/alarms/shelved-alarms/shelved-alarm"
+                 + "/alarm-type-id";
+              require-instance false;
+            }
+            description
+              "Compress alarms with this 'alarm-type-id'.";
+          }
+          leaf alarm-type-qualifier {
+            type leafref {
+              path "/alarms/shelved-alarms/shelved-alarm"
+                 + "/alarm-type-qualifier";
+              require-instance false;
+            }
+            description
+              "Compress the alarms with this
+               'alarm-type-qualifier'.";
+          }
+        }
+        output {
+          leaf compressed-alarms {
+            type uint32;
+            description
+              "Number of compressed alarm entries.";
+          }
+        }
+      }
+    }
+    list alarm-profile {
+      if-feature "alarm-profile";
+      key "alarm-type-id alarm-type-qualifier-match resource";
+      ordered-by user;
+      description
+        "This list is used to assign further information or
+         configuration for each alarm type.  This module supports a
+         mechanism where the client can override the system-default
+         alarm severity levels.  The 'alarm-profile' is also a useful
+         augmentation point for specific additions to alarm types.";
+      leaf alarm-type-id {
+        type alarm-type-id;
+        description
+          "The alarm type identifier to match.";
+      }
+      leaf alarm-type-qualifier-match {
+        type string;
+        description
+          "An XML Schema regular expression that is used to match the
+           alarm type qualifier.";
+        reference
+          "XML Schema Part 2: Datatypes Second Edition,
+             World Wide Web Consortium Recommendation
+             REC-xmlschema-2-20041028";
+      }
+      leaf resource {
+        type resource-match;
+        description
+          "Specifies which resources to match.";
+      }
+      leaf description {
+        type string;
+        mandatory true;
+        description
+          "A description of the alarm profile.";
+      }
+      container alarm-severity-assignment-profile {
+        if-feature "severity-assignment";
+        description
+          "The client can override the system-default severity
+           level.";
+        reference
+          "ITU-T Recommendation M.3100:
+             Generic network information model
+           ITU-T Recommendation M.3160:
+             Generic, protocol-neutral management information model";
+        leaf-list severity-level {
+          type severity;
+          ordered-by user;
+          description
+            "Specifies the configured severity level(s) for the
+             matching alarm.  If the alarm has several severity
+             levels, the leaf-list shall be given in rising severity
+             order.  The original M3100/M3160 ASAP function only
+             allows for a one-to-one mapping between alarm type and
+             severity, but since YANG module supports stateful
+             alarms, the mapping must allow for several severity
+             levels.
+
+             Assume a high-utilization alarm type with two thresholds
+             with the system-default severity levels of threshold1 =
+             warning and threshold2 = minor.  Setting this leaf-list
+             to (minor, major) will assign the severity levels as
+             threshold1 = minor and threshold2 = major";
+        }
+      }
+    }
+  }
+
+  /*
+   * Notifications
+   */
+
+  notification alarm-notification {
+    description
+      "This notification is used to report a state change for an
+       alarm.  The same notification is used for reporting a newly
+       raised alarm, a cleared alarm, or changing the text and/or
+       severity of an existing alarm.";
+    uses common-alarm-parameters;
+    uses alarm-state-change-parameters;
+  }
+
+  notification alarm-inventory-changed {
+    description
+      "This notification is used to report that the list of possible
+       alarms has changed.  This can happen when, for example, a new
+       software module is installed or a new physical card is
+       inserted.";
+  }
+}

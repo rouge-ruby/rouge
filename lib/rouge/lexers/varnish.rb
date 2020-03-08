@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class Varnish < RegexLexer
       title 'VCL: Varnish Configuration Language'
-      desc 'The Configuration Language of Varnish HTTP Cache (https://varnish-cache.org/)'
+      desc 'The configuration language for Varnish HTTP Cache (varnish-cache.org)'
 
       tag 'vcl'
       aliases 'varnishconf', 'varnish'

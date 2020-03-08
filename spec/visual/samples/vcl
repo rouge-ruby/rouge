@@ -38,3 +38,24 @@ sub vcl_synth {
 
     # Fall-through to default
 }
+
+#### Fastly's dialect ####
+
+# reference: https://docs.fastly.com/vcl/
+
+# local variables
+declare local var.ip1 IP;
+set var.ip1 = "192.0.2.0";
+
+# string literals
+set var.s = {xyz"Hello, world!"xyz}; # heredoc-style
+
+# more literals
+set resp.http.X-Str = {"Hello, world!"};
+set resp.http.X-Rtime = 10ms;
+set resp.http.X-RTime = 2.5h;
+set resp.http.X-Int = 0xFF;
+set resp.http.X-Float = 1.2e3;
+set resp.http.X-Float = 1e2;
+set resp.http.X-HexFloat = 0xA.Bp3;
+set resp.http.X-HexFloat = 0xAp3;

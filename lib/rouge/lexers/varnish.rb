@@ -4,16 +4,14 @@
 module Rouge
   module Lexers
     class Varnish < RegexLexer
-      title 'Varnish'
-      desc 'The Varnish (high-performance web accelerator) configuration language'
+      title 'VCL: Varnish Configuration Language'
+      desc 'The configuration language for Varnish HTTP Cache (varnish-cache.org)'
 
-      tag 'varnish'
-      aliases 'varnishconf', 'VCL'
+      tag 'vcl'
+      aliases 'varnishconf', 'varnish'
       filenames '*.vcl'
-      mimetypes 'text/x-varnish'
+      mimetypes 'text/x-varnish', 'text/x-vcl'
 
-      LNUM = '[0-9]+'
-      DNUM = '([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)'
       SPACE = '[ \f\n\r\t\v]+'
 
       # backend acl
@@ -21,6 +19,9 @@ module Rouge
         @keywords ||= Set.new %w[
           vcl set unset include import if else elseif elif elsif director probe
           backend acl
+
+          declare local
+          BOOL FLOAT INTEGER IP RTIME STRING TIME
         ]
       end
 
@@ -65,6 +66,9 @@ module Rouge
         # long strings ({" ... "})
         rule %r/\{".*?"}/m, Str::Single
 
+        # heredoc style long strings ({xyz"..."xyz})
+        rule %r/\{(\w+)".*?"(\1)\}/m, Str::Single
+
         # comments
         rule %r'/\*.*?\*/'m, Comment::Multiline
         rule %r'(?://|#).*', Comment::Single
@@ -72,7 +76,13 @@ module Rouge
         rule %r/true|false/, Keyword::Constant
 
         # "wildcard variables"
-        rule %r/(?:(?:be)?re(?:sp|q)|obj)\.http\.[\w.-]+/ do
+        var_prefix = Regexp.union(%w(beresp bereq resp req obj))
+        rule %r/(?:#{var_prefix})\.http\.[\w.-]+/ do
+          token Name::Variable
+        end
+
+        # local variables (var.*)
+        rule %r/(?:var)\.[\w.-]+/ do
           token Name::Variable
         end
 
@@ -86,20 +96,47 @@ module Rouge
           push :inline_c
         end
 
-        rule %r/[a-z_.-]+/i do |m|
+        rule %r/\.?[a-z_][\w.-]*/i do |m|
           next token Keyword if self.class.keywords.include? m[0]
           next token Name::Function if self.class.functions.include? m[0]
           next token Name::Variable if self.class.variables.include? m[0]
           token Text
         end
 
-        # duration
-        rule %r/(?:#{LNUM}|#{DNUM})(?:ms|[smhdwy])/, Num::Other
-        # size in bytes
-        rule %r/#{LNUM}[KMGT]?B/, Num::Other
-        # literal numeric values (integer/float)
-        rule %r/#{LNUM}/, Num::Integer
-        rule %r/#{DNUM}/, Num::Float
+        ## for number literals
+
+        decimal = %r/[0-9]+/
+        hex = %r/[0-9a-f]+/i
+
+        numeric = %r{
+          (?:
+            0x#{hex}
+            (?:\.#{hex})?
+            (?:p[+-]?#{hex})?
+          )
+          |
+          (?:
+            #{decimal}
+            (?:\.#{decimal})?
+            (?:e[+-]?#{decimal})?
+          )
+        }xi
+
+        # duration literals
+        duration_suffix = Regexp.union(%w(ms s m h d w y))
+        rule %r/#{numeric}#{duration_suffix}/, Num::Other
+
+        # numeric literals (integer / float)
+        rule numeric do |m|
+            case m[0]
+            when /^#{decimal}$/
+              token Num::Integer
+            when /^0x#{hex}$/
+              token Num::Integer
+            else
+              token Num::Float
+            end
+        end
 
         # standard strings
         rule %r/"/, Str::Double, :string

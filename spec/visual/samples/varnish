@@ -1,5 +1,3 @@
-# VCL: https://varnish-cache.org/docs/trunk/users-guide/vcl.html
-
 # Define a function that converts a string to lower-case in-place.
 C{
     #include <ctype.h>

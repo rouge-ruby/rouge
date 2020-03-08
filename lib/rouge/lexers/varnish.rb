@@ -12,12 +12,6 @@ module Rouge
       filenames '*.vcl'
       mimetypes 'text/x-varnish', 'text/x-vcl'
 
-      INUM = %r/[0-9]+/
-      FNUM = %r/#{INUM}+(?:\.#{INUM}(?:e[+-]?#{INUM})?|e[+-]?#{INUM})/i
-      HNUM = %r/[0-9a-f]+/i
-      HINUM = %r/0x#{HNUM}/i
-      HFNUM = %r/0x#{HNUM}(?:\.#{HNUM}(?:p[+-]?#{HNUM})?|(?:p[+-]?#{HNUM})?)/i
-
       SPACE = '[ \f\n\r\t\v]+'
 
       # backend acl
@@ -109,16 +103,40 @@ module Rouge
           token Text
         end
 
-        # duration
+        ## for number literals
+
+        decimal = %r/[0-9]+/
+        hex = %r/[0-9a-f]+/i
+
+        numeric = %r{
+          (?:
+            0x#{hex}
+            (?:\.#{hex})?
+            (?:p[+-]?#{hex})?
+          )
+          |
+          (?:
+            #{decimal}
+            (?:\.#{decimal})?
+            (?:e[+-]?#{decimal})?
+          )
+        }xi
+
+        # duration literals
         duration_suffix = Regexp.union(%w(ms s m h d w y))
-        rule %r/(?:#{INUM}|#{FNUM}|#{HINUM}|#{HFNUM})(?:#{duration_suffix})/, Num::Other
-        # size in bytes
-        rule %r/#{INUM}[KMGT]?B/, Num::Other
-        # literal numeric values (integer/float)
-        rule %r/#{FNUM}/, Num::Float
-        rule %r/#{HFNUM}/, Num::Float
-        rule %r/#{INUM}/, Num::Integer
-        rule %r/#{HINUM}/, Num::Integer
+        rule %r/#{numeric}#{duration_suffix}/, Num::Other
+
+        # numeric literals (integer / float)
+        rule numeric do |m|
+            case m[0]
+            when /^#{decimal}$/
+              token Num::Integer
+            when /^0x#{hex}$/
+              token Num::Integer
+            else
+              token Num::Float
+            end
+        end
 
         # standard strings
         rule %r/"/, Str::Double, :string

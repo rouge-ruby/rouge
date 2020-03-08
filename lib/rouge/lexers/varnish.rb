@@ -13,10 +13,10 @@ module Rouge
       mimetypes 'text/x-varnish', 'text/x-vcl'
 
       INUM = %r/[0-9]+/
-      FNUM = %r/#{INUM}+(?:\.#{INUM}(?:e[\+\-]?#{INUM})?|e[\+\-]?#{INUM})/i
+      FNUM = %r/#{INUM}+(?:\.#{INUM}(?:e[+-]?#{INUM})?|e[+-]?#{INUM})/i
       HNUM = %r/[0-9a-f]+/i
       HINUM = %r/0x#{HNUM}/i
-      HFNUM = %r/0x#{HNUM}(?:\.#{HNUM}(?:p[\+\-]?#{HNUM})?|(?:p[\+\-]?#{HNUM})?)/i
+      HFNUM = %r/0x#{HNUM}(?:\.#{HNUM}(?:p[+-]?#{HNUM})?|(?:p[+-]?#{HNUM})?)/i
 
       SPACE = '[ \f\n\r\t\v]+'
 
@@ -73,7 +73,7 @@ module Rouge
         rule %r/\{".*?"}/m, Str::Single
 
         # heredoc style long strings ({xyz"..."xyz})
-        rule %r/\{(\w+)".*?"(\1)}/m, Str::Single
+        rule %r/\{(\w+)".*?"(\1)\}/m, Str::Single
 
         # comments
         rule %r'/\*.*?\*/'m, Comment::Multiline
@@ -102,7 +102,7 @@ module Rouge
           push :inline_c
         end
 
-        rule %r/\.?[a-z_][a-z_0-9\.\-]*/i do |m|
+        rule %r/\.?[a-z_][\w.-]*/i do |m|
           next token Keyword if self.class.keywords.include? m[0]
           next token Name::Function if self.class.functions.include? m[0]
           next token Name::Variable if self.class.variables.include? m[0]

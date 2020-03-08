@@ -172,7 +172,7 @@ module Rouge
         rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
 
         decimal = %r/[\d]+(?:_\d+)*/
-        exp = %r/e[\+\-]?\d+/i
+        exp = %r/e[+-]?\d+/i
         rule %r/#{decimal}(?:\.#{decimal}#{exp}?|#{exp})/, Num::Float
         rule decimal, Num::Integer
 

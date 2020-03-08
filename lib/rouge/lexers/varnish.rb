@@ -4,13 +4,13 @@
 module Rouge
   module Lexers
     class Varnish < RegexLexer
-      title 'Varnish'
-      desc 'The Varnish (high-performance web accelerator) configuration language'
+      title 'VCL: Varnish Configuration Language'
+      desc 'The Configuration Language of Varnish HTTP Cache (https://varnish-cache.org/)'
 
-      tag 'varnish'
-      aliases 'varnishconf', 'VCL'
+      tag 'vcl'
+      aliases 'varnishconf', 'varnish'
       filenames '*.vcl'
-      mimetypes 'text/x-varnish'
+      mimetypes 'text/x-varnish', 'text/x-vcl'
 
       INUM = %r/[0-9]+/
       FNUM = %r/#{INUM}+(?:\.#{INUM}(?:e[\+\-]?#{INUM})?|e[\+\-]?#{INUM})/i

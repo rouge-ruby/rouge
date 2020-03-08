@@ -75,7 +75,7 @@ module Rouge
         rule %r/\s+/, Text::Whitespace
         rule %r/[\{\}\;]+/, Punctuation
         rule %r/(?<![\-\w])(and|or|not|\+|\.)(?![\-\w])/, Operator
-        
+
         rule %r/(?:#{top_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
         rule %r/(?:#{module_header_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
         rule %r/(?:#{meta_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
@@ -87,8 +87,8 @@ module Rouge
         rule %r/(?:#{types.join('|')})(?=[^\w\-\:])\b/, Keyword::Type
         rule %r/(?:#{constants_keywords.join('|')})(?=[^\w\-\:])\b/, Name::Constant
 
-        rule %r/"[^"\\]*(?:\\.[^"\\]*)*"/, Str
-        rule %r/\'[^\'\\]*(?:\\.[^\'\\]*)*\'/, Str
+        rule %r/"[^"\\]*(?:\\.[^"\\]*)*"/, Str #for double quotes
+        rule %r/\'[^\'\\]*(?:\\.[^\'\\]*)*\'/, Str #for single quotes
 
         rule %r/\/\*/, Comment, :comment
         rule %r/\/\/.*?$/, Comment
@@ -99,7 +99,7 @@ module Rouge
         end
 
         #match BNF stmt `date-arg-str`
-        rule %r/([0-9]{4}+\-[0-9]{2}\-[0-9]{2})(?=[\s\{\}\;])/, Name::Label
+        rule %r/([0-9]{4}\-[0-9]{2}\-[0-9]{2})(?=[\s\{\}\;])/, Name::Label
         rule %r/([0-9]+\.[0-9]+)(?=[\s\{\}\;])/, Num::Float
         rule %r/([0-9]+)(?=[\s\{\}\;])/, Num::Integer
         rule %r/[^;\{\}\s\*\+\'"]+/, Name

@@ -40,6 +40,8 @@ iasc|idesc|inv|keys|load|log|lsq|ltime|ltrim|maxs|md5|meta|mins|next|parse|plist
 / Strings
 ("";"x\n";"\007")
 
+a:1 2 3   / comment with leading whitespaces
+b:3 4 5 5 / to bring in line with this comment
 
 10D 10D10 10D10:10 10D10:10:10 10D10:10:10.11
 10Dz 10D10p 10D10:10n 10D10:10:10z 10D10:10:10.11p

@@ -34,7 +34,7 @@ module Rouge
       end
 
       state :name do
-        rule %r/("(?:\"|[^"\n])*?")(\s*)(:)/ do
+        rule %r/("(?:\\.|[^"\\\n])*?")(\s*)(:)/ do
           groups Name::Label, Text::Whitespace, Punctuation
         end
       end

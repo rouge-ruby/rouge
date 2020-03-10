@@ -1,0 +1,32 @@
+version 1.2
+@totalColumns 3
+name: notEmpty
+age: range(0, 120)
+gender: is("m") or is("f") or is("t") or is("n")
+
+@separator TAB
+@quoted
+@totalColumns 21
+@permitEmpty
+@ignoreColumnNameCase
+
+//This Comment is a Single Line Comment it terminates at this line break
+a_column:
+
+/*This Comment is a Multi Line Comment:
+it can go on for as many lines as you like, until you type*/
+a_column:
+
+a_column: is("some string") and $b_column/starts("some string") //here two tests are combined on a single line, the second test here looks to the second column 
+b_column:                                                       //to check it's value starts with "some string"
+
+a_column: is("some string")    //the contents of a_column must be the string "some string"
+a_column: is($a_column)  //the contents of a_column must be the value held in a_column, treated as a string
+
+a_column: range(*, 10)
+
+a_column: xDateTime(2014-10-04T00:00:01Z,2015-12-03T23:59:59) //the value of a_column must be a valid xDateTime and between the two xDateTimes shown (inclusive)
+a_column: xDateTime(2014-10-04T00:00:01+02:00,2015-12-03T23:59:59+02:00) //the value of a_column must be a valid xDateTime and between the two xDateTimes shown (inclusive)
+a_column: xDateTime(2014-10-04,2015-12-03) //the value of a_column must be a valid xDate and between the two xDates shown (inclusive)
+a_column: xTime(00:00:01+02:00,2015-12-03T23:59:59+02:00) //the value of a_column must be a valid xTime and between the two xTimes shown (inclusive)
+a_column: ukDate(04/10/2014,03/12/2015) //the value of a_column must be a valid ukDate and between the two ukDates shown (inclusive)

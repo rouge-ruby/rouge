@@ -51,7 +51,7 @@ module Rouge
           LOCALTIME LOCALTIMESTAMP LOCATION LOCATOR LOCK LOWER MAP MATCH
           MAX MAXVALUE MESSAGE_LENGTH MESSAGE_OCTET_LENGTH MESSAGE_TEXT
           METHOD MIN MINUTE MINVALUE MOD MODE MODIFIES MODIFY MONTH
-          MORE MOVE MUMPS NAMES NATIONAL NATURAL NCHAR NCLOB NEW NEXT
+          MORE MOVE MUMPS NAMES NATURAL NCLOB NEW NEXT
           NO NOCREATEDB NOCREATEUSER NONE NOT NOTHING NOTIFY NOTNULL
           NULL NULLABLE NULLIF OBJECT OCTET_LENGTH OF OFF OFFSET OIDS
           OLD ON ONLY OPEN OPERATION OPERATOR OPTION OPTIONS OR ORDER
@@ -59,7 +59,7 @@ module Rouge
           OWNER PAD PARAMETER PARAMETERS PARAMETER_MODE PARAMATER_NAME
           PARAMATER_ORDINAL_POSITION PARAMETER_SPECIFIC_CATALOG
           PARAMETER_SPECIFIC_NAME PARAMATER_SPECIFIC_SCHEMA PARTIAL PASCAL
-          PENDANT PLACING PLI POSITION POSTFIX PRECISION PREFIX PREORDER
+          PENDANT PLACING PLI POSITION POSTFIX PREFIX PREORDER
           PREPARE PRESERVE PRIMARY PRIOR PRIVILEGES PROCEDURAL PROCEDURE
           PUBLIC READ READS RECHECK RECURSIVE REF REFERENCES REFERENCING
           REINDEX RELATIVE RENAME REPEATABLE REPLACE RESET RESTART
@@ -75,7 +75,7 @@ module Rouge
           STDIN STDOUT STORAGE STRICT STRUCTURE STYPE SUBCLASS_ORIGIN
           SUBLIST SUBSTRING SUM SYMMETRIC SYSID SYSTEM SYSTEM_USER
           TABLE TABLE_NAME  TEMP TEMPLATE TEMPORARY TERMINATE THAN THEN
-          TIMESTAMP TIMEZONE_HOUR TIMEZONE_MINUTE TO TOAST TRAILING
+          TIMEZONE_HOUR TIMEZONE_MINUTE TO TOAST TRAILING
           TRANSATION TRANSACTIONS_COMMITTED TRANSACTIONS_ROLLED_BACK
           TRANSATION_ACTIVE TRANSFORM TRANSFORMS TRANSLATE TRANSLATION
           TREAT TRIGGER TRIGGER_CATALOG TRIGGER_NAME TRIGGER_SCHEMA TRIM
@@ -84,8 +84,24 @@ module Rouge
           USAGE USER USER_DEFINED_TYPE_CATALOG USER_DEFINED_TYPE_NAME
           USER_DEFINED_TYPE_SCHEMA USING VACUUM VALID VALIDATOR VALUES
           VARIABLE VERBOSE VERSION VIEW VOLATILE WHEN WHENEVER WHERE
-          WITH WITHOUT WORK WRITE YEAR ZONE
+          WITH WITHOUT WORK WRITE ZONE
         )
+      end
+
+      def self.keywords_type
+        # sources:
+        # https://dev.mysql.com/doc/refman/5.7/en/numeric-type-overview.html
+        # https://dev.mysql.com/doc/refman/5.7/en/date-and-time-type-overview.html
+        # https://dev.mysql.com/doc/refman/5.7/en/string-type-overview.html
+        @keywords_type ||= Set.new(%w(
+            ZEROFILL UNSIGNED SIGNED SERIAL BIT TINYINT BOOL BOOLEAN SMALLINT
+            MEDIUMINT INT INTEGER BIGINT DECIMAL DEC NUMERIC FIXED FLOAT DOUBLE
+            PRECISION REAL
+            DATE DATETIME TIMESTAMP TIME YEAR
+            NATIONAL CHAR CHARACTER NCHAR BYTE
+            VARCHAR VARYING BINARY VARBINARY TINYBLOB TINYTEXT BLOB TEXT
+            MEDIUMBLOB MEDIUMTEXT LONGBLOB LONGTEXT ENUM
+        ))
       end
 
       state :root do
@@ -94,11 +110,15 @@ module Rouge
         rule %r(/\*), Comment::Multiline, :multiline_comments
         rule %r/\d+/, Num::Integer
         rule %r/'/, Str::Single, :single_string
+        # A double-quoted string refers to a database object in our default SQL
+        # dialect, which is apropriate for e.g. MS SQL and PostgreSQL.
         rule %r/"/, Name::Variable, :double_string
         rule %r/`/, Name::Variable, :backtick
 
-        rule %r/\w\w*/ do |m|
-          if self.class.keywords.include? m[0].upcase
+        rule %r/\w[\w\d]*/ do |m|
+          if self.class.keywords_type.include? m[0].upcase
+            token Name::Builtin
+          elsif self.class.keywords.include? m[0].upcase
             token Keyword
           else
             token Name

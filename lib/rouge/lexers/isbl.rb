@@ -13,7 +13,7 @@ module Rouge
         load File.join(__dir__, 'isbl/builtins.rb')
         self.builtins
       end
-  
+
       def self.constants
         @constants ||= self.builtins["const"].merge(self.builtins["enum"]).collect!(&:downcase)
       end
@@ -32,7 +32,7 @@ module Rouge
           конецпока except exitfor finally foreach все if если in в not не or или try while пока
         )
       end
-    
+
       state :whitespace do
         rule %r/\s+/m, Text
         rule %r(//.*?$), Comment::Single
@@ -68,7 +68,7 @@ module Rouge
         rule %r/[.]/, Punctuation, :dotted
         rule(//) { pop! }
       end
-      
+
       state :root do
         mixin :whitespace
         rule %r/[:]/, Punctuation, :type

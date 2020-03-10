@@ -1,0 +1,54 @@
+SELECT ?item ?itemLabel ?genderLabel (GROUP_CONCAT(DISTINCT ?occupationLabel; SEPARATOR=", ") AS ?occupations) (GROUP_CONCAT(DISTINCT ?countryLabel; SEPARATOR=", ") AS ?countries) ?death {
+  VALUES ?target_country { wd:Q16 wd:Q31 wd:Q39 wd:Q142 } . #countries: Canada, France, Switzerland, Belgium.
+  VALUES ?occupation { wd:Q483501 wd:Q36834 wd:Q639669 wd:Q753110 wd:Q488205 wd:Q49757 wd:Q4964182 wd:Q1281618 wd:Q36180 wd:Q482980 wd:Q1028181 wd:Q6625963 wd:Q28389 wd:Q1930187 wd:Q33999 wd:Q3282637 wd:Q81096 wd:Q201788 wd:Q18939491 wd:Q486748 wd:Q3658608 wd:Q214917 wd:Q11774202 wd:Q205375 } . #occupation: composer, poet, sculptor, writer, artist, painter, etc.
+   ?item wdt:P31 wd:Q5;
+               wdt:P21 ?gender;
+               wdt:P570 ?death;
+               wdt:P27 ?target_country;
+               wdt:P27 ?country;
+               wdt:P106 ?occupation .
+   FILTER( YEAR( ?death ) = 1966 ) .
+   SERVICE wikibase:label {
+       bd:serviceParam wikibase:language "fr,en,ru,el,es,fa" .
+       ?item rdfs:label ?itemLabel .
+       ?gender rdfs:label ?genderLabel .
+       ?occupation rdfs:label ?occupationLabel .
+       ?country rdfs:label ?countryLabel .
+   } .
+} GROUP BY ?item ?itemLabel ?genderLabel ?death ORDER BY ?itemLabel
+
+
+SELECT ?material $VAR (concat("test#\"foo", 'foo\'bar\n') AS ?x_2) (-.123 AS ?num)
+where {
+  ?painting wdt:P31/wdt:P279 wd:Q3305213; # end of line comment
+            p:P186 [ ps:P186 ?material; pq:P518 wd:Q861259 ].
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE]". }
+}
+ORDER BY DESC(?count)
+
+# illustrates sitelink selection, ";" notation
+SELECT ?item ?itemLabel ?article (-200.23e+3 AS ?exp)
+WHERE
+{
+	?article 	schema:about ?item ;
+			schema:isPartOf <https://species.wikimedia.org/> .
+	SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" }
+}
+LIMIT +200
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT (SUM(?val) AS ?sum) (COUNT(?a) AS ?count)
+WHERE {
+    ?a rdf:value ?val .
+} FILTER NOT EXISTS {
+  ?line wdt:P361 wd:Q129612;
+} GROUP BY ?a
+
+# various literals
+'chat'@fr
+"abc"^^appNS:appDataType
+true
+false
+'''The librarian said, "Perhaps you would enjoy 'War and Peace'."'''
+"""The librarian said, 'Perhaps you would enjoy "War and Peace".'"""
+"\u4444 and \U88888888"

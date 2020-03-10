@@ -99,12 +99,14 @@ module Rouge
 
       state :string do
         rule %r/%(\\.|.)+?%/, Str::Escape
+        rule %r/\\"/, Str::Double
         rule %r/"/, Str::Double, :pop!
         rule %r/./m, Str::Double
       end
 
       state :string_s do
         rule %r/%(\\.|.)+?%/, Str::Escape
+        rule %r/\\'/, Str::Single
         rule %r/'/, Str::Single, :pop!
         rule %r/./m, Str::Single
       end

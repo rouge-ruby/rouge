@@ -27,6 +27,27 @@ Cursor("select * from IOUSER",,)
 test
 ***/
 
+Affect('xsl','<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml" indent="yes" />
+<xsl:template match="/">
+<document>
+	<xsl:for-each select="root/set/row">
+	<xsl:element name="cmr"><xsl:attribute name="id"><xsl:value-of select="cell[1]/value"/></xsl:attribute>
+	<xsl:for-each select="cell">
+		<xsl:if test="name!=\'id_cmr\'">
+		<xsl:element name="{name}"><xsl:value-of select="value"/></xsl:element>
+		</xsl:if>
+	</xsl:for-each>
+	</xsl:element>
+	</xsl:for-each>
+</document>
+</xsl:template>
+</xsl:stylesheet>');
+Option("ESCAPE","False");
+
+Rtf_Tab("C:\data\dev\rtf\rtf\fusion_tableaux.rtf","C:\data\dev\rtf\rtf\fusion_tableaux_res.rtf",
+    "TABLEAU1","select COL1,COL2,COL3 from TABLE_FUSIONRTF");
+
 Affect(VAR1,'%TEST%'); //Créer et affecter la variable VAR1 avec une chaîne
 select * from [TABLE1] where COL1 like %VAR1%; //utiliser la variable VAR1 dans une requête
 

@@ -35,9 +35,9 @@ module Rouge
       )
 
       keywords_pseudo = %w(
-        __FILE__ __MODULE__ __LINE__ __FUNCTION__ __PRETTY_FUNCTION__
-         __DATE__ __EOF__ __TIME__ __TIMESTAMP__ __VENDOR__
-        __VERSION__
+        __FILE__ __FILE_FULL_PATH__ __MODULE__ __LINE__ __FUNCTION__
+        __PRETTY_FUNCTION__ __DATE__ __EOF__ __TIME__ __TIMESTAMP__
+        __VENDOR__ __VERSION__
       )
 
       state :whitespace do
@@ -48,7 +48,7 @@ module Rouge
       state :root do
         mixin :whitespace
         # Comments
-        rule %r(//(.*?)\n), Comment::Single
+        rule %r(//.*), Comment::Single
         rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/), Comment::Multiline
         rule %r(/\+), Comment::Multiline, :nested_comment
         # Keywords

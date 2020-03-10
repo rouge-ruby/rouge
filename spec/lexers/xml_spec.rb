@@ -34,6 +34,7 @@ describe Rouge::Lexers::XML do
       assert_guess :source => '<?xml version="1.0" ?><html destdir="${reportfolderPath}" encoding="utf-8" />'
       assert_guess :source => '<!DOCTYPE xml>'
       deny_guess   :source => '<!DOCTYPE html>'
+      assert_guess :source => '<!DOCTYPE unknown>'
     end
   end
 end

@@ -1,0 +1,43 @@
+include "MUMPS"
+load "iovtk"
+
+// Parameters
+func f = 1.;
+real dt = 1.;
+real T = 1.;
+
+// Mesh
+int nn = 25;	//Mesh quality
+mesh Th = square(nn, nn);
+
+// Fespace
+func Pk = P1;
+fespace Uh(Th, Pk);
+Uh u;
+
+// Macro
+macro grad(A) [dx(A), dy(A)] //
+
+// Problem
+varf vLaplacian (u, uh)
+	= int2d(Th)(
+		  grad(u)' * grad(uh)
+	)
+	- int2d(Th)(
+		  f * uh
+	)
+	+ on(1, 2, 3, 4, u=0)
+	;
+matrix<real> Laplacian = vLaplacian(Uh, Uh, solver=sparsesolver);
+real[int] LaplacianBoundary = vLaplacian(0, Uh);
+
+for (int i = 0; i < 10; i++) {
+	LaplacianBoundary = vLaplacian(0, Uh);
+	u[] = Laplacian^-1 * LaplacianBoundary;
+
+	// Plot
+	plot(u, nbiso=30, fill=true, value=true, cmm="A");
+
+	// Save
+	savevtk("res.vtu", Th, u, dataname="u");
+}

@@ -24,10 +24,7 @@ module Rouge
 
       def stream(tokens, &b)
         tokens.each do |tok, val|
-          escape = escape_sequence(tok)
-          yield escape.style_string
-          yield val.gsub("\n", "#{escape.reset_string}\n#{escape.style_string}")
-          yield escape.reset_string
+          escape_sequence(tok).stream_value(val, &b)
         end
       end
 
@@ -83,6 +80,14 @@ module Rouge
         def bg
           return @bg if instance_variable_defined? :@bg
           @bg = style.bg && self.class.color_index(style.bg)
+        end
+
+
+        def stream_value(val, &b)
+          yield style_string
+          yield val.gsub("\e", "\\e")
+                   .gsub("\n", "#{reset_string}\n#{style_string}")
+          yield reset_string
         end
 
         def style_string
@@ -157,12 +162,23 @@ module Rouge
         end
       end
 
+      class Unescape < EscapeSequence
+        def initialize(*) end
+        def style_string(*) '' end
+        def reset_string(*) '' end
+        def stream_value(val) yield val end
+      end
+
     # private
       def escape_sequence(token)
-        return '' if escape?(token)
+        return Unescape.new if escape?(token)
         @escape_sequences ||= {}
         @escape_sequences[token.qualname] ||=
-          EscapeSequence.new(get_style(token))
+          make_escape_sequence(get_style(token))
+      end
+
+      def make_escape_sequence(style)
+        EscapeSequence.new(style)
       end
 
       def get_style(token)

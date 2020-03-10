@@ -12,6 +12,13 @@ fn g() {
     io::println(d);
 }
 
+fn h(a: i32) -> i32 {
+  let b = (a / 4 + 1_000) * 2 - 3;
+  let c = (a | 0b0100) & 0xF;
+
+  c ^ !b
+}
+
 fn main() {
     f();
     g();
@@ -23,13 +30,14 @@ println!("a\\");
 println!("a\n");
 println!("a\"b");
 println!("a\'");
-
-debug!("test %?", a.b);
-debug!("test %u", a.c);
-debug!("test %i", a.d);
-debug!("test %c", a.e);
-debug!("test %f", a.f);
-debug!("test %b", a.g);
+println!(r"");
+println!(r"\n\");
+println!(r#"a"b\"#);
+println!(r##"r#""#"##);
+println!(r###"r##"r#""#"##"###);
+println!(r#"
+  "New line in a raw string"
+"#);
 
 trait iterable<A> {
     fn iterate(blk: fn(x: &A) -> bool);

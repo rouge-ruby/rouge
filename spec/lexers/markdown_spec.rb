@@ -39,6 +39,14 @@ describe Rouge::Lexers::Markdown do
       assert_has_token("Comment.Single","```\n#!/usr/bin/env ruby\n```\n")
     end
 
+    it 'picks a sub-lexer when the code-block-content is ambiguous' do
+      source = "Index: ): Awaitable<\n"
+      assert_raises Rouge::Guesser::Ambiguous do
+        Rouge::Lexer.find_fancy(nil, source)
+      end
+      assert_no_errors "```\n#{source}```\n"
+    end
+
     it 'recognizes backticks instead of code block if inside string' do
       assert_has_token("Literal.String.Backtick","\nx```ruby\nfoo\n```\n")
       deny_has_token("Name.Label","\nx```ruby\nfoo\n```\n")

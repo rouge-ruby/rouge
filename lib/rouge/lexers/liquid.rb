@@ -266,7 +266,7 @@ module Rouge
         end
 
         rule %r/(with|for)\b/, Name::Tag
-        rule %r/[^\s\.]+(\.[^\s\.]+)+\b/, Name::Other
+        rule %r/[\/\w-]+(\.[\w-]+)+\b/, Text
 
         mixin :variable_tag_markup
       end

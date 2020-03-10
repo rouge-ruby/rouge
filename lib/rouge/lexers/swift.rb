@@ -25,7 +25,7 @@ module Rouge
       )
 
       declarations = Set.new %w(
-        class deinit enum convenience extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype open fileprivate
+        class deinit enum convenience extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype open fileprivate some
       )
 
       constants = Set.new %w(
@@ -67,6 +67,7 @@ module Rouge
 
       state :root do
         mixin :whitespace
+        
         rule %r/\$(([1-9]\d*)?\d)/, Name::Variable
 
         rule %r{[()\[\]{}:;,?\\]}, Punctuation

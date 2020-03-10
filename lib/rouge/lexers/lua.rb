@@ -72,7 +72,10 @@ module Rouge
 
         rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?) do |m|
           name = m[0]
-          if self.builtins.include?(name)
+          if name == "gsub"
+            token Name::Builtin
+            push :gsub
+          elsif self.builtins.include?(name)
             token Name::Builtin
           elsif name =~ /\./
             a, b = name.split('.', 2)
@@ -96,6 +99,41 @@ module Rouge
         end
         # inline function
         rule %r(\(), Punctuation, :pop!
+      end
+
+      state :gsub do
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/[(,]/, Punctuation
+        rule %r/\s+/, Text
+        rule %r/"/, Str::Regex, :regex
+      end
+
+      state :regex do
+        rule %r(") do
+          token Str::Regex
+          goto :regex_end
+        end
+
+        rule %r/\[\^?/, Str::Escape, :regex_group
+        rule %r/\\./, Str::Escape
+        rule %r{[(][?][:=<!]}, Str::Escape
+        rule %r/[{][\d,]+[}]/, Str::Escape
+        rule %r/[()?]/, Str::Escape
+        rule %r/./, Str::Regex
+      end
+
+      state :regex_end do
+        rule %r/[$]+/, Str::Regex, :pop!
+        rule(//) { pop! }
+      end
+
+      state :regex_group do
+        rule %r(/), Str::Escape
+        rule %r/\]/, Str::Escape, :pop!
+        rule %r/(\\)(.)/ do |m|
+          groups Str::Escape, Str::Regex
+        end
+        rule %r/./, Str::Regex
       end
 
       state :escape_sqs do

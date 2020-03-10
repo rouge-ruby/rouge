@@ -4,6 +4,8 @@
 # not required by the main lib.
 # to use this module, require 'rouge/cli'.
 
+require 'rbconfig'
+
 module Rouge
   class FileReader
     attr_reader :input
@@ -200,9 +202,22 @@ module Rouge
         yield %[                            delimiters. implies --escape]
       end
 
+      # There is no consistent way to do this, but this is used elsewhere,
+      # and we provide explicit opt-in and opt-out with $COLORTERM
+      def self.supports_truecolor?
+        return true if %w(24bit truecolor).include?(ENV['COLORTERM'])
+        return false if ENV['COLORTERM'] && ENV['COLORTERM'] =~ /256/
+
+        if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
+          ENV['ConEmuANSI'] == 'ON' && !ENV['ANSICON']
+        else
+          ENV['TERM'] !~ /(^rxvt)|(-color$)/
+        end
+      end
+
       def self.parse(argv)
         opts = {
-          :formatter => 'terminal256',
+          :formatter => supports_truecolor? ? 'terminal-truecolor' : 'terminal256',
           :theme => 'thankful_eyes',
           :css_class => 'codehilite',
           :input_file => '-',
@@ -299,8 +314,10 @@ module Rouge
 
         theme = Theme.find(opts[:theme]).new or error! "unknown theme #{opts[:theme]}"
 
+        # TODO: document this in --help
         @formatter = case opts[:formatter]
         when 'terminal256' then Formatters::Terminal256.new(theme)
+        when 'terminal-truecolor' then Formatters::TerminalTruecolor.new(theme)
         when 'html' then Formatters::HTML.new
         when 'html-pygments' then Formatters::HTMLPygments.new(Formatters::HTML.new, opts[:css_class])
         when 'html-inline' then Formatters::HTMLInline.new(theme)

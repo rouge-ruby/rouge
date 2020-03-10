@@ -38,6 +38,45 @@ funky = "I'm a string. \"You can quote me\". Tab \t newline \n you get it."
 right = "C:\\Users\\nodejs\\templates"
 wrong = "C:\Users\nodejs\templates" # note: doesn't produce a valid path
 
+# What you see is what you get - no escapes
+winpath  = 'C:\Users\nodejs\templates'
+winpath2 = '\\ServerX\admin$\system32\'
+quoted   = 'Tom "Dubs" Preston-Werner'
+regex    = '<\i\c*\s*>'
+wrong    = 'no multiline - but rest of lex is okay
+
+# multiline
+regex2 = '''I [dw]on't need \d{2} apples'''
+lines  = '''
+The first newline is
+trimmed in raw strings.
+   All other whitespace
+   is preserved.
+'''
+
+str4 = """Here are two quotation marks: "". Simple enough."""
+# str5 = """Here are three quotation marks: """."""  # INVALID
+str5 = """Here are three quotation marks: ""\"."""
+str6 = """Here are fifteen quotation marks: ""\"""\"""\"""\"""\"."""
+
+# "This," she said, "is just a pointless statement."
+str7 = """"This," she said, "is just a pointless statement."""
+# The following strings are byte-for-byte equivalent:
+str1 = "The quick brown fox jumps over the lazy dog."
+
+str2 = """
+The quick brown \
+
+
+  fox jumps over \
+    the lazy dog."""
+
+str3 = """\
+       The quick brown \
+       fox jumps over \
+       the lazy dog.\
+       """
+
 # Test file for TOML
 # Only this one tries to emulate a TOML file written by a user of the kind of parser writers probably hate
 # This part you'll really hate
@@ -62,3 +101,6 @@ test_string = "You'll hate me after this - #"          # " Annoying, isn't it?
             ]
 
 東京都 = 123
+
+name = { first = "Tom", last = "Preston-Werner" }
+point = { x = 1, y = 2 }

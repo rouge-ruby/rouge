@@ -1,0 +1,59 @@
+@import Foundation;
+#include <cheader.h>
+#include <cppheader>
+#import <objective-cheader.h>
+
+@class ForwardDeclare;
+
+@interface BaseClass : NSObject
+- (instancetype)initWithForwardDeclare(ForwardDeclare *)ForwardDeclare NS_DESIGNATED_INITIALIZER;
+@end
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface GenericClass<__covariant Type : id<NSCopying>> : NSObject {
+	std::unique_ptr<Type> _storage;
+}
+
+- (void)takesABlock:(void * (^_Nullable)(NSString *, T *, ...))block __attribute__((deprecated));
+@end
+
+@implementation GenericClass {
+  @private
+	struct {
+		int a;
+		NSArray<NSNumber *> b;
+	} _moreStuff;
+}
+@end
+
+template <typename T, typename Lambda>
+auto takesALambda(GenericClass<T *> *generic, Lambda lambda) -> decltype(generic.class) {
+	[generic takesABlock:^(@"Hello, world!", new T(), 3) {
+		lambda(@{
+			@"A" : @YES,
+			@"literal" : @1,
+			@"test" : @[ reinterpret_cast<NSArray *>(generic) ],
+		})
+	}];
+	return generic.class;
+}
+
+NS_ASSUME_NONNULL_END
+
+void function() {
+	static_assert(sizeof(id) == 8, "ILP static assert");
+	auto result = takesALambda([GenericClass new], [&](NSDictionary<NSString *, id> things) {
+		[things ? things : [BaseClass initWithForwardDeclare:ForwardDeclare.sharedForwardDeclare]
+		    keysSortedByValueUsingSelector:@selector(class)];
+	});
+	@try {
+		throw throw std::exception();
+	}
+	@catch (NSException *exception) {
+		std::cout << std::string(exception.description.UTF8String) << std::endl;
+	}
+}
+
+template <class F, class... Args>
+explicit thread(F &&f, Args &&... args);

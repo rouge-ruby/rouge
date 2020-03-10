@@ -15,11 +15,6 @@ module Rouge
         @perl = Perl.new
       end
   
-      def self.detect?(text)
-        return false if text.doctype?(/((?:ht|x)ml)/)
-        return true if text.doctype?
-      end
-
       # Note: If you add a tag in the lines below, you also need to modify "disambiguate '*.m'" in file disambiguation.rb
       TEXT_BLOCKS = %w(text doc)
       PERL_BLOCKS = %w(args flags attr init once shared perl cleanup filter)

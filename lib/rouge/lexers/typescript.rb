@@ -18,6 +18,13 @@ module Rouge
       filenames '*.ts', '*.d.ts'
 
       mimetypes 'text/typescript'
+
+      prepend :statement do
+        rule %r/(#{Javascript.id_regex})(\??)(\s*)(:)/ do
+          groups Name::Label, Punctuation, Text, Punctuation
+          push :expr_start
+        end
+      end
     end
   end
 end

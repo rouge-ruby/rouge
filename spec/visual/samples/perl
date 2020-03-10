@@ -72,6 +72,10 @@ my $str2 = "This is a $string with plain interpolation."
 my $cmd2 = `So is @this one.`
 my $str3 = 'A boring $string.'
 
+my @w = ( q!str4!, qw< str5 str6 >, qq(str7 $str1), qx`false`, qr/foo/ );
+$a = qr/bar/i;
+my %x = ( q_ThisString => "doesnt_overrun as if it were q-quoted" );
+
 # from http://gist.github.com/485595
 use strict;
 use warnings;

@@ -4,6 +4,28 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.17.0: 2020-03-11
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.16.0...v3.17.0)
+
+- General
+  - Fix name of splat expansion Rubocop rule ([#1451](https://github.com/rouge-ruby/rouge/pull/1451/) by Hiroki Noda)
+- CoffeeScript Lexer
+  - Improve regex and string lexing in CoffeeScript lexer ([#1441](https://github.com/rouge-ruby/rouge/pull/1441/) by Michael Camilleri)
+- ECL Lexer (**NEW**)
+  - Add ECL lexer ([#1396](https://github.com/rouge-ruby/rouge/pull/1396/) by David de Hilster)
+- Markdown Lexer
+  - Fix brackets in links in Markdown lexer ([#1445](https://github.com/rouge-ruby/rouge/pull/1445/) by Marcel Amirault)
+  - Fix fenced code blocks in Markdown lexer ([#1442](https://github.com/rouge-ruby/rouge/pull/1442/) by Michael Camilleri)
+- NASM Lexer
+  - Rewrite NASM lexer ([#1428](https://github.com/rouge-ruby/rouge/pull/1428/) by Michael Camilleri)
+- Ruby Lexer
+  - Support additional number literals in the Ruby lexer ([#1456](https://github.com/rouge-ruby/rouge/pull/1456/) by FUJI Goro)
+- Scala Lexer
+  - Fix symbol lexing in Scala lexer ([#1438](https://github.com/rouge-ruby/rouge/pull/1438/) by Michael Camilleri)
+- Varnish Lexer
+  - Add support for Fastly extensions to Varnish lexer ([#1454](https://github.com/rouge-ruby/rouge/pull/1454/) by FUJI Goro)
+
 ## version 3.16.0: 2020-02-12
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.15.0...v3.16.0)

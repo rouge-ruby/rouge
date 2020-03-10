@@ -14,6 +14,11 @@ describe Rouge::Lexers::Python do
       assert_guess :filename => 'SConstruct'
       assert_guess :filename => 'SConscript'
       assert_guess :filename => 'foo.tac'
+      assert_guess :filename => 'foo.bzl'
+      assert_guess :filename => 'BUCK'
+      assert_guess :filename => 'BUILD'
+      assert_guess :filename => 'BUILD.bazel'
+      assert_guess :filename => 'WORKSPACE'
     end
 
     it 'guesses by mimetype' do

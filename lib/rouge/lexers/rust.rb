@@ -96,7 +96,7 @@ module Rouge
         rule %r([=-]>), Keyword
         rule %r(<->), Keyword
         rule %r/[()\[\]{}|,:;]/, Punctuation
-        rule %r/[*!@~&+%^<>=\?-]|\.{2,3}/, Operator
+        rule %r/[*\/!@~&+%^<>=\?-]|\.{2,3}/, Operator
 
         rule %r/([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule %r/[.]\s*#{id}/, Name::Property
@@ -159,6 +159,7 @@ module Rouge
         )x, Str::Char
 
         rule %r/"/, Str, :string
+        rule %r/r(#*)".*?"\1/m, Str
 
         # numbers
         dot = /[.][0-9_]+/
@@ -185,16 +186,7 @@ module Rouge
       state :string do
         rule %r/"/, Str, :pop!
         rule escapes, Str::Escape
-        rule %r/%%/, Str::Interpol
-        rule %r(
-          %
-          ( [0-9]+ [$] )?  # Parameter
-          [0#+-]*          # Flag
-          ( [0-9]+ [$]? )? # Width
-          ( [.] [0-9]+ )?  # Precision
-          [bcdfiostuxX?]   # Type
-        )x, Str::Interpol
-        rule %r/[^%"\\]+/m, Str
+        rule %r/[^"\\]+/m, Str
       end
     end
   end

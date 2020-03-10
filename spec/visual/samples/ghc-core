@@ -1,0 +1,259 @@
+
+==================== Tidy Core ====================
+2019-12-18 17:32:20.30543 UTC
+
+Result size of Tidy Core
+  = {terms: 140, types: 117, coercions: 3, joins: 0/6}
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+Main.fib1 :: Integer
+[GblId,
+ Caf=NoCafRefs,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 100 0}]
+Main.fib1 = 0
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+Main.fib3 :: Integer
+[GblId,
+ Caf=NoCafRefs,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 100 0}]
+Main.fib3 = 1
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+Main.fib2 :: Integer
+[GblId,
+ Caf=NoCafRefs,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 100 0}]
+Main.fib2 = 2
+
+Rec {
+-- RHS size: {terms: 24, types: 3, coercions: 0, joins: 0/0}
+Main.fib_fib [Occ=LoopBreaker] :: Integer -> Integer
+[GblId, Arity=1, Str=<S,U>, Unf=OtherCon []]
+Main.fib_fib
+  = \ (ds_d2OU :: Integer) ->
+      case integer-gmp-1.0.2.0:GHC.Integer.Type.eqInteger#
+             ds_d2OU Main.fib1
+      of {
+        __DEFAULT ->
+          case integer-gmp-1.0.2.0:GHC.Integer.Type.eqInteger#
+                 ds_d2OU Main.fib3
+          of {
+            __DEFAULT ->
+              integer-gmp-1.0.2.0:GHC.Integer.Type.plusInteger
+                (Main.fib_fib
+                   (integer-gmp-1.0.2.0:GHC.Integer.Type.minusInteger
+                      ds_d2OU Main.fib3))
+                (Main.fib_fib
+                   (integer-gmp-1.0.2.0:GHC.Integer.Type.minusInteger
+                      ds_d2OU Main.fib2));
+            1# -> Main.fib3
+          };
+        1# -> Main.fib1
+      }
+end Rec }
+
+-- RHS size: {terms: 56, types: 30, coercions: 0, joins: 0/6}
+Main.$wfib [InlPrag=NOUSERINLINE[2]]
+  :: forall a p. (a -> a -> Bool) -> (Num a, Num p) => a -> p
+[GblId,
+ Arity=4,
+ Caf=NoCafRefs,
+ Str=<C(C(S)),C(C1(U))><L,U(A,C(C1(U)),A,A,A,A,C(U))><L,U(C(C1(U)),A,A,A,A,A,C(U))><L,U>,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True,
+         Guidance=IF_ARGS [60 150 90 0] 500 0}]
+Main.$wfib
+  = \ (@ a_s4rE)
+      (@ p_s4rF)
+      (ww_s4rM :: a_s4rE -> a_s4rE -> Bool)
+      (w_s4rH :: Num a_s4rE)
+      (w1_s4rI :: Num p_s4rF)
+      (w2_s4rJ :: a_s4rE) ->
+      let {
+        lvl_s4qh :: a_s4rE
+        [LclId]
+        lvl_s4qh = fromInteger @ a_s4rE w_s4rH Main.fib3 } in
+      let {
+        lvl1_s4ql :: a_s4rE
+        [LclId]
+        lvl1_s4ql = fromInteger @ a_s4rE w_s4rH Main.fib2 } in
+      let {
+        lvl2_s4qn :: p_s4rF
+        [LclId]
+        lvl2_s4qn = fromInteger @ p_s4rF w1_s4rI Main.fib3 } in
+      let {
+        lvl3_s4qp :: p_s4rF
+        [LclId]
+        lvl3_s4qp = fromInteger @ p_s4rF w1_s4rI Main.fib1 } in
+      let {
+        lvl4_s4qf :: a_s4rE
+        [LclId]
+        lvl4_s4qf = fromInteger @ a_s4rE w_s4rH Main.fib1 } in
+      letrec {
+        fib4_X4qP [Occ=LoopBreaker] :: a_s4rE -> p_s4rF
+        [LclId, Arity=1, Str=<L,U>, Unf=OtherCon []]
+        fib4_X4qP
+          = \ (ds_d2OU :: a_s4rE) ->
+              case ww_s4rM ds_d2OU lvl4_s4qf of {
+                False ->
+                  case ww_s4rM ds_d2OU lvl_s4qh of {
+                    False ->
+                      + @ p_s4rF
+                        w1_s4rI
+                        (fib4_X4qP (- @ a_s4rE w_s4rH ds_d2OU lvl_s4qh))
+                        (fib4_X4qP (- @ a_s4rE w_s4rH ds_d2OU lvl1_s4ql));
+                    True -> lvl2_s4qn
+                  };
+                True -> lvl3_s4qp
+              }; } in
+      fib4_X4qP w2_s4rJ
+
+-- RHS size: {terms: 14, types: 21, coercions: 0, joins: 0/0}
+fib [InlPrag=NOUSERINLINE[2]]
+  :: forall a p. (Eq a, Num a, Num p) => a -> p
+[GblId,
+ Arity=4,
+ Caf=NoCafRefs,
+ Str=<S(C(C(S))L),1*U(C(C1(U)),A)><L,U(A,C(C1(U)),A,A,A,A,C(U))><L,U(C(C1(U)),A,A,A,A,A,C(U))><L,U>,
+ Unf=Unf{Src=InlineStable, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True,
+         Guidance=ALWAYS_IF(arity=4,unsat_ok=True,boring_ok=False)
+         Tmpl= \ (@ a_s4rE)
+                 (@ p_s4rF)
+                 (w_s4rG [Occ=Once!] :: Eq a_s4rE)
+                 (w1_s4rH [Occ=Once] :: Num a_s4rE)
+                 (w2_s4rI [Occ=Once] :: Num p_s4rF)
+                 (w3_s4rJ [Occ=Once] :: a_s4rE) ->
+                 case w_s4rG of
+                 { ghc-prim-0.5.3:GHC.Classes.C:Eq ww1_s4rM [Occ=Once]
+                                                   _ [Occ=Dead] ->
+                 Main.$wfib @ a_s4rE @ p_s4rF ww1_s4rM w1_s4rH w2_s4rI w3_s4rJ
+                 }}]
+fib
+  = \ (@ a_s4rE)
+      (@ p_s4rF)
+      (w_s4rG :: Eq a_s4rE)
+      (w1_s4rH :: Num a_s4rE)
+      (w2_s4rI :: Num p_s4rF)
+      (w3_s4rJ :: a_s4rE) ->
+      case w_s4rG of
+      { ghc-prim-0.5.3:GHC.Classes.C:Eq ww1_s4rM ww2_s4rN ->
+      Main.$wfib @ a_s4rE @ p_s4rF ww1_s4rM w1_s4rH w2_s4rI w3_s4rJ
+      }
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+Main.main2 :: Integer
+[GblId,
+ Caf=NoCafRefs,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 100 0}]
+Main.main2 = 42
+
+-- RHS size: {terms: 10, types: 11, coercions: 0, joins: 0/0}
+Main.main1 :: String
+[GblId,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=False, ConLike=False,
+         WorkFree=False, Expandable=False, Guidance=IF_ARGS [] 80 30}]
+Main.main1
+  = case GHC.Show.$w$cshowsPrec4
+           0# (Main.fib_fib Main.main2) (ghc-prim-0.5.3:GHC.Types.[] @ Char)
+    of
+    { (# ww3_a33q, ww4_a33r #) ->
+    ghc-prim-0.5.3:GHC.Types.: @ Char ww3_a33q ww4_a33r
+    }
+
+-- RHS size: {terms: 4, types: 0, coercions: 0, joins: 0/0}
+main :: IO ()
+[GblId,
+ Arity=1,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 40 60}]
+main
+  = GHC.IO.Handle.Text.hPutStr'
+      GHC.IO.Handle.FD.stdout Main.main1 ghc-prim-0.5.3:GHC.Types.True
+
+-- RHS size: {terms: 2, types: 1, coercions: 0, joins: 0/0}
+Main.main3
+  :: ghc-prim-0.5.3:GHC.Prim.State# ghc-prim-0.5.3:GHC.Prim.RealWorld
+     -> (# ghc-prim-0.5.3:GHC.Prim.State#
+             ghc-prim-0.5.3:GHC.Prim.RealWorld,
+           () #)
+[GblId,
+ Arity=1,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 20 60}]
+Main.main3 = GHC.TopHandler.runMainIO1 @ () main
+
+-- RHS size: {terms: 1, types: 0, coercions: 3, joins: 0/0}
+:Main.main :: IO ()
+[GblId,
+ Arity=1,
+ Unf=Unf{Src=InlineStable, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True,
+         Guidance=ALWAYS_IF(arity=0,unsat_ok=True,boring_ok=True)
+         Tmpl= Main.main3
+               `cast` (Sym (ghc-prim-0.5.3:GHC.Types.N:IO[0] <()>_R)
+                       :: (ghc-prim-0.5.3:GHC.Prim.State#
+                             ghc-prim-0.5.3:GHC.Prim.RealWorld
+                           -> (# ghc-prim-0.5.3:GHC.Prim.State#
+                                   ghc-prim-0.5.3:GHC.Prim.RealWorld,
+                                 () #))
+                          ~R# IO ())}]
+:Main.main
+  = Main.main3
+    `cast` (Sym (ghc-prim-0.5.3:GHC.Types.N:IO[0] <()>_R)
+            :: (ghc-prim-0.5.3:GHC.Prim.State#
+                  ghc-prim-0.5.3:GHC.Prim.RealWorld
+                -> (# ghc-prim-0.5.3:GHC.Prim.State#
+                        ghc-prim-0.5.3:GHC.Prim.RealWorld,
+                      () #))
+               ~R# IO ())
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+Main.$trModule4 :: ghc-prim-0.5.3:GHC.Prim.Addr#
+[GblId,
+ Caf=NoCafRefs,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 20 0}]
+Main.$trModule4 = "main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+Main.$trModule3 :: ghc-prim-0.5.3:GHC.Types.TrName
+[GblId,
+ Caf=NoCafRefs,
+ Str=m1,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 10 20}]
+Main.$trModule3 = ghc-prim-0.5.3:GHC.Types.TrNameS Main.$trModule4
+
+-- RHS size: {terms: 1, types: 0, coercions: 0, joins: 0/0}
+Main.$trModule2 :: ghc-prim-0.5.3:GHC.Prim.Addr#
+[GblId,
+ Caf=NoCafRefs,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 20 0}]
+Main.$trModule2 = "Main"#
+
+-- RHS size: {terms: 2, types: 0, coercions: 0, joins: 0/0}
+Main.$trModule1 :: ghc-prim-0.5.3:GHC.Types.TrName
+[GblId,
+ Caf=NoCafRefs,
+ Str=m1,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 10 20}]
+Main.$trModule1 = ghc-prim-0.5.3:GHC.Types.TrNameS Main.$trModule2
+
+-- RHS size: {terms: 3, types: 0, coercions: 0, joins: 0/0}
+Main.$trModule :: ghc-prim-0.5.3:GHC.Types.Module
+[GblId,
+ Caf=NoCafRefs,
+ Str=m,
+ Unf=Unf{Src=<vanilla>, TopLvl=True, Value=True, ConLike=True,
+         WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 10 30}]
+Main.$trModule
+  = ghc-prim-0.5.3:GHC.Types.Module Main.$trModule3 Main.$trModule1
+

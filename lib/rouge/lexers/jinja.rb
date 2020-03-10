@@ -38,6 +38,7 @@ module Rouge
       state :root do
         # Comments
         rule %r/{#/, Comment, :comment
+        rule %r/##.*/, Comment
 
         # Statements
         rule %r/\{\%/ do
@@ -51,13 +52,13 @@ module Rouge
           push :expression
         end
 
-        rule(/(.+?)(?=\\|{{|{%|{#)/m) { delegate parent }
+        rule(/(.+?)(?=\\|{{|{%|{#|##)/m) { delegate parent }
         rule(/.+/m) { delegate parent }
       end
 
       state :filter do
         # Filters are called like variable|foo(arg1, ...)
-        rule %r/(\|)(\w+)/ do
+        rule %r/(\|\s*)(\w+)/ do
           groups Operator, Name::Function
         end
       end
@@ -96,8 +97,9 @@ module Rouge
       end
 
       state :comment do
-        rule(/[^{#]+/m) { token Comment }
+        rule %r/[^#]+/m, Comment
         rule(/#}/) { token Comment; pop! }
+        rule %r/#/, Comment
       end
 
       state :expression do

@@ -1034,7 +1034,7 @@ compiler."
       fi
 
       # Append the name of the PIC object to the libtool object file.
-      test -z "$run" && cat >> ${libobj}T <<EOF
+      test -z "$run" && cat >> ${libobj}T <<"EOF"
 pic_object='$objdir/$objname'
 
 EOF
@@ -1046,7 +1046,7 @@ EOF
     else
       # No PIC object so indicate it doesn't exist in the libtool
       # object file.
-      test -z "$run" && cat >> ${libobj}T <<EOF
+      test -z "$run" && cat >> ${libobj}T <<'EOF'
 pic_object=none
 
 EOF

@@ -84,6 +84,9 @@ end
 
 # It appears in Floats
 2.3
+1.2e3
+1e23
+1_2.3_4e5
 
 # It appears in Range
 1..10

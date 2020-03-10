@@ -32,9 +32,15 @@ module Rouge
         rule %r/^#(?=[^#]).*?$/, Generic::Heading
         rule %r/^##*.*?$/, Generic::Subheading
 
-        rule %r/^([ \t]*)(```|~~~)([^\n]*\n)((.*?)(\2))?/m do |m|
+        rule %r/^([ \t]*)(`{3,}|~{3,})([^\n]*\n)((.*?)(\n\1)(\2))?/m do |m|
           name = m[3].strip
-          sublexer = Lexer.find_fancy(name.empty? ? "guess" : name, m[5], @options)
+          sublexer =
+            begin
+              Lexer.find_fancy(name.empty? ? "guess" : name, m[5], @options)
+            rescue Guesser::Ambiguous => e
+              e.alternatives.first.new(@options)
+            end
+
           sublexer ||= PlainText.new(@options.merge(:token => Str::Backtick))
           sublexer.reset!
 
@@ -45,8 +51,10 @@ module Rouge
             delegate sublexer, m[5]
           end
 
-          if m[6]
-            token Punctuation, m[6]
+          token Text, m[6]
+
+          if m[7]
+            token Punctuation, m[7]
           else
             push do
               rule %r/^([ \t]*)(#{m[2]})/ do |mb|
@@ -94,7 +102,7 @@ module Rouge
         end
 
         # links and images
-        rule %r/(!?\[)(#{edot}*?)(\])/ do
+        rule %r/(!?\[)(#{edot}*?)(\])(?=[\[(])/ do
           groups Punctuation, Name::Variable, Punctuation
           push :link
         end
@@ -109,13 +117,15 @@ module Rouge
         rule %r/<.*?@.+[.].+>/, Name::Variable
         rule %r[<(https?|mailto|ftp)://#{edot}*?>], Name::Variable
 
-
         rule %r/[^\\`\[*\n&<]+/, Text
 
         # inline html
         rule(/&\S*;/) { delegate html }
         rule(/<#{edot}*?>/) { delegate html }
         rule %r/[&<]/, Text
+
+        # An opening square bracket that is not a link
+        rule %r/\[/, Text
 
         rule %r/\n/, Text
       end

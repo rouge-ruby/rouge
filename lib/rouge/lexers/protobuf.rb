@@ -17,7 +17,7 @@ module Rouge
       state :root do
         rule %r/[\s]+/, Text
         rule %r/[,;{}\[\]()]/, Punctuation
-        rule %r/\/(\\\n)?\/(\n|(.|\n)*?[^\\]\n)/, Comment::Single
+        rule %r/\/(\\\n)?\/($|(.|\n)*?[^\\]$)/, Comment::Single
         rule %r/\/(\\\n)?\*(.|\n)*?\*(\\\n)?\//, Comment::Multiline
         rule kw, Keyword
         rule datatype, Keyword::Type

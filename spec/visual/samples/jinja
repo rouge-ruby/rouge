@@ -12,7 +12,9 @@
 
 {# A comment #}
 
-Hello {{ user.name|capitalize }} !
+Hello {{ user.name|capitalize }} ! ## Comment
+
+Cool list filter {{ listx | join(', ') }}
 
 {% if user.admin is true %}
   <span>You're an admin !</span>
@@ -22,6 +24,12 @@ Hello {{ user.name|capitalize }} !
 
 {# A comment on multiple lines
    to hide a piece of code or whatever #}
+
+{# note: commented-out template because we no longer use this
+    {% for user in users %}
+        ...
+    {% endfor %}
+#}
 
 {% raw %}
   {% for item in seq %}

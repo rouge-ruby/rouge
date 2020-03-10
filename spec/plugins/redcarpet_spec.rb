@@ -42,6 +42,16 @@ puts "hello, world"
     assert { result.include?(%(<pre class="highlight ruby"><code>)) }
   end
 
+  it 'chooses when a guess is ambiguous' do
+    result = markdown.render <<-mkd
+``` guess
+Index: ): Awaitable<
+```
+    mkd
+
+    assert { result.include?(%(<pre class="highlight)) }
+  end
+
   it 'passes options' do
     result = markdown.render <<-mkd
 ``` shell?k=v

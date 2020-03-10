@@ -1,0 +1,120 @@
+/* ----------------------------------------------------------------------------
+ * (c) Copyright Wiley & Sons 2005
+ *
+ * @author: Colin Willcock, Thomas Deiß, Stephan Tobies, Stefan Keil, Federico 
+ *          Engler, Stephan Schulz
+ * @desc:   This is a strongly simplified Domain Name Server (DNS) test suite  
+ *          for testing some basic domain name resolution behaviour.
+ * @remark: This TTCN-3 code is based on the DNS example code presented in 
+ *          "C. Willock et al., An Introduction to TTCN-3, Wiley & Sons, 2005. 
+ *          ISBN: 0-470-01224-2"
+ *          This copyright notice shall not be removed in copies of this file.
+ * ----------------------------------------------------------------------------
+*/
+module DNSTester {
+
+  // Simple type definitions to match the protocol structure
+  type integer Identification( 0..65535 ); // 16-bit integer
+  type enumerated MessageKind {e_Question, e_Answer};
+  type charstring Question;
+  type charstring Answer;
+
+  // The definition of our DNS message type.
+  type record DNSMessage {
+    Identification identification,
+    MessageKind messageKind,
+    Question question,
+    Answer answer optional
+  }
+
+  // A possible template for the DNS message type.
+  template DNSMessage a_NokiaQuestion := {
+    identification := 12345,
+    messageKind := e_Question,
+    question := "www.nokia.com",
+    answer := omit
+  }
+
+  // A parameterized template for DNS questions based on DNSMessage.
+  template DNSMessage a_DNSQuestion( Identification p_id, Question p_question ) := {
+    identification := p_id,
+    messageKind := e_Question,
+    question := p_question,
+    answer := omit
+  }
+
+  // A parameterized template for DNS answers based on DNSMessage.
+  template DNSMessage a_DNSAnswer( Identification p_id, Answer p_answer ) := {
+    identification := p_id,
+    messageKind := e_Answer,
+    question := ?,
+    answer := p_answer
+  }
+
+  // DNS messages are allowed to move in and out through ports of this type.
+  type port DNSPort message {
+    inout DNSMessage
+  }
+
+  // Our single component uses one single port to communicate with the SUT.
+  type component DNSClient {
+    port DNSPort serverPort
+  }
+
+  // Our first test case! This small test case will behave very poorly in case
+  // of an erroneous SUT. More about this later!
+  testcase ExampleResolveNokia1() runs on DNSClient {
+    serverPort.send( a_DNSQuestion( 12345, "www.research.nokia.com" ) );
+    serverPort.receive( a_DNSAnswer( 12345, "172.21.56.98" ) );
+    setverdict( pass );
+    stop;
+  }
+
+  testcase ExampleResolveNokia2() runs on DNSClient {
+    serverPort.send( a_DNSQuestion( 12345, "www.research.nokia.com" ) );
+    alt {
+      // Handle the case when the expected answer comes in.
+      [] serverPort.receive( a_DNSAnswer( 12345, "172.21.56.98" ) ) {
+         setverdict( pass );
+      }
+      // Handle the case when unexpected answers come in.
+      [] serverPort.receive {
+         setverdict( fail );
+      }
+    }
+    stop;
+  }
+
+  // Our test case is now able to handle incorrect replies as well as
+  // missing replies.
+  testcase ExampleResolveNokia3() runs on DNSClient {
+    timer replyTimer;
+    serverPort.send( a_DNSQuestion( 12345, "www.research.nokia.com" ) );
+    replyTimer.start( 20.0 );
+    alt {
+      // Handle the case when the expected answer comes in.
+      [] serverPort.receive( a_DNSAnswer( 12345, "172.21.56.98" ) ) {
+         setverdict( pass );
+         replyTimer.stop;
+      }
+      // Handle the case when unexpected answers come in.
+      [] serverPort.receive {
+         setverdict( fail );
+         replyTimer.stop;
+      }
+      // Handle the case when no answer comes in.
+      [] replyTimer.timeout {
+         setverdict( fail );
+      }
+    }
+    stop;
+  }
+
+  // Our small control part.
+  control {
+    execute( ExampleResolveNokia1() );
+    execute( ExampleResolveNokia2() );
+    execute( ExampleResolveNokia3() );
+  }
+
+}

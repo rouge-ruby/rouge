@@ -17,8 +17,9 @@ A sample of the code that produces the bug.
 <insert code>
 ```
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+It also helps if you can provide a link to a code sample on [rouge.jneen.net][dingus].
 
 **Additional context**
 Add any other context about the problem here.
+
+[dingus]: http://rouge.jneen.net/

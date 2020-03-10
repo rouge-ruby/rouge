@@ -40,17 +40,6 @@ Rouge::Theme.find('base16.light').render(scope: '.highlight')
 
 ### Jekyll
 
-**NOTE**: If you're using GitHub Pages, you're stuck with [version
-2.2.1][ghp-versions] of Rouge. Although GitHub Pages uses an up to date version
-of Jekyll, it locks the version of Rouge. There is [an open issue][ghp-issue] to
-upgrade this to a more current release.
-
-[ghp-versions]: https://pages.github.com/versions/
-"Version of the dependencies used by GitHub Pages"
-
-[ghp-issue]: https://github.com/github/pages-gem/issues/601
-"pages-gem Issue #601"
-
 Rouge is Jekyll's default syntax highlighter. Out of the box, Rouge will be
 used to highlight text wrapped in the `{% highlight %}` template tags. The
 `{% highlight %}` tag provides minimal options: you can specify the language to
@@ -128,6 +117,55 @@ The built-in formatters are:
   highlighted text for use in the terminal. `theme` must be an instance of
   `Rouge::Theme`, or a `Hash` structure with `:theme` entry.
 
+#### Writing your own HTML formatter
+
+If the above formatters are not sufficient, and you wish to customize the layout
+of the HTML document, we suggest writing your own HTML formatter. This can be
+accomplished by subclassing `Rouge::Formatters::HTML` and overriding specific
+methods:
+
+``` ruby
+class MyFormatter < Rouge::Formatters::HTML
+
+  # this is the main entry method. override this to customize the behavior of
+  # the HTML blob as a whole. it should receive an Enumerable of (token, value)
+  # pairs and yield out fragments of the resulting html string. see the docs
+  # for the methods available on Token.
+  def stream(tokens, &block)
+    yield "<div class='my-outer-div'>"
+
+    tokens.each do |token, value|
+      # for every token in the output, we render a span
+      yield span(token, value)
+    end
+
+    yield "</div>"
+  end
+
+  # or, if you need linewise processing, try:
+  def stream(tokens, &block)
+    token_lines(tokens).each do |line_tokens|
+      yield "<div class='my-cool-line'>"
+      line_tokens.each do |token, value|
+        yield span(token, value)
+      end
+      yield "</div>"
+    end
+  end
+
+  # Override this method to control how individual spans are rendered.
+  # The value `safe_value` will already be HTML-escaped.
+  def safe_span(token, safe_value)
+    # in this case, "text" tokens don't get surrounded by a span
+    if token == Token::Tokens::Text
+      safe_value
+    else
+      "<span class=\"#{token.shortname}\">#{safe_value}</span>"
+    end
+  end
+end
+```
+
 ### Lexer Options
 
 * `debug: false` will print a trace of the lex on stdout.
@@ -176,7 +214,7 @@ different encoding, please convert it to UTF-8 first.
 
 ## Contributing
 
-We're always exited to welcome new contributors to Rouge. By it's nature, a
+We're always excited to welcome new contributors to Rouge. By it's nature, a
 syntax highlighter relies for its success on submissions from users of the
 languages being highlighted. You can help Rouge by filing bug reports or
 developing new lexers.

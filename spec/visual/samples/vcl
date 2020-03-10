@@ -1,0 +1,61 @@
+# Define a function that converts a string to lower-case in-place.
+C{
+    #include <ctype.h>
+
+    static void strtolower(char *c) {
+        for (; *c; c++) {
+            if (isupper(*c)) {
+                *c = tolower(*c);
+            }
+        }
+    }
+}C
+
+sub vcl_recv {
+    if (req.http.host ~ "[A-Z]" || req.url ~ "[A-Z]") {
+        # Convert host and path to lowercase in-place (dummy C code from Varnish 3 instead of builtin std.tolower function)
+        C{
+            /* foo */
+            strtolower(VRT_GetHdr(sp, HDR_REQ, "\005host:"));
+            strtolower((char *)VRT_r_req_url(sp));
+        }C
+        # and redirect based on the fake HTTP code 701 and set new URL as reason
+        return (synth(701, "http://" + req.http.host + req.url));
+    }
+
+    # Fall-through to default
+}
+
+sub vcl_synth {
+    # Check for redirects - redirects are performed using: synth(701, "http://target-url/")
+    # Thus we piggyback the redirect target in the error response variable.
+    if (701 == resp.status) {
+        set resp.http.location = resp.reason;
+        set resp.status = 301;
+        set resp.reason = "Moved permanently";
+        return(deliver);
+    }
+
+    # Fall-through to default
+}
+
+#### Fastly's dialect ####
+
+# reference: https://docs.fastly.com/vcl/
+
+# local variables
+declare local var.ip1 IP;
+set var.ip1 = "192.0.2.0";
+
+# string literals
+set var.s = {xyz"Hello, world!"xyz}; # heredoc-style
+
+# more literals
+set resp.http.X-Str = {"Hello, world!"};
+set resp.http.X-Rtime = 10ms;
+set resp.http.X-RTime = 2.5h;
+set resp.http.X-Int = 0xFF;
+set resp.http.X-Float = 1.2e3;
+set resp.http.X-Float = 1e2;
+set resp.http.X-HexFloat = 0xA.Bp3;
+set resp.http.X-HexFloat = 0xAp3;

@@ -49,6 +49,9 @@ module Rouge
       #
       #     Lexer.find_fancy('guess', "#!/bin/bash\necho Hello, world")
       #
+      #   If the code matches more than one lexer then Guesser::Ambiguous
+      #   is raised.
+      #
       # This is used in the Redcarpet plugin as well as Rouge's own
       # markdown lexer for highlighting internal code blocks.
       #
@@ -206,7 +209,8 @@ module Rouge
       # Determine if a lexer has a method named +:detect?+ defined in its
       # singleton class.
       def detectable?
-        @detectable ||= methods(false).include?(:detect?)
+        return @detectable if defined?(@detectable)
+        @detectable = singleton_methods(false).include?(:detect?)
       end
 
     protected
@@ -315,7 +319,7 @@ module Rouge
 
     def as_bool(val)
       case val
-      when nil, false, 0, '0', 'off'
+      when nil, false, 0, '0', 'false', 'off'
         false
       when Array
         val.empty? ? true : as_bool(val.last)

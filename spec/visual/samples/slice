@@ -1,0 +1,27 @@
+// File system module.
+module Filesystem {
+
+    // Node interface:
+    interface Node {
+        idempotent string name();
+    }
+
+    exception GenericError {
+        string reason;
+    }
+
+    sequence<string> Lines;
+
+    ["java:implements:java.lang.AutoCloseable"]
+    interface File extends Node {
+        idempotent Lines read();
+        idempotent void  write(Lines text) throws GenericError;
+    } 
+
+    sequence<Node*> NodeSeq;
+
+    // Directory interface:
+    interface Directory extends Node {
+        idempotent NodeSeq list();
+    }
+}

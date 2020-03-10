@@ -64,7 +64,7 @@ module Rouge
         # here-string
         rule %r/<<</, Operator
 
-        rule %r/(<<-?)(\s*)(\'?)(\\?)(\w+)(\3)/ do |m|
+        rule %r/(<<-?)(\s*)(['"]?)(\\?)(\w+)(\3)/ do |m|
           groups Operator, Text, Str::Heredoc, Str::Heredoc, Name::Constant, Str::Heredoc
           @heredocstr = Regexp.escape(m[5])
           push :heredoc

@@ -185,4 +185,23 @@ describe Rouge::Lexer do
     refute { NonDetectableLexer.methods(false).include?(:detect?) }
     refute { NonDetectableLexer.detectable? }
   end
+
+  it 'handles boolean options' do
+    option_lexer = Class.new(Rouge::RegexLexer) do
+      option :bool_opt, 'An example boolean option'
+
+      def initialize(*)
+        super
+        @bool_opt = bool_option(:bool_opt) { nil }
+      end
+    end
+
+    assert_equal true, option_lexer.new({bool_opt: 'true'}).instance_variable_get(:@bool_opt)
+    assert_equal false, option_lexer.new({bool_opt: nil}).instance_variable_get(:@bool_opt)
+    assert_equal false, option_lexer.new({bool_opt: false}).instance_variable_get(:@bool_opt)
+    assert_equal false, option_lexer.new({bool_opt: 0}).instance_variable_get(:@bool_opt)
+    assert_equal false, option_lexer.new({bool_opt: '0'}).instance_variable_get(:@bool_opt)
+    assert_equal false, option_lexer.new({bool_opt: 'false'}).instance_variable_get(:@bool_opt)
+    assert_equal false, option_lexer.new({bool_opt: 'off'}).instance_variable_get(:@bool_opt)
+  end
 end

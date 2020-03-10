@@ -13,7 +13,8 @@ module Rouge
 
       id = /@?[_a-z]\w*/i
 
-      sql_keywords = %w(
+      def self.sql_keywords
+        @sql_keywords ||= %w(
           ABORT ABS ABSOLUTE ACCESS ADA ADD ADMIN AFTER AGGREGATE ALIAS
           ALL ALLOCATE ALTER ANALYSE ANALYZE AND ANY ARE AS ASC ASENSITIVE
           ASSERTION ASSIGNMENT ASYMMETRIC AT ATOMIC AUTHORIZATION
@@ -87,7 +88,8 @@ module Rouge
           USER_DEFINED_TYPE_SCHEMA USING VACUUM VALID VALIDATOR VALUES
           VARIABLE VERBOSE VERSION VIEW VOLATILE WHEN WHENEVER WHERE
           WITH WITHOUT WORK WRITE ZONE
-      )
+        )
+      end
 
       state :whitespace do
         rule %r/\s+/m, Text
@@ -98,13 +100,13 @@ module Rouge
       state :string do
         rule %r/%(\\.|.)+?%/, Str::Escape
         rule %r/"/, Str::Double, :pop!
-        rule %r/.|\n/, Str::Double
+        rule %r/./m, Str::Double
       end
 
       state :string_s do
         rule %r/%(\\.|.)+?%/, Str::Escape
         rule %r/'/, Str::Single, :pop!
-        rule %r/.|\n/, Str::Single
+        rule %r/./m, Str::Single
       end
 
       state :root do
@@ -116,12 +118,9 @@ module Rouge
         rule %r/[~!%^&*()+=|\[\]{}:;,.<>\/?-]/, Punctuation
         rule %r/"/, Str::Double, :string
         rule %r/'/, Str::Single, :string_s
-        rule %r(
-          [0-9]
-          ([.][0-9]*)? # decimal
-        )ix, Num
+        rule %r/\d(\.\d*)?/i, Num
         rule %r/#{id}(?=\s*[(])/, Name::Function
-        rule %r/\b(#{sql_keywords.join('|')})\b/i, Keyword
+        rule %r/\b(#{Datastudio.sql_keywords.join('|')})\b/i, Keyword
         rule id, Name
       end
 

@@ -23,6 +23,10 @@ Cursor("select * from IOUSER",,)
   Message("%USR%");
 }
 
+/***
+test
+***/
+
 Affect(VAR1,'%TEST%'); //Créer et affecter la variable VAR1 avec une chaîne
 select * from [TABLE1] where COL1 like %VAR1%; //utiliser la variable VAR1 dans une requête
 

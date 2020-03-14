@@ -27,6 +27,20 @@ module Rouge
         DC[1-4] NAK SYN ETB CAN EM SUB ESC [FGRU]S SP DEL [abfnrtv\\\"'\&]
       )
 
+      prelude_function = %w(
+        abs acos all and any asin atan atan2 break ceiling compare concat
+        concatMap const cos cosh curry cycle div drop dropWhile elem
+        encodeFloat enumFrom enumFromThen enumFromThenTo enumFromTo exp
+        fail filter flip floor foldl foldl1 foldr foldr1 fromInteger fst
+        gcd getChar getLine head id init iterate last lcm length lines log
+        lookup map max maxBound maximum maybe min minBound minimum mod
+        negate not null or pi pred print product putChar putStr putStrLn
+        readFile recip repeat replicate return reverse scanl scanl1 sequence
+        sequence_ show sin sinh snd span splitAt sqrt succ sum tail take
+        takeWhile tan tanh uncurry unlines unwords unzip unzip3 words
+        writeFile zip zip3 zipWith zipWith3
+      )
+
       state :basic do
         rule %r/\s+/m, Text
         rule %r/{-#/, Comment::Preproc, :comment_preproc
@@ -54,6 +68,12 @@ module Rouge
         rule %r/\%(access)\s+(public|abstract|private|export)/, Keyword  # export
         rule %r/\%(language)\s+(.*)/, Keyword  # language
         rule %r/\%(provide)\s+.*\s+(with)\s+/, Keyword  # type
+      end
+
+      state :prelude do
+        rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword.Constant
+        rule %r/\b(Type|Exists|World|IO|IntTy|FTy|File|Mode|Dec|Bool|Ordering|Either|IsJust|List|Maybe|Nat|Stream|StrM|Not|Lazy|Inf)\b/, Keyword::Type
+        rule %r/\b(?:#{prelude_function.join('|')})\b/, Name::Builtin
       end
 
       state :root do

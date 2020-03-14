@@ -71,7 +71,6 @@ module Rouge
       end
 
       state :prelude do
-        rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword::Constant
         rule %r/\b(Type|Exists|World|IO|IntTy|FTy|File|Mode|Dec|Bool|Ordering|Either|IsJust|List|Maybe|Nat|Stream|StrM|Not|Lazy|Inf)\b/, Keyword::Type
         rule %r/\b(Eq|Ord|Num|MinBound|MaxBound|Integral|Applicative|Alternative|Cast|Foldable|Functor|Monad|Traversable|Uninhabited|Semigroup|Monoid)\b/, Name::Class
         rule %r/\b(?:#{prelude_function.join('|')})\b/, Name::Builtin
@@ -86,6 +85,7 @@ module Rouge
         rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
         # not sure why, but ^ doesn't work here
         # rule %r/^[_a-z][\w']*/, Name::Function
+        rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword::Constant
         rule %r/[_a-z][\w']*/, Name
         rule %r/[A-Z][\w']*/, Keyword::Type
         rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor

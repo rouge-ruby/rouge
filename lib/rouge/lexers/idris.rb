@@ -80,7 +80,6 @@ module Rouge
       state :root do
         mixin :basic
         mixin :directive
-        mixin :prelude
 
         rule %r/\bimport\b/, Keyword::Reserved, :import
         rule %r/\bmodule\b/, Keyword::Reserved, :module
@@ -112,6 +111,9 @@ module Rouge
         rule %r/\[\s*\]/, Keyword::Type
         rule %r/\(\s*\)/, Name::Builtin
 
+        # we might want to define some primes (IO -> IO'), so Prelude shoud
+        # be below
+        mixin :prelude
         # Quasiquotations
         rule %r/(\[)([_a-z][\w']*)(\|)/ do |m|
           token Operator, m[1]

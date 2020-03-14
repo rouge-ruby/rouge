@@ -49,8 +49,16 @@ module Rouge
         rule %r/[-{}]/, Comment::Preproc
       end
 
+      state :directive do
+        rule %r/\%(default)\s+(total|partial)/, Keyword  # totality
+        rule %r/\%(access)\s+(public|abstract|private|export)/, Keyword  # export
+        rule %r/\%(language)\s+(.*)/, Keyword  # language
+        rule %r/\%(provide)\s+.*\s+(with)\s+/, Keyword  # type
+      end
+
       state :root do
         mixin :basic
+        mixin :directive
 
         rule %r/\bimport\b/, Keyword::Reserved, :import
         rule %r/\bmodule\b/, Keyword::Reserved, :module

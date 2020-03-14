@@ -8,7 +8,7 @@ import Specdris.Data.SpecState
 %access export
 %default total
 
-|||BTree with elements in the leafs.
+||| BTree with elements in the leafs.
 public export
 data Tree : Type -> Type where
      Leaf : (elem : a) -> Tree a

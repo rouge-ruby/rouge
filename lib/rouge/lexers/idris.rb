@@ -12,11 +12,9 @@ module Rouge
       filenames '*.idr'
       mimetypes 'text/x-idris'
 
-      # instance where 75-86
-      # class where 64-73
-      # data where 88-102
       reserved = %w(
         _
+        data class instance namespace
         infix[lr]? let where of with type 
         do if then else case in
       )

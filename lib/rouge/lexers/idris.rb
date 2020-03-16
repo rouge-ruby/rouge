@@ -68,9 +68,9 @@ module Rouge
       end
 
       state :prelude do
-        rule %r/\b(Type|Exists|World|IO|IntTy|FTy|File|Mode|Dec|Bool|Ordering|Either|IsJust|List|Maybe|Nat|Stream|StrM|Not|Lazy|Inf)\b/, Keyword::Type
-        rule %r/\b(Eq|Ord|Num|MinBound|MaxBound|Integral|Applicative|Alternative|Cast|Foldable|Functor|Monad|Traversable|Uninhabited|Semigroup|Monoid)\b/, Name::Class
-        rule %r/\b(?:#{prelude_function.join('|')})\b/, Name::Builtin
+        rule %r/\b(Type|Exists|World|IO|IntTy|FTy|File|Mode|Dec|Bool|Ordering|Either|IsJust|List|Maybe|Nat|Stream|StrM|Not|Lazy|Inf)\s/, Keyword::Type
+        rule %r/\b(Eq|Ord|Num|MinBound|MaxBound|Integral|Applicative|Alternative|Cast|Foldable|Functor|Monad|Traversable|Uninhabited|Semigroup|Monoid)\s/, Name::Class
+        rule %r/\b(?:#{prelude_function.join('|')})[ ]+(?![=:-])/, Name::Builtin
       end
 
       state :root do
@@ -83,10 +83,10 @@ module Rouge
         rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword::Constant
         # function signature
         rule %r/^([\w']+)\s*(:)/, Name::Function
+        # should be below as you can override names defined in Prelude
+        mixin :prelude
         rule %r/[_a-z][\w']*/, Name
         rule %r/[A-Z][\w']*/, Keyword::Type
-        rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor
-
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function
@@ -108,10 +108,7 @@ module Rouge
 
         rule %r/\[\s*\]/, Keyword::Type
         rule %r/\(\s*\)/, Name::Builtin
-
-        # we might want to define some primes (IO -> IO'), so Prelude shoud
-        # be below
-        mixin :prelude
+        
         # Quasiquotations
         rule %r/(\[)([_a-z][\w']*)(\|)/ do |m|
           token Operator, m[1]

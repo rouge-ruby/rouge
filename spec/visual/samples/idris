@@ -67,7 +67,7 @@ evaluateTree (Leaf (Left info)) state _ store level         = let out = evalInfo
                                                                   if store then
                                                                     pure $ addLine out state
                                                                   else do 
-                                                                    putStrLn' out
+                                                                    putStrLn out
                                                                     pure state
 
 -- test case

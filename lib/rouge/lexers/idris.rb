@@ -82,12 +82,13 @@ module Rouge
         rule %r/\bimport\b/, Keyword::Reserved, :import
         rule %r/\bmodule\b/, Keyword::Reserved, :module
         rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
-        # not sure why, but ^ doesn't work here
-        # rule %r/^[_a-z][\w']*/, Name::Function
         rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword::Constant
+        # function signature
+        rule %r/^([\w']+)\s*(:)/, Name::Function
         rule %r/[_a-z][\w']*/, Name
         rule %r/[A-Z][\w']*/, Keyword::Type
         rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor
+
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function
@@ -152,16 +153,8 @@ module Rouge
 
       state :module do
         rule %r/\s+/, Text
-        # module Foo (functions)
         # module X
         rule %r/([A-Z][\w.]*)/, Name::Namespace, :pop!
-          # groups Name::Namespace, Text, Punctuation
-          # push :funclist
-        # end
-
-        # rule %r/\bwhere\b/, Keyword::Reserved, :pop!
-
-        # rule %r/[A-Z][a-zA-Z0-9_.]*/, Name::Namespace, :pop!
       end
 
       state :funclist do

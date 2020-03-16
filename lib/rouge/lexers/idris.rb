@@ -14,7 +14,6 @@ module Rouge
 
       # instance where 75-86
       # class where 64-73
-      # default 270
       # data where 88-102
       reserved = %w(
         _
@@ -128,7 +127,6 @@ module Rouge
       state :import do
         rule %r/\s+/, Text
         rule %r/"/, Str, :string
-        rule %r/\bqualified\b/, Keyword
         # import X as Y
         rule %r/([A-Z][\w.]*)(\s+)(as)(\s+)([A-Z][a-zA-Z0-9_.]*)/ do
           groups(
@@ -137,16 +135,6 @@ module Rouge
             Text, Name # Y
           )
           pop!
-        end
-
-        # import X hiding (functions)
-        rule %r/([A-Z][\w.]*)(\s+)(hiding)(\s+)(\()/ do
-          groups(
-            Name::Namespace, # X
-            Text, Keyword, # hiding
-            Text, Punctuation # (
-          )
-          goto :funclist
         end
 
         # import X (functions)
@@ -165,14 +153,15 @@ module Rouge
       state :module do
         rule %r/\s+/, Text
         # module Foo (functions)
-        rule %r/([A-Z][\w.]*)(\s+)(\()/ do
-          groups Name::Namespace, Text, Punctuation
-          push :funclist
-        end
+        # module X
+        rule %r/([A-Z][\w.]*)/, Name::Namespace, :pop!
+          # groups Name::Namespace, Text, Punctuation
+          # push :funclist
+        # end
 
-        rule %r/\bwhere\b/, Keyword::Reserved, :pop!
+        # rule %r/\bwhere\b/, Keyword::Reserved, :pop!
 
-        rule %r/[A-Z][a-zA-Z0-9_.]*/, Name::Namespace, :pop!
+        # rule %r/[A-Z][a-zA-Z0-9_.]*/, Name::Namespace, :pop!
       end
 
       state :funclist do

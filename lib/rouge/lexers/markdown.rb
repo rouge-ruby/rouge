@@ -102,7 +102,7 @@ module Rouge
         end
 
         # links and images
-        rule %r/(!?\[)(#{edot}*?)(\])(?=[\[(])/ do
+        rule %r/(!?\[)(#{edot}*?|[^\]]*?)(\])(?=( ?\[|\())/ do
           groups Punctuation, Name::Variable, Punctuation
           push :link
         end

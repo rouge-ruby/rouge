@@ -6,7 +6,7 @@ module Rouge
     module Lexers
         class Rego < RegexLexer
             title "Rego"
-            desc "The Rego open-policy-agent (OPA) policy language (https://www.openpolicyagent.org/)"
+            desc "The Rego open-policy-agent (OPA) policy language (openpolicyagent.org)"
             tag 'rego'
             aliases 'rego'
             filenames '*.rego'
@@ -23,7 +23,7 @@ module Rouge
               rule %r/-?\d+([eE][+-]?\d+)?/, Num
 
               rule %r/\\u[0-9a-fA-F]{4}/, Num::Hex
-              rule %r/\\["\/bfnrt]/, Str::Delimiter
+              rule %r/\\["\/bfnrt]/, Str::Escape
             end
       
             state :atoms do
@@ -33,7 +33,7 @@ module Rouge
             end
       
             state :operators do
-              rule %r/(=|!=|>|<|>=|<=|\+|-|\*|%|\/|\||&|:=)/, Operator
+              rule %r/(=|!=|>=|<=|>|<|\+|-|\*|%|\/|\||&|:=)/, Operator
               rule %r/(default|not|package|import|as|with|else|some)/, Operator
               rule %r/[#&*+-.\/:<=>?@^~]+/, Operator
             end

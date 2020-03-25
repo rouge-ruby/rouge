@@ -1097,8 +1097,3 @@ has (parens too)](example.com), and text after it.
 
 [this is not a
 link]
-
-[this is a link
-split over two lines] [link ref]
-
-[link ref]: example.com

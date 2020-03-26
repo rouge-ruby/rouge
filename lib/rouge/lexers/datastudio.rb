@@ -123,7 +123,15 @@ module Rouge
         rule %r/\d(\.\d*)?/i, Num
         rule %r/#{id}(?=\s*[(])/, Name::Function
         rule %r/\b(#{Datastudio.sql_keywords.join('|')})\b/i, Keyword
-        rule id, Name
+        rule id do |m|
+          name = m[0].downcase
+          
+          if self.class.sql_keywords.include? name
+            token Keyword
+          else
+            token Name
+          end
+        end
       end
 
     end

@@ -23,7 +23,7 @@ module Rouge
       def self.keywords
         @keywords ||= Set.new %w(
           abstract anonymous as assembly break catch constant constructor continue
-          contract do delete else emit enum event external for function hex
+          contract do delete else emit enum event external fallback for function hex
           if indexed interface internal import is library mapping memory
           modifier new payable public pure pragma private return returns
           storage struct throw try type using var view while
@@ -86,8 +86,10 @@ module Rouge
 
       def self.reserved
         @reserved ||= Set.new %w(
-          after case default final in inline let match null of
-          relocatable static switch typeof
+          alias after apply auto case copyof default define final
+          immutable implements in inline let macro match mutable null of
+          override partial promise receive reference relocatable sealed
+          sizeof static supports switch typedef typeof unchecked virtual
         )
       end
 
@@ -105,6 +107,7 @@ module Rouge
         mixin :expr_bol
       end
 
+      # TODO: natspec in comments
       state :inline_whitespace do
         rule /[ \t\r]+/, Text
         rule /\\\n/, Text # line continuation

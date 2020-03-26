@@ -22,11 +22,11 @@ module Rouge
       # TODO: seperate by "type"
       def self.keywords
         @keywords ||= Set.new %w(
-          anonymous as assembly break constant continue contract do delete
-          else enum event external for function hex if indexed interface
-          internal import is library mapping memory modifier new payable
-          public pragma private return returns storage struct throw
-          using var while
+          abstract anonymous as assembly break catch constant continue
+          contract do delete else enum event external for function hex
+          if indexed interface internal import is library mapping memory
+          modifier new payable public pure pragma private return returns
+          storage struct throw try type using var view while
         )
       end
 
@@ -81,9 +81,8 @@ module Rouge
 
       def self.reserved
         @reserved ||= Set.new %w(
-          abstract after case catch default final in inline let
-          match null of pure relocatable static switch try type
-          typeof view
+          after case default final in inline let match null of
+          relocatable static switch typeof
         )
       end
 

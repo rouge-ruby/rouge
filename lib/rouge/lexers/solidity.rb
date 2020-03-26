@@ -22,8 +22,8 @@ module Rouge
       # TODO: seperate by "type"
       def self.keywords
         @keywords ||= Set.new %w(
-          abstract anonymous as assembly break catch constant continue
-          contract do delete else enum event external for function hex
+          abstract anonymous as assembly break catch constant constructor continue
+          contract do delete else emit enum event external for function hex
           if indexed interface internal import is library mapping memory
           modifier new payable public pure pragma private return returns
           storage struct throw try type using var view while
@@ -34,14 +34,19 @@ module Rouge
         return @builtins if @builtins
         @builtins = Set.new %w(
           now
-          true false
+          false true
+          balance now selector super this
+          blockhash gasleft
           assert require revert
           selfdestruct suicide
-          this super balance transfer send call callcode delegatecall
-          addmod mulmod keccak256 sha256 sha3 ripemd160 ecrecover
+          call callcode delegatecall
+          send transfer
+          addmod ecrecover keccak256 mulmod sha256 sha3 ripemd160
         )
         # TODO: use (currently shadowed by catch-all in :statements)
-        block = %w(blockhash coinbase difficulty gaslimit number timestamp)
+        abi = %w(encode encodePacked encodeWithSelector encodeWithSignature)
+        @builtins.merge( abi.map { |i| "abi.#{i}" } )
+        block = %w(coinbase difficulty gaslimit hash number timestamp)
         @builtins.merge( block.map { |i| "block.#{i}" } )
         msg = %w(data gas sender sig value)
         @builtins.merge( msg.map { |i| "msg.#{i}" } )
@@ -122,8 +127,9 @@ module Rouge
         rule /(hex)?\"/, Str, :string_double
         rule /(hex)?\'/, Str, :string_single
         rule %r('(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
+        rule /\d\d*\.\d+([eE]\d+)?/i, Num::Float
         rule /0x[0-9a-f]+/i, Num::Hex
-        rule /\d+/i, Num::Integer
+        rule /\d+([eE]\d+)?/i, Num::Integer
         rule %r(\*/), Error
         rule %r([~!%^&*+=\|?:<>/-]), Operator
         rule /(?:block|msg|tx)\.[a-z]*\b/, Name::Builtin

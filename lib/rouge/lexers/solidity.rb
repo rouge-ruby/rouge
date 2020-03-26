@@ -109,34 +109,34 @@ module Rouge
 
       # TODO: natspec in comments
       state :inline_whitespace do
-        rule /[ \t\r]+/, Text
-        rule /\\\n/, Text # line continuation
+        rule %r/[ \t\r]+/, Text
+        rule %r/\\\n/, Text # line continuation
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
       end
 
       state :whitespace do
-        rule /\n+/m, Text, :bol
+        rule %r/\n+/m, Text, :bol
         rule %r(//(\\.|.)*?\n), Comment::Single, :bol
         mixin :inline_whitespace
       end
 
       state :expr_whitespace do
-        rule /\n+/m, Text, :expr_bol
+        rule %r/\n+/m, Text, :expr_bol
         mixin :whitespace
       end
 
       state :statements do
         mixin :whitespace
-        rule /(hex)?\"/, Str, :string_double
-        rule /(hex)?\'/, Str, :string_single
+        rule %r/(hex)?\"/, Str, :string_double
+        rule %r/(hex)?\'/, Str, :string_single
         rule %r('(\\.|\\[0-7]{1,3}|\\x[a-f0-9]{1,2}|[^\\'\n])')i, Str::Char
-        rule /\d\d*\.\d+([eE]\d+)?/i, Num::Float
-        rule /0x[0-9a-f]+/i, Num::Hex
-        rule /\d+([eE]\d+)?/i, Num::Integer
+        rule %r/\d\d*\.\d+([eE]\d+)?/i, Num::Float
+        rule %r/0x[0-9a-f]+/i, Num::Hex
+        rule %r/\d+([eE]\d+)?/i, Num::Integer
         rule %r(\*/), Error
         rule %r([~!%^&*+=\|?:<>/-]), Operator
-        rule /(?:block|msg|tx)\.[a-z]*\b/, Name::Builtin
-        rule /[()\[\],.]/, Punctuation
+        rule %r/(?:block|msg|tx)\.[a-z]*\b/, Name::Builtin
+        rule %r/[()\[\],.]/, Punctuation
         rule id do |m|
           name = m[0]
 
@@ -163,29 +163,29 @@ module Rouge
       end
 
       state :statement do
-        rule /;/, Punctuation, :pop!
+        rule %r/;/, Punctuation, :pop!
         mixin :expr_whitespace
         mixin :statements
-        rule /[{}]/, Punctuation
+        rule %r/[{}]/, Punctuation
       end
 
       state :string_common do
-        rule /\\(u[a-fA-F0-9]{4}|x..|[^x])/, Str::Escape
-        rule /[^\\\"\'\n]+/, Str
-        rule /\\\n/, Str # line continuation
-        rule /\\/, Str # stray backslash
+        rule %r/\\(u[a-fA-F0-9]{4}|x..|[^x])/, Str::Escape
+        rule %r/[^\\\"\'\n]+/, Str
+        rule %r/\\\n/, Str # line continuation
+        rule %r/\\/, Str # stray backslash
       end
 
       state :string_double do
         mixin :string_common
-        rule /\"/, Str, :pop!
-        rule /\'/, Str
+        rule %r/\"/, Str, :pop!
+        rule %r/\'/, Str
       end
 
       state :string_single do
         mixin :string_common
-        rule /\'/, Str, :pop!
-        rule /\"/, Str
+        rule %r/\'/, Str, :pop!
+        rule %r/\"/, Str
       end
     end
   end

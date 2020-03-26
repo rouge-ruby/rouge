@@ -122,9 +122,8 @@ module Rouge
         rule %r/'/, Str::Single, :string_s
         rule %r/\d(\.\d*)?/i, Num
         rule %r/#{id}(?=\s*[(])/, Name::Function
-        rule %r/\b(#{Datastudio.sql_keywords.join('|')})\b/i, Keyword
         rule id do |m|
-          name = m[0].downcase
+          name = m[0].upcase
           
           if self.class.sql_keywords.include? name
             token Keyword

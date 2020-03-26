@@ -15,8 +15,8 @@ describe Rouge::Lexers::Solidity do
       assert_guess :mimetype => 'text/x-solidity'
     end
 
-    # it 'guesses by source' do
-    #   assert_guess :source => 'pragma solidity'
-    # end
+    it 'guesses by source' do
+      assert_guess :source => 'pragma solidity'
+    end
   end
 end

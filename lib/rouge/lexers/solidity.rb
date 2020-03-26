@@ -3,20 +3,18 @@
 module Rouge
   module Lexers
     class Solidity < RegexLexer
+      title "Solidity"
+      desc "Solidity, an Ethereum smart contract programming language"
       tag 'solidity'
       filenames '*.sol', '*.solidity'
       mimetypes 'text/x-solidity'
-
-      title "Solidity"
-      desc "Solidity, an Ethereum smart contract programming language"
 
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
-
-      def self.analyze_text(text)
-        return 1 if text.shebang? 'pragma solidity'
+      def self.detect?(text)
+        return true if text.start_with? 'pragma solidity'
       end
 
       # TODO: seperate by "type"

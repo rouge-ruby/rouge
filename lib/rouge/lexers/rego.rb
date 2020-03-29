@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
-# example file taken from https://github.com/open-policy-agent/contrib/blob/f9e71d7/api_authz/docker/policy/api_authz.rego
 
 module Rouge
     module Lexers
@@ -8,7 +7,6 @@ module Rouge
             title "Rego"
             desc "The Rego open-policy-agent (OPA) policy language (openpolicyagent.org)"
             tag 'rego'
-            aliases 'rego'
             filenames '*.rego'
 
             state :basic do
@@ -35,7 +33,7 @@ module Rouge
             state :operators do
               rule %r/(=|!=|>=|<=|>|<|\+|-|\*|%|\/|\||&|:=)/, Operator
               rule %r/(default|not|package|import|as|with|else|some)/, Operator
-              rule %r/[#&*+-.\/:<=>?@^~]+/, Operator
+              rule %r/[\/:?@^~]+/, Operator
             end
       
             state :root do

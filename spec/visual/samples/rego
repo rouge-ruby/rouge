@@ -4,16 +4,18 @@ subordinates = {"alice": [], "charlie": [], "bob": ["alice"], "betty": ["charlie
 
 # HTTP API request
 import input
-# input = {
+# input = { # example input
 #   "path": ["finance", "salary", "alice"],
 #   "user": "alice",
 #   "method": "GET"
+#   "version": 1
 # }
 
 default allow = false
 
 # Allow users to get their own salaries.
 allow {
+  input.version = 1.0e1
   input.method = "GET"
   input.path = ["finance", "salary", username]
   input.user == username
@@ -21,6 +23,7 @@ allow {
 
 # Allow managers to get their subordinates' salaries.
 allow {
+  input.version = 1.0
   input.method = "GET"
   input.path = ["finance", "salary", username]
   subordinates[input.user][_] == username

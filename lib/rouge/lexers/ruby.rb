@@ -309,6 +309,8 @@ module Rouge
 
       state :classname do
         rule %r/\s+/, Text
+        rule %r/\w+(::\w+)+/, Name::Class
+
         rule %r/\(/ do
           token Punctuation
           push :defexpr

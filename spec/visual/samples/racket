@@ -104,3 +104,4 @@
 
 ;; #true is not highlighted properly
 (define ht #true)
+(define hf #false)

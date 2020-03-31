@@ -62,7 +62,7 @@ module Rouge
       def self.keywords_type
         return @keywords_type if @keywords_type
         @keywords_type = Set.new %w(
-          address bool bytes fixed int ufixed uint string
+          address bool bytes fixed int string ufixed uintb
         )
 
         # bytes1 .. bytes32

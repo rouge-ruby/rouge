@@ -2,12 +2,12 @@
 
 ;; Single-line comment
 
-;; Multi-line comments
+#| Block comment on one line |#
 
-#| Multi-line comment on one line |#
-
-#| Multi-line comment on
-   two lines |#
+#|Block comment.
+(define x 3)
+is not highlighted as the commented text.
+|#
 
 #|
 Block comment.
@@ -15,6 +15,15 @@ Block comment.
 is not highlighted as the commented text.
 |#
 
+#| a |# 1 ; reads equal to 1
+#| #| a |# 1 |# 2 ; reads equal to 2
+
+#;1 2 ; reads equal to 2
+#;(define x 1) (define x 2) ; reads equal to (define x 2)
+#;(define x (f a b)) (define x 2) ; reads equal to (define x 2)
+
+#!/bin/sh ; reads equal to nothing
+#! /bin/sh ; reads equal to nothing
 
 'symbol
 `symbol

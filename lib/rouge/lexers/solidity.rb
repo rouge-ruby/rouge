@@ -11,7 +11,7 @@ module Rouge
 
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
-      id = /[a-zA-Z_][a-zA-Z0-9_]*/
+      id = /[a-zA-Z$_][a-zA-Z0-9$_]*/
 
       def self.detect?(text)
         return true if text.start_with? 'pragma solidity'
@@ -62,7 +62,7 @@ module Rouge
       def self.keywords_type
         return @keywords_type if @keywords_type
         @keywords_type = Set.new %w(
-          int uint bytes fixed ufixed address bool
+          address bool bytes fixed int ufixed uint string
         )
 
         # bytes1 .. bytes32

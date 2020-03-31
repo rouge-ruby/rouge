@@ -10,9 +10,9 @@
    two lines |#
 
 #|
-#  Block comment.
-#  (define x 3)
-#  is not highlighted as the commented text.
+Block comment.
+(define x 3)
+is not highlighted as the commented text.
 |#
 
 
@@ -104,4 +104,8 @@
 
 ;; #true is not highlighted properly
 (define ht #true)
+(define ht #t)
+(define ht #T)
 (define hf #false)
+(define hf #f)
+(define hf #F)

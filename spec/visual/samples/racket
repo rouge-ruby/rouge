@@ -2,10 +2,19 @@
 
 ;; Single-line comment
 
+;; Multi-line comments
+
 #| Multi-line comment on one line |#
 
 #| Multi-line comment on
    two lines |#
+
+#|
+#  Block comment.
+#  (define x 3)
+#  is not highlighted as the commented text.
+|#
+
 
 'symbol
 `symbol
@@ -23,6 +32,7 @@
 
 (define (1-crazy-identifier-疯狂的标识符-τρελό-αναγνωριστικό x)
   (add1 x))
+
 (check-equal? (1-crazy-identifier-疯狂的标识符-τρελό-αναγνωριστικό 1) 2)
 
 (require xml net/url
@@ -324,3 +334,6 @@
 ; as a list item.
 (define (render-as-item a-fragment)
   `(li ,a-fragment))
+
+;; #true is not highlighted properly
+(define ht #true)

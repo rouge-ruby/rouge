@@ -64,7 +64,7 @@ describe Rouge::Lexers::YANG do
         assert_tokens_equal 'value "5";',
           ['Keyword.Declaration', 'value'],
           ['Text.Whitespace', ' '],
-          ['Literal.String', '"5"'],
+          ['Literal.String.Double', '"5"'],
           ['Punctuation', ';']
       end
 

@@ -20,11 +20,13 @@ module Rouge
       # TODO: seperate by "type"
       def self.keywords
         @keywords ||= Set.new %w(
-          abstract anonymous as assembly break catch constant constructor continue
-          contract do delete else emit enum event external fallback for function hex
-          if indexed interface internal import is library mapping memory
-          modifier new payable public pure pragma private return returns
-          storage struct throw try type using var view while
+          abstract anonymous as assembly break catch constant
+          constructor continue contract do delete else emit enum event
+          external fallback for function hex if indexed interface
+          internal import is library mapping memory modifier new
+          override payable public pure pragma private receive return
+          returns storage struct throw try type using var view virtual
+          while
         )
       end
 
@@ -84,9 +86,8 @@ module Rouge
         @reserved ||= Set.new %w(
           alias after apply auto case copyof default define final fixed
           immutable implements in inline let macro match mutable null of
-          override partial promise receive reference relocatable sealed
-          sizeof static supports switch typedef typeof ufixed unchecked
-          virtual
+          partial promise reference relocatable sealed sizeof static
+          supports switch typedef typeof ufixed unchecked
         )
 
         # size helpers

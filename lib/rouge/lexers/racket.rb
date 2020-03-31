@@ -511,7 +511,7 @@ module Rouge
         rule %r/['`]#{id}/i, Str::Symbol
         rule %r/#\\([()\/'"._!\$%& ?=+-]{1}|[a-z0-9]+)/i,
           Str::Char
-        rule %r/#t(rue)?|#f(alse)?/, Name::Constant
+        rule %r/#t(rue)?|#f(alse)?/i, Name::Constant
         rule %r/(?:'|#|`|,@|,|\.)/, Operator
 
         rule %r/(['#])(\s*)(\()/m do

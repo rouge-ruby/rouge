@@ -11,7 +11,7 @@ module Rouge
 
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
-      id = /[a-zA-Z$_][a-zA-Z0-9$_]*/
+      id = /[a-zA-Z$_][\w$_]*/
 
       def self.detect?(text)
         return true if text.start_with? 'pragma solidity'

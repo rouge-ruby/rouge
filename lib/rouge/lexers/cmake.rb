@@ -164,6 +164,7 @@ module Rouge
           goto :bracket_string
         end
 
+        rule %r/\\"/, Text
         rule %r/"/, Str::Double, :quoted_argument
 
         rule %r/([A-Za-z_][A-Za-z0-9_]*)(#{SPACE}*)(\()/ do |m|

@@ -96,8 +96,8 @@ module Rouge
         rule %r/[\{\}\;]+/, Punctuation
         rule %r/(?<![\-\w])(and|or|not|\+|\.)(?![\-\w])/, Operator
 
-        rule %r/"[^"\\]*(?:\\.[^"\\]*)*"/, Str #for double quotes
-        rule %r/\'[^\'\\]*(?:\\.[^\'\\]*)*\'/, Str #for single quotes
+        rule %r/"(?:\\"|[^"])*?"/, Str::Double #for double quotes
+        rule %r/'(?:\\'|[^'])*?'/, Str::Single #for single quotes
 
         rule %r/\/\*/, Comment, :comment
         rule %r/\/\/.*?$/, Comment

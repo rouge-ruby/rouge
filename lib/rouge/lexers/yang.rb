@@ -14,45 +14,45 @@ module Rouge
 
       #Keywords from RFC7950 ; oriented at BNF style
       def self.top_stmts_keywords
-        @top_stms_keywords ||= %w(
+        @top_stms_keywords ||= Set.new %w(
           module submodule
         )
       end
 
       def self.module_header_stmts_keywords
-        @module_header_stmts_keywords ||= %w(
+        @module_header_stmts_keywords ||= Set.new %w(
           yang-version namespace prefix belongs-to
         )
       end
 
       def self.meta_stmts_keywords
-        @meta_stmts_keywords ||= %w(
+        @meta_stmts_keywords ||= Set.new %w(
           organization contact description reference revision
         )
       end
 
       def self.linkage_stmts_keywords
-        @linkage_stmts_keywords ||=  %w(
+        @linkage_stmts_keywords ||= Set.new %w(
           import include revision-date
         )
       end
 
       def self.body_stmts_keywords
-        @body_stms_keywords ||= %w(
+        @body_stms_keywords ||= Set.new %w(
           extension feature identity typedef grouping augment rpc notification
           deviation action argument identity if-feature input output
         )
       end
 
       def self.data_def_stmts_keywords
-        @data_def_stms_keywords ||= %w(
+        @data_def_stms_keywords ||= Set.new %w(
           container leaf-list leaf list choice anydata anyxml uses case config
           deviate must when presence refine
         )
       end
 
       def self.type_stmts_keywords
-        @type_stmts_keywords ||= %w(
+        @type_stmts_keywords ||= Set.new %w(
           type units default status bit enum error-app-tag error-message
           fraction-digits length min-elements max-elements modifier ordered-by
           path pattern position range require-instance value yin-element base
@@ -60,14 +60,14 @@ module Rouge
       end
 
       def self.list_stmts_keywords
-        @list_stmts_keywords ||= %w(
+        @list_stmts_keywords ||= Set.new %w(
           key mandatory unique
         )
       end
 
       #RFC7950 other keywords
       def self.constants_keywords
-        @constants_keywords ||= %w(
+        @constants_keywords ||= Set.new %w(
           true false current obsolete deprecated add delete replace
           not-supported invert-match max min unbounded user
         )
@@ -75,7 +75,7 @@ module Rouge
 
       #RFC7950 Built-In Types
       def self.types
-        @types ||= %W(
+        @types ||= Set.new %w(
           binary bits boolean decimal64 empty enumeration int8 int16 int32
           int64 string uint8 uint16 uint32 uint64 union leafref identityref
           instance-identifier

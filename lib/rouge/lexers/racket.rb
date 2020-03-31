@@ -488,6 +488,7 @@ module Rouge
       state :root do
         # comments
         rule %r/;.*$/, Comment::Single
+        rule %r/#\|/, Comment::Multiline, :comment
         rule %r/\s+/m, Text
 
         rule %r/[+-]inf[.][f0]/, Num::Float
@@ -522,6 +523,13 @@ module Rouge
         rule %r/\)|\]|\}/, Punctuation
 
         rule id, Name::Variable
+      end
+
+      state :comment do
+        rule %r/[^|#]+/, Comment::Multiline
+        rule %r/\|#/, Comment::Multiline, :pop!
+        rule %r/#\|/, Comment::Multiline, :comment
+        rule %r/[|#]/, Comment::Multiline
       end
 
       state :command do

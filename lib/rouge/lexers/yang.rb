@@ -140,7 +140,7 @@ module Rouge
           end
         end
 
-        rule %r/[^;\{\}\s\*\+\'"]+/, Name
+        rule %r/[^;{}\s*+'"]+/, Name
       end
     end
   end

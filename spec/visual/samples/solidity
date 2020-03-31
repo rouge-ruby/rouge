@@ -83,6 +83,7 @@ contract Types is Strings {
     string str; // dynamic array (not a value-type)
     bytes bs; // same as above
     //var v = 5; // `var` is a keyword, not a type, and compiler chokes
+    var unu$ed; // `var` is highlighted, though, and `$` is a valid char
 
     address a = "0x1"; // lexer parses as string
     struct AddressMap {

@@ -91,11 +91,10 @@ module Rouge
         )
 
         # size helpers
-        sizesm = (0..256).step(8)
-        sizesn = (8..256).step(8)
+        sizesm = (8..256).step(8)
+        sizesn = (0..80)
         sizesmxn = sizesm.map { |m| m }
                      .product( sizesn.map { |n| n } )
-                     .select { |m,n| m+n <= 256 }
         # [u]fixed{MxN}
         @reserved.merge(sizesmxn.map { |m,n|  "fixed#{m}x#{n}" })
         @reserved.merge(sizesmxn.map { |m,n| "ufixed#{m}x#{n}" })

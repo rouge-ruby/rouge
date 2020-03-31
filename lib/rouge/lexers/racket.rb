@@ -488,7 +488,9 @@ module Rouge
       state :root do
         # comments
         rule %r/;.*$/, Comment::Single
-        rule %r/#\|/, Comment::Multiline, :comment
+        rule %r/#!.*/, Comment::Single
+        rule %r/#\|/, Comment::Multiline, :block_comment
+        rule %r/#;/, Comment::Multiline, :sexp_comment
         rule %r/\s+/m, Text
 
         rule %r/[+-]inf[.][f0]/, Num::Float
@@ -525,11 +527,24 @@ module Rouge
         rule id, Name::Variable
       end
 
-      state :comment do
+      state :block_comment do
         rule %r/[^|#]+/, Comment::Multiline
         rule %r/\|#/, Comment::Multiline, :pop!
-        rule %r/#\|/, Comment::Multiline, :comment
+        rule %r/#\|/, Comment::Multiline, :block_comment
         rule %r/[|#]/, Comment::Multiline
+      end
+
+      state :sexp_comment do
+        rule %r/[({\[]/, Comment::Multiline, :sexp_comment_inner
+        rule %r/"(?:\\"|[^"])*?"/, Comment::Multiline, :pop!
+        rule %r/[^\s]+/, Comment::Multiline, :pop!
+        rule(//) { pop! }
+      end
+
+      state :sexp_comment_inner do
+        rule %r/[^(){}\[\]]+/, Comment::Multiline
+        rule %r/[)}\]]/, Comment::Multiline, :pop!
+        rule %r/[({\[]/, Comment::Multiline, :sexp_comment_inner
       end
 
       state :command do

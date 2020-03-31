@@ -10,57 +10,77 @@ module Rouge
       filenames '*.yang'
       mimetypes 'application/yang'
 
+      id = /[\w_-]+(?=[^\w\-\:])\b/
+
       #Keywords from RFC7950 ; oriented at BNF style
-      top_stmts_keywords = %w(
-        module submodule
-      )
+      def self.top_stmts_keywords
+        @top_stms_keywords ||= %w(
+          module submodule
+        )
+      end
 
-      module_header_stmts_keywords = %w(
-        yang-version namespace prefix belongs-to
-      )
+      def self.module_header_stmts_keywords
+        @module_header_stmts_keywords ||= %w(
+          yang-version namespace prefix belongs-to
+        )
+      end
 
-      meta_stmts_keywords = %w(
-        organization contact description reference revision
-      )
+      def self.meta_stmts_keywords
+        @meta_stmts_keywords ||= %w(
+          organization contact description reference revision
+        )
+      end
 
-      linkage_stmts_keywords =  %w(
-        import include revision-date
-      )
+      def self.linkage_stmts_keywords
+        @linkage_stmts_keywords ||=  %w(
+          import include revision-date
+        )
+      end
 
-      body_stmts_keywords = %w(
-        extension feature identity typedef grouping augment rpc
-        notification deviation action argument identity if-feature
-        input output
-      )
+      def self.body_stmts_keywords
+        @body_stms_keywords ||= %w(
+          extension feature identity typedef grouping augment rpc notification
+          deviation action argument identity if-feature input output
+        )
+      end
 
-      data_def_stmts_keywords = %w(
-        container leaf-list leaf list choice anydata anyxml uses
-        case config deviate must when presence refine
-      )
+      def self.data_def_stmts_keywords
+        @data_def_stms_keywords ||= %w(
+          container leaf-list leaf list choice anydata anyxml uses case config
+          deviate must when presence refine
+        )
+      end
 
-      type_stmts_keywords = %w(
-        type units default status bit enum error-app-tag error-message
-        fraction-digits length min-elements max-elements modifier
-        ordered-by path pattern position range require-instance value
-        yin-element base
-      )
+      def self.type_stmts_keywords
+        @type_stmts_keywords ||= %w(
+          type units default status bit enum error-app-tag error-message
+          fraction-digits length min-elements max-elements modifier ordered-by
+          path pattern position range require-instance value yin-element base
+        )
+      end
 
-      list_stmts_keywords = %w(
-        key mandatory unique
-      )
+      def self.list_stmts_keywords
+        @list_stmts_keywords ||= %w(
+          key mandatory unique
+        )
+      end
 
       #RFC7950 other keywords
-      constants_keywords = %w(
-        true false current obsolete deprecated add delete replace
-        not-supported invert-match max min unbounded user
-      )
+      def self.constants_keywords
+        @constants_keywords ||= %w(
+          true false current obsolete deprecated add delete replace
+          not-supported invert-match max min unbounded user
+        )
+      end
 
       #RFC7950 Built-In Types
-      types = %W(
-        binary bits boolean decimal64 empty enumeration int8 int16
-        int32 int64 string uint8 uint16 uint32 uint64 union leafref
-        identityref instance-identifier
-      )
+      def self.types
+        @types ||= %W(
+          binary bits boolean decimal64 empty enumeration int8 int16 int32
+          int64 string uint8 uint16 uint32 uint64 union leafref identityref
+          instance-identifier
+        )
+      end
 
       state :comment do
         rule %r/[^*\/]/, Comment
@@ -75,17 +95,6 @@ module Rouge
         rule %r/\s+/, Text::Whitespace
         rule %r/[\{\}\;]+/, Punctuation
         rule %r/(?<![\-\w])(and|or|not|\+|\.)(?![\-\w])/, Operator
-
-        rule %r/(?:#{top_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
-        rule %r/(?:#{module_header_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
-        rule %r/(?:#{meta_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
-        rule %r/(?:#{linkage_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
-        rule %r/(?:#{body_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
-        rule %r/(?:#{data_def_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
-        rule %r/(?:#{type_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
-        rule %r/(?:#{list_stmts_keywords.join('|')})(?=[^\w\-\:])\b/, Keyword::Declaration
-        rule %r/(?:#{types.join('|')})(?=[^\w\-\:])\b/, Keyword::Type
-        rule %r/(?:#{constants_keywords.join('|')})(?=[^\w\-\:])\b/, Name::Constant
 
         rule %r/"[^"\\]*(?:\\.[^"\\]*)*"/, Str #for double quotes
         rule %r/\'[^\'\\]*(?:\\.[^\'\\]*)*\'/, Str #for single quotes
@@ -102,6 +111,35 @@ module Rouge
         rule %r/([0-9]{4}\-[0-9]{2}\-[0-9]{2})(?=[\s\{\}\;])/, Name::Label
         rule %r/([0-9]+\.[0-9]+)(?=[\s\{\}\;])/, Num::Float
         rule %r/([0-9]+)(?=[\s\{\}\;])/, Num::Integer
+
+        rule id do |m|
+          name = m[0].downcase
+
+          if self.class.top_stmts_keywords.include? name
+            token Keyword::Declaration
+          elsif self.class.module_header_stmts_keywords.include? name
+            token Keyword::Declaration
+          elsif self.class.meta_stmts_keywords.include? name
+            token Keyword::Declaration
+          elsif self.class.linkage_stmts_keywords.include? name
+            token Keyword::Declaration
+          elsif self.class.body_stmts_keywords.include? name
+            token Keyword::Declaration
+          elsif self.class.data_def_stmts_keywords.include? name
+            token Keyword::Declaration
+          elsif self.class.type_stmts_keywords.include? name
+            token Keyword::Declaration
+          elsif self.class.list_stmts_keywords.include? name
+            token Keyword::Declaration
+          elsif self.class.types.include? name
+            token Keyword::Type
+          elsif self.class.constants_keywords.include? name
+            token Name::Constant
+          else
+            token Name
+          end
+        end
+
         rule %r/[^;\{\}\s\*\+\'"]+/, Name
       end
     end

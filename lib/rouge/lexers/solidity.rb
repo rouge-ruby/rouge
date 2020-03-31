@@ -30,6 +30,7 @@ module Rouge
 
       def self.builtins
         return @builtins if @builtins
+
         @builtins = Set.new %w(
           now
           false true
@@ -41,6 +42,7 @@ module Rouge
           send transfer
           addmod ecrecover keccak256 mulmod sha256 sha3 ripemd160
         )
+
         # TODO: use (currently shadowed by catch-all in :statements)
         abi = %w(encode encodePacked encodeWithSelector encodeWithSignature)
         @builtins.merge( abi.map { |i| "abi.#{i}" } )
@@ -61,12 +63,31 @@ module Rouge
 
       def self.keywords_type
         return @keywords_type if @keywords_type
+
         @keywords_type = Set.new %w(
-          address bool bytes fixed int string ufixed uint
+          address bool byte bytes int string uint
         )
 
         # bytes1 .. bytes32
         @keywords_type.merge( (1..32).map { |i| "bytes#{i}" } )
+
+        # size helper
+        sizes = (8..256).step(8)
+        # [u]int8 .. [u]int256
+        @keywords_type.merge( sizes.map { |n|  "int#{n}" } )
+        @keywords_type.merge( sizes.map { |n| "uint#{n}" } )
+      end
+
+      def self.reserved
+        return @reserved if @reserved
+
+        @reserved ||= Set.new %w(
+          alias after apply auto case copyof default define final fixed
+          immutable implements in inline let macro match mutable null of
+          override partial promise receive reference relocatable sealed
+          sizeof static supports switch typedef typeof ufixed unchecked
+          virtual
+        )
 
         # size helpers
         sizesm = (0..256).step(8)
@@ -74,21 +95,9 @@ module Rouge
         sizesmxn = sizesm.map { |m| m }
                      .product( sizesn.map { |n| n } )
                      .select { |m,n| m+n <= 256 }
-        # [u]int8 .. [u]int256
-        @keywords_type.merge( sizesn.map { |n|  "int#{n}" } )
-        @keywords_type.merge( sizesn.map { |n| "uint#{n}" } )
         # [u]fixed{MxN}
-        @keywords_type.merge(sizesmxn.map { |m,n|  "fixed#{m}x#{n}" })
-        @keywords_type.merge(sizesmxn.map { |m,n| "ufixed#{m}x#{n}" })
-      end
-
-      def self.reserved
-        @reserved ||= Set.new %w(
-          alias after apply auto case copyof default define final
-          immutable implements in inline let macro match mutable null of
-          override partial promise receive reference relocatable sealed
-          sizeof static supports switch typedef typeof unchecked virtual
-        )
+        @reserved.merge(sizesmxn.map { |m,n|  "fixed#{m}x#{n}" })
+        @reserved.merge(sizesmxn.map { |m,n| "ufixed#{m}x#{n}" })
       end
 
       start { push :bol }

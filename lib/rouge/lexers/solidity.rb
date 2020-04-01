@@ -20,7 +20,7 @@ module Rouge
       # TODO: seperate by "type"
       def self.keywords
         @keywords ||= Set.new %w(
-          abstract anonymous as assembly break catch constant
+          abstract anonymous as assembly break catch calldata constant
           constructor continue contract do delete else emit enum event
           external fallback for function hex if indexed interface
           internal import is library mapping memory modifier new

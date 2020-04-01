@@ -41,4 +41,4 @@
   if Assigned(OurOrgID)
     Employees.DelWhere(EmployeesOurOrgIDWhereID)
   endif
-  Employees.Events.EnableAll  
+  Employees.Events.EnableAll

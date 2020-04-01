@@ -1,52 +1,17 @@
-module test-module {
-  namespace "urn:ietf:params:xml:ns:yang:test";
-  prefix tmodule;
+module petstore {
+    namespace "http://gribok.org/ns/yang/example";
+    prefix ex;
 
-  import yang-types {
-    prefix yang;
-  }
-
-  organization "My Organization";
-  contact
-    "My name is Max Mustermann";
-  description
-    "This is an example description";
-
-  revision 2020-03-08 {
-    description
-      "Initial revision.";
-  }
-
-  typedef address-family {
-    type enumeration {
-      enum ipv4 {
-        value 1;
-        description
-          "IPv4 Address Family.";
-      }
-
-      enum ipv6 {
-        value 2;
-        description
-          "IPv6 Address Family.";
-      }
-    }
-  }
-
-  list interface-list {
-      key "name";
-      description
-        "This represents the list of interfaces";
-      leaf name {
-        type yang:interface-type;
-        description
-          "A reference to the interface type definition.";
-      }
+    revision 2020-04-01 {
+        description "Example yang";
     }
 
-  feature myfeature {
-    description
-      "Example for a feature";
-    reference "No reference exists";
-  }
+    container pets {
+        list dogs {
+            key name;
+            leaf name {
+                type string;
+            }
+        }
+    }
 }

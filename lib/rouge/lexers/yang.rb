@@ -103,7 +103,7 @@ module Rouge
         rule %r/\/\/.*?$/, Comment
 
         #match BNF stmt for `node-identifier` with [ prefix ":"]
-        rule %r/(?:^|(?<=[\s\{\}\;]))([^;{}\s\*\+\'\"\:\/]+)(:)([^;{}\s\*\+\'\"\:\/]+)(?=[\s\{\}\;])/ do
+        rule %r/(?:^|(?<=[\s{};]))([\w\-\.]+)(:)([\w\-\.]+)(?=[\s{};])/ do
           groups Name::Namespace, Punctuation, Name
         end
 

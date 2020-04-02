@@ -1,17 +1,18 @@
 // Types
-type : IApplication
-type : .custom_type
+App : IApplication
+Employees : IReference.РАБ = References.ReferenceFactory("РАБ").GetComponent
 
 // Operators
-result = 1 + 1 / 2
+Result = 1 + 1 / 2
 
 // Numbers
-integer = 5
-float = 5.5
+Integer = 5
+Float = 5.5
+WordBool = True
 
 // Strings
-double_quotes = "An example"
-single_quotes = 'An example'
+Double_Quotes = "An example"
+Single_Quotes = 'An example'
 
 // Comments
 
@@ -35,7 +36,7 @@ if ExceptionExists()
     LoadStringFmt("DIR21A2F148_1B41_40F3_9152_6E09E712025A"; "COMMON";
       ArrayOf(UserID)); ecException)) // Не существует пользователя с ИД = %s
 endif
-Employees = CreateReference(EMPLOYEES_REFERENCE; ArrayOf("Пользователь"; SYSREQ_STATE); FALSE)
+Employees : IReference.РАБ = CreateReference(EMPLOYEES_REFERENCE; ArrayOf("Пользователь"; SYSREQ_STATE); FALSE)
 Employees.Events.DisableAll
 EmployeesTableName = Employees.TableName
 EmployeesUserWhereID = Employees.AddWhere(Format(ADD_EQUAL_NUMBER_TEMPLATE; ArrayOf(EmployeesTableName;

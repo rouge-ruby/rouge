@@ -1,3 +1,8 @@
+  /********************************************
+   * Получить список кодов или ИД работников, *
+   * соответствующих пользователю.            *
+   ********************************************/
+
   ADD_EQUAL_NUMBER_TEMPLATE = "%s.%s = %s"
   ADD_EQUAL_STATE_TEMPLATE = "%s.%s = '%s'"
   EMPLOYEES_REFERENCE = "РАБ"
@@ -7,21 +12,21 @@
   ServiceFactory.GetUserByID(UserID)
   ExceptionsOn()
   if ExceptionExists()
-    Raise(CreateException("EDIRInvalidTypeOfParam"; 
-      LoadStringFmt("DIR21A2F148_1B41_40F3_9152_6E09E712025A"; "COMMON"; 
+    Raise(CreateException("EDIRInvalidTypeOfParam";
+      LoadStringFmt("DIR21A2F148_1B41_40F3_9152_6E09E712025A"; "COMMON";
         ArrayOf(UserID)); ecException)) // Не существует пользователя с ИД = %s
   endif
-  Employees = CreateReference(EMPLOYEES_REFERENCE; ArrayOf("Пользователь"; "Состояние"); FALSE)
+  Employees = CreateReference(EMPLOYEES_REFERENCE; ArrayOf("Пользователь"; SYSREQ_STATE); FALSE)
   Employees.Events.DisableAll
   EmployeesTableName = Employees.TableName
-  EmployeesUserWhereID = Employees.AddWhere(Format(ADD_EQUAL_NUMBER_TEMPLATE; ArrayOf(EmployeesTableName; 
+  EmployeesUserWhereID = Employees.AddWhere(Format(ADD_EQUAL_NUMBER_TEMPLATE; ArrayOf(EmployeesTableName;
     Employees.Requisites("Пользователь").SQLFieldName; UserID)))
   if OnlyActive
-    EmployeesStateWhereID = Employees.AddWhere(Format(ADD_EQUAL_STATE_TEMPLATE; ArrayOf(EmployeesTableName; 
-      Employees.Requisites("Состояние").SQLFieldName; Employees.Requisites("Состояние").Items.IDByValue("Действующая"))))
+    EmployeesStateWhereID = Employees.AddWhere(Format(ADD_EQUAL_STATE_TEMPLATE; ArrayOf(EmployeesTableName;
+      Employees.Requisites(SYSREQ_STATE).SQLFieldName; Employees.Requisites(SYSREQ_STATE).Items.IDByValue("Действующая"))))
   endif
-  if Assigned(OurOrgID) 
-    EmployeesOurOrgIDWhereID = Employees.AddWhere(Format(ADD_EQUAL_STATE_TEMPLATE; ArrayOf(EmployeesTableName; 
+  if Assigned(OurOrgID)
+    EmployeesOurOrgIDWhereID = Employees.AddWhere(Format(ADD_EQUAL_STATE_TEMPLATE; ArrayOf(EmployeesTableName;
       Employees.Requisites("НашаОрг").SQLFieldName; OurOrgID)))
   endif
   Employees.Open()
@@ -31,14 +36,221 @@
       Result.Add(Employee.SYSREQ_CODE)
     else
       Result.Add(Employee.SYSREQ_ID)
-    endif  
+    endif
   endforeach
   Employees.Close()
   Employees.DelWhere(EmployeesUserWhereID)
   if OnlyActive
     Employees.DelWhere(EmployeesStateWhereID)
-  endif 
+  endif
   if Assigned(OurOrgID)
     Employees.DelWhere(EmployeesOurOrgIDWhereID)
   endif
   Employees.Events.EnableAll
+
+  /**********************************************
+   * Подсчитать количество страниц в PDF-файле. *
+   **********************************************/
+
+  try
+    try
+      // Подключиться к библиотеке
+      PDFDocument = CreateObject('DebenuPDFLibraryLite.PDFLibrary')
+    except
+      Raise(CreateException('EDIRLibObjectNotFound';
+        LoadString('DIRB9A32A61_8B1D_49A2_A4F1_E1C60270757E'; 'COMMON'); ecException))
+    endexcept
+    // Загрузить файл. FilePath - путь к PDF-документу
+    if PDFDocument.LoadFromFile(FilePath; "") = 1
+      // Получить количество страниц
+      Result = PDFDocument.PageCount
+    endif
+  finally
+    PDFDocument = nil
+  endfinally
+
+  /*******************************************
+   * Импортировать сертификаты пользователя. *
+   *******************************************/
+
+  YES_VALUE_STR = 'Да'
+  NO_VALUE_STR = 'Нет'
+  CertifatePathList = CreateStringList()
+  if Assigned(CertArray)
+    CertifatePathList = AD_ExportCertificatesFromArray(CertArray)
+  endif
+  if CertifatePathList.Count > 0
+    UserReference = References.SYSREF_USERS_REFERENCE.GetObjectByID(UserID)
+    // Импортировать сертификаты
+    CertificatesDetailDataSet = UserReference.DetailDataSet(2)
+    HasDefaultCertificate = CertificatesDetailDataSet.Locate(SYSREQ_USERS_USER_DEFAULT_CERTIFICATE; YES_VALUE_STR)
+    SignAndEncExist = CertificatesDetailDataSet.Locate('ISBCertificateType'; CERTIFICATE_TYPE_SIGN_AND_ENCRYPT)
+    // Сформировать список плагинов
+    Plugins = CreateStringList()
+    // Plugin Bicrypt
+    Plugins.Add('{918672C1-2E22-484E-A9A4-4BBEFF197FD0}')
+    // Plugin CryptoPro
+    Plugins.Add('{6F21AC62-2750-4DE2-84C9-AD87F1DA4BA1}')
+    // Plugin Capicom
+    Plugins.Add('{B1B27433-D685-47F8-8500-CF9525407145}')
+
+    foreach CertificateFileName in CertifatePathList
+      if FileExists(CertificateFileName)
+        try
+          // Определить плагин, соответствующий сертификату
+          foreach PluginName in Plugins
+            FreeException()
+            ExceptionsOff()
+            CertificateID = ReadCertificateFromFile(CertificateFileName; ; cpID; PluginName)
+            ExceptionsOn()
+            if not ExceptionExists()
+              exitfor
+            endif
+          endforeach
+          if Assigned(CertificateID)
+            CertificateOwner = ReadCertificateFromFile(CertificateFileName; ; cpSubjectName; PluginName)
+            CertificateFromDate = ReadCertificateFromFile(CertificateFileName; ; cpValidFromDate; PluginName)
+            CertificateToDate = ReadCertificateFromFile(CertificateFileName; ; cpValidToDate; PluginName)
+            CertificateCanSign = ReadCertificateFromFile(CertificateFileName; ; cpDigitalSignatureEnabled; PluginName)
+            CertificateCanEnc = ReadCertificateFromFile(CertificateFileName; ; cpDataEnciphermentEnabled; PluginName)
+            ExpiredCert = DateDiff('D'; Today(); CertificateToDate) < 0
+            if (CertificateCanSign or CertificateCanEnc) and not ExpiredCert
+              // Выполнить проверку на наличие сертификата в хранилище
+              if not CertificatesDetailDataSet.Locate(SYSREQ_USERS_USER_CERTIFICATE_THUMBPRINT; CertificateID) // Сертификат не найден
+                try
+                  Events = CertificatesDetailDataSet.Events
+                  Events.AddCheckPoint
+                  Events.Events(dseBeforeInsert).Enabled = FALSE
+                  CertificatesDetailDataSet.Append
+                  Events.ReleaseCheckPoint
+                  CertificatesDetailDataSet.SYSREQ_USERS_USER_CERTIFICATE_SUBJECT_NAME = CertificateOwner
+                  CertificatesDetailDataSet.SYSREQ_USERS_USER_CERTIFICATE_THUMBPRINT = CertificateID
+                  CertificatesDetailDataSet.Requisites(SYSREQ_USERS_USER_CERTIFICATE).LoadFromFile(CertificateFileName)
+                  CertificatesDetailDataSet.SYSREQ_USERS_USER_CERTIFICATE_STATE = OPERATING_RECORD_FLAG_FEMININE
+                  CertificatesDetailDataSet.SYSREQ_USERS_USER_CERTIFICATE_PLUGIN_NAME = PluginName
+
+                  // Определить тип сертификата
+                  ISBCertificateType = IfThen(CertificateCanSign and CertificateCanEnc; IfThen(SignAndEncExist; CERTIFICATE_TYPE_SIGN; CERTIFICATE_TYPE_SIGN_AND_ENCRYPT);
+                    IfThen(CertificateCanSign; CERTIFICATE_TYPE_SIGN; CERTIFICATE_TYPE_ENCRYPT))
+                  if ISBCertificateType == CERTIFICATE_TYPE_SIGN_AND_ENCRYPT
+                    SignAndEncExist = TRUE
+                    AD_WriteToLog(LoadStringFmt('DIR61B72B83_DEC3_434E_BA18_8E966FB76E05'; 'COMMON'; CertificateID))
+                  endif
+
+                  CertificatesDetailDataSet.ISBCertificateType = ISBCertificateType
+                  // Установить по умолчанию
+                  if not HasDefaultCertificate and CertificateCanSign
+                    CertificatesDetailDataSet.SYSREQ_USERS_USER_DEFAULT_CERTIFICATE = YES_VALUE_STR
+                    HasDefaultCertificate = TRUE
+                  else
+                    CertificatesDetailDataSet.SYSREQ_USERS_USER_DEFAULT_CERTIFICATE = NO_VALUE_STR
+                  endif
+                  CertificatesDetailDataSet.ISBCertificateInfo = Format('%s %s'; ArrayOf(LoadString('ISB_REQ_Г000063'; 'ISBSYSDEV'); CertificateOwner))
+                except
+                  CertificatesDetailDataSet.Delete
+                  AD_WriteToLog(GetLastException().Message)
+                endexcept
+              else
+                AD_WriteToLog(LoadStringFmt('DIRCC6D87E5_A4D3_4CD1_96F9_DF96010E1BA7'; 'COMMON'; CertificateID))
+              endif
+            else
+              Text = IfThen(ExpiredCert; LoadStringFmt('DIR9CF98EB3_38B8_422B_9843_1D1D17E1D155'; 'COMMON'; CertificateID);
+                LoadStringFmt('DIRD0F733DB_9BF8_4104_A0BF_CC8144F8168B'; 'COMMON'; CertificateID))
+              AD_WriteToLog(Text)
+            endif
+          else
+            AD_WriteToLog(LoadStringFmt('DIRD053139F_6203_4533_A9EC_42C893C2AEAC'; 'COMMON'; UserReference.Дополнение))
+          endif
+        finally
+          DeleteFile(CertificateFileName)
+        endfinally
+      endif
+    endforeach
+    try
+      UserReference.Save()
+      Message = LoadString('DIR6E06F1B4_07C7_4C6D_ADD7_53E09563D708'; 'COMMON')
+    except
+      UserReference.Cancel()
+      Message = LoadString('DIR4B329CD9_6912_4F91_8AE1_366F94FA67C7'; 'COMMON')
+      AD_WriteToLog(GetLastException().Message)
+    endexcept
+    AD_WriteToLog(Message)
+  else
+    AD_WriteToLog(LoadString('DIR032410C3_F2AA_4CD0_B72D_4DA87AAFC0BD'; 'COMMON'))
+  endif
+
+  /*****************************
+   * Склонение ФИО по падежам. *
+   *****************************/
+
+  !ММФиоСклПадеж=""
+  Если !Фам<<>>"" И !Имя<<>>"" И !Пол<<>>''
+   // Список согласных букв
+    !СписСогл='б,в,г,д,ж,з,к,л,м,н,п,р,с,т,ф,ц,ч,ш,щ,ъ'
+    !СписГлас='а,е,и,о,у,ы,э,ю,я'
+    !Длина=ДлинаСтр(!Фам)
+    !Имя=РазбСтр(!Имя;1;1)
+    !Отч=РазбСтр(!Отч;1;1)
+
+    Если !Пол=="Мужской"
+
+      !ПоследСимвол=СтрНижнРегистр(ВыделитьСтр(!Фам;!Длина;1))
+      !НовФам=""
+
+     // Фамилия заканчивается на согласную
+      Если ПоискПодстр(!ПоследСимвол;!СписСогл;',')<>0
+        !НовФам=!Фам&"у"
+      КонецЕсли
+
+     // Фамилия заканчивается на а/я
+      Если !ПоследСимвол=='а' ИЛИ !ПоследСимвол=='я'
+        !НовФам=ВыделитьСтр(!Фам;1;!Длина-1)&"е"
+      КонецЕсли
+
+     // Фамилия заканчивается на ь
+      Если !ПоследСимвол=='ь'
+        !НовФам=ВыделитьСтр(!Фам;1;!Длина-1)&"ю"
+      КонецЕсли
+
+     // Фамилия заканчивается на ух,юх,ех,ах,ях
+      !ПоследСимвол2=ВыделитьСтр(!Фам;!Длина-1;2)
+      Если !ПоследСимвол=='ух' ИЛИ !ПоследСимвол=='юх' ИЛИ
+           !ПоследСимвол=='ех' ИЛИ !ПоследСимвол=='ах' ИЛИ
+           !ПоследСимвол=='ях'
+        !НовФам=!Фам&"у"
+      КонецЕсли
+
+     // Фамилия заканчивается на ух,юх,ех,ах,ях
+      Если !ПоследСимвол2=="ой" ИЛИ !ПоследСимвол2=="ий"
+        !НовФам=ВыделитьСтр(!Фам;1;!Длина-2)&"ому"
+      Иначе
+       // Фамилия заканчивается на й
+        Если !ПоследСимвол=='й'
+          !НовФам=ВыделитьСтр(!Фам;1;!Длина-1)&"ю"
+        КонецЕсли
+      КонецЕсли
+      Если !НовФам==""
+        !НовФам = !Фам
+      КонецЕсли
+      !НовФам="г-ну "&!НовФам
+    Иначе // Пол женский
+      !НовФам=!Фам
+      !Длина=ДлинаСтр(!Фам)
+      !ПоследСимвол=ВыделитьСтр(!Фам;!Длина;1)
+      !ПоследСимвол2=ВыделитьСтр(!Фам;!Длина-1;2)
+      Если !ПоследСимвол2=="ая"
+        !НовФам=ВыделитьСтр(!Фам;1;!Длина-2)&"ой"
+      КонецЕсли
+     // Фамилия заканчивается на а/я
+      Если !ПоследСимвол=='а'
+        !НовФам=ВыделитьСтр(!Фам;1;!Длина-1)&"ой"
+      КонецЕсли
+
+      !НовФам="г-же "&!НовФам
+    КонецЕсли
+
+    Если !Отч<<>>''
+      !Отч=!Отч&"."
+    КонецЕсли
+    !ММФиоСклПадеж=!Должность&" "&СжПроб(!НовФам)&" "&!Имя&". "&!Отч
+  КонецЕсли

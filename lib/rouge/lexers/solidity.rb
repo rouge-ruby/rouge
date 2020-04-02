@@ -81,23 +81,12 @@ module Rouge
       end
 
       def self.reserved
-        return @reserved if @reserved
-
         @reserved ||= Set.new %w(
           alias after apply auto case copyof default define final fixed
           immutable implements in inline let macro match mutable null of
           partial promise reference relocatable sealed sizeof static
           supports switch typedef typeof ufixed unchecked
         )
-
-        # size helpers
-        sizesm = (8..256).step(8)
-        sizesn = (0..80)
-        sizesmxn = sizesm.map { |m| m }
-                     .product( sizesn.map { |n| n } )
-        # [u]fixed{MxN}
-        @reserved.merge(sizesmxn.map { |m,n|  "fixed#{m}x#{n}" })
-        @reserved.merge(sizesmxn.map { |m,n| "ufixed#{m}x#{n}" })
       end
 
       start { push :bol }
@@ -144,6 +133,7 @@ module Rouge
         rule %r([~!%^&*+=\|?:<>/-]), Operator
         rule %r/(?:block|msg|tx)\.[a-z]*\b/, Name::Builtin
         rule %r/[()\[\],.]/, Punctuation
+        rule %r/u?fixed\d*x\d*/, Keyword::Reserved
         rule id do |m|
           name = m[0]
 

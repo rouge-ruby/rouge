@@ -111,7 +111,7 @@ is not highlighted as the commented text.
              `(html (body "Hello, World!"))))
 
 
-;; #true is not highlighted properly
+;; Highlight booleans
 (define ht #true)
 (define ht #t)
 (define ht #T)

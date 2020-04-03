@@ -31,8 +31,15 @@ module Rouge
 
         rule %r/\d+/, Num::Integer
 
-        rule %r/^msg(ctxt|id(_plural)?|str)/, Keyword::Declaration
-        rule %r/^["#m].*?\n/, Error
+        rule %r/\w+/ do |m|
+          if self.class.keywords.include? m[0]
+            token Keyword::Declaration
+          else
+            token Error
+          end
+        end
+
+        rule %r/^["#].*/, Error
       end
     end
   end

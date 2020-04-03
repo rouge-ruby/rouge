@@ -12,24 +12,35 @@ module Rouge
       title "Cypher"
       desc 'The Cypher query language (neo4j.com/docs/cypher-manual)'
 
-      functions = %w(
-        ABS ACOS ALLSHORTESTPATHS ASIN ATAN ATAN2 AVG CEIL COALESCE COLLECT COS COT COUNT DATE DEGREES E ENDNODE
-        EXP EXTRACT FILTER FLOOR HAVERSIN HEAD ID KEYS LABELS LAST LEFT LENGTH LOG LOG10 LOWER LTRIM MAX MIN NODE NODES
-        PERCENTILECONT PERCENTILEDISC PI RADIANS RAND RANGE REDUCE REL RELATIONSHIP RELATIONSHIPS REPLACE REVERSE RIGHT
-        ROUND RTRIM SHORTESTPATH SIGN SIN SIZE SPLIT SQRT STARTNODE STDEV STDEVP STR SUBSTRING SUM TAIL TAN TIMESTAMP
-        TOFLOAT TOINT TOINTEGER TOSTRING TRIM TYPE UPPER
-      )
+      def self.functions
+        @functions ||= Set.new %w(
+          ABS ACOS ALLSHORTESTPATHS ASIN ATAN ATAN2 AVG CEIL COALESCE COLLECT
+          COS COT COUNT DATE DEGREES E ENDNODE EXP EXTRACT FILTER FLOOR
+          HAVERSIN HEAD ID KEYS LABELS LAST LEFT LENGTH LOG LOG10 LOWER LTRIM
+          MAX MIN NODE NODES PERCENTILECONT PERCENTILEDISC PI RADIANS RAND
+          RANGE REDUCE REL RELATIONSHIP RELATIONSHIPS REPLACE REVERSE RIGHT
+          ROUND RTRIM SHORTESTPATH SIGN SIN SIZE SPLIT SQRT STARTNODE STDEV
+          STDEVP STR SUBSTRING SUM TAIL TAN TIMESTAMP TOFLOAT TOINT TOINTEGER
+          TOSTRING TRIM TYPE UPPER
+        )
+      end
 
-      pedicates = %w(
-        ALL AND ANY CONTAINS EXISTS HAS IN NONE NOT OR SINGLE XOR
-      )
+      def self.predicates
+        @predicates ||= Set.new %w(
+          ALL AND ANY CONTAINS EXISTS HAS IN NONE NOT OR SINGLE XOR
+        )
+      end
 
-      keywords = %w(
-        AS ASC ASCENDING ASSERT BY CASE COMMIT CONSTRAINT CREATE CSV CYPHER DELETE DESC DESCENDING DETACH
-        DISTINCT DROP ELSE END ENDS EXPLAIN FALSE FIELDTERMINATOR FOREACH FROM HEADERS IN INDEX IS JOIN LIMIT LOAD MATCH
-        MERGE NULL ON OPTIONAL ORDER PERIODIC PROFILE REMOVE RETURN SCAN SET SKIP START STARTS THEN TRUE UNION UNIQUE
-        UNWIND USING WHEN WHERE WITH CALL YIELD
-      )
+      def self.keywords
+        @keywords ||= Set.new %w(
+          AS ASC ASCENDING ASSERT BY CASE COMMIT CONSTRAINT CREATE CSV CYPHER
+          DELETE DESC DESCENDING DETACH DISTINCT DROP ELSE END ENDS EXPLAIN
+          FALSE FIELDTERMINATOR FOREACH FROM HEADERS IN INDEX IS JOIN LIMIT
+          LOAD MATCH MERGE NULL ON OPTIONAL ORDER PERIODIC PROFILE REMOVE
+          RETURN SCAN SET SKIP START STARTS THEN TRUE UNION UNIQUE UNWIND USING
+          WHEN WHERE WITH CALL YIELD
+        )
+      end
 
       state :root do
         rule %r/[^\S\n]+/, Text
@@ -49,9 +60,9 @@ module Rouge
         # - "name ("
         rule %r/([\w]+)(\s*)(\()/ do |m|
           name = m[1].upcase
-          if functions.include? name
+          if self.class.functions.include? name
             groups Name::Function, Text::Whitespace, Literal::String::Symbol
-          elsif keywords.include? name
+          elsif self.class.keywords.include? name
             groups Keyword, Text::Whitespace, Literal::String::Symbol
           else
             groups Name, Text::Whitespace, Literal::String::Symbol
@@ -74,9 +85,9 @@ module Rouge
 
         rule %r/[._\w\d$]+/ do |m|
           match = m[0].upcase
-          if pedicates.include? match
+          if self.class.predicates.include? match
             token Operator::Word
-          elsif keywords.include? match
+          elsif self.class.keywords.include? match
             token Keyword
           else
             token Name

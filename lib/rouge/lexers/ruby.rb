@@ -229,7 +229,7 @@ module Rouge
         rule %r/\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\./,
           Operator, :expr_start
         rule %r/[-+\/*%=<>&!^|~]=?/, Operator, :expr_start
-        rule(%r/[?]/) { token Punctuation; push :ternary; push :expr_start }
+        rule(/[?]/) { token Punctuation; push :ternary; push :expr_start }
         rule %r<[\[({,:\\;/]>, Punctuation, :expr_start
         rule %r<[\])}]>, Punctuation
       end

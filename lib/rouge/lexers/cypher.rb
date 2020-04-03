@@ -50,7 +50,7 @@ module Rouge
         rule %r/[{}),;\[\]]/, Str::Symbol
 
         # literal number
-        rule %r/([_\w\d]+)(:)(\s*)([._\d]+)/ do
+        rule %r/(\w+)(:)(\s*)([._\d]+)/ do
           groups Name::Label, Str::Delimiter, Text::Whitespace, Num
         end
 
@@ -58,7 +58,7 @@ module Rouge
         # - "name("
         # - "name  ("
         # - "name ("
-        rule %r/([\w]+)(\s*)(\()/ do |m|
+        rule %r/(\w+)(\s*)(\()/ do |m|
           name = m[1].upcase
           if self.class.functions.include? name
             groups Name::Function, Text::Whitespace, Str::Symbol
@@ -69,7 +69,7 @@ module Rouge
           end
         end
 
-        rule %r/:[_\w\d]+/, Name::Class
+        rule %r/:\w+/, Name::Class
 
         # number range
         rule %r/(-?\d+)(\.\.)(-?\d+)/ do
@@ -78,12 +78,12 @@ module Rouge
 
         rule %r/(\d+)+/, Num
 
-        rule %r([._\w\d]+:), Name::Property
+        rule %r([.\w]+:), Name::Property
 
         # remaining "("
         rule %r/\(/, Str::Symbol
 
-        rule %r/[._\w\d$]+/ do |m|
+        rule %r/[.\w$]+/ do |m|
           match = m[0].upcase
           if self.class.predicates.include? match
             token Operator::Word

@@ -27,8 +27,7 @@ module Rouge
         rule %r/".*?"/, Str::Double
         rule %r/\\n/, Str::Escape
 
-        rule %r/\[/, Punctuation
-        rule %r/\]/, Punctuation
+        rule %r/[\[\]]/, Punctuation
 
         rule %r/\d+/, Literal::Number::Integer
 

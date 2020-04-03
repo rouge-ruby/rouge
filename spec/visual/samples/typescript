@@ -198,3 +198,8 @@ declare module "foo" {
     [K in keyof IFoo]?: IFoo[K]
   }
 }
+
+// Template strings
+const x = `Hello world ${a.b}`;
+const y = `Hello world ${a?.b}`;
+const z = `Hello world`;

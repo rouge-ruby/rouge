@@ -30,7 +30,7 @@ module Rouge
         rule %r/\[/, Punctuation
         rule %r/\]/, Punctuation
 
-        rule %r/[0-9]+/, Literal::Number::Integer
+        rule %r/\d+/, Literal::Number::Integer
 
         rule %r/^msg(ctxt|id(_plural)?|str)/, Keyword::Declaration
         rule %r/^["#m].*?\n/, Error

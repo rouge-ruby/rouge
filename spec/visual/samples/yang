@@ -1,139 +1,64 @@
-//see https://github.com/YangModels/yang/blob/master/standard/ietf/RFC/ietf-alarms%402019-09-11.yang
-module ietf-alarms {
-  yang-version 1.1;
-  namespace "urn:ietf:params:xml:ns:yang:ietf-alarms";
-  prefix al;
+module server-system {
+    yang-version 1.1;
+    namespace "http://gribok.org/ns/yang/example";
+    prefix ex;
 
-  import ietf-yang-types {
-    prefix yang;
-    reference
-      "RFC 6991: Common YANG Data Types.";
-  }
+    import ietf-yang-types {
+      prefix yang;
+      reference
+        "RFC 6991: Common YANG Data Types.";
+    }
 
-  organization
-    "IETF CCAMP Working Group";
-  contact
-    "WG Web:   <https://trac.ietf.org/trac/ccamp>
-     WG List:  <mailto:ccamp@ietf.org>
-
-     Editor:   Stefan Vallin
-               <mailto:stefan@wallan.se>
-
-     Editor:   Martin Bjorklund
-               <mailto:mbj@tail-f.com>";
-
-  revision 2019-09-11 {
+    organization "Gribok";
+    contact "gribok@example.org";
     description
-      "Initial revision.";
-    reference
-      "RFC 8632: A YANG Data Model for Alarm Management";
-  }
+        "An example module";
 
-  /*
-   * Common types
-   */
-
-  typedef resource {
-    type union {
-      type instance-identifier {
-        require-instance false;
-      }
-      type yang:object-identifier;
-      type string;
-      type yang:uuid;
+    revision 2020-04-03 {
+        description "Example yang";
     }
-    description
-      "This is an identification of the alarming resource, such as an
-       interface.  It should be as fine-grained as possible to both
-       guide the operator and guarantee uniqueness of the alarms.
 
-       If the server supports several models, the precedence should
-       be in the order as given in the union definition.";
-  }
+    /*
+     * Comment for container system
+     */
 
-  typedef severity {
-    type enumeration {
-      enum indeterminate {
-        value 2;
-        description
-          "Indicates that the severity level could not be
-           determined.  This level SHOULD be avoided.";
-      }
-      enum warning {
-        value 3;
-        description
-          "The 'warning' severity level indicates the detection of a
-           potential or impending service-affecting fault, before any
-           significant effects have been felt.  Action should be
-           taken to further diagnose (if necessary) and correct the
-           problem in order to prevent it from becoming a more
-           serious service-affecting fault.";
-      }
-    }
-  }
-
-  /*
-   * Groupings
-   */
-
-  grouping common-alarm-parameters {
-    description
-      "Common parameters for an alarm.
-
-       This grouping is used both in the alarm list and in the
-       notification representing an alarm-state change.";
-    leaf resource {
-      type resource;
-      mandatory true;
-      description
-        "The alarming resource.  See also 'alt-resource'.  This could
-         be, for example, a reference to the alarming interface";
-    }
-    leaf alarm-type-id {
-      type alarm-type-id;
-      mandatory true;
-      description
-        "This leaf and the leaf 'alarm-type-qualifier' together
-         provide a unique identification of the alarm type.";
-    }
-    leaf alarm-type-qualifier {
-      type alarm-type-qualifier;
-      description
-        "This leaf is used when the 'alarm-type-id' leaf cannot
-         uniquely identify the alarm type.  Normally, this is not the
-         case, and this leaf is the empty string.";
-    }
-    leaf-list alt-resource {
-      type resource;
-      description
-        "Used if the alarming resource is available over other
-         interfaces.  This field can contain SNMP OIDs, CIM paths, or
-         3GPP distinguished names, for example.";
-    }
-    list related-alarm {
-      if-feature "alarm-correlation";
-      key "resource alarm-type-id alarm-type-qualifier";
-      description
-        "References to related alarms.  Note that the related alarm
-         might have been purged from the alarm list.";
-      leaf resource {
-        type leafref {
-          path "/alarms/alarm-list/alarm/resource";
-          require-instance false;
+    container system {
+        leaf host-name {
+            type string;
+            description "Hostname for this system";
         }
-        description
-          "The alarming resource for the related alarm.";
-      }
-      leaf alarm-type-id {
-        type leafref {
-          path "/alarms/alarm-list/alarm"
-             + "[resource=current()/../resource]"
-             + "/alarm-type-id";
-          require-instance false;
+
+        leaf-list domain-search {
+            type string;
+            description "List of domain names to search";
         }
-        description
-          "The alarm type identifier for the related alarm.";
-      }
+
+        container login {
+            leaf message {
+                type string;
+                description
+                    "Message given at start of login session";
+            }
+
+            list user {
+                key "name";
+                leaf name {
+                    type string;
+                }
+                leaf uuid {
+                  type yang:uuid;
+                }
+                leaf full-name {
+                    type string;
+                    mandatory true;
+                    description
+                      "The full name of user  See also 'name'.  This could
+                       be, for example, a reference to the user name";
+                }
+                leaf class {
+                    type string;
+                }
+            }
+        }
     }
-  }
 }

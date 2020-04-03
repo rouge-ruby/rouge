@@ -3,17 +3,3 @@ msgstr ""
 "Language: Russian\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-
-#: path/to/file.php:42
-msgid "Apple"
-msgstr "Яблоко"
-
-msgid "%d apple"
-msgid_plural "%d apples"
-msgstr[0] "%d яблоко"
-msgstr[1] "%d яблока"
-msgstr[2] "%d яблок"
-
-#, fuzzy
-#~ msgid "Ape"
-#~ msgstr "Яблоко"

@@ -21,8 +21,8 @@ module Rouge
       state :root do
         rule %r/\s+/, Text::Whitespace
 
-        rule %r/^#[,:].*?\n/, Comment::Special
-        rule %r/^#[^,:].*?\n/, Comment
+        rule %r/^#[,:].*/, Comment::Special
+        rule %r/^#[^,:].*/, Comment
 
         rule %r/".*?"/, Str::Double
         rule %r/\\n/, Str::Escape

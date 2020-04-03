@@ -25,7 +25,7 @@ module Rouge
       end
 
       def self.builtins
-        load File.join(__dir__, 'lua/builtins.rb')
+        load File.join(Lexers::BASE_DIR, 'lua/builtins.rb')
         self.builtins
       end
 

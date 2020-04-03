@@ -39,7 +39,7 @@ module Rouge
       end
 
       # Load Lasso keywords from separate YML file
-      @keywords = ::YAML.load_file(File.join(__dir__, 'lasso/keywords.yml')).tap do |h|
+      @keywords = ::YAML.load_file(File.join(Lexers::BASE_DIR, 'lasso/keywords.yml')).tap do |h|
         h.each do |k,v|
           h[k] = Set.new v
         end

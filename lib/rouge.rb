@@ -6,6 +6,10 @@ require 'pathname'
 
 # The containing module for Rouge
 module Rouge
+  # cache value in a constant since `__dir__` allocates a new string
+  # on every call.
+  LIB_DIR = __dir__.freeze
+
   class << self
     def reload!
       Object.send :remove_const, :Rouge
@@ -36,11 +40,11 @@ end
 
 # mimic Kernel#require_relative API
 def load_relative(path)
-  load File.join(__dir__, "#{path}.rb")
+  load File.join(Rouge::LIB_DIR, "#{path}.rb")
 end
 
 def lexer_dir(path = '')
-  File.join(__dir__, 'rouge', 'lexers', path)
+  File.join(Rouge::LIB_DIR, 'rouge/lexers', path)
 end
 
 load_relative 'rouge/version'

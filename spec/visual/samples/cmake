@@ -27,3 +27,6 @@ message("abc${outer_${inner_variable}_variable}def")
 
 if (FOO)
 endif(FOO)
+
+list(APPEND CFLAGS -foo=\"${CMAKE_CURRENT_SOURCE_DIR}/bar\")
+message("everything else is counted as part of the string")

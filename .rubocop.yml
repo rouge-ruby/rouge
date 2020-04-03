@@ -38,7 +38,7 @@ Lint/EndAlignment:
 Lint/EmptyWhen:
   Enabled: false
 
-Lint/RedundantSplatExpansion:
+Lint/UnneededSplatExpansion:
   Enabled: false
 
 Lint/IneffectiveAccessModifier:

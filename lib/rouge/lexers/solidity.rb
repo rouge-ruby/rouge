@@ -133,7 +133,7 @@ module Rouge
         rule %r([~!%^&*+=\|?:<>/-]), Operator
         rule %r/(?:block|msg|tx)\.[a-z]*\b/, Name::Builtin
         rule %r/[()\[\],.]/, Punctuation
-        rule %r/u?fixed\d*x\d*/, Keyword::Reserved
+        rule %r/u?fixed\d+x\d+/, Keyword::Reserved
         rule id do |m|
           name = m[0]
 

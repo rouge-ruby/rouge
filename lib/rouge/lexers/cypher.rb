@@ -47,11 +47,11 @@ module Rouge
         rule %r(//.*?$), Comment::Single
 
         rule %r([*+\-<>=&|~%^]), Operator
-        rule %r/[{}),;\[\]]/, Literal::String::Symbol
+        rule %r/[{}),;\[\]]/, Str::Symbol
 
         # literal number
         rule %r/([_\w\d]+)(:)(\s*)([._\d]+)/ do
-          groups Name::Label, Literal::String::Delimiter, Text::Whitespace, Literal::Number
+          groups Name::Label, Str::Delimiter, Text::Whitespace, Num
         end
 
         # function-like
@@ -61,11 +61,11 @@ module Rouge
         rule %r/([\w]+)(\s*)(\()/ do |m|
           name = m[1].upcase
           if self.class.functions.include? name
-            groups Name::Function, Text::Whitespace, Literal::String::Symbol
+            groups Name::Function, Text::Whitespace, Str::Symbol
           elsif self.class.keywords.include? name
-            groups Keyword, Text::Whitespace, Literal::String::Symbol
+            groups Keyword, Text::Whitespace, Str::Symbol
           else
-            groups Name, Text::Whitespace, Literal::String::Symbol
+            groups Name, Text::Whitespace, Str::Symbol
           end
         end
 
@@ -73,15 +73,15 @@ module Rouge
 
         # number range
         rule %r/(-?)(\d+)(\.\.)(-?)(\d+)/ do
-          groups Literal::String::Symbol, Literal::Number, Literal::String::Symbol, Literal::String::Symbol, Literal::Number
+          groups Str::Symbol, Num, Str::Symbol, Str::Symbol, Num
         end
 
-        rule %r/(\d+)+/, Literal::Number
+        rule %r/(\d+)+/, Num
 
         rule %r([._\w\d]+:), Name::Property
 
         # remaining "("
-        rule %r/\(/, Literal::String::Symbol
+        rule %r/\(/, Str::Symbol
 
         rule %r/[._\w\d$]+/ do |m|
           match = m[0].upcase
@@ -94,9 +94,9 @@ module Rouge
           end
         end
 
-        rule %r/"(\\\\|\\"|[^"])*"/, Str
-        rule %r/'(\\\\|\\'|[^'])*'/, Str
-        rule %r/`(\\\\|\\`|[^`])*`/, Str
+        rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
+        rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
+        rule %r/`(\\\\|\\`|[^`])*`/, Str::Backtick
 
         rule %r/\n/, Text
       end

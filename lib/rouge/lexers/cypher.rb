@@ -10,7 +10,7 @@ module Rouge
       mimetypes 'application/x-cypher-query'
 
       title "Cypher"
-      desc 'The Cypher query language (https://neo4j.com/docs/cypher-manual)'
+      desc 'The Cypher query language (neo4j.com/docs/cypher-manual)'
 
       functions = %w(
         ABS ACOS ALLSHORTESTPATHS ASIN ATAN ATAN2 AVG CEIL COALESCE COLLECT COS COT COUNT DATE DEGREES E ENDNODE

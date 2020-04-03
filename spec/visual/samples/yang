@@ -1,6 +1,6 @@
 module server-system {
     yang-version 1.1;
-    namespace "http://gribok.org/ns/yang/example";
+    namespace "http://autlan.dt/gribok/yang/example";
     prefix ex;
 
     import ietf-yang-types {

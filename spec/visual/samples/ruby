@@ -35,6 +35,15 @@ link_to 'new', new_article_path, class: 'btn'
 # doesn't parse them consistently.
 a ? b::c : :d
 a ? b:c
+a ? :b : :c
+a ? :b :c
+(a) ? b : c
+(a)   \
+ ? :b  \
+ : :c
+(a) ?
+ :b :
+ :c
 method_that_takes_a_char ?b
 cond??b::c : d
 

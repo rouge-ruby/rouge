@@ -72,8 +72,8 @@ module Rouge
         rule %r/:[_\w\d]+/, Name::Class
 
         # number range
-        rule %r/(-?)(\d+)(\.\.)(-?)(\d+)/ do
-          groups Str::Symbol, Num, Str::Symbol, Str::Symbol, Num
+        rule %r/(-?\d+)(\.\.)(-?\d+)/ do
+          groups Num, Operator, Num
         end
 
         rule %r/(\d+)+/, Num

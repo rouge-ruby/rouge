@@ -19,13 +19,17 @@ module Rouge
       end
 
       state :root do
+        rule %r/\s+/, Text::Whitespace
+
         rule %r/^#[,:].*?\n/, Comment::Special
         rule %r/^#[^,:].*?\n/, Comment
+
         rule %r/".*?"/, Str::Double
         rule %r/\\n/, Str::Escape
-        rule %r/\s+/, Text::Whitespace
+
         rule %r/\[/, Punctuation
         rule %r/\]/, Punctuation
+
         rule %r/[0-9]+/, Literal::Number::Integer
 
         rule %r/^msg(ctxt|id(_plural)?|str)/, Keyword::Declaration

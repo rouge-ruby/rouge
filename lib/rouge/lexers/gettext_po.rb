@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
-# https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html
 
 module Rouge
   module Lexers
-    class Gettext < RegexLexer
-      tag 'gettext'
-      aliases 'po'
+    class GettextPO < RegexLexer
+      tag 'gettext_po'
+      aliases 'gettext', 'po'
 
-      title "Gettext File"
-      desc 'Gettext portable object'
+      title "Gettext Portable Object"
+      desc 'Gettext portable object files (gnu.org/software/gettext/'
       filenames '*.po', '*.pot'
       mimetypes 'text/x-gettext-translation'
 

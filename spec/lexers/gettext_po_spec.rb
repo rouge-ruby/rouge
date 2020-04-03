@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-describe Rouge::Lexers::Gettext do
-  let(:subject) { Rouge::Lexers::Gettext.new }
+describe Rouge::Lexers::GettextPO do
+  let(:subject) { Rouge::Lexers::GettextPO.new }
 
   describe 'guessing' do
     include Support::Guessing

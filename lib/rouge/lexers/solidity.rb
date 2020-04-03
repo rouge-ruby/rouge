@@ -120,7 +120,6 @@ module Rouge
         rule %r/\d+([eE]\d+)?/i, Num::Integer
         rule %r(\*/), Error
         rule %r([~!%^&*+=\|?:<>/-]), Operator
-        rule %r/(?:block|msg|tx)\.[a-z]*\b/, Name::Builtin
         rule %r/[()\[\],.]/, Punctuation
         rule %r/u?fixed\d+x\d+/, Keyword::Reserved
         rule %r/bytes\d+/, Keyword::Type

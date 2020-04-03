@@ -64,20 +64,9 @@ module Rouge
       end
 
       def self.keywords_type
-        return @keywords_type if @keywords_type
-
-        @keywords_type = Set.new %w(
+        @keywords_type ||= Set.new %w(
           address bool byte bytes int string uint
         )
-
-        # bytes1 .. bytes32
-        @keywords_type.merge( (1..32).map { |i| "bytes#{i}" } )
-
-        # size helper
-        sizes = (8..256).step(8)
-        # [u]int8 .. [u]int256
-        @keywords_type.merge( sizes.map { |n|  "int#{n}" } )
-        @keywords_type.merge( sizes.map { |n| "uint#{n}" } )
       end
 
       def self.reserved
@@ -134,6 +123,8 @@ module Rouge
         rule %r/(?:block|msg|tx)\.[a-z]*\b/, Name::Builtin
         rule %r/[()\[\],.]/, Punctuation
         rule %r/u?fixed\d+x\d+/, Keyword::Reserved
+        rule %r/bytes\d+/, Keyword::Type
+        rule %r/u?int\d+/, Keyword::Type
         rule id do |m|
           name = m[0]
 

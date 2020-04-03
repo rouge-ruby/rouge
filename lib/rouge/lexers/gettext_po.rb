@@ -13,9 +13,9 @@ module Rouge
       mimetypes 'text/x-gettext-translation'
 
       def self.keywords
-        @keywords ||= super + Set.new(%w(
+        @keywords ||= Set.new %w(
           msgctxt msgid msgid_plural msgstr
-        ))
+        )
       end
 
       state :root do

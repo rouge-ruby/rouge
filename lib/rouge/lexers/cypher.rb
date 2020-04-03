@@ -43,7 +43,7 @@ module Rouge
       end
 
       state :root do
-        rule %r/[^\S\n]+/, Text
+        rule %r/[\s]+/, Text
         rule %r(//.*?$), Comment::Single
 
         rule %r([*+\-<>=&|~%^]), Operator
@@ -97,8 +97,6 @@ module Rouge
         rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
         rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
         rule %r/`(\\\\|\\`|[^`])*`/, Str::Backtick
-
-        rule %r/\n/, Text
       end
     end
   end

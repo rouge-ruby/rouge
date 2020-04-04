@@ -27,7 +27,6 @@ module Rouge
             state :atoms do
               rule %r/(true|false|null)/, Keyword::Constant
               rule %r/[[:word:]]*/, Str::Symbol
-              rule %r/'[^']*'/, Str::Symbol
             end
       
             state :operators do

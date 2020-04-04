@@ -55,6 +55,12 @@ describe Rouge::Lexers::PHP do
 
     it 'recognizes case insensitively keywords' do
       assert_tokens_equal 'wHiLe', ["Keyword", "wHiLe"]
+      assert_tokens_equal 'Class BAR', ["Keyword.Declaration", "Class"], ["Text", " "], ["Name.Class", "BAR"]
+      assert_tokens_equal 'Const BAR', ["Keyword", "Const"], ["Text", " "], ["Name.Constant", "BAR"]
+      assert_tokens_equal 'Use BAR', ["Keyword.Namespace", "Use"], ["Text", " "], ["Name.Namespace", "BAR"]
+      assert_tokens_equal 'NameSpace BAR', ["Keyword.Namespace", "NameSpace"], ["Text", " "], ["Name.Namespace", "BAR"]
+      assert_tokens_equal 'Function (', ["Keyword", "Function"], ["Text", " "], ["Punctuation", "("]
+      assert_tokens_equal 'Function foo', ["Keyword", "Function"], ["Text", " "], ["Name.Function", "foo"]
     end
 
     it 'recognizes case sensitively E_* and PHP_* as constants' do

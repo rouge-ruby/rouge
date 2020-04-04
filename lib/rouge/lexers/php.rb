@@ -117,23 +117,23 @@ module Rouge
 
         rule %r/[~!%^&*+=\|:.<>\/?@-]+/, Operator
         rule %r/[\[\]{}();,]/, Punctuation
-        rule %r/(class|interface|trait)(\s+)(#{nsid})/ do
+        rule %r/(class|interface|trait)(\s+)(#{nsid})/i do
           groups Keyword::Declaration, Text, Name::Class
         end
-        rule %r/(use)(\s+)(function|const|)(\s*)(#{nsid})/ do
+        rule %r/(use)(\s+)(function|const|)(\s*)(#{nsid})/i do
           groups Keyword::Namespace, Text, Keyword::Namespace, Text, Name::Namespace
           push :use
         end
-        rule %r/(namespace)(\s+)(#{nsid})/ do
+        rule %r/(namespace)(\s+)(#{nsid})/i do
           groups Keyword::Namespace, Text, Name::Namespace
         end
         # anonymous functions
-        rule %r/(function)(\s*)(?=\()/ do
+        rule %r/(function)(\s*)(?=\()/i do
           groups Keyword, Text
         end
 
         # named functions
-        rule %r/(function)(\s+)(&?)(\s*)/ do
+        rule %r/(function)(\s+)(&?)(\s*)/i do
           groups Keyword, Text, Operator, Text
           push :funcname
         end

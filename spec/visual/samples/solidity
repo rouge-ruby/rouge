@@ -14,7 +14,7 @@ pragma experimental SMTChecker;
 /* Comments relevant to the code are multi-line. */
 
 library Assembly {
-    public function junk(address _addr) private returns (address _ret) {
+    function junk(address _addr) private returns (address _ret) {
         assembly {
             let tmp := 0
 
@@ -51,7 +51,7 @@ and it's multi-line. // no comment"; // comment ok // even nested :)
 and it\'s multi-line. // no comment'; // same thing, single-quote
     string hexstr = hex'537472696e67732e73656e6428746869732e62616c616e6365293b';
 
-    fallback() external {}
+    fallback() external payable virtual {}
 
     receive() external payable {
         revert();
@@ -83,7 +83,7 @@ contract Types is Strings {
     string str; // dynamic array (not a value-type)
     bytes bs; // same as above
     //var v = 5; // `var` is a keyword, not a type, and compiler chokes
-    var unu$ed; // `var` is highlighted, though, and `$` is a valid char
+    uint unu$ed; // `var` is highlighted, though, and `$` is a valid char
 
     address a = "0x1"; // lexer parses as string
     struct AddressMap {
@@ -94,9 +94,9 @@ contract Types is Strings {
     }
     mapping (address => AddressMap) touchedMe;
 
-    public function failOnNegative(int8 _arg)
+    function failOnNegative(int8 _arg)
         private
-        constant
+        pure
         returns (uint256)
     {
         /* implicit type conversion from `int8` to `uint256` */
@@ -104,15 +104,15 @@ contract Types is Strings {
     }
 
     // some arithmetic operators + built-in names
-    public function opportunisticSend(address k) private {
+    function opportunisticSend(address k) private {
         /* `touchedMe[k].result` et al are addresses, so
            `send()` available */
-        touchedMe[k].origin.send(k**2 % 100 finney);
+        touchedMe[k].origin.send(uint256(k)**2 % 100 finney);
         touchedMe[k].result.send(1 wei);
         touchedMe[k].sender.send(mulmod(1 szabo, k, 42));
     }
 
-    fallback() external payable {
+    fallback() external payable override {
         /* inferred type: address */
         var k = msg.sender;
         /* inferred type: `ufixed0x256` */
@@ -178,13 +178,14 @@ contract BadPractices {
         mutex = false;
     }
     
-    constructor {
+    constructor() external {
         creator = tx.origin;
         owner = msg.sender;
     }
 
     /* Dangerous - function public, and doesn't check who's calling. */
-    public function withdraw(uint _amount)
+    function withdraw(uint _amount)
+        public
         critical
         returns (bool)
     { /* `mutex` set via modifier */
@@ -203,6 +204,8 @@ contract BadPractices {
             owner++;
         }
     }
+
+    /* receive()?.. nah, why bother */
 }
 
 /*

@@ -67,7 +67,7 @@ module Rouge
           and E_PARSE old_function E_ERROR or as E_WARNING parent eval
           PHP_OS break exit case extends PHP_VERSION cfunction
           print for require continue foreach require_once declare return
-          default static do switch die stdclass echo else elseif
+          default static do switch die echo else elseif
           var empty if xor enddeclare include virtual endfor include_once
           while endforeach global __file__ endif list __line__ endswitch
           new __sleep endwhile not array __wakeup E_ALL final
@@ -139,6 +139,7 @@ module Rouge
           groups Keyword, Text, Name::Constant
         end
 
+        rule %r/stdClass\b/i, Name::Class
         rule %r/(true|false|null)\b/i, Keyword::Constant
         rule %r/(?:void|\??(?:int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
         rule %r/\$\{\$+#{id}\}/i, Name::Variable

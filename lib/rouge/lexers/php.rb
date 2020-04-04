@@ -63,19 +63,22 @@ module Rouge
       end
 
       def self.keywords
+        # (echo parent ; echo self ; sed -nE 's/<ST_IN_SCRIPTING>"((__)?[[:alpha:]_]+(__)?)".*/\1/p' zend_language_scanner.l | tr '[A-Z]' '[a-z]') | sort -u | grep -Fwv -e isset -e unset -e empty -e const -e use -e function -e namespace
+        # - isset, unset and empty are actually keywords (directly handled by PHP's lexer but let's pretend these are functions, you use them like so)
+        # - self and parent are kind of keywords, they are not handled by PHP's lexer
+        # - use, const, namespace and function are handled by specific rules to highlight what's next to the keyword
         @keywords ||= Set.new %w(
-          and E_PARSE old_function E_ERROR or as E_WARNING parent eval
-          PHP_OS break exit case extends PHP_VERSION cfunction
-          print for require continue foreach require_once declare return
-          default static do switch die echo else elseif
-          var empty if xor enddeclare include virtual endfor include_once
-          while endforeach global __file__ endif list __line__ endswitch
-          new __sleep endwhile not array __wakeup E_ALL final
-          php_user_filter interface implements public private protected
-          abstract clone try catch finally throw this use namespace yield
-          fn callable insteadof trait __trait__ goto __namespace__ __dir__
-          instanceof __class__ __function__ __method__ __halt_compiler
-          class self
+          old_function cfunction
+          __class__ __dir__ __file__ __function__ __halt_compiler
+          __line__ __method__ __namespace__ __trait__ abstract and
+          array as break callable case catch class clone continue
+          declare default die do echo else elseif enddeclare
+          endfor endforeach endif endswitch endwhile eval exit
+          extends final finally fn for foreach global goto if
+          implements include include_once instanceof insteadof
+          interface list new or parent print private protected
+          public require require_once return self static switch
+          throw trait try var while xor yield
         )
       end
 

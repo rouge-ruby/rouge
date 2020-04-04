@@ -96,7 +96,8 @@ module Rouge
       state :inline_whitespace do
         rule %r/[ \t\r]+/, Text
         rule %r/\\\n/, Text # line continuation
-        rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
+        rule %r(/[*].*?[*]/)m, Comment::Multiline
+        rule %r(/\*.*(\*/){0})m, Comment::Multiline # open to EOF
       end
 
       state :whitespace do

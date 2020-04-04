@@ -52,5 +52,18 @@ describe Rouge::Lexers::PHP do
     it 'recognizes trait definition' do
       assert_tokens_equal 'trait A {}', ["Keyword.Declaration", "trait"], ["Text", " "], ["Name.Class", "A"], ["Text", " "], ["Punctuation", "{}"]
     end
+
+    it 'recognizes case insensitively keywords' do
+      assert_tokens_equal 'wHiLe', ["Keyword", "wHiLe"]
+    end
+
+    it 'recognizes case sensitively E_* and PHP_* as constants' do
+      assert_tokens_equal 'PHP_EOL', ["Keyword.Constant", "PHP_EOL"]
+      assert_tokens_equal 'PHP_EOL_1', ["Name.Other", "PHP_EOL_1"]
+
+      assert_tokens_equal 'E_user_DEPRECATED', ["Name.Other", "E_user_DEPRECATED"]
+      assert_tokens_equal 'E_USER_deprecated', ["Name.Other", "E_USER_deprecated"]
+      assert_tokens_equal 'E_USER_DEPRECATED', ["Keyword.Constant", "E_USER_DEPRECATED"]
+    end
   end
 end

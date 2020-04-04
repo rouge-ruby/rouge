@@ -144,6 +144,7 @@ module Rouge
 
         rule %r/stdClass\b/i, Name::Class
         rule %r/(true|false|null)\b/i, Keyword::Constant
+        rule %r/(?:E|PHP)(?:_[[:upper:]]+)+\b/, Keyword::Constant
         rule %r/(?:void|\??(?:int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
         rule %r/\$\{\$+#{id}\}/i, Name::Variable
         rule %r/\$+#{id}/i, Name::Variable

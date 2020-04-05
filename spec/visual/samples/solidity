@@ -208,14 +208,10 @@ contract BadPractices {
     /* receive()?.. nah, why bother */
 }
 
-/* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /*
-// Open comment to EOF. Compiler chokes on this, but it's useful for
-// highlighting to show that there's an unmatched multi-line comment
-// open.
-//
-// On the other hand, a regular multi-line comment closure, including an
-// escaped variant as demonstrated shortly, should close the comment;
-// note that there are no nested multi-line comments.
+/* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /* /*
+// A regular multi-line comment closure, including an escaped variant as
+// demonstrated shortly, should close the comment; note that the lexer
+// should not be nesting multi-line comments.
 //
 // If the comment is still shown as "open", then a
 //
@@ -230,7 +226,8 @@ contract BadPractices {
 // It is imperative that syntax highlighters do parse it if either of
 // `* /` or `\* /` (with space removed) are present.
 //
-// Now, let's party! :) \* /
+// Now, let's party! :) \*/
+
 contract MoreBadPractices is BadPractices {
     uint balance;
 
@@ -239,4 +236,13 @@ contract MoreBadPractices is BadPractices {
         if (!msg.sender.send(this.balance / 10)) throw;
         balance -= this.balance;
     }
+}
+
+/*
+// Open comment to EOF. Compiler chokes on this, but it's useful for
+// highlighting to show that there's an unmatched multi-line comment
+// open.
+
+contract CommentToEndOfFile is MoreBadPractices {
+    fallback() external payable override {}
 }

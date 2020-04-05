@@ -1,5 +1,4 @@
 package httpapi.authz
-# taken from https://github.com/open-policy-agent/contrib/blob/f9e71d7/api_authz/docker/policy/api_authz.rego
 
 subordinates = {"alice": [], "charlie": [], "bob": ["alice"], "betty": ["charlie"]}
 
@@ -7,10 +6,3 @@ subordinates = {"alice": [], "charlie": [], "bob": ["alice"], "betty": ["charlie
 import input
 
 default allow = false
-
-# Allow users to get their own salaries.
-allow {
-  input.method = "GET"
-  input.path = ["finance", "salary", username]
-  input.user == username
-}

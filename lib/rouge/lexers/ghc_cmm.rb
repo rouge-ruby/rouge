@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# C minus minus (Cmm) is a pun on the name C++. It's an intermediate language of the Glasgow Haskell Compiler (GHC) that
-# is very similar to C, but with many features missing and some special constructs.
+# C minus minus (Cmm) is a pun on the name C++. It's an intermediate language
+# of the Glasgow Haskell Compiler (GHC) that is very similar to C, but with
+# many features missing and some special constructs.
 #
-# Cmm is a dialect of C--. The goal of this lexer is to use what GHC produces and parses (Cmm); C-- itself is not
-# supported.
+# Cmm is a dialect of C--. The goal of this lexer is to use what GHC produces
+# and parses (Cmm); C-- itself is not supported.
 #
 # https://gitlab.haskell.org/ghc/ghc/wikis/commentary/compiler/cmm-syntax
 #

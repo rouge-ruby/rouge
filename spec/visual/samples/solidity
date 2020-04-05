@@ -220,11 +220,11 @@ contract MoreBadPractices is BadPractices {
     * /
     \* /
 
-    / * no modifiers to check ownership * /
+    /* no modifiers to check ownership */
     fallback() external payable {
         balance += msg.value;
 
-        / * vulnerable to re-entry * /
+        /* vulnerable to re-entry */
         if (!msg.sender.send(this.balance / 10)) throw;
         balance -= this.balance;
     }

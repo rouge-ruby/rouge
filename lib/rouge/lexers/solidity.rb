@@ -46,7 +46,7 @@ module Rouge
         )
 
         # TODO: use (currently shadowed by catch-all in :statements)
-        abi = %w(encode encodePacked encodeWithSelector encodeWithSignature)
+        abi = %w(decode encode encodePacked encodeWithSelector encodeWithSignature)
         @builtins.merge( abi.map { |i| "abi.#{i}" } )
         block = %w(coinbase difficulty gaslimit hash number timestamp)
         @builtins.merge( block.map { |i| "block.#{i}" } )

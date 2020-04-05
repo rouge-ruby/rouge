@@ -158,7 +158,6 @@ module Rouge
         rule %r/\.\./, Operator
         rule %r/[+\-*\/<>=!&|~]/, Operator
         rule %r/[\[\].{}:;,()]/, Punctuation
-
       end
 
       state :keywords do

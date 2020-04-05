@@ -16,6 +16,7 @@ module Rouge
       title "GHC Cmm (C--)"
       desc "GHC Cmm is the intermediate representation of the GHC Haskell compiler"
       tag 'ghc-cmm'
+      aliases 'cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
       macros = %r(#(?:define|include|endif|else|if))
@@ -33,6 +34,7 @@ module Rouge
 
         # sections markers
         rule %r/^=====.*=====$/, Generic::Heading
+
         # timestamps
         rule %r/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ UTC$/, Comment::Single
 
@@ -158,6 +160,7 @@ module Rouge
         rule %r/[\[\].{}:;,()]/, Punctuation
 
       end
+
       state :keywords do
         rule %r/const/, Keyword::Constant
         rule %r/"/, Literal::String::Double

@@ -111,7 +111,7 @@ module Rouge
         rule %r(//.*?$), Comment::Single
         rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        
+
         rule %r/(->|::)(\s*)(#{id})/ do
           groups Operator, Text, Name::Attribute
         end
@@ -175,7 +175,7 @@ module Rouge
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string
       end
-      
+
       state :use do
         rule %r/(\s+)(as)(\s+)(#{id})/i do
           groups Text, Keyword, Text, Name
@@ -184,7 +184,7 @@ module Rouge
         rule %r/\\\{/, Operator, :uselist
         rule %r/;/, Punctuation, :pop!
       end
-      
+
       state :uselist do
         rule %r/\s+/, Text
         rule %r/,/, Operator

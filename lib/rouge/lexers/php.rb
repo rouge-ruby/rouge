@@ -165,12 +165,11 @@ module Rouge
           end
         end
 
-        rule %r/(?:(?:(?:\d+(?:_\d+)*)|(?:(?:(?:\d+(?:_\d+)*)?\.(?:\d+(?:_\d+)*))|(?:(?:\d+(?:_\d+)*)\.(?:\d+(?:_\d+)*)?)))e[+-]?(?:\d+(?:_\d+)*))/i, Num::Float
-        rule %r/(?:(?:\d+(?:_\d+)*)?\.(?:\d+(?:_\d+)*))|(?:(?:\d+(?:_\d+)*)\.(?:\d+(?:_\d+)*)?)/, Num::Float
-        rule %r/0[0-7]+(?:_[0-7]+)*/, Num::Oct
-        rule %r/0b[01]+(?:_[01]+)*/i, Num::Bin
-        rule %r/0x[a-f0-9]+(?:_[a-f0-9]+)*/i, Num::Hex
-        rule %r/\d+(?:_\d+)*/, Num::Integer
+        rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float
+        rule %r/0[0-7][0-7_]*/, Num::Oct
+        rule %r/0b[01][01_]*/i, Num::Bin
+        rule %r/0x[a-f0-9][a-f0-9_]*/i, Num::Hex
+        rule %r/\d[_\d]*/, Num::Integer
         rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string

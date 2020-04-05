@@ -77,14 +77,13 @@ module Rouge
 
         rule %r/[^\S\n]+/, Text
         rule %r(#(.*)?\n?), Comment::Single
-        rule %r/[\[\]{}:(),;]/, Punctuation
+        rule %r/[\[\]{}:(),;.]/, Punctuation
         rule %r/\\\n/, Text
         rule %r/\\/, Text
 
         rule %r/(in|is|and|or|not)\b/, Operator::Word
         rule %r/(<<|>>|\/\/|\*\*)=?/, Operator
         rule %r/[-~+\/*%=<>&^|@]=?|!=/, Operator
-        rule %r/\.(?![0-9])/, Operator  # so it doesn't match float literals
 
         rule %r/(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do
           groups Keyword::Namespace,

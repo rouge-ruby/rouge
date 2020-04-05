@@ -47,7 +47,7 @@ a ?b :c       # parsed as (a) ? (b) : (c)
 (a)    \      # parsed as (a) ? (:b) : (:c)
  ? :b  \
  : :c
-(a) ?         # parsed as (a) ? (:b) (:c)
+(a) ?         # parsed as (a) ? (:b) : (:c)
  :b :
  :c
 a             # parsed as (a) ? (b) : (c)

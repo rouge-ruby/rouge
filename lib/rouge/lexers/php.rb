@@ -67,6 +67,7 @@ module Rouge
         # - isset, unset and empty are actually keywords (directly handled by PHP's lexer but let's pretend these are functions, you use them like so)
         # - self and parent are kind of keywords, they are not handled by PHP's lexer
         # - use, const, namespace and function are handled by specific rules to highlight what's next to the keyword
+        # - class is also listed here, in addition to the rule below, to handle anonymous classes
         @keywords ||= Set.new %w(
           old_function cfunction
           __class__ __dir__ __file__ __function__ __halt_compiler
@@ -144,8 +145,8 @@ module Rouge
 
         rule %r/stdClass\b/i, Name::Class
         rule %r/(true|false|null)\b/i, Keyword::Constant
-        rule %r/(?:E|PHP)(?:_[[:upper:]]+)+\b/, Keyword::Constant
-        rule %r/(?:void|\??(?:int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
+        rule %r/(E|PHP)(_[[:upper:]]+)+\b/, Keyword::Constant
+        rule %r/(void|\??(int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
         rule %r/\$\{\$+#{id}\}/i, Name::Variable
         rule %r/\$+#{id}/i, Name::Variable
         rule %r/(yield)([ \n\r\t]+)(from)/i do
@@ -165,12 +166,11 @@ module Rouge
           end
         end
 
-        rule %r/(?:(?:(?:\d+(?:_\d+)*)|(?:(?:(?:\d+(?:_\d+)*)?\.(?:\d+(?:_\d+)*))|(?:(?:\d+(?:_\d+)*)\.(?:\d+(?:_\d+)*)?)))e[+-]?(?:\d+(?:_\d+)*))/i, Num::Float
-        rule %r/(?:(?:\d+(?:_\d+)*)?\.(?:\d+(?:_\d+)*))|(?:(?:\d+(?:_\d+)*)\.(?:\d+(?:_\d+)*)?)/, Num::Float
-        rule %r/0[0-7]+(?:_[0-7]+)*/, Num::Oct
-        rule %r/0b[01]+(?:_[01]+)*/i, Num::Bin
-        rule %r/0x[a-f0-9]+(?:_[a-f0-9]+)*/i, Num::Hex
-        rule %r/\d+(?:_\d+)*/, Num::Integer
+        rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float
+        rule %r/0[0-7][0-7_]*/, Num::Oct
+        rule %r/0b[01][01_]*/i, Num::Bin
+        rule %r/0x[a-f0-9][a-f0-9_]*/i, Num::Hex
+        rule %r/\d[_\d]*/, Num::Integer
         rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string

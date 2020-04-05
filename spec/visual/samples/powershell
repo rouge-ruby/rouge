@@ -187,3 +187,9 @@ Function Get-IPv4Scopes
     }
 
 } #end function
+
+# Without Error
+$gitUserName = "$($userAdObject.Properties['sn']), $($userAdObject.Properties['givenName'])"
+
+# With Error
+$gitExeString = "$gitExeFolder\git.exe" &("$gitExeString") config --add --global user.name `"$gitUserName`"

@@ -7,7 +7,7 @@ module Rouge
       tag 'pascal'
       title "Pascal"
       desc 'a procedural programming language commonly used as a teaching language.'
-      filenames '*.pas'
+      filenames '*.pas', '*.lpr'
 
       mimetypes 'text/x-pascal'
 

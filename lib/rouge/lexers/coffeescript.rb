@@ -49,33 +49,54 @@ module Rouge
 
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
 
-      state :comments_and_whitespace do
-        rule %r/\s+/m, Text
+      state :comments do
         rule %r/###[^#].*?###/m, Comment::Multiline
         rule %r/#.*$/, Comment::Single
       end
 
-      state :multiline_regex do
-        # this order is important, so that #{ isn't interpreted
-        # as a comment
-        mixin :has_interpolation
-        mixin :comments_and_whitespace
-
-        rule %r(///([gim]+\b|\B)), Str::Regex, :pop!
-        rule %r(/), Str::Regex
-        rule %r([^/#]+), Str::Regex
+      state :whitespace do
+        rule %r/\s+/m, Text
       end
 
-      state :slash_starts_regex do
-        mixin :comments_and_whitespace
+      state :regex_comment do
+        rule %r/^#(?!\{).*$/, Comment::Single
+        rule %r/(\s+)(#(?!\{).*)$/ do
+          groups Text, Comment::Single
+        end
+      end
+
+      state :multiline_regex_begin do
         rule %r(///) do
           token Str::Regex
           goto :multiline_regex
         end
+      end
+
+      state :multiline_regex_end do
+        rule %r(///([gimy]+\b|\B)), Str::Regex, :pop!
+      end
+
+      state :multiline_regex do
+        mixin :multiline_regex_end
+        mixin :regex_comment
+        mixin :has_interpolation
+        mixin :comments
+        mixin :whitespace
+        mixin :code_escape
+
+        rule %r/\\\D/, Str::Escape
+        rule %r/\\\d+/, Name::Variable
+        rule %r/./m, Str::Regex
+      end
+
+      state :slash_starts_regex do
+        mixin :comments
+        mixin :whitespace
+        mixin :multiline_regex_begin
 
         rule %r(
           /(\\.|[^\[/\\\n]|\[(\\.|[^\]\\\n])*\])+/ # a regex
-          ([gim]+\b|\B)
+          ([gimy]+\b|\B)
         )x, Str::Regex, :pop!
 
         rule(//) { pop! }
@@ -83,7 +104,9 @@ module Rouge
 
       state :root do
         rule(%r(^(?=\s|/|<!--))) { push :slash_starts_regex }
-        mixin :comments_and_whitespace
+        mixin :comments
+        mixin :whitespace
+
         rule %r(
           [+][+]|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\bin\b|\bof\b|
           [?]|:|=|[|][|]|\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&|^/])=?
@@ -129,10 +152,19 @@ module Rouge
         rule %r/'/, Str, :sqs
       end
 
+      state :code_escape do
+        rule %r(\\(
+          c[A-Z]|
+          x[0-9a-fA-F]{2}|
+          u[0-9a-fA-F]{4}|
+          u\{[0-9a-fA-F]{4}\}
+        ))x, Str::Escape
+      end
+
       state :strings do
         # all coffeescript strings are multi-line
         rule %r/[^#\\'"]+/m, Str
-
+        mixin :code_escape
         rule %r/\\./, Str::Escape
         rule %r/#/, Str
       end

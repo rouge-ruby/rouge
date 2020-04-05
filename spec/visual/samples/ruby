@@ -79,11 +79,53 @@ class Ipsum < Lorem
 end
 
 ########
+# Various types of class definitions
+########
+
+# Singleton class definition
+module Table
+  module Row
+    DEFAULTS = { cell_width: 80, cell_height: 60 }
+
+    class << self
+      def styles hsh
+        hsh.merge DEFAULTS
+      end
+    end
+  end
+end
+
+# Nested class name
+module Table
+  module Row
+    class Cell < Table::Block
+      WIDTH = TABLE::ROW::styles[:cell_width]
+
+      def text string, width = WIDTH
+        string.center width
+      end
+    end
+  end
+end
+
+# Compact class name
+class Table::Row::Cell < Table::Block
+  WIDTH = TABLE::ROW::styles[:cell_width]
+
+  def text string, width = WIDTH
+    string.center width
+  end
+end
+
+########
 # The popular . :bow:
 ########
 
 # It appears in Floats
 2.3
+1.2e3
+1e23
+1_2.3_4e5
 
 # It appears in Range
 1..10

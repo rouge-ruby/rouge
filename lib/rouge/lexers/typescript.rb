@@ -19,6 +19,10 @@ module Rouge
 
       mimetypes 'text/typescript'
 
+      prepend :root do
+        rule %r/[?][.]/, Punctuation
+      end
+
       prepend :statement do
         rule %r/(#{Javascript.id_regex})(\??)(\s*)(:)/ do
           groups Name::Label, Punctuation, Text, Punctuation

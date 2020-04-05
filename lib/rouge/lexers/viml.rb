@@ -14,7 +14,7 @@ module Rouge
       mimetypes 'text/x-vim'
 
       def self.keywords
-        load File.join(__dir__, 'viml/keywords.rb')
+        load File.join(Lexers::BASE_DIR, 'viml/keywords.rb')
         self.keywords
       end
 

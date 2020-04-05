@@ -29,6 +29,10 @@
 
 @end
 
+@autoreleasepool {
+    NSString *string = [[NSString alloc] initWithUTF8String:"I will be autoreleased"];
+}
+
 double (^multiplyTwoValues)(double, double) = ^(double firstValue, double secondValue) {
     return firstValue * secondValue;
 };

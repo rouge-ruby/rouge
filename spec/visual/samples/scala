@@ -64,4 +64,8 @@ class why_would_you_name_a_class_this_way_oh_well_we_need_to_highlight_it(a: Int
   def hex = 0x123
 }
 
+StorageState.table(StorageState.NewUsers()).format(
+  keyParams('app_id).asInstanceOf[String]
+)
+
 // Comment at EOF

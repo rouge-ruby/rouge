@@ -1,0 +1,69 @@
+// Types
+App : IApplication
+Employees : IReference.РАБ = References.ReferenceFactory("РАБ").GetComponent
+
+// Operators
+Result = 1 + 1 / 2
+
+// Numbers
+Integer = 5
+Float = 5.5
+WordBool = True
+
+// Strings
+Double_Quotes = "An example"
+Single_Quotes = 'An example'
+
+// Comments
+
+/********************************************
+ * Получить список кодов или ИД работников, *
+ * соответствующих пользователю.            *
+ ********************************************/
+
+// Example code
+
+ADD_EQUAL_NUMBER_TEMPLATE = "%s.%s = %s"
+ADD_EQUAL_STATE_TEMPLATE = "%s.%s = '%s'"
+EMPLOYEES_REFERENCE = "РАБ"
+// Проверить, сущуствует ли пользователь с ИД UserID
+ExceptionsOff()
+FreeException()
+ServiceFactory.GetUserByID(UserID)
+ExceptionsOn()
+if ExceptionExists()
+  Raise(CreateException("EDIRInvalidTypeOfParam";
+    LoadStringFmt("DIR21A2F148_1B41_40F3_9152_6E09E712025A"; "COMMON";
+      ArrayOf(UserID)); ecException)) // Не существует пользователя с ИД = %s
+endif
+Employees : IReference.РАБ = CreateReference(EMPLOYEES_REFERENCE; ArrayOf("Пользователь"; SYSREQ_STATE); FALSE)
+Employees.Events.DisableAll
+EmployeesTableName = Employees.TableName
+EmployeesUserWhereID = Employees.AddWhere(Format(ADD_EQUAL_NUMBER_TEMPLATE; ArrayOf(EmployeesTableName;
+  Employees.Requisites("Пользователь").SQLFieldName; UserID)))
+if OnlyActive
+  EmployeesStateWhereID = Employees.AddWhere(Format(ADD_EQUAL_STATE_TEMPLATE; ArrayOf(EmployeesTableName;
+    Employees.Requisites(SYSREQ_STATE).SQLFieldName; Employees.Requisites(SYSREQ_STATE).Items.IDByValue("Действующая"))))
+endif
+if Assigned(OurOrgID)
+  EmployeesOurOrgIDWhereID = Employees.AddWhere(Format(ADD_EQUAL_STATE_TEMPLATE; ArrayOf(EmployeesTableName;
+    Employees.Requisites("НашаОрг").SQLFieldName; OurOrgID)))
+endif
+Employees.Open()
+Result = CreateStringList()
+foreach Employee in Employees
+  if IsResultCode
+    Result.Add(Employee.SYSREQ_CODE)
+  else
+    Result.Add(Employee.SYSREQ_ID)
+  endif
+endforeach
+Employees.Close()
+Employees.DelWhere(EmployeesUserWhereID)
+if OnlyActive
+  Employees.DelWhere(EmployeesStateWhereID)
+endif
+if Assigned(OurOrgID)
+  Employees.DelWhere(EmployeesOurOrgIDWhereID)
+endif
+Employees.Events.EnableAll

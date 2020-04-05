@@ -177,7 +177,6 @@ module Rouge
 
        state :comment_multi do
          rule %r(\*/), Comment::Multiline, :pop!
-         rule %r(/\*), Comment::Multiline, :comment_multi
          rule %r([^*/]+), Comment::Multiline
          rule %r([*/]), Comment::Multiline
        end

@@ -12,6 +12,10 @@ module Rouge
                 '*.bzl', 'BUCK', 'BUILD', 'BUILD.bazel', 'WORKSPACE'
       mimetypes 'text/x-python', 'application/x-python'
 
+      def self.string_register
+        @string_register ||= StringRegister.new
+      end
+
       def self.detect?(text)
         return true if text.shebang?(/pythonw?(?:[23](?:\.\d+)?)?/)
       end
@@ -109,14 +113,11 @@ module Rouge
 
         # TODO: not in python 3
         rule %r/`.*?`/, Str::Backtick
-        rule %r/(?:r|ur|ru)"""/i, Str, :raw_tdqs
-        rule %r/(?:r|ur|ru)'''/i, Str, :raw_tsqs
-        rule %r/(?:r|ur|ru)"/i,   Str, :raw_dqs
-        rule %r/(?:r|ur|ru)'/i,   Str, :raw_sqs
-        rule %r/u?"""/i,          Str, :tdqs
-        rule %r/u?'''/i,          Str, :tsqs
-        rule %r/u?"/i,            Str, :dqs
-        rule %r/u?'/i,            Str, :sqs
+        rule %r/([rfbu]{0,2})('''|"""|['"])/i do |m|
+          token Str
+          self.class.string_register.push [m[1].downcase, m[2]]
+          push :generic_string
+        end
 
         rule %r/@#{dotted_identifier}/i, Name::Decorator
 
@@ -172,26 +173,39 @@ module Rouge
         mixin :raise
       end
 
-      state :strings do
-        rule %r/%(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str::Interpol
+      state :generic_string do
+        rule %r/[^'"\\{]+/, Str
+        rule %r/{{/, Str
+
+        rule %r/'''|"""|['"]/ do |m|
+          token Str
+          if self.class.string_register.delim? m[0]
+            self.class.string_register.pop
+            pop!
+          end
+        end
+
+        rule %r/\\/ do |m|
+          if self.class.string_register.type? "r"
+            token Str
+          else
+            token Str::Interpol
+          end
+          push :generic_escape
+        end
+
+        rule %r/{/ do |m|
+          if self.class.string_register.type? "f"
+            token Str::Interpol
+            push :generic_interpol
+          else
+            token Str
+          end
+        end
       end
 
-      state :strings_double do
-        rule %r/[^\\"%\n]+/, Str
-        mixin :strings
-      end
-
-      state :strings_single do
-        rule %r/[^\\'%\n]+/, Str
-        mixin :strings
-      end
-
-      state :nl do
-        rule %r/\n/, Str
-      end
-
-      state :escape do
-        rule %r(\\
+      state :generic_escape do
+        rule %r(
           ( [\\abfnrtv"']
           | \n
           | N{[a-zA-Z][a-zA-Z ]+[a-zA-Z]}
@@ -200,48 +214,33 @@ module Rouge
           | x[a-fA-F0-9]{2}
           | [0-7]{1,3}
           )
-        )x, Str::Escape
-      end
-
-      state :raw_escape do
-        rule %r/\\./, Str
-      end
-
-      state :dqs do
-        rule %r/"/, Str, :pop!
-        mixin :escape
-        mixin :strings_double
-      end
-
-      state :sqs do
-        rule %r/'/, Str, :pop!
-        mixin :escape
-        mixin :strings_single
-      end
-
-      state :tdqs do
-        rule %r/"""/, Str, :pop!
-        rule %r/"/, Str
-        mixin :escape
-        mixin :strings_double
-        mixin :nl
-      end
-
-      state :tsqs do
-        rule %r/'''/, Str, :pop!
-        rule %r/'/, Str
-        mixin :escape
-        mixin :strings_single
-        mixin :nl
-      end
-
-      %w(tdqs tsqs dqs sqs).each do |qtype|
-        state :"raw_#{qtype}" do
-          mixin :raw_escape
-          mixin :"#{qtype}"
+        )x do
+          if self.class.string_register.type? "r"
+            token Str
+          else
+            token Str::Escape
+          end
+          pop!
         end
       end
 
+      state :generic_interpol do
+        rule %r/[^{}]+/ do |m|
+          recurse m[0]
+        end
+        rule %r/{/, Str::Interpol, :generic_interpol
+        rule %r/}/, Str::Interpol, :pop!
+      end
+
+      class StringRegister < Array
+        def delim?(delim)
+          self.last[1] == delim
+        end
+
+        def type?(type)
+          self.last[0].include? type
+        end
+      end
     end
   end
 end

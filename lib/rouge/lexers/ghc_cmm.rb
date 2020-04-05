@@ -14,7 +14,7 @@ module Rouge
   module Lexers
     class GHCCmm < RegexLexer
       title "GHC Cmm (C--)"
-      desc "Intermediate representation of the GHC Haskell compiler."
+      desc "GHC Cmm is the intermediate representation of the GHC Haskell compiler"
       tag 'ghc-cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 

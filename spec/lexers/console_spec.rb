@@ -22,6 +22,16 @@ describe Rouge::Lexers::ConsoleLexer do
       ['Text', 'foo']
   end
 
+  it 'parses a custom error' do
+    subject_with_options = klass.new({ error: 'No command,Unhandled' })
+    assert_tokens_equal 'No command \'foo\' found, did you mean:', subject_with_options,
+      ['Generic.Error', 'No command \'foo\' found, did you mean:']
+    assert_tokens_equal 'Unhandled condition in test.lisp', subject_with_options,
+      ['Generic.Error', 'Unhandled condition in test.lisp']
+    assert_tokens_equal 'foo', subject_with_options,
+      ['Generic.Output', 'foo']
+  end
+
   it 'parses single-line comments' do
     subject_with_options = klass.new({ comments: true })
     assert_tokens_equal '# this is a comment', subject_with_options,

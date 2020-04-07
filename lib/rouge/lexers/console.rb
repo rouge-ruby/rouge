@@ -9,12 +9,14 @@ module Rouge
     # line before passing the remainder of the line to the language lexer for
     # the shell (by default, the {Shell} lexer).
     #
-    # The {ConsoleLexer} class accepts four options:
+    # The {ConsoleLexer} class accepts five options:
     # 1. **lang**: the shell language to lex (default: `shell`);
     # 2. **output**: the output language (default: `plaintext?token=Generic.Output`);
     # 3. **prompt**: comma-separated list of strings that indicate the end of a
     #    prompt (default: `$,#,>,;`);
     # 4. **comments**: whether to enable comments.
+    # 5. **error**: comma-separated list of strings that indicate the start of an
+    #    error message
     #
     # The comments option, if enabled, will lex lines that begin with a `#` as a
     # comment. Please note that this option will only work if the prompt is
@@ -39,12 +41,13 @@ module Rouge
       tag 'console'
       aliases 'terminal', 'shell_session', 'shell-session'
       filenames '*.cap'
-      desc 'A generic lexer for shell sessions. Accepts ?lang and ?output lexer options, a ?prompt option, and ?comments to enable # comments.'
+      desc 'A generic lexer for shell sessions. Accepts ?lang and ?output lexer options, a ?prompt option, ?comments to enable # comments, and ?error to handle error messages.'
 
       option :lang, 'the shell language to lex (default: shell)'
       option :output, 'the output language (default: plaintext?token=Generic.Output)'
       option :prompt, 'comma-separated list of strings that indicate the end of a prompt. (default: $,#,>,;)'
       option :comments, 'enable hash-comments at the start of a line - otherwise interpreted as a prompt. (default: false, implied by ?prompt not containing `#`)'
+      option :error, 'comma-separated list of strings that indicate the start of an error message'
 
       def initialize(*)
         super
@@ -52,6 +55,7 @@ module Rouge
         @lang = lexer_option(:lang) { 'shell' }
         @output = lexer_option(:output) { PlainText.new(token: Generic::Output) }
         @comments = bool_option(:comments) { :guess }
+        @error = list_option(:error) { nil }
       end
 
       def prompt_regex
@@ -67,6 +71,12 @@ module Rouge
           %w($ > ;)
         else
           %w($ # > ;)
+        end
+      end
+
+      def error_regex
+        @error_regex ||= if @error.any?
+          /^(?:#{@error.map(&Regexp.method(:escape)).join('|')})/
         end
       end
 
@@ -162,6 +172,12 @@ module Rouge
           lang_lexer.reset!
 
           yield Comment, input[0]
+        elsif error_regex =~ input[0]
+          puts "console: matched error #{input[0].inspect}" if @debug
+          output_lexer.reset!
+          lang_lexer.reset!
+
+          yield Generic::Error, input[0]
         else
           puts "console: matched output #{input[0].inspect}" if @debug
           lang_lexer.reset!

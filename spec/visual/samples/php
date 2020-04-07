@@ -628,4 +628,13 @@ class Zip extends Archive {
 }
 
 ?>
+
+<?php if (true): ?><!-- Notice the space between the colon & question mark -->
+  <p>Hello world!</p>
+<?php endif ?>
+
+<?php if (true) :?><!-- No space -->
+  <p>Hello world!</p>
+<?php endif ?>
+
 <p>it's html here at the end, too.</p>

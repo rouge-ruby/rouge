@@ -27,7 +27,7 @@ $a = 1;
 /* another comment */
 $a = 1;
 /* a multi
-line comemnt 
+line comemnt
 followed by an empty comment */
 $a = 1;
 /**/
@@ -55,7 +55,7 @@ trait SomeTrait {
   public const PUBLIC_CONST_B = 2;
   protected const PROTECTED_CONST = 3;
   private const PRIVATE_CONST = 4;
-      
+
   function afunc(string $arg, SomeInterface $arg2, callable $arg3, object $arg4): void {
     echo "hello";
     if (1 <=> 1) {
@@ -257,7 +257,7 @@ class Zip extends Archive {
       $dir_data .= pack("V", 0);            // Compressed size
       $dir_data .= pack("V", 0);            // Uncompressed size
       */
-  
+
       // Append dir data to the central directory data
       $cd_data[] = $dir_data;
     }
@@ -271,7 +271,7 @@ class Zip extends Archive {
 
       // Reset file data
       $fd = '';
-  
+
       // Detect possible compressions
       // Use deflate
       if(function_exists('gzdeflate')) {
@@ -313,7 +313,7 @@ class Zip extends Archive {
 
       // File data
       $fd .= $compressed_data;
-  
+
       // Data descriptor
       $fd .= pack("V", crc32($content));          // crc-32
       $fd .= pack("V", strlen($compressed_data)); // Compressed size
@@ -395,7 +395,7 @@ class Zip extends Archive {
     // Return content?
     if(!$filename)
       return $data;
-  
+
     // Write to file
     return file_put_contents($filename, $data);
   }

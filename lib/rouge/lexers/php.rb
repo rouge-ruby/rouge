@@ -63,16 +63,23 @@ module Rouge
       end
 
       def self.keywords
+        # (echo parent ; echo self ; sed -nE 's/<ST_IN_SCRIPTING>"((__)?[[:alpha:]_]+(__)?)".*/\1/p' zend_language_scanner.l | tr '[A-Z]' '[a-z]') | sort -u | grep -Fwv -e isset -e unset -e empty -e const -e use -e function -e namespace
+        # - isset, unset and empty are actually keywords (directly handled by PHP's lexer but let's pretend these are functions, you use them like so)
+        # - self and parent are kind of keywords, they are not handled by PHP's lexer
+        # - use, const, namespace and function are handled by specific rules to highlight what's next to the keyword
+        # - class is also listed here, in addition to the rule below, to handle anonymous classes
         @keywords ||= Set.new %w(
-          and E_PARSE old_function E_ERROR or as E_WARNING parent eval
-          PHP_OS break exit case extends PHP_VERSION cfunction FALSE
-          print for require continue foreach require_once declare return
-          default static do switch die stdClass echo else TRUE elseif
-          var empty if xor enddeclare include virtual endfor include_once
-          while endforeach global __FILE__ endif list __LINE__ endswitch
-          new __sleep endwhile not array __wakeup E_ALL NULL final
-          php_user_filter interface implements public private protected
-          abstract clone try catch finally throw this use namespace yield
+          old_function cfunction
+          __class__ __dir__ __file__ __function__ __halt_compiler
+          __line__ __method__ __namespace__ __trait__ abstract and
+          array as break callable case catch class clone continue
+          declare default die do echo else elseif enddeclare
+          endfor endforeach endif endswitch endwhile eval exit
+          extends final finally fn for foreach global goto if
+          implements include include_once instanceof insteadof
+          interface list new or parent print private protected
+          public require require_once return self static switch
+          throw trait try var while xor yield
         )
       end
 
@@ -85,49 +92,50 @@ module Rouge
       state :root do
         # some extremely rough heuristics to decide whether to start inline or not
         rule(/\s*(?=<)/m) { delegate parent; push :template }
-        rule(/[^$]+(?=<\?(php|=))/) { delegate parent; push :template }
+        rule(/[^$]+(?=<\?(php|=))/i) { delegate parent; push :template }
 
         rule(//) { push :template; push :php }
       end
 
       state :template do
-        rule %r/<\?(php|=)?/, Comment::Preproc, :php
+        rule %r/<\?(php|=)?/i, Comment::Preproc, :php
         rule(/.*?(?=<\?)|.*/m) { delegate parent }
       end
 
       state :php do
         rule %r/\?>/, Comment::Preproc, :pop!
         # heredocs
-        rule %r/<<<('?)(#{id})\1\n.*?\n\s*\2;?/im, Str::Heredoc
+        rule %r/<<<(["']?)(#{id})\1\n.*?\n\s*\2;?/im, Str::Heredoc
         rule %r/\s+/, Text
         rule %r/#.*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single
         rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        
+
         rule %r/(->|::)(\s*)(#{id})/ do
           groups Operator, Text, Name::Attribute
         end
 
+        rule %r/(void|\??(int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
         rule %r/[~!%^&*+=\|:.<>\/?@-]+/, Operator
         rule %r/[\[\]{}();,]/, Punctuation
-        rule %r/(class|interface|trait)(\s+)(#{nsid})/ do
+        rule %r/(class|interface|trait)(\s+)(#{nsid})/i do
           groups Keyword::Declaration, Text, Name::Class
         end
-        rule %r/(use)(\s+)(function|const|)(\s*)(#{nsid})/ do
+        rule %r/(use)(\s+)(function|const|)(\s*)(#{nsid})/i do
           groups Keyword::Namespace, Text, Keyword::Namespace, Text, Name::Namespace
           push :use
         end
-        rule %r/(namespace)(\s+)(#{nsid})/ do
+        rule %r/(namespace)(\s+)(#{nsid})/i do
           groups Keyword::Namespace, Text, Name::Namespace
         end
         # anonymous functions
-        rule %r/(function)(\s*)(?=\()/ do
+        rule %r/(function)(\s*)(?=\()/i do
           groups Keyword, Text
         end
 
         # named functions
-        rule %r/(function)(\s+)(&?)(\s*)/ do
+        rule %r/(function)(\s+)(&?)(\s*)/i do
           groups Keyword, Text, Operator, Text
           push :funcname
         end
@@ -136,13 +144,18 @@ module Rouge
           groups Keyword, Text, Name::Constant
         end
 
-        rule %r/(true|false|null)\b/, Keyword::Constant
+        rule %r/stdClass\b/i, Name::Class
+        rule %r/(true|false|null)\b/i, Keyword::Constant
+        rule %r/(E|PHP)(_[[:upper:]]+)+\b/, Keyword::Constant
         rule %r/\$\{\$+#{id}\}/i, Name::Variable
         rule %r/\$+#{id}/i, Name::Variable
+        rule %r/(yield)([ \n\r\t]+)(from)/i do
+          groups Keyword, Text, Keyword
+        end
 
         # may be intercepted for builtin highlighting
         rule %r/\\?#{nsid}/i do |m|
-          name = m[0]
+          name = m[0].downcase
 
           if self.class.keywords.include? name
             token Keyword
@@ -153,30 +166,30 @@ module Rouge
           end
         end
 
-        rule %r/(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, Num::Float
-        rule %r/\d+e[+-]?\d+/i, Num::Float
-        rule %r/0[0-7]+/, Num::Oct
-        rule %r/0x[a-f0-9]+/i, Num::Hex
-        rule %r/\d+/, Num::Integer
+        rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float
+        rule %r/0[0-7][0-7_]*/, Num::Oct
+        rule %r/0b[01][01_]*/i, Num::Bin
+        rule %r/0x[a-f0-9][a-f0-9_]*/i, Num::Hex
+        rule %r/\d[_\d]*/, Num::Integer
         rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string
       end
-      
+
       state :use do
-        rule %r/(\s+)(as)(\s+)(#{id})/ do
+        rule %r/(\s+)(as)(\s+)(#{id})/i do
           groups Text, Keyword, Text, Name
           :pop!
         end
         rule %r/\\\{/, Operator, :uselist
         rule %r/;/, Punctuation, :pop!
       end
-      
+
       state :uselist do
         rule %r/\s+/, Text
         rule %r/,/, Operator
         rule %r/\}/, Operator, :pop!
-        rule %r/(as)(\s+)(#{id})/ do
+        rule %r/(as)(\s+)(#{id})/i do
           groups Keyword, Text, Name
         end
         rule %r/#{id}/, Name::Namespace
@@ -189,7 +202,8 @@ module Rouge
       state :string do
         rule %r/"/, Str::Double, :pop!
         rule %r/[^\\{$"]+/, Str::Double
-        rule %r/\\([nrt\"$\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})/,
+        rule %r/\\u\{[0-9a-fA-F]+\}/, Str::Escape
+        rule %r/\\([efrntv\"$\\]|[0-7]{1,3}|[xX][0-9a-fA-F]{1,2})/,
           Str::Escape
         rule %r/\$#{id}(\[\S+\]|->#{id})?/, Name::Variable
 

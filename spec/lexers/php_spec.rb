@@ -52,5 +52,27 @@ describe Rouge::Lexers::PHP do
     it 'recognizes trait definition' do
       assert_tokens_equal 'trait A {}', ["Keyword.Declaration", "trait"], ["Text", " "], ["Name.Class", "A"], ["Text", " "], ["Punctuation", "{}"]
     end
+
+    it 'recognizes case insensitively keywords' do
+      assert_tokens_equal 'While', ["Keyword", "While"]
+      # class for anonymous classes is recognized as a regular keyword
+      assert_tokens_equal 'Class {', ["Keyword", "Class"], ["Text", " "], ["Punctuation", "{"]
+      assert_tokens_equal 'Class BAR', ["Keyword.Declaration", "Class"], ["Text", " "], ["Name.Class", "BAR"]
+      assert_tokens_equal 'Const BAR', ["Keyword", "Const"], ["Text", " "], ["Name.Constant", "BAR"]
+      assert_tokens_equal 'Use BAR', ["Keyword.Namespace", "Use"], ["Text", " "], ["Name.Namespace", "BAR"]
+      assert_tokens_equal 'NameSpace BAR', ["Keyword.Namespace", "NameSpace"], ["Text", " "], ["Name.Namespace", "BAR"]
+      # function for anonymous functions is also recognized as a regular keyword
+      assert_tokens_equal 'Function (', ["Keyword", "Function"], ["Text", " "], ["Punctuation", "("]
+      assert_tokens_equal 'Function foo', ["Keyword", "Function"], ["Text", " "], ["Name.Function", "foo"]
+    end
+
+    it 'recognizes case sensitively E_* and PHP_* as constants' do
+      assert_tokens_equal 'PHP_EOL', ["Keyword.Constant", "PHP_EOL"]
+      assert_tokens_equal 'PHP_EOL_1', ["Name.Other", "PHP_EOL_1"]
+
+      assert_tokens_equal 'E_user_DEPRECATED', ["Name.Other", "E_user_DEPRECATED"]
+      assert_tokens_equal 'E_USER_deprecated', ["Name.Other", "E_USER_deprecated"]
+      assert_tokens_equal 'E_USER_DEPRECATED', ["Keyword.Constant", "E_USER_DEPRECATED"]
+    end
   end
 end

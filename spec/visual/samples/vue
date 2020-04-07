@@ -73,3 +73,11 @@ p {
 <script lang="coffee">
   module.exports = { data: -> { greeting: 'Hello' } }
 </script>
+
+<!-- Slot Shorthand -->
+<current-user v-slot:default="{ user }">
+  {{ user.firstName }}
+</current-user>
+<current-user #default="{ user }">
+  {{ user.firstName }}
+</current-user>

@@ -118,7 +118,7 @@ module Rouge
 
         rule %r/(void|\??(int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
         rule %r/[~!%^&*+=\|:.<>\/@-]+/, Operator
-        rule %r/\?+/, Operator
+        rule %r/\?/, Operator
         rule %r/[\[\]{}();,]/, Punctuation
         rule %r/(class|interface|trait)(\s+)(#{nsid})/i do
           groups Keyword::Declaration, Text, Name::Class

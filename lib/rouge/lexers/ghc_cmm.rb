@@ -16,7 +16,6 @@ module Rouge
       title "GHC Cmm (C--)"
       desc "GHC Cmm is the intermediate representation of the GHC Haskell compiler"
       tag 'ghc-cmm'
-      aliases 'cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
       macros = %r(#(?:define|include|endif|else|if))

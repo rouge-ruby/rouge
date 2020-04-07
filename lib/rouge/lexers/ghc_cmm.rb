@@ -18,10 +18,10 @@ module Rouge
       tag 'ghc-cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
 
-      macros = %r(#(?:define|include|endif|else|if))
-
       ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
-      id = %r((?!#{macros})[\w#\$%_']+)
+
+      # Make sure that this is not a preprocessor macro, e.g. `#if` or `#define`.
+      id = %r((?!#)[\w#\$%_']+)
 
       complex_id = %r(
         (?:[\w#$%_']|\(\)|\(,\)|\[\]|[0-9])*

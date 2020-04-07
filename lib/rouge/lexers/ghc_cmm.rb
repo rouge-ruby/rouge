@@ -73,7 +73,7 @@ module Rouge
         mixin :operators
         mixin :keywords
 
-        rule %r/\s/, Text
+        rule %r/\s+/, Text
       end
 
       state :preprocessor_macros do
@@ -120,7 +120,7 @@ module Rouge
         mixin :operators
 
         rule %r/#{id}/, Text
-        rule %r/\s/, Text
+        rule %r/\s+/, Text
       end
 
       state :label do
@@ -129,7 +129,7 @@ module Rouge
         mixin :keywords
         mixin :operators
 
-        rule %r/[^\S\n]/, Text # Tab, space, etc. but not newline!
+        rule %r/[^\S\n]+/, Text # Tab, space, etc. but not newline!
         rule %r/\n/, Text, :pop!
       end
 

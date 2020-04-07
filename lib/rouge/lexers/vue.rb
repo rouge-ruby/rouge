@@ -58,6 +58,10 @@ module Rouge
         end
       end
 
+      prepend :tag do
+        rule %r/[a-zA-Z0-9_:#\[\]()*.-]+\s*=\s*/m, Name::Attribute, :attr
+      end
+
       state :style do
         rule %r/(<\s*\/\s*)(style)(\s*>)/ do
           groups Name::Tag, Keyword, Name::Tag
@@ -121,4 +125,3 @@ module Rouge
     end
   end
 end
-

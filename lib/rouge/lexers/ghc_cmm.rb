@@ -17,6 +17,7 @@ module Rouge
       desc "GHC Cmm is the intermediate representation of the GHC Haskell compiler"
       tag 'ghc-cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
+      aliases 'cmm'
 
       ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
 

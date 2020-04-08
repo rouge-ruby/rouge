@@ -77,6 +77,7 @@ $app->setLogger(new class implements Logger {
 });
 
 // some uses
+use Class1, Class2, Class3;
 use some\namespace\ClassA;
 use some\namespace\ClassB;
 use some\namespace\ClassC as C;

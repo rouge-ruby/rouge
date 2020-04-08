@@ -1,6 +1,6 @@
 /*
  * Handwritten Code Examples
- * Extracted from https://gitlab.haskell.org/ghc/ghc/blob/master/rts/HeapStackCheck.cmm
+ * Extracted from: https://gitlab.haskell.org/ghc/ghc/blob/master/
  */
 
 #include "Cmm.h"
@@ -201,6 +201,27 @@ stg_block_stmwait
     ccall stmWaitUnlock(MyCapability() "ptr", R3 "ptr");
     BLOCK_GENERIC;
 }
+
+/*
+ * CLOSURE
+ */
+
+
+import CLOSURE ghczmprim_GHCziTypes_True_closure;
+/* ----------------------------------------------------------------------------
+   Dummy return closure
+
+   Entering this closure will just return to the address on the top of the
+   stack.  Useful for getting a thread in a canonical form where we can
+   just enter the top stack word to start the thread.  (see deleteThread)
+ * ------------------------------------------------------------------------- */
+
+INFO_TABLE( stg_dummy_ret, 0, 0, CONSTR_NOCAF, "DUMMY_RET", "DUMMY_RET")
+    ()
+{
+    return ();
+}
+CLOSURE(stg_dummy_ret_closure,stg_dummy_ret);
 
 /*
  * Generated Code Examples

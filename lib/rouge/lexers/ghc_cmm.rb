@@ -273,7 +273,6 @@ module Rouge
         rule %r/<(#{id})>/, Name::Builtin
 
         rule %r/(Sp|SpLim|Hp|HpLim|HpAlloc|BaseReg|CurrentNursery|CurrentTSO|R\d{1,2}|gcptr)(?!#{id})/, Name::Variable::Global
-        rule %r/CLOSURE/, Keyword::Type
         rule %r/([A-Z]#{id})(\.)/ do |m|
           token Name::Namespace, m[1]
           token Punctuation, m[2]
@@ -300,6 +299,7 @@ module Rouge
           push :function
         end
 
+        rule %r/CLOSURE/, Keyword::Type
         rule %r/#{complex_id}/, Name::Label
       end
 

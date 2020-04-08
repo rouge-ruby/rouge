@@ -52,6 +52,8 @@ load_relative 'rouge/util'
 load_relative 'rouge/text_analyzer'
 load_relative 'rouge/token'
 
+load_relative 'rouge/string_scanner'
+
 load_relative 'rouge/lexer'
 load_relative 'rouge/regex_lexer'
 load_relative 'rouge/template_lexer'

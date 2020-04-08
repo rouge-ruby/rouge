@@ -15,14 +15,14 @@ module Rouge
     #
     # @api private
     def load_file(path)
-      load File.join(LIB_DIR, "rouge", "#{path}.rb")
+      load File.join(LIB_DIR, "rouge/#{path}.rb")
     end
 
     # Load the lexers in the `lib/rouge/lexers` directory.
     #
     # @api private
     def load_lexers
-      lexer_dir = File.join(LIB_DIR, "rouge", "lexers", "")
+      lexer_dir = File.join(LIB_DIR, "rouge/lexers/")
       Dir.glob(File.join(lexer_dir, '*.rb')).each do |f|
         Lexers.load_lexer(f.sub(lexer_dir, ''))
       end

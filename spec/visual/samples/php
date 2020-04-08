@@ -637,4 +637,30 @@ class Zip extends Archive {
   <p>Hello world!</p>
 <?php endif ?>
 
+<?php
+
+// Trait Examples
+
+class ClassA
+{
+    use TraitA {
+        foo as private bar;
+    }
+}
+
+class ClassB
+{
+    use TraitA, TraitB {
+        TraitB::foo insteadof TraitA;
+    }
+}
+
+
+class ClassC
+{
+    use TraitA, TraitB {
+        TraitB::foo as bar;
+    }
+}
+?>
 <p>it's html here at the end, too.</p>

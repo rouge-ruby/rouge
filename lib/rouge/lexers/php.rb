@@ -178,22 +178,36 @@ module Rouge
       end
 
       state :use do
-        rule %r/(\s+)(as)(\s+)(#{id})/i do
-          groups Text, Keyword, Text, Name
+        rule %r/\s+/, Text
+        rule %r/;/, Punctuation, :pop!
+        rule %r/(as)(\s+)(#{id})/i do
+          groups Keyword, Text, Name::Namespace
           :pop!
         end
-        rule %r/\\\{/, Operator, :uselist
-        rule %r/;/, Punctuation, :pop!
+        rule %r/(,)(\s+)(#{nsid})/ do
+          groups Punctuation, Text, Name::Namespace
+        end
+        rule %r/\\\{/, Punctuation, :uselist
+        rule %r/{/ do
+          token Punctuation
+          goto :uselist
+        end
       end
 
       state :uselist do
         rule %r/\s+/, Text
-        rule %r/,/, Operator
-        rule %r/\}/, Operator, :pop!
-        rule %r/(as)(\s+)(#{id})/i do
-          groups Keyword, Text, Name
+        rule %r/\}/, Punctuation, :pop!
+        rule %r/[,;]/, Punctuation
+        rule %r/::/, Operator
+        rule id do |m|
+          if self.class.keywords.include? m[0]
+            token Keyword
+          elsif m[0] =~ /^[[:upper:]]/
+            token Name::Namespace
+          else
+            token Name::Function
+          end
         end
-        rule %r/#{id}/, Name::Namespace
       end
 
       state :funcname do

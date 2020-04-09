@@ -54,15 +54,15 @@ describe Rouge::Lexers::PHP do
     end
 
     it 'recognizes case insensitively keywords' do
-      assert_tokens_equal 'While', ["Keyword", "While"]
-      assert_tokens_equal 'Class {', ["Keyword.Declaration", "Class"], ["Text", " "], ["Punctuation", "{"]
-      assert_tokens_equal 'Class BAR', ["Keyword.Declaration", "Class"], ["Text", " "], ["Name.Class", "BAR"]
-      assert_tokens_equal 'Const BAR', ["Keyword", "Const"], ["Text", " "], ["Name.Constant", "BAR"]
-      assert_tokens_equal 'Use BAR', ["Keyword.Namespace", "Use"], ["Text", " "], ["Name.Namespace", "BAR"]
-      assert_tokens_equal 'NameSpace BAR', ["Keyword.Namespace", "NameSpace"], ["Text", " "], ["Name.Namespace", "BAR"]
+      assert_tokens_equal 'While', ["Keyword", "While"]; subject.reset_token
+      assert_tokens_equal 'Class {', ["Keyword.Declaration", "Class"], ["Text", " "], ["Punctuation", "{"]; subject.reset_token
+      assert_tokens_equal 'Class BAR', ["Keyword.Declaration", "Class"], ["Text", " "], ["Name.Class", "BAR"]; subject.reset_token
+      assert_tokens_equal 'Const BAR', ["Keyword", "Const"], ["Text", " "], ["Name.Constant", "BAR"]; subject.reset_token
+      assert_tokens_equal 'Use BAR', ["Keyword.Namespace", "Use"], ["Text", " "], ["Name.Namespace", "BAR"]; subject.reset_token
+      assert_tokens_equal 'NameSpace BAR', ["Keyword.Namespace", "NameSpace"], ["Text", " "], ["Name.Namespace", "BAR"]; subject.reset_token
       # function for anonymous functions is also recognized as a regular keyword
-      assert_tokens_equal 'Function (', ["Keyword", "Function"], ["Text", " "], ["Punctuation", "("]
-      assert_tokens_equal 'Function foo', ["Keyword", "Function"], ["Text", " "], ["Name.Function", "foo"]
+      assert_tokens_equal 'Function (', ["Keyword", "Function"], ["Text", " "], ["Punctuation", "("]; subject.reset_token
+      assert_tokens_equal 'Function foo', ["Keyword", "Function"], ["Text", " "], ["Name.Function", "foo"]; subject.reset_token
     end
 
     it 'recognizes case sensitively E_* and PHP_* as constants' do

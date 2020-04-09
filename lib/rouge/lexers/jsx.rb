@@ -6,7 +6,7 @@ module Rouge
 
     class JSX < Javascript
       title 'JSX'
-      desc 'React JSX (https://facebook.github.io/react/)'
+      desc 'An XML-like syntax extension to JavaScript (facebook.github.io/jsx/)'
       tag 'jsx'
       aliases 'jsx', 'react'
       filenames '*.jsx'

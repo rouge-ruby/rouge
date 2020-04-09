@@ -148,6 +148,17 @@ module Rouge
           groups Keyword, Text, Keyword
         end
 
+        # anonymous functions
+        rule %r/(function)(\s*)(?=\()/i do
+          groups Keyword, Text
+        end
+
+        # named functions
+        rule %r/(function)(\s+)(&?)(\s*)/i do
+          groups Keyword, Text, Operator, Text
+          @next_token = Name::Function
+        end
+
         rule nsid do |m|
           name = m[0].downcase
 
@@ -159,9 +170,6 @@ module Rouge
             token Keyword::Declaration
           elsif "const" == name
             @next_token = Name::Constant if @next_token.nil?
-            token Keyword
-          elsif "function" == name
-            @next_token = Name::Function
             token Keyword
           elsif self.class.keywords.include? name
             token Keyword

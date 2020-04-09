@@ -44,6 +44,10 @@ module Rouge
         end
       end
 
+      def reset_token
+        @next_token = nil
+      end
+
       # source: http://php.net/manual/en/language.variables.basics.php
       # the given regex is invalid utf8, so... we're using the unicode
       # "Letter" property instead.
@@ -105,7 +109,7 @@ module Rouge
 
       state :php do
         rule %r/\?>/ do
-          @name_kind = nil
+          @next_token = nil
           token Comment::Preproc
           pop!
         end
@@ -130,7 +134,7 @@ module Rouge
         rule %r/\?/, Operator
 
         rule %r/[;]/ do
-          @name_kind = nil
+          @next_token = nil
           token Punctuation
         end
         rule %r/[\[\]{}(),]/, Punctuation
@@ -147,27 +151,27 @@ module Rouge
         rule nsid do |m|
           name = m[0].downcase
 
-          if "namespace" == name
-            @name_kind = Name::Namespace
-            token Keyword
-          elsif %w(class interface use trait).include? name
-            @name_kind = Name::Class
+          if %w(namespace use).include? name
+            @next_token = Name::Namespace
+            token Keyword::Namespace
+          elsif %w(class interface trait).include? name
+            @next_token = Name::Class
             token Keyword::Declaration
           elsif "const" == name
-            @name_kind = Name::Constant if @name_kind.nil?
+            @next_token = Name::Constant if @next_token.nil?
             token Keyword
           elsif "function" == name
-            @name_kind = Name::Function
+            @next_token = Name::Function
             token Keyword
           elsif self.class.keywords.include? name
             token Keyword
           elsif self.builtins.include? name
             token Name::Builtin
-          elsif @name_kind == Name::Function
+          elsif @next_token == Name::Function
             token Name::Function
-            @name_kind = nil
-          elsif @name_kind
-            token @name_kind
+            @next_token = nil
+          elsif @next_token
+            token @next_token
           else
             token Name::Other
           end

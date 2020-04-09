@@ -109,10 +109,13 @@ module Rouge
           token Comment::Preproc
           pop!
         end
+
         # heredocs
         rule %r/<<<(["']?)(#{id})\1\n.*?\n\s*\2;?/im, Str::Heredoc
+
+        # whitespace and comments
         rule %r/\s+/, Text
-        rule %r/#.*?$/, Comment::Single
+        rule %r/(#|//).*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single
         rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
@@ -122,8 +125,10 @@ module Rouge
         end
 
         rule %r/(void|\??(int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
+
         rule %r/[~!%^&*+=\|:.<>\/@-]+/, Operator
         rule %r/\?/, Operator
+
         rule %r/[;]/ do
           @name_kind = nil
           token Punctuation
@@ -139,7 +144,6 @@ module Rouge
           groups Keyword, Text, Keyword
         end
 
-        # may be intercepted for builtin highlighting
         rule nsid do |m|
           name = m[0].downcase
 
@@ -174,6 +178,7 @@ module Rouge
         rule %r/0b[01][01_]*/i, Num::Bin
         rule %r/0x[a-f0-9][a-f0-9_]*/i, Num::Hex
         rule %r/\d[_\d]*/, Num::Integer
+
         rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
         rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
         rule %r/"/, Str::Double, :string

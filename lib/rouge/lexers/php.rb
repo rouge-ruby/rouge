@@ -52,7 +52,7 @@ module Rouge
       # the given regex is invalid utf8, so... we're using the unicode
       # "Letter" property instead.
       id = /[\p{L}_][\p{L}\p{N}_]*/
-      nsid = /(?:#{id}\\?)+/
+      id_with_ns_and_paren = /((?:#{id}\\?)+)(\s*)([(]?)/
 
       start do
         case @start_inline
@@ -67,25 +67,28 @@ module Rouge
       end
 
       def self.keywords
-        # (echo parent ; echo self ; sed -nE 's/<ST_IN_SCRIPTING>"((__)?[[:alpha:]_]+(__)?)".*/\1/p' zend_language_scanner.l | tr '[A-Z]' '[a-z]') | sort -u | grep -Fwv -e isset -e unset -e empty -e const -e use -e namespace
         # - isset, unset and empty are actually keywords (directly handled by PHP's lexer but let's pretend these are functions, you use them like so)
         # - self and parent are kind of keywords, they are not handled by PHP's lexer
         # - use, const, namespace and function are handled by specific rules to highlight what's next to the keyword
-        # - class is also listed here, in addition to the rule below, to handle anonymous classes
         @keywords ||= Set.new %w(
           old_function cfunction
-          function
-          __class__ __dir__ __file__ __function__ __halt_compiler
-          __line__ __method__ __namespace__ __trait__ abstract and
-          array as break callable case catch class clone continue
-          declare default die do echo else elseif enddeclare
-          endfor endforeach endif endswitch endwhile eval exit
-          extends final finally fn for foreach global goto if
-          implements include include_once instanceof insteadof
-          interface list new or parent print private protected
-          public require require_once return self static switch
-          throw trait try var while xor yield
+          __class__ __dir__ __file__ __function__ __halt_compiler __line__
+          __method__ __namespace__ __trait__ abstract and array as break
+          case catch clone continue declare default die do echo else
+          elseif enddeclare endfor endforeach endif endswitch endwhile eval
+          exit extends final finally fn for foreach global goto if implements
+          include include_once instanceof insteadof list new or parent print
+          private protected public require require_once return self static
+          switch throw try var while xor yield
         )
+      end
+
+      def self.namespaces
+        @namespaces ||= Set.new %w(namespace use)
+      end
+
+      def self.declarations
+        @declarations ||= Set.new %w(class interface trait)
       end
 
       def self.detect?(text)
@@ -133,11 +136,11 @@ module Rouge
         rule %r/[~!%^&*+=\|:.<>\/@-]+/, Operator
         rule %r/\?/, Operator
 
-        rule %r/[;]/ do
-          @next_token = nil
+        rule %r/[;{]/ do
           token Punctuation
+          @next_token = nil
         end
-        rule %r/[\[\]{}(),]/, Punctuation
+        rule %r/[\[\]}(),]/, Punctuation
 
         rule %r/stdClass\b/i, Name::Class
         rule %r/(true|false|null)\b/i, Keyword::Constant
@@ -148,41 +151,44 @@ module Rouge
           groups Keyword, Text, Keyword
         end
 
-        # anonymous functions
-        rule %r/(function)(\s*)(?=\()/i do
-          groups Keyword, Text
-        end
+        rule id_with_ns_and_paren do |m|
+          name = m[1].downcase
+          first = Name
 
-        # named functions
-        rule %r/(function)(\s+)(&?)(\s*)/i do
-          groups Keyword, Text, Operator, Text
-          @next_token = Name::Function
-        end
-
-        rule nsid do |m|
-          name = m[0].downcase
-
-          if %w(namespace use).include? name
+          if self.class.namespaces.include? name
+            first = Keyword::Namespace
             @next_token = Name::Namespace
-            token Keyword::Namespace
-          elsif %w(class interface trait).include? name
+          elsif self.class.declarations.include? name
+            first = Keyword::Declaration
             @next_token = Name::Class
-            token Keyword::Declaration
           elsif "const" == name
+            first = Keyword
             @next_token = Name::Constant if @next_token.nil?
-            token Keyword
+          elsif "function" == name
+            first = Keyword
+            @next_token = Name::Function
           elsif self.class.keywords.include? name
-            token Keyword
+            first = Keyword
           elsif self.builtins.include? name
-            token Name::Builtin
+            first = Name::Builtin
           elsif @next_token == Name::Function
-            token Name::Function
+            first = Name::Function
             @next_token = nil
           elsif @next_token
-            token @next_token
+            first = @next_token
           else
-            token Name::Other
+            if m[1] =~ /^[[:upper:]][[[:upper:]]\d_]+$/
+              first = Name::Constant
+            elsif m[1] =~ /^[[:upper:]][[:alnum:]]+?$/
+              first = Name::Class
+            elsif m[3] == "("
+              first = Name::Function
+            else
+              first = Name
+            end
           end
+
+          groups first, Text, Punctuation
         end
 
         rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float

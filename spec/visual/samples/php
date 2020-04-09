@@ -90,6 +90,8 @@ interface SomeInterface {
 class Foo extends AbstractFoo implements Bar {
 }
 
+public abstract function thing(mysqli $mysqli, int FOO + BAR, ?mysqli $mysqli): mysqli $mysqli;
+
 function sort_on(array &$array, string $key) {
     usort($array, function ($a, $b) use($key) { return $a <=> $b; });
 }

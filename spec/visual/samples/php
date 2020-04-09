@@ -1,4 +1,9 @@
 <p>It's html outside php!</p>
+<?php use Foo, Bar ?>
+<?php use /*Foo, */Bar ?>
+<?php use Class1, Class2; ?>
+<?php const FOO = 42, BAR = C ?>
+<?php const /*FOO = 42, */BAR = C; ?>
 <?php
 file_put_contents("log.txt", "\u{FEFF}===== Début du fichier =====\n");
 
@@ -69,6 +74,13 @@ interface SomeInterface {
   function nullableTypes(?bool $arg): ?iterable;
 }
 
+class Foo extends AbstractFoo implements Bar {
+}
+
+function sort_on(array &$array, string $key) {
+    usort($array, function ($a, $b) use($key) { return $a <=> $b; });
+}
+
 //Anonymous class example
 $app->setLogger(new class implements Logger {
     public function log(string $msg) {
@@ -77,7 +89,6 @@ $app->setLogger(new class implements Logger {
 });
 
 // some uses
-use Class1, Class2, Class3;
 use some\namespace\ClassA;
 use some\namespace\ClassB;
 use some\namespace\ClassC as C;
@@ -94,6 +105,23 @@ use const some\namespace\ConstC;
 use some\namespace\{ClassA, ClassB, ClassC as C};
 use function some\namespace\{fn_a, fn_b, fn_c};
 use const some\namespace\{ConstA, ConstB, ConstC};
+
+use const some\namespace\{
+    ConstA,
+    #ConstB,
+    ConstC
+};
+
+use some\name\{function some_fn, const Foo\BAR, SomeClass};
+
+use Class1, /*Class2, */Class3;
+
+class ClassB
+{
+    use TraitA, TraitB, TraitC {
+        TraitB::foo insteadof TraitA;
+    }
+}
 
 namespace some\namespace;
 
@@ -638,30 +666,4 @@ class Zip extends Archive {
   <p>Hello world!</p>
 <?php endif ?>
 
-<?php
-
-// Trait Examples
-
-class ClassA
-{
-    use TraitA {
-        foo as private bar;
-    }
-}
-
-class ClassB
-{
-    use TraitA, TraitB {
-        TraitB::foo insteadof TraitA;
-    }
-}
-
-
-class ClassC
-{
-    use TraitA, TraitB {
-        TraitB::foo as bar;
-    }
-}
-?>
 <p>it's html here at the end, too.</p>

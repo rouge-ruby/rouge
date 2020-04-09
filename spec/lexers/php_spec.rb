@@ -36,19 +36,19 @@ describe Rouge::Lexers::PHP do
     it 'recognizes double-slash comments not followed by a newline (#797)' do
       assert_tokens_equal '// comment', ['Comment.Single', '// comment']
     end
-    
+
     it 'recognizes try catch finally definition' do
       assert_tokens_equal 'try {} catch () {} finally {}', ["Keyword", "try"], ["Text", " "], ["Punctuation", "{}"], ["Text", " "], ["Keyword", "catch"], ["Text", " "], ["Punctuation", "()"], ["Text", " "], ["Punctuation", "{}"], ["Text", " "], ["Keyword", "finally"], ["Text", " "], ["Punctuation", "{}"]
     end
-    
+
     it 'recognizes class definition' do
       assert_tokens_equal 'class A {}', ["Keyword.Declaration", "class"], ["Text", " "], ["Name.Class", "A"], ["Text", " "], ["Punctuation", "{}"]
     end
-    
+
     it 'recognizes interface definition' do
       assert_tokens_equal 'interface A {}', ["Keyword.Declaration", "interface"], ["Text", " "], ["Name.Class", "A"], ["Text", " "], ["Punctuation", "{}"]
     end
-    
+
     it 'recognizes trait definition' do
       assert_tokens_equal 'trait A {}', ["Keyword.Declaration", "trait"], ["Text", " "], ["Name.Class", "A"], ["Text", " "], ["Punctuation", "{}"]
     end
@@ -66,12 +66,12 @@ describe Rouge::Lexers::PHP do
     end
 
     it 'recognizes case sensitively E_* and PHP_* as constants' do
-      assert_tokens_equal 'PHP_EOL', ["Keyword.Constant", "PHP_EOL"]
-      assert_tokens_equal 'PHP_EOL_1', ["Name.Other", "PHP_EOL_1"]
+      assert_tokens_equal 'PHP_EOL', ["Keyword.Constant", "PHP_EOL"]; subject.reset_token
+      assert_tokens_equal 'PHP_EOL_1', ["Name.Constant", "PHP_EOL_1"]; subject.reset_token
 
-      assert_tokens_equal 'E_user_DEPRECATED', ["Name.Other", "E_user_DEPRECATED"]
-      assert_tokens_equal 'E_USER_deprecated', ["Name.Other", "E_USER_deprecated"]
-      assert_tokens_equal 'E_USER_DEPRECATED', ["Keyword.Constant", "E_USER_DEPRECATED"]
+      assert_tokens_equal 'E_user_DEPRECATED', ["Name", "E_user_DEPRECATED"]; subject.reset_token
+      assert_tokens_equal 'E_USER_deprecated', ["Name", "E_USER_deprecated"]; subject.reset_token
+      assert_tokens_equal 'E_USER_DEPRECATED', ["Keyword.Constant", "E_USER_DEPRECATED"]; subject.reset_token
     end
   end
 end

@@ -152,7 +152,7 @@ module Rouge
             token Keyword
           elsif %w(class interface use trait).include? name
             @name_kind = Name::Class
-            token Keyword
+            token Keyword::Declaration
           elsif "const" == name
             @name_kind = Name::Constant if @name_kind.nil?
             token Keyword

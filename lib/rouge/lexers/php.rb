@@ -115,7 +115,7 @@ module Rouge
 
         # whitespace and comments
         rule %r/\s+/, Text
-        rule %r/(#|//).*?$/, Comment::Single
+        rule %r/#.*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single
         rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline

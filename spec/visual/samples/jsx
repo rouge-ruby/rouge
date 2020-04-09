@@ -48,15 +48,6 @@ var content = (
   </Nav>
 );
 
-var App = (
-  <Form>
-    <FormRow>
-      <FormLabel />
-      <FormInput />
-    </FormRow>
-  </Form>
-);
-
 var thing = <A b={function() { var c = <D e={true}>&quot;</D>; }()}/>
 
 class LikeButton extends React.Component {

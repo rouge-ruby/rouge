@@ -199,7 +199,8 @@ finally
     if !TargetHelper.ExitCode.exitCode <> 0 then exit !TargetHelper.ExitCode.exitCode
     if Environment.ExitCode <> 0 then exit Environment.ExitCode
 
-let test = something.Dictionary.["someKey"]
+let value = array.[0]
+let value = dict.Test.["key"]
 
 // syntax highlighting
 let number = 123

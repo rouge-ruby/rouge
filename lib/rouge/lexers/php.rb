@@ -21,6 +21,8 @@ module Rouge
       def initialize(*)
         super
 
+        @token = MagicToken.new
+
         # if truthy, the lexer starts highlighting with php code
         # (no <?php required)
         @start_inline = bool_option(:start_inline) { :guess }
@@ -45,14 +47,14 @@ module Rouge
       end
 
       def reset_token
-        @next_token = nil
+        @token.reset!
       end
 
       # source: http://php.net/manual/en/language.variables.basics.php
       # the given regex is invalid utf8, so... we're using the unicode
       # "Letter" property instead.
       id = /[\p{L}_][\p{L}\p{N}_]*/
-      id_with_ns_and_paren = /((?:#{id}\\?)+)(\s*)([(]?)/
+      id_with_ns_and_paren = /([?]?(?:#{id}\\?)+)(\s*)([(]?)/
 
       start do
         case @start_inline
@@ -112,7 +114,7 @@ module Rouge
 
       state :php do
         rule %r/\?>/ do
-          @next_token = nil
+          @token.reset!
           token Comment::Preproc
           pop!
         end
@@ -131,65 +133,90 @@ module Rouge
           groups Operator, Text, Name::Attribute
         end
 
-        rule %r/(void|\??(int|float|bool|string|iterable|self|callable))\b/i, Keyword::Type
+        rule %r/=/ do
+          token Operator
+          # on argument list, on '=' you pass default values, names are constants
+          @token.value if @token.set_by? :fn
+        end
 
-        rule %r/[~!%^&*+=\|:.<>\/@-]+/, Operator
-        rule %r/\?/, Operator
+        rule %r/[(,]/ do
+          token Punctuation
+          @token.replace_with(Name::Class) if @token.set_by? :fn
+        end
 
+        rule %r/[\[\]})]/, Punctuation
         rule %r/[;{]/ do
           token Punctuation
-          @next_token = nil
+          @token.reset!
         end
-        rule %r/[\[\]}(),]/, Punctuation
 
         rule %r/stdClass\b/i, Name::Class
         rule %r/(true|false|null)\b/i, Keyword::Constant
         rule %r/(E|PHP)(_[[:upper:]]+)+\b/, Keyword::Constant
-        rule %r/\$\{\$+#{id}\}/, Name::Variable
-        rule %r/\$+#{id}/, Name::Variable
         rule %r/(yield)([ \n\r\t]+)(from)/i do
           groups Keyword, Text, Keyword
         end
 
+
+        rule %r/\$\{\$+#{id}\}/, Name::Variable
+        rule %r/\$+#{id}/, Name::Variable
+
         rule id_with_ns_and_paren do |m|
           name = m[1].downcase
-          first = Name
 
-          if self.class.namespaces.include? name
-            first = Keyword::Namespace
-            @next_token = Name::Namespace
-          elsif self.class.declarations.include? name
-            first = Keyword::Declaration
-            @next_token = Name::Class
-          elsif "const" == name
-            first = Keyword
-            @next_token = Name::Constant if @next_token.nil?
-          elsif "function" == name
-            first = Keyword
-            @next_token = Name::Function
-          elsif self.class.keywords.include? name
-            first = Keyword
-          elsif self.builtins.include? name
-            first = Name::Builtin
-          elsif @next_token == Name::Function
-            first = Name::Function
-            @next_token = nil
-          elsif @next_token
-            first = @next_token
-          else
-            if m[1] =~ /^[[:upper:]][[[:upper:]]\d_]+$/
-              first = Name::Constant
-            elsif m[1] =~ /^[[:upper:]][[:alnum:]]+?$/
-              first = Name::Class
-            elsif m[3] == "("
-              first = Name::Function
-            else
-              first = Name
-            end
-          end
+          t = if self.class.namespaces.include? name
+                @token.will_be Name::Namespace, set_by: :ns
+                Keyword::Namespace
+              elsif self.class.declarations.include? name
+                @token.will_be Name::Class, set_by: :decl
+                Keyword::Declaration
+              elsif 'const' == name
+                # distinguish `const` found in a `use` statement
+                unless @token.set?
+                  @token.will_be Name::Constant, set_by: :const
+                else
+                  @token.will_be Name::Constant
+                end
+                Keyword
+              elsif 'function' == name
+                # distinguish `function` found in a `use` statement
+                unless @token.set?
+                  @token.will_be Name::Function, set_by: :fn, default: Name::Constant
+                else
+                  @token.will_be Name::Function
+                end
+                Keyword
+              elsif 'as' == name
+                # distinguish `as` found in a `use` statement
+                unless @token.set?
+                  @token.will_be Name::Tag, set_by: :ns
+                else
+                  @token.will_be Name::Tag
+                end
+                Keyword
+              elsif self.class.keywords.include? name
+                Keyword
+              elsif !@token.set? && self.builtins.include?(name)
+                Name::Builtin
+              elsif @token.set?
+                @token.value
+              else
+                if m[1] =~ /^[[:upper:]][[[:upper:]]\d_]+$/
+                  Name::Constant
+                elsif m[1] =~ /^[[:upper:]][[:alnum:]]+?$/
+                  Name::Class
+                elsif m[3] == "("
+                  Name::Function
+                else
+                  Name
+                end
+              end
 
-          groups first, Text, Punctuation
+          groups t, Text, Punctuation
         end
+
+        rule %r/[~!%^&*+\|:.<>\/@-]+/, Operator
+        rule %r/\?/, Operator
 
         rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float
         rule %r/0[0-7][0-7_]*/, Num::Oct
@@ -228,6 +255,48 @@ module Rouge
         rule %r/\}/, Str::Interpol, :pop!
         mixin :php
       end
+
+      class MagicToken
+        def initialize
+          reset!
+        end
+
+        def replace_with(tokens)
+          tokens = [tokens] unless tokens.is_a?(Array)
+          @stack = tokens
+        end
+
+        def reset!
+          @stack = []
+          @statement = nil
+          @default = Token::Tokens::Name
+        end
+
+        def set?
+          !@statement.nil?
+        end
+
+        def set_by?(statement)
+          @statement == statement
+        end
+
+        def value
+          @stack.pop || @default
+        end
+
+        def will_be(tokens, set_by: nil, default: nil)
+          tokens = [tokens] unless tokens.is_a?(Array)
+          if set_by.nil?
+            @stack.concat tokens
+          else
+            @stack = tokens
+            @statement = set_by
+            @default = default.nil? ? tokens.first : default
+          end
+        end
+      end
+
+      private_constant :MagicToken
     end
   end
 end

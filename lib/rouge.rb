@@ -11,7 +11,6 @@ module Rouge
   LIB_DIR = __dir__.freeze
 
   class << self
-    # Reload all Rouge files
     def reload!
       Object.send :remove_const, :Rouge
       load __FILE__

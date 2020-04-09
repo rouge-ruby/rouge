@@ -81,3 +81,30 @@ ReactDOM.render(
   <LikeButton />,
   document.getElementById('example')
 );
+
+const withAuthRedirect = (route: string, redirectIfAuthed: boolean) => <P,>(
+  Page: NextComponentType<NextPageContext, {}, P>
+) => {
+  return class extends React.Component<P> {
+    static async getInitialProps(ctx: NextPageContext) {
+      const shouldContinue = await redirectBasedOnLogin(
+        ctx,
+        route,
+        redirectIfAuthed
+      );
+      if (!shouldContinue) {
+        return {};
+      }
+      if (Page.getInitialProps) {
+        return Page.getInitialProps(ctx);
+      }
+    }
+
+    render() {
+      return <Page {...this.props} />;
+    }
+  };
+};
+
+export const withLoginRedirect = withAuthRedirect('/login', false);
+export const withDashboardRedirect = withAuthRedirect('/dashboard', true);

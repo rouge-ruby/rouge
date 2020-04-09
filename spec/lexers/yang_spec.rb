@@ -68,6 +68,16 @@ describe Rouge::Lexers::YANG do
           ['Punctuation', ';']
       end
 
+      it 'parse complex name' do
+        assert_tokens_equal ' +abc*iu{ asd;}',
+          ['Text.Whitespace', ' '],
+          ['Name', '+abc*iu'],
+          ['Punctuation', '{'],
+          ['Text.Whitespace', ' '],
+          ['Name', 'asd'],
+          ['Punctuation', ';}']
+      end
+
     end
 
   end

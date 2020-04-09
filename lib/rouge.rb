@@ -11,23 +11,6 @@ module Rouge
   LIB_DIR = __dir__.freeze
 
   class << self
-    # Load a file relative to the `lib/rouge` path.
-    #
-    # @api private
-    def load_file(path)
-      load File.join(LIB_DIR, "rouge/#{path}.rb")
-    end
-
-    # Load the lexers in the `lib/rouge/lexers` directory.
-    #
-    # @api private
-    def load_lexers
-      lexer_dir = File.join(LIB_DIR, "rouge/lexers/")
-      Dir.glob(File.join(lexer_dir, '*.rb')).each do |f|
-        Lexers.load_lexer(f.sub(lexer_dir, ''))
-      end
-    end
-
     # Reload all Rouge files
     def reload!
       Object.send :remove_const, :Rouge
@@ -52,6 +35,25 @@ module Rouge
       raise "unknown formatter #{formatter}" unless formatter
 
       formatter.format(lexer.lex(text), &b)
+    end
+
+    # Load a file relative to the `lib/rouge` path.
+    #
+    # @api private
+    def load_file(path)
+      load File.join(LIB_DIR, "rouge/#{path}.rb")
+    end
+
+    # Load the lexers in the `lib/rouge/lexers` directory.
+    #
+    # @api private
+    def load_lexers
+      # The trailing slash is necessary to avoid lexers being loaded multiple
+      # times by `Lexers.load_lexer`
+      lexer_dir = File.join(LIB_DIR, "rouge/lexers/")
+      Dir.glob(File.join(lexer_dir, '*.rb')).each do |f|
+        Lexers.load_lexer(f.sub(lexer_dir, ''))
+      end
     end
   end
 end

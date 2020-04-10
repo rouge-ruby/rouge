@@ -241,6 +241,8 @@ module Rouge
           self.last[0].include? type
         end
       end
+
+      private_constant :StringRegister
     end
   end
 end

@@ -81,7 +81,7 @@ module Rouge
 
       state :template do
         rule %r/>/, Punctuation, :pop!
-        rule %r/(class|struct|typename)\b/, Keyword, :classname
+        rule %r/typename\b/, Keyword, :classname
         mixin :root
       end
     end

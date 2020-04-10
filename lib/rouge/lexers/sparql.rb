@@ -48,6 +48,7 @@ module Rouge
         end
         rule %r(<[^>]*>), Name::Namespace
         rule %r(true|false)i, Keyword::Constant
+        rule %r/a\b/, Keyword
         
         rule %r([A-Z]\w+\b)i do |m|
           if self.class.builtins.include? m[0].upcase

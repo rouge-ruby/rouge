@@ -58,3 +58,9 @@
 
 	<https://data.cssz.cz/resource/dataset/zanikle-duchody/id2> a adms:Identifier ;
 	skos:notation "https://data.cssz.cz/dataset/zanikle-duchody"^^<http://purl.org/spar/datacite/url> .
+
+@prefix : <http://example.org/#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+: a :AdditionalTest ;
+  rdfs:comment ":-)"^^: .

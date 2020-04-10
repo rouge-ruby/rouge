@@ -76,7 +76,7 @@ module Rouge
           groups Num, Operator, Num
         end
 
-        rule %r/(\d+)+/, Num
+        rule %r/-?\d+/, Num
 
         rule %r([.\w]+:), Name::Property
 

@@ -35,12 +35,12 @@ module Rouge
       state :root do
         rule %r(\s+)m, Text::Whitespace
         rule %r(#.*), Comment::Single
-        
+
         rule %r("""), Str::Double, :string_double_literal
         rule %r("), Str::Double, :string_double
         rule %r('''), Str::Single, :string_single_literal
         rule %r('), Str::Single, :string_single
-       
+
         rule %r([$?]\w+), Name::Variable
         rule %r((\w*:)(\w+)?) do |m|
           token Name::Namespace, m[1]
@@ -49,7 +49,7 @@ module Rouge
         rule %r(<[^>]*>), Name::Namespace
         rule %r(true|false)i, Keyword::Constant
         rule %r/a\b/, Keyword
-        
+
         rule %r([A-Z]\w+\b)i do |m|
           if self.class.builtins.include? m[0].upcase
             token Name::Builtin
@@ -102,7 +102,7 @@ module Rouge
         end
         mixin :string_single_common
       end
-      
+
       state :string_single_literal do
         rule %r(''') do
           token Str::Single

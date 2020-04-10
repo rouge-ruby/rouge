@@ -50,7 +50,7 @@ module Rouge
         rule %r/[{}),;\[\]]/, Str::Symbol
 
         # literal number
-        rule %r/(\w+)(:)(\s*)([._\d]+)/ do
+        rule %r/(\w+)(:)(\s*)(-?[._\d]+)/ do
           groups Name::Label, Str::Delimiter, Text::Whitespace, Num
         end
 

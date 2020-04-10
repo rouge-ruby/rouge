@@ -78,6 +78,22 @@ double distance = [](double x, double y, double xx, double yy) -> double {
   return abs(x-xx) + abs(y-yy);
 };
 
+// templates
+namespace N
+{
+  template<class T>
+  class Y // template definition
+  {
+    void mf() { }
+  };
+}
+template class N::Y<char*>;
+template void N::Y<double>::mf();
+template struct Z<double>;
+template<typename T> concept C1 = sizeof(T) != sizeof(int);
+template<C1 T> struct S1 { };
+template<C1 T> using Ptr = T*;
+
 // variadic template
 template<class F, class... Args>
 void forward_args(F f, Args... args) {

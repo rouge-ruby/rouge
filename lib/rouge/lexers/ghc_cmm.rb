@@ -161,7 +161,11 @@ module Rouge
       end
 
       state :keywords do
-        rule %r/const(?:\s)/, Keyword::Constant
+        rule %r/(const)(\s+)/ do |m|
+          token Keyword::Constant, m[1]
+          token Text, m[2]
+        end
+
         rule %r/"/, Literal::String::Double
 
         rule %r/(switch)([^{]*)({)/ do |m|

@@ -223,6 +223,29 @@ INFO_TABLE( stg_dummy_ret, 0, 0, CONSTR_NOCAF, "DUMMY_RET", "DUMMY_RET")
 }
 CLOSURE(stg_dummy_ret_closure,stg_dummy_ret);
 
+
+#define SELECTOR_CODE_NOUPD(offset)                                     \
+  INFO_TABLE_SELECTOR(stg_sel_##offset##_noupd, offset, THUNK_SELECTOR, "stg_sel_noupd", "stg_sel_noupd") \
+      (P_ node)                                                         \
+  {                                                                     \
+      P_ selectee, field, dest;                                         \
+      TICK_ENT_DYN_THK();                                               \
+      STK_CHK_NP(node);                                                 \
+      UPD_BH_UPDATABLE(node);                                           \
+      LDV_ENTER(node);                                                  \
+      selectee = StgThunk_payload(node,0);                              \
+      ENTER_CCS_THUNK(node);                                            \
+      if (NEED_EVAL(selectee)) {                                        \
+          SAVE_CCS;                                                     \
+          dest = UNTAG_IF_PROF(selectee); /* Note [untag for prof] */   \
+          (P_ constr) = call %GET_ENTRY(dest) (dest);                   \
+          RESTORE_CCS;                                                  \
+          selectee = constr;                                            \
+      }                                                                 \
+      field = StgClosure_payload(UNTAG(selectee),offset);               \
+      jump stg_ap_0_fast(field);                                        \
+  }
+
 /*
  * Generated Code Examples
  */

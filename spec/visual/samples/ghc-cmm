@@ -529,3 +529,74 @@ CLOSURE(stg_dummy_ret_closure,stg_dummy_ret);
          const :Main.main_info;
          const 0;
  }]
+
+==================== Output Cmm ====================
+2020-04-08 16:21:51.381258704 UTC
+
+[sat_s2eD_entry() { //  [R2, R1]
+         { info_tbls: [(c2PW,
+                        label: sat_s2eD_info
+                        rep: HeapRep 1 nonptrs { Fun {arity: 1 fun_type: ArgSpec 5} }
+                        srt: Nothing)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c2PW: // global
+           _s2eC::P64 = R2;
+           _s2eD::P64 = R1;
+           goto c2PY;
+       c2PY: // global
+           R1 = _s2eC::P64;
+           call stg_ap_0_fast(R1) args: 8, res: 0, upd: 8;
+     }
+ },
+ sat_s2eN_entry() { //  [R1]
+         { info_tbls: [(c2Q0,
+                        label: sat_s2eN_info
+                        rep: HeapRep 2 ptrs { Thunk }
+                        srt: Just Data.Functor.Utils.#._closure)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c2Q0: // global
+           _s2eN::P64 = R1;
+           if ((Sp + 8) - 24 < SpLim) (likely: False) goto c2Q1; else goto c2Q2;
+       c2Q2: // global
+           Hp = Hp + 56;
+           if (Hp > HpLim) (likely: False) goto c2Q4; else goto c2Q3;
+       c2Q4: // global
+           HpAlloc = 56;
+           goto c2Q1;
+       c2Q1: // global
+           R1 = _s2eN::P64;
+           call (stg_gc_enter_1)(R1) args: 8, res: 0, upd: 8;
+       c2Q3: // global
+           I64[Sp - 16] = stg_upd_frame_info;
+           P64[Sp - 8] = _s2eN::P64;
+           _s2el::P64 = P64[_s2eN::P64 + 16];
+           _s2en::P64 = P64[_s2eN::P64 + 24];
+           I64[Hp - 48] = stg_sel_6_upd_info;
+           P64[Hp - 32] = _s2en::P64;
+           _c2PQ::P64 = Hp - 48;
+           I64[Hp - 24] = sat_s2eD_info;
+           _c2PR::P64 = Hp - 23;
+           I64[Hp - 8] = GHC.Types.MkCoercible_con_info;
+           _c2PZ::P64 = Hp - 7;
+           R5 = _c2PQ::P64;
+           R4 = _s2el::P64;
+           R3 = _c2PR::P64;
+           R2 = _c2PZ::P64;
+           R1 = Data.Functor.Utils.#._closure;
+           Sp = Sp - 16;
+           call stg_ap_pppp_fast(R5,
+                                 R4,
+                                 R3,
+                                 R2,
+                                 R1) args: 24, res: 0, upd: 24;
+     }
+ },
+ section ""data" . $cbifoldr1_r29S_closure" {
+     $cbifoldr1_r29S_closure:
+         const $cbifoldr1_r29S_info;
+         const 0;
+ }]

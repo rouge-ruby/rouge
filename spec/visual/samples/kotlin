@@ -172,4 +172,10 @@ fun anAnnotatedFunction() = {
 
 val (a, b) = pair
 
+loop@ for (i in 1..100) {
+    for (j in 1..100) {
+        if (...) break@loop
+    }
+}
+
 // comment at EOF (#797)

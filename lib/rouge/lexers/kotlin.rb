@@ -78,6 +78,8 @@ module Rouge
         end
         rule class_name, Name::Class
         rule %r'(#{name})(?=\s*[({])', Name::Function
+        rule %r'(?<=return|continue|break|this|super)@(#{name})', Name::Decorator # label reference
+        rule %r'(#{name})@', Name::Decorator # label
         rule name, Name
       end
 

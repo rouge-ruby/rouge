@@ -23,5 +23,13 @@ describe Rouge::Lexers::Kotlin do
     it 'recognizes one-line comments not followed by a newline (#797)' do
       assert_tokens_equal '// comment', ['Comment.Single', '// comment']
     end
+
+    it 'recognizes label' do
+      assert_tokens_equal 'label@', ["Name.Decorator", "label@"]
+    end
+
+    it 'recognizes label reference in break statement' do
+      assert_tokens_equal 'break@label', ["Keyword", "break"], ["Name.Decorator", "@label"]
+    end
   end
 end

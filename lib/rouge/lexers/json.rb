@@ -23,6 +23,9 @@ module Rouge
 
         mixin :name
         mixin :value
+
+        # These characters may be invalid but syntax correctness is a non-goal
+        rule %r/[\]}]/, Punctuation
       end
 
       state :object do

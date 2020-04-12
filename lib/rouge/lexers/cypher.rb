@@ -76,7 +76,12 @@ module Rouge
           groups Num, Operator, Num
         end
 
-        rule %r/-?\d+/, Num
+        # numbers
+        rule %r/(\d+\.\d*|\d*\.\d+)(e[+-]?\d+)?/i, Num::Float
+        rule %r/\d+e[+-]?\d+/i, Num::Float
+        rule %r/0[0-7]+/, Num::Oct
+        rule %r/0x[a-f0-9]+/i, Num::Hex
+        rule %r/\d+/, Num::Integer
 
         rule %r([.\w]+:), Name::Property
 

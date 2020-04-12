@@ -22,10 +22,10 @@ module Rouge
 
       def self.keywords
         @keywords ||= super + Set.new(%w(
-          asm auto catch const_cast delete dynamic_cast explicit export
-          friend mutable namespace new operator private protected public
-          reinterpret_cast restrict size_of static_cast template this throw
-          throws typeid typename using virtual final override
+          asm auto catch const_cast delete dynamic_cast explicit export friend
+          mutable namespace new operator private protected public
+          reinterpret_cast restrict size_of static_cast this throw throws
+          typeid typename using virtual final override
 
           alignas alignof constexpr decltype noexcept static_assert
           thread_local try
@@ -57,7 +57,8 @@ module Rouge
       dq = /\d('?\d)*/
 
       prepend :statements do
-        rule %r/class\b/, Keyword, :classname
+        rule %r/(class|struct)\b/, Keyword, :classname
+        rule %r/template\b/, Keyword, :template
         rule %r/\d+(\.\d+)?(?:h|(?:min)|s|(?:ms)|(?:us)|(?:ns))/, Num::Other
         rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lu]*)?)i, Num::Float
         rule %r(#{dq}e[+-]?#{dq}[lu]*)i, Num::Float
@@ -76,6 +77,12 @@ module Rouge
         rule %r/\s*(?=>)/m, Text, :pop!
         rule %r/[.]{3}/, Operator
         mixin :whitespace
+      end
+
+      state :template do
+        rule %r/>/, Punctuation, :pop!
+        rule %r/typename\b/, Keyword, :classname
+        mixin :root
       end
     end
   end

@@ -51,7 +51,7 @@ module Rouge
         mixin :operators
 
         # escaped newline
-        rule %r/\\\n/, Comment::Preproc
+        rule %r/\\\n/, Text
 
         # rest is Text
         rule %r/./, Text

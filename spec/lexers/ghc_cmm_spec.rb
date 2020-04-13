@@ -987,8 +987,7 @@ import pthread_mutex_unlock;
                           ['Punctuation', '('],
                           ['Name.Label', 'offset'],
                           ['Punctuation', ')'],
-                          ['Text', '                                     '],
-                          ['Comment.Preproc', "\\\n"]
+                          ['Text', "                                     \\\n"]
     end
 
     it 'should respect #define when it lexes types' do

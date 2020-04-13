@@ -10,7 +10,7 @@ module Rouge
         @at_keywords ||= %w(
           selector private protected public encode synchronized try
           throw catch finally end property synthesize dynamic optional
-          interface implementation import
+          interface implementation import autoreleasepool
         )
       end
 

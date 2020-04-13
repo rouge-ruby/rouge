@@ -15,10 +15,9 @@ namespace :check do
       formatter.format ruby_lexer.lex(sample)
       formatter.format guessed_lexer.lex(sample)
     end
-    print_options = { scale_bytes: true, normalize_paths: true }
 
     if ENV['CI']
-      report.pretty_print(print_options)
+      report.pretty_print(scale_bytes: true, normalize_paths: true)
     else
       results_file = File.expand_path('rouge-memory.tmp', dir)
       t_allocated = report.scale_bytes(report.total_allocated_memsize)
@@ -26,7 +25,7 @@ namespace :check do
       puts
       puts "Total allocated: #{t_allocated} (#{report.total_allocated} objects)"
       puts "Total retained:  #{t_retained} (#{report.total_retained} objects)"
-      report.pretty_print(print_options.merge(to_file: results_file))
+      report.pretty_print(to_file: results_file, scale_bytes: true, normalize_paths: true)
       puts
       puts "Detailed report saved to file: #{results_file}"
     end

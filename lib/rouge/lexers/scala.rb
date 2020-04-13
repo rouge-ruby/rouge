@@ -40,7 +40,7 @@ module Rouge
           groups Keyword, Text
           push :class
         end
-        rule %r/'#{idrest}[^']/, Str::Symbol
+        rule %r/'#{idrest}(?!')/, Str::Symbol
         rule %r/[^\S\n]+/, Text
 
         rule %r(//.*), Comment::Single

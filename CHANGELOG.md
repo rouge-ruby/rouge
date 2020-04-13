@@ -4,6 +4,67 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.17.0: 2020-03-11
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.16.0...v3.17.0)
+
+- General
+  - Fix name of splat expansion Rubocop rule ([#1451](https://github.com/rouge-ruby/rouge/pull/1451/) by Hiroki Noda)
+- CoffeeScript Lexer
+  - Improve regex and string lexing in CoffeeScript lexer ([#1441](https://github.com/rouge-ruby/rouge/pull/1441/) by Michael Camilleri)
+- ECL Lexer (**NEW**)
+  - Add ECL lexer ([#1396](https://github.com/rouge-ruby/rouge/pull/1396/) by David de Hilster)
+- Markdown Lexer
+  - Fix brackets in links in Markdown lexer ([#1445](https://github.com/rouge-ruby/rouge/pull/1445/) by Marcel Amirault)
+  - Fix fenced code blocks in Markdown lexer ([#1442](https://github.com/rouge-ruby/rouge/pull/1442/) by Michael Camilleri)
+- NASM Lexer
+  - Rewrite NASM lexer ([#1428](https://github.com/rouge-ruby/rouge/pull/1428/) by Michael Camilleri)
+- Ruby Lexer
+  - Support additional number literals in the Ruby lexer ([#1456](https://github.com/rouge-ruby/rouge/pull/1456/) by FUJI Goro)
+- Scala Lexer
+  - Fix symbol lexing in Scala lexer ([#1438](https://github.com/rouge-ruby/rouge/pull/1438/) by Michael Camilleri)
+- Varnish Lexer
+  - Add support for Fastly extensions to Varnish lexer ([#1454](https://github.com/rouge-ruby/rouge/pull/1454/) by FUJI Goro)
+
+## version 3.16.0: 2020-02-12
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.15.0...v3.16.0)
+
+- General
+  - Update GitHub Issues settings ([#1436](https://github.com/rouge-ruby/rouge/pull/1436/) by Michael Camilleri)
+  - Add information about custom HTML formatters to README ([#1415](https://github.com/rouge-ruby/rouge/pull/1415/) by Jeanine Adkisson)
+  - Fix memoisation of Lexer.detectable? ([#1425](https://github.com/rouge-ruby/rouge/pull/1425/) by Ashwin Maroli)
+  - Update latest Ruby checked by Travis to 2.7 ([#1422](https://github.com/rouge-ruby/rouge/pull/1422/) by Michael Camilleri)
+  - Add TerminalTruecolor formatter ([#1413](https://github.com/rouge-ruby/rouge/pull/1413/) by Jeanine Adkisson)
+  - Fix escaping of term codes in Terminal256 formatter  ([#1404](https://github.com/rouge-ruby/rouge/pull/1404/) by Jeanine Adkisson)
+  - Fix crash in Terminal256 formatter with escaped tokens ([#1402](https://github.com/rouge-ruby/rouge/pull/1402/) by Jeanine Adkisson)
+- D Lexer
+  - Add __FILE_FULL_PATH__ keyword to D lexer ([#1394](https://github.com/rouge-ruby/rouge/pull/1394/) by Hiroki Noda)
+- Java Lexer
+  - Support Unicode identifiers in Java lexer ([#1414](https://github.com/rouge-ruby/rouge/pull/1414/) by Michael Camilleri)
+  - Combine import and package rules in Java lexer ([#1389](https://github.com/rouge-ruby/rouge/pull/1389/) by Michael Camilleri)
+- Lua Lexer
+  - Add regex support to Lua lexer ([#1403](https://github.com/rouge-ruby/rouge/pull/1403/) by Michael Camilleri)
+- NASM Lexer
+  - Improve the NASM visual sample ([#1421](https://github.com/rouge-ruby/rouge/pull/1421/) by Bernardo Sulzbach)
+- Objective-C Lexer
+  - Add @autoreleasepool keyword to Objective-C lexer ([#1424](https://github.com/rouge-ruby/rouge/pull/1424/) by Nicolas Bouilleaud)
+  - Fix Error token in common Objective-C module ([#1406](https://github.com/rouge-ruby/rouge/pull/1406/) by Masataka Pocke Kuwabara)
+- PowerShell Lexer
+  - Fix array access priority in PowerShell lexer ([#1429](https://github.com/rouge-ruby/rouge/pull/1429/) by Michael Camilleri)
+- Rust Lexer
+  - Support raw strings in Rust lexer ([#1399](https://github.com/rouge-ruby/rouge/pull/1399/) by Konrad Borowski)
+  - Remove sprintf-style format parsing from Rust lexer ([#1400](https://github.com/rouge-ruby/rouge/pull/1400/) by Konrad Borowski)
+- Shell Lexer
+  - Support using '"' to identify heredoc delimiters in Shell lexer ([#1411](https://github.com/rouge-ruby/rouge/pull/1411/) by Michael Camilleri)
+- TOML Lexer
+  - Improve string syntax support in TOML lexer ([#1419](https://github.com/rouge-ruby/rouge/pull/1419/) by Jeanine Adkisson)
+- TypeScript Lexer
+  - Support optional props in TypeScript lexer ([#1393](https://github.com/rouge-ruby/rouge/pull/1393/) by Michael Camilleri)
+- Varnish Lexer (**NEW**)
+  - Add Varnish lexer ([#365](https://github.com/rouge-ruby/rouge/pull/365/) by julp)
+  - Clean up Varnish lexer ([#1433](https://github.com/rouge-ruby/rouge/pull/1433/) by Michael Camilleri)
+
 ## version 3.15.0: 2020-01-15
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.14.0...v3.15.0)

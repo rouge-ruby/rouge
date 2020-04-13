@@ -8,6 +8,7 @@ module Rouge
     class JSONDOC < JSON
       desc "JavaScript Object Notation with extensions for documentation"
       tag 'json-doc'
+      aliases 'jsonc'
 
       prepend :name do
         rule %r/([$\w]+)(\s*)(:)/ do

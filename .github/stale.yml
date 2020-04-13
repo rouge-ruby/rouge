@@ -4,8 +4,9 @@ daysUntilStale: 365
 daysUntilClose: 14
 # Issues with these labels will never be considered stale
 exemptLabels:
-  - security
+  - lexer-request
   - pr-open
+  - security
 # Label to use when marking an issue as stale
 staleLabel: stale-issue
 # Comment to post when marking an issue as stale. Set to `false` to disable
@@ -13,7 +14,7 @@ markComment: >
   This issue has been automatically marked as stale because it has not
   had any activity for more than a year. It will be closed if no additional
   activity occurs within the next 14 days.
-   
+
   If you would like this issue to remain open, please reply and let us know if
   the issue is still reproducible.
 # Comment to post when closing a stale issue. Set to `false` to disable

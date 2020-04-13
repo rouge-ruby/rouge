@@ -1,5 +1,6 @@
 <p>It's html outside php!</p>
 <?php
+file_put_contents("log.txt", "\u{FEFF}===== Début du fichier =====\n");
 
 $test = function($a) { $lambda = 1; }
 
@@ -519,7 +520,7 @@ class Zip extends Archive {
                              $header);
 
       // Valid header?
-      if($header_info['header'] != 33639248)
+      if($header_info['header'] != 33_639_248)
         return false;
 
       // New position
@@ -577,7 +578,7 @@ class Zip extends Archive {
                              $header);
 
       // Valid header?
-      if($header_info['header'] != 67324752)
+      if($header_info['header'] != 67_324_752)
         return false;
 
       // Get content start position
@@ -627,4 +628,13 @@ class Zip extends Archive {
 }
 
 ?>
+
+<?php if (true): ?><!-- Notice the space between the colon & question mark -->
+  <p>Hello world!</p>
+<?php endif ?>
+
+<?php if (true) :?><!-- No space -->
+  <p>Hello world!</p>
+<?php endif ?>
+
 <p>it's html here at the end, too.</p>

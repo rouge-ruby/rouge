@@ -79,3 +79,8 @@ resource "aws_subnet" "main" {
   vpc_id            = aws_vpc.main.id
   fqns              = aws_route53_record.cert_validation[*].fqdn
 }
+
+## Object with regular expression
+resource "aws_cloudfront_distribution" "s3_distribution" {
+  aliases = ["www.${replace(var.domain_name, "/\\.$/", "")}"]
+}

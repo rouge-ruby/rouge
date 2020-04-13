@@ -40,7 +40,7 @@ module Rouge
       def self.body_stmts_keywords
         @body_stms_keywords ||= Set.new %w(
           extension feature identity typedef grouping augment rpc notification
-          deviation action argument identity if-feature input output
+          deviation action argument if-feature input output
         )
       end
 

@@ -143,6 +143,11 @@ null
 
 {"message":"\\\"retry_count\\\":0}\"}"}
 
- "This is a test": "of missing opening brace"
+ "This is a test": "of missing an opening brace"
 }
+
+ "This is a test": "of missing an opening bracket"
+]
+
+{"This is a correct": "JSON object"}
 

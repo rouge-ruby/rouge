@@ -329,7 +329,15 @@ module Rouge
       end
 
       state :ternary do
-        rule(/:(?!:)/) { token Punctuation; goto :expr_start }
+        rule %r/(:)(\s+)/ do
+          groups Punctuation, Text
+          goto :expr_start
+        end
+
+        rule %r/:(?![^#\n]*?[:\\])/ do
+          token Punctuation
+          goto :expr_start
+        end
 
         mixin :root
       end

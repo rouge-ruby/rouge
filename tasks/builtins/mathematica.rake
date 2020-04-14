@@ -7,12 +7,9 @@ def mathematica_builtins(&b)
 
   mathematica_doc_url = 'http://reference.wolfram.com/language/guide/AlphabeticalListing.html'
 
-  mathematica_docs = open(mathematica_doc_url).read
-
-  p :docs => mathematica_docs
+  mathematica_docs = URI.open(mathematica_doc_url).read
 
   mathematica_docs.scan %r(<span class="IFSans"><a href="/language/ref/(\w+)[.]html">)m do |word|
-    p :word => word
     yield word
   end
 end

@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'open-uri'
+
 def get_keywords(input)
   out = { command: [], option: [], auto: [] }
   input.each do |line|
@@ -49,10 +51,10 @@ def render_keywords(keywords, &b)
 end
 
 def vim_keywords
-  syntax_file = ENV['syntax_file'] || '/usr/share/vim/vim80/syntax/vim.vim'
+  syntax_file = "https://raw.githubusercontent.com/vim/vim/master/runtime/syntax/vim.vim"
   out = nil
 
-  File.open(syntax_file, 'r') do |f|
+  URI.open(syntax_file) do |f|
     out = render_keywords(get_keywords(f))
   end
 

@@ -8,7 +8,7 @@ module GherkinKeywords
   extend self
 
   def gherkin_i18n
-    @gherkin_i18n ||= JSON.load(open(I18N_CONFIG_URL))
+    @gherkin_i18n ||= JSON.load(URI.open(I18N_CONFIG_URL))
   end
 
   def keywords_for(*keys)

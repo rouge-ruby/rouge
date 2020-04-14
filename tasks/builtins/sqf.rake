@@ -23,7 +23,7 @@ def fetch_sqf_commands
   url = "https://raw.githubusercontent.com/intercept/intercept/master/src/client/headers/client/sqf_assignments.hpp"
   pattern = /(?<=\(").+?(?=")/
 
-  open(url) do |f|
+  URI.open(url) do |f|
     f.read.scan(pattern)
   end
 end

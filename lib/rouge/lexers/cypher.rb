@@ -42,24 +42,11 @@ module Rouge
         )
       end
 
-      def self.left_arrow_head
-        @left_arrow_head ||= %w(< \u27e8 \u3008 \ufe64 \uff1c)
-      end
-
-      def self.right_arrow_head
-        @right_arrow_head ||= %w(> \u27e9 \u3009 \ufe65 \uff1e)
-      end
-
-      def self.dash
-        @dash ||= %w(\- \u00ad \u2010 \u2011 \u2012 \u2013 \u2014 \u2015 \u2212 \ufe58 \ufe63 \uff0d)
-      end
-
       state :root do
         rule %r/[\s]+/, Text
         rule %r(//.*?$), Comment::Single
 
-        rule %r([*+=&|~%^#{Cypher.right_arrow_head.join('')}#{Cypher.left_arrow_head.join('')}#{Cypher.dash.join('')}]), Operator
-
+        rule %r([*+\-<>=&|~%^]), Operator
         rule %r/[{}),;\[\]]/, Str::Symbol
 
         # literal number

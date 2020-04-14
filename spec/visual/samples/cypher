@@ -100,6 +100,3 @@ MATCH (p:Person)-[rel]->(:Movie {title:'The Matrix'})
 RETURN p.name, type(rel)
 
 RETURN sign(-17), sign(0.1), sign(0xABCDEF), sign(000)
-
-MATCH (p:Person)‒[rel]―〉(:Movie {title:'The Matrix'})
-RETURN p, rel, m

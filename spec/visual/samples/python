@@ -138,9 +138,13 @@ float_literals = [
     0_00E+2_34_5, 0.e+1, 00_1.E-0_2, -100.e+20, 1e01,
     0_00E+2_34_5j, 0.e+1J, 00_1.E-0_2j, -100.e+20J 1e01j
 ]
+floats = (19.0, 19.)
 
 # PEP 465
 a = b @ c
 x @= y
 
-floats = (19.0, 19.)
+# PEP 498
+f'{hello} world {int(x) + 1}'
+f'{{ {4*10} }}'
+f'result: {value:{width}.{precision}}'

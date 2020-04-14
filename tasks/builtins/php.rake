@@ -5,9 +5,9 @@ def php_references(&b)
 
   php_manual_url = 'http://us3.php.net/distributions/manual/php_manual_en.tar.gz'
 
-  sh 'mkdir -p /tmp/rouge'
+  sh 'mkdir -p /tmp/rouge', { verbose: false }
   Dir.chdir '/tmp/rouge' do
-    sh "wget -O- #{php_manual_url} | tar -xz"
+    sh "wget -qO- #{php_manual_url} | tar -xz", { verbose: false }
     Dir.chdir './php-chunked-xhtml' do
       Dir.glob('./ref.*').sort.each { |x| yield File.read(x) }
     end

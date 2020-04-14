@@ -18,11 +18,10 @@ module Rouge
         )
       end
 
+      # self-modifying method that loads the builtins file
       def self.builtins
-        # Load Matlab keywords from separate YML file
-        @builtins ||= ::YAML.load_file(File.join(Lexers::BASE_DIR, 'matlab/builtins.yml')).tap do |a|
-          Set.new a
-        end
+        load File.join(Lexers::BASE_DIR, 'matlab/builtins.rb')
+        builtins
       end
 
       state :root do

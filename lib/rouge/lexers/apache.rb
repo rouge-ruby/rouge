@@ -11,14 +11,10 @@ module Rouge
       mimetypes 'text/x-httpd-conf', 'text/x-apache-conf'
       filenames '.htaccess', 'httpd.conf'
 
-      class << self
-        attr_reader :keywords
-      end
-      # Load Apache keywords from separate YML file
-      @keywords = ::YAML.load_file(File.join(Lexers::BASE_DIR, 'apache/keywords.yml')).tap do |h|
-        h.each do |k,v|
-          h[k] = Set.new v
-        end
+      # self-modifying method that loads the keywords file
+      def self.keywords
+        load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
+        keywords
       end
 
       def name_for_token(token, kwtype, tktype)

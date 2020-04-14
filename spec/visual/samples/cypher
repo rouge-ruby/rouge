@@ -1,0 +1,102 @@
+// Cypher for Rouge
+CREATE (john:Person {name: 'John'})
+CREATE (joe:Person {name: 'Joe'})
+CREATE (steve:Person {name: 'Steve'})
+CREATE (sara:Person {name: 'Sara'})
+CREATE (maria:Person {name: 'Maria'})
+CREATE (john)-[:KNOWS]->(joe)-[:KNOWS]->(steve)
+CREATE (john)-[:KNOWS]->(sara)-[:KNOWS]->(maria)
+
+MATCH (joe { name: 'Joe' })-[:knows*2..2]-(friend_of_friend)
+WHERE NOT (joe)-[:knows]-(friend_of_friend)
+RETURN friend_of_friend.name, COUNT(*)
+ORDER BY COUNT(*) DESC , friend_of_friend.name
+
+LOAD CSV WITH HEADERS FROM "https://dl.dropboxusercontent.com/u/14493611/movies_setup.csv" AS row
+MERGE (m:Movie {title:row.title}) ON CREATE SET m.tagline = row.tagline,m.released=row.released
+MERGE (p:Person {name:row.name}) ON CREATE SET p.born = row.born
+FOREACH (_ in CASE row.type WHEN "ACTED_IN" then [1] else [] end |
+   MERGE (p)-[r:ACTED_IN]->(m) ON CREATE SET r.roles = split(row.roles,";")[0..-1]
+)
+FOREACH (_ in CASE row.type WHEN "DIRECTED" then [1] else [] end | MERGE (p)-[:DIRECTED]->(m))
+FOREACH (_ in CASE row.type WHEN "PRODUCED" then [1] else [] end | MERGE (p)-[:PRODUCED]->(m))
+FOREACH (_ in CASE row.type WHEN "WROTE"    then [1] else [] end | MERGE (p)-[:WROTE   ]->(m))
+FOREACH (_ in CASE row.type WHEN "REVIEWED" then [1] else [] end | MERGE (p)-[:REVIEWED]->(m))
+
+MATCH (n:Person { name: $name })
+RETURN n
+
+UNWIND $props AS properties
+CREATE (n:Person)
+SET n = properties
+RETURN n
+
+MATCH (n)
+WHERE id(n)= $id
+RETURN n.name
+
+START n=node:people(name = $value)
+RETURN n
+
+MATCH (n) RETURN n // This is an end of line comment
+
+MATCH (n) WHERE n.property = '//This is NOT a comment' RETURN n
+
+MATCH (a:Person { name: 'Keanu Reeves' })
+RETURN [(a)-->(b) WHERE b:Movie | b.released] AS years
+
+// alias with backticks
+MATCH (p:Person {born:  1965})
+RETURN p.name AS name, p.born AS `birth year`
+
+// complex queries
+LOAD CSV WITH HEADERS FROM 'https://data.neo4j.com/advanced-cypher/movies2.csv' AS row
+MERGE (m:Movie {id:toInteger(row.movieId)})
+   ON CREATE SET m.title=row.title, m.avgVote=toFloat(row.avgVote),
+      m.releaseYear=toInteger(row.releaseYear), m.genres=split(row.genres,":")
+MERGE (p:Person {id: toInteger(row.personId)})
+   ON CREATE SET p.name = row.name, p.born = toInteger(row.birthYear),
+      p.died = toInteger(row.deathYear)
+WITH row, m, p
+CALL apoc.do.when(row.personType = 'ACTOR',
+     "MERGE (p)-[:ACTED_IN {roles: split(coalesce(row.characters,''), ':')}]->(m)
+          ON CREATE SET p:Actor",
+     "MERGE (p)-[:DIRECTED]->(m)
+          ON CREATE SET p:Director",
+      {row:row, m:m, p:p}) YIELD value AS value
+SET p:Person  // cannot end query with APOC call
+
+PROFILE LOAD CSV WITH HEADERS FROM
+     'https://data.neo4j.com/advanced-cypher/movies2.csv' AS row
+WITH row.movieId as movieId, row.title as title, row.genres as genres,
+toInteger(row.releaseYear) as releaseYear, toFloat(row.avgVote) as avgVote,
+collect({id: row.personId, name:row.name, born: toInteger(row.birthYear), died:toInteger(row.deathYear),personType: row.personType, roles: split(coalesce(row.characters,""),':')}) as people
+MERGE (m:Movie {id:movieId})
+   ON CREATE SET m.title=title, m.avgVote=avgVote,
+      m.releaseYear=releaseYear, m.genres=split(genres,":")
+WITH *
+UNWIND people as person
+MERGE (p:Person {id: person.id})
+   ON CREATE SET p.name = person.name, p.born = person.born, p.died = person.died
+WITH  m, person, p
+CALL apoc.do.when(person.personType = 'ACTOR',
+     "MERGE (p)-[:ACTED_IN {roles: person.roles}]->(m)
+                ON CREATE SET p:Actor",
+     "MERGE (p)-[:DIRECTED]->(m)
+         ON CREATE SET p:Director",
+     {m:m, p:p, person:person}) YIELD value AS value
+RETURN count()  // cannot end query with APOC call
+
+MATCH (m:Movie)
+WITH collect(m.title) AS Movies, collect (m.released) AS Released
+WITH Movies, Released,
+[x IN Released | date().year - x + 1] AS YearsAgo
+RETURN Movies, YearsAgo
+
+MATCH (p:Person)-[rel:ACTED_IN]->(m:Movie {title: 'The Matrix'})
+RETURN p, rel, m
+
+MATCH (p:Person)-[rel]->(:Movie {title:'The Matrix'})
+RETURN p.name, type(rel)
+
+RETURN sign(-17), sign(0.1), sign(0xABCDEF), sign(000)

@@ -1,0 +1,625 @@
+/*
+ * Handwritten Code Examples
+ * Extracted from: https://gitlab.haskell.org/ghc/ghc/blob/master/
+ */
+
+#include "Cmm.h"
+#include "Updates.h"
+#include "SMPClosureOps.h"
+
+#if defined(__PIC__)
+import pthread_mutex_unlock;
+#endif
+import EnterCriticalSection;
+import LeaveCriticalSection;
+
+#define PRE_RETURN(why,what_next)                       \
+  StgTSO_what_next(CurrentTSO) = what_next::I16;        \
+  StgRegTable_rRet(BaseReg) = why;                      \
+  R1 = BaseReg;
+
+/* Remember that the return address is *removed* when returning to a
+ * ThreadRunGHC thread.
+ */
+
+stg_gc_noregs
+{
+    W_ ret;
+
+    DEBUG_ONLY(foreign "C" heapCheckFail());
+    if (Hp > HpLim) {
+        Hp = Hp - HpAlloc/*in bytes*/;
+        if (HpLim == 0) {
+                ret = ThreadYielding;
+                goto sched;
+        }
+        if (HpAlloc <= BLOCK_SIZE
+            && bdescr_link(CurrentNursery) != NULL) {
+            HpAlloc = 0;
+            CLOSE_NURSERY();
+            Capability_total_allocated(MyCapability()) =
+              Capability_total_allocated(MyCapability()) +
+              BYTES_TO_WDS(bdescr_free(CurrentNursery) -
+                           bdescr_start(CurrentNursery));
+            CurrentNursery = bdescr_link(CurrentNursery);
+            bdescr_free(CurrentNursery) = bdescr_start(CurrentNursery);
+            OPEN_NURSERY();
+            if (Capability_context_switch(MyCapability()) != 0 :: CInt ||
+                Capability_interrupt(MyCapability())      != 0 :: CInt ||
+                (StgTSO_alloc_limit(CurrentTSO) `lt` (0::I64) &&
+                 (TO_W_(StgTSO_flags(CurrentTSO)) & TSO_ALLOC_LIMIT) != 0)) {
+                ret = ThreadYielding;
+                goto sched;
+            } else {
+                jump %ENTRY_CODE(Sp(0)) [];
+            }
+        } else {
+            ret = HeapOverflow;
+            goto sched;
+        }
+    } else {
+        if (CHECK_GC()) {
+            ret = HeapOverflow;
+        } else {
+            ret = StackOverflow;
+        }
+    }
+  sched:
+    PRE_RETURN(ret,ThreadRunGHC);
+    jump stg_returnToSched [R1];
+}
+
+#define HP_GENERIC                              \
+    PRE_RETURN(HeapOverflow, ThreadRunGHC)      \
+    jump stg_returnToSched [R1];
+
+#define BLOCK_GENERIC                           \
+    PRE_RETURN(ThreadBlocked,  ThreadRunGHC)    \
+    jump stg_returnToSched [R1];
+
+#define YIELD_GENERIC                           \
+    PRE_RETURN(ThreadYielding, ThreadRunGHC)    \
+    jump stg_returnToSched [R1];
+
+#define BLOCK_BUT_FIRST(c)                      \
+    PRE_RETURN(ThreadBlocked, ThreadRunGHC)     \
+    R2 = c;                                     \
+    jump stg_returnToSchedButFirst [R1,R2,R3];
+
+#define YIELD_TO_INTERPRETER                    \
+    PRE_RETURN(ThreadYielding, ThreadInterpret) \
+    jump stg_returnToSchedNotPaused [R1];
+
+/* -----------------------------------------------------------------------------
+   Heap checks in thunks/functions.
+
+   In these cases, node always points to the function closure.  This gives
+   us an easy way to return to the function: just leave R1 on the top of
+   the stack, and have the scheduler enter it to return.
+
+   There are canned sequences for 'n' pointer values in registers.
+   -------------------------------------------------------------------------- */
+
+INFO_TABLE_RET ( stg_enter, RET_SMALL, W_ info_ptr, P_ closure )
+    return (/* no return values */)
+{
+    ENTER(closure);
+}
+
+__stg_gc_enter_1 (P_ node)
+{
+    jump stg_gc_noregs (stg_enter_info, node) ();
+}
+
+/* -----------------------------------------------------------------------------
+   Canned heap checks for primitives.
+
+   We can't use stg_gc_fun because primitives are not functions, so
+   these fragments let us save some boilerplate heap-check-failure
+   code in a few common cases.
+   -------------------------------------------------------------------------- */
+
+stg_gc_prim (W_ fun)
+{
+    call stg_gc_noregs ();
+    jump fun();
+}
+
+stg_gc_prim_p (P_ arg, W_ fun)
+{
+    call stg_gc_noregs ();
+    jump fun(arg);
+}
+
+stg_gc_prim_pp (P_ arg1, P_ arg2, W_ fun)
+{
+    call stg_gc_noregs ();
+    jump fun(arg1,arg2);
+}
+
+stg_gc_prim_n (W_ arg, W_ fun)
+{
+    call stg_gc_noregs ();
+    jump fun(arg);
+}
+
+__stg_gc_fun /* explicit stack */
+{
+    W_ size;
+    W_ info;
+    W_ type;
+
+    info = %GET_FUN_INFO(UNTAG(R1));
+
+    // cache the size
+    type = TO_W_(StgFunInfoExtra_fun_type(info));
+    if (type == ARG_GEN) {
+        size = BITMAP_SIZE(StgFunInfoExtra_bitmap(info));
+    } else {
+        if (type == ARG_GEN_BIG) {
+#if defined(TABLES_NEXT_TO_CODE)
+            // bitmap field holds an offset
+            size = StgLargeBitmap_size(
+                      TO_W_(StgFunInfoExtraRev_bitmap_offset(info))
+                      + %GET_ENTRY(UNTAG(R1)) /* ### */ );
+#else
+            size = StgLargeBitmap_size( StgFunInfoExtra_bitmap(info) );
+#endif
+        } else {
+            size = BITMAP_SIZE(W_[stg_arg_bitmaps + WDS(type)]);
+        }
+    }
+
+#if defined(NO_ARG_REGS)
+    // we don't have to save any registers away
+    Sp_adj(-3);
+    Sp(2) = R1;
+    Sp(1) = size;
+    Sp(0) = stg_gc_fun_info;
+    jump stg_gc_noregs [];
+#else
+    W_ type;
+    type = TO_W_(StgFunInfoExtra_fun_type(info));
+    // cache the size
+    if (type == ARG_GEN || type == ARG_GEN_BIG) {
+        // regs already saved by the heap check code
+        Sp_adj(-3);
+        Sp(2) = R1;
+        Sp(1) = size;
+        Sp(0) = stg_gc_fun_info;
+        // DEBUG_ONLY(foreign "C" debugBelch("stg_fun_gc_gen(ARG_GEN)"););
+        jump stg_gc_noregs [];
+    } else {
+        jump W_[stg_stack_save_entries + WDS(type)] [*]; // all regs live
+            // jumps to stg_gc_noregs after saving stuff
+    }
+#endif /* !NO_ARG_REGS */
+}
+
+stg_block_stmwait
+{
+    ccall stmWaitUnlock(MyCapability() "ptr", R3 "ptr");
+    BLOCK_GENERIC;
+}
+
+/*
+ * CLOSURE
+ */
+
+
+import CLOSURE ghczmprim_GHCziTypes_True_closure;
+/* ----------------------------------------------------------------------------
+   Dummy return closure
+
+   Entering this closure will just return to the address on the top of the
+   stack.  Useful for getting a thread in a canonical form where we can
+   just enter the top stack word to start the thread.  (see deleteThread)
+ * ------------------------------------------------------------------------- */
+
+INFO_TABLE( stg_dummy_ret, 0, 0, CONSTR_NOCAF, "DUMMY_RET", "DUMMY_RET")
+    ()
+{
+    return ();
+}
+CLOSURE(stg_dummy_ret_closure,stg_dummy_ret);
+
+
+#define SELECTOR_CODE_NOUPD(offset)                                     \
+  INFO_TABLE_SELECTOR(stg_sel_##offset##_noupd, offset, THUNK_SELECTOR, "stg_sel_noupd", "stg_sel_noupd") \
+      (P_ node)                                                         \
+  {                                                                     \
+      P_ selectee, field, dest;                                         \
+      TICK_ENT_DYN_THK();                                               \
+      STK_CHK_NP(node);                                                 \
+      UPD_BH_UPDATABLE(node);                                           \
+      LDV_ENTER(node);                                                  \
+      selectee = StgThunk_payload(node,0);                              \
+      ENTER_CCS_THUNK(node);                                            \
+      if (NEED_EVAL(selectee)) {                                        \
+          SAVE_CCS;                                                     \
+          dest = UNTAG_IF_PROF(selectee); /* Note [untag for prof] */   \
+          (P_ constr) = call %GET_ENTRY(dest) (dest);                   \
+          RESTORE_CCS;                                                  \
+          selectee = constr;                                            \
+      }                                                                 \
+      field = StgClosure_payload(UNTAG(selectee),offset);               \
+      jump stg_ap_0_fast(field);                                        \
+  }
+
+/*
+ * Generated Code Examples
+ */
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.90905 UTC
+
+[]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.910624 UTC
+
+[section ""data" . Main.double_closure" {
+     Main.double_closure:
+         const GHC.Types.D#_con_info;
+         const 1.5 :: W64;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.91168 UTC
+
+[section ""data" . Main.character_closure" {
+     Main.character_closure:
+         const GHC.Types.C#_con_info;
+         const 99;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.912616 UTC
+
+[section ""cstring" . Main.string1_bytes" {
+     Main.string1_bytes:
+         I8[] [77,121,32,10,32,115,116,114,105,110,103,33]
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.918188 UTC
+
+[Main.string_entry() //  [R1]
+         { info_tbls: [(c3zg,
+                        label: Main.string_info
+                        rep: HeapRep static { Thunk }
+                        srt: Nothing)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c3zg: // global
+           if ((Sp + -16) < SpLim) (likely: False) goto c3zh; else goto c3zi;
+       c3zh: // global
+           R1 = R1;
+           call (stg_gc_enter_1)(R1) args: 8, res: 0, upd: 8;
+       c3zi: // global
+           (_c3zd::I64) = call "ccall" arg hints:  [PtrHint,
+                                                    PtrHint]  result hints:  [PtrHint] newCAF(BaseReg, R1);
+           if (_c3zd::I64 == 0) goto c3zf; else goto c3ze;
+       c3zf: // global
+           call (I64[R1])() args: 8, res: 0, upd: 8;
+       c3ze: // global
+           I64[Sp - 16] = stg_bh_upd_frame_info;
+           I64[Sp - 8] = _c3zd::I64;
+           R2 = Main.string1_bytes;
+           Sp = Sp - 16;
+           call GHC.CString.unpackCString#_info(R2) args: 24, res: 0, upd: 24;
+     }
+ },
+ section ""data" . Main.string_closure" {
+     Main.string_closure:
+         const Main.string_info;
+         const 0;
+         const 0;
+         const 0;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.920067 UTC
+
+[section ""data" . Main.charArray3_closure" {
+     Main.charArray3_closure:
+         const GHC.Types.C#_con_info;
+         const 97;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.921058 UTC
+
+[section ""data" . Main.charArray2_closure" {
+     Main.charArray2_closure:
+         const GHC.Types.C#_con_info;
+         const 10;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.922009 UTC
+
+[section ""data" . Main.charArray1_closure" {
+     Main.charArray1_closure:
+         const :_con_info;
+         const Main.charArray2_closure+1;
+         const GHC.Types.[]_closure+1;
+         const 3;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.923223 UTC
+
+[section ""data" . Main.charArray_closure" {
+     Main.charArray_closure:
+         const :_con_info;
+         const Main.charArray3_closure+1;
+         const Main.charArray1_closure+2;
+         const 3;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.924127 UTC
+
+[section ""cstring" . Main.$trModule4_bytes" {
+     Main.$trModule4_bytes:
+         I8[] [109,97,105,110]
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.925047 UTC
+
+[section ""data" . Main.$trModule3_closure" {
+     Main.$trModule3_closure:
+         const GHC.Types.TrNameS_con_info;
+         const Main.$trModule4_bytes;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.926068 UTC
+
+[section ""cstring" . Main.$trModule2_bytes" {
+     Main.$trModule2_bytes:
+         I8[] [77,97,105,110]
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.926966 UTC
+
+[section ""data" . Main.$trModule1_closure" {
+     Main.$trModule1_closure:
+         const GHC.Types.TrNameS_con_info;
+         const Main.$trModule2_bytes;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.927956 UTC
+
+[section ""data" . Main.$trModule_closure" {
+     Main.$trModule_closure:
+         const GHC.Types.Module_con_info;
+         const Main.$trModule3_closure+1;
+         const Main.$trModule1_closure+1;
+         const 3;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.932229 UTC
+
+[section ""data" . u3zH_srt" {
+     u3zH_srt:
+         const stg_SRT_2_info;
+         const Main.string_closure;
+         const GHC.Show.showLitString_closure;
+         const 0;
+ },
+ Main.main2_entry() //  [R1]
+         { info_tbls: [(c3zE,
+                        label: Main.main2_info
+                        rep: HeapRep static { Thunk }
+                        srt: Just u3zH_srt)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c3zE: // global
+           if ((Sp + -16) < SpLim) (likely: False) goto c3zF; else goto c3zG;
+       c3zF: // global
+           R1 = R1;
+           call (stg_gc_enter_1)(R1) args: 8, res: 0, upd: 8;
+       c3zG: // global
+           (_c3zB::I64) = call "ccall" arg hints:  [PtrHint,
+                                                    PtrHint]  result hints:  [PtrHint] newCAF(BaseReg, R1);
+           if (_c3zB::I64 == 0) goto c3zD; else goto c3zC;
+       c3zD: // global
+           call (I64[R1])() args: 8, res: 0, upd: 8;
+       c3zC: // global
+           I64[Sp - 16] = stg_bh_upd_frame_info;
+           I64[Sp - 8] = _c3zB::I64;
+           R3 = GHC.Show.$fShow[]1_closure;
+           R2 = Main.string_closure;
+           Sp = Sp - 16;
+           call GHC.Show.showLitString_info(R3, R2) args: 24, res: 0, upd: 24;
+     }
+ },
+ section ""data" . Main.main2_closure" {
+     Main.main2_closure:
+         const Main.main2_info;
+         const 0;
+         const 0;
+         const 0;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.93387 UTC
+
+[section ""data" . Main.main1_closure" {
+     Main.main1_closure:
+         const :_con_info;
+         const GHC.Show.$fShow(,)3_closure;
+         const Main.main2_closure;
+         const 0;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.937028 UTC
+
+[Main.main_entry() //  []
+         { info_tbls: [(c3zU,
+                        label: Main.main_info
+                        rep: HeapRep static { Fun {arity: 1 fun_type: ArgSpec 3} }
+                        srt: Nothing)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c3zU: // global
+           R4 = GHC.Types.True_closure+2;
+           R3 = Main.main1_closure+2;
+           R2 = GHC.IO.Handle.FD.stdout_closure;
+           call GHC.IO.Handle.Text.hPutStr'_info(R4,
+                                                 R3,
+                                                 R2) args: 8, res: 0, upd: 8;
+     }
+ },
+ section ""data" . Main.main_closure" {
+     Main.main_closure:
+         const Main.main_info;
+         const GHC.IO.Handle.FD.stdout_closure;
+         const GHC.IO.Handle.Text.hPutStr'_closure;
+         const Main.main1_closure;
+         const 0;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.940434 UTC
+
+[Main.main3_entry() //  []
+         { info_tbls: [(c3A4,
+                        label: Main.main3_info
+                        rep: HeapRep static { Fun {arity: 1 fun_type: ArgSpec 3} }
+                        srt: Nothing)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c3A4: // global
+           R2 = Main.main_closure+1;
+           call GHC.TopHandler.runMainIO1_info(R2) args: 8, res: 0, upd: 8;
+     }
+ },
+ section ""data" . Main.main3_closure" {
+     Main.main3_closure:
+         const Main.main3_info;
+         const Main.main_closure;
+         const GHC.TopHandler.runMainIO1_closure;
+         const 0;
+ }]
+
+
+==================== Output Cmm ====================
+2020-01-04 12:58:09.943474 UTC
+
+[:Main.main_entry() //  []
+         { info_tbls: [(c3Ae,
+                        label: :Main.main_info
+                        rep: HeapRep static { Fun {arity: 1 fun_type: ArgSpec 3} }
+                        srt: Just Main.main3_closure)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c3Ae: // global
+           call Main.main3_info() args: 8, res: 0, upd: 8;
+     }
+ },
+ section ""data" . :Main.main_closure" {
+     :Main.main_closure:
+         const :Main.main_info;
+         const 0;
+ }]
+
+==================== Output Cmm ====================
+2020-04-08 16:21:51.381258704 UTC
+
+[sat_s2eD_entry() { //  [R2, R1]
+         { info_tbls: [(c2PW,
+                        label: sat_s2eD_info
+                        rep: HeapRep 1 nonptrs { Fun {arity: 1 fun_type: ArgSpec 5} }
+                        srt: Nothing)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c2PW: // global
+           _s2eC::P64 = R2;
+           _s2eD::P64 = R1;
+           goto c2PY;
+       c2PY: // global
+           R1 = _s2eC::P64;
+           call stg_ap_0_fast(R1) args: 8, res: 0, upd: 8;
+     }
+ },
+ sat_s2eN_entry() { //  [R1]
+         { info_tbls: [(c2Q0,
+                        label: sat_s2eN_info
+                        rep: HeapRep 2 ptrs { Thunk }
+                        srt: Just Data.Functor.Utils.#._closure)]
+           stack_info: arg_space: 8 updfr_space: Just 8
+         }
+     {offset
+       c2Q0: // global
+           _s2eN::P64 = R1;
+           if ((Sp + 8) - 24 < SpLim) (likely: False) goto c2Q1; else goto c2Q2;
+       c2Q2: // global
+           Hp = Hp + 56;
+           if (Hp > HpLim) (likely: False) goto c2Q4; else goto c2Q3;
+       c2Q4: // global
+           HpAlloc = 56;
+           goto c2Q1;
+       c2Q1: // global
+           R1 = _s2eN::P64;
+           call (stg_gc_enter_1)(R1) args: 8, res: 0, upd: 8;
+       c2Q3: // global
+           I64[Sp - 16] = stg_upd_frame_info;
+           P64[Sp - 8] = _s2eN::P64;
+           _s2el::P64 = P64[_s2eN::P64 + 16];
+           _s2en::P64 = P64[_s2eN::P64 + 24];
+           I64[Hp - 48] = stg_sel_6_upd_info;
+           P64[Hp - 32] = _s2en::P64;
+           _c2PQ::P64 = Hp - 48;
+           I64[Hp - 24] = sat_s2eD_info;
+           _c2PR::P64 = Hp - 23;
+           I64[Hp - 8] = GHC.Types.MkCoercible_con_info;
+           _c2PZ::P64 = Hp - 7;
+           R5 = _c2PQ::P64;
+           R4 = _s2el::P64;
+           R3 = _c2PR::P64;
+           R2 = _c2PZ::P64;
+           R1 = Data.Functor.Utils.#._closure;
+           Sp = Sp - 16;
+           call stg_ap_pppp_fast(R5,
+                                 R4,
+                                 R3,
+                                 R2,
+                                 R1) args: 24, res: 0, upd: 24;
+     }
+ },
+ section ""data" . $cbifoldr1_r29S_closure" {
+     $cbifoldr1_r29S_closure:
+         const $cbifoldr1_r29S_info;
+         const 0;
+ }]

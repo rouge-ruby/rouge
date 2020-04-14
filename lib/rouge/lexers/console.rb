@@ -58,10 +58,19 @@ module Rouge
         @error = list_option(:error) { nil }
       end
 
-      def prompt_regex
-        @prompt_regex ||= begin
-          /^#{prompt_prefix_regex}(?:#{end_chars.map(&Regexp.method(:escape)).join('|')})/
+      # whether to allow comments. if manually specifying a prompt that isn't
+      # simply "#", we flag this to on
+      def allow_comments?
+        case @comments
+        when :guess
+          @prompt && !@prompt.empty? && !end_chars.include?('#')
+        else
+          @comments
         end
+      end
+
+      def comment_regex
+        /\A\s*?#/
       end
 
       def end_chars
@@ -80,25 +89,6 @@ module Rouge
         end
       end
 
-      # whether to allow comments. if manually specifying a prompt that isn't
-      # simply "#", we flag this to on
-      def allow_comments?
-        case @comments
-        when :guess
-          @prompt && !@prompt.empty? && !end_chars.include?('#')
-        else
-          @comments
-        end
-      end
-
-      def prompt_prefix_regex
-        if allow_comments?
-          /[^<#]*?/m
-        else
-          /.*?/m
-        end
-      end
-
       def lang_lexer
         @lang_lexer ||= case @lang
         when Lexer
@@ -112,6 +102,10 @@ module Rouge
         end
       end
 
+      def line_regex
+        /(\\.|[^\\])*?(\n|$)/m
+      end
+
       def output_lexer
         @output_lexer ||= case @output
         when nil
@@ -123,22 +117,6 @@ module Rouge
         when String
           Lexer.find(@output).new(options)
         end
-      end
-
-      def line_regex
-        /(\\.|[^\\])*?(\n|$)/m
-      end
-
-      def comment_regex
-        /\A\s*?#/
-      end
-
-      def stream_tokens(input, &output)
-        input = StringScanner.new(input)
-        lang_lexer.reset!
-        output_lexer.reset!
-
-        process_line(input, &output) while !input.eos?
       end
 
       def process_line(input, &output)
@@ -184,6 +162,28 @@ module Rouge
 
           output_lexer.continue_lex(input[0], &output)
         end
+      end
+
+      def prompt_prefix_regex
+        if allow_comments?
+          /[^<#]*?/m
+        else
+          /.*?/m
+        end
+      end
+
+      def prompt_regex
+        @prompt_regex ||= begin
+          /^#{prompt_prefix_regex}(?:#{end_chars.map(&Regexp.method(:escape)).join('|')})/
+        end
+      end
+
+      def stream_tokens(input, &output)
+        input = StringScanner.new(input)
+        lang_lexer.reset!
+        output_lexer.reset!
+
+        process_line(input, &output) while !input.eos?
       end
     end
   end

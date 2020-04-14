@@ -1103,7 +1103,7 @@ link]
 
 [This link is followed by text in](example.com) (parentheses)
 [This link is followed by text in](example.com) (paren theses)
-[This link is followed by text in](example.com) paren (theses)
+[This link is followed by text in](example.com "Title text") paren (theses)
 
 [This link is referenced][exampleref]
 

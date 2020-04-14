@@ -21,13 +21,13 @@ module Rouge
 
       def self.module_header_stmts_keywords
         @module_header_stmts_keywords ||= Set.new %w(
-          yang-version namespace prefix belongs-to
+          belongs-to namespace prefix yang-version
         )
       end
 
       def self.meta_stmts_keywords
         @meta_stmts_keywords ||= Set.new %w(
-          organization contact description reference revision
+          contact description organization reference revision
         )
       end
 
@@ -39,23 +39,23 @@ module Rouge
 
       def self.body_stmts_keywords
         @body_stms_keywords ||= Set.new %w(
-          extension feature identity typedef grouping augment rpc notification
-          deviation action argument if-feature input output
+          action argument augment deviation extension feature grouping identity
+          if-feature input notification output rpc typedef
         )
       end
 
       def self.data_def_stmts_keywords
         @data_def_stms_keywords ||= Set.new %w(
-          container leaf-list leaf list choice anydata anyxml uses case config
-          deviate must when presence refine
+          anydata anyxml case choice config container deviate leaf leaf-list
+          list must presence refine uses when
         )
       end
 
       def self.type_stmts_keywords
         @type_stmts_keywords ||= Set.new %w(
-          type units default status bit enum error-app-tag error-message
-          fraction-digits length min-elements max-elements modifier ordered-by
-          path pattern position range require-instance value yin-element base
+          base bit default enum error-app-tag error-message fraction-digits
+          length max-elements min-elements modifier ordered-by path pattern
+          position range require-instance status type units value yin-element
         )
       end
 
@@ -68,17 +68,17 @@ module Rouge
       #RFC7950 other keywords
       def self.constants_keywords
         @constants_keywords ||= Set.new %w(
-          true false current obsolete deprecated add delete replace
-          not-supported invert-match max min unbounded user
+          add current delete deprecated false invert-match max min
+          not-supported obsolete replace true unbounded user
         )
       end
 
       #RFC7950 Built-In Types
       def self.types
         @types ||= Set.new %w(
-          binary bits boolean decimal64 empty enumeration int8 int16 int32
-          int64 string uint8 uint16 uint32 uint64 union leafref identityref
-          instance-identifier
+          binary bits boolean decimal64 empty enumeration identityref
+          instance-identifier int16 int32 int64 int8 leafref string uint16
+          uint32 uint64 uint8 union
         )
       end
 

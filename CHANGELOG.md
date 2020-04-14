@@ -4,6 +4,69 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.18.0: 2020-04-15
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.17.0...v3.18.0)
+
+- General
+  - Use plain Ruby files for built-in keyword lists ([#1418](https://github.com/rouge-ruby/rouge/pull/1418/) by Ashwin Maroli)
+  - Load Rouge files using methods scoped to the Rouge module ([#1481](https://github.com/rouge-ruby/rouge/pull/1481/) by Michael Camilleri)
+  - Use module constants to store directory paths for file loading ([#1416](https://github.com/rouge-ruby/rouge/pull/1416/) by Ashwin Maroli)
+  - Fix Ruby keyword warning in check:memory Rake task ([#1431](https://github.com/rouge-ruby/rouge/pull/1431/) by Ashwin Maroli)
+  - Revert Rubocop splat expansion cop ([#1461](https://github.com/rouge-ruby/rouge/pull/1461/) by Michael Camilleri)
+- C++ Lexer
+  - Make lexing of class-like identifiers more consistent in C++ lexer ([#1495](https://github.com/rouge-ruby/rouge/pull/1495/) by Michael Camilleri)
+- CMake Lexer
+  - Fix handling of escaped quotes in CMake lexer ([#1473](https://github.com/rouge-ruby/rouge/pull/1473/) by Michael Camilleri)
+- Console Lexer
+  - Add option to tokenise error messages in Console lexer ([#1498](https://github.com/rouge-ruby/rouge/pull/1498/) by Gavin Lock)
+- Cypher Lexer (**NEW**)
+  - Add Cypher lexer ([#1423](https://github.com/rouge-ruby/rouge/pull/1423/) by Guillaume Grossetie)
+- Datastudio Lexer (**NEW**)
+  - Add Datastudio lexer ([#1453](https://github.com/rouge-ruby/rouge/pull/1453/) by Bastien Durel)
+- F# Lexer
+  - Support dictionary indexers on nested properties in F# lexer ([#1482](https://github.com/rouge-ruby/rouge/pull/1482/) by Michael Camilleri)
+- GHC Cmm Lexer (**NEW**)
+  - Add GHC Cmm lexer ([#1387](https://github.com/rouge-ruby/rouge/pull/1387/) by Sven Tennie)
+- ISBL Lexer (**NEW**)
+  - Add ISBL lexer ([#891](https://github.com/rouge-ruby/rouge/pull/891/) by Dmitriy Tarasov)
+- JSON Lexer
+  - Allow unmatched braces and brackets in JSON lexer ([#1497](https://github.com/rouge-ruby/rouge/pull/1497/) by Michael Camilleri)
+- JSONDOC Lexer
+  - Add jsonc alias to JSONDOC lexer ([#1440](https://github.com/rouge-ruby/rouge/pull/1440/) by Michael Camilleri)
+- Kotlin Lexer
+  - Support labels in Kotlin lexer ([#1496](https://github.com/rouge-ruby/rouge/pull/1496/) by Jen)
+- Markdown Lexer
+  - Add support for multi-line links in Markdown lexer ([#1465](https://github.com/rouge-ruby/rouge/pull/1465/) by Marcel Amirault)
+- Pascal Lexer
+  - Add Lazarus program file glob to Pascal lexer ([#1466](https://github.com/rouge-ruby/rouge/pull/1466/) by Morabaraba)
+- PHP Lexer
+  - Separate ? from other operators in PHP lexer ([#1478](https://github.com/rouge-ruby/rouge/pull/1478/) by Michael Camilleri)
+  - Fix bugs, and better support v7.4.0 features, in PHP lexer ([#1397](https://github.com/rouge-ruby/rouge/pull/1397/) by julp)
+- Python Lexer
+  - Use generic string states in Python lexer ([#1477](https://github.com/rouge-ruby/rouge/pull/1477/) by Michael Camilleri)
+  - Remove . as a operator in Python lexer ([#1375](https://github.com/rouge-ruby/rouge/pull/1375/) by Andrew Nisbet)
+- Racket Lexer
+  - Improve support for # in Racket lexer ([#1472](https://github.com/rouge-ruby/rouge/pull/1472/) by Michael Camilleri)
+- Rego Lexer (**NEW**)
+  - Add Rego lexer ([#1468](https://github.com/rouge-ruby/rouge/pull/1468/) by David Ashby)
+- Ruby Lexer
+  - Improve lexing of ternaries that include symbols in Ruby lexer ([#1476](https://github.com/rouge-ruby/rouge/pull/1476/) by Michael Camilleri)
+  - Fix tokenization of compact class names in Ruby lexer ([#1470](https://github.com/rouge-ruby/rouge/pull/1470/) by Ashwin Maroli)
+- Solidity Lexer (**NEW**)
+  - Add Solidity lexer ([#760](https://github.com/rouge-ruby/rouge/pull/760/) by Noel Maersk)
+- Terraform Lexer
+  - Support regular expressions in Terraform lexer ([#1490](https://github.com/rouge-ruby/rouge/pull/1490/) by Michael Camilleri)
+- TypeScript Lexer
+  - Add support for optional chaining operator to TypeScript lexer ([#1475](https://github.com/rouge-ruby/rouge/pull/1475/) by Michael Camilleri)
+- Vue Lexer
+  - Support slot shorthand syntax to Vue lexer ([#1483](https://github.com/rouge-ruby/rouge/pull/1483/) by Michael Camilleri)
+- YANG Lexer (**NEW**)
+  - Remove duplicate identity keyword in YANG Lexer ([#1499](https://github.com/rouge-ruby/rouge/pull/1499/) by GRIBOK)
+  - Make default rule more permissive in YANG lexer ([#1488](https://github.com/rouge-ruby/rouge/pull/1488/) by GRIBOK)
+  - Update URL in YANG visual sample ([#1474](https://github.com/rouge-ruby/rouge/pull/1474/) by GRIBOK)
+  - Add YANG lexer ([#1458](https://github.com/rouge-ruby/rouge/pull/1458/) by GRIBOK)
+
 ## version 3.17.0: 2020-03-11
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.16.0...v3.17.0)

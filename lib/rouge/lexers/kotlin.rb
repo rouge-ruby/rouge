@@ -53,6 +53,9 @@ module Rouge
           groups Keyword::Declaration, Text
           push :property
         end
+        rule %r'(return|continue|break|this|super)(@#{name})?' do
+          groups Keyword, Name::Decorator
+        end
         rule %r'\bfun\b', Keyword
         rule %r'\b(?:#{keywords.join('|')})\b', Keyword
         rule %r'^\s*\[.*?\]', Name::Attribute
@@ -78,6 +81,7 @@ module Rouge
         end
         rule class_name, Name::Class
         rule %r'(#{name})(?=\s*[({])', Name::Function
+        rule %r'(#{name})@', Name::Decorator # label
         rule name, Name
       end
 

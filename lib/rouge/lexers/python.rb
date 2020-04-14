@@ -12,10 +12,6 @@ module Rouge
                 '*.bzl', 'BUCK', 'BUILD', 'BUILD.bazel', 'WORKSPACE'
       mimetypes 'text/x-python', 'application/x-python'
 
-      def self.string_register
-        @string_register ||= StringRegister.new
-      end
-
       def self.detect?(text)
         return true if text.shebang?(/pythonw?(?:[23](?:\.\d+)?)?/)
       end
@@ -73,6 +69,11 @@ module Rouge
 
       identifier =        /[a-z_][a-z0-9_]*/i
       dotted_identifier = /[a-z_.][a-z0-9_.]*/i
+
+      def current_string
+        @string_register ||= StringRegister.new
+      end
+
       state :root do
         rule %r/\n+/m, Text
         rule %r/^(:)(\s*)([ru]{,2}""".*?""")/mi do
@@ -115,7 +116,7 @@ module Rouge
         rule %r/`.*?`/, Str::Backtick
         rule %r/([rfbu]{0,2})('''|"""|['"])/i do |m|
           token Str
-          self.class.string_register.push [m[1].downcase, m[2]]
+          current_string.register type: m[1].downcase, delim: m[2]
           push :generic_string
         end
 
@@ -179,14 +180,14 @@ module Rouge
 
         rule %r/'''|"""|['"]/ do |m|
           token Str
-          if self.class.string_register.delim? m[0]
-            self.class.string_register.pop
+          if current_string.delim? m[0]
+            current_string.remove
             pop!
           end
         end
 
         rule %r/\\/ do |m|
-          if self.class.string_register.type? "r"
+          if current_string.type? "r"
             token Str
           else
             token Str::Interpol
@@ -195,7 +196,7 @@ module Rouge
         end
 
         rule %r/{/ do |m|
-          if self.class.string_register.type? "f"
+          if current_string.type? "f"
             token Str::Interpol
             push :generic_interpol
           else
@@ -215,7 +216,7 @@ module Rouge
           | [0-7]{1,3}
           )
         )x do
-          if self.class.string_register.type? "r"
+          if current_string.type? "r"
             token Str
           else
             token Str::Escape
@@ -235,6 +236,14 @@ module Rouge
       class StringRegister < Array
         def delim?(delim)
           self.last[1] == delim
+        end
+
+        def register(type: "u", delim: "'")
+          self.push [type, delim]
+        end
+
+        def remove
+          self.pop
         end
 
         def type?(type)

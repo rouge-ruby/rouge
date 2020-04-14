@@ -23,9 +23,9 @@ def lua_builtins_source(lua_functions)
 end
 
 def get_lua_functions(manual_url)
-  open(manual_url) do |f|
+  URI.open(manual_url) do |f|
     f.map do |line|
-      line[%r(^<A HREF="manual.html#pdf-(.+)">\1</A>), 1]
+      line.scrub[%r(^<A HREF="manual.html#pdf-(.+)">\1</A>), 1]
     end.compact
   end
 end
@@ -46,15 +46,12 @@ namespace :builtins do
   task :lua do
     version = "5.2"
     lua_manual_url = "http://www.lua.org/manual/#{version}/"
-    puts "Downloading function index for Lua #{version}" 
     functions = get_lua_functions(lua_manual_url)
-    puts "#{functions.length} functions found:"
 
     modules = {}
     functions.each do |full_function_name|
       m = get_function_module(full_function_name)
       (modules[m] ||= []) << full_function_name
-      puts "  #{full_function_name}"
     end
 
     File.open('lib/rouge/lexers/lua/builtins.rb', 'w') do |f|

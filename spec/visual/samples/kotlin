@@ -166,6 +166,10 @@ fun <T, V : Comparable> String.genericExtensionFunction() {
    return
 }
 
+inline fun <reified T> membersOf() = T::class.members
+public interface List<out E> : Collection<E> {}
+public interface Comparable<in T> {}
+
 @Deprecated("This is an annotation")
 fun anAnnotatedFunction() = {
 }

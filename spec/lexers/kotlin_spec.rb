@@ -31,5 +31,11 @@ describe Rouge::Lexers::Kotlin do
     it 'recognizes label reference in break statement' do
       assert_tokens_equal 'break@label', ["Keyword", "break"], ["Name.Decorator", "@label"]
     end
+
+    it 'recognizes type modifiers' do
+      for modifer in ['reified', 'out', 'in'] do
+        assert_tokens_equal "<#{modifer} T>", ["Punctuation", "<"], ["Keyword", modifer], ["Text", " "], ["Name.Class", "T"], ["Punctuation", ">"]
+      end
+    end
   end
 end

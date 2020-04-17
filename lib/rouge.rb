@@ -13,7 +13,7 @@ module Rouge
   class << self
     def reload!
       Object.send :remove_const, :Rouge
-      load __FILE__
+      Kernel::load __FILE__
     end
 
     # Highlight some text with a given lexer and formatter.
@@ -40,7 +40,7 @@ module Rouge
     #
     # @api private
     def load_file(path)
-      load File.join(LIB_DIR, "rouge/#{path}.rb")
+      Kernel::load File.join(LIB_DIR, "rouge/#{path}.rb")
     end
 
     # Load the lexers in the `lib/rouge/lexers` directory.

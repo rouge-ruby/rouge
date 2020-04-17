@@ -162,7 +162,7 @@ fun `String`.`backTickedExtensionFunction`() {
    return
 }
 
-fun <T, V> String.genericExtensionFunction() {
+fun <T, V : Comparable> String.genericExtensionFunction() {
    return
 }
 

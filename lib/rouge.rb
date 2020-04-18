@@ -12,7 +12,7 @@ module Rouge
 
   class << self
     def reload!
-      Object.send :remove_const, :Rouge
+      Object::send :remove_const, :Rouge
       Kernel::load __FILE__
     end
 

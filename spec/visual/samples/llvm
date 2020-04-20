@@ -84,3 +84,5 @@ attributes #1 = { "no-sse" }
 define void @f() #0 #1 { ... }
 
 %1 = addrspacecast i32* %a to i32 addrspace(1)*
+
+source_filename = "/path/to/source.c"

@@ -29,7 +29,7 @@ module Rouge
       end
 
       def self.builtins
-        load File.join(Lexers::BASE_DIR, 'php/builtins.rb')
+        Kernel::load File.join(Lexers::BASE_DIR, 'php/builtins.rb')
         self.builtins
       end
 

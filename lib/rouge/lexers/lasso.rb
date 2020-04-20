@@ -36,7 +36,7 @@ module Rouge
 
       # self-modifying method that loads the keywords file
       def self.keywords
-        load File.join(Lexers::BASE_DIR, 'lasso/keywords.rb')
+        Kernel::load File.join(Lexers::BASE_DIR, 'lasso/keywords.rb')
         keywords
       end
 

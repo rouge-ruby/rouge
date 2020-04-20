@@ -10,7 +10,7 @@ module Rouge
       filenames '*.isbl'
 
       def self.builtins
-        load File.join(Lexers::BASE_DIR, 'isbl/builtins.rb')
+        Kernel::load File.join(Lexers::BASE_DIR, 'isbl/builtins.rb')
         self.builtins
       end
 

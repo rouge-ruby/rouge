@@ -56,7 +56,7 @@ module Rouge
 
       # The list of built-in symbols comes from a wolfram server and is created automatically by rake
       def self.builtins
-        load File.join(Lexers::BASE_DIR, 'mathematica/builtins.rb')
+        Kernel::load File.join(Lexers::BASE_DIR, 'mathematica/builtins.rb')
         self.builtins
       end
 

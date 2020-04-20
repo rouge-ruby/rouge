@@ -20,7 +20,7 @@ module Rouge
 
       # self-modifying method that loads the builtins file
       def self.builtins
-        load File.join(Lexers::BASE_DIR, 'matlab/builtins.rb')
+        Kernel::load File.join(Lexers::BASE_DIR, 'matlab/builtins.rb')
         builtins
       end
 

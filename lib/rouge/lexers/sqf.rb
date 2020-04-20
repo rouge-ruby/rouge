@@ -55,7 +55,7 @@ module Rouge
       end
 
       def self.commands
-        load File.join(Lexers::BASE_DIR, "sqf/commands.rb")
+        Kernel::load File.join(Lexers::BASE_DIR, "sqf/commands.rb")
         @commands = self.commands
       end
 

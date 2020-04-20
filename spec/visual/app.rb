@@ -18,8 +18,7 @@ class VisualTestApp < Sinatra::Application
   DEMOS = ROOT.join('lib/rouge/demos')
 
   def reload_source!
-    Object.send :remove_const, :Rouge
-    load ROUGE_LIB
+    Rouge.reload!
   end
 
   def query_string

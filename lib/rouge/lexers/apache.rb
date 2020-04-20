@@ -13,7 +13,7 @@ module Rouge
 
       # self-modifying method that loads the keywords file
       def self.keywords
-        load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
+        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
         keywords
       end
 

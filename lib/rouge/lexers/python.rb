@@ -189,10 +189,11 @@ module Rouge
         rule %r/\\/ do |m|
           if current_string.type? "r"
             token Str
+            push :raw_escape
           else
             token Str::Interpol
+            push :generic_escape
           end
-          push :generic_escape
         end
 
         rule %r/{/ do |m|
@@ -215,14 +216,9 @@ module Rouge
           | x[a-fA-F0-9]{2}
           | [0-7]{1,3}
           )
-        )x do
-          if current_string.type? "r"
-            token Str
-          else
-            token Str::Escape
-          end
-          pop!
-        end
+        )x, Str::Escape, :pop!
+
+        rule %r/./, Error, :pop!
       end
 
       state :generic_interpol do
@@ -231,6 +227,10 @@ module Rouge
         end
         rule %r/{/, Str::Interpol, :generic_interpol
         rule %r/}/, Str::Interpol, :pop!
+      end
+
+      state :raw_escape do
+        rule %r/./, Str, :pop!
       end
 
       class StringRegister < Array

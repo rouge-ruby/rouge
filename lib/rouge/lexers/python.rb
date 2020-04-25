@@ -186,9 +186,7 @@ module Rouge
           end
         end
 
-        rule %r/(?=\\)/ do |m|
-          push :generic_escape
-        end
+        rule %r/(?=\\)/, Str, :generic_escape
 
         rule %r/{/ do |m|
           if current_string.type? "f"

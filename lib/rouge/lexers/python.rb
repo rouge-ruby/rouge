@@ -202,6 +202,7 @@ module Rouge
         rule %r(\\
           ( [\\abfnrtv"']
           | \n
+          | newline
           | N{[a-zA-Z][a-zA-Z ]+[a-zA-Z]}
           | u[a-fA-F0-9]{4}
           | U[a-fA-F0-9]{8}

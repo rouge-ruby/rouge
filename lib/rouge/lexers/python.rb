@@ -186,14 +186,8 @@ module Rouge
           end
         end
 
-        rule %r/\\/ do |m|
-          if current_string.type? "r"
-            token Str
-            push :raw_escape
-          else
-            token Str::Interpol
-            push :generic_escape
-          end
+        rule %r/(?=\\)/ do |m|
+          push :generic_escape
         end
 
         rule %r/{/ do |m|
@@ -207,7 +201,7 @@ module Rouge
       end
 
       state :generic_escape do
-        rule %r(
+        rule %r(\\
           ( [\\abfnrtv"']
           | \n
           | N{[a-zA-Z][a-zA-Z ]+[a-zA-Z]}
@@ -216,9 +210,12 @@ module Rouge
           | x[a-fA-F0-9]{2}
           | [0-7]{1,3}
           )
-        )x, Str::Escape, :pop!
+        )x do
+          token (current_string.type?("r") ? Str : Str::Escape)
+          pop!
+        end
 
-        rule %r/./, Error, :pop!
+        rule %r/\\./, Str, :pop!
       end
 
       state :generic_interpol do
@@ -227,10 +224,6 @@ module Rouge
         end
         rule %r/{/, Str::Interpol, :generic_interpol
         rule %r/}/, Str::Interpol, :pop!
-      end
-
-      state :raw_escape do
-        rule %r/./, Str, :pop!
       end
 
       class StringRegister < Array

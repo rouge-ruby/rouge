@@ -67,13 +67,20 @@ module Rouge
         rule %r'\n', Text
         rule %r'::|!!|\?[:.]', Operator
         rule %r"(\.\.)", Operator
+        # Number literals
+        decDigits = %r"([0-9][0-9_]*[0-9])|[0-9]"
+        exponent = %r"[eE][+-]?(#{decDigits})"
+        double = %r"((#{decDigits})?\.#{decDigits}(#{exponent})?)|(#{decDigits}#{exponent})"
+        rule %r"(#{double}[fF]?)|(#{decDigits}[fF])", Num::Float
+        rule %r"0[bB]([01][01_]*[01]|[01])[uU]?L?", Num::Bin
+        rule %r"0[xX]([0-9a-fA-F][0-9a-fA-F_]*[0-9a-fA-F]|[0-9a-fA-F])[uU]?L?", Num::Hex
+        rule %r"(([1-9][0-9_]*[0-9])|[0-9])[uU]?L?", Num::Integer
         rule %r'[~!%^&*()+=|\[\]:;,.<>/?-]', Punctuation
         rule %r'[{}]', Punctuation
         rule %r'@"(""|[^"])*"'m, Str
         rule %r'""".*?"""'m, Str
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
-        rule %r"[0-9](\.[0-9]+)?([eE][+-][0-9]+)?[flFL]?|0[xX][0-9a-fA-F]+[Ll]?", Num
         rule %r'(@#{class_name})', Name::Decorator
         rule %r'(#{class_name})(<)' do
           groups Name::Class, Punctuation

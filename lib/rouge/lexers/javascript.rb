@@ -15,7 +15,7 @@ module Rouge
 
       tag 'javascript'
       aliases 'js'
-      filenames '*.js', '*.mjs'
+      filenames '*.cjs', '*.js', '*.mjs'
       mimetypes 'application/javascript', 'application/x-javascript',
                 'text/javascript', 'text/x-javascript'
 

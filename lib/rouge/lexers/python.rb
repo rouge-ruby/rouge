@@ -210,7 +210,7 @@ module Rouge
           | [0-7]{1,3}
           )
         )x do
-          token (current_string.type?("r") ? Str : Str::Escape)
+          current_string.type?("r") ? token(Str) : token(Str::Escape)
           pop!
         end
 

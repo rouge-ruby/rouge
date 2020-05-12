@@ -4,6 +4,28 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.19.0: 2020-05-13
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.18.0...v3.19.0)
+
+- General
+  - Use qualified method name for calls to Kernel#load ([#1503](https://github.com/rouge-ruby/rouge/pull/1503/) by Michael Camilleri)
+  - Update keyword-generation Rake tasks ([#1500](https://github.com/rouge-ruby/rouge/pull/1500/) by Michael Camilleri)
+  - Add Rake task to generate keywords for LLVM lexer ([#1505](https://github.com/rouge-ruby/rouge/pull/1505/) by Michael Camilleri)
+- JavaScript Lexer
+  - Add CommonJS file glob to JavaScript lexer ([#1511](https://github.com/rouge-ruby/rouge/pull/1511/) by Andrew)
+- Kotlin Lexer
+  - Improve handling of numbers in Kotlin lexer ([#1509](https://github.com/rouge-ruby/rouge/pull/1509/) by Jen)
+  - Add generic parameter keywords to Kotlin lexer ([#1504](https://github.com/rouge-ruby/rouge/pull/1504/) by Jen)
+- Python Lexer
+  - Fix RuboCop grouped expression warning in Python lexer ([#1513](https://github.com/rouge-ruby/rouge/pull/1513/) by Michael Camilleri)
+  - Allow Unicode in Python identifiers ([#1510](https://github.com/rouge-ruby/rouge/pull/1510/) by Niko Strijbol)
+  - Fix escape sequences in Python's strings ([#1508](https://github.com/rouge-ruby/rouge/pull/1508/) by Michael Camilleri)
+- SPARQL Lexer
+  - Support the 'a' keyword in SPARQL lexer ([#1493](https://github.com/rouge-ruby/rouge/pull/1493/) by Michael Camilleri)
+- Turtle Lexer
+  - Allow empty prefix in Turtle lexer ([#1494](https://github.com/rouge-ruby/rouge/pull/1494/) by Michael Camilleri)
+
 ## version 3.18.0: 2020-04-15
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.17.0...v3.18.0)

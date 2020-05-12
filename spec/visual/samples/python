@@ -150,3 +150,8 @@ x @= y
 f'{hello} world {int(x) + 1}'
 f'{{ {4*10} }}'
 f'result: {value:{width}.{precision}}'
+
+# Unicode identifiers
+α = 10
+def coöperative(б):
+    return f"{б} is Russian"

@@ -67,8 +67,8 @@ module Rouge
         )
       end
 
-      identifier =        /[a-z_][a-z0-9_]*/i
-      dotted_identifier = /[a-z_.][a-z0-9_.]*/i
+      identifier =        /[[:alpha:]_][[:alnum:]_]*/
+      dotted_identifier = /[[:alpha:]_.][[:alnum:]_.]*/
 
       def current_string
         @string_register ||= StringRegister.new

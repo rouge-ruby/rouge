@@ -49,11 +49,13 @@ module Rouge
           name = m[0]
           keywords = self.class.keywords
 
-          if mapping_contains?(keywords[:command], name)
+          if keywords[:command].include? name
             token Keyword
-          elsif mapping_contains?(keywords[:option], name)
+          elsif keywords[:function].include? name
             token Name::Builtin
-          elsif mapping_contains?(keywords[:auto], name)
+          elsif keywords[:option].include? name
+            token Name::Builtin
+          elsif keywords[:auto].include? name
             token Name::Builtin
           else
             token Text
@@ -62,40 +64,6 @@ module Rouge
 
         # no errors in VimL!
         rule %r/./m, Text
-      end
-
-      def mapping_contains?(mapping, word)
-        shortest, longest = find_likely_mapping(mapping, word)
-
-        shortest and word.start_with?(shortest) and
-        longest and longest.start_with?(word)
-      end
-
-      # binary search through the mappings to find the one that's likely
-      # to actually work.
-      def find_likely_mapping(mapping, word)
-        min = 0
-        max = mapping.size
-
-        until max == min
-          mid = (max + min) / 2
-
-          cmp, _ = mapping[mid]
-
-          case word <=> cmp
-          when 1
-            # too low
-            min = mid + 1
-          when -1
-            # too high
-            max = mid
-          when 0
-            # just right, abort!
-            return mapping[mid]
-          end
-        end
-
-        mapping[max - 1]
       end
     end
   end

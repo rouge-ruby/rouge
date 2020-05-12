@@ -25,8 +25,8 @@ module Rouge
       end
 
       def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'lua/builtins.rb')
-        self.builtins
+        Kernel::load File.join(Lexers::BASE_DIR, 'lua/keywords.rb')
+        builtins
       end
 
       def builtins

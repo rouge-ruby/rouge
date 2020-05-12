@@ -120,7 +120,6 @@ module Rouge
         rule %r/(?<!->)(self|inherited|currentcapture|givenblock)\b/i, Name::Builtin::Pseudo
         rule %r/-(?!infinity)#{id}/i, Name::Attribute
         rule %r/::\s*#{id}/, Name::Label
-        rule %r/error_((code|msg)_\w+|adderror|columnrestriction|databaseconnectionunavailable|databasetimeout|deleteerror|fieldrestriction|filenotfound|invaliddatabase|invalidpassword|invalidusername|modulenotfound|noerror|nopermission|outofmemory|reqcolumnmissing|reqfieldmissing|requiredcolumnmissing|requiredfieldmissing|updateerror)/i, Name::Exception
 
         # definitions
         rule %r/(define)(\s+)(#{id})(\s*=>\s*)(type|trait|thread)\b/i do
@@ -145,7 +144,6 @@ module Rouge
         # keywords
         rule %r/(true|false|none|minimal|full|all|void)\b/i, Keyword::Constant
         rule %r/(local|var|variable|global|data(?=\s))\b/i, Keyword::Declaration
-        rule %r/(array|date|decimal|duration|integer|map|pair|string|tag|xml|null|boolean|bytes|keyword|list|locale|queue|set|stack|staticarray)\b/i, Keyword::Type
         rule %r/(#{id})(\s+)(in)\b/i do
           groups Name, Text, Keyword
         end
@@ -169,9 +167,15 @@ module Rouge
 
           if name == 'namespace_using'
             token Keyword::Namespace, m[2]
+          elsif self.class.keywords[:exceptions].include? name
+            token Name::Exception, m[2]
+          elsif self.class.keywords[:types].include? name
+            token Keyword::Type, m[2]
+          elsif self.class.keywords[:traits].include? name
+            token Name::Decorator, m[2]
           elsif self.class.keywords[:keywords].include? name
             token Keyword, m[2]
-          elsif self.class.keywords[:types_traits].include? name
+          elsif self.class.keywords[:builtins].include? name
             token Name::Builtin, m[2]
           else
             token Name::Other, m[2]

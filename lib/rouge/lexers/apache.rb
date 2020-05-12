@@ -12,13 +12,27 @@ module Rouge
       filenames '.htaccess', 'httpd.conf'
 
       # self-modifying method that loads the keywords file
-      def self.keywords
+      def self.directives
         Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        keywords
+        directives
       end
 
-      def name_for_token(token, kwtype, tktype)
-        if self.class.keywords[kwtype].include? token
+      def self.sections
+        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
+        sections
+      end
+
+      def self.values
+        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
+        values
+      end
+
+      def name_for_token(token, tktype)
+        if self.class.sections.include? token
+          tktype
+        elsif self.class.directives.include? token
+          tktype
+        elsif self.class.values.include? token
           tktype
         else
           Text
@@ -34,12 +48,12 @@ module Rouge
         mixin :whitespace
 
         rule %r/(<\/?)(\w+)/ do |m|
-          groups Punctuation, name_for_token(m[2].downcase, :sections, Name::Label)
+          groups Punctuation, name_for_token(m[2].downcase, Name::Label)
           push :section
         end
 
         rule %r/\w+/ do |m|
-          token name_for_token(m[0].downcase, :directives, Name::Class)
+          token name_for_token(m[0].downcase, Name::Class)
           push :directive
         end
       end
@@ -61,7 +75,7 @@ module Rouge
         mixin :whitespace
 
         rule %r/\S+/ do |m|
-          token name_for_token(m[0], :values, Literal::String::Symbol)
+          token name_for_token(m[0].downcase, Literal::String::Symbol)
         end
       end
     end

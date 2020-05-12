@@ -47,6 +47,7 @@ def baz():
     '\UaaaaAF09'
     '\xaf\xAF\x09'
     '\007'
+    '.*\[p00t_(d\d{4})\].*' # There are no escape sequences in this string
 
 # escaped characters in raw strings
 def baz():
@@ -56,6 +57,7 @@ def baz():
     r'\UaaaaAF09'
     r'\xaf\xAF\x09'
     r'\007'
+    r'.*\[p00t_(d\d{4})\].*'
 
 # line continuations
 apple.filter(x, y)

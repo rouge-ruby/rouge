@@ -186,14 +186,7 @@ module Rouge
           end
         end
 
-        rule %r/\\/ do |m|
-          if current_string.type? "r"
-            token Str
-          else
-            token Str::Interpol
-          end
-          push :generic_escape
-        end
+        rule %r/(?=\\)/, Str, :generic_escape
 
         rule %r/{/ do |m|
           if current_string.type? "f"
@@ -206,9 +199,10 @@ module Rouge
       end
 
       state :generic_escape do
-        rule %r(
+        rule %r(\\
           ( [\\abfnrtv"']
           | \n
+          | newline
           | N{[a-zA-Z][a-zA-Z ]+[a-zA-Z]}
           | u[a-fA-F0-9]{4}
           | U[a-fA-F0-9]{8}
@@ -216,13 +210,11 @@ module Rouge
           | [0-7]{1,3}
           )
         )x do
-          if current_string.type? "r"
-            token Str
-          else
-            token Str::Escape
-          end
+          token (current_string.type?("r") ? Str : Str::Escape)
           pop!
         end
+
+        rule %r/\\./, Str, :pop!
       end
 
       state :generic_interpol do

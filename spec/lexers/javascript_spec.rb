@@ -17,7 +17,9 @@ describe Rouge::Lexers::Javascript do
     include Support::Guessing
 
     it 'guesses by filename' do
+      assert_guess :filename => 'foo.cjs'
       assert_guess :filename => 'foo.js'
+      assert_guess :filename => 'foo.mjs'
     end
 
     it 'guesses by mimetype' do

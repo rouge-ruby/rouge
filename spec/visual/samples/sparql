@@ -52,3 +52,11 @@ false
 '''The librarian said, "Perhaps you would enjoy 'War and Peace'."'''
 """The librarian said, 'Perhaps you would enjoy "War and Peace".'"""
 "\u4444 and \U88888888"
+
+# `a` keyword
+PREFIX : <http://example.org/#>
+SELECT ?item ?itemLabel
+WHERE
+{
+    ?item a :Test .
+}

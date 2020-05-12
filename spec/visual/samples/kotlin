@@ -182,4 +182,10 @@ loop@ for (i in 1..100) {
     }
 }
 
+val ints = listOf(1, 4_20, 100L, 123_345_678U)
+val bins = listOf(0b1, 0B0, 0b10_10_01, 0b10U, 0b10uL)
+val hexes = listOf(0xFF, 0Xa, 0x10L, 0X0UL)
+val exponents = listOf(1e10, -1E10F, 1.5e10, 1e-10)
+val doublesAndFloats = listOf(3.14, .99, 22f, 1_000.000_1, 19.95F)
+
 // comment at EOF (#797)

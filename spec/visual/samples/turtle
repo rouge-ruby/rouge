@@ -52,9 +52,15 @@
 	dcterms:modified "2015-09-06T23:59:12"^^xsd:dateTime ;
 	owl:versionInfo "5.0" ;
 	adms:versionNotes "Lepší než předtim"@cs, "This version is better"@en .
-	
+
 	<https://data.cssz.cz/resource/dataset/zanikle-duchody/id1> a adms:Identifier ;
 	skos:notation "https://data.cssz.cz/dataset/pocet-zaniklych-duchodu-v-ceske-republice"^^<http://purl.org/spar/datacite/url> .
 
 	<https://data.cssz.cz/resource/dataset/zanikle-duchody/id2> a adms:Identifier ;
 	skos:notation "https://data.cssz.cz/dataset/zanikle-duchody"^^<http://purl.org/spar/datacite/url> .
+
+@prefix : <http://example.org/#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+: a :AdditionalTest ;
+  rdfs:comment ":-)"^^: .

@@ -33,20 +33,21 @@ module Rouge
       end
 
       state :root do
-        rule %r/[^{#$]+/, Other
+        rule %r/[^{#$]+/ do
+          delegate parent
+        end
 
         rule %r/(#)(\*.*?\*)(#)/m do
-          groups Comment::Preproc, Comment, Comment::Preproc
+          token Comment
         end
 
         rule %r/(##)(.*?$)/ do
-          groups Comment::Preproc, Comment
+          token Comment
         end
 
         rule %r/(#\{?)(#{id})(\}?)(\s?\()/m do
-          groups Punctuation, Name::Function, Punctuation, Punctuation do
-            goto :directiveparams
-          end
+          groups Punctuation, Name::Function, Punctuation, Punctuation
+          push :directiveparams
         end
 
         rule %r/(#\{?)(#{id})(\}|\b)/m do
@@ -60,12 +61,10 @@ module Rouge
         rule %r/#{id}/, Name::Variable
         rule %r/\(/, Punctuation, :funcparams
         rule %r/(\.)(#{id})/ do
-          groups Punctuation, Name::Variable do
-            goto :push
-          end
+          groups Punctuation, Name::Variable
         end
         rule %r/\}/, Punctuation, :pop!
-        rule %r/./, Str::Char, :pop!
+        rule(//) { pop! }
       end
 
       state :directiveparams do
@@ -91,9 +90,9 @@ module Rouge
         rule %r/\b[0-9]+\b/, Literal::Number
         rule %r/(true|false|null)\b/, Keyword::Constant
         rule %r/\(/, Punctuation, :push
-        rule %r/\)/, Punctuation, :push
+        rule %r/\)/, Punctuation, :pop!
         rule %r/\[/, Punctuation, :push
-        rule %r/\]/, Punctuation, :push
+        rule %r/\]/, Punctuation, :pop!
         rule %r/\}/, Punctuation, :pop!
       end
 

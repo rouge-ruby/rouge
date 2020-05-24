@@ -13,7 +13,7 @@ module Rouge
 
       mimetypes 'text/x-jsx', 'application/x-jsx'
 
-      start { @html = HTML.new(options) }
+      start { @html = HTML.new(options); push :expr_start }
 
       prepend :expr_start do
         mixin :tag

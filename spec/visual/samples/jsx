@@ -1,3 +1,7 @@
+<header className="App-header">
+  Hello React!
+</header>
+
 var myDivElement = <div className="foo" />;
 ReactDOM.render(myDivElement, document.getElementById('example'));
 

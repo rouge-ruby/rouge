@@ -9,7 +9,7 @@ module Rouge
       filenames '*.vm', '*.velocity', '*.fhtml'
       mimetypes 'text/html+velocity'
 
-      IDENTIFIER = IDENTIFIER = /[a-zA-Z_]\w*/
+      id = /[a-zA-Z_]\w*/
 
       def self.analyze_text(text)
         rv = 0.0
@@ -43,13 +43,13 @@ module Rouge
           groups Comment::Preproc, Comment
         end
 
-        rule /(#\{?)(#{IDENTIFIER})(\}?)(\s?\()/m do
+        rule /(#\{?)(#{id})(\}?)(\s?\()/m do
           groups Punctuation, Name::Function, Punctuation, Punctuation do
             goto :directiveparams
           end
         end
 
-        rule /(#\{?)(#{IDENTIFIER})(\}|\b)/m do
+        rule /(#\{?)(#{id})(\}|\b)/m do
           groups Punctuation, Name::Function, Punctuation
         end
 
@@ -57,9 +57,9 @@ module Rouge
       end
 
       state :variable do
-        rule /#{IDENTIFIER}/, Name::Variable
+        rule /#{id}/, Name::Variable
         rule /\(/, Punctuation, :funcparams
-        rule /(\.)(#{IDENTIFIER})/ do
+        rule /(\.)(#{id})/ do
           groups Punctuation, Name::Variable do
             goto :push
           end
@@ -71,7 +71,7 @@ module Rouge
       state :directiveparams do
         rule /(&&|\|\||==?|!=?|[-<>+*%&|^\/])|\b(eq|ne|gt|lt|ge|le|not|in)\b/, Operator
         rule /\[/, Operator, :rangeoperator
-        rule /\b#{IDENTIFIER}\b/, Name::Function
+        rule /\b#{id}\b/, Name::Function
         mixin :funcparams
       end
 

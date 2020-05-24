@@ -11,27 +11,6 @@ module Rouge
 
       id = /[a-zA-Z_]\w*/
 
-      def self.analyze_text(text)
-        rv = 0.0
-        if text =~ /#\{?macro\}?\(.*?\).*?#\{?end\}?/
-          rv += 0.25
-        end
-
-        if text =~ /#\{?if\}?\(.+?\).*?#\{?end\}?/
-          rv += 0.15
-        end
-
-        if text =~ /#\{?foreach\}?\(.+?\).*?#\{?end\}?/
-          rv += 0.15
-        end
-
-        if text =~ /\$\{?[a-zA-Z_]\w*(\([^)]*\))?(\.\w+(\([^)]*\))?)*\}?/
-          rv += 0.01
-        end
-
-        rv
-      end
-
       state :root do
         rule %r/[^{#$]+/ do
           delegate parent

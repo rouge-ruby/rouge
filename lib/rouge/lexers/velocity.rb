@@ -33,68 +33,68 @@ module Rouge
       end
 
       state :root do
-        rule /[^{#$]+/, Other
+        rule %r/[^{#$]+/, Other
 
-        rule /(#)(\*.*?\*)(#)/m do
+        rule %r/(#)(\*.*?\*)(#)/m do
           groups Comment::Preproc, Comment, Comment::Preproc
         end
 
-        rule /(##)(.*?$)/ do
+        rule %r/(##)(.*?$)/ do
           groups Comment::Preproc, Comment
         end
 
-        rule /(#\{?)(#{id})(\}?)(\s?\()/m do
+        rule %r/(#\{?)(#{id})(\}?)(\s?\()/m do
           groups Punctuation, Name::Function, Punctuation, Punctuation do
             goto :directiveparams
           end
         end
 
-        rule /(#\{?)(#{id})(\}|\b)/m do
+        rule %r/(#\{?)(#{id})(\}|\b)/m do
           groups Punctuation, Name::Function, Punctuation
         end
 
-        rule /\$\{?/, Punctuation, :variable
+        rule %r/\$\{?/, Punctuation, :variable
       end
 
       state :variable do
-        rule /#{id}/, Name::Variable
-        rule /\(/, Punctuation, :funcparams
-        rule /(\.)(#{id})/ do
+        rule %r/#{id}/, Name::Variable
+        rule %r/\(/, Punctuation, :funcparams
+        rule %r/(\.)(#{id})/ do
           groups Punctuation, Name::Variable do
             goto :push
           end
         end
-        rule /\}/, Punctuation, :pop!
-        rule /./, Str::Char, :pop!
+        rule %r/\}/, Punctuation, :pop!
+        rule %r/./, Str::Char, :pop!
       end
 
       state :directiveparams do
-        rule /(&&|\|\||==?|!=?|[-<>+*%&|^\/])|\b(eq|ne|gt|lt|ge|le|not|in)\b/, Operator
-        rule /\[/, Operator, :rangeoperator
-        rule /\b#{id}\b/, Name::Function
+        rule %r/(&&|\|\||==?|!=?|[-<>+*%&|^\/])|\b(eq|ne|gt|lt|ge|le|not|in)\b/, Operator
+        rule %r/\[/, Operator, :rangeoperator
+        rule %r/\b#{id}\b/, Name::Function
         mixin :funcparams
       end
 
       state :rangeoperator do
-        rule /\.\./, Operator
+        rule %r/\.\./, Operator
         mixin :funcparams
-        rule /\]/, Operator, :pop!
+        rule %r/\]/, Operator, :pop!
       end
 
       state :funcparams do
-        rule /\$\{?/, Punctuation, :variable
-        rule /\s+/, Text
-        rule /,/, Punctuation
-        rule /"(\\\\|\\"|[^"])*"/, Str::Double
-        rule /'(\\\\|\\'|[^'])*'/, Str::Single
-        rule /0[xX][0-9a-fA-F]+[Ll]?/, Literal::Number
-        rule /\b[0-9]+\b/, Literal::Number
-        rule /(true|false|null)\b/, Keyword::Constant
-        rule /\(/, Punctuation, :push
-        rule /\)/, Punctuation, :push
-        rule /\[/, Punctuation, :push
-        rule /\]/, Punctuation, :push
-        rule /\}/, Punctuation, :pop!
+        rule %r/\$\{?/, Punctuation, :variable
+        rule %r/\s+/, Text
+        rule %r/,/, Punctuation
+        rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
+        rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
+        rule %r/0[xX][0-9a-fA-F]+[Ll]?/, Literal::Number
+        rule %r/\b[0-9]+\b/, Literal::Number
+        rule %r/(true|false|null)\b/, Keyword::Constant
+        rule %r/\(/, Punctuation, :push
+        rule %r/\)/, Punctuation, :push
+        rule %r/\[/, Punctuation, :push
+        rule %r/\]/, Punctuation, :push
+        rule %r/\}/, Punctuation, :pop!
       end
 
     end

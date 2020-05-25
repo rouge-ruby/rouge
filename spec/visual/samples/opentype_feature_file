@@ -7,7 +7,7 @@ languagesystem grek dflt;
 
 
 table name {
-  nameid 0 "Copyright Enschede";
+  nameid 0 "\00A9 2020 Enschede";
   nameid 9 "Jan van Krimpen";
 } name;
 
@@ -15,6 +15,7 @@ table name {
 
 include (../../family.fea);
 include (  ../../family.fea  ) ;
+include (../../locl-IPPH-APPH.fea); # imports IPA lookups (which differ between upright and italic)
 
 languagesystem DFLT dflt;
 languagesystem latn dflt;
@@ -57,6 +58,7 @@ table OS/2 {
 # Script and language coverage
 languagesystem DFLT dflt;
 languagesystem latn dflt;
+language DEU include_dflt;
 
 # Ligature formation
 feature liga {
@@ -88,6 +90,24 @@ feature test {
      substitute [ a e i o u] c' lookup CNTXT_LIGS t' s' lookup CNTXT_SUB;
  } test;
 
+lookup ADD_ADVANCE_WIDTH {
+    pos ka-gran' lookup REPHA_SPACE lookup ANUSVARA_SPACE lookup ADD70 repha-gran anusvara-gran;
+    pos ka-gran' lookup REPHA_SPACE lookup ADD70 repha-gran;
+    pos ka-gran' lookup ANUSVARA_SPACE lookup ADD70 anusvara-gran;
+} ADD_ADVANCE_WIDTH;
+
+lookup REMOVE_CAKRA {
+    sub ka ka.pas_cakra.ns by ka;
+} REMOVE_CAKRA;
+
+lookup REORDER_CAKRA {
+    sub ka by ka.pas_cakra ka;
+} REORDER_CAKRA;
+
+lookup REORDER_CHAIN {
+    sub ka' lookup REMOVE_CAKRA lookup REORDER_CAKRA ka.pas_cakra.ns' ;
+} REORDER_CHAIN;
+
 table OS/2 {
     FSType 4;
     Panose 2 15 0 0 2 2 8 2 9 4;
@@ -114,3 +134,92 @@ table OS/2 {
     WidthClass 3;
     Vendor "ADBE";
 } OS/2;
+
+feature vpal {
+  position \1401 <0 26 0 -87>;
+  position \1414 <0 50 0 -140>;
+} vpal;
+
+table vmtx {
+  VertOriginY \736 867;
+  VertOriginY \754 868;
+  VertOriginY \755 875;
+} vmtx;
+
+feature cv18 { # Character Variant 18 — dotted zero
+
+	cvParameters {
+		FeatUILabelNameID {
+			name 3 1 0x0409 "Dotted zero [ 0 ]"; # English US
+			name 3 1 0x0809 "Dotted zero [ 0 ]"; # English GB
+			name 1 0 0 "Dotted zero [ 0 ]"; # Mac English
+			name 3 1 0x0408 "\039C\03B7\03B4\03AD\03BD \03BC\03B5 \03BA\03B5\03BD\03C4\03C1\03B9\03BA\03AE \03C4\03B5\03BB\03B5\03AF\03B1 [ 0 ]"; # Greek: "Μηδέν με κεντρική τελεία [ 0 ]"
+			name 3 1 0x0419 "\041D\043E\043B\044C \0441 \043F\0443\043D\043A\0442\0438\0440\043E\043C [ 0 ]"; # Russian: "Ноль с пунктиром [ 0 ]"
+		};
+	};
+
+	lookup ZERO {
+		sub zero by zero.0;
+		sub zero.pnum by zero.0p;
+	} ZERO;
+
+} cv18;
+
+table STAT {
+
+   ElidedFallbackName { name "Regular"; };
+
+   DesignAxis wght 0 { name "Weight"; };
+   DesignAxis opsz 1 { name "Optical"; };
+
+   AxisValue {
+      location wght 200 200 - 250;
+      name "ExtraLight";
+   };
+
+   AxisValue {
+      location wght 300 250 - 350;
+      name "Light";
+   };
+
+   AxisValue {
+      location wght 400 350 - 450;
+      name "Regular";
+      flag ElidableAxisValueName;
+   };
+
+   AxisValue {
+      location wght 600 550 - 650;
+      name "Semibold";
+   };
+
+   AxisValue {
+      location wght 700 650 - 750;
+      name "Bold";
+   };
+
+   AxisValue {
+      location wght 900 800 - 900;
+      name "Black";
+   };
+
+   AxisValue {
+      location
+      opsz 6 0 - 8;
+      name "Caption";
+   };
+
+   AxisValue {
+      location
+      opsz 10 8 - 24;
+      name "Text";
+      flag ElidableAxisValueName;
+   };
+
+   AxisValue {
+      location
+      opsz 60 24 - 100;
+      name "Display";
+   };
+
+} STAT;

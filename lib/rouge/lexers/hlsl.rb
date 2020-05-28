@@ -3,6 +3,8 @@
 
 module Rouge
   module Lexers
+    load_lexer 'c.rb'
+
     class HLSL < C
       title "HLSL"
       desc "HLSL, the High Level Shading Language for DirectX"

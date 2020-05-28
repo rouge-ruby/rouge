@@ -1,0 +1,38 @@
+// Data for each pixel
+struct PSInput
+{
+    float4 position : SV_POSITION;
+    float4 color : COLOR;
+    float2 uv : TEXCOORD;
+};
+
+// Creates a gradient between four colors
+float4 FourColorGradient(float4 color1, float4 color2, float4 color3, float4 color4, float2 uv)
+{
+    return lerp(lerp(color1, color2, uv.y),  lerp(color3, color4, uv.y), uv.x);
+}
+
+// Vertex shader
+PSInput VSMain(float4 position : POSITION, float4 color : COLOR, float4 uv : TEXCOORD)
+{
+    PSInput result;
+
+    result.position = position;
+    result.color = color;
+    result.uv = uv.xy;
+
+    return result;
+}
+
+/*
+* Pixel Shader, entry point into this shader
+*/
+float4 PSMain(PSInput input) : SV_TARGET
+{
+    const float4 _Color1 = float4(1,.5,.5,1);
+    const float4 _Color2 = float4(0.5,1,0,1);
+    const float4 _Color3 = float4(0,1,1,1);
+    const float4 _Color4 = float4(1,0,1,1);
+    float4 gradient = FourColorGradient(_Color1, _Color2, _Color3, _Color4, input.uv);
+    return input.color * gradient;
+}

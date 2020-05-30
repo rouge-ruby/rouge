@@ -73,7 +73,7 @@ module Rouge
             push :module
           elsif reserved.include?(match)
             token Keyword::Reserved
-          elsif match.start_with?(/'?[A-Z]/)
+          elsif match =~ /\A'?[A-Z]/
             token Keyword::Type
           else
             token Name

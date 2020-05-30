@@ -17,8 +17,8 @@ module Rouge
       end
 
       reserved = %w(
-        _ case class data default deriving do else if in
-        infix[lr]? instance let newtype of then type where
+        _ case class data default deriving do else if in infix infixl infixr
+        instance let newtype of then type where
       )
 
       ascii = %w(

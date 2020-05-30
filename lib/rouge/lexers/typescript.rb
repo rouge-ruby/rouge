@@ -7,7 +7,7 @@ module Rouge
     load_lexer 'typescript/common.rb'
 
     class Typescript < Javascript
-      include TypescriptCommon
+      extend TypescriptCommon
 
       title "TypeScript"
       desc "TypeScript, a superset of JavaScript"

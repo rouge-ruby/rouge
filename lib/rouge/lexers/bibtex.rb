@@ -11,8 +11,8 @@ module Rouge
       tag 'bibtex'
       filenames '*.bib'
 
-      valid_punctuation = /@\!\$\&\*\+\-\.\/\:\;\<\>\?\[\\\]\^\`\|\~/
-      valid_name = /[a-z\_#{valid_punctuation}][\w#{valid_punctuation}]*/io
+      valid_punctuation = /[@!$&.\\:;<>?\[\]^`|~*\/+-]/
+      valid_name = /[a-z_#{valid_punctuation}][\w#{valid_punctuation}]*/io
 
       state :root do
         mixin :whitespace

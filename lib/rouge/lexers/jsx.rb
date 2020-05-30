@@ -6,97 +6,85 @@ module Rouge
 
     class JSX < Javascript
       title 'JSX'
-      desc 'React JSX (https://facebook.github.io/react/)'
+      desc 'An XML-like syntax extension to JavaScript (facebook.github.io/jsx/)'
       tag 'jsx'
       aliases 'jsx', 'react'
       filenames '*.jsx'
 
       mimetypes 'text/x-jsx', 'application/x-jsx'
 
-      id = Javascript.id_regex
-
-      def start_embed!
-        @embed ||= JSX.new(options)
-        @embed.reset!
-        @embed.push(:expr_start)
-        push :jsx_embed_root
-      end
-
-      def tag_token(name)
-        name[0] =~ /\p{Lower}/ ? Name::Tag : Name::Class
-      end
-
-      start { @html = HTML.new(options) }
-
-      state :jsx_tags do
-        rule %r/</, Punctuation, :jsx_element
-      end
-
-      state :jsx_internal do
-        rule %r(</) do
-          token Punctuation
-          goto :jsx_end_tag
-        end
-
-        rule %r/{/ do
-          token Str::Interpol
-          start_embed!
-        end
-
-        rule %r/[^<>{]+/ do
-          delegate @html
-        end
-
-        mixin :jsx_tags
-      end
+      start { @html = HTML.new(options); push :expr_start }
 
       prepend :expr_start do
-        mixin :jsx_tags
+        mixin :tag
       end
 
-      state :jsx_tag do
-        mixin :comments_and_whitespace
-        rule %r/#{id}/ do |m|
-          token tag_token(m[0])
+      state :tag do
+        rule %r/</ do
+          token Punctuation
+          push :tag_opening
+          push :element
+          push :element_name
         end
-
-        rule %r/[.]/, Punctuation
       end
 
-      state :jsx_end_tag do
-        mixin :jsx_tag
-        rule %r/>/, Punctuation, :pop!
-      end
-
-      state :jsx_element do
-        rule %r/#{id}=/, Name::Attribute, :jsx_attribute
-        mixin :jsx_tag
-        rule %r/>/ do token Punctuation; goto :jsx_internal end
-        rule %r(/>), Punctuation, :pop!
-      end
-
-      state :jsx_attribute do
-        rule %r/"(\\[\\"]|[^"])*"/, Str::Double, :pop!
-        rule %r/'(\\[\\']|[^'])*'/, Str::Single, :pop!
+      state :tag_opening do
+        rule %r/<\// do
+          token Punctuation
+          goto :element
+          push :element_name
+        end
+        mixin :tag
         rule %r/{/ do
           token Str::Interpol
-          pop!
-          start_embed!
+          push :interpol
+          push :expr_start
+        end
+        rule %r/[^<{]+/ do
+          delegate @html
         end
       end
 
-      state :jsx_embed_root do
-        rule %r/[.][.][.]/, Punctuation
+      state :element do
+        mixin :comments_and_whitespace
+        rule %r/\/>/ do
+          token Punctuation
+          pop! 2
+        end
+        rule %r/>/, Punctuation, :pop!
+        rule %r/{/ do
+          token Str::Interpol
+          push :interpol
+          push :expr_start
+        end
+        rule %r/\w+/, Name::Attribute
+        rule %r/=/, Punctuation
+        rule %r/(["']).*?(\1)/, Str
+      end
+
+      state :element_name do
+        rule %r/[A-Z]\w*/, Name::Class
+        rule %r/\w+/, Name::Tag
+        rule %r/\./, Punctuation
+        rule(//) { pop! }
+      end
+
+      state :interpol do
         rule %r/}/, Str::Interpol, :pop!
-        mixin :jsx_embed
+        rule %r/{/ do
+          token Punctuation
+          push :interpol_inner
+          push :statement
+        end
+        mixin :root
       end
 
-      state :jsx_embed do
-        rule %r/{/ do delegate @embed; push :jsx_embed end
-        rule %r/}/ do delegate @embed; pop! end
-        rule %r/[^{}]+/ do
-          delegate @embed
+      state :interpol_inner do
+        rule %r/}/ do
+          token Punctuation
+          goto :statement
         end
+        mixin :root
       end
     end
   end

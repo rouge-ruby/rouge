@@ -9,8 +9,8 @@ module Rouge
     class TSX < JSX
       extend TypescriptCommon
 
-      title 'TypeScript'
-      desc 'tsx'
+      title 'TSX'
+      desc 'TypeScript-compatible JSX (www.typescriptlang.org/docs/handbook/jsx.html)'
 
       tag 'tsx'
       filenames '*.tsx'

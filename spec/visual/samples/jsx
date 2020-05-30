@@ -1,7 +1,9 @@
+<header className="App-header">
+  Hello React!
+</header>
+
 var myDivElement = <div className="foo" />;
 ReactDOM.render(myDivElement, document.getElementById('example'));
-
-
 
 var MyComponent = React.createClass({/*...*/});
 var myElement = <MyComponent someProperty={true} />;
@@ -48,15 +50,6 @@ var content = (
       name={window.isLoggedIn ? window.name : ''} // end of line comment
     />
   </Nav>
-);
-
-var App = (
-  <Form>
-    <FormRow>
-      <FormLabel />
-      <FormInput />
-    </FormRow>
-  </Form>
 );
 
 var thing = <A b={function() { var c = <D e={true}>&quot;</D>; }()}/>

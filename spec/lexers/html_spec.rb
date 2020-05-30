@@ -65,6 +65,7 @@ describe Rouge::Lexers::HTML do
       assert_guess :filename => 'foo.html'
       assert_guess :filename => 'foo.htm'
       assert_guess :filename => 'foo.xhtml'
+      assert_guess :filename => 'foo.cshtml'
     end
 
     it 'guesses by mimetype' do

@@ -282,7 +282,7 @@ module Rouge
         end
         rule %r/#{id}/, Name::Attribute
         rule %r/#{int}/, Num::Integer
-        rule(//) { pop!; push :slash_starts_regex }
+        rule(//) { goto :slash_starts_regex }
       end
 
       state :strings do

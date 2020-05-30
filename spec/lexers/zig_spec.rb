@@ -9,7 +9,6 @@ describe Rouge::Lexers::Zig do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.zig'
-      assert_guess :filename => 'foo.zir'
     end
 
     it 'guesses by mimetype' do

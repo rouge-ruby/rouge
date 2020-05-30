@@ -1,25 +1,18 @@
 const std = @import("std");
 
-// read an unsigned integer from standard input
-fn get_num(stdin: *const std.fs.File, stdout: *const @TypeOf(std.io.getStdOut().outStream())) !u32 {
+fn get_num(ptr: *u32, stdin: *const std.fs.File, stdout: *const @TypeOf(std.io.getStdOut().outStream())) !void {
     var buf: [20]u8 = undefined;
     const len = try stdin.read(&buf);
-
-    // 20 bytes is bigger than what a u32 can hold, so
-    // check against that length to ensure we don't
-    // have too big an input
     if (len == buf.len) {
         try stdout.print("Input is too long!\n", .{});
         std.os.exit(1);
     }
 
     const trimmed_line = std.mem.trimRight(u8, buf[0..len], "\r\n");
-    const number = std.fmt.parseUnsigned(u8, trimmed_line, 10) catch {
+    ptr.* = std.fmt.parseUnsigned(u8, trimmed_line, 10) catch {
         try stdout.print("Invalid number!\n", .{});
         std.os.exit(1);
     };
-
-    return number;
 }
 
 fn factorial(n: u32) u32 {
@@ -29,8 +22,14 @@ fn factorial(n: u32) u32 {
 pub fn main() !void {
     const stdin = std.io.getStdIn();
     const stdout = std.io.getStdOut().outStream();
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
 
-    const x = get_num(&stdin, &stdout) catch 0;
-    try stdout.print("The factorial of {} is {}\n", .{ x, factorial(x) });
+    const allocator = &arena.allocator;
+    const ptr = try allocator.create(u32);
+
+    get_num(ptr, &stdin, &stdout) catch {
+        try stdout.print("Error while trying to read in number!\n", .{});
+    };
+    try stdout.print("The factorial of {} is {}\n", .{ ptr.*, factorial(ptr.*) });
 }
-

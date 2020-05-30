@@ -4,27 +4,27 @@
 module Rouge
   module Lexers
     module TypescriptCommon
-      def self.keywords
+      def keywords
         @keywords ||= super + Set.new(%w(
           is namespace static private protected public
           implements readonly
         ))
       end
 
-      def self.declarations
+      def declarations
         @declarations ||= super + Set.new(%w(
           type abstract
         ))
       end
 
-      def self.reserved
+      def reserved
         @reserved ||= super + Set.new(%w(
           string any void number namespace module
           declare default interface keyof
         ))
       end
 
-      def self.builtins
+      def builtins
         @builtins ||= super + %w(
           Pick Partial Readonly Record
         )

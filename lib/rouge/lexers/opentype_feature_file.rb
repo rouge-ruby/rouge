@@ -12,20 +12,24 @@ module Rouge
 
       def self.keywords
         @keywords ||= %w(
-          Ascender Attach AxisValue CapHeight CaretOffset CodePageRange DesignAxis Descender
-          ElidedFallbackName ElidedFallbackNameID ElidableAxisValueName FeatUILabelNameID
-          FeatUITooltipTextNameID FontRevision FSType GlyphClassDef HorizAxis.BaseScriptList
-          HorizAxis.BaseTagList HorizAxis.MinMax IgnoreBaseGlyphs IgnoreLigatures IgnoreMarks
-          LigatureCaretByDev LigatureCaretByIndex LigatureCaretByPos LineGap MarkAttachClass
-          MarkAttachmentType NULL OlderSiblingFontAttribute Panose ParamUILabelNameID RightToLeft
-          SampleTextNameID TypoAscender TypoDescender TypoLineGap UnicodeRange UseMarkFilteringSet
-          Vendor VertAdvanceY VertAxis.BaseScriptList VertAxis.BaseTagList VertAxis.MinMax VertOriginY
-          VertTypoAscender VertTypoDescender VertTypoLineGap WeightClass WidthClass XHeight
+          Ascender Attach AxisValue CapHeight CaretOffset CodePageRange
+          DesignAxis Descender ElidedFallbackName ElidedFallbackNameID
+          ElidableAxisValueName FeatUILabelNameID FeatUITooltipTextNameID
+          FontRevision FSType GlyphClassDef HorizAxis.BaseScriptList
+          HorizAxis.BaseTagList HorizAxis.MinMax IgnoreBaseGlyphs
+          IgnoreLigatures IgnoreMarks LigatureCaretByDev LigatureCaretByIndex
+          LigatureCaretByPos LineGap MarkAttachClass MarkAttachmentType NULL
+          OlderSiblingFontAttribute Panose ParamUILabelNameID RightToLeft
+          SampleTextNameID TypoAscender TypoDescender TypoLineGap UnicodeRange
+          UseMarkFilteringSet Vendor VertAdvanceY VertAxis.BaseScriptList
+          VertAxis.BaseTagList VertAxis.MinMax VertOriginY VertTypoAscender
+          VertTypoDescender VertTypoLineGap WeightClass WidthClass XHeight
 
-          anchorDef anchor anonymous anon by contour cursive device enumerate enum
-          exclude_dflt featureNames feature flag from ignore include_dflt include languagesystem
-          language location lookupflag lookup markClass mark nameid name parameters position pos
-          required reversesub rsub script sizemenuname substitute subtable sub table useExtension
+          anchorDef anchor anonymous anon by contour cursive device enumerate
+          enum exclude_dflt featureNames feature flag from ignore include_dflt
+          include languagesystem language location lookupflag lookup markClass
+          mark nameid name parameters position pos required reversesub rsub
+          script sizemenuname substitute subtable sub table useExtension
           valueRecordDef winAscent winDescent
         )
       end

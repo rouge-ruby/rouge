@@ -79,14 +79,6 @@ module Rouge
             token Name
           end
         end
-        # rule %r/\bimport\b/, Keyword::Reserved, :import
-        # rule %r/\bmodule\b/, Keyword::Reserved, :module
-        # rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
-        # not sure why, but ^ doesn't work here
-        # rule %r/^[_a-z][\w']*/, Name::Function
-        # rule %r/[_a-z][\w']*/, Name
-        # rule %r/[A-Z][\w']*/, Keyword::Type
-        # rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function

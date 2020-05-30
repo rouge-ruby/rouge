@@ -14,6 +14,13 @@ module Rouge
 
       tag 'tsx'
       filenames '*.tsx'
+
+      prepend :element_name do
+        rule %r/(\w+)(,)/ do
+          groups Name::Other, Punctuation
+          pop! 3
+        end
+      end
     end
   end
 end

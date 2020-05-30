@@ -225,8 +225,6 @@ module Rouge
           groups Name::Label, Text, Punctuation
         end
 
-        rule %r/[{}]/, Punctuation
-
         mixin :expr_start
       end
 

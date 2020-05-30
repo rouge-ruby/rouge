@@ -60,7 +60,7 @@ decltype(a->x) ax = a->x;
 
 // strongly typed enums
 enum class Day {
-  Mon, Tue, Wed, Thur, Fri, Sat, Sun
+    Mon, Tue, Wed, Thur, Fri, Sat, Sun
 };
 Day today = Day::Mon;
 
@@ -81,11 +81,11 @@ double distance = [](double x, double y, double xx, double yy) -> double {
 // templates
 namespace N
 {
-  template<class T>
-  class Y // template definition
-  {
-    void mf() { }
-  };
+    template<class T>
+    class Y // template definition
+    {
+        void mf() { }
+    };
 }
 template class N::Y<char*>;
 template void N::Y<double>::mf();
@@ -97,22 +97,22 @@ template<C1 T> using Ptr = T*;
 // variadic template
 template<class F, class... Args>
 void forward_args(F f, Args... args) {
-  f(std::forward<Args>(args)...);
+    f(std::forward<Args>(args)...);
 }
 
 // namespace
 namespace printing {
-  inline namespace latest {
-    using std::cout;
-    void print() {
-      cout << "Latest print\n";
-    }
-  }
-  namespace old {
-    void print() {
-      ::printf("Old print\n");
-    }
-  }
+    inline namespace latest {
+        using std::cout;
+        void print() {
+            cout << "Latest print\n";
+        }
+     }
+     namespace old {
+          void print() {
+              ::printf("Old print\n");
+          }
+     }
 }
 printing::print();
 printing::latest::print();
@@ -125,47 +125,47 @@ oldPrint::print();
 [[deprecated("useless")]] void doNothing() {}
 
 namespace std {
-  class thread {
-  public:
-    // types:
-    class id;
-    typedef void *native_handle_type;
+    class thread {
+    public:
+        // types:
+        class id;
+        typedef void *native_handle_type;
 
-    // construct/copy/destroy:
-    thread() noexcept;
-    template <class F, class ...Args> explicit thread(F&& f, Args&&... args);
-    ~thread();
-    thread(const thread&) = delete;
-    thread(thread&&) noexcept;
-    thread& operator=(const thread&) = delete;
-    thread& operator=(thread&&) noexcept;
+        // construct/copy/destroy:
+        thread() noexcept;
+        template <class F, class ...Args> explicit thread(F&& f, Args&&... args);
+        ~thread();
+        thread(const thread&) = delete;
+        thread(thread&&) noexcept;
+        thread& operator=(const thread&) = delete;
+        thread& operator=(thread&&) noexcept;
 
-    // members:
-    void swap(thread&) noexcept;
-    bool joinable() const noexcept;
-    void join();
-    void detach();
-    id get_id() const noexcept;
-    native_handle_type native_handle();
+        // members:
+        void swap(thread&) noexcept;
+        bool joinable() const noexcept;
+        void join();
+        void detach();
+        id get_id() const noexcept;
+        native_handle_type native_handle();
 
-    // static members:
-    static unsigned hardware_concurrency() noexcept;
-  };
+        // static members:
+        static unsigned hardware_concurrency() noexcept;
+    };
 }
 
 // try-block
 try {
-  throw std::runtime_error("Runtime error!");
+    throw std::runtime_error("Runtime error!");
 } catch (std::exception& e) {
-  std::cerr << e.what() << std::endl;
+    std::cerr << e.what() << std::endl;
 }
 
 constexpr int factorial(int n) {
-  return n > 0 ? n * factorial(n - 1) : 1;
+    return n > 0 ? n * factorial(n - 1) : 1;
 }
 
 /* foo */ #if 0
- this is commented
+    this is commented
 #endif
 
 /* it shouldn't hang */        /* trying to lex this */
@@ -190,22 +190,22 @@ constexpr int factorial(int n) {
 class Base
 {
 public:
-  Base () = default;
-  virtual ~Base () = default;
+    Base () = default;
+    virtual ~Base () = default;
 
-  virtual void foo () = 0;
+    virtual void foo () = 0;
 };
 
 class Derived final : public Base
 {
 public:
-  Derived () = default;
-  virtual ~Derived () = default;
+    Derived () = default;
+    virtual ~Derived () = default;
 
-  virtual void foo () override
-  {
-     auto a = 1 + 2;
-  }
+    virtual void foo () override
+    {
+        auto a = 1 + 2;
+    }
 };
 
 #define foo bar
@@ -213,31 +213,36 @@ public:
 
 class Highlighter : public QSyntaxHighlighter
 {
-   class InnerClass {}
+    class InnerClass {}
 
-   Q_OBJECT
+    Q_OBJECT
 
 public:
-   Highlighter(QTextDocument *parent = 0);
+    Highlighter(QTextDocument *parent = 0);
 
 protected:
-   void highlightBlock(const QString &text);
+    void highlightBlock(const QString &text);
 
 private:
-   struct HighlightingRule
-   {
-       QRegExp pattern;
-       QTextCharFormat format;
-   };
-   QVector<HighlightingRule> highlightingRules;
+    struct HighlightingRule
+    {
+        QRegExp pattern;
+        QTextCharFormat format;
+    };
+    QVector<HighlightingRule> highlightingRules;
 
-   QRegExp commentStartExpression;
-   QRegExp commentEndExpression;
+    QRegExp commentStartExpression;
+    QRegExp commentEndExpression;
 
-   QTextCharFormat keywordFormat;
-   QTextCharFormat classFormat;
-   QTextCharFormat singleLineCommentFormat;
-   QTextCharFormat multiLineCommentFormat;
-   QTextCharFormat quotationFormat;
-   QTextCharFormat functionFormat;
+    QTextCharFormat keywordFormat;
+    QTextCharFormat classFormat;
+    QTextCharFormat singleLineCommentFormat;
+    QTextCharFormat multiLineCommentFormat;
+    QTextCharFormat quotationFormat;
+    QTextCharFormat functionFormat;
 };
+
+switch (foo) {
+    case Foo::kBar:
+        break;
+}

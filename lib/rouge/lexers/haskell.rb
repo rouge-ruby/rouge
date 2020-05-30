@@ -57,6 +57,12 @@ module Rouge
         rule %r/'(?=(?:.|\\\S+)')/, Str::Char, :character
         rule %r/"/, Str, :string
 
+        rule %r/\d+e[+-]?\d+/i, Num::Float
+        rule %r/\d+\.\d+(e[+-]?\d+)?/i, Num::Float
+        rule %r/0o[0-7]+/i, Num::Oct
+        rule %r/0x[\da-f]+/i, Num::Hex
+        rule %r/\d+/, Num::Integer
+
         rule %r/[\w']+/ do |m|
           match = m[0]
           if match == "import"
@@ -90,12 +96,6 @@ module Rouge
         rule %r(:[:!#\$\%&*+.\\/<=>?@^\|~-]*), Operator
         # other operators
         rule %r([:!#\$\%&*+.\\/<=>?@^\|~-]+), Operator
-
-        rule %r/\d+e[+-]?\d+/i, Num::Float
-        rule %r/\d+\.\d+(e[+-]?\d+)?/i, Num::Float
-        rule %r/0o[0-7]+/i, Num::Oct
-        rule %r/0x[\da-f]+/i, Num::Hex
-        rule %r/\d+/, Num::Integer
 
         rule %r/\[\s*\]/, Keyword::Type
         rule %r/\(\s*\)/, Name::Builtin

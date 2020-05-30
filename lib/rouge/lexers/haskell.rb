@@ -54,14 +54,33 @@ module Rouge
       state :root do
         mixin :basic
 
-        rule %r/\bimport\b/, Keyword::Reserved, :import
-        rule %r/\bmodule\b/, Keyword::Reserved, :module
-        rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
+        rule %r/'(?=(?:.|\\\S+)')/, Str::Char, :character
+        rule %r/"/, Str, :string
+
+        rule %r/[\w']+/ do |m|
+          match = m[0]
+          if match == "import"
+            token Keyword::Reserved
+            push :import
+          elsif match == "module"
+            token Keyword::Reserved
+            push :module
+          elsif reserved.include?(match)
+            token Keyword::Reserved
+          elsif match.start_with?(/'?[A-Z]/)
+            token Keyword::Type
+          else
+            token Name
+          end
+        end
+        # rule %r/\bimport\b/, Keyword::Reserved, :import
+        # rule %r/\bmodule\b/, Keyword::Reserved, :module
+        # rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
         # not sure why, but ^ doesn't work here
         # rule %r/^[_a-z][\w']*/, Name::Function
-        rule %r/[_a-z][\w']*/, Name
-        rule %r/[A-Z][\w']*/, Keyword::Type
-        rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor
+        # rule %r/[_a-z][\w']*/, Name
+        # rule %r/[A-Z][\w']*/, Keyword::Type
+        # rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function
@@ -77,9 +96,6 @@ module Rouge
         rule %r/0o[0-7]+/i, Num::Oct
         rule %r/0x[\da-f]+/i, Num::Hex
         rule %r/\d+/, Num::Integer
-
-        rule %r/'/, Str::Char, :character
-        rule %r/"/, Str, :string
 
         rule %r/\[\s*\]/, Keyword::Type
         rule %r/\(\s*\)/, Name::Builtin

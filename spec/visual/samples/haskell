@@ -399,3 +399,5 @@ quasi3 = [here|Newlines
 are part of
 the quotation
 |]
+
+[ H.label [ H.for' hName, H.class' "col-sm-2 col-form-label" ] [ text msg ]

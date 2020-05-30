@@ -83,7 +83,7 @@ module Rouge
         rule %r/#{valid_name}/o, Name::Variable
         rule %r/"/, Literal::String, :quoted_string
         rule %r/\{/, Literal::String, :braced_string
-        rule %r/[\d]+/, Literal::Number
+        rule %r/\d+/, Literal::Number
         rule %r/#/, Punctuation
         rule(//) { pop! }
       end

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# regex based on https://github.com/SaswatPadhi/prismjs-bibtex and https://github.com/alecthomas/chroma/blob/master/lexers/b/bibtex.go
+# Regular expressions based on https://github.com/SaswatPadhi/prismjs-bibtex
+# and https://github.com/alecthomas/chroma/blob/master/lexers/b/bibtex.go
 
 module Rouge
   module Lexers
@@ -9,6 +10,7 @@ module Rouge
       title 'BibTeX'
       desc "BibTeX"
       tag 'bibtex'
+      aliases 'bib'
       filenames '*.bib'
 
       valid_punctuation = /[@!$&.\\:;<>?\[\]^`|~*\/+-]/

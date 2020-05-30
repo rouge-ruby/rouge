@@ -203,3 +203,7 @@ declare module "foo" {
 const x = `Hello world ${a.b}`;
 const y = `Hello world ${a?.b}`;
 const z = `Hello world`;
+
+// Nullish coalescing in template strings
+const content = `Value is ${value ?? 'not set'}`;
+const description = "Highlighting is broken now";

@@ -33,6 +33,7 @@ module Rouge
       def self.extended(base)
         base.prepend :root do
           rule %r/[?][.]/, base::Punctuation
+          rule %r/[?]{2}/, base::Operator
         end
 
         base.prepend :statement do

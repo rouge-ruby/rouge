@@ -136,6 +136,31 @@ module Rouge
           DEPTH0 DEPTH1 DEPTH2 DEPTH3 DEPTH4
         )
       end
+
+      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
+      id = /[a-zA-Z_][a-zA-Z0-9_]*/
+
+      state :root do
+        mixin :expr_whitespace
+        rule %r(
+          ([\w*\s]+?[\s*])                  # return arguments
+          (#{id})                           # function name
+          (\s*\([^;]*?\)(?:\s*:\s+#{id})?)  # signature
+          (#{ws}?)({|;)                     # open brace or semicolon
+        )mx do |m|
+          # This is copied from the C lexer
+          recurse m[1]
+          token Name::Function, m[2]
+          recurse m[3]
+          recurse m[4]
+          token Punctuation, m[5]
+          if m[5] == ?{
+            push :function
+          end
+        end
+        rule %r/\{/, Punctuation, :function
+        mixin :statements
+      end
     end
   end
 end

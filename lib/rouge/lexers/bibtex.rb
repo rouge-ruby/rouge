@@ -13,30 +13,35 @@ module Rouge
       aliases 'bib'
       filenames '*.bib'
 
-      valid_punctuation = /[@!$&.\\:;<>?\[\]^`|~*\/+-]/
+      valid_punctuation = Regexp.quote("@!$&.\\:;<>?[]^`|~*/+-")
       valid_name = /[a-z_#{valid_punctuation}][\w#{valid_punctuation}]*/io
 
       state :root do
         mixin :whitespace
-        rule %r/@comment/i, Comment
-        rule %r/@preamble/i do
-          token Name::Class
-          push :closing_brace
-          push :value
-          push :opening_brace
+
+        rule %r/@(#{valid_name})/o do |m|
+          match = m[1].downcase
+
+          if match == "comment"
+            token Comment
+          elsif match == "preamble"
+            token Name::Class
+            push :closing_brace
+            push :value
+            push :opening_brace
+          elsif match == "string"
+            token Name::Class
+            push :closing_brace
+            push :field
+            push :opening_brace
+          else
+            token Name::Class
+            push :closing_brace
+            push :command_body
+            push :opening_brace
+          end
         end
-        rule %r/@string/i do
-          token Name::Class
-          push :closing_brace
-          push :field
-          push :opening_brace
-        end
-        rule %r/@#{valid_name}/o do
-          token Name::Class
-          push :closing_brace
-          push :command_body
-          push :opening_brace
-        end
+
         rule %r/.+/, Comment
       end
 

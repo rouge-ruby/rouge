@@ -72,7 +72,7 @@ module Rouge
 
       state :field do
         mixin :whitespace
-        rule %r/#{valid_name}/o do
+        rule valid_name do
           token Name::Attribute
           push :value
           push :equal_sign
@@ -87,7 +87,7 @@ module Rouge
 
       state :value do
         mixin :whitespace
-        rule %r/#{valid_name}/o, Name::Variable
+        rule valid_name, Name::Variable
         rule %r/"/, Literal::String, :quoted_string
         rule %r/\{/, Literal::String, :braced_string
         rule %r/\d+/, Literal::Number

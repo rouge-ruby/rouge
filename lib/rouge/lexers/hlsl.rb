@@ -7,7 +7,7 @@ module Rouge
 
     class HLSL < C
       title "HLSL"
-      desc "HLSL, the High Level Shading Language for DirectX"
+      desc "HLSL, the High Level Shading Language for DirectX (docs.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl)"
       tag 'hlsl'
       filenames '*.hlsl', '*.hlsli'
       mimetypes 'text/x-hlsl'

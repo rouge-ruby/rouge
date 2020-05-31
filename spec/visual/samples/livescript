@@ -79,6 +79,9 @@ c = ^^...[copy, these, {}]
 delete ...list[1, 2, 3]
 do ...[a, b, c]
 
+# arguments shorthand &
+-> &1 + &2 || &a + &b || &
+
 # Imports
 obj = {one: 1, two: 2}
 obj <<< three: 3

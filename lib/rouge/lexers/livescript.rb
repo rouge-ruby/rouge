@@ -86,9 +86,6 @@ module Rouge
           push :id
         end
         rule %r/#{id}(?=\s*:[^:=])/, Name::Attribute
-        rule %r/(&)(#{id})?/ do
-          groups Name::Builtin, Name::Attribute
-        end
 
         # operators
         rule %r(
@@ -96,6 +93,11 @@ module Rouge
           [.]([|&^]|<<|>>>?)[.]|\\(?=\n)|[.:]=|<<<<?|<[|]|[|]>|
           (<<|>>|==?|!=?|[-<>+*%^/~?])=?
         )x, Operator, :slash_starts_regex
+
+        # arguments shorthand
+        rule %r/(&)(#{id})?/ do
+          groups Name::Builtin, Name::Attribute
+        end
 
         # switch case
         rule %r/[|]|\bcase(?=\s)/, Keyword, :switch_underscore

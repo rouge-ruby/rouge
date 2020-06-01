@@ -56,11 +56,10 @@ module Rouge
           end
         end
 
-        # operators
-        rule %r([-*+.=?\|]+), Operator
         rule %r/"/, Str, :string
         rule %r/\//, Str, :regexp
 
+        rule %r([-*+.=?\|]+), Operator
         rule %r/[\[\](){}:]/, Punctuation
       end
 
@@ -75,9 +74,10 @@ module Rouge
       end
 
       state :regexp do
-        rule %r/\//, Str, :pop!
-        rule %r/\\/, Str::Escape, :escape
-        rule %r/[^\/]+/, Str::Regex
+        rule %r/\//, Str::Regex, :pop!
+        rule %r/[^\\\/]+/, Str::Regex
+        rule %r/\\[\\\/]/, Str::Regex
+        rule %r/\\/, Str::Regex
       end
 
       state :string do

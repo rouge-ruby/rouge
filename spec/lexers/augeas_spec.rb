@@ -10,6 +10,10 @@ describe Rouge::Lexers::Augeas do
     it 'guesses by filename' do
       assert_guess :filename => 'file.aug'
     end
+
+    it 'guess by mimetype' do
+      assert_guess :mimetype => 'text/x-augeas'
+    end
   end
 end
 

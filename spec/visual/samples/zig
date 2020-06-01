@@ -1,6 +1,46 @@
+// builtin demo
+
 const std = @import("std");
 const warn = std.debug.warn;
 
+fn add_integers(x: i78, y: i78) i78 {
+    var res: i78 = undefined;
+
+    if (@addWithOverflow(i78, x, y, &res)) {
+        warn("overflow detected!\n", .{});
+        return 0;
+    }
+
+    return res;
+}
+
+test "add_integers" {
+    warn("{}\n", .{add_integers(123, 171781717)});
+    warn("{}\n", .{add_integers(97239729372893729998991, 99900091788888881781717)});
+}
+
+// demo of real numbers
+
+const std = @import("std");
+const warn = std.debug.warn;
+
+fn add_floats(x: f128, y: f128) f128 {
+  return x + y;
+}
+
+test "add_floats" {
+  const x = 1.23;
+  const y = -.0019;
+  warn("{} + {} = {}\n", .{x, y, add_floats(x, y)});
+}
+
+
+// unions and enums demo - a simple arithmetic expression evaluator
+
+const std = @import("std");
+const warn = std.debug.warn;
+
+/// this expresses the variants that an arithmetic expression can take
 const Expr = union(enum) {
     Val: i32,
     Add: Payload,

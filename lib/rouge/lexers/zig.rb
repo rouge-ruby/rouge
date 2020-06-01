@@ -17,11 +17,13 @@ module Rouge
       def self.keywords 
         @keywords ||= %w(
           align linksection threadlocal struct enum union error break return
-          continue asm defer errdefer const var extern packed export pub
-          noalias inline noinline comptime callconv volatile allowzero null
-          undefined usingnamespace test void noreturn type anyerror anyframe fn
-          true false unreachable try catch async suspend nosuspend await resume
-          if else switch and or orelse while for
+          anyframe fn c_longlong c_ulonglong c_longdouble c_void comptime_float
+          c_short c_ushort c_int c_uint c_long c_ulong continue asm defer
+          errdefer const var extern packed export pub if else switch and or
+          orelse while for bool unreachable try catch async suspend nosuspend
+          await resume undefined usingnamespace test void noreturn type
+          anyerror usize noalias inline noinline comptime callconv volatile
+          allowzero
         )
       end
 
@@ -29,24 +31,21 @@ module Rouge
         @builtins ||= %w(
           @addWithOverflow @as @atomicLoad @atomicStore @bitCast @breakpoint
           @alignCast @alignOf @cDefine @cImport @cInclude @bitOffsetOf
-          @byteOffsetOf @OpaqueType @panic @ptrCast @bitReverse @Vector @sin
-          @cos @exp @exp2 @log @log2 @log10 @fabs @floor @ceil @trunc @round
-          @cUndef @canImplicitCast @clz @cmpxchgWeak @cmpxchgStrong
-          @compileError @compileLog @ctz @popCount @divExact @divFloor
-          @divTrunc @embedFile @export @tagName @TagType @errorName @call
-          @errorReturnTrace @fence @fieldParentPtr @field @unionInit
-          @frameAddress @import @newStackCall @asyncCall @intToPtr @intCast
+          @atomicRmw @bytesToSlice @byteOffsetOf @OpaqueType @panic @ptrCast
+          @bitReverse @Vector @sin @cUndef @canImplicitCast @clz @cmpxchgWeak
+          @cmpxchgStrong @compileError @compileLog @ctz @popCount @divExact
+          @divFloor @cos @divTrunc @embedFile @export @tagName @TagType
+          @errorName @call @errorReturnTrace @fence @fieldParentPtr @field
+          @unionInit @errorToInt @intToEnum @enumToInt @setAlignStack @frame
+          @Frame @exp @exp2 @log @log2 @log10 @fabs @floor @ceil @trunc @round
           @floatCast @intToFloat @floatToInt @boolToInt @errSetCast @intToError
-          @errorToInt @intToEnum @enumToInt @setAlignStack @frame @Frame
+          @frameAddress @import @newStackCall @asyncCall @intToPtr @intCast
           @frameSize @memcpy @memset @mod @mulWithOverflow @splat @ptrToInt
           @rem @returnAddress @setCold @Type @shuffle @setGlobalLinkage
           @setGlobalSection @shlExact @This @hasDecl @hasField
           @setRuntimeSafety @setEvalBranchQuota @setFloatMode @shlWithOverflow
           @shrExact @sizeOf @bitSizeOf @sqrt @byteSwap @subWithOverflow
-          @truncate @typeInfo @typeName @TypeOf @atomicRmw @bytesToSlice
-          @sliceToBytes bool f16 f32 f64 f128 i0 u0 isize usize comptime_int
-          comptime_float c_short c_ushort c_int c_uint c_long c_ulong
-          c_longlong c_ulonglong c_longdouble c_void
+          @sliceToBytes comptime_int @truncate @typeInfo @typeName @TypeOf
         )
       end
 
@@ -55,7 +54,6 @@ module Rouge
       escapes = %r(
       \\ ([nrt'"\\0] | x#{hex}{2} | u#{hex}{4} | U#{hex}{8})
       )x
-      size = /8|16|32|64/
 
       state :bol do
         mixin :whitespace
@@ -79,36 +77,30 @@ module Rouge
       state :root do
         rule %r/\n/, Text, :bol
         mixin :whitespace
-        rule %r/#!?\[/, Name::Decorator, :attribute
         rule %r/\b(?:#{Zig.keywords.join('|')})\b/, Keyword
+          rule %r/\b(?:(i|u)[0-9]+)\b/, Keyword
+        rule %r/\b(?:f(16|32|64|128))\b/, Keyword
+        rule %r/\b(?:(isize|usize))\b/, Keyword
         mixin :has_literals
 
-        rule %r([=-]>), Keyword
-        rule %r(<->), Keyword
         rule %r/[()\[\]{}|,:;]/, Punctuation
         rule %r/[*\/!@~&+%^<>=\?-]|\.{1,3}/, Operator
 
         rule %r/([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
-          rule %r/[.]\s*#{id}/, Name::Property
-          rule %r/(#{id})(::)/m do
-            groups Name::Namespace, Punctuation
+        rule %r/[.]\s*#{id}/, Name::Property
+        rule %r/'#{id}/, Name::Variable
+        rule %r/#{id}/ do |m|
+          name = m[0]
+          if self.class.builtins.include? name
+            token Name::Builtin
+          else
+            token Name
           end
-
-          rule %r/'#{id}/, Name::Variable
-          rule %r/#{id}/ do |m|
-            name = m[0]
-            if self.class.builtins.include? name
-              token Name::Builtin
-            else
-              token Name
-            end
-          end
+        end
       end
 
       state :has_literals do
-        # constants
-        rule %r/\b(?:true|false|nil)\b/, Keyword::Constant
-        # characters
+        rule %r/\b(?:true|false|null)\b/, Keyword::Constant
         rule %r(
         ' (?: #{escapes} | [^\\] ) '
         )x, Str::Char
@@ -116,16 +108,13 @@ module Rouge
         rule %r/"/, Str, :string
         rule %r/r(#*)".*?"\1/m, Str
 
-        # numbers
         dot = /[.][0-9_]+/
         exp = /e[-+]?[0-9_]+/
-        flt = /f32|f64/
 
         rule %r(
-        [0-9]+
-          (#{dot}  #{exp}? #{flt}?
-           |#{dot}? #{exp}  #{flt}?
-        |#{dot}? #{exp}? #{flt}
+          [0-9]+
+          (#{dot}  #{exp}?
+          |#{dot}? #{exp} 
           )
         )x, Num::Float
 
@@ -133,7 +122,7 @@ module Rouge
         ( 0b[10_]+
          | 0x[0-9a-fA-F_]+
          | [0-9_]+
-        ) (u#{size}?|i#{size})?
+        )
         )x, Num::Integer
       end
 

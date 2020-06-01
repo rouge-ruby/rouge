@@ -18,5 +18,40 @@ describe Rouge::Lexers::Zig do
 
   describe 'lexing' do
     include Support::Lexing;
+
+    it 'classifies identifiers' do
+      assert_tokens_equal 'var x: i32 = 100;',
+        ['Keyword', 'var'],
+        ['Text', ' '],
+        ['Name', 'x'],
+        ['Punctuation', ':'],
+        ['Text', ' '],
+        ['Keyword', 'i32'],
+        ['Text', ' '],
+        ['Operator', '='],
+        ['Text', ' '],
+        ['Literal.Number.Integer', '100'],
+        ['Punctuation', ';']
+
+      assert_tokens_equal 'var x: f32 = 1.01;',
+        ['Keyword', 'var'],
+        ['Text', ' '],
+        ['Name', 'x'],
+        ['Punctuation', ':'],
+        ['Text', ' '],
+        ['Keyword', 'f32'],
+        ['Text', ' '],
+        ['Operator', '='],
+        ['Text', ' '],
+        ['Literal.Number.Float', '1.01'],
+        ['Punctuation', ';']
+    end
+
+    it 'recognizes exponents in integers and reals' do
+      assert_tokens_equal '1e6', ['Literal.Number.Float', '1e6']
+      assert_tokens_equal '123_456', ['Literal.Number.Integer', '123_456']
+      assert_tokens_equal '3.14159_26', ['Literal.Number.Float', '3.14159_26']
+      assert_tokens_equal '3.141_592e-20', ['Literal.Number.Float', '3.141_592e-20']
+    end
   end
 end

@@ -1,0 +1,68 @@
+%%% Bibtex comment
+
+@inproceedings{DBLP:conf/pldi/PadhiSM16,
+  author    = {Saswat Padhi and
+               Rahul Sharma and
+               Todd D. Millstein},
+  title     = {Data-driven precondition inference with learned features},
+  booktitle = {Proceedings of the 37th {ACM} {SIGPLAN} Conference on Programming
+               Language Design and Implementation, {PLDI} 2016, Santa Barbara, CA,
+               USA, June 13-17, 2016},
+  pages     = {42--56},
+  year      = {2016},
+  crossref  = {DBLP:conf/pldi/2016},
+  url       = {https://doi.org/10.1145/2908080.2908099},
+  doi       = {10.1145/2908080.2908099},
+  timestamp = {Tue, 06 Nov 2018 16:59:30 +0100},
+  biburl    = {https://dblp.org/rec/bib/conf/pldi/PadhiSM16},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{article,
+  author  = {Peter Adams},
+  title   = {The title of the work},
+  journal = {The name of the journal},
+  year    = 1993,
+  number  = 2,
+  pages   = {201-213},
+  month   = 7,
+  note    = {An optional note},
+  volume  = 4
+}
+
+@MISC{WEBSITE:1,
+  HOWPUBLISHED = "\url{http://example.com}",
+  AUTHOR = "Intel",
+  TITLE = "Example Website",
+  MONTH = "Dec",
+  YEAR = "1988",
+  NOTE = "Accessed on 2012-11-11"
+}
+
+@STRING(PRL="Phys. Rev. Lett.")
+@STRING(RMP="Rev. Mod. Phys.")
+
+@ARTICLE{klitzing:nobel,
+   AUTHOR="Klaus von Klitzing",
+   TITLE="The Quantised Hall Effect",
+   JOURNAL=RMP,
+   VOLUME=58,
+   PAGES=519,
+   YEAR=1986
+}
+
+@preamble{ "\newcommand{\mytext}{Last accessed:}" }
+
+@ARTICLE{knuth:1974,
+  author = {Knuth, Donald E.},
+  title = {{C}omputer {P}rogramming as an {A}rt},
+  journal = {Communications of the ACM},
+  year = {1974},
+  volume = {17},
+  pages = {667--673},
+  number = {12},
+  month = {December },
+  address = {New York, NY, USA},
+  publisher = {ACM Press},
+  note = {\mytext{} 09/20/12}
+}

@@ -8,7 +8,7 @@ describe Rouge::Lexers::Augeas do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'file.aug'
+      assert_guess :filename => 'foo.aug'
     end
 
     it 'guess by mimetype' do

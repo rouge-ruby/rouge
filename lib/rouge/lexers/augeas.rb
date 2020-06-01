@@ -61,7 +61,7 @@ module Rouge
         rule %r/"/, Str, :string
         rule %r/\//, Str, :regexp
 
-        rule %r/[\[\](){}]/, Punctuation
+        rule %r/[\[\](){}:]/, Punctuation
       end
 
       state :module do

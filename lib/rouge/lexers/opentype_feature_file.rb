@@ -84,8 +84,8 @@ module Rouge
       state :includepath do
         rule %r/\s+/, Text::Whitespace
         rule %r/\)/, Punctuation, :pop!
-        rule %r/\(/, Punctuation
-        rule %r/[a-z0-9\/_.-]*/i, Str
+        rule %r/\(/, Punctuation, :includepath
+        rule %r/[^\s()]/, Str
       end
 
       state :strings do

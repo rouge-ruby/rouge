@@ -73,7 +73,7 @@ module Rouge
         end
 
         rule identifier, Name
-        rule %r/0x|\\[0-9A-Fa-f]+/, Num::Hex
+        rule %r/(?:0x|\\)[0-9A-Fa-f]+/, Num::Hex
         rule %r/-?\d+/, Num::Integer
       end
 

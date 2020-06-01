@@ -57,7 +57,7 @@ module Rouge
         rule %r/[\-\[\]\/(){},.:;=%*<>']/, Punctuation
 
         rule %r/`.*?/, Str::Backtick
-        rule %r/\"/, Str, :dqs
+        rule %r/\"/, Str, :strings
         rule %r/\\[^.*\s]+/i, Str::Escape
 
         # classes, start with @<nameOfClass>
@@ -89,19 +89,10 @@ module Rouge
       end
 
       state :strings do
+        rule %r/"/, Str, :pop!
+        rule %r/[^"%\n]+/, Str
         rule %r/(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str
       end
-
-      state :strings_double do
-        rule %r/[^"%\n]+/, Str
-        mixin :strings
-      end
-
-      state :dqs do
-        rule %r/"/, Str, :pop!
-        mixin :strings_double
-      end
-
     end
   end
 end

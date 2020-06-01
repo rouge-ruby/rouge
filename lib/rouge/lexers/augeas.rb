@@ -12,18 +12,18 @@ module Rouge
       filenames '*.aug'
       mimetypes 'text/x-augeas'
 
-      def self.detect?(text)
-        return false
+      def self.reserved
+        @reserved ||= Set.new %w(
+          _ let del store value counter seq key label autoload
+          incl excl transform test get put in after set
+        )
       end
 
-      reserved = %w(
-        _ let del store value counter seq key label autoload
-        incl excl transform test get put in after set
-      )
-
-      types = %w(
-        unit string regexp lens tree filter
-      )
+      def self.types
+        @types ||= Set.new %w(
+          unit string regexp lens tree filter
+        )
+      end
 
       state :basic do
         rule %r/\s+/m, Text
@@ -40,13 +40,21 @@ module Rouge
       state :root do
         mixin :basic
 
-        rule %r/\bmodule\b/, Keyword::Reserved, :module
-        rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
-        # not sure why, but ^ doesn't work here
-        # rule %r/^[_a-z][\w']*/, Name::Function
-        rule %r/[_a-z][\w']*/, Name
-        rule %r/\b(?:#{types.join('|')})\b/, Keyword::Type
-        rule %r/[A-Z][\w]*/, Keyword::Namespace
+        rule %r/\w[\w']*/ do |m|
+          name = m[0]
+          if name == "module"
+            token Keyword::Reserved
+            push :module
+          elsif self.class.reserved.include? name
+            token Keyword::Reserved
+          elsif self.class.types.include? name
+            token Keyword::Type
+          elsif name =~ /\A[A-Z]/
+            token Keyword::Namespace
+          else
+            token Name
+          end
+        end
 
         # operators
         rule %r([-*+.=?\|]+), Operator

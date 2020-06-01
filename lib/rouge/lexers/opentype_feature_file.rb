@@ -52,7 +52,7 @@ module Rouge
           push :featurename
         end
         # solve include( ../path)
-        rule %r/(include)(?!_dflt)/i, Keyword, :includepath
+        rule %r/include\b/i, Keyword, :includepath
 
         rule %r/[\-\[\]\/(){},.:;=%*<>']/, Punctuation
 

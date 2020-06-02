@@ -29,6 +29,19 @@ module Rouge
           Pick Partial Readonly Record
         )
       end
+
+      def self.extended(base)
+        base.prepend :root do
+          rule %r/[?][.]/, base::Punctuation
+        end
+
+        base.prepend :statement do
+          rule %r/(#{Javascript.id_regex})(\??)(\s*)(:)/ do
+            groups base::Name::Label, base::Punctuation, base::Text, base::Punctuation
+            push :expr_start
+          end
+        end
+      end
     end
   end
 end

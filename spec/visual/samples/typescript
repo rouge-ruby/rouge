@@ -206,4 +206,4 @@ const z = `Hello world`;
 
 // Nullish coalescing in template strings
 const content = `Value is ${value ?? 'not set'}`;
-const description = "Highlighting is broken now";
+const description = "Highlighting is not broken now";

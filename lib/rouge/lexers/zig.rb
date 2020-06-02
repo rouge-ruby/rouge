@@ -71,10 +71,13 @@ module Rouge
 
       state :root do
         rule %r/\n/, Text, :bol
+
         mixin :whitespace
-        rule %r/\b(?:(i|u)[0-9]+)\b/, Keyword
-        rule %r/\b(?:f(16|32|64|128))\b/, Keyword
-        rule %r/\b(?:(isize|usize))\b/, Keyword
+
+        rule %r/\b(?:(i|u)[0-9]+)\b/, Keyword::Type
+        rule %r/\b(?:f(16|32|64|128))\b/, Keyword::Type
+        rule %r/\b(?:(isize|usize))\b/, Keyword::Type
+
         mixin :has_literals
 
         rule %r/'#{id}/, Name::Variable

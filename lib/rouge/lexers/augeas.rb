@@ -14,8 +14,10 @@ module Rouge
 
       def self.reserved
         @reserved ||= Set.new %w(
-          _ let del store value counter seq key label autoload
-          incl excl transform test get put in after set
+          _ let del store value counter seq key label autoload incl excl
+          transform test get put in after set clear insa insb print_string
+          print_regexp print_endline print_tree lens_ctype lens_atype
+          lens_ktype lens_vtype lens_format_atype regexp_match
         )
       end
 

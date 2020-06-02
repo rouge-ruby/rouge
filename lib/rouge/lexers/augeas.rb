@@ -21,12 +21,6 @@ module Rouge
         )
       end
 
-      def self.types
-        @types ||= Set.new %w(
-          unit string regexp lens tree filter
-        )
-      end
-
       state :basic do
         rule %r/\s+/m, Text
         rule %r/\(\*/, Comment::Multiline, :comment
@@ -42,6 +36,10 @@ module Rouge
       state :root do
         mixin :basic
 
+        rule %r/(:)(\w\w*)/ do
+          groups Punctuation, Keyword::Type
+        end
+
         rule %r/\w[\w']*/ do |m|
           name = m[0]
           if name == "module"
@@ -49,8 +47,6 @@ module Rouge
             push :module
           elsif self.class.reserved.include? name
             token Keyword::Reserved
-          elsif self.class.types.include? name
-            token Keyword::Type
           elsif name =~ /\A[A-Z]/
             token Keyword::Namespace
           else

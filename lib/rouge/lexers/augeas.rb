@@ -86,6 +86,7 @@ module Rouge
         rule %r/x[\da-f]+/i, Str::Escape, :pop!
         rule %r/\d+/, Str::Escape, :pop!
         rule %r/\s+/, Str::Escape, :pop!
+        rule %r/./, Str, :pop!
       end
     end
   end

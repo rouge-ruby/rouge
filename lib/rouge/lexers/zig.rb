@@ -78,7 +78,7 @@ module Rouge
         rule %r/\b(?:f(16|32|64|128))\b/, Keyword::Type
         rule %r/\b(?:(isize|usize))\b/, Keyword::Type
 
-        mixin :has_literals
+        mixin :literals
 
         rule %r/'#{id}/, Name::Variable
         rule %r/([.]?)(\s*)(@?#{id})(\s*)([(]?)/ do |m|
@@ -102,7 +102,7 @@ module Rouge
         rule %r/[*\/!@~&+%^<>=\?-]|\.{1,3}/, Operator
       end
 
-      state :has_literals do
+      state :literals do
         rule %r/\b(?:true|false|null)\b/, Keyword::Constant
         rule %r(
         ' (?: #{escapes} | [^\\] ) '

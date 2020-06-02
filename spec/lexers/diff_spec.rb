@@ -46,5 +46,17 @@ index d228e4b..560b687 100644
  load load_dir.join('rouge/lexers/text.rb')
       source
     end
+
+    it 'does not detect invalid diff-like sources' do
+      deny_guess :source => <<-source
+---4
+---2
+      source
+
+      deny_guess :source => <<-source
++++4
++++2
+      source
+    end
   end
 end

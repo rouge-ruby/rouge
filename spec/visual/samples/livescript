@@ -1,0 +1,304 @@
+mitch =
+    age:    21
+    height: 180cm
+    pets:   [\dog, \goldfish]
+
+phile = {}
+phile{height, pets} = mitch
+phile.height #=> 180
+phile.pets   #=> ['dog', 'goldfish']
+
+a = [2 7 1 8]
+    ..push 3
+    ..shift!
+    ..sort!
+a #=> [1,3,7,8]
+
+# Numbers
+const PI = 3.14
+2~1000
+16~ff
+10e-15
+5_000m == 5km * 1e3m
+0xAAff
+
+# Some operators
+n = n++ - ++n - n-- + --n
+
+14 .&. 9   #=> 8
+14 .|. 9   #=> 15
+14 .^. 9   #=> 7
+~9         #=> -10
+9  .<<. 2  #=> 36
+-9 .>>. 2  #=> -3
+-9 .>>>. 2 #=> 1073741821
+
+2 < 4
+9 > 7
+8 <= 8
+7 >= 8
+
+4 >? 8     #=> 8
+9 - 5 <? 6 #=> 4
+
+on and off
+on && off
+
+yes or no
+yes || no
+
+not false
+!false
+
+false xor true
+false xor false
+1 xor 0
+1 xor 1
+
+(f and g or h) 3 4
+
+3 in list
+\id of id: 23, name: \rogers
+
+# Pipes
+[1 2 3] |> reverse
+reverse <| [1 2 3]
+4
+|> (+ 1)
+|> even
+
+# Function calls
+add-two-times-two = (+ 2) >> (* 2)
+
+r = +...[4 5 6]
+t = typeof! ...[\b 5 {}]
+c = ~...[4, 5]
+++...player<[strength hp]>
+i = new ...[some, classes]
+c = ^^...[copy, these, {}]
+delete ...list[1, 2, 3]
+do ...[a, b, c]
+
+# arguments shorthand &
+-> &1 + &2 || &a + &b || &
+
+# Imports
+obj = {one: 1, two: 2}
+obj <<< three: 3
+{go: true} <<<< window
+import obj
+obj2 = ^^obj
+obj3 = obj with three: 3
+
+export func = ->
+
+require! <[ fs path ]>
+require! jQuery: $
+require! {
+    fs: filesystem
+    'prelude-ls': {map, id}
+    path: {join, resolve}:p
+}
+
+{ property : 1 }
+
+# These shouldn't be highlighted as constants, since this is
+# totally legit in livescript
+{ true: 1, false: 0 }
+foo.true = foo.false = @undefined = @null
+{ if: 0, try: 1, in: 2 }
+{ and: 0, or: 1, xor: 2, not: 3, is: 4, isnt: 5 }
+foo.instanceof = foo.typeof = @finally = @super
+
+# These should
+{ 1: true, 0: false }
+1 instanceof Number
+typeof \foo
+
+# These refer to builtins
+window.foo = bar(Array)
+
+# These are properties
+foo.window = bar.Array
+
+# A more complicated comment with some `code` inside
+# ['TAG', 'value', line] ++ [column]
+#
+# [Jison](http://github.com/zaach/jison) generated [parser](../lib/parser.js).
+# { 1: true, 0: false }
+# 1 instanceof Number
+# typeof \foo
+
+/*
+A more complicated comment with some `code` inside
+['TAG', 'value', line] ++ [column]
+
+[Jison](http://github.com/zaach/jison) generated [parser](../lib/parser.js).
+{ 1: true, 0: false }
+1 instanceof Number
+typeof \foo
+*/
+
+# Some interpolated values
+a-function = ({x = 1, y = 3} = {}) -> "#{\#}#x#{\,}#{y}"
+
+function detab str, len
+    if len then str.replace detab[len]||=//\n[^\n\S]{1,#len}//g '\n' else str
+
+# Erases all newlines and indentations.
+unlines = (.replace /\n[^\n\S]*/g '')
+
+# Multiline regex
+
+symbol = //
+  [-/^]= | [%+:*]{1,2}= | \|>=  # compound assign
+| \.(?:[&\|\^] | << | >>>?)\.=? # bitwise and shifts
+| \.{1,3}                       # dot / cascade / splat/placeholder/yada*3
+| \^\^                          # clone
+| \*?<(?:--?|~~?)!?             # backcall
+| !?(?:--?|~~?)>\*?             # function, bound function
+| ([-+&|:])\1                   # crement / logic / `prototype`
+| %%                            # mod
+| &                             # arguments
+| \([^\n\S]*\)                  # call
+| [!=]==?                       # strict equality, deep equals
+| !?\~=                         # fuzzy equality
+| @@?                           # this / constructor
+| <\[(?:[\s\S]*?\]>)?           # words
+| <<<<?                         # import
+| <\|                           # backpipe
+| [<>]== | <<= | >>=            # deep {less,greater}-than-(or-equal-to)
+| << | >>                       # compose
+| [<>]\??=?                     # {less,greater}-than-(or-equal-to) / min/max
+| \|>                           # pipe
+| \|                            # case
+| =>                            # then
+| \*\* | \^                     # pow
+| `                             # backticks
+| [^\s#]?
+//g
+
+# With some hex numbers and unicode
+//
+    ( (?!\s)[$\xAA-\uFFDC] )
+//ig
+
+# Some single line regexes
+/[^\n\S]*(?:#.*)?/gimy
+multident = /(?:\s*#.*)*(?:\n([^\n\S]*))*/g
+simplestr = /'[^\\']*(?:\\[\s\S][^\\']*)*'|/g
+
+# list of words
+<[ , : -> else { assign } ]> ++ <[
+    do [ generator ] = ... | ! enum ( interface )
+    package private protected public static
+]>
+
+js-keywords = <[
+    true false null this void super return throw break continue
+    if else for while switch case default try catch finally
+    function class extends implements new do delete typeof in instanceof
+    let with var const import export debugger yield
+]>
+
+exports <<<
+
+    lex: (
+        code
+        options
+    ) -> (^^exports).tokenize code||'' options||{}
+
+    rewrite: (it || @tokens) ->
+        first-pass it
+        it.shift! if it.0?.0 is 'NEWLINE'
+        it
+
+    tokenize: (code, o) ->
+        @inter or code.=replace /[\r\u2028\u2029\uFEFF]/g ''
+        code = '\n' + code
+        while c = code.char-at i
+            if @variable-x
+                then throw new Error 'Error'
+
+function ok token, i
+    switch tag = token.0
+    | \,                   => break
+    | \NEWLINE             => return true if inline
+    | \DEDENT              => return true
+    | \POST_IF \FOR \WHILE => return inline
+    | _                    => return false
+    t1 = tokens[i+1]?.0
+    t1 is not (if tag is \, then \NEWLINE else \COMMENT) and
+    \: is not tokens[if t1 is \( then 1 + index-of-pair tokens, i+1 else i+2]?.0
+
+!function go token, i then tokens.splice i, 0 ['}' '' token.2, token.3]
+
+switch id
+case <[ true false on off yes no null void arguments debugger ]>
+    tag = 'LITERAL'
+case <[ new do typeof delete ]>
+    tag = 'UNARY'
+case 'yield'
+    tag = 'YIELD'
+case 'return' 'throw'
+    tag = 'HURL'
+case 'break' 'continue'
+    tag = 'JUMP'
+case 'this' 'eval' 'super'
+    return @token 'LITERAL' id, true .length
+case 'in' 'of'
+    if @fget 'for'
+        @fset 'for' false
+        if id is 'in'
+            @fset 'by' true
+            id = ''
+            if last.0 is 'ID' and @tokens[*-2].0 in <[ , ] } ]>
+                id = @tokens.pop!1
+                @tokens.pop! if @tokens[*-1].0 is ','
+        break
+    fallthrough
+case 'and' 'or' 'xor' 'is' 'isnt'
+    @unline!
+    tag = if id in <[ is isnt ]> then 'COMPARE' else 'LOGIC'
+    tag = 'BIOP' if last.0 is '('
+    @token tag, switch id
+    | 'is'   => '==='
+    | 'isnt' => '!=='
+    | 'or'   => '||'
+    | 'and'  => '&&'
+    | 'xor'  => 'xor'
+    @last.alias = true
+    return id.length
+case otherwise 0
+
+if rnum is /[0-9]/
+    @carp "invalid number base #radix (with number #rnum),
+           base must be from 2 to 36"
+
+@validate /^(?:[gimy]{1,4}|[?$]?)/.exec(rest).0
+
+do-line = (code, index) ->
+    [input, tabs] = (MULTIDENT <<< last-index: index).exec code
+    {length} = @count-lines input
+    {last} = this
+    last <<< {+eol, +spaced}
+    return length if index + length >= code.length
+    if tabs and (@emender ||= //[^#{ tabs.char-at! }]//).exec tabs
+        @carp "contaminated indent #{ escape that }"
+    if 0 > delta = tabs.length - @dent
+        @dedent -delta
+        @newline!
+    else
+        [tag, val] = last
+        if tag is 'ASSIGN' and val + '' not in <[ = := += ]>
+        or val is '++' and @tokens[*-2].spaced
+        or tag in <[ +- PIPE BACKPIPE COMPOSE DOT LOGIC MATH COMPARE RELATION
+                        SHIFT IN OF TO BY FROM EXTENDS IMPLEMENTS ]>
+            return length
+        if delta then @indent delta else @newline!
+    @fset 'for' false
+    @fset 'by' false
+    length
+
+try Function "'use strict'; var #id" catch
+    @carp "invalid variable interpolation '#id'"

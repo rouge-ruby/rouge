@@ -65,11 +65,6 @@ module Rouge
 
       state :module do
         rule %r/\s+/, Text
-        # module Foo (functions)
-        rule %r/([A-Z][\w.]*)(\s+)(\()/ do
-          groups Name::Namespace, Text, Punctuation
-        end
-
         rule %r/[A-Z][a-zA-Z0-9_.]*/, Name::Namespace, :pop!
       end
 

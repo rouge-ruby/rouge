@@ -10,7 +10,7 @@ module Rouge
       mimetypes 'text/x-zig'
 
       title 'Zig'
-      desc 'The Zig programming language'
+      desc 'The Zig programming language (ziglang.org)'
 
       def self.keywords
         @keywords ||= %w(

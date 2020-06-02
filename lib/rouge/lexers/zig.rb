@@ -48,10 +48,7 @@ module Rouge
       end
 
       id = /[a-z_]\w*/i
-      hex = /[0-9a-f]/i
-      escapes = %r(
-      \\ ([nrt'"\\0] | x#{hex}{2} | u#{hex}{4} | U#{hex}{8})
-      )x
+      escapes = /\\ ([nrt'"\\0] | x\h{2} | u\h{4} | U\h{8})/x
 
       state :bol do
         mixin :whitespace

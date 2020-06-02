@@ -72,26 +72,31 @@ module Rouge
       state :root do
         rule %r/\n/, Text, :bol
         mixin :whitespace
-        rule %r/\b(?:#{Zig.keywords.join('|')})\b/, Keyword
         rule %r/\b(?:(i|u)[0-9]+)\b/, Keyword
         rule %r/\b(?:f(16|32|64|128))\b/, Keyword
         rule %r/\b(?:(isize|usize))\b/, Keyword
         mixin :has_literals
 
+        rule %r/'#{id}/, Name::Variable
+        rule %r/([.]?)(\s*)(@?#{id})(\s*)([(]?)/ do |m|
+          name = m[3]
+          t = if self.class.keywords.include? name
+                Keyword
+              elsif self.class.builtins.include? name
+                Name::Builtin
+              elsif !m[1].empty? && !m[5].empty?
+                Name::Function
+              elsif !m[1].empty?
+                Name::Property
+              else
+                Name
+              end
+
+          groups Punctuation, Text, t, Text, Punctuation
+        end
+
         rule %r/[()\[\]{}|,:;]/, Punctuation
         rule %r/[*\/!@~&+%^<>=\?-]|\.{1,3}/, Operator
-
-        rule %r/([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
-        rule %r/[.]\s*#{id}/, Name::Property
-        rule %r/'#{id}/, Name::Variable
-        rule %r/#{id}/ do |m|
-          name = m[0]
-          if self.class.builtins.include? name
-            token Name::Builtin
-          else
-            token Name
-          end
-        end
       end
 
       state :has_literals do

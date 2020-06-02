@@ -10,7 +10,7 @@ module Rouge
       mimetypes 'text/livescript'
 
       title 'LiveScript'
-      desc 'LiveScript, a language which compiles to JavaScript'
+      desc 'LiveScript, a language which compiles to JavaScript (livescript.net)'
 
       def self.detect?(text)
         return text.shebang? 'lsc'

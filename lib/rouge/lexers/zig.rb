@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# uses the rust lexer as a starting point
-
 module Rouge
   module Lexers
     class Zig < RegexLexer
@@ -14,7 +12,7 @@ module Rouge
       title 'Zig'
       desc 'The Zig programming language'
 
-      def self.keywords 
+      def self.keywords
         @keywords ||= %w(
           align linksection threadlocal struct enum union error break return
           anyframe fn c_longlong c_ulonglong c_longdouble c_void comptime_float
@@ -78,7 +76,7 @@ module Rouge
         rule %r/\n/, Text, :bol
         mixin :whitespace
         rule %r/\b(?:#{Zig.keywords.join('|')})\b/, Keyword
-          rule %r/\b(?:(i|u)[0-9]+)\b/, Keyword
+        rule %r/\b(?:(i|u)[0-9]+)\b/, Keyword
         rule %r/\b(?:f(16|32|64|128))\b/, Keyword
         rule %r/\b(?:(isize|usize))\b/, Keyword
         mixin :has_literals
@@ -114,7 +112,7 @@ module Rouge
         rule %r(
           [0-9]+
           (#{dot}  #{exp}?
-          |#{dot}? #{exp} 
+          |#{dot}? #{exp}
           )
         )x, Num::Float
 

@@ -58,7 +58,7 @@ module Rouge
         rule %r/\//, Str, :regexp
 
         rule %r([-*+.=?\|]+), Operator
-        rule %r/[\[\](){}:]/, Punctuation
+        rule %r/[\[\](){}:;]/, Punctuation
       end
 
       state :module do

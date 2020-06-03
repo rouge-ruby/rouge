@@ -9,7 +9,7 @@ module Rouge
       filenames '*.vm', '*.velocity', '*.fhtml'
       mimetypes 'text/html+velocity'
 
-      id = /[a-zA-Z_]\w*/
+      id = /[a-z_]\w*/i
 
       state :root do
         rule %r/[^{#$]+/ do

@@ -49,7 +49,7 @@ module Rouge
       end
 
       state :range_operator do
-        rule %r/\.\./, Operator
+        rule %r/[.]{2}/, Operator
         mixin :func_params
         rule %r/\]/, Operator, :pop!
       end

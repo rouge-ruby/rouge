@@ -1,0 +1,32 @@
+(*
+Multiline
+Comment
+*)
+
+module Example =
+  autoload xfm
+
+let eol      = Util.eol
+let sep_spc  = Sep.space
+let sep_cont = Sep.cl_or_space
+
+let sep_cont_opt_build (sep:string) =
+   del (Rx.cl_or_opt_space . sep . Rx.cl_or_opt_space) (" " . sep . " ")
+
+let negate_or_value (key:lens) (value:lens) =
+  [ del_negate . (negate_node . key | key . value) ]
+
+let del_negate = del /(!!)*/ ""
+
+let sto_to_com_cmnd = del_negate . negate_node? . (
+      let alias = Rx.word - /(NO)?(PASSWD|EXEC|SETENV)/
+     in let non_alias = /[\/a-z]([^,:#()\n\\]|\\\\[=:,\\])*[^,=:#() \t\n\\]|[^,=:#() \t\n\\]/
+   in store (alias | non_alias))
+
+let filter = (incl "/etc/sudoers")
+    . (incl "/usr/local/etc/sudoers")
+    . (incl "/etc/sudoers.d/*")
+    . (incl "/usr/local/etc/sudoers.d/*")
+    . (incl "/opt/csw/etc/sudoers")
+    . (incl "/etc/opt/csw/sudoers")
+    . Util.stdexcl

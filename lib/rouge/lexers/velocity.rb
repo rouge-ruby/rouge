@@ -4,7 +4,7 @@ module Rouge
   module Lexers
     class Velocity < TemplateLexer
       title 'Velocity'
-      desc 'Generic `Velocity <http://velocity.apache.org/>`_ template lexer.'
+      desc 'Velocity is a Java-based template engine (velocity.apache.org)'
       tag 'velocity'
       filenames '*.vm', '*.velocity', '*.fhtml'
       mimetypes 'text/html+velocity'

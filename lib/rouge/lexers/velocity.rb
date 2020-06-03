@@ -16,13 +16,8 @@ module Rouge
           delegate parent
         end
 
-        rule %r/(#)(\*.*?\*)(#)/m do
-          token Comment
-        end
-
-        rule %r/(##)(.*?$)/ do
-          token Comment
-        end
+        rule %r/(#)(\*.*?\*)(#)/m, Comment::Multiline
+        rule %r/(##)(.*?$)/, Comment::Single
 
         rule %r/(#\{?)(#{id})(\}?)(\s?\()/m do
           groups Punctuation, Name::Function, Punctuation, Punctuation

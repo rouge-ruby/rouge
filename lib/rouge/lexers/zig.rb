@@ -58,7 +58,7 @@ module Rouge
 
       state :attribute do
         mixin :whitespace
-        mixin :has_literals
+        mixin :literals
         rule %r/[(,)=:]/, Name::Decorator
         rule %r/\]/, Name::Decorator, :pop!
         rule id, Name::Decorator

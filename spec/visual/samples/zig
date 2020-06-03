@@ -1,0 +1,141 @@
+// builtin demo
+
+const std = @import("std");
+const warn = std.debug.warn;
+
+fn add_integers(x: i78, y: i78) i78 {
+    var res: i78 = undefined;
+
+    if (@addWithOverflow(i78, x, y, &res)) {
+        warn("overflow detected!\n", .{});
+        return 0;
+    }
+
+    return res;
+}
+
+test "add_integers" {
+    warn("{}\n", .{add_integers(123, 171781717)});
+    warn("{}\n", .{add_integers(97239729372893729998991, 99900091788888881781717)});
+}
+
+// demo of real numbers
+
+const std = @import("std");
+const warn = std.debug.warn;
+
+fn add_floats(x: f128, y: f128) f128 {
+  return x + y;
+}
+
+test "add_floats" {
+  const x = 1.23;
+  const y = -.0019;
+  warn("{} + {} = {}\n", .{x, y, add_floats(x, y)});
+}
+
+
+// unions and enums demo - a simple arithmetic expression evaluator
+
+const std = @import("std");
+const warn = std.debug.warn;
+
+/// this expresses the variants that an arithmetic expression can take
+const Expr = union(enum) {
+    Val: i32,
+    Add: Payload,
+    Div: Payload,
+    Sub: Payload,
+    Mul: Payload,
+};
+
+const Payload = struct {
+    left: *const Expr,
+    right: *const Expr,
+};
+
+fn show_helper(expr: *const Payload, expr_name: []const u8, stdout: *const @TypeOf(std.io.getStdOut().outStream())) anyerror!void {
+    try stdout.print("{}", .{expr_name});
+    try show(expr.left, stdout);
+    try stdout.print(", ", .{});
+    try show(expr.right, stdout);
+    try stdout.print(")", .{});
+}
+
+fn show(e: *const Expr, stdout: *const @TypeOf(std.io.getStdOut().outStream())) anyerror!void {
+    switch (e.*) {
+        Expr.Val => |n| try stdout.print("Val {}", .{n}),
+        Expr.Add => |a| try show_helper(&a, "Add (", stdout),
+        Expr.Sub => |s| try show_helper(&s, "Sub (", stdout),
+        Expr.Mul => |m| try show_helper(&m, "Mul (", stdout),
+        Expr.Div => |d| try show_helper(&d, "Div (", stdout),
+        else => unreachable,
+    }
+}
+
+fn eval(e: *const Expr) i32 {
+    return switch (e.*) {
+        Expr.Val => |v| v,
+        Expr.Add => |a| eval(a.left) + eval(a.right),
+        Expr.Sub => |s| eval(s.left) - eval(s.right),
+        Expr.Mul => |m| eval(m.left) * eval(m.right),
+        Expr.Div => |d| return if (eval(d.right) == 0) eval(d.left) else @divTrunc(eval(d.left), eval(d.right)),
+        else => unreachable,
+    };
+}
+
+pub fn main() !void {
+    const stdout = std.io.getStdOut().outStream();
+
+    const e1 = Expr{ .Val = 100 };
+    try show(&e1, &stdout);
+    try stdout.print(" = {}\n", .{eval(&e1)});
+
+    const e2 = Expr{ .Div = .{ .left = &Expr{ .Val = 10 }, .right = &Expr{ .Val = 2 } } };
+    try show(&e2, &stdout);
+    try stdout.print(" = {}\n", .{eval(&e2)});
+
+    const e3 = Expr{
+        .Div = .{
+            .left = &Expr{
+                .Mul = .{
+                    .left = &Expr{ .Val = 5 },
+                    .right = &Expr{ .Val = 4 },
+                },
+            },
+            .right = &Expr{ .Val = 2 },
+        },
+    };
+    try show(&e3, &stdout);
+    try stdout.print(" = {}\n", .{eval(&e3)});
+
+    const e4 = Expr{
+        .Add = .{
+            .left = &Expr{
+                .Mul = .{
+                    .left = &Expr{ .Val = 5 },
+                    .right = &Expr{ .Val = 4 },
+                },
+            },
+            .right = &Expr{
+                .Sub = .{
+                    .left = &Expr{ .Val = 100 },
+                    .right = &Expr{
+                        .Div = .{
+                            .left = &Expr{ .Val = 12 },
+                            .right = &Expr{ .Val = 4 },
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    try show(&e4, &stdout);
+    try stdout.print(" = {}\n", .{eval(&e4)});
+
+    const e5 = Expr{ .Div = .{ .left = &Expr{ .Val = 100 }, .right = &Expr{ .Val = 0 } } };
+    try show(&e5, &stdout);
+    try stdout.print(" = {}\n", .{eval(&e5)});
+}
+

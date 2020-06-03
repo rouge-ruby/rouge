@@ -1,0 +1,46 @@
+const std = @import("std");
+const warn = std.debug.warn;
+
+fn add_floats(x: f16, y: f16) f16 {
+    return x + y;
+}
+
+test "add_floats" {
+    warn("{}\n", .{add_floats(123.23, -0.92)});
+}
+
+const std = @import("std");
+
+fn get_num(ptr: *u32, stdin: *const std.fs.File, stdout: *const @TypeOf(std.io.getStdOut().outStream())) !void {
+    var buf: [20]u8 = undefined;
+    const len = try stdin.read(&buf);
+    if (len == buf.len) {
+        try stdout.print("Input is too long!\n", .{});
+        std.os.exit(1);
+    }
+
+    const trimmed_line = std.mem.trimRight(u8, buf[0..len], "\r\n");
+    ptr.* = std.fmt.parseUnsigned(u8, trimmed_line, 10) catch {
+        try stdout.print("Invalid number!\n", .{});
+        std.os.exit(1);
+    };
+}
+
+fn factorial(n: u32) u32 {
+    return if (n <= 0) 1 else n * factorial(n - 1);
+}
+
+pub fn main() !void {
+    const stdin = std.io.getStdIn();
+    const stdout = std.io.getStdOut().outStream();
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
+    const allocator = &arena.allocator;
+    const ptr = try allocator.create(u32);
+
+    get_num(ptr, &stdin, &stdout) catch {
+        try stdout.print("Error while trying to read in number!\n", .{});
+    };
+    try stdout.print("The factorial of {} is {}\n", .{ ptr.*, factorial(ptr.*) });
+}

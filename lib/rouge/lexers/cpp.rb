@@ -68,6 +68,7 @@ module Rouge
         rule %r/#{dq}[lu]*/i, Num::Integer
         rule %r/\bnullptr\b/, Name::Builtin
         rule %r/(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
+        rule %r/::/, Operator
       end
 
       state :classname do
@@ -83,6 +84,11 @@ module Rouge
         rule %r/>/, Punctuation, :pop!
         rule %r/typename\b/, Keyword, :classname
         mixin :root
+      end
+
+      state :case do
+        rule %r/:(?!:)/, Punctuation, :pop!
+        mixin :statements
       end
     end
   end

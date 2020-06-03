@@ -21,7 +21,7 @@ module Rouge
 
         rule %r/(#\{?)(#{id})(\}?)(\s?\()/m do
           groups Punctuation, Name::Function, Punctuation, Punctuation
-          push :directiveparams
+          push :directive_params
         end
 
         rule %r/(#\{?)(#{id})(\}|\b)/m do
@@ -33,7 +33,7 @@ module Rouge
 
       state :variable do
         rule %r/#{id}/, Name::Variable
-        rule %r/\(/, Punctuation, :funcparams
+        rule %r/\(/, Punctuation, :func_params
         rule %r/(\.)(#{id})/ do
           groups Punctuation, Name::Variable
         end
@@ -41,20 +41,20 @@ module Rouge
         rule(//) { pop! }
       end
 
-      state :directiveparams do
+      state :directive_params do
         rule %r/(&&|\|\||==?|!=?|[-<>+*%&|^\/])|\b(eq|ne|gt|lt|ge|le|not|in)\b/, Operator
-        rule %r/\[/, Operator, :rangeoperator
+        rule %r/\[/, Operator, :range_operator
         rule %r/\b#{id}\b/, Name::Function
-        mixin :funcparams
+        mixin :func_params
       end
 
-      state :rangeoperator do
+      state :range_operator do
         rule %r/\.\./, Operator
-        mixin :funcparams
+        mixin :func_params
         rule %r/\]/, Operator, :pop!
       end
 
-      state :funcparams do
+      state :func_params do
         rule %r/\$\{?/, Punctuation, :variable
         rule %r/\s+/, Text
         rule %r/,/, Punctuation

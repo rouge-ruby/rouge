@@ -60,16 +60,12 @@ module Rouge
         rule %r/,/, Punctuation
         rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
         rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
-        rule %r/0[xX][0-9a-fA-F]+[Ll]?/, Literal::Number
-        rule %r/\b[0-9]+\b/, Literal::Number
+        rule %r/0[xX][0-9a-fA-F]+[Ll]?/, Num::Hex
+        rule %r/\b[0-9]+\b/, Num::Integer
         rule %r/(true|false|null)\b/, Keyword::Constant
-        rule %r/\(/, Punctuation, :push
-        rule %r/\)/, Punctuation, :pop!
-        rule %r/\[/, Punctuation, :push
-        rule %r/\]/, Punctuation, :pop!
-        rule %r/\}/, Punctuation, :pop!
+        rule %r/[(\[]/, Punctuation, :push!
+        rule %r/[)\]}]/, Punctuation, :pop!
       end
-
     end
   end
 end

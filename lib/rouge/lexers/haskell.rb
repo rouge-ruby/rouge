@@ -17,8 +17,8 @@ module Rouge
       end
 
       reserved = %w(
-        _ case class data default deriving do else if in
-        infix[lr]? instance let newtype of then type where
+        _ case class data default deriving do else if in infix infixl infixr
+        instance let newtype of then type where
       )
 
       ascii = %w(
@@ -54,14 +54,31 @@ module Rouge
       state :root do
         mixin :basic
 
-        rule %r/\bimport\b/, Keyword::Reserved, :import
-        rule %r/\bmodule\b/, Keyword::Reserved, :module
-        rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
-        # not sure why, but ^ doesn't work here
-        # rule %r/^[_a-z][\w']*/, Name::Function
-        rule %r/[_a-z][\w']*/, Name
-        rule %r/[A-Z][\w']*/, Keyword::Type
-        rule %r/'[A-Z]\w+'?/, Keyword::Type  # promoted data constructor
+        rule %r/'(?=(?:.|\\\S+)')/, Str::Char, :character
+        rule %r/"/, Str, :string
+
+        rule %r/\d+e[+-]?\d+/i, Num::Float
+        rule %r/\d+\.\d+(e[+-]?\d+)?/i, Num::Float
+        rule %r/0o[0-7]+/i, Num::Oct
+        rule %r/0x[\da-f]+/i, Num::Hex
+        rule %r/\d+/, Num::Integer
+
+        rule %r/[\w']+/ do |m|
+          match = m[0]
+          if match == "import"
+            token Keyword::Reserved
+            push :import
+          elsif match == "module"
+            token Keyword::Reserved
+            push :module
+          elsif reserved.include?(match)
+            token Keyword::Reserved
+          elsif match =~ /\A'?[A-Z]/
+            token Keyword::Type
+          else
+            token Name
+          end
+        end
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function
@@ -71,15 +88,6 @@ module Rouge
         rule %r(:[:!#\$\%&*+.\\/<=>?@^\|~-]*), Operator
         # other operators
         rule %r([:!#\$\%&*+.\\/<=>?@^\|~-]+), Operator
-
-        rule %r/\d+e[+-]?\d+/i, Num::Float
-        rule %r/\d+\.\d+(e[+-]?\d+)?/i, Num::Float
-        rule %r/0o[0-7]+/i, Num::Oct
-        rule %r/0x[\da-f]+/i, Num::Hex
-        rule %r/\d+/, Num::Integer
-
-        rule %r/'/, Str::Char, :character
-        rule %r/"/, Str, :string
 
         rule %r/\[\s*\]/, Keyword::Type
         rule %r/\(\s*\)/, Name::Builtin

@@ -19,6 +19,8 @@ module Rouge
       mimetypes 'application/javascript', 'application/x-javascript',
                 'text/javascript', 'text/x-javascript'
 
+      # Pseudo-documentation: https://stackoverflow.com/questions/1661197/what-characters-are-valid-for-javascript-variable-names
+
       def self.detect?(text)
         return 1 if text.shebang?('node')
         return 1 if text.shebang?('jsc')
@@ -138,7 +140,7 @@ module Rouge
       end
 
       def self.id_regex
-        /[$a-z_][a-z0-9_]*/io
+        /[\p{L}\p{Nl}$_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}_]*/io
       end
 
       id = self.id_regex

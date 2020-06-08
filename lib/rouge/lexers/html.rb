@@ -47,13 +47,13 @@ module Rouge
         rule %r(</), Name::Tag, :tag_end
         rule %r/</, Name::Tag, :tag_start
 
-        rule %r(<\s*[a-zA-Z0-9:-]+), Name::Tag, :tag # opening tags
-        rule %r(<\s*/\s*[a-zA-Z0-9:-]+\s*>), Name::Tag # closing tags
+        rule %r(<\s*[\p{L}:_-][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·-]*), Name::Tag, :tag # opening tags
+        rule %r(<\s*/\s*[\p{L}:_-][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·-]*\s*>), Name::Tag # closing tags
       end
 
       state :tag_end do
         mixin :tag_end_end
-        rule %r/[a-zA-Z0-9:-]+/ do
+        rule %r/[\p{L}:_-][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·-]*/ do
           token Name::Tag
           goto :tag_end_end
         end
@@ -67,7 +67,7 @@ module Rouge
       state :tag_start do
         rule %r/\s+/, Text
 
-        rule %r/[a-zA-Z0-9:-]+/ do
+        rule %r/[\p{L}:_-][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·-]*/ do
           token Name::Tag
           goto :tag
         end
@@ -83,8 +83,8 @@ module Rouge
 
       state :tag do
         rule %r/\s+/m, Text
-        rule %r/[a-zA-Z0-9_:\[\]()*.-]+\s*=\s*/m, Name::Attribute, :attr
-        rule %r/[a-zA-Z0-9_:#*-]+/, Name::Attribute
+        rule %r/[\p{L}:_\[\]()*.-][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·\[\]()*.-]*\s*=\s*/m, Name::Attribute, :attr
+        rule %r/[\p{L}:_*#-][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·*#-]*/, Name::Attribute
         rule %r(/?\s*>)m, Name::Tag, :pop!
       end
 

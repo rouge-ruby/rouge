@@ -12,6 +12,8 @@ module Rouge
       mimetypes 'text/xml', 'application/xml', 'image/svg+xml',
                 'application/rss+xml', 'application/atom+xml'
 
+      # Documentation: https://www.w3.org/TR/xml11/#charsets and https://www.w3.org/TR/xml11/#sec-suggested-names
+
       def self.detect?(text)
         return false if text.doctype?(/html/)
         return true if text =~ /\A<\?xml\b/
@@ -27,10 +29,10 @@ module Rouge
         rule %r/<![^>]*>/, Comment::Preproc
 
         # open tags
-        rule %r(<\s*[\w:.-]+)m, Name::Tag, :tag
+        rule %r(<\s*[\p{L}:_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·-]*)m, Name::Tag, :tag
 
         # self-closing tags
-        rule %r(<\s*/\s*[\w:.-]+\s*>)m, Name::Tag
+        rule %r(<\s*/\s*[\p{L}:_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·-]*\s*>)m, Name::Tag
       end
 
       state :comment do
@@ -41,7 +43,7 @@ module Rouge
 
       state :tag do
         rule %r/\s+/m, Text
-        rule %r/[\w.:-]+\s*=/m, Name::Attribute, :attr
+        rule %r/[\p{L}:_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:_.·-]*\s*=/m, Name::Attribute, :attr
         rule %r(/?\s*>), Name::Tag, :pop!
       end
 

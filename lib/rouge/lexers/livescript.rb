@@ -196,7 +196,7 @@ module Rouge
         rule %r/[#][{]/, Str::Interpol, :interpolated_expression
         # without curly braces
         rule %r/(#)(#{id})/ do |m|
-          groups Str::Interpol, if self.class.builtins.include? m[2] then Name::Builtin else Name::Variable end
+          groups Str::Interpol, (self.class.builtins.include? m[2]) ? Name::Builtin : Name::Variable
         end
       end
 

@@ -188,6 +188,9 @@ Function Get-IPv4Scopes
 
 } #end function
 
+Write-Output "Updating: $($file.FullName)"
+# $content = Get-Content $file.FullName
+
 # Without Error
 $gitUserName = "$($userAdObject.Properties['sn']), $($userAdObject.Properties['givenName'])"
 

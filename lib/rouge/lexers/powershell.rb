@@ -201,7 +201,7 @@ module Rouge
         rule %r/(?:#{KEYWORDS})\b(?![-.])/i, Keyword::Reserved
 
         rule %r/-{1,2}\w+/, Name::Tag
-        
+
         rule %r/(\.)?([-\w]+)(\[)/ do |m|
           groups Operator, Name::Function, Punctuation
           push :bracket
@@ -209,12 +209,12 @@ module Rouge
 
         rule %r/([\/\\~\w][-.:\/\\~\w]*)(\n)?/ do |m|
           groups Name::Function, Text::Whitespace
-          push :parameters unless m[2]
+          push :parameters
         end
 
         rule %r/(\.)?([-\w]+)(?:(\()|(\n))?/ do |m|
           groups Operator, Name::Function, Punctuation, Text::Whitespace
-          push :parameters unless m[3]
+          push :parameters unless m[3].nil?
         end
 
         rule %r/[-+*\/%=!.&|]/, Operator

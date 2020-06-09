@@ -4,6 +4,47 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.20.0: 2020-06-10
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.19.0...v3.20.0)
+
+- Augeas Lexer (**NEW**)
+  - Add Augeas lexer ([#1521](https://github.com/rouge-ruby/rouge/pull/1521/) by Raphaël Pinson)
+- BibTeX Lexer (**NEW**)
+  - Add BibTeX lexer ([#1360](https://github.com/rouge-ruby/rouge/pull/1360/) by alexlihengwang)
+- C++ Lexer
+  - Support scope resolution operator in C++ lexer ([#1523](https://github.com/rouge-ruby/rouge/pull/1523/) by Michael Camilleri)
+- Diff Lexer
+  - Fix erroneous detection in Diff lexer ([#1532](https://github.com/rouge-ruby/rouge/pull/1532/) by Catalin)
+- Haskell Lexer
+  - Improve support for single quotes in Haskell lexer ([#1524](https://github.com/rouge-ruby/rouge/pull/1524/) by Michael Camilleri)
+- HLSL Lexer (**NEW**)
+  - Add HLSL lexer ([#1520](https://github.com/rouge-ruby/rouge/pull/1520/) by Mitch McClellan)
+- HTML Lexer
+  - Add `*.cshtml` file glob to HTML lexer ([#1522](https://github.com/rouge-ruby/rouge/pull/1522/) by Michael Camilleri)
+- JavaScript Lexer
+  - Fix erroneous brace matching rule in JavaScript lexer ([#1526](https://github.com/rouge-ruby/rouge/pull/1526/) by Michael Camilleri)
+- JSX Lexer
+  - Simplify JSX and TSX lexers ([#1492](https://github.com/rouge-ruby/rouge/pull/1492/) by Michael Camilleri)
+- LiveScript Lexer (**NEW**)
+  - Add LiveScript lexer ([#650](https://github.com/rouge-ruby/rouge/pull/650/) by FuriousBoar)
+- OpenType Feature File Lexer
+  - Add new keywords to and fix bugs in OpenType feature file lexer ([#1519](https://github.com/rouge-ruby/rouge/pull/1519/) by Zachary Quinn Scheuren)
+- PowerShell Lexer
+  - Fix incorrect predicate usage in PowerShell lexer ([#1536](https://github.com/rouge-ruby/rouge/pull/1536/) by Michael Camilleri)
+- TSX Lexer
+  - Permit use of trailing comma in generics in TSX lexer ([#1528](https://github.com/rouge-ruby/rouge/pull/1528/) by Michael Camilleri)
+  - Simplify JSX and TSX lexers ([#1492](https://github.com/rouge-ruby/rouge/pull/1492/) by Michael Camilleri)
+  - Change the way common methods are mixed in to TypeScript-based lexers ([#1527](https://github.com/rouge-ruby/rouge/pull/1527/) by Michael Camilleri)
+- TypeScript Lexer
+  - Support nullish coalescing operator in TypeScript lexer ([#1529](https://github.com/rouge-ruby/rouge/pull/1529/) by Michael Camilleri)
+  - Move rules from TypeScript lexer to TypeScript common module ([#1530](https://github.com/rouge-ruby/rouge/pull/1530/) by Michael Camilleri)
+  - Change the way common methods are mixed in to TypeScript-based lexers ([#1527](https://github.com/rouge-ruby/rouge/pull/1527/) by Michael Camilleri)
+- Velocity Lexer (**NEW**)
+  - Add Velocity lexer ([#1518](https://github.com/rouge-ruby/rouge/pull/1518/) by Michael Camilleri)
+- Zig Lexer (**NEW**)
+  - Add Zig lexer ([#1533](https://github.com/rouge-ruby/rouge/pull/1533/) by Timmy Jose)
+
 ## version 3.19.0: 2020-05-13
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.18.0...v3.19.0)

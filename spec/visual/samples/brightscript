@@ -1,0 +1,34 @@
+REM main function
+function main(args as dynamic) as void
+  print "main function"
+
+  screen = CreateObject("roSGScreen")
+  m.port = CreateObject("roMessagePort")
+  screen.setMessagePort(m.port)
+
+  state = createInitialState(screen)
+
+  scene = screen.CreateScene("HelloWorld")
+  screen.show()
+
+  ' event loop
+  while(true)
+    msg = wait(0, m.port)
+    msgType = type(msg)
+    if msgType = "roSGScreenEvent"
+      if msg.isScreenClosed() then return
+    end if
+  end while
+end function
+
+function createInitialState(screen as object) as object
+  initialState = createObject("roSGNode","ContentNode")
+  initialStateFields = {
+    currentScreen: {
+      screenType: screenType().HOME_SCREEN,
+    }
+  }
+
+  initialState.addFields(initialStateFields)
+  return createStore(initialState, screen)
+end function

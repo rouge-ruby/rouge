@@ -11,6 +11,7 @@ set /a num=0xff
 set /p "=qwerty." < nul
 echo %~dp0
 rem all okay
+@rem "sample"
 :: this is an empty label
 attrib.exe +r file.txt 2>nul
 for /f "tokens=1" %%a in ('echo hello %username% hi ^'') do echo %%~a

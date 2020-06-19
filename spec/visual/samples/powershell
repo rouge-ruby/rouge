@@ -95,7 +95,7 @@ process {
 }
 
 ###########################
-# Control structures 
+# Control structures
 ###########################
 
 if ($var1 -eq $var2)
@@ -114,15 +114,15 @@ Foreach ($Thing in $Things ) {
 }
 
 ###########################
-# Classes 
+# Classes
 ###########################
 
 class Child : Parent, Relatives {
     [int] hidden $var = 8
-    
+
     Child ([string]$a, [string]$b, [int]$capacity) {
         $this.var = $a
-    } 
+    }
 
     [string]toString() {
         return "A string"

@@ -6,6 +6,37 @@ module Rouge
   # A stateful lexer that uses sets of regular expressions to
   # tokenize a string.  Most lexers are instances of RegexLexer.
   class RegexLexer < Lexer
+    class InvalidRegex < StandardError
+      def initialize(re)
+        @re = re
+      end
+
+      def to_s
+        "regex #{@re.inspect} matches empty string, but is not empty!"
+      end
+    end
+
+    class ClosedState < StandardError
+      attr_reader :state
+      def initialize(state)
+        @state = state
+      end
+
+      def rule
+        @state.rules.last
+      end
+
+      def to_s
+        rule = @state.rules.last
+        msg = "State :#{state.name} cannot continue after #{rule.inspect}, which will always match."
+        if rule.re.source.include?('*')
+          msg += " Consider replacing * with +."
+        end
+
+        msg
+      end
+    end
+
     # A rule is a tuple of a regular expression to test, and a callback
     # to perform if the test succeeds.
     #
@@ -42,12 +73,13 @@ module Rouge
     end
 
     class StateDSL
-      attr_reader :rules
+      attr_reader :rules, :name
       def initialize(name, &defn)
         @name = name
         @defn = defn
         @rules = []
         @loaded = false
+        @closed = false
       end
 
       def to_state(lexer_class)
@@ -95,9 +127,13 @@ module Rouge
       #   {RegexLexer#token}, and {RegexLexer#delegate}.  The first
       #   argument can be used to access the match groups.
       def rule(re, tok=nil, next_state=nil, &callback)
+        raise ClosedState.new(self) if @closed
+
         if tok.nil? && callback.nil?
           raise "please pass `rule` a token to yield or a callback"
         end
+
+        matches_empty = re.match?('')
 
         callback ||= case next_state
         when :pop!
@@ -123,6 +159,9 @@ module Rouge
             @stack.push(state)
           end
         when nil
+          # cannot use an empty-matching regexp with no predicate
+          raise InvalidRegex.new(re) if matches_empty
+
           proc do |stream|
             puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
@@ -132,6 +171,20 @@ module Rouge
         end
 
         rules << Rule.new(re, callback)
+
+        close! if matches_empty && !context_sensitive?(re)
+      end
+
+      def context_sensitive?(re)
+        source = re.source
+        return true if /[(][?]<?[!=]/.match?(source)
+
+        # anchors count as lookahead/behind
+        return true if /[$^]/.match?(source)
+      end
+
+      def close!
+        @closed = true
       end
 
       # Mix in the rules from another state into this state.  The rules

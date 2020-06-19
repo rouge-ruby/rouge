@@ -133,7 +133,7 @@ module Rouge
           raise "please pass `rule` a token to yield or a callback"
         end
 
-        matches_empty = re.match?('')
+        matches_empty = re =~ ''
 
         callback ||= case next_state
         when :pop!
@@ -177,10 +177,12 @@ module Rouge
 
       def context_sensitive?(re)
         source = re.source
-        return true if /[(][?]<?[!=]/.match?(source)
+        return true if source =~ /[(][?]<?[!=]/
 
         # anchors count as lookahead/behind
-        return true if /[$^]/.match?(source)
+        return true if source =~ /[$^]/
+
+        false
       end
 
       def close!

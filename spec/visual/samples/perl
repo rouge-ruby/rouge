@@ -60,7 +60,13 @@ $s =~ y/[]|/()&/; # "backward" compatible
 
 
 # quoted strings
+my $a = 'foo';
+my $a = 'foo\'s bar';
+my $a = 'foo\bar';
+my $a = 'foo\\bar';
 my $a = "foo";
+my $a = "foo \" bar";
+my $a = "foo\bar";
 
 print "a: ";
 print $a, " - ";

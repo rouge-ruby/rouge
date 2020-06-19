@@ -82,7 +82,17 @@ module Rouge
 
       state :template do
         rule %r/>/, Punctuation, :pop!
-        rule %r/typename\b/, Keyword, :classname
+        rule %r/(typename)([ ,]?)/ do |m|
+          case m[2]
+          when " "
+            groups Keyword, Text
+            push :classname
+          when ","
+            groups Keyword, Punctuation
+          else
+            token Keyword
+          end
+        end
         mixin :root
       end
 

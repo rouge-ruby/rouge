@@ -8,7 +8,7 @@ module Rouge
 
       title "SSH Config File"
       desc 'A lexer for SSH configuration files'
-      filenames 'config', 'ssh_config'
+      filenames 'ssh_config'
 
       state :root do
         rule %r/[a-z0-9]+/i, Keyword, :statement

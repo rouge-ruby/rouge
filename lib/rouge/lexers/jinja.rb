@@ -40,6 +40,17 @@ module Rouge
         rule %r/{#/, Comment, :comment
         rule %r/##.*/, Comment
 
+        # Raw and verbatim
+        rule %r/({%)(\s*)(raw|verbatim)(\s*)(%})/ do |m|
+          groups Comment::Preproc, Text, Keyword, Text, Comment::Preproc
+          case m[3]
+          when "raw"
+            push :raw
+          when "verbatim"
+            push :verbatim
+          end
+        end
+
         # Statements
         rule %r/\{\%/ do
           token Comment::Preproc
@@ -114,11 +125,6 @@ module Rouge
       end
 
       state :statement do
-        rule %r/(raw|verbatim)(\s+)(\%\})/ do
-          groups Keyword, Text, Comment::Preproc
-          goto :raw
-        end
-
         rule %r/(\w+\.?)/ do |m|
           if self.class.keywords.include?(m[0])
             groups Keyword
@@ -142,12 +148,21 @@ module Rouge
       end
 
       state :raw do
-        rule %r{(\{\%)(\s+)(endverbatim|endraw)(\s+)(\%\})} do
+        rule %r/({%)(\s*)(endraw)(\s*)(%})/ do
           groups Comment::Preproc, Text, Keyword, Text, Comment::Preproc
           pop!
         end
+        rule %r/[^{]+/, Text
+        rule %r/{/, Text
+      end
 
-        rule %r/(.+?)/m, Text
+      state :verbatim do
+        rule %r/({%)(\s*)(endverbatim)(\s*)(%})/ do
+          groups Comment::Preproc, Text, Keyword, Text, Comment::Preproc
+          pop!
+        end
+        rule %r/[^{]+/, Text
+        rule %r/{/, Text
       end
     end
   end

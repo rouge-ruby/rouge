@@ -48,7 +48,7 @@ module Rouge
         rule %r/\\![btrnNf0\\"]/, Str::Escape
         rule %r/\\/, Str::Double
         rule %r/"/, Str::Double, :pop!
-        rule %r/[^\\"]*/m, Str::Double
+        rule %r/[^\\"]+/m, Str::Double
       end
     end
   end

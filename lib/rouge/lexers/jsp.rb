@@ -112,9 +112,8 @@ module Rouge
 
       state :jsp_interp_literal_start do
         rule %r/'/, Literal, :pop!
-        rule %r/[^']*/, Literal
+        rule %r/[^']+/, Literal
       end
-
     end
   end
 end

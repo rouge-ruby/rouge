@@ -41,7 +41,7 @@ module Rouge
 
       state :dotted do
         mixin :whitespace
-        rule %r/[a-zа-яё_0-9]*/i do |m|
+        rule %r/[a-zа-яё_0-9]+/i do |m|
           name = m[0]
           if self.class.constants.include? name.downcase
             token Name::Builtin
@@ -56,7 +56,7 @@ module Rouge
 
       state :type do
         mixin :whitespace
-        rule %r/[a-zа-яё_0-9]*/i do |m|
+        rule %r/[a-zа-яё_0-9]+/i do |m|
           name = m[0]
           if self.class.interfaces.include? name.downcase
             token Keyword::Type

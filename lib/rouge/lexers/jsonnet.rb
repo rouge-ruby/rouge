@@ -126,6 +126,7 @@ module Rouge
 
       state :string do
         rule %r/\\([\\\/bfnrt]|(u[0-9a-fA-F]{4}))/, Str::Escape
+        rule %r/\\./, Str::Escape
       end
 
       state :string_double do
@@ -137,15 +138,15 @@ module Rouge
 
       state :string_single do
         mixin :string
-        rule %r/\\'/, Str::Escape
         rule %r/'/, Str, :pop!
         rule %r/[^\\']+/, Str
       end
 
       state :string_block do
         mixin :string
-        rule %r/\|\|\|/, Str, :pop!
-        rule %r/.*/, Str
+        rule %r/[|][|][|]/, Str, :pop!
+        rule %r/[^|\\]+/, Str
+        rule %r/[|]/, Str
       end
     end
   end

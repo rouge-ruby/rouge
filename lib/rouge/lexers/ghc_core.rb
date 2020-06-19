@@ -27,8 +27,9 @@ module Rouge
         mixin :function
 
         # rest is Text
+        # TODO: this is really inefficient
         rule %r/\s/m, Text
-        rule %r/.*/, Text
+        rule %r/./, Text
       end
 
       state :expression do

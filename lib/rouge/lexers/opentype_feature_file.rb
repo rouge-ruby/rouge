@@ -91,7 +91,6 @@ module Rouge
       state :strings do
         rule %r/"/, Str, :pop!
         rule %r/[^"%\n]+/, Str
-        rule %r/(\([a-z0-9_]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?/i, Str
       end
     end
   end

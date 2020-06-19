@@ -160,6 +160,11 @@ my $addOperation = $totalNumber + $myOtherVar;
 
 sub __END__but_not_really { 1 }
 
+# fat commas
+use constant EMPTY_SPACE => '&nbsp;';
+my %h = ( FOO => 23 );
+$text = format_text({FOO => 23, BAR => 30});
+
 __DATA__
 
 This is just some end text; everything after DATA can be accessed

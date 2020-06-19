@@ -66,13 +66,13 @@ body {
   }
 
   ul {
-    @include horizontal-list; 
+    @include horizontal-list;
     padding: 0 0 0 25px;
     li {
       @include incr(18px);
       padding: 0 20px 0 0;
       text-transform: uppercase;
-      a { 
+      a {
         color: #febf0f;
         text-decoration: none;
         width: 100px;
@@ -86,7 +86,7 @@ body {
         @include replace-text("header-timeline-text.jpg");
       }
     }
-  } 
+  }
 }
 
 #paging {
@@ -99,8 +99,8 @@ body {
     color: #908f8b;
     padding-right: 20px;
     text-transform: uppercase;
-    a { 
-      color: #f07b07; 
+    a {
+      color: #f07b07;
       text-decoration: none;
     }
   }
@@ -109,18 +109,18 @@ body {
     @include horizontal-list;
     li {
       padding: 3px 4px;
-      a { 
+      a {
         color: #4c4c4c;
         @include replace-text("thread-paging-inactive-bullet.jpg");
         width: 10px;
         height: 10px;
         display: block;
       }
-      &.active a { 
+      &.active a {
         color: #f17d06;
         background-image: image_@import "compass";
       }
-    } 
+    }
   }
 }
 
@@ -152,7 +152,7 @@ body {
 
     @for $i from 0 through 30 {
     &.position#{$i} {
-      left: ($i * -910px); 
+      left: ($i * -910px);
     }
   }
 }
@@ -163,7 +163,7 @@ body {
     width: 100%;
   }
 
-  #thread { 
+  #thread {
     padding: 0;
     width: 5000px;
     position: absolute;
@@ -278,15 +278,15 @@ body {
   }
 
   ul {
-    @include horizontal-list; 
+    @include horizontal-list;
 
     li {
       padding: 0 30px 0 0;
-      a { 
+      a {
         text-decoration: none;
-        color: #ef7a06; 
+        color: #ef7a06;
       }
-    } 
+    }
   }
 }
 

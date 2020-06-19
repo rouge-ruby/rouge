@@ -397,4 +397,12 @@ button.short
 table
   :border-collapse collapse
 
+body
+  &.open > button::after
+    color: red
+
+body
+  &::after
+    color: red
+
 // Comment at EOF (#797)

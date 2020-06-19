@@ -194,5 +194,8 @@ Write-Output "Updating: $($file.FullName)"
 # Without Error
 $gitUserName = "$($userAdObject.Properties['sn']), $($userAdObject.Properties['givenName'])"
 
-# With Error
+# Grave escaping
 $gitExeString = "$gitExeFolder\git.exe" &("$gitExeString") config --add --global user.name `"$gitUserName`"
+hildItem -Include *.txt `
+    -Recurse
+Write-Output `$hello

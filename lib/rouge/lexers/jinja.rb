@@ -41,7 +41,7 @@ module Rouge
         rule %r/##.*/, Comment
 
         # Raw and verbatim
-        rule %r/({%)(\s*)(raw|verbatim)(\s*)(%})/ do |m|
+        rule %r/({%-?)(\s*)(raw|verbatim)(\s*)(-?%})/ do |m|
           groups Comment::Preproc, Text, Keyword, Text, Comment::Preproc
           case m[3]
           when "raw"
@@ -148,7 +148,7 @@ module Rouge
       end
 
       state :raw do
-        rule %r/({%)(\s*)(endraw)(\s*)(%})/ do
+        rule %r/({%-?)(\s*)(endraw)(\s*)(-?%})/ do
           groups Comment::Preproc, Text, Keyword, Text, Comment::Preproc
           pop!
         end
@@ -157,7 +157,7 @@ module Rouge
       end
 
       state :verbatim do
-        rule %r/({%)(\s*)(endverbatim)(\s*)(%})/ do
+        rule %r/({%-?)(\s*)(endverbatim)(\s*)(-?%})/ do
           groups Comment::Preproc, Text, Keyword, Text, Comment::Preproc
           pop!
         end

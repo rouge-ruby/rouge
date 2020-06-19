@@ -178,14 +178,15 @@ module Rouge
       end
 
       state :sq do
-        rule %r/\\[']/, Str::Escape
+        rule %r/\\[\\']/, Str::Escape
         rule %r/[^\\']+/, Str::Single
         rule %r/'/, Punctuation, :pop!
+        rule %r/\\/, Str::Single
       end
 
       state :dq do
         mixin :string_intp
-        rule %r/\\[\\tnr"]/, Str::Escape
+        rule %r/\\[\\tnr"$@]/, Str::Escape
         rule %r/[^\\"]+?/, Str::Double
         rule %r/"/, Punctuation, :pop!
       end

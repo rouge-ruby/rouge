@@ -12,7 +12,7 @@ module Rouge
       end
 
       def to_s
-        "regex #{@re.inspect} matches empty string, but is not empty!"
+        "regex #{@re.inspect} matches empty string, but has no predicate!"
       end
     end
 

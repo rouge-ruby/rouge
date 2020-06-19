@@ -78,7 +78,7 @@ module Rouge
 
       state :basic do
         # Comments
-        rule %r/\brem\b.*$/i, Comment
+        rule %r/@?\brem\b.*$/i, Comment
         # Empty Labels
         rule %r/^::.*$/, Comment
 

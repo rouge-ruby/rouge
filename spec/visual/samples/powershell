@@ -196,6 +196,6 @@ $gitUserName = "$($userAdObject.Properties['sn']), $($userAdObject.Properties['g
 
 # Grave escaping
 $gitExeString = "$gitExeFolder\git.exe" &("$gitExeString") config --add --global user.name `"$gitUserName`"
-hildItem -Include *.txt `
+Get-ChildItem -Include *.txt `
     -Recurse
 Write-Output `$hello

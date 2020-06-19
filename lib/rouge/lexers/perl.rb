@@ -99,6 +99,9 @@ module Rouge
           re_tok, :balanced_regex
 
         rule %r/\s+/, Text
+
+        rule(/(?=[a-z_]\w*\s+=>)/i) { push :fat_comma }
+
         rule %r/(?:#{builtins.join('|')})\b/, Name::Builtin
         rule %r/((__(DIE|WARN)__)|(DATA|STD(IN|OUT|ERR)))\b/,
           Name::Builtin::Pseudo
@@ -135,6 +138,12 @@ module Rouge
           Operator
         rule %r/[()\[\]:;,<>\/?{}]/, Punctuation
         rule(/(?=\w)/) { push :name }
+      end
+
+      state :fat_comma do
+        rule %r/\w+/, Str
+        rule %r/\s+/, Text
+        rule %r/=>/, Operator, :pop!
       end
 
       state :format do

@@ -13,7 +13,7 @@ module Rouge
 
       # Documentation: https://www.w3.org/TR/CSS21/syndata.html#characters
 
-      identifier = /[\p{L}_-][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}-]*/
+      identifier = /[\p{L}_-][\p{Word}\p{Cf}-]*/
       number = /-?(?:[0-9]+(\.[0-9]+)?|\.[0-9]+)/
 
       def self.attributes

@@ -254,13 +254,13 @@ module Rouge
 
 
       state :funcname do
-        rule %r/[\p{L}\p{Nl}\p{Sc}\p{So}\p{Sm}_][\p{Word}\p{S}\p{Po}!]*/, Name::Function, :pop!
+        rule %r/[\p{L}\p{Nl}\p{S}_][\p{Word}\p{S}\p{Po}!]*/, Name::Function, :pop!
         rule %r/\([^\s\w{]{1,2}\)/, Operator, :pop!
         rule %r/[^\s\w{]{1,2}/, Operator, :pop!
       end
 
       state :typename do
-        rule %r/[\p{L}\p{Nl}\p{Sc}\p{So}\p{Sm}_][\p{Word}\p{S}\p{Po}!]*/, Name::Class, :pop!
+        rule %r/[\p{L}\p{Nl}\p{S}_][\p{Word}\p{S}\p{Po}!]*/, Name::Class, :pop!
       end
 
       state :stringescape do

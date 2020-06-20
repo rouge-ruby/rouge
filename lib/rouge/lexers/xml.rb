@@ -29,10 +29,10 @@ module Rouge
         rule %r/<![^>]*>/, Comment::Preproc
 
         # open tags
-        rule %r(<\s*[\p{L}:_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:.·-]*)m, Name::Tag, :tag
+        rule %r(<\s*[\p{L}:_][\p{Word}\p{Cf}:.·-]*)m, Name::Tag, :tag
 
         # self-closing tags
-        rule %r(<\s*/\s*[\p{L}:_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:.·-]*\s*>)m, Name::Tag
+        rule %r(<\s*/\s*[\p{L}:_][\p{Word}\p{Cf}:.·-]*\s*>)m, Name::Tag
       end
 
       state :comment do
@@ -43,7 +43,7 @@ module Rouge
 
       state :tag do
         rule %r/\s+/m, Text
-        rule %r/[\p{L}:_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}\p{Cf}:.·-]*\s*=/m, Name::Attribute, :attr
+        rule %r/[\p{L}:_][\p{Word}\p{Cf}:.·-]*\s*=/m, Name::Attribute, :attr
         rule %r(/?\s*>), Name::Tag, :pop!
       end
 

@@ -7,7 +7,7 @@ module Rouge
       title "BrightScript"
       desc "BrightScript Programming Language (https://developer.roku.com/en-ca/docs/references/brightscript/language/brightscript-language-reference.md)"
       tag 'brightscript'
-      aliases 'bs'
+      aliases 'bs', 'brs'
       filenames '*.brs'
 
       # https://developer.roku.com/en-ca/docs/references/brightscript/language/global-utility-functions.md
@@ -99,14 +99,14 @@ module Rouge
         rule %r/\s+/m, Text::Whitespace
 
         # https://developer.roku.com/en-ca/docs/references/brightscript/language/expressions-variables-types.md#comments
-        rule %r/(\'.*?$)/, Comment::Single
-        rule %r/((?i)REM.*?$)/, Comment::Single
+        rule %r/\'.*/, Comment::Single
+        rule %r/REM.*/i, Comment::Single
 
         # https://developer.roku.com/en-ca/docs/references/brightscript/language/expressions-variables-types.md#operators
         rule %r([~!%^&*+=\|?:<>/-]), Operator
 
-        rule %r/\d+[lu]*/i, Num::Integer      
-        rule %r/\d*\.\d+([eE]\-?\d+)?/, Num::Float
+        rule %r/\d*\.\d+([e]\-?\d+)?/i, Num::Float
+        rule %r/\d+[lu]*/i, Num::Integer
 
         rule %r/".*?"/, Str::Double
 

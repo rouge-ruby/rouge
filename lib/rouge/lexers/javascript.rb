@@ -140,7 +140,7 @@ module Rouge
       end
 
       def self.id_regex
-        /[\p{L}\p{Nl}$_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}_]*/io
+        /[\p{L}\p{Nl}$_][\p{L}\p{Nl}\p{Mc}\p{Mn}\p{Nd}\p{Pc}]*/io
       end
 
       id = self.id_regex

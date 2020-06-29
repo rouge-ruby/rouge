@@ -1,0 +1,65 @@
+(math/trunc 1.0)
+# => 1
+
+(- 0x01 1.0)
+# => 0
+
+(inc -1e0)
+# => 0
+
+(- 8r123 83)
+# => 0
+
+(nil? nil)
+# => true
+
+(not= 1 1)
+# => false
+
+(string "\u004a" "\u0061" "\u006E\u0065\u0074")
+# => "Janet"
+
+(string "\U01F5DD" "\U01F512" "\U01F513")
+# => "\xF0\x9F\x97\x9D\xF0\x9F\x94\x92\xF0\x9F\x94\x93"
+
+(put @{:a 1} :b 2)
+# => @{:a 1 :b 2}
+
+(type @{:a 1})
+# => :table
+
+(type {:a 1})
+# => :struct
+
+(in [:a :b :c] 1)
+# => :b
+
+(type [:a :b])
+# => :tuple
+
+(type '(:a :b))
+# => :tuple
+
+(tuple/type '[])
+# => :brackets
+
+(tuple/type '())
+# => :parens
+
+(first [1 2 3])
+# => 1
+
+(drop [1 2 3])
+# => [2 3]
+
+(+ 1 2 3)
+# => 6
+
+(apply + [1 2 3])
+# => 6
+
+(+ ;[2 3 5 7 11])
+# => 28
+
+(|(+ 1 1 2 3 5 $) 8)
+# => 20

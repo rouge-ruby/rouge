@@ -112,7 +112,7 @@ module Rouge
         # https://developer.roku.com/en-ca/docs/references/brightscript/language/expressions-variables-types.md#operators
         rule %r([~!%^&*+=\|?:<>/-]), Operator
 
-        rule %r/\d*\.\d+([e]-?\d+)?/i, Num::Float
+        rule %r/\d*\.\d+(e-?\d+)?/i, Num::Float
         rule %r/\d+[lu]*/i, Num::Integer
 
         rule %r/".*?"/, Str::Double

@@ -94,6 +94,7 @@ template<typename T> concept C1 = sizeof(T) != sizeof(int);
 template<C1 T> struct S1 { };
 template<C1 T> using Ptr = T*;
 template <typename, typename...>
+template<class...> struct Tuple { };
 
 // variadic template
 template<class F, class... Args>

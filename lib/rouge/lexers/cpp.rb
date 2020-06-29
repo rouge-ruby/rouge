@@ -75,25 +75,22 @@ module Rouge
         rule id, Name::Class, :pop!
 
         # template specification
-        rule %r/\s*(?=>)/m, Text, :pop!
         rule %r/[.]{3}/, Operator
+        rule %r/(?=>)/, Text, :pop!
         mixin :whitespace
       end
 
       state :template do
-        rule %r/>/, Punctuation, :pop!
-        rule %r/(typename)([ ,]?)/ do |m|
-          case m[2]
-          when " "
+        rule %r/[>;]/, Punctuation, :pop!
+        rule %r/(typename\b)(\s?)/ do |m|
+          if m[2].empty?
+            token Keyword
+          else
             groups Keyword, Text
             push :classname
-          when ","
-            groups Keyword, Punctuation
-          else
-            token Keyword
           end
         end
-        mixin :root
+        mixin :statements
       end
 
       state :case do

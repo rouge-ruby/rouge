@@ -9,18 +9,18 @@ describe Rouge::Lexers::SSH do
 
     it 'lexes a specification' do
       example = 'Host example
-  Hostname www.example.com
-  Port 1234
-  Tunnel no'
+                 Hostname www.example.com
+                 Port 1234
+                 Tunnel no'
 
       assert_tokens_equal example, ["Keyword",        "Host"],
-                                   ["Text",           " example\n  "],
+                                   ["Text",           " example\n                 "],
                                    ["Keyword",        "Hostname"],
-                                   ["Text",           " www.example.com\n  "],
+                                   ["Text",           " www.example.com\n                 "],
                                    ["Keyword",        "Port"],
                                    ["Text",           " "],
                                    ["Literal.Number", "1234"],
-                                   ["Text",           "\n  "],
+                                   ["Text",           "\n                 "],
                                    ["Keyword",        "Tunnel"],
                                    ["Text",           " "],
                                    ["Name.Constant",  "no"]

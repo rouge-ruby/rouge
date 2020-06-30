@@ -128,8 +128,7 @@ module Rouge
         # XXX: long strings?
         # XXX: true, false, nil?
 
-        # XXX: don't know what ~@ means
-        rule %r/~@|[\'#~,;\|]/, Operator
+        rule %r/[\'#~,;\|]/, Operator
 
         rule %r/(\()(\s*)(#{identifier})/m do |m|
           token Punctuation, m[1]

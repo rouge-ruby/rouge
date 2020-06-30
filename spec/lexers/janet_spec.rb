@@ -8,8 +8,7 @@ describe Rouge::Lexers::Janet do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.clj'
-      assert_guess :filename => 'foo.cljs'
+      assert_guess :filename => 'foo.janet'
     end
 
     it 'guesses by mimetype' do

@@ -122,7 +122,6 @@ module Rouge
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/'#{keyword}/, Str::Symbol
         rule %r/:+#{keyword}/, Name::Constant
-        rule %r/\\(.|[a-z]+)/i, Str::Char
         # XXX: hex escape
         # XXX: u and U escapes
         # XXX: long strings?

@@ -20,8 +20,8 @@ module Rouge
         )
       end
 
-      def self.builtins
-        @builtins ||= Set.new %w(
+      def self.bundled
+        @bundled ||= Set.new %w(
           % * + - / < <= = > >= abstract? accumulate accumulate2 all
           all-bindings all-dynamics apply array array/concat
           array/ensure array/fill array/insert array/new
@@ -104,7 +104,7 @@ module Rouge
 
       def name_token(name)
         return Keyword if self.class.specials.include?(name)
-        return Name::Builtin if self.class.builtins.include?(name)
+        return Name::Builtin if self.class.bundled.include?(name)
         nil
       end
 

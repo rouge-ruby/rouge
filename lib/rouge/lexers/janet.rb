@@ -120,14 +120,13 @@ module Rouge
         rule %r/[+-]?\d[\d_]*(\.[\d_]+)?([eE][+-]?\d+)?/, Num::Float
         rule %r/[+-]?\.\d[\d_]*([eE][+-]?\d+)?/, Num::Float
 
+        # XXX: escapes?  hex, u, U, \n, etc.
         rule %r/@?"(\\.|[^"])*"/, Str
+        rule %r/@?(`+).*?\1/m, Str::Heredoc
+
         rule %r/'#{symbol}/, Str::Symbol
         rule %r/#{keyword}/, Name::Constant
         rule %r/true|false|nil/, Name::Constant
-        # XXX: hex escape
-        # XXX: u and U escapes
-        # XXX: long strings?
-        # XXX: multiline strings
 
         rule %r/[\'#~,;\|]/, Operator
 

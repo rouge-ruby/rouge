@@ -99,7 +99,7 @@ module Rouge
 
       # XXX: from janet.vim !$%&*+-./:<=>?@A-Z^_a-z
       # XXX: reduce repetition somehow?
-      identifier = %r([!$%&*+./<=>?@_A-Za-z^-][!$%&*+./:<=>?@^_A-Za-z0-9-]*)
+      symbol = %r([!$%&*+./<=>?@_A-Za-z^-][!$%&*+./:<=>?@^_A-Za-z0-9-]*)
       keyword = %r(:[!$%&*+./:<=>?@_A-Za-z^-]+)
 
       def name_token(name)
@@ -119,7 +119,7 @@ module Rouge
         # XXX: exponent
 
         rule %r/@?"(\\.|[^"])*"/, Str
-        rule %r/'#{identifier}/, Str::Symbol
+        rule %r/'#{symbol}/, Str::Symbol
         rule %r/#{keyword}/, Name::Constant
         rule %r/true|false|nil/, Name::Constant
         # XXX: hex escape
@@ -128,13 +128,13 @@ module Rouge
 
         rule %r/[\'#~,;\|]/, Operator
 
-        rule %r/(\()(\s*)(#{identifier})/m do |m|
+        rule %r/(\()(\s*)(#{symbol})/m do |m|
           token Punctuation, m[1]
           token Text::Whitespace, m[2]
           token(name_token(m[3]) || Name::Function, m[3])
         end
 
-        rule identifier do |m|
+        rule symbol do |m|
           token name_token(m[0]) || Name
         end
 

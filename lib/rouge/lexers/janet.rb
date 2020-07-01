@@ -131,9 +131,9 @@ module Rouge
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/@?(`+).*?\1/m, Str::Heredoc
 
+        rule %r/true|false|nil/, Name::Constant
         rule %r/'#{symbol}/, Str::Symbol
         rule %r/#{keyword}/, Name::Constant
-        rule %r/true|false|nil/, Name::Constant
 
         rule %r/[\'#~,;\|]/, Operator
 

@@ -126,6 +126,7 @@ module Rouge
         # XXX: hex escape
         # XXX: u and U escapes
         # XXX: long strings?
+        # XXX: multiline strings
 
         rule %r/[\'#~,;\|]/, Operator
 

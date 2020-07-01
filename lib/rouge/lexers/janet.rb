@@ -14,9 +14,9 @@ module Rouge
 
       mimetypes 'text/x-janet', 'application/x-janet'
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          if do fn while def var quote quasiquote unquote splice set break
+      def self.specials
+        @specials ||= Set.new %w(
+          break def do fn if quote quasiquote splice set unquote var while
         )
       end
 
@@ -103,7 +103,7 @@ module Rouge
       keyword = %r(:[!$%&*+./:<=>?@^_A-Za-z0-9-]+)
 
       def name_token(name)
-        return Keyword if self.class.keywords.include?(name)
+        return Keyword if self.class.specials.include?(name)
         return Name::Builtin if self.class.builtins.include?(name)
         nil
       end

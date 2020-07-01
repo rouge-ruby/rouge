@@ -112,12 +112,12 @@ module Rouge
         rule %r/#.*?$/, Comment::Single
         rule %r/\s+/m, Text::Whitespace
 
-        rule %r/[+-]?0x[0-9a-fA-F]+/, Num::Hex
-        rule %r/[+-]?\d+(\.\d+)?([eE][+-]?\d+)?/, Num::Float
-        rule %r/[+-]?\.\d+([eE][+-]?\d+)?/, Num::Float
-        rule %r/[+-]?\d+/, Num::Integer
+        # exactly where underscores can go is not regular
+        rule %r/[+-]?0x[0-9a-fA-F][_0-9a-fA-F]*/, Num::Hex
+        # this covers integers as well
+        rule %r/[+-]?\d[\d_]*(\.[\d_]+)?([eE][+-]?\d+)?/, Num::Float
+        rule %r/[+-]?\.\d[\d_]*([eE][+-]?\d+)?/, Num::Float
         # XXX: r
-        # XXX: underscores between digits
 
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/'#{symbol}/, Str::Symbol

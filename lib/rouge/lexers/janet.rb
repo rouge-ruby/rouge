@@ -121,10 +121,10 @@ module Rouge
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/'#{identifier}/, Str::Symbol
         rule %r/#{keyword}/, Name::Constant
+        rule %r/true|false|nil/, Name::Constant
         # XXX: hex escape
         # XXX: u and U escapes
         # XXX: long strings?
-        # XXX: true, false, nil?
 
         rule %r/[\'#~,;\|]/, Operator
 

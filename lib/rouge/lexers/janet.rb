@@ -117,7 +117,6 @@ module Rouge
         rule %r/-?\.\d+([eE][+-]?\d+)?/, Num::Float
         rule %r/-?\d+/, Num::Integer
         # XXX: r
-        # XXX: exponent
 
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/'#{symbol}/, Str::Symbol

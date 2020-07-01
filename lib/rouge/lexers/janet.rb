@@ -98,10 +98,9 @@ module Rouge
       end
 
       # XXX: from janet.vim !$%&*+-./:<=>?@A-Z^_a-z
-      #      colon is also possible in both of these, but not as first
-      #      thing in identifier
-      identifier = %r([\w!$%&*+./<=>?@^-]+)
-      keyword = %r([\w!\$%&*+./<=>?@^-]+)
+      # XXX: reduce repetition somehow?
+      identifier = %r([!$%&*+./<=>?@_A-Za-z^-][!$%&*+./:<=>?@^_A-Za-z0-9-]*)
+      keyword = %r(:[!$%&*+./:<=>?@_A-Za-z^-]+)
 
       def name_token(name)
         return Keyword if self.class.keywords.include?(name)
@@ -120,8 +119,8 @@ module Rouge
         # XXX: exponent
 
         rule %r/@?"(\\.|[^"])*"/, Str
-        rule %r/'#{keyword}/, Str::Symbol
-        rule %r/:+#{keyword}/, Name::Constant
+        rule %r/'#{identifier}/, Str::Symbol
+        rule %r/#{keyword}/, Name::Constant
         # XXX: hex escape
         # XXX: u and U escapes
         # XXX: long strings?

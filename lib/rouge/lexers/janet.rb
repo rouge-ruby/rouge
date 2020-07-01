@@ -117,6 +117,7 @@ module Rouge
         rule %r/-?\.\d+([eE][+-]?\d+)?/, Num::Float
         rule %r/-?\d+/, Num::Integer
         # XXX: r
+        # XXX: underscores between digits
 
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/'#{symbol}/, Str::Symbol

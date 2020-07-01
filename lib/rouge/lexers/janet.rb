@@ -113,11 +113,12 @@ module Rouge
         rule %r/\s+/m, Text::Whitespace
 
         # exactly where underscores can go is not regular
+        # not going to try to restrict initial number to be between 2 and 36
+        rule %r/[+-]?\d+r[0-9a-zA-Z][0-9a-zA-Z_]*(&[+-]?[0-9a-zA-Z]+)?/, Num::Float
         rule %r/[+-]?0x[0-9a-fA-F][_0-9a-fA-F]*/, Num::Hex
         # this covers integers as well
         rule %r/[+-]?\d[\d_]*(\.[\d_]+)?([eE][+-]?\d+)?/, Num::Float
         rule %r/[+-]?\.\d[\d_]*([eE][+-]?\d+)?/, Num::Float
-        # XXX: r
 
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/'#{symbol}/, Str::Symbol

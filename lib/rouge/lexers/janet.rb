@@ -104,9 +104,10 @@ module Rouge
         )
       end
 
-      # XXX: from janet.vim !$%&*+-./:<=>?@A-Z^_a-z
-      # XXX: reduce repetition somehow?
-      symbol = %r([!$%&*+./<=>?@^_A-Za-z-][!$%&*+./:<=>?@^_A-Za-z0-9-]*)
+      symbol = %r(
+        [!$%&*+./<=>?@^_A-Za-z-]
+        [!$%&*+./<=>?@^_A-Za-z0-9:-]*
+      )x
       keyword = %r(:[!$%&*+./:<=>?@^_A-Za-z0-9-]+)
 
       def name_token(name)

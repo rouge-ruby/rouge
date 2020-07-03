@@ -108,7 +108,9 @@ module Rouge
         [!$%&*+./<=>?@^_A-Za-z-]
         [!$%&*+./<=>?@^_A-Za-z0-9:-]*
       )x
-      keyword = %r(:[!$%&*+./:<=>?@^_A-Za-z0-9-]+)
+      keyword = %r(
+        :[!$%&*+./<=>?@^_A-Za-z0-9:-]+
+      )x
 
       def name_token(name)
         return Keyword if self.class.specials.include?(name)

@@ -127,7 +127,6 @@ module Rouge
         rule %r/[+-]?\d[\d_]*(\.[\d_]+)?([eE][+-]?\d+)?/, Num::Float
         rule %r/[+-]?\.\d[\d_]*([eE][+-]?\d+)?/, Num::Float
 
-        # XXX: escapes?  hex, u, U, \n, etc.
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/@?(`+).*?\1/m, Str::Heredoc
 

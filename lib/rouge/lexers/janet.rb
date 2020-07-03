@@ -135,19 +135,24 @@ module Rouge
         rule %r/
           [+-]?
           \d+
-          r[0-9a-zA-Z][0-9a-zA-Z_]*
-          (&[+-]?[0-9a-zA-Z]+)?
+          r[0-9a-zA-Z]
+           [0-9a-zA-Z_]*
+          (&[+-]?
+            [0-9a-zA-Z]+)?
         /x, Num::Float
         # numbers via hex
         #   split into 2 rules for ease of expression / understanding
         rule %r/
           [+-]?
-          0x[0-9a-fA-F][_0-9a-fA-F]*
-          (\.[0-9a-fA-F][0-9a-fA-F_]*)?
+          0x[0-9a-fA-F]
+            [0-9a-fA-F_]*
+          (\.[0-9a-fA-F]
+             [0-9a-fA-F_]*)?
         /x, Num::Hex
         rule %r/
           [+-]?
-          0x\.[0-9a-fA-F][_0-9a-fA-F]*
+          0x\.[0-9a-fA-F]
+              [0-9a-fA-F_]*
         /x, Num::Hex
         # decimal floating point
         #   split into 2 rules for ease of expression / understanding

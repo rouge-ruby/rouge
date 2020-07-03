@@ -121,6 +121,11 @@ module Rouge
 
         # the Num::Float rules also cover integers
         # exactly where underscores can go is not regular
+        #
+        #   0x1._2 is valid
+        #   0x._2 is not
+        #
+        # skipping handling of these cases
 
         # numbers where radix is specified
         #   not going to try to restrict initial number to be between 2 and 36
@@ -135,11 +140,11 @@ module Rouge
         rule %r/
           [+-]?
           0x[0-9a-fA-F][_0-9a-fA-F]*
-          (\.[0-9a-fA-F_]+)?
+          (\.[0-9a-fA-F][0-9a-fA-F_]*)?
         /x, Num::Hex
         rule %r/
           [+-]?
-          0x\.[0-9a-fA-F_]+
+          0x\.[0-9a-fA-F][_0-9a-fA-F]*
         /x, Num::Hex
         # decimal floating point
         #   split into 2 rules for ease of expression / understanding

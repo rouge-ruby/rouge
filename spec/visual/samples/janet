@@ -1,65 +1,123 @@
-(math/trunc 1.0)
-# => 1
+# Constants
+nil
+true
+false
 
-(- 0x01 1.0)
-# => 0
+# Symbols
+symbol
+kebab-case-symbol
+snake_case_symbol
+my-module/my-fuction
+*****
+!%$^*__--__._+++===~-crazy-symbol
+*global-var*
+你好
 
-(inc -1e0)
-# => 0
+# Keywords
+:keyword
+:range
+:0x0x0x0
+:a-keyword
+::
+:
 
-(- 8r123 83)
-# => 0
+# Numbers
+0
++0.0
+-10_000
+16r1234abcd
+0x23.23
+1e10
+1.6e-4
+7r343_111_266.6&+10
 
+# Strings
+"This is a string."
+"This\nis\na\nstring."
+"\u004a"
+"\U01F5DD"
+"This
+is
+a
+string."
+``
+This
+is
+a
+string
+``
+`
+This is
+a string.
+`
+
+# Buffers
+@""
+@"Buffer."
+@``Another buffer``
+@`
+Yet another buffer
+`
+
+# Tuples
+(do 1 2 3)
+[do 1 2 3]
+
+# Arrays
+@(:one :two :three)
+@[:one :two :three]
+
+# Structs
+{}
+{:key1 "value1" :key2 :value2 :key3 3}
+{(1 2 3) (4 5 6)}
+{@[] @[]}
+{1 2 3 4 5 6}
+
+# Tables
+@{}
+@{:key1 "value1" :key2 :value2 :key3 3}
+@{(1 2 3) (4 5 6)}
+@{@[] @[]}
+@{1 2 3 4 5 6}
+
+# Special forms
+(def anumber (+ 1 2 3 4 5))
+(var a 1)
+(fn identity [x] x)
+
+# Function definitions
+(defn triangle-area
+  "Calculates the area of a triangle."
+  [base height]
+  (print "calculating area of a triangle...")
+  (* base height 0.5))
+
+(defn ignore-extra
+ [x &]
+ (+ x 1))
+
+# Function calls
+(print (triangle-area 5 10))
 (nil? nil)
-# => true
-
 (not= 1 1)
-# => false
-
-(string "\u004a" "\u0061" "\u006E\u0065\u0074")
-# => "Janet"
-
-(string "\U01F5DD" "\U01F512" "\U01F513")
-# => "\xF0\x9F\x97\x9D\xF0\x9F\x94\x92\xF0\x9F\x94\x93"
-
 (put @{:a 1} :b 2)
-# => @{:a 1 :b 2}
-
 (type @{:a 1})
-# => :table
-
 (type {:a 1})
-# => :struct
-
 (in [:a :b :c] 1)
-# => :b
-
 (type [:a :b])
-# => :tuple
-
 (type '(:a :b))
-# => :tuple
-
 (tuple/type '[])
-# => :brackets
-
 (tuple/type '())
-# => :parens
-
 (first [1 2 3])
-# => 1
-
 (drop [1 2 3])
-# => [2 3]
-
 (+ 1 2 3)
-# => 6
-
 (apply + [1 2 3])
-# => 6
-
 (+ ;[2 3 5 7 11])
-# => 28
-
 (|(+ 1 1 2 3 5 $) 8)
-# => 20
+
+# Quotes
+'x
+~x
+'(print "hello world")
+(quote (print "hello world"))

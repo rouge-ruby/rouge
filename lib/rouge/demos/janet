@@ -1,30 +1,3 @@
-(def defn :macro
-  "(defn name & more)\n\nDefine a function. Equivalent to (def name (fn name [args] ...))."
-  (fn defn [name & more]
-    (def len (length more))
-    (def modifiers @[])
-    (var docstr "")
-    (def fstart
-      (fn recur [i]
-        (def {i ith} more)
-        (def t (type ith))
-        (if (= t :tuple)
-          i
-          (do
-            (if (= t :string)
-              (set docstr ith)
-              (array/push modifiers ith))
-            (if (< i len) (recur (+ i 1)))))))
-    (def start (fstart 0))
-    (def args (in more start))
-    # Add function signature to docstring
-    (var index 0)
-    (def arglen (length args))
-    (def buf (buffer "(" name))
-    (while (< index arglen)
-      (buffer/push-string buf " ")
-      (buffer/format buf "%j" (in args index))
-      (set index (+ index 1)))
-    (array/push modifiers (string buf ")\n\n" docstr))
-    # Build return value
-    ~(def ,name ,;modifiers (fn ,name ,;(tuple/slice more start)))))
+(defn a-fun
+  "A function"
+  (do-something))

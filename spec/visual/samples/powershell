@@ -199,3 +199,6 @@ $gitExeString = "$gitExeFolder\git.exe" &("$gitExeString") config --add --global
 Get-ChildItem -Include *.txt `
     -Recurse
 Write-Output `$hello
+
+# Where-Object alias
+Get-process | ? {$_.workingset -gt 25000*1024}

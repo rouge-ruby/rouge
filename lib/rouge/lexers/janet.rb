@@ -105,12 +105,12 @@ module Rouge
       end
 
       symbol = %r(
-        [!$%&*+./<=>?@^_A-Za-z-]
-        [!$%&*+./<=>?@^_A-Za-z0-9:-]*
-      )x
+        [!$%&*+./<=>?@^_a-z-]
+        [!$%&*+./<=>?@^\w:-]*
+      )ix
       keyword = %r(
-        :[!$%&*+./<=>?@^_A-Za-z0-9:-]+
-      )x
+        :[!$%&*+./<=>?@^\w:-]+
+      )ix
 
       def name_token(name)
         return Keyword if self.class.specials.include?(name)
@@ -132,40 +132,17 @@ module Rouge
 
         # numbers where radix is specified
         #   not going to try to restrict initial number to be between 2 and 36
-        rule %r/
-          [+-]?
-          \d+
-          r[0-9a-zA-Z]
-           [0-9a-zA-Z_]*
-          (&[+-]?
-            [0-9a-zA-Z]+)?
-        /x, Num::Float
+        rule %r/[+-]?\d{1,2}r[\w.]+(&[+-]?\w+)?/, Num::Float
+
         # numbers via hex
         #   split into 2 rules for ease of expression / understanding
-        rule %r/
-          [+-]?
-          0x[0-9a-fA-F]
-            [0-9a-fA-F_]*
-          (\.[0-9a-fA-F]
-             [0-9a-fA-F_]*)?
-        /x, Num::Hex
-        rule %r/
-          [+-]?
-          0x\.[0-9a-fA-F]
-              [0-9a-fA-F_]*
-        /x, Num::Hex
+        rule %r/[+-]?0x[\h_]+(\.[\h_]+)?/, Num::Hex
+        rule %r/[+-]?0x\.[\h_]+/, Num::Hex
+
         # decimal floating point
         #   split into 2 rules for ease of expression / understanding
-        rule %r/
-          [+-]?
-          \d[\d_]*(\.[\d_]+)?
-          ([eE][+-]?\d+)?
-        /x, Num::Float
-        rule %r/
-          [+-]?
-          \.\d[\d_]*
-          ([eE][+-]?\d+)?
-        /x, Num::Float
+        rule %r/[+-]?[\d_]+(\.[\d_]+)?([e][+-]?\d+)?/i, Num::Float
+        rule %r/[+-]?\.[\d_]+([e][+-]?\d+)?/i, Num::Float
 
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/@?(`+).*?\1/m, Str::Heredoc

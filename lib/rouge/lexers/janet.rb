@@ -104,6 +104,16 @@ module Rouge
         )
       end
 
+      def name_token(name)
+        if self.class.specials.include? name
+          Keyword
+        elsif self.class.bundled.include? name
+          Keyword::Reserved
+        else
+          Name::Function
+        end
+      end
+
       punctuation = %r/[_!@$%^&*+=|~<>.?\\\/-]/o
       symbol = %r/([[:alpha:]]|#{punctuation})([[:word:]]|#{punctuation})*/o
       keyword = %r/:([[:word:]]|#{punctuation})*/o
@@ -130,24 +140,29 @@ module Rouge
         rule %r/@?"/, Str::Double, :string
         rule %r/@?(`+).*?\1/m, Str::Heredoc
 
-        rule %r/[\#~,;\|]/, Operator
-
-        rule %r/'/, Operator, :quoted_symbol
+        rule %r/(')([\(\[])/ do
+          groups Operator, Punctuation
+          push :quote
+        end
         rule %r/(\()(\s*)(quote)/ do
           groups Punctuation, Text, Keyword
-          push :quoted_forms
+          push :quote
+        end
+
+        rule %r/(~)([\(\[])/ do
+          groups Operator, Punctuation
+          push :quasiquote
+        end
+        rule %r/(\()(\s*)(quasiquote)/ do
+          groups Punctuation, Text, Keyword
+          push :quasiquote
         end
 
         rule /(\()(\s*)(#{symbol})/ do |m|
-          id = if self.class.specials.include? m[3]
-                 Keyword
-               elsif self.class.bundled.include? m[3]
-                 Keyword::Reserved
-               else
-                 Name::Function
-               end
-          groups Punctuation, Text, id
+          groups Punctuation, Text, name_token(m[3])
         end
+
+        rule %r/[\#~,';\|]/, Operator
 
         rule %r/@?[({\[]/, Punctuation
         rule %r/[)}\]]/, Punctuation
@@ -162,15 +177,21 @@ module Rouge
         rule %r/[^"\\]+/, Str::Double
       end
 
-      state :quoted_symbol do
-        rule %r/\(/, Punctuation, :pop!
-        rule(//) { pop! }
+      state :quote do
+        rule %r/[\)\]]/, Punctuation, :pop!
+        rule %r/[\(\[]/, Punctuation, :push
+        rule symbol, Str::Symbol
+        mixin :root
       end
 
-      state :quoted_forms do
-        rule %r/\(/, Punctuation
-        rule %r/\)/, Punctuation, :pop!
-        mixin :root
+      state :quasiquote do
+        rule %r/(,)(\()(\s*)(#{symbol})/ do |m|
+          groups Operator, Punctuation, Text, name_token(m[4])
+          push :quasiquote
+        end
+        rule %r/,#{symbol}/, Name
+
+        mixin :quote
       end
     end
   end

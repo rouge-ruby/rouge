@@ -117,7 +117,19 @@ Yet another buffer
 (|(+ 1 1 2 3 5 $) 8)
 
 # Quotes
+(quote 1)
+(quote hi)
+(quote quote)
+'(1 2 3)
+'(print 1 2 3)
 'x
-~x
 '(print "hello world")
 (quote (print "hello world"))
+(def name 'myfunction)
+(def args '[x y z])
+(defn body '[(print x) (print y) (print z)])
+
+# Quasiquotes
+~x
+~(def ,name (fn ,name ,args ,body))
+~(+ 1 ,(inc 1))

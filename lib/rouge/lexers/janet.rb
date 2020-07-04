@@ -121,25 +121,14 @@ module Rouge
         rule %r/'#{symbol}/, Str::Symbol
         rule keyword, Keyword
 
-        # the Num::Float rules also cover integers
-        # exactly where underscores can go is not regular
-        #
-        #   0x1._2 is valid
-        #   0x._2 is not
-        #
-        # skipping handling of these cases
-
         # numbers where radix is specified
-        #   not going to try to restrict initial number to be between 2 and 36
         rule %r/[+-]?\d{1,2}r[\w.]+(&[+-]?\w+)?/, Num::Float
 
         # numbers via hex
-        #   split into 2 rules for ease of expression / understanding
         rule %r/[+-]?0x[\h_]+(\.[\h_]+)?/, Num::Hex
         rule %r/[+-]?0x\.[\h_]+/, Num::Hex
 
         # decimal floating point
-        #   split into 2 rules for ease of expression / understanding
         rule %r/[+-]?[\d_]+(\.[\d_]+)?([e][+-]?\d+)?/i, Num::Float
         rule %r/[+-]?\.[\d_]+([e][+-]?\d+)?/i, Num::Float
 

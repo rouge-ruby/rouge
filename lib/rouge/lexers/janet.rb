@@ -143,7 +143,7 @@ module Rouge
         rule %r/[+-]?[\d_]+(\.[\d_]+)?([e][+-]?\d+)?/i, Num::Float
         rule %r/[+-]?\.[\d_]+([e][+-]?\d+)?/i, Num::Float
 
-        rule %r/@?"(\\.|[^"])*"/, Str
+        rule %r/@?"/, Str::Double, :string
         rule %r/@?(`+).*?\1/m, Str::Heredoc
 
         rule %r/[\'#~,;\|]/, Operator
@@ -166,6 +166,13 @@ module Rouge
 
         # tuples
         rule %r/[()]/, Punctuation
+      end
+
+      state :string do
+        rule %r/"/, Str::Double, :pop!
+        rule %r/\\(u\h{4}|U\h{6})/, Str::Escape
+        rule %r/\\./, Str::Escape
+        rule %r/[^"\\]+/, Str::Double
       end
     end
   end

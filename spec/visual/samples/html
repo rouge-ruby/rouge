@@ -54,3 +54,8 @@ Hello tagless world!
 <custom-element #ref></custom-element>
 <custom-element [target]="expression"></custom-element>
 <custom-element (target)="expression"></custom-element>
+
+<!-- Unicode example -->
+<œuvre>
+	<书名 语言="français">Les Misérables</书名>
+</œuvre>

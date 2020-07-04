@@ -11,7 +11,9 @@ module Rouge
       filenames '*.css'
       mimetypes 'text/css'
 
-      identifier = /[a-zA-Z0-9_-]+/
+      # Documentation: https://www.w3.org/TR/CSS21/syndata.html#characters
+
+      identifier = /[\p{L}_-][\p{Word}\p{Cf}-]*/
       number = /-?(?:[0-9]+(\.[0-9]+)?|\.[0-9]+)/
 
       def self.attributes

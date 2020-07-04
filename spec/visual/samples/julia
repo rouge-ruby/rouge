@@ -292,3 +292,14 @@ end
 # the author.
 #
 # "Learn Julia in Y Minutes" is licensed under http://creativecommons.org/licenses/by-sa/3.0/legalcode
+
+# Unicode example
+mutable struct Œuvre end
+⇵ = uppercase
+
+function résumer_œuvre(书名::Œuvre="Les Misérables")
+    语言 = "français"
+    for ϕ ∈ 1:1
+        ⇵(语言) # "FRANÇAIS"
+    end
+end

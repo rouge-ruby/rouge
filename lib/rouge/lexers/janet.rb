@@ -104,22 +104,17 @@ module Rouge
         )
       end
 
-      symbol = %r([[[:alpha:]]_!@$%^&*+=|~:<>.?\\,-][[:graph:]]*)
-      keyword = %r(:[[:graph:]]*)
-
-      def name_token(name)
-        return Keyword if self.class.specials.include?(name)
-        return Name::Builtin if self.class.bundled.include?(name)
-        nil
-      end
+      punctuation = %r/[_!@$%^&*+=|~<>.?\\\/-]/o
+      symbol = %r/([[:alpha:]]|#{punctuation})([[:word:]]|#{punctuation})*/o
+      keyword = %r/:([[:word:]]|#{punctuation})*/o
 
       state :root do
         rule %r/#.*?$/, Comment::Single
         rule %r/\s+/m, Text::Whitespace
 
-        rule %r/true|false|nil/, Keyword::Constant
-        rule %r/'#{symbol}/, Str::Symbol
-        rule keyword, Keyword
+        rule %r/(true|false|nil)\b/, Name::Constant
+        rule %r/['~]#{symbol}/, Str::Symbol
+        rule keyword, Keyword::Constant
 
         # numbers where radix is specified
         rule %r/[+-]?\d{1,2}r[\w.]+(&[+-]?\w+)?/, Num::Float
@@ -135,26 +130,29 @@ module Rouge
         rule %r/@?"/, Str::Double, :string
         rule %r/@?(`+).*?\1/m, Str::Heredoc
 
-        rule %r/[\'#~,;\|]/, Operator
+        rule %r/[\#~,;\|]/, Operator
 
-        rule %r/(\()(\s*)(#{symbol})/m do |m|
-          token Punctuation, m[1]
-          token Text::Whitespace, m[2]
-          token(name_token(m[3]) || Name::Function, m[3])
+        rule %r/'/, Operator, :quoted_symbol
+        rule %r/(\()(\s*)(quote)/ do
+          groups Punctuation, Text, Keyword
+          push :quoted_forms
         end
 
-        rule symbol do |m|
-          token name_token(m[0]) || Name
+        rule /(\()(\s*)(#{symbol})/ do |m|
+          id = if self.class.specials.include? m[3]
+                 Keyword
+               elsif self.class.bundled.include? m[3]
+                 Keyword::Reserved
+               else
+                 Name::Function
+               end
+          groups Punctuation, Text, id
         end
 
-        # tuples (and arrays if preceded by @)
-        rule %r/[\[\]]/, Punctuation
+        rule %r/@?[({\[]/, Punctuation
+        rule %r/[)}\]]/, Punctuation
 
-        # structs (and tables if preceded by @)
-        rule %r/[{}]/, Punctuation
-
-        # tuples
-        rule %r/[()]/, Punctuation
+        rule symbol, Name
       end
 
       state :string do
@@ -162,6 +160,17 @@ module Rouge
         rule %r/\\(u\h{4}|U\h{6})/, Str::Escape
         rule %r/\\./, Str::Escape
         rule %r/[^"\\]+/, Str::Double
+      end
+
+      state :quoted_symbol do
+        rule %r/\(/, Punctuation, :pop!
+        rule(//) { pop! }
+      end
+
+      state :quoted_forms do
+        rule %r/\(/, Punctuation
+        rule %r/\)/, Punctuation, :pop!
+        mixin :root
       end
     end
   end

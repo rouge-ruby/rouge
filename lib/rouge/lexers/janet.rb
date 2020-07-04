@@ -105,10 +105,7 @@ module Rouge
       end
 
       symbol = %r([[[:alpha:]]_!@$%^&*+=|~:<>.?\\,-][[:graph:]]*)
-
-      keyword = %r(
-        :[!$%&*+./<=>?@^\w:-]+
-      )ix
+      keyword = %r(:[[:graph:]]*)
 
       def name_token(name)
         return Keyword if self.class.specials.include?(name)
@@ -119,6 +116,10 @@ module Rouge
       state :root do
         rule %r/#.*?$/, Comment::Single
         rule %r/\s+/m, Text::Whitespace
+
+        rule %r/true|false|nil/, Keyword::Constant
+        rule %r/'#{symbol}/, Str::Symbol
+        rule keyword, Keyword
 
         # the Num::Float rules also cover integers
         # exactly where underscores can go is not regular
@@ -144,10 +145,6 @@ module Rouge
 
         rule %r/@?"(\\.|[^"])*"/, Str
         rule %r/@?(`+).*?\1/m, Str::Heredoc
-
-        rule %r/true|false|nil/, Name::Constant
-        rule %r/'#{symbol}/, Str::Symbol
-        rule %r/#{keyword}/, Name::Constant
 
         rule %r/[\'#~,;\|]/, Operator
 

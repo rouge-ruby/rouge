@@ -13,6 +13,7 @@ my-module/my-fuction
 *global-var*
 你好
 symbols:with:colons
+_
 
 # Keywords
 :keyword
@@ -95,8 +96,8 @@ Yet another buffer
   (* base height 0.5))
 
 (defn ignore-extra
- [x &]
- (+ x 1))
+  [x &]
+  (+ x 1))
 
 # Function calls
 (print (triangle-area 5 10))

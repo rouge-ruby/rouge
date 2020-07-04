@@ -114,9 +114,8 @@ module Rouge
         end
       end
 
-      punctuation = %r/[_!@$%^&*+=|~<>.?\\\/-]/o
-      symbol = %r/([[:alpha:]]|#{punctuation})([[:word:]]|#{punctuation})*/o
-      keyword = %r/:([[:word:]]|#{punctuation})*/o
+      punctuation = %r/[_!@$%^&*+=~<>.?\/-]/o
+      symbol = %r/([[:alpha:]]|#{punctuation})([[:word:]]|#{punctuation}|:)*/o
 
       state :root do
         rule %r/#.*?$/, Comment::Single
@@ -124,7 +123,7 @@ module Rouge
 
         rule %r/(true|false|nil)\b/, Name::Constant
         rule %r/['~]#{symbol}/, Str::Symbol
-        rule keyword, Keyword::Constant
+        rule %r/:([[:word:]]|#{punctuation}|:)*/, Keyword::Constant
 
         # numbers where radix is specified
         rule %r/[+-]?\d{1,2}r[\w.]+(&[+-]?\w+)?/, Num::Float

@@ -349,7 +349,7 @@ Stack:
 
 # Unicode example
 œuvre:
-	书名: Les Misérables
+  书名: Les Misérables
   语言: français
   référence: &réf_01
   alias: *λ-01

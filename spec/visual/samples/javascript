@@ -273,3 +273,10 @@ var myOct   = 0o67;
 
 let x = /abc/u;
 let x = /abc/y;
+
+// Unicode example
+class Œuvre {
+  résumer(语言 = "français") {
+    书名 = "Les Misérables";
+  }
+}

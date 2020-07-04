@@ -69,6 +69,11 @@ ul#nav li.new {
   font-size: 29px ! important;
 }
 
-a[target="_blank"] { 
+a[target="_blank"] {
     background-color: yellow;
+}
+
+/* Unicode example */
+œuvre 书名[语言="français"] {
+  color: blue;
 }

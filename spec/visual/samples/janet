@@ -1,0 +1,139 @@
+# Constants
+nil
+true
+false
+
+# Symbols
+symbol
+kebab-case-symbol
+snake_case_symbol
+my-module/my-fuction
+*****
+!%$^*__--__._+++===~-crazy-symbol
+*global-var*
+你好
+symbols:with:colons
+_
+
+# Keywords
+:keyword
+:range
+:0x0x0x0
+:a-keyword
+::
+:
+
+# Numbers
+0
++0.0
+-10_000
+16r1234abcd
+0x23.23
+1e10
+1.6e-4
+7r343_111_266.6&+10
+
+# Strings
+"This is a string."
+"This\nis\na\nstring."
+"\u004a"
+"\U01F5DD"
+"This
+is
+a
+string."
+``
+This
+is
+a
+string
+``
+`
+This is
+a string.
+`
+
+# Buffers
+@""
+@"Buffer."
+@``Another buffer``
+@`
+Yet another buffer
+`
+
+# Tuples
+(do 1 2 3)
+[do 1 2 3]
+
+# Arrays
+@(:one :two :three)
+@[:one :two :three]
+
+# Structs
+{}
+{:key1 "value1" :key2 :value2 :key3 3}
+{(1 2 3) (4 5 6)}
+{@[] @[]}
+{1 2 3 4 5 6}
+
+# Tables
+@{}
+@{:key1 "value1" :key2 :value2 :key3 3}
+@{(1 2 3) (4 5 6)}
+@{@[] @[]}
+@{1 2 3 4 5 6}
+
+# Special forms
+(def anumber (+ 1 2 3 4 5))
+(var a 1)
+(fn identity [x] x)
+
+# Function definitions
+(defn triangle-area
+  "Calculates the area of a triangle."
+  [base height]
+  (print "calculating area of a triangle...")
+  (* base height 0.5))
+
+(defn ignore-extra
+  [x &]
+  (+ x 1))
+
+# Function calls
+(print (triangle-area 5 10))
+(nil? nil)
+(not= 1 1)
+(put @{:a 1} :b 2)
+(type @{:a 1})
+(type {:a 1})
+(in [:a :b :c] 1)
+(type [:a :b])
+(type '(:a :b))
+(tuple/type '[])
+(tuple/type '())
+(first [1 2 3])
+(drop [1 2 3])
+(+ 1 2 3)
+(apply + [1 2 3])
+(+ ;[2 3 5 7 11])
+(|(+ 1 1 2 3 5 $) 8)
+
+# Quotes
+(quote 1)
+(quote hi)
+(quote quote)
+'(1 2 3)
+'(print 1 2 3)
+'x
+'(print "hello world")
+(quote (print "hello world"))
+(def name 'myfunction)
+(def args '[x y z])
+(defn body '[(print x) (print y) (print z)])
+
+# Quasiquotes
+~x
+~(def ,name (fn ,name ,args ,body))
+~(+ 1 ,(inc 1))
+(quasiquote (+ 1 (unquote (inc 1))))
+(quasiquote (+ 1 (unquote (inc (inc 1)))))

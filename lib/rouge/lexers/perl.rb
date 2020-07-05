@@ -186,7 +186,12 @@ module Rouge
 
       state :dq do
         mixin :string_intp
-        rule %r/\\[\\tnr"$@]/, Str::Escape
+        rule %r/\\[\\tnrabefluLUE"$@]/, Str::Escape
+        rule %r/\\0\d{2}/, Str::Escape
+        rule %r/\\x\h{2}/, Str::Escape
+        rule %r/\\x\{\h{4}\}/, Str::Escape
+        rule %r/\\c./, Str::Escape
+        rule %r/\\N\{[^\}]+\}/, Str::Escape
         rule %r/[^\\"]+?/, Str::Double
         rule %r/"/, Punctuation, :pop!
       end

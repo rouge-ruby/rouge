@@ -136,3 +136,4 @@ Yet another buffer
 ~(def ,name (fn ,name ,args ,body))
 ~(+ 1 ,(inc 1))
 (quasiquote (+ 1 (unquote (inc 1))))
+(quasiquote (+ 1 (unquote (inc (inc 1)))))

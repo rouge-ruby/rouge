@@ -164,6 +164,11 @@ sub __END__but_not_really { 1 }
 use constant EMPTY_SPACE => '&nbsp;';
 my %h = ( FOO => 23 );
 $text = format_text({FOO => 23, BAR => 30});
+foo(
+  sub # comment
+      # second comment
+    => 1
+)
 
 __DATA__
 

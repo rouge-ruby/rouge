@@ -122,7 +122,9 @@ module Rouge
         rule %r/\s+/m, Text::Whitespace
 
         rule %r/(true|false|nil)\b/, Name::Constant
-        rule %r/['~]#{symbol}/, Str::Symbol
+        rule %r/(['~])(#{symbol})/ do
+          groups Operator, Str::Symbol
+        end
         rule %r/:([[:word:]]|#{punctuation}|:)*/, Keyword::Constant
 
         # numbers where radix is specified
@@ -139,12 +141,10 @@ module Rouge
         rule %r/@?"/, Str::Double, :string
         rule %r/@?(`+).*?\1/m, Str::Heredoc
 
+        rule %r/\(/, Punctuation, :function
+
         rule %r/(')([\(\[])/ do
           groups Operator, Punctuation
-          push :quote
-        end
-        rule %r/(\()(\s*)(quote)/ do
-          groups Punctuation, Text, Keyword
           push :quote
         end
 
@@ -152,21 +152,31 @@ module Rouge
           groups Operator, Punctuation
           push :quasiquote
         end
-        rule %r/(\()(\s*)(quasiquote)/ do
-          groups Punctuation, Text, Keyword
-          push :quasiquote
-        end
-
-        rule /(\()(\s*)(#{symbol})/ do |m|
-          groups Punctuation, Text, name_token(m[3])
-        end
 
         rule %r/[\#~,';\|]/, Operator
 
-        rule %r/@?[({\[]/, Punctuation
-        rule %r/[)}\]]/, Punctuation
+        rule %r/@?[({\[]/, Punctuation, :push
+        rule %r/[)}\]]/, Punctuation, :pop!
 
         rule symbol, Name
+      end
+
+      state :function do
+        rule symbol do |m|
+          case m[0]
+          when "quote"
+            token Keyword
+            goto :quote
+          when "quasiquote"
+            token Keyword
+            goto :quasiquote
+          else
+            token name_token(m[0])
+            goto :root
+          end
+        end
+
+        mixin :root
       end
 
       state :string do
@@ -177,18 +187,28 @@ module Rouge
       end
 
       state :quote do
-        rule %r/[\)\]]/, Punctuation, :pop!
         rule %r/[\(\[]/, Punctuation, :push
         rule symbol, Str::Symbol
         mixin :root
       end
 
       state :quasiquote do
-        rule %r/(,)(\()(\s*)(#{symbol})/ do |m|
-          groups Operator, Punctuation, Text, name_token(m[4])
-          push :quasiquote
+        rule %r/(,)(\()/ do
+          groups Operator, Punctuation
+          push :function
         end
-        rule %r/,#{symbol}/, Name
+        rule %r/(\()(\s*)(unquote)(\s+)(\()/ do
+          groups Punctuation, Text, Keyword, Text, Punctuation
+          push :root
+          push :function
+        end
+
+        rule %r/(,)(#{symbol})/ do
+          groups Operator, Name
+        end
+        rule %r/(\()(\s*)(unquote)(\s+)(#{symbol})/ do
+          groups Punctuation, Text, Keyword, Text, Name
+        end
 
         mixin :quote
       end

@@ -8,7 +8,7 @@ module Rouge
       desc "The Janet programming language (janet-lang.org)"
 
       tag 'janet'
-      aliases 'janet'
+      aliases 'jdn'
 
       filenames '*.janet', '*.jdn'
 

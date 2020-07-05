@@ -142,7 +142,7 @@ module Rouge
 
       state :fat_comma do
         rule %r/\w+/, Str
-        rule %r/\s*/, Text
+        rule %r/\s+/, Text
         rule %r/=>/, Operator, :pop!
       end
 

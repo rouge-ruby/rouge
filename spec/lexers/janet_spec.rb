@@ -9,6 +9,7 @@ describe Rouge::Lexers::Janet do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.janet'
+      assert_guess :filename => 'foo.jdn'
     end
 
     it 'guesses by mimetype' do

@@ -28,3 +28,10 @@ allow {
   input.path = ["finance", "salary", username]
   subordinates[input.user][_] == username
 }
+
+not obj.foo.bar.bar
+
+some_rule[msg] {
+  msg := "hey"
+}
+

@@ -67,6 +67,7 @@ my $a = 'foo\\bar';
 my $a = "foo";
 my $a = "foo \" bar";
 my $a = "foo\bar";
+my $a = "foo \057 \x7f \x{263a} \cC \N{GREEK SMALL LETTER SIGMA} bar";
 
 print "a: ";
 print $a, " - ";

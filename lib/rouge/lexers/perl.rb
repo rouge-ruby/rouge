@@ -140,16 +140,16 @@ module Rouge
         rule(/(?=\w)/) { push :name }
       end
 
+      state :format do
+        rule %r/\.\n/, Str::Interpol, :pop!
+        rule %r/.*?\n/, Str::Interpol
+      end
+
       state :fat_comma do
         rule %r/#.*/, Comment::Single
         rule %r/\w+/, Str
         rule %r/\s+/, Text
         rule %r/=>/, Operator, :pop!
-      end
-
-      state :format do
-        rule %r/\.\n/, Str::Interpol, :pop!
-        rule %r/.*?\n/, Str::Interpol
       end
 
       state :name_common do

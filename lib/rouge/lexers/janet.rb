@@ -135,8 +135,12 @@ module Rouge
         rule %r/[+-]?0x\.\h[\h_]*/, Num::Hex
 
         # decimal floating point
-        rule %r/[+-]?\d[\d_]*(\.\d[\d_]*)?([e][+-]?\d+)?/i, Num::Float
+        rule %r/[+-]?\d[\d_]*(\.\d[\d_]*)?([e][+-]?\d+)/i, Num::Float
         rule %r/[+-]?\.\d[\d_]*([e][+-]?\d+)?/i, Num::Float
+        rule %r/[+-]?\d[\d_]*\.\d[\d_]*/, Num::Float
+
+        # integers
+        rule %r/[+-]?\d+/, Num::Integer
 
         rule %r/@?"/, Str::Double, :string
         rule %r/@?(`+).*?\1/m, Str::Heredoc

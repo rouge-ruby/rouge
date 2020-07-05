@@ -161,6 +161,13 @@ module Rouge
         rule symbol, Name
       end
 
+      state :string do
+        rule %r/"/, Str::Double, :pop!
+        rule %r/\\(u\h{4}|U\h{6})/, Str::Escape
+        rule %r/\\./, Str::Escape
+        rule %r/[^"\\]+/, Str::Double
+      end
+
       state :function do
         rule symbol do |m|
           case m[0]
@@ -177,13 +184,6 @@ module Rouge
         end
 
         mixin :root
-      end
-
-      state :string do
-        rule %r/"/, Str::Double, :pop!
-        rule %r/\\(u\h{4}|U\h{6})/, Str::Escape
-        rule %r/\\./, Str::Escape
-        rule %r/[^"\\]+/, Str::Double
       end
 
       state :quote do

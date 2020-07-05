@@ -127,20 +127,16 @@ module Rouge
         end
         rule %r/:([[:word:]]|#{punctuation}|:)*/, Keyword::Constant
 
-        # numbers where radix is specified
+        # radix-specified numbers
         rule %r/[+-]?\d{1,2}r[\w.]+(&[+-]?\w+)?/, Num::Float
 
-        # numbers via hex
+        # hex numbers
         rule %r/[+-]?0x\h[\h_]*(\.\h[\h_]*)?/, Num::Hex
         rule %r/[+-]?0x\.\h[\h_]*/, Num::Hex
 
-        # decimal floating point
-        rule %r/[+-]?\d[\d_]*(\.\d[\d_]*)?([e][+-]?\d+)/i, Num::Float
+        # decimal numbers (Janet treats all decimals as floats)
+        rule %r/[+-]?\d[\d_]*(\.\d[\d_]*)?([e][+-]?\d+)?/i, Num::Float
         rule %r/[+-]?\.\d[\d_]*([e][+-]?\d+)?/i, Num::Float
-        rule %r/[+-]?\d[\d_]*\.\d[\d_]*/, Num::Float
-
-        # integers
-        rule %r/[+-]?\d+/, Num::Integer
 
         rule %r/@?"/, Str::Double, :string
         rule %r/@?(`+).*?\1/m, Str::Heredoc

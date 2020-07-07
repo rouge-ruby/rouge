@@ -227,6 +227,7 @@ module Rouge
         rule %r/catch\b/i, Keyword, :in_catch
         rule %r/new\b/i, Keyword, :in_new
         rule %r/(class|interface|trait|extends|implements)\b/i, Keyword::Declaration, :in_declaration
+        rule %r/(public|protected|private)\b/i, Keyword, :in_visibility
         rule %r/stdClass\b/, Name::Class
 
         mixin :names
@@ -355,6 +356,14 @@ module Rouge
         mixin :escape
         mixin :whitespace
         mixin :names
+        mixin :return
+      end
+
+      state :in_visibility do
+        rule %r/(?=(function|const)\b)/i, Keyword, :pop!
+        rule %r/\??#{id}/, Keyword::Type, :pop!
+        mixin :escape
+        mixin :whitespace
         mixin :return
       end
     end

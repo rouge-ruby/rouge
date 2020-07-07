@@ -103,17 +103,28 @@ module Rouge
       end
 
       state :names do
+        rule %r/#{id_with_ns}(?=\s*\()/ do |m|
+          name = m[0].downcase
+          if self.class.keywords.include? name
+            token Keyword
+          elsif self.builtins.include? name
+            token Name::Builtin
+          else
+            token Name::Function
+          end
+        end
         rule id_with_ns do |m|
-          if self.class.keywords.include? m[0]
+          name = m[0].downcase
+          if self.class.keywords.include? name
             token Keyword
           elsif m[0] =~ /^__.*?__$/
             token Name::Builtin
-          elsif m[0] =~ /\\?[[:upper:]][[[:upper:]]\d_]+$/
+          elsif m[0] =~ /^(E|PHP)(_[[:upper:]]+)+$/
+            token Keyword::Constant
+          elsif m[0] =~ /(\\|^)[[:upper:]][[[:upper:]][[:digit:]]_]+$/
             token Name::Constant
-          elsif m[0] =~ /\\?[[:upper:]][[:alnum:]]*?$/ # Q: Convention in PHP for single upper case letter
+          elsif m[0] =~ /(\\|^)[[:upper:]][[:alnum:]]*?$/
             token Name::Class
-          elsif m[0] =~ /\\?[[:lower:]]+_[[[:lower:]]_]+$/
-            token Name::Function
           else
             token Name
           end
@@ -203,51 +214,15 @@ module Rouge
         mixin :values
         mixin :variables
 
-        rule %r/(#{id_with_ns})(\s*)(\()/ do |m|
-          t = if self.class.keywords.include? m[1]
-                Keyword
-              elsif self.builtins.include? m[1]
-                Name::Builtin
-              elsif m[1][0] =~ /[A-Z]/
-                Name::Constant
-              else
-                Name::Function
-              end
+        rule %r/use\b/i, Keyword::Namespace, :in_use
+        rule %r/namespace\b/i, Keyword::Namespace, :in_namespace
+        rule %r/const\b/i, Keyword, :in_const
+        rule %r/catch\b/i, Keyword, :in_catch
+        rule %r/new\b/i, Keyword, :in_new
+        rule %r/(class|interface|trait|extends|implements)\b/i, Keyword::Declaration, :in_declaration
+        rule %r/stdClass\b/, Name::Class
 
-          groups t, Text, Punctuation
-        end
-
-        rule id_with_ns do |m|
-          name = m[0].downcase
-
-          if name == "use"
-            push :in_use
-            token Keyword::Namespace
-          elsif name == "namespace"
-            push :in_namespace
-            token Keyword::Namespace
-          elsif name == "const"
-            push :in_const
-            token Keyword
-          elsif name == "catch"
-            push :in_catch
-          elsif %w(class interface trait extends implements).include? name
-            push :in_declaration
-            token Keyword::Declaration
-          elsif m[0] == "stdClass"
-            token Keyword::Class
-          elsif self.class.keywords.include? name
-            token Keyword
-          elsif m[0] =~ /^(E|PHP)(_[[:upper:]]+)+$/
-            token Keyword::Constant
-          elsif m[0] =~ /^[[:upper:]][[[:upper:]][[:digit:]]_]*$/
-            token Name::Constant
-          elsif m[0][0] =~ /[[:upper:]]/
-            token Name::Class
-          else
-            token Name
-          end
-        end
+        mixin :names
 
         rule %r/[;,\(\)\{\}\[\]]/, Punctuation
 
@@ -336,12 +311,21 @@ module Rouge
         mixin :return
       end
 
+      state :in_new do
+        rule %r/class\b/i, Keyword::Declaration, :pop!
+        rule id_with_ns, Name::Class, :pop!
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
       state :in_use do
         rule %r/[,\}]/, Punctuation
         rule %r/(function|const)\b/i, Keyword
         rule %r/(#{ns})(\{)/ do
           groups Name::Namespace, Punctuation
         end
+        rule %r/#{id_with_ns}(_#{id})+/, Name::Function
         mixin :escape
         mixin :whitespace
         mixin :names

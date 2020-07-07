@@ -113,6 +113,7 @@ module Rouge
             token Name::Function
           end
         end
+
         rule id_with_ns do |m|
           name = m[0].downcase
           if self.class.keywords.include? name
@@ -232,6 +233,8 @@ module Rouge
 
       state :in_assign do
         rule %r/,/, Punctuation, :pop!
+        rule %r/[\[\]]/, Punctuation
+        rule %r/\(/, Punctuation, :in_assign_function
         mixin :escape
         mixin :whitespace
         mixin :values
@@ -239,6 +242,12 @@ module Rouge
         mixin :names
         mixin :operators
         mixin :return
+      end
+
+      state :in_assign_function do
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/,/, Punctuation
+        mixin :in_assign
       end
 
       state :in_catch do

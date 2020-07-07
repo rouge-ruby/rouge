@@ -212,6 +212,7 @@ namespace some\namespace;
 
 list($id1, $name1) = $data[0];
 [$id1, $name1] = $data[0];
+const A = f(1, 2, g(3, 4, $my_var[0])), B = "abc";
 
 
 /* Conditionals */

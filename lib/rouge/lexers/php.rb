@@ -185,6 +185,12 @@ module Rouge
           push :in_function_name
           token Keyword
         end
+        rule %r/fn\b/i do
+          push :in_function_return
+          push :in_function_params
+          push :in_function_name
+          token Keyword
+        end
 
         # constants
         rule %r/(true|false|null)\b/i, Keyword::Constant
@@ -292,6 +298,7 @@ module Rouge
       state :in_function_params do
         rule %r/\)/, Punctuation, :pop!
         rule %r/,/, Punctuation
+        rule %r/[.]{3}/, Punctuation
         rule %r/=/, Operator, :in_assign
         rule %r/\??#{id}/, Keyword::Type, :in_assign
         mixin :escape

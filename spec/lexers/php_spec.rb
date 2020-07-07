@@ -55,7 +55,6 @@ describe Rouge::Lexers::PHP do
 
     it 'recognizes case insensitively keywords' do
       assert_tokens_equal 'While', ["Keyword", "While"]; subject.reset_stack
-      assert_tokens_equal 'Class {', ["Keyword.Declaration", "Class"], ["Text", " "], ["Punctuation", "{"]; subject.reset_stack
       assert_tokens_equal 'Class BAR', ["Keyword.Declaration", "Class"], ["Text", " "], ["Name.Class", "BAR"]; subject.reset_stack
       assert_tokens_equal 'Const BAR', ["Keyword", "Const"], ["Text", " "], ["Name.Constant", "BAR"]; subject.reset_stack
       assert_tokens_equal 'Use BAR', ["Keyword.Namespace", "Use"], ["Text", " "], ["Name.Constant", "BAR"]; subject.reset_stack

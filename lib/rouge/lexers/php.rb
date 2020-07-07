@@ -113,7 +113,21 @@ module Rouge
 
         rule id_with_ns do |m|
           name = m[0].downcase
-          if self.class.keywords.include? name
+          if name == "use"
+            push :in_use
+            token Keyword::Namespace
+          elsif name == "const"
+            push :in_const
+            token Keyword
+          elsif name == "catch"
+            push :in_catch
+            token Keyword
+          elsif %w(public protected private).include? name
+            push :in_visibility
+            token Keyword
+          elsif name == "stdClass"
+            token Name::Class
+          elsif self.class.keywords.include? name
             token Keyword
           elsif m[0] =~ /^__.*?__$/
             token Name::Builtin
@@ -185,6 +199,9 @@ module Rouge
 
         # constants
         rule %r/(true|false|null)\b/i, Keyword::Constant
+
+        # objects
+        rule %r/new\b/i, Keyword, :in_new
       end
 
       state :variables do
@@ -209,23 +226,20 @@ module Rouge
         mixin :escape
 
         mixin :whitespace
-        mixin :values
         mixin :variables
+        mixin :values
 
-        rule %r/(namespace)(\s+)(#{id_with_ns})/i do |m|
+        rule %r/(namespace)
+                (\s+)
+                (#{id_with_ns})/ix do |m|
           groups Keyword::Namespace, Text, Name::Namespace
         end
 
-        rule %r/(class|interface|trait|extends|implements)(\s+)(#{id_with_ns})/i do |m|
+        rule %r/(class|interface|trait|extends|implements)
+                (\s+)
+                (#{id_with_ns})/ix do |m|
           groups Keyword::Declaration, Text, Name::Class
         end
-
-        rule %r/use\b/i, Keyword::Namespace, :in_use
-        rule %r/const\b/i, Keyword, :in_const
-        rule %r/catch\b/i, Keyword, :in_catch
-        rule %r/new\b/i, Keyword, :in_new
-        rule %r/(public|protected|private)\b/i, Keyword, :in_visibility
-        rule %r/stdClass\b/, Name::Class
 
         mixin :names
 
@@ -352,7 +366,7 @@ module Rouge
       end
 
       state :in_visibility do
-        rule %r/(?=(function|const)\b)/i, Keyword, :pop!
+        rule %r/(?=(abstract|const|function|static)\b)/i, Keyword, :pop!
         rule %r/\??#{id}/, Keyword::Type, :pop!
         mixin :escape
         mixin :whitespace

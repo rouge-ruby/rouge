@@ -69,8 +69,8 @@ describe Rouge::Lexers::PHP do
       assert_tokens_equal 'PHP_EOL', ["Keyword.Constant", "PHP_EOL"]; subject.reset_stack
       assert_tokens_equal 'PHP_EOL_1', ["Name.Constant", "PHP_EOL_1"]; subject.reset_stack
 
-      assert_tokens_equal 'E_user_DEPRECATED', ["Name.Class", "E_user_DEPRECATED"]; subject.reset_stack
-      assert_tokens_equal 'E_USER_deprecated', ["Name.Class", "E_USER_deprecated"]; subject.reset_stack
+      assert_tokens_equal 'E_user_DEPRECATED', ["Name", "E_user_DEPRECATED"]; subject.reset_stack
+      assert_tokens_equal 'E_USER_deprecated', ["Name", "E_USER_deprecated"]; subject.reset_stack
       assert_tokens_equal 'E_USER_DEPRECATED', ["Keyword.Constant", "E_USER_DEPRECATED"]; subject.reset_stack
     end
   end

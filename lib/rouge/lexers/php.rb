@@ -21,8 +21,6 @@ module Rouge
       def initialize(*)
         super
 
-        @token = MagicToken.new
-
         # if truthy, the lexer starts highlighting with php code
         # (no <?php required)
         @start_inline = bool_option(:start_inline) { :guess }
@@ -30,42 +28,10 @@ module Rouge
         @disabledmodules = list_option(:disabledmodules)
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'php/keywords.rb')
-        builtins
-      end
-
-      def builtins
-        return [] unless @funcnamehighlighting
-
-        @builtins ||= Set.new.tap do |builtins|
-          self.class.builtins.each do |mod, fns|
-            next if @disabledmodules.include? mod
-            builtins.merge(fns)
-          end
-        end
-      end
-
-      def reset_token
-        @token.reset!
-      end
-
-      # source: http://php.net/manual/en/language.variables.basics.php
-      # the given regex is invalid utf8, so... we're using the unicode
-      # "Letter" property instead.
-      id = /[\p{L}_][\p{L}\p{N}_]*/
-      id_with_ns_and_paren = /([?]?(?:#{id}\\?)+)(\s*)([(]?)/
-
-      start do
-        case @start_inline
-        when true
-          push :template
-          push :php
-        when false
-          push :template
-        when :guess
-          # pass
-        end
+      def self.detect?(text)
+        return true if text.shebang?('php')
+        return false if /^<\?hh/ =~ text
+        return true if /^<\?php/ =~ text
       end
 
       def self.keywords
@@ -85,160 +51,88 @@ module Rouge
         )
       end
 
-      def self.namespaces
-        @namespaces ||= Set.new %w(namespace use)
+      def self.builtins
+        Kernel::load File.join(Lexers::BASE_DIR, 'php/keywords.rb')
+        builtins
       end
 
-      def self.declarations
-        @declarations ||= Set.new %w(class interface trait)
+      def builtins
+        return [] unless @funcnamehighlighting
+
+        @builtins ||= Set.new.tap do |builtins|
+          self.class.builtins.each do |mod, fns|
+            next if @disabledmodules.include? mod
+            builtins.merge(fns)
+          end
+        end
       end
 
-      def self.detect?(text)
-        return true if text.shebang?('php')
-        return false if /^<\?hh/ =~ text
-        return true if /^<\?php/ =~ text
+      # source: http://php.net/manual/en/language.variables.basics.php
+      # the given regex is invalid utf8, so... we're using the unicode
+      # "Letter" property instead.
+      id = /[\p{L}_][\p{L}\p{N}_]*/
+      ns = /(?:#{id}\\)+/
+      id_with_ns = /(?:#{ns})?#{id}/
+
+      start do
+        case @start_inline
+        when true
+          push :php
+        when :guess
+          push :start
+        end
       end
 
-      state :root do
-        # some extremely rough heuristics to decide whether to start inline or not
-        rule(/\s*(?=<)/m) { delegate parent; push :template }
-        rule(/[^$]+(?=<\?(php|=))/i) { delegate parent; push :template }
-
-        rule(//) { push :template; push :php }
-      end
-
-      state :template do
-        rule %r/<\?(php|=)?/i, Comment::Preproc, :php
-        rule(/.*?(?=<\?)|.*/m) { delegate parent }
-      end
-
-      state :php do
+      state :escape do
         rule %r/\?>/ do
-          @token.reset!
           token Comment::Preproc
-          pop!
+          reset_stack
         end
+      end
 
-        # heredocs
-        rule %r/<<<(["']?)(#{id})\1\n.*?\n\s*\2;?/im, Str::Heredoc
+      state :return do
+        rule(//) { pop! }
+      end
 
-        # whitespace and comments
-        rule %r/\s+/, Text
-        rule %r/#.*?$/, Comment::Single
-        rule %r(//.*?$), Comment::Single
-        rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
-        rule %r(/\*.*?\*/)m, Comment::Multiline
+      state :start do
+        # some extremely rough heuristics to decide whether to start inline or not
+        rule(/\s*(?=<)/m) { delegate parent; pop! }
+        rule(/[^$]+(?=<\?(php|=))/i) { delegate parent; pop! }
 
-        rule %r/(->|::)(\s*)(#{id})/ do
-          groups Operator, Text, Name::Attribute
+        rule(//) { goto :php }
+      end
+
+      state :names do
+        rule id_with_ns do |m|
+          if self.class.keywords.include? m[0]
+            token Keyword
+          elsif m[0] =~ /^__.*?__$/
+            token Name::Builtin
+          elsif m[0] =~ /\\?[[:upper:]][[[:upper:]]\d_]+$/
+            token Name::Constant
+          elsif m[0] =~ /\\?[[:upper:]][[:alnum:]]*?$/ # Q: Convention in PHP for single upper case letter
+            token Name::Class
+          elsif m[0] =~ /\\?[[:lower:]]+_[[[:lower:]]_]+$/
+            token Name::Function
+          else
+            token Name
+          end
         end
+      end
 
-        rule %r/=/ do
-          token Operator
-          # on argument list, on '=' you pass default values, names are constants
-          @token.value if @token.set_by? :fn
-        end
-
-        rule %r/[(,]/ do
-          token Punctuation
-          @token.replace_with(Name::Class) if @token.set_by? :fn
-        end
-
-        rule %r/[\[\]})]/, Punctuation
-        rule %r/[;{]/ do
-          token Punctuation
-          @token.reset!
-        end
-
-        rule %r/stdClass\b/i, Name::Class
-        rule %r/(true|false|null)\b/i, Keyword::Constant
-        rule %r/(E|PHP)(_[[:upper:]]+)+\b/, Keyword::Constant
-        rule %r/(yield)([ \n\r\t]+)(from)/i do
-          groups Keyword, Text, Keyword
-        end
-
-
-        rule %r/\$\{\$+#{id}\}/, Name::Variable
-        rule %r/\$+#{id}/, Name::Variable
-
-        rule id_with_ns_and_paren do |m|
-          name = m[1].downcase
-
-          t = if self.class.namespaces.include? name
-                @token.will_be Name::Namespace, set_by: :ns
-                Keyword::Namespace
-              elsif self.class.declarations.include? name
-                @token.will_be Name::Class, set_by: :decl
-                Keyword::Declaration
-              elsif 'const' == name
-                # distinguish `const` found in a `use` statement
-                unless @token.set?
-                  @token.will_be Name::Constant, set_by: :const
-                else
-                  @token.will_be Name::Constant
-                end
-                Keyword
-              elsif 'function' == name
-                # distinguish `function` found in a `use` statement
-                unless @token.set?
-                  @token.will_be Name::Function, set_by: :fn, default: Name::Constant
-                else
-                  @token.will_be Name::Function
-                end
-                Keyword
-              elsif 'as' == name
-                # distinguish `as` found in a `use` statement
-                unless @token.set?
-                  @token.will_be Name::Tag, set_by: :ns
-                else
-                  @token.will_be Name::Tag
-                end
-                Keyword
-              elsif self.class.keywords.include? name
-                Keyword
-              elsif !@token.set? && self.builtins.include?(name)
-                Name::Builtin
-              elsif @token.set?
-                @token.value
-              else
-                if m[1] =~ /^[[:upper:]][[[:upper:]]\d_]+$/
-                  Name::Constant
-                elsif m[1] =~ /^[[:upper:]][[:alnum:]]+?$/
-                  Name::Class
-                elsif m[3] == "("
-                  Name::Function
-                else
-                  Name
-                end
-              end
-
-          groups t, Text, Punctuation
-        end
-
+      state :operators do
         rule %r/[~!%^&*+\|:.<>\/@-]+/, Operator
-        rule %r/\?/, Operator
-
-        rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float
-        rule %r/0[0-7][0-7_]*/, Num::Oct
-        rule %r/0b[01][01_]*/i, Num::Bin
-        rule %r/0x[a-f0-9][a-f0-9_]*/i, Num::Hex
-        rule %r/\d[_\d]*/, Num::Integer
-
-        rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
-        rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
-        rule %r/"/, Str::Double, :string
       end
 
       state :string do
         rule %r/"/, Str::Double, :pop!
         rule %r/[^\\{$"]+/, Str::Double
         rule %r/\\u\{[0-9a-fA-F]+\}/, Str::Escape
-        rule %r/\\([efrntv\"$\\]|[0-7]{1,3}|[xX][0-9a-fA-F]{1,2})/,
-          Str::Escape
+        rule %r/\\([efrntv\"$\\]|[0-7]{1,3}|[xX][0-9a-fA-F]{1,2})/, Str::Escape
         rule %r/\$#{id}(\[\S+\]|->#{id})?/, Name::Variable
 
-        rule %r/\{\$\{/, Str::Interpol, :interp_double
-        rule %r/\{(?=\$)/, Str::Interpol, :interp_single
+        rule %r/\{\$\{/, Str::Interpol, :string_interp_double
+        rule %r/\{(?=\$)/, Str::Interpol, :string_interp_single
         rule %r/(\{)(\S+)(\})/ do
           groups Str::Interpol, Name::Variable, Str::Interpol
         end
@@ -246,57 +140,213 @@ module Rouge
         rule %r/[${\\]+/, Str::Double
       end
 
-      state :interp_double do
+      state :string_interp_double do
         rule %r/\}\}/, Str::Interpol, :pop!
         mixin :php
       end
 
-      state :interp_single do
+      state :string_interp_single do
         rule %r/\}/, Str::Interpol, :pop!
         mixin :php
       end
 
-      class MagicToken
-        def initialize
-          reset!
+      state :values do
+        # heredocs
+        rule %r/<<<(["']?)(#{id})\1\n.*?\n\s*\2;?/im, Str::Heredoc
+
+        # numbers
+        rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float
+        rule %r/0[0-7][0-7_]*/, Num::Oct
+        rule %r/0b[01][01_]*/i, Num::Bin
+        rule %r/0x[a-f0-9][a-f0-9_]*/i, Num::Hex
+        rule %r/\d[_\d]*/, Num::Integer
+
+        # strings
+        rule %r/'([^'\\]*(?:\\.[^'\\]*)*)'/, Str::Single
+        rule %r/`([^`\\]*(?:\\.[^`\\]*)*)`/, Str::Backtick
+        rule %r/"/, Str::Double, :string
+
+        # functions
+        rule %r/function\b/i do
+          push :in_function_return
+          push :in_function_params
+          push :in_function_name
+          token Keyword
         end
 
-        def replace_with(tokens)
-          tokens = [tokens] unless tokens.is_a?(Array)
-          @stack = tokens
-        end
-
-        def reset!
-          @stack = []
-          @statement = nil
-          @default = Token::Tokens::Name
-        end
-
-        def set?
-          !@statement.nil?
-        end
-
-        def set_by?(statement)
-          @statement == statement
-        end
-
-        def value
-          @stack.pop || @default
-        end
-
-        def will_be(tokens, set_by: nil, default: nil)
-          tokens = [tokens] unless tokens.is_a?(Array)
-          if set_by.nil?
-            @stack.concat tokens
-          else
-            @stack = tokens
-            @statement = set_by
-            @default = default.nil? ? tokens.first : default
-          end
-        end
+        # constants
+        rule %r/(true|false|null)\b/i, Keyword::Constant
       end
 
-      private_constant :MagicToken
+      state :variables do
+        rule %r/\$\{\$+#{id}\}/, Name::Variable
+        rule %r/\$+#{id}/, Name::Variable
+      end
+
+      state :whitespace do
+        rule %r/\s+/, Text
+        rule %r/#.*?$/, Comment::Single
+        rule %r(//.*?$), Comment::Single
+        rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
+        rule %r(/\*.*?\*/)m, Comment::Multiline
+      end
+
+      state :root do
+        rule %r/<\?(php|=)?/i, Comment::Preproc, :php
+        rule(/.*?(?=<\?)|.*/m) { delegate parent }
+      end
+
+      state :php do
+        mixin :escape
+
+        mixin :whitespace
+        mixin :values
+        mixin :variables
+
+        rule %r/(#{id_with_ns})(\s*)(\()/ do |m|
+          t = if self.class.keywords.include? m[1]
+                Keyword
+              elsif self.builtins.include? m[1]
+                Name::Builtin
+              elsif m[1][0] =~ /[A-Z]/
+                Name::Constant
+              else
+                Name::Function
+              end
+
+          groups t, Text, Punctuation
+        end
+
+        rule id_with_ns do |m|
+          name = m[0].downcase
+
+          if name == "use"
+            push :in_use
+            token Keyword::Namespace
+          elsif name == "namespace"
+            push :in_namespace
+            token Keyword::Namespace
+          elsif name == "const"
+            push :in_const
+            token Keyword
+          elsif name == "catch"
+            push :in_catch
+          elsif %w(class interface trait extends implements).include? name
+            push :in_declaration
+            token Keyword::Declaration
+          elsif m[0] == "stdClass"
+            token Keyword::Class
+          elsif self.class.keywords.include? name
+            token Keyword
+          elsif m[0] =~ /^(E|PHP)(_[[:upper:]]+)+$/
+            token Keyword::Constant
+          elsif m[0] =~ /^[[:upper:]][[[:upper:]][[:digit:]]_]*$/
+            token Name::Constant
+          elsif m[0][0] =~ /[[:upper:]]/
+            token Name::Class
+          else
+            token Name
+          end
+        end
+
+        rule %r/[;,\(\)\{\}\[\]]/, Punctuation
+
+        mixin :operators
+        rule %r/[=?]/, Operator
+      end
+
+      state :in_assign do
+        rule %r/,/, Punctuation, :pop!
+        mixin :escape
+        mixin :whitespace
+        mixin :values
+        mixin :variables
+        mixin :names
+        mixin :operators
+        mixin :return
+      end
+
+      state :in_catch do
+        rule %r/\(/, Punctuation
+        rule %r/\|/, Operator
+        rule id, Name::Class
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_const do
+        rule id, Name::Constant
+        rule %r/=/, Operator, :in_assign
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_declaration do
+        rule id_with_ns, Name::Class, :pop!
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_function_body do
+        rule %r/{/, Punctuation, :push
+        rule %r/}/, Punctuation, :pop!
+        mixin :php
+      end
+
+      state :in_function_name do
+        rule %r/&/, Operator
+        rule id, Name
+        rule %r/\(/, Punctuation, :pop!
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_function_params do
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/,/, Punctuation
+        rule %r/=/, Operator, :in_assign
+        rule %r/\??#{id}/, Keyword::Type, :in_assign
+        mixin :escape
+        mixin :whitespace
+        mixin :variables
+        mixin :return
+      end
+
+      state :in_function_return do
+        rule %r/use\b/, Keyword, :pop!
+        rule %r/:/, Punctuation
+        rule %r/\??#{id}/, Keyword::Type, :in_assign
+        rule %r/\{/ do
+          token Punctuation
+          goto :in_function_body
+        end
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_namespace do
+        rule id_with_ns, Name::Namespace, :pop!
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_use do
+        rule %r/[,\}]/, Punctuation
+        rule %r/(function|const)\b/i, Keyword
+        rule %r/(#{ns})(\{)/ do
+          groups Name::Namespace, Punctuation
+        end
+        mixin :escape
+        mixin :whitespace
+        mixin :names
+        mixin :return
+      end
     end
   end
 end

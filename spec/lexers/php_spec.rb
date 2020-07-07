@@ -54,24 +54,24 @@ describe Rouge::Lexers::PHP do
     end
 
     it 'recognizes case insensitively keywords' do
-      assert_tokens_equal 'While', ["Keyword", "While"]; subject.reset_token
-      assert_tokens_equal 'Class {', ["Keyword.Declaration", "Class"], ["Text", " "], ["Punctuation", "{"]; subject.reset_token
-      assert_tokens_equal 'Class BAR', ["Keyword.Declaration", "Class"], ["Text", " "], ["Name.Class", "BAR"]; subject.reset_token
-      assert_tokens_equal 'Const BAR', ["Keyword", "Const"], ["Text", " "], ["Name.Constant", "BAR"]; subject.reset_token
-      assert_tokens_equal 'Use BAR', ["Keyword.Namespace", "Use"], ["Text", " "], ["Name.Namespace", "BAR"]; subject.reset_token
-      assert_tokens_equal 'NameSpace BAR', ["Keyword.Namespace", "NameSpace"], ["Text", " "], ["Name.Namespace", "BAR"]; subject.reset_token
+      assert_tokens_equal 'While', ["Keyword", "While"]; subject.reset_stack
+      assert_tokens_equal 'Class {', ["Keyword.Declaration", "Class"], ["Text", " "], ["Punctuation", "{"]; subject.reset_stack
+      assert_tokens_equal 'Class BAR', ["Keyword.Declaration", "Class"], ["Text", " "], ["Name.Class", "BAR"]; subject.reset_stack
+      assert_tokens_equal 'Const BAR', ["Keyword", "Const"], ["Text", " "], ["Name.Constant", "BAR"]; subject.reset_stack
+      assert_tokens_equal 'Use BAR', ["Keyword.Namespace", "Use"], ["Text", " "], ["Name.Constant", "BAR"]; subject.reset_stack
+      assert_tokens_equal 'NameSpace BAR', ["Keyword.Namespace", "NameSpace"], ["Text", " "], ["Name.Namespace", "BAR"]; subject.reset_stack
       # function for anonymous functions is also recognized as a regular keyword
-      assert_tokens_equal 'Function (', ["Keyword", "Function"], ["Text", " "], ["Punctuation", "("]; subject.reset_token
-      assert_tokens_equal 'Function foo', ["Keyword", "Function"], ["Text", " "], ["Name.Function", "foo"]; subject.reset_token
+      assert_tokens_equal 'Function (', ["Keyword", "Function"], ["Text", " "], ["Punctuation", "("]; subject.reset_stack
+      assert_tokens_equal 'Function foo', ["Keyword", "Function"], ["Text", " "], ["Name", "foo"]; subject.reset_stack
     end
 
     it 'recognizes case sensitively E_* and PHP_* as constants' do
-      assert_tokens_equal 'PHP_EOL', ["Keyword.Constant", "PHP_EOL"]; subject.reset_token
-      assert_tokens_equal 'PHP_EOL_1', ["Name.Constant", "PHP_EOL_1"]; subject.reset_token
+      assert_tokens_equal 'PHP_EOL', ["Keyword.Constant", "PHP_EOL"]; subject.reset_stack
+      assert_tokens_equal 'PHP_EOL_1', ["Name.Constant", "PHP_EOL_1"]; subject.reset_stack
 
-      assert_tokens_equal 'E_user_DEPRECATED', ["Name", "E_user_DEPRECATED"]; subject.reset_token
-      assert_tokens_equal 'E_USER_deprecated', ["Name", "E_USER_deprecated"]; subject.reset_token
-      assert_tokens_equal 'E_USER_DEPRECATED', ["Keyword.Constant", "E_USER_DEPRECATED"]; subject.reset_token
+      assert_tokens_equal 'E_user_DEPRECATED', ["Name.Class", "E_user_DEPRECATED"]; subject.reset_stack
+      assert_tokens_equal 'E_USER_deprecated', ["Name.Class", "E_USER_deprecated"]; subject.reset_stack
+      assert_tokens_equal 'E_USER_DEPRECATED', ["Keyword.Constant", "E_USER_DEPRECATED"]; subject.reset_stack
     end
   end
 end

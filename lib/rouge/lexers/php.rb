@@ -212,12 +212,18 @@ module Rouge
         mixin :values
         mixin :variables
 
+        rule %r/(namespace)(\s+)(#{id_with_ns})/i do |m|
+          groups Keyword::Namespace, Text, Name::Namespace
+        end
+
+        rule %r/(class|interface|trait|extends|implements)(\s+)(#{id_with_ns})/i do |m|
+          groups Keyword::Declaration, Text, Name::Class
+        end
+
         rule %r/use\b/i, Keyword::Namespace, :in_use
-        rule %r/namespace\b/i, Keyword::Namespace, :in_namespace
         rule %r/const\b/i, Keyword, :in_const
         rule %r/catch\b/i, Keyword, :in_catch
         rule %r/new\b/i, Keyword, :in_new
-        rule %r/(class|interface|trait|extends|implements)\b/i, Keyword::Declaration, :in_declaration
         rule %r/(public|protected|private)\b/i, Keyword, :in_visibility
         rule %r/stdClass\b/, Name::Class
 
@@ -260,13 +266,6 @@ module Rouge
       state :in_const do
         rule id, Name::Constant
         rule %r/=/, Operator, :in_assign
-        mixin :escape
-        mixin :whitespace
-        mixin :return
-      end
-
-      state :in_declaration do
-        rule id_with_ns, Name::Class, :pop!
         mixin :escape
         mixin :whitespace
         mixin :return
@@ -322,19 +321,21 @@ module Rouge
         mixin :return
       end
 
-      state :in_namespace do
-        rule id_with_ns, Name::Namespace, :pop!
+      state :in_new do
+        rule %r/class\b/i do
+          token Keyword::Declaration
+          goto :in_new_class
+        end
+        rule id_with_ns, Name::Class, :pop!
         mixin :escape
         mixin :whitespace
         mixin :return
       end
 
-      state :in_new do
-        rule %r/class\b/i, Keyword::Declaration, :pop!
-        rule id_with_ns, Name::Class, :pop!
-        mixin :escape
-        mixin :whitespace
-        mixin :return
+      state :in_new_class do
+        rule %r/\}/, Punctuation, :pop!
+        rule %r/\{/, Punctuation
+        mixin :php
       end
 
       state :in_use do

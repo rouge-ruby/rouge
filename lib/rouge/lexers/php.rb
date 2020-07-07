@@ -35,19 +35,16 @@ module Rouge
       end
 
       def self.keywords
-        # - isset, unset and empty are actually keywords (directly handled by PHP's lexer but let's pretend these are functions, you use them like so)
-        # - self and parent are kind of keywords, they are not handled by PHP's lexer
-        # - use, const, namespace and function are handled by specific rules to highlight what's next to the keyword
         @keywords ||= Set.new %w(
           old_function cfunction
           __class__ __dir__ __file__ __function__ __halt_compiler __line__
-          __method__ __namespace__ __trait__ abstract and array as break
-          case catch clone continue declare default die do echo else
-          elseif enddeclare endfor endforeach endif endswitch endwhile eval
-          exit extends final finally fn for foreach global goto if implements
-          include include_once instanceof insteadof list new or parent print
-          private protected public require require_once return self static
-          switch throw try var while xor yield
+          __method__ __namespace__ __trait__ abstract and array as break case
+          catch clone continue declare default die do echo else elseif
+          enddeclare endfor endforeach endif endswitch endwhile eval exit
+          extends final finally fn for foreach global goto if implements
+          include include_once instanceof insteadof isset list new or parent
+          print private protected public require require_once return self
+          static switch throw try var while xor yield
         )
       end
 
@@ -67,9 +64,6 @@ module Rouge
         end
       end
 
-      # source: http://php.net/manual/en/language.variables.basics.php
-      # the given regex is invalid utf8, so... we're using the unicode
-      # "Letter" property instead.
       id = /[\p{L}_][\p{L}\p{N}_]*/
       ns = /(?:#{id}\\)+/
       id_with_ns = /(?:#{ns})?#{id}/
@@ -95,7 +89,10 @@ module Rouge
       end
 
       state :start do
-        # some extremely rough heuristics to decide whether to start inline or not
+        # We enter this state if we aren't sure whether the PHP in the text is
+        # delimited by <?php (or <?=) tags or not. These two rules check
+        # whether there is an opening angle bracket and, if there is, delegates
+        # the tokens before it to the HTML lexer.
         rule(/\s*(?=<)/m) { delegate parent; pop! }
         rule(/[^$]+(?=<\?(php|=))/i) { delegate parent; pop! }
 

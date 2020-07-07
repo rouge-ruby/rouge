@@ -292,8 +292,8 @@ module Rouge
       end
 
       state :in_function_return do
-        rule %r/use\b/, Keyword, :pop!
         rule %r/:/, Punctuation
+        rule %r/use\b/i, Keyword, :in_function_use
         rule %r/\??#{id}/, Keyword::Type, :in_assign
         rule %r/\{/ do
           token Punctuation
@@ -301,6 +301,16 @@ module Rouge
         end
         mixin :escape
         mixin :whitespace
+        mixin :return
+      end
+
+      state :in_function_use do
+        rule %r/[,\(]/, Punctuation
+        rule %r/&/, Operator
+        rule %r/\)/, Punctuation, :pop!
+        mixin :escape
+        mixin :whitespace
+        mixin :variables
         mixin :return
       end
 

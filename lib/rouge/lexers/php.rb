@@ -179,13 +179,7 @@ module Rouge
         rule %r/"/, Str::Double, :string
 
         # functions
-        rule %r/function\b/i do
-          push :in_function_return
-          push :in_function_params
-          push :in_function_name
-          token Keyword
-        end
-        rule %r/fn\b/i do
+        rule %r/(function|fn)\b/i do
           push :in_function_return
           push :in_function_params
           push :in_function_name

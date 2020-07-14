@@ -65,7 +65,7 @@ module Rouge
       end
 
       state :root do
-        rule %r/#.*?$/, Comment::Single
+        rule %r/#.*/, Comment::Single
         rule %r/^=[a-zA-Z0-9]+\s+.*?\n=cut/m, Comment::Multiline
         rule %r/(?:#{keywords.join('|')})\b/, Keyword
 
@@ -99,6 +99,9 @@ module Rouge
           re_tok, :balanced_regex
 
         rule %r/\s+/, Text
+
+        rule(/(?=[a-z_]\w*(\s*#.*\n)*\s*=>)/i) { push :fat_comma }
+
         rule %r/(?:#{builtins.join('|')})\b/, Name::Builtin
         rule %r/((__(DIE|WARN)__)|(DATA|STD(IN|OUT|ERR)))\b/,
           Name::Builtin::Pseudo
@@ -140,6 +143,13 @@ module Rouge
       state :format do
         rule %r/\.\n/, Str::Interpol, :pop!
         rule %r/.*?\n/, Str::Interpol
+      end
+
+      state :fat_comma do
+        rule %r/#.*/, Comment::Single
+        rule %r/\w+/, Str
+        rule %r/\s+/, Text
+        rule %r/=>/, Operator, :pop!
       end
 
       state :name_common do

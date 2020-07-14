@@ -4,6 +4,42 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.21.0: 2020-07-15
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.20.0...v3.21.0)
+
+- General
+  - Improve support for Unicode identifiers in various lexers ([#1537](https://github.com/rouge-ruby/rouge/pull/1537/) by Benjamin Galliot)
+  - Fix YARD error when parsing LiveScript lexer ([#1541](https://github.com/rouge-ruby/rouge/pull/1541/) by Michael Camilleri)
+- Batchfile Lexer
+  - Allow @ before REM in Batchfile lexer ([#1545](https://github.com/rouge-ruby/rouge/pull/1545/) by Konrad Borowski)
+- BrightScript Lexer (**NEW**)
+  - Add BrightScript lexer ([#1544](https://github.com/rouge-ruby/rouge/pull/1544/) by domRowan)
+- C++ Lexer
+  - Support template parameter packs in C++ lexer ([#1555](https://github.com/rouge-ruby/rouge/pull/1555/) by Michael Camilleri)
+- Docker Lexer
+  - Remove docker_ file glob from Docker lexer ([#1550](https://github.com/rouge-ruby/rouge/pull/1550/) by Michael Camilleri)
+- Janet Lexer (**NEW**)
+  - Add Janet lexer ([#1558](https://github.com/rouge-ruby/rouge/pull/1558/) by sogaiu)
+- Jinja Lexer
+  - Fix nesting of raw and verbatim tags in Jinja/Twig lexers ([#1552](https://github.com/rouge-ruby/rouge/pull/1552/) by Michael Camilleri)
+- Perl Lexer
+  - Support fat comma in Perl lexer ([#1553](https://github.com/rouge-ruby/rouge/pull/1553/) by Michael Camilleri)
+  - Fix character escaping in Perl lexer ([#1549](https://github.com/rouge-ruby/rouge/pull/1549/) by Michael Camilleri)
+- PowerShell Lexer
+  - Support ? in PowerShell lexer ([#1559](https://github.com/rouge-ruby/rouge/pull/1559/) by Michael Camilleri)
+  - Support using grave character to escape characters in PowerShell lexer ([#1551](https://github.com/rouge-ruby/rouge/pull/1551/) by Michael Camilleri)
+- Rego Lexer
+  - Fix identifier matching in Rego lexer ([#1556](https://github.com/rouge-ruby/rouge/pull/1556/) by Michael Camilleri)
+- Sass Lexer
+  - Fix & selector matching in Sass/SCSS lexer ([#1554](https://github.com/rouge-ruby/rouge/pull/1554/) by Michael Camilleri)
+- SCSS Lexer
+  - Fix & selector matching in Sass/SCSS lexer ([#1554](https://github.com/rouge-ruby/rouge/pull/1554/) by Michael Camilleri)
+- SSH Config Lexer
+  - Add SSH config lexer ([#1543](https://github.com/rouge-ruby/rouge/pull/1543/) by Chris Buckley)
+- Twig Lexer
+  - Fix nesting of raw and verbatim tags in Jinja/Twig lexers ([#1552](https://github.com/rouge-ruby/rouge/pull/1552/) by Michael Camilleri)
+
 ## version 3.20.0: 2020-06-10
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.19.0...v3.20.0)

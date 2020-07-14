@@ -218,6 +218,7 @@ module Rouge
           push :parameters unless m[3].nil?
         end
 
+        rule %r/\?/, Name::Function, :parameters
         rule %r/[-+*\/%=!.&|]/, Operator
         rule %r/@\{/, Punctuation, :hasht
         rule %r/@\(/, Punctuation, :array

@@ -11,6 +11,8 @@ module Rouge
       filenames '*.json5'
       mimetypes 'application/json5', 'application/x-json5'
 
+      desc 'JSON 5 extension for JSON (json5.org)'
+
       append :whitespace do
         rule %r://.*$:, Comment
 

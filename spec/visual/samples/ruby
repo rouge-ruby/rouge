@@ -269,6 +269,14 @@ a.()
 %r( hash mark: # )
 %w( ! $ % # )
 
+# this is modulo
+board[i/w][i%w] == 'O'
+puts [[x%w].reverse]
+
+# this is a method that takes a list
+def x(s) puts x end
+x %w].]
+
 ##################################################################
 # HEREDOCS
 <<-CONTENT.strip_heredoc

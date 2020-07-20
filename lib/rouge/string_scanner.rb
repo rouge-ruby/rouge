@@ -4,13 +4,13 @@
 require 'strscan'
 
 module Rouge
-  class StringScanner < ::StringScanner
-    def initialize(str)
-      if ::StringScanner.method_defined?(:fixed_anchor?)
-        super str, fixed_anchor: true
-      else
-        super str
-      end
+  class << self
+    if ::StringScanner.method_defined?(:fixed_anchor?)
+      def fixed_anchor?; true end
+      def string_scanner(str) StringScanner.new(str, fixed_anchor: true) end
+    else
+      def fixed_anchor?; false end
+      def string_scanner(str) StringScanner.new(str) end
     end
   end
 end

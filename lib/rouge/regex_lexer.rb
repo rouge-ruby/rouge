@@ -13,11 +13,16 @@ module Rouge
     class Rule
       attr_reader :callback
       attr_reader :re
-      attr_reader :beginning_of_line
+      attr_reader :line_start_hack
       def initialize(re, callback)
         @re = re
         @callback = callback
-        @beginning_of_line = re.source[0] == ?^
+
+        if Rouge.fixed_anchor?
+          @line_start_hack = false
+        else
+          @line_start_hack = re.source[0] == ?^
+        end
       end
 
       def inspect
@@ -254,7 +259,7 @@ module Rouge
     #
     # @see #step #step (where (2.) is implemented)
     def stream_tokens(str, &b)
-      stream = StringScanner.new(str)
+      stream = Rouge.string_scanner(str)
 
       @current_stream = stream
       @output_stream  = b
@@ -301,7 +306,7 @@ module Rouge
           # see http://bugs.ruby-lang.org/issues/7092
           # TODO: this doesn't cover cases like /(a|^b)/, but it's
           # the most common, for now...
-          next if rule.beginning_of_line && !stream.beginning_of_line?
+          next if rule.line_start_hack && !stream.beginning_of_line?
 
           if (size = stream.skip(rule.re))
             puts "    got: #{stream[0].inspect}" if @debug

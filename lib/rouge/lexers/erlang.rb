@@ -77,7 +77,7 @@ module Rouge
         rule %r{(#{atom_re})(:)} do
           groups Name::Namespace, Punctuation
         end
-        rule %r{(?:^|(?<=:))(#{atom_re})(\s*)(\()} do
+        rule %r{(#{atom_re})(\s*)(\()} do
           groups Name::Function, Text, Punctuation
         end
         rule(%r{[+-]?#{base_re}#[0-9a-zA-Z]+}, Num::Integer)

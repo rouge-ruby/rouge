@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# XXX this is hacky but hey it works
+return if Object::const_defined?(:Rouge) && Rouge.const_defined?(:LIB_DIR)
+
 # stdlib
 require 'pathname'
 

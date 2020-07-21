@@ -304,8 +304,12 @@ module Rouge
           # XXX HACK XXX
           # StringScanner's implementation of ^ is b0rken.
           # see http://bugs.ruby-lang.org/issues/7092
-          # TODO: this doesn't cover cases like /(a|^b)/, but it's
-          # the most common, for now...
+          #
+          # This was fixed using an optional fixed_anchor flag in Ruby 2.7.
+          # If available, this hack is not necessary, since anchors will
+          # have the correct behavior by default.
+          #
+          # @see string_scanner.rb
           next if !FIXED_ANCHOR && \
             rule.line_start_hack && !stream.beginning_of_line?
 

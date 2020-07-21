@@ -327,6 +327,8 @@ module Rouge
       @debug = Lexer.debug_enabled? && bool_option('debug')
     end
 
+    # Returns a new lexer with the given options set. Useful for e.g. setting
+    # debug flags post hoc, or providing global overrides for certain options
     def with(opts={})
       new_options = @options.dup
       opts.each { |k, v| new_options[k.to_s] = v }

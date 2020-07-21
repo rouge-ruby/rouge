@@ -18,7 +18,7 @@ module Rouge
         @re = re
         @callback = callback
 
-        if Rouge.fixed_anchor?
+        if FIXED_ANCHOR
           @line_start_hack = false
         else
           @line_start_hack = re.source[0] == ?^
@@ -306,7 +306,8 @@ module Rouge
           # see http://bugs.ruby-lang.org/issues/7092
           # TODO: this doesn't cover cases like /(a|^b)/, but it's
           # the most common, for now...
-          next if rule.line_start_hack && !stream.beginning_of_line?
+          next if !FIXED_ANCHOR && \
+            rule.line_start_hack && !stream.beginning_of_line?
 
           if (size = stream.skip(rule.re))
             puts "    got: #{stream[0].inspect}" if @debug

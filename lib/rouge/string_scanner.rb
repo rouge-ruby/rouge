@@ -4,15 +4,13 @@
 require 'strscan'
 
 module Rouge
-  class << self
-    legacy_specified = "#{ENV['ROUGE_LEGACY_ANCHORS']}" != ""
+  legacy_specified = "#{ENV['ROUGE_LEGACY_ANCHORS']}" != ""
 
-    if !legacy_specified && ::StringScanner.method_defined?(:fixed_anchor?)
-      def fixed_anchor?; true end
-      def string_scanner(str) StringScanner.new(str, fixed_anchor: true) end
-    else
-      def fixed_anchor?; false end
-      def string_scanner(str) StringScanner.new(str) end
-    end
+  if !legacy_specified && ::StringScanner.method_defined?(:fixed_anchor?)
+    FIXED_ANCHOR = true
+    def self.string_scanner(str) StringScanner.new(str, fixed_anchor: true) end
+  else
+    FIXED_ANCHOR = false
+    def self.string_scanner(str) StringScanner.new(str) end
   end
 end

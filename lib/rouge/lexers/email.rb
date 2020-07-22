@@ -16,26 +16,48 @@ module Rouge
         return true if text.start_with?('From: ')
       end
 
-      state :root do
+      start do
+        push :header
+      end
+
+      state :header do
         rule %r/^(From|To|Cc|Bcc):\s/, Keyword, :address
         rule %r/^Date:\s/, Keyword, :date
         rule %r/^Subject:\s/, Keyword, :subject
+        rule %r/^[A-Z][A-Za-z0-9-]+:\s/, Keyword, :other_header
+        rule %r/\n/m, Text::Whitespace, :pop!
+      end
+
+      state :root do
         rule %r/\n/m, Text::Whitespace
-        rule %r/^>.*/, Comment
+        rule %r/^>.*$/, Comment
         rule %r/^--\s\n/m, Comment::Doc, :signature
-        rule %r/.*/, Text
+        rule %r/.*$/, Text
+      end
+
+      state :header_line_and_continuation do
+        rule %r/\n(?=[^ \t])/m, Text::Whitespace, :pop!
+        rule %r/\n/m, Text::Whitespace
       end
 
       state :address do
-        rule %r/[^\n]+\n/m, Name, :pop!
+        mixin :header_line_and_continuation
+        rule %r/.*$/, Name
       end
 
       state :date do
-        rule %r/[^\n]+\n/m, Literal::Date, :pop!
+        mixin :header_line_and_continuation
+        rule %r/.*$/, Literal::Date
       end
 
       state :subject do
-        rule %r/[^\n]+\n/m, Name::Label, :pop!
+        mixin :header_line_and_continuation
+        rule %r/.*$/, Name::Label
+      end
+
+      state :other_header do
+        mixin :header_line_and_continuation
+        rule %r/.*$/, Literal::String
       end
 
       state :signature do

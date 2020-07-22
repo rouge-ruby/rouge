@@ -25,19 +25,19 @@ module Rouge
         rule %r/^Date:\s/, Keyword, :date
         rule %r/^Subject:\s/, Keyword, :subject
         rule %r/^[A-Z][A-Za-z0-9-]+:\s/, Keyword, :other_header
-        rule %r/\n/m, Text::Whitespace, :pop!
+        rule %r/\n/, Text::Whitespace, :pop!
       end
 
       state :root do
-        rule %r/\n/m, Text::Whitespace
+        rule %r/\n/, Text::Whitespace
         rule %r/^>.*$/, Comment
-        rule %r/^--\s\n/m, Comment::Doc, :signature
+        rule %r/^--\s\n/, Comment::Doc, :signature
         rule %r/.*$/, Text
       end
 
       state :header_line_and_continuation do
-        rule %r/\n(?=[^ \t])/m, Text::Whitespace, :pop!
-        rule %r/\n/m, Text::Whitespace
+        rule %r/\n(?=[^ \t])/, Text::Whitespace, :pop!
+        rule %r/\n/, Text::Whitespace
       end
 
       state :address do

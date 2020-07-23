@@ -9,15 +9,10 @@ describe Rouge::Lexers::Email do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.eml'
-      assert_guess :filename => 'foo.mail'
     end
 
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'message/rfc822'
-    end
-
-    it 'guesses by source' do
-      assert_guess :source => 'From: Me <me@example.com>'
     end
   end
 end

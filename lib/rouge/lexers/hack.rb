@@ -32,7 +32,7 @@ module Rouge
         )
       end
 
-      prepend :template do
+      prepend :root do
         rule %r/<\?hh(\s*\/\/\s*(strict|decl|partial))?$/, Comment::Preproc, :php
       end
 

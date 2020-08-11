@@ -4,6 +4,13 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.22.0: 2020-08-12
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.21.0...v3.22.0)
+
+- PHP Lexer
+  - Rewrite PHP lexer to support use statements, function declarations and type declarations ([#1489](https://github.com/rouge-ruby/rouge/pull/1489/) by Michael Camilleri)
+
 ## version 3.21.0: 2020-07-15
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.20.0...v3.21.0)

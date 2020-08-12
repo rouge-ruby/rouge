@@ -1,0 +1,6 @@
+WITH persons AS (
+	SELECT 1::bigint id, 'Kirk'::text person
+	)
+SELECT p.* 
+FROM persons p
+WHERE p.id = 1;

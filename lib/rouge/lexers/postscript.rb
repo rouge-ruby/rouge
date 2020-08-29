@@ -69,8 +69,8 @@ module Rouge
         rule %r'(?:#{keywords.join('|')}#{delimiter_end})', Name::Builtin
 
         # Conditionals / flow control
-        rule /(eq|ne|g[et]|l[et]|and|or|not|if(?:else)?|for(?:all)?)#{delimiter_end}/, Keyword::Reserved
-        rule /(false|true)#{delimiter_end}/, Keyword::Constant
+        rule %r'(eq|ne|g[et]|l[et]|and|or|not|if(?:else)?|for(?:all)?)#{delimiter_end}', Keyword::Reserved
+        rule %r'(false|true)#{delimiter_end}', Keyword::Constant
 
         # Numbers
         rule %r'<[0-9A-Fa-f]+>#{delimiter_end}', Num::Hex
@@ -82,7 +82,7 @@ module Rouge
         # Names
         rule valid_name, Name::Function      # Anything else is executed
 
-        rule /\s+/, Text
+        rule %r'\s+', Text
       end
 
       state :stringliteral do
@@ -93,7 +93,7 @@ module Rouge
       end
 
       state :escape do
-        rule /[0-8]{3}|n|r|t|b|f|\\|\(|\)/, Str::Escape, :pop!
+        rule %r'[0-8]{3}|n|r|t|b|f|\\|\(|\)', Str::Escape, :pop!
       end
     end
   end

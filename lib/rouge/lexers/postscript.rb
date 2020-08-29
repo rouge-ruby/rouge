@@ -20,7 +20,7 @@ module Rouge
       mimetypes "application/postscript"
 
       def self.detect?(text)
-        /%^%!/
+        return true if /^%!/ =~ text
       end
 
       delimiter = %s"()<>\[\]{}/%\s"

@@ -66,7 +66,7 @@ module Rouge
 
         rule %r'[{}<>\[\]]', Punctuation
 
-        rule %r'(?:#{keywords.join('|')}#{delimiter_end})', Name::Builtin
+        rule %r'(?:#{keywords.join('|')})#{delimiter_end}', Name::Builtin
 
         # Conditionals / flow control
         rule %r'(eq|ne|g[et]|l[et]|and|or|not|if(?:else)?|for(?:all)?)#{delimiter_end}', Keyword::Reserved

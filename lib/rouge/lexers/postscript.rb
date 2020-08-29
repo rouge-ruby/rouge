@@ -38,7 +38,7 @@ module Rouge
         currentpoint curveto cvi cvs def defaultmatrix
         dict dictstackoverflow div dtransform dup end
         exch exec exit exp fill findfont floor get
-        getinterval grestore gsave gt identmatrix idiv
+        getinterval grestore gsave identmatrix idiv
         idtransform index invertmatrix itransform length
         lineto ln load log loop matrix mod moveto
         mul neg newpath pathforall pathbbox pop print

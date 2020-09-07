@@ -400,6 +400,10 @@ fn int_literals_delimiter() {
     let red_color = 0xff_60_60;
 }
 
+fn float_literals_delimiter() {
+    let billion = 1000_000_000.0;
+}
+
 // Some hidden lines by starting with hash
 # extern crate core;
 # use core::str;

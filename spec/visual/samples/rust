@@ -409,3 +409,8 @@ async fn learn_and_sing() {
     let song = learn_song().await;
     sing_song(song).await;
 }
+
+fn tuple_access() {
+    let t: (i32, i32) = (42, 13);
+    let f: t.0;
+}

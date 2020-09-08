@@ -100,7 +100,7 @@ module Rouge
 
         rule %r/([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule %r/[.]\s*#{id}/, Name::Property
-        rule %r/[.]\s*\d+/, Num::Integer
+        rule %r/[.]\s*\d+/, Name::Property
         rule %r/(#{id})(::)/m do
           groups Name::Namespace, Punctuation
         end

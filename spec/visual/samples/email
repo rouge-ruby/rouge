@@ -16,8 +16,8 @@ Greetings and salutations.
 
 I have investigated.
 
-Note: This header-like like shouldn't be highlighted
- since it's part of the body text.
+Note: A space-stuffed line starting with > is not a quote.
+ > like this.
 
--- 
+--
 This message is highly confidential and will self-destruct.

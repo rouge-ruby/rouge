@@ -30,7 +30,8 @@ module Rouge
       end
 
       state :root do
-        rule %r/.*/m, Text
+        rule %r/^>.*/, Comment
+        rule %r/.*/, Text
       end
     end
   end

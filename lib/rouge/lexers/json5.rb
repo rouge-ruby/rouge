@@ -68,9 +68,6 @@ module Rouge
         rule %r/[+-]?\d*\.\d*(?:e[+-]?\d+)?/i, Num::Float
         rule %r/[+-]?\d+e[+-]?\d+/, Num::Integer
         rule %r/[+-]?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
-
-        rule %r/[+-]?[.]\d+/, Num::Float
-        rule %r/[+-]?\d+[.]/, Num::Float
       end
     end
   end

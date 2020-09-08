@@ -66,7 +66,7 @@ module Rouge
         rule %r'/[*].*', Comment::Multiline, :comment # multiline block comment
         rule %r'\n', Text
         rule %r'(::)(class)' do
-          groups Operator, Name
+          groups Operator, Keyword
         end
         rule %r'::|!!|\?[:.]', Operator
         rule %r"(\.\.)", Operator

@@ -4,7 +4,8 @@
 # stdlib
 require 'pathname'
 
-# Avoid multiple loads
+# Avoid multiple loads (top-level return will be possible when 2.4+ is the
+# minimum supported version)
 unless Object::const_defined?(:Rouge) && Rouge.const_defined?(:LIB_DIR)
 
   # The containing module for Rouge

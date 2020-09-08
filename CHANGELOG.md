@@ -4,6 +4,22 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.23.0: 2020-09-09
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.22.0...v3.23.0)
+
+- Kotlin Lexer
+  - Fix handling of ::class in Kotlin lexer ([#1572](https://github.com/rouge-ruby/rouge/pull/1572/) by Manuel Dossinger)
+- PostScript Lexer (**NEW**)
+  - Add PostScript lexer ([#1578](https://github.com/rouge-ruby/rouge/pull/1578/) by Liam Cooke)
+- Ruby Lexer
+  - Handle % like / in Ruby lexer ([#1563](https://github.com/rouge-ruby/rouge/pull/1563/) by Jeanine Adkisson)
+- Rust Lexer
+  - Support tuple index expressions in Rust lexer ([#1580](https://github.com/rouge-ruby/rouge/pull/1580/) by Hugo Peixoto)
+  - Fix floating point separators in Rust lexer ([#1581](https://github.com/rouge-ruby/rouge/pull/1581/) by Hugo Peixoto)
+- systemd Lexer (**NEW**)
+  - Add systemd lexer ([#1568](https://github.com/rouge-ruby/rouge/pull/1568/) by Jean-Louis Jouannic)
+
 ## version 3.22.0: 2020-08-12
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.21.0...v3.22.0)
@@ -42,7 +58,7 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
   - Fix & selector matching in Sass/SCSS lexer ([#1554](https://github.com/rouge-ruby/rouge/pull/1554/) by Michael Camilleri)
 - SCSS Lexer
   - Fix & selector matching in Sass/SCSS lexer ([#1554](https://github.com/rouge-ruby/rouge/pull/1554/) by Michael Camilleri)
-- SSH Config Lexer
+- SSH Config Lexer (**NEW**)
   - Add SSH config lexer ([#1543](https://github.com/rouge-ruby/rouge/pull/1543/) by Chris Buckley)
 - Twig Lexer
   - Fix nesting of raw and verbatim tags in Jinja/Twig lexers ([#1552](https://github.com/rouge-ruby/rouge/pull/1552/) by Michael Camilleri)

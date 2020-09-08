@@ -9,16 +9,6 @@ describe Rouge::Lexers::SystemD do
 
     it 'guesses by filename' do
       assert_guess :filename => 'unit.service'
-      assert_guess :filename => 'unit.socket'
-      assert_guess :filename => 'unit.device'
-      assert_guess :filename => 'unit.mount'
-      assert_guess :filename => 'unit.automount'
-      assert_guess :filename => 'unit.swap'
-      assert_guess :filename => 'unit.target'
-      assert_guess :filename => 'unit.path'
-      assert_guess :filename => 'unit.timer'
-      assert_guess :filename => 'unit.slice'
-      assert_guess :filename => 'unit.scope'
     end
 
     it 'guesses by mimetype' do

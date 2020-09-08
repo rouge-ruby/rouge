@@ -6,7 +6,7 @@ module Rouge
     class SystemD < RegexLexer
       tag 'systemd'
       aliases 'unit-file'
-      filenames '*.service', '*.socket', '*.device', '*.mount', '*.automount', '*.swap', '*.target', '*.path', '*.timer', '*.slice', '*.scope'
+      filenames '*.service'
       mimetypes 'text/x-systemd-unit'
       desc 'A lexer for systemd unit files'
 

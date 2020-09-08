@@ -1,0 +1,70 @@
+I:abc-charset UTF-8 % This is a builtin instruction field with a trailing comment
++: Error % I: fields can not be repeated
+%%abc-version 2.2 % Instruction fields can also start with %%
+\linebreak % or \. The \ option is not in the standard, but some software supports it
+  %% This is not an instruction, but a comment
+X: 1
+T: The Three Blind Mice
++: This is a repeated field
+O: Old Round.
+%R: air, jig, march
+B: "The Everyday Song Book", 1927
+F: http://www.library.pitt.edu/happybirthday/pdf/The_Everyday_Song_Book.pdf
+Z: 2017 John Chambers <jc:trillian.mit.edu>
+M: 6/8
+L: 1/8
+K: Eb
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[| "^1"G3 F3 | E3 z2z | G3 F3 | E3 z2z | "^2"B3 A2 A | G3 z2z |
+w: Three blind mice, three blind mice; See how they run;
+%
+B3 A2 A | G3 z2B | "^3"e2 e d c d | e2 B B2 B |
++: see how they run; They all ran aft-er the farm-er's wife, She
+%
+e e e d c d | e2 B B2 B | "^4"e e e
++: cut off their tails with a carv-ing knife; Did ev-er you
+%
+d c d | e B B B2 A | G3 F3 | !fermata!E3 z2z |]
++: see such a sight in your life As three blind mice?
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+%%begintext align % Runs until %%endtext. /^%%/ is whitespace
+%% A version of this rhyme, together with music, was
+%% published in Deuteromelia or The Seconde part of Musicks melodie
+%% (1609). The editor of the book, and possible author of the rhyme, was
+%% Thomas Ravenscroft. The original lyrics are:
+%%endtext
+%%begintext
+%%     Three Blinde Mice,
+%%     Three Blinde Mice,
+%%     Dame Iulian,
+%%     Dame Iulian,
+%%     the Miller and his merry olde Wife,
+%%     she scrapte her tripe licke thou the knife.
+%%
+%%endtext
+%%begintext align
+%% The rhyme only entered children's literature in 1842 when it was
+%% published in a collection by James Orchard Halliwell.
+%%
+%% From https://en.wikipedia.org/wiki/Three_Blind_Mice
+%%endtext
+
+X: 2
+T: Fantasi
+K: Ador
+% Tuplet
+(3 BAB (3:: BAB (3:2 BAB (3:2:3 BAB (3::2 BAB (3:2:2 BAB
+% Non-tuplet
+(3:2:2:5 BAB
+% Builtin decorations
+a!trill!aTbHC
+% Other decorations
+A2!yeah!C4
+% Durations
+A2 A/ A < B A > B
+% Bar lines
+A |: BC :| EF | [2 GB [|] =A2 :: B |[ C :|: D :||: E :|||: F
+% More bar lines
+faf gfe|[1 dfe dBA:|[2 d2e dcB|]\
+[1,3,5-7 dcA .|[1,3,5-7,9-13,22 dcA
+w: &SGML; entities and  \u0075nicode literals are properly highlighted

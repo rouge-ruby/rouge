@@ -167,7 +167,7 @@ module Rouge
         flt = /f32|f64/
 
         rule %r(
-          [0-9]+
+          [0-9_]+
           (#{dot}  #{exp}? #{flt}?
           |#{dot}? #{exp}  #{flt}?
           |#{dot}? #{exp}? #{flt}

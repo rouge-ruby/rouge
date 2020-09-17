@@ -9,6 +9,11 @@ module Rouge
       tag 'j'
       filenames '*.ijs', '*.ijt'
 
+      # For J-specific terms we use, see:
+      #   https://code.jsoftware.com/wiki/Vocabulary/AET
+      #   https://code.jsoftware.com/wiki/Vocabulary/Glossary
+
+      # https://code.jsoftware.com/wiki/Vocabulary/PartsOfSpeech
       def self.token_map
         @token_map ||= {
           noun: Keyword::Constant,
@@ -21,6 +26,7 @@ module Rouge
         }
       end
 
+      # https://code.jsoftware.com/wiki/NuVoc
       def self.inflection_list
         @inflection_list ||= ['', '.', ':', '..', '.:', ':.', '::']
       end
@@ -141,6 +147,8 @@ module Rouge
           @def_stack.empty? or @def_stack.each(&method(:push)).clear
         end
 
+        # https://code.jsoftware.com/wiki/Vocabulary/com
+        # https://code.jsoftware.com/wiki/Vocabulary/NounExplicitDefinition
         rule %r/
           ([0-4]|13|adverb|conjunction|dyad|monad|noun|verb)([\ \t]+)
           (def(?:ine)?\b|:)(?![.:])([\ \t]*)

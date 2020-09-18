@@ -43,7 +43,7 @@ describe Rouge::Lexers::J do
         %w'
                ^:     ~           .           : :. ::
             ;.          !. !:     / /.       \\ \.
-          }           "           `    `:     @ @. @:
+          }       }:: "           `    `:     @ @. @:
           & &. &: &.:
           d. D. D: f. F. F.. F.: F: F:. F:: H. L: M. S:
         '.each do |modifier|

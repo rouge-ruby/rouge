@@ -11,14 +11,14 @@ NB. Primitives
 = =. =:     < <. <:     > >. >:
 + +. +:     - -. -:     * *. *:     % %. %:
 ^ ^. ^:     $ $. $:     ~ ~. ~:     | |. |:
-.           : :. ::     , ,. ,:     ;    ;:
+. .. .:     : :. ::     , ,. ,:     ; ;. ;:
 # #. #:     ! !. !:     / /. /:     \ \. \:
 [    [:     ]           { {. {: {:: } }. }: }::
 " ". ":     `    `:     @ @. @:     & &. &: &.:
 ? ?.
 a. a: A. b. C. d. D. D: e. E. f. F. F.. F.: F:
 F:. F:: H. i. i: I. j. L. L: M. o. p. p.. p: q:
-r. s: S: u. u: v. x: Z:
+r. s: S: t. t: T. u. u: v. x: Z:
 _9: _8: _7: _6: _5: _4: _3: _2: _1: 0: 1: 2: 3:
 4: 5: 6: 7: 8: 9: _:
 
@@ -59,7 +59,7 @@ NB. String literals
 'foo ''bar'''   NB. `''` escapes single-quote
 
 NB. Invalid tokens
-foo: for_. {::. .: 10: NB..
+foo: for_. {::. .:. 10: NB..
 
 NB. Multiline String
 noun define

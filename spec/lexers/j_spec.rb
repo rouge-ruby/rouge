@@ -41,11 +41,12 @@ describe Rouge::Lexers::J do
 
       it 'covers all the modifiers' do
         %w'
-               ^:     ~           .           : :. ::
+               ^:     ~           . .. .:     : :. ::
             ;.          !. !:     / /.       \\ \.
           }       }:: "           `    `:     @ @. @:
           & &. &: &.:
           d. D. D: f. F. F.. F.: F: F:. F:: H. L: M. S:
+          t. t: T.
         '.each do |modifier|
           assert_tokens_equal modifier, ['Operator', modifier]
         end
@@ -61,9 +62,9 @@ describe Rouge::Lexers::J do
       end
 
       it 'validates the inflection' do
-        assert_tokens_equal '[.q::F:.:. .:',
+        assert_tokens_equal '[.q::F:.:. .::',
           ['Error', '[.q::F:.:.'], ['Text', ' '],
-          ['Error', '.:']
+          ['Error', '.::']
       end
     end
 

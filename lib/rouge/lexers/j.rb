@@ -83,19 +83,6 @@ module Rouge
         @control_words_id ||= Set.new %w(for goto label)
       end
 
-      def lex_str(match)
-        unless match[3]
-          token Error
-          return
-        end
-        token Str::Single, match[1]
-        match[2].scan(/([^']*)('*)/) do |s, e|
-          token Str::Single, s
-          token Str::Escape, e
-        end
-        token Str::Single, match[3]
-      end
-
       state :expr do
         rule %r/\s+/, Text
 
@@ -111,7 +98,7 @@ module Rouge
           token m[1].empty? ? Num : Error
         end
 
-        rule(/(')((?:[^'\n]|'')*)(')?/) {|m| lex_str m }
+        rule %r/'/, Str::Single, :str
 
         rule %r/NB\.(?![.:]).*/, Comment::Single
 
@@ -136,8 +123,13 @@ module Rouge
         end
       end
 
+      state :str do
+        rule %r/''/, Str::Escape
+        rule %r/[^'\n]/, Str::Single
+        rule %r/'|$/, Str::Single, :pop!
+      end
+
       start do
-        @q_expr ||= self.dup.tap {|o| o.push :q_expr }
         @def_stack = []
       end
 
@@ -179,17 +171,14 @@ module Rouge
           @def_stack.push @def_body
           pop!
         end
-        rule %r/(')((?:[^'\n]|'')*)(')?/ do |m|
+        rule %r/'/ do
           if @def_body == :noun
-            lex_str m
-          elsif m[3]
-            token Punctuation, m[1]
-            delegate @q_expr, m[2]
-            token Punctuation, m[3]
+            token Str::Single
+            goto :str
           else
-            token Error
+            token Punctuation
+            goto :q_expr
           end
-          pop!
         end
         rule(//) { pop! }
       end
@@ -198,8 +187,17 @@ module Rouge
       # explicit definition.
       # e.g. dyad def 'x + y'
       state :q_expr do
-        rule(/('')((?:[^'\n]|'''')*)('')?/) {|m| lex_str m }
+        rule %r/''/, Str::Single, :q_str
+        rule %r/'|$/, Punctuation, :pop!
+        rule %r/NB\.(?![.:])([^'\n]|'')*/, Comment::Single
         mixin :expr
+      end
+
+      state :q_str do
+        rule %r/''''/, Str::Escape
+        rule %r/[^'\n]+/, Str::Single
+        rule %r/''/, Str::Single, :pop!
+        rule(/'|$/) { token Punctuation; pop! 2 }
       end
 
       state :note do

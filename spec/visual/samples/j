@@ -59,7 +59,7 @@ NB. String literals
 'foo ''bar'''   NB. `''` escapes single-quote
 
 NB. Invalid tokens
-foo: for_. {::. .: 10: NB.. 'foo
+foo: for_. {::. .: 10: NB..
 
 NB. Multiline String
 noun define

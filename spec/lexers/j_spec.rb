@@ -158,13 +158,6 @@ describe Rouge::Lexers::J do
           ['Literal.String.Single', "'"]
       end
 
-      it 'rejects unclosed literals' do
-        assert_tokens_equal "'foo bar\nbaz",
-          ['Error', "'foo bar"],
-          ['Text', "\n"],
-          ['Name', 'baz']
-      end
-
       it 'recognizes no inflection' do
         assert_tokens_equal "'foo'.'bar':",
           ['Literal.String.Single', "'foo'"],

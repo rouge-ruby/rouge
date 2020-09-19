@@ -125,7 +125,7 @@ module Rouge
 
       state :str do
         rule %r/''/, Str::Escape
-        rule %r/[^'\n]/, Str::Single
+        rule %r/[^'\n]+/, Str::Single
         rule %r/'|$/, Str::Single, :pop!
       end
 

@@ -130,13 +130,16 @@ module Rouge
       end
 
       start do
-        @def_stack = []
+        @note_next = false
       end
 
       state :root do
         rule %r/\n/ do
           token Text
-          @def_stack.empty? or @def_stack.each(&method(:push)).clear
+          if @note_next
+            push :note
+            @note_next = false
+          end
         end
 
         # https://code.jsoftware.com/wiki/Vocabulary/com
@@ -148,7 +151,11 @@ module Rouge
           groups Keyword::Pseudo, Text, Keyword::Pseudo, Text
           @def_body = (m[1] == '0' || m[1] == 'noun') ? :noun : :code
           if m[3] == 'define'
-            @def_stack.push @def_body
+            # stack: [:root]
+            #    or  [:root, ..., :def_next]
+            pop! if stack.size > 1
+            push @def_body
+            push :def_next  # [:root, ..., @def_body, :def_next]
           else
             push :expl_def
           end
@@ -156,20 +163,26 @@ module Rouge
 
         rule %r/^([ \t]*)(Note\b(?![.:]))([ \t\r]*)(?!=[.:]|$)/ do
           groups Text, Name, Text
-          # 'Note' is a (pro)verb, and evaluated after applying modifiers
-          # including explicit definitions.
-          @def_stack.unshift :note
+          @note_next = true
         end
 
         rule %r/[mnuvxy]\b(?![.:])/, Name
         mixin :expr
       end
 
+      state :def_next do
+        rule %r/\n/, Text, :pop!
+        mixin :root
+      end
+
       state :expl_def do
         rule %r/0\b(?![.:])/ do
           token Keyword::Pseudo
-          @def_stack.push @def_body
-          pop!
+          # stack: [:root, :expl_def]
+          #    or  [:root, ..., :def_next, :expl_def]
+          pop! if stack.size > 2
+          goto @def_body
+          push :def_next  # [:root, ..., @def_body, :def_next]
         end
         rule %r/'/ do
           if @def_body == :noun

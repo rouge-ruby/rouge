@@ -130,6 +130,7 @@ Yet another buffer
 (def name 'myfunction)
 (def args '[x y z])
 (defn body '[(print x) (print y) (print z)])
+'{:foo (print "bar")}
 
 # Quasiquotes
 ~x

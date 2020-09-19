@@ -143,20 +143,19 @@ module Rouge
 
         rule %r/\(/, Punctuation, :function
 
-        rule %r/(')([\(\[])/ do
+        rule %r/(')([\(\[\{])/ do
           groups Operator, Punctuation
           push :quote
         end
 
-        rule %r/(~)([\(\[])/ do
+        rule %r/(~)([\(\[\{])/ do
           groups Operator, Punctuation
           push :quasiquote
         end
 
         rule %r/[\#~,';\|]/, Operator
 
-        rule %r/@?[({\[]/, Punctuation, :push
-        rule %r/[)}\]]/, Punctuation, :pop!
+        rule %r/@?[(){}\[\]]/, Punctuation
 
         rule symbol, Name
       end
@@ -169,6 +168,8 @@ module Rouge
       end
 
       state :function do
+        rule %r/[\)]/, Punctuation, :pop!
+
         rule symbol do |m|
           case m[0]
           when "quote"
@@ -187,8 +188,9 @@ module Rouge
       end
 
       state :quote do
-        rule %r/[\(\[]/, Punctuation, :push
-        rule symbol, Str::Symbol
+        rule %r/[\(\[\{]/, Punctuation, :push
+        rule %r/[\)\]\}]/, Punctuation, :pop!
+        rule symbol, Str::Escape
         mixin :root
       end
 
@@ -199,7 +201,6 @@ module Rouge
         end
         rule %r/(\()(\s*)(unquote)(\s+)(\()/ do
           groups Punctuation, Text, Keyword, Text, Punctuation
-          push :root
           push :function
         end
 

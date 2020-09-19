@@ -114,7 +114,7 @@ module Rouge
         end
       end
 
-      punctuation = %r/[_!@$%^&*+=~<>.?\/-]/o
+      punctuation = %r/[_!$%^&*+=~<>.?\/-]/o
       symbol = %r/([[:alpha:]]|#{punctuation})([[:word:]]|#{punctuation}|:)*/o
 
       state :root do
@@ -143,12 +143,12 @@ module Rouge
 
         rule %r/\(/, Punctuation, :function
 
-        rule %r/(')([\(\[\{])/ do
+        rule %r/(')(@?[\(\[\{])/ do
           groups Operator, Punctuation
           push :quote
         end
 
-        rule %r/(~)([\(\[\{])/ do
+        rule %r/(~)(@?[\(\[\{])/ do
           groups Operator, Punctuation
           push :quasiquote
         end

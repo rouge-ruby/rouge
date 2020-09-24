@@ -47,6 +47,7 @@ describe Rouge::Lexers::Shell do
       assert_guess :filename => 'foo.eclass'
       assert_guess :filename => 'foo.exheres-0'
       assert_guess :filename => 'foo.exlib'
+      assert_guess :filename => 'foo.bats'
       deny_guess   :filename => 'foo'
     end
 
@@ -62,6 +63,7 @@ describe Rouge::Lexers::Shell do
       assert_guess :source => '   #!   /bin/bash'
       assert_guess :source => '#!/usr/bin/env bash'
       assert_guess :source => '#!/usr/bin/env bash -i'
+      assert_guess :source => '#!/usr/bin/env bats'
       deny_guess   :source => '#!/bin/smash'
       # not sure why you would do this, but hey, whatevs
       deny_guess   :source => '#!/bin/bash/python'

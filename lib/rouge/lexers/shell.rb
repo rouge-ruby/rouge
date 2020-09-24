@@ -11,13 +11,13 @@ module Rouge
       aliases 'bash', 'zsh', 'ksh', 'sh'
       filenames '*.sh', '*.bash', '*.zsh', '*.ksh', '.bashrc', '.zshrc',
                 '.kshrc', '.profile', 'APKBUILD', 'PKGBUILD', '*.ebuild',
-                '*.eclass', '*.exheres-0', '*.exlib'
+                '*.eclass', '*.exheres-0', '*.exlib', '*.bats'
 
       mimetypes 'application/x-sh', 'application/x-shellscript', 'text/x-sh',
                 'text/x-shellscript'
 
       def self.detect?(text)
-        return true if text.shebang?(/(ba|z|k)?sh/)
+        return true if text.shebang?(/(ba|z|k)?sh|bats/)
       end
 
       KEYWORDS = %w(

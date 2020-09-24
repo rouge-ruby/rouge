@@ -4,17 +4,20 @@
 module Rouge
   module Lexers
     class Matlab < RegexLexer
-      title "MATLAB"
-      desc "Matlab"
+      title "MATLAB / GNU Octave"
+      desc "Matlab / GNU Octave"
       tag 'matlab'
-      aliases 'm'
+      aliases 'm', 'octave', 'oct'
       filenames '*.m'
-      mimetypes 'text/x-matlab', 'application/x-matlab'
+      mimetypes 'text/x-matlab', 'application/x-matlab',
+                'text/x-octave', 'application/x-octave'
 
       def self.keywords
         @keywords = Set.new %w(
           break case catch classdef continue else elseif end for function
           global if otherwise parfor persistent return spmd switch try while
+          endif endfor endwhile endfunction end_try_catch endparfor
+          endclassdef end_try_catch
         )
       end
 
@@ -27,7 +30,7 @@ module Rouge
       state :root do
         rule %r/\s+/m, Text # Whitespace
         rule %r([{]%.*?%[}])m, Comment::Multiline
-        rule %r/%.*$/, Comment::Single
+        rule %r/[%#].*$/, Comment::Single
         rule %r/([.][.][.])(.*?)$/ do
           groups(Keyword, Comment)
         end

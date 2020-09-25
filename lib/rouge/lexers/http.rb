@@ -8,16 +8,22 @@ module Rouge
       title "HTTP"
       desc 'http requests and responses'
 
+      option :content, "the language for the content (default: auto-detect)"
+
       def self.http_methods
         @http_methods ||= %w(GET POST PUT DELETE HEAD OPTIONS TRACE PATCH)
       end
 
       def content_lexer
+        @content_lexer ||= (lexer_option(:content) || guess_content_lexer)
+      end
+
+      def guess_content_lexer
         return Lexers::PlainText unless @content_type
 
-        @content_lexer ||= Lexer.guess_by_mimetype(@content_type)
+        Lexer.guess_by_mimetype(@content_type)
       rescue Lexer::AmbiguousGuess
-        @content_lexer = Lexers::PlainText
+        Lexers::PlainText
       end
 
       start { @content_type = 'text/plain' }

@@ -229,6 +229,8 @@ function* range(from, to)
   1 + 2
 }`;
 
+var notATernary = `${obj?.prop}`;
+
 @(function(thing) { return thing; })
 class Person {
   @deprecate

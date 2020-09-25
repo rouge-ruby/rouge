@@ -44,6 +44,7 @@ module Rouge
       yield %||
       yield %|where <command> is one of:|
       yield %|	highlight	#{Highlight.desc}|
+      yield %|	debug		#{Debug.desc}|
       yield %|	help		#{Help.desc}|
       yield %|	style		#{Style.desc}|
       yield %|	list		#{List.desc}|
@@ -104,6 +105,8 @@ module Rouge
         Help
       when 'highlight', 'hi'
         Highlight
+      when 'debug'
+        Debug
       when 'style'
         Style
       when 'list'
@@ -215,7 +218,7 @@ module Rouge
         end
       end
 
-      def self.parse(argv)
+      def self.parse_opts(argv)
         opts = {
           :formatter => supports_truecolor? ? 'terminal-truecolor' : 'terminal256',
           :theme => 'thankful_eyes',
@@ -256,7 +259,11 @@ module Rouge
           end
         end
 
-        new(opts)
+        opts
+      end
+
+      def self.parse(argv)
+        new(parse_opts(argv))
       end
 
       def input_stream
@@ -341,6 +348,29 @@ module Rouge
       def self.parse_cgi(str)
         pairs = CGI.parse(str).map { |k, v| [k.to_sym, v.first] }
         Hash[pairs]
+      end
+    end
+
+    class Debug < Highlight
+      def self.desc
+      end
+
+      def self.doc
+        return enum_for(:doc) unless block_given?
+
+        yield %|usage: rougify debug [<options>]|
+        yield %||
+        yield %|Debug a lexer. Similar options to `rougify highlight`, but|
+        yield %|defaults to the `null` formatter, and ensures the `debug`|
+        yield %|option is enabled, to print debugging information to stdout.|
+      end
+
+      def self.parse_opts(argv)
+        out = super(argv)
+        out[:lexer_opts]['debug'] = '1'
+        out[:formatter] = 'null'
+
+        out
       end
     end
 

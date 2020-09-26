@@ -38,6 +38,42 @@ module Rouge
         registry[name.to_s]
       end
 
+      # Same as ::find_fancy, except instead of returning an instantiated
+      # lexer, returns a pair of [lexer_class, options], so that you can
+      # modify or provide additional options to the lexer.
+      #
+      # Please note: the lexer class might be nil!
+      def lookup_fancy(str, code=nil, default_options={})
+        if str && !str.include?('?') && str != 'guess'
+          lexer_class = find(str)
+          return [lexer_class, default_options]
+        end
+
+        name, opts = str ? str.split('?', 2) : [nil, '']
+
+        # parse the options hash from a cgi-style string
+        opts = CGI.parse(opts || '').map do |k, vals|
+          val = case vals.size
+          when 0 then true
+          when 1 then vals[0]
+          else vals
+          end
+
+          [ k.to_s, val ]
+        end
+
+        opts = default_options.merge(Hash[opts])
+
+        lexer_class = case name
+        when 'guess', nil
+          self.guess(:source => code, :mimetype => opts['mimetype'])
+        when String
+          self.find(name)
+        end
+
+        [lexer_class, opts]
+      end
+
       # Find a lexer, with fancy shiny features.
       #
       # * The string you pass can include CGI-style options
@@ -55,34 +91,8 @@ module Rouge
       # This is used in the Redcarpet plugin as well as Rouge's own
       # markdown lexer for highlighting internal code blocks.
       #
-      def find_fancy(str, code=nil, additional_options={})
-
-        if str && !str.include?('?') && str != 'guess'
-          lexer_class = find(str)
-          return lexer_class && lexer_class.new(additional_options)
-        end
-
-        name, opts = str ? str.split('?', 2) : [nil, '']
-
-        # parse the options hash from a cgi-style string
-        opts = CGI.parse(opts || '').map do |k, vals|
-          val = case vals.size
-          when 0 then true
-          when 1 then vals[0]
-          else vals
-          end
-
-          [ k.to_s, val ]
-        end
-
-        opts = additional_options.merge(Hash[opts])
-
-        lexer_class = case name
-        when 'guess', nil
-          self.guess(:source => code, :mimetype => opts['mimetype'])
-        when String
-          self.find(name)
-        end
+      def find_fancy(str, code=nil, default_options={})
+        lexer_class, opts = lookup_fancy(str, code, default_options)
 
         lexer_class && lexer_class.new(opts)
       end
@@ -315,6 +325,14 @@ module Rouge
       opts.each { |k, v| @options[k.to_s] = v }
 
       @debug = Lexer.debug_enabled? && bool_option('debug')
+    end
+
+    # Returns a new lexer with the given options set. Useful for e.g. setting
+    # debug flags post hoc, or providing global overrides for certain options
+    def with(opts={})
+      new_options = @options.dup
+      opts.each { |k, v| new_options[k.to_s] = v }
+      self.class.new(new_options)
     end
 
     def as_bool(val)

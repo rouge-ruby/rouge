@@ -65,7 +65,7 @@ module Rouge
       end
 
       state :root do
-        rule %r/#.*?$/, Comment::Single
+        rule %r/#.*/, Comment::Single
         rule %r/^=[a-zA-Z0-9]+\s+.*?\n=cut/m, Comment::Multiline
         rule %r/(?:#{keywords.join('|')})\b/, Keyword
 
@@ -99,6 +99,9 @@ module Rouge
           re_tok, :balanced_regex
 
         rule %r/\s+/, Text
+
+        rule(/(?=[a-z_]\w*(\s*#.*\n)*\s*=>)/i) { push :fat_comma }
+
         rule %r/(?:#{builtins.join('|')})\b/, Name::Builtin
         rule %r/((__(DIE|WARN)__)|(DATA|STD(IN|OUT|ERR)))\b/,
           Name::Builtin::Pseudo
@@ -142,6 +145,13 @@ module Rouge
         rule %r/.*?\n/, Str::Interpol
       end
 
+      state :fat_comma do
+        rule %r/#.*/, Comment::Single
+        rule %r/\w+/, Str
+        rule %r/\s+/, Text
+        rule %r/=>/, Operator, :pop!
+      end
+
       state :name_common do
         rule %r/\w+::/, Name::Namespace
         rule %r/[\w:]+/, Name::Variable, :pop!
@@ -178,16 +188,24 @@ module Rouge
       end
 
       state :sq do
-        rule %r/\\[']/, Str::Escape
+        rule %r/\\[\\']/, Str::Escape
         rule %r/[^\\']+/, Str::Single
         rule %r/'/, Punctuation, :pop!
+        rule %r/\\/, Str::Single
       end
 
       state :dq do
         mixin :string_intp
-        rule %r/\\[\\tnr"]/, Str::Escape
+        rule %r/\\[\\tnrabefluLUE"$@]/, Str::Escape
+        rule %r/\\0\d{2}/, Str::Escape
+        rule %r/\\o\{\d+\}/, Str::Escape
+        rule %r/\\x\h{2}/, Str::Escape
+        rule %r/\\x\{\h+\}/, Str::Escape
+        rule %r/\\c./, Str::Escape
+        rule %r/\\N\{[^\}]+\}/, Str::Escape
         rule %r/[^\\"]+?/, Str::Double
         rule %r/"/, Punctuation, :pop!
+        rule %r/\\/, Str::Escape
       end
 
       state :bq do

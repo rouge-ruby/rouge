@@ -17,10 +17,10 @@ module Rouge
 
       def self.keywords
         @@keywords ||= %w(as do extends flush from import include use else starts
-                          ends with without autoescape endautoescape block endblock
-                          embed endembed filter endfilter for endfor if endif
-                          macro endmacro sandbox endsandbox set endset
-                          spaceless endspaceless verbatim endverbatim)
+                          ends with without autoescape endautoescape block
+                          endblock embed endembed filter endfilter for endfor
+                          if endif macro endmacro sandbox endsandbox set endset
+                          spaceless endspaceless)
       end
 
       def self.tests

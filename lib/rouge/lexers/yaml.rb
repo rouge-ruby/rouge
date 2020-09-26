@@ -11,6 +11,8 @@ module Rouge
       aliases 'yml'
       filenames '*.yaml', '*.yml'
 
+      # Documentation: https://yaml.org/spec/1.2/spec.html
+
       def self.detect?(text)
         # look for the %YAML directive
         return true if text =~ /\A\s*%YAML/m
@@ -165,15 +167,15 @@ module Rouge
         )x, Keyword::Type
 
         # an anchor
-        rule %r/&[\w-]+/, Name::Label
+        rule %r/&[\p{L}\p{Nl}\p{Nd}_-]+/, Name::Label
 
         # an alias
-        rule %r/\*[\w-]+/, Name::Variable
+        rule %r/\*[\p{L}\p{Nl}\p{Nd}_-]+/, Name::Variable
       end
 
       state :block_nodes do
         # implicit key
-        rule %r/((?:\w[\w -]*)?)(:)(?=\s|$)/ do |m|
+        rule %r/((?:[\p{L}\p{Nl}\p{Nd}_][\p{L}\p{Nl}\p{Nd}\p{Blank}_-]*)?)(:)(?=\s|$)/ do |m|
           groups Name::Attribute, Punctuation::Indicator
           set_indent m[0], :implicit => true
         end

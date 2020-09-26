@@ -374,7 +374,7 @@ module Rouge
       end
 
       state :method_call do
-        rule %r(/) do
+        rule %r(/|%) do
           token Operator
           goto :expr_start
         end

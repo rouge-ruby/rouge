@@ -11,6 +11,8 @@ module Rouge
       filenames '*.jl'
       mimetypes 'text/x-julia', 'application/x-julia'
 
+      # Documentation: https://docs.julialang.org/en/v1/manual/variables/#Allowed-Variable-Names-1
+
       def self.detect?(text)
         return true if text.shebang? 'julia'
       end
@@ -252,13 +254,13 @@ module Rouge
 
 
       state :funcname do
-        rule %r/[a-zA-Z_]\w*/, Name::Function, :pop!
+        rule %r/[\p{L}\p{Nl}\p{S}_][\p{Word}\p{S}\p{Po}!]*/, Name::Function, :pop!
         rule %r/\([^\s\w{]{1,2}\)/, Operator, :pop!
         rule %r/[^\s\w{]{1,2}/, Operator, :pop!
       end
 
       state :typename do
-        rule %r/[a-zA-Z_]\w*/, Name::Class, :pop!
+        rule %r/[\p{L}\p{Nl}\p{S}_][\p{Word}\p{S}\p{Po}!]*/, Name::Class, :pop!
       end
 
       state :stringescape do

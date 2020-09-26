@@ -29,6 +29,7 @@ module Rouge
         end
 
         rule %r/@#{id}/, Keyword, :selector
+        rule %r/&/, Keyword, :selector
 
         # $variable: assignment
         rule %r/([$]#{id})([ \t]*)(:)/ do

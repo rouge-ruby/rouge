@@ -100,6 +100,7 @@ module Rouge
 
         rule %r/([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
         rule %r/[.]\s*#{id}/, Name::Property
+        rule %r/[.]\s*\d+/, Name::Attribute
         rule %r/(#{id})(::)/m do
           groups Name::Namespace, Punctuation
         end
@@ -167,7 +168,7 @@ module Rouge
         flt = /f32|f64/
 
         rule %r(
-          [0-9]+
+          [0-9_]+
           (#{dot}  #{exp}? #{flt}?
           |#{dot}? #{exp}  #{flt}?
           |#{dot}? #{exp}? #{flt}

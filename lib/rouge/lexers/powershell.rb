@@ -165,6 +165,7 @@ module Rouge
       end
 
       state :parameters do
+        rule %r/`./m, Str::Escape
         rule %r/\s*?\n/, Text::Whitespace, :pop!
         rule %r/[;(){}\]]/, Punctuation, :pop!
         rule %r/[|=]/, Operator, :pop!
@@ -217,6 +218,7 @@ module Rouge
           push :parameters unless m[3].nil?
         end
 
+        rule %r/\?/, Name::Function, :parameters
         rule %r/[-+*\/%=!.&|]/, Operator
         rule %r/@\{/, Punctuation, :hasht
         rule %r/@\(/, Punctuation, :array

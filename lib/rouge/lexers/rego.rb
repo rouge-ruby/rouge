@@ -9,6 +9,18 @@ module Rouge
             tag 'rego'
             filenames '*.rego'
 
+            def self.constants
+              @constants ||= Set.new %w(
+                true false null
+              )
+            end
+
+            def self.operators
+              @operators ||= Set.new %w(
+                as default else import not package some with
+              )
+            end
+
             state :basic do
               rule %r/\s+/, Text
               rule %r/#.*/, Comment::Single
@@ -24,21 +36,24 @@ module Rouge
               rule %r/\\["\/bfnrt]/, Str::Escape
             end
 
-            state :atoms do
-              rule %r/(true|false|null)/, Keyword::Constant
-              rule %r/[[:word:]]+/, Str::Symbol
-            end
-
             state :operators do
               rule %r/(=|!=|>=|<=|>|<|\+|-|\*|%|\/|\||&|:=)/, Operator
-              rule %r/(default|not|package|import|as|with|else|some)/, Operator
               rule %r/[\/:?@^~]+/, Operator
             end
 
             state :root do
               mixin :basic
               mixin :operators
-              mixin :atoms
+
+              rule %r/[[:word:]]+/ do |m|
+                if self.class.constants.include? m[0]
+                  token Keyword::Constant
+                elsif self.class.operators.include? m[0]
+                  token Operator::Word
+                else
+                  token Name
+                end
+              end
             end
         end
     end

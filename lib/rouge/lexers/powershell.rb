@@ -131,34 +131,43 @@ module Rouge
         rule %r/[:,]/, Punctuation
       end
 
-      state :hasht do
-        rule %r/\s+/, Text::Whitespace
-        rule %r/\}/, Punctuation, :pop!
+      state :expr do
+        mixin :comments
         rule %r/"/, Str::Double, :dq
         rule %r/'/, Str::Single, :sq
+        rule %r/[{]/, Punctuation, :brace
+      end
+
+      state :hasht do
+        rule %r/\}/, Punctuation, :pop!
         rule %r/\w+/, Name::Other
         rule %r/=/, Operator
         rule %r/,/, Punctuation
+        mixin :expr
         mixin :variable
       end
 
       state :array do
         rule %r/\s+/, Text::Whitespace
         rule %r/\)/, Punctuation, :pop!
-        rule %r/"/, Str::Double, :dq
-        rule %r/'/, Str::Single, :sq
         rule %r/,/, Punctuation
+        mixin :expr
         mixin :variable
+      end
+
+      state :brace do
+        rule %r/[}]/, Punctuation, :pop!
+        mixin :root
       end
 
       state :bracket do
         rule %r/\]/, Punctuation, :pop!
-        rule %r/[A-Za-z]\w+\./, Name::Constant
+        rule %r/[A-Za-z]\w+\./, Name
         rule %r/([A-Za-z]\w+)/ do |m|
           if ATTRIBUTES.include? m[0]
             token Name::Builtin::Pseudo
           else
-            token Keyword::Type
+            token Name
           end
         end
         mixin :root
@@ -174,12 +183,15 @@ module Rouge
         mixin :root
       end
 
-      state :root do
+      state :comments do
         rule %r/\s+/, Text::Whitespace
-
-        rule %r/#requires\s-version \d(?:\.\d+)?/, Comment::Preproc
         rule %r/#.*/, Comment
         rule %r/<#/, Comment::Multiline, :multiline
+      end
+
+      state :root do
+        mixin :comments
+        rule %r/#requires\s-version \d(?:\.\d+)?/, Comment::Preproc
 
         rule %r/"/, Str::Double, :dq
         rule %r/'/, Str::Single, :sq
@@ -204,12 +216,12 @@ module Rouge
         rule %r/-{1,2}\w+/, Name::Tag
 
         rule %r/(\.)?([-\w]+)(\[)/ do |m|
-          groups Operator, Name::Function, Punctuation
+          groups Operator, Name, Punctuation
           push :bracket
         end
 
         rule %r/([\/\\~\w][-.:\/\\~\w]*)(\n)?/ do |m|
-          groups Name::Function, Text::Whitespace
+          groups Name, Text::Whitespace
           push :parameters
         end
 

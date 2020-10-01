@@ -49,7 +49,7 @@ module Rouge
 
       state :root do
         rule %r/\s+/m, Text
-        
+
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
 
@@ -67,7 +67,7 @@ module Rouge
             token Keyword::Type
           elsif self.class.constants.include? m[0].downcase
             token Keyword::Constant
-          elsif 'package'.casecmp m[0]
+          elsif m[0].downcase == 'package'
             token Keyword::Namespace
           elsif m[1] == "@"
             token Name::Decorator

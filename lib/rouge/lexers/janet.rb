@@ -143,12 +143,12 @@ module Rouge
 
         rule %r/\(/, Punctuation, :function
 
-        rule %r/(')(@?[\(\[\{])/ do
+        rule %r/(')(@?[(\[{])/ do
           groups Operator, Punctuation
           push :quote
         end
 
-        rule %r/(~)(@?[\(\[\{])/ do
+        rule %r/(~)(@?[(\[{])/ do
           groups Operator, Punctuation
           push :quasiquote
         end
@@ -188,8 +188,8 @@ module Rouge
       end
 
       state :quote do
-        rule %r/[\(\[\{]/, Punctuation, :push
-        rule %r/[\)\]\}]/, Punctuation, :pop!
+        rule %r/[(\[{]/, Punctuation, :push
+        rule %r/[)\]}]/, Punctuation, :pop!
         rule symbol, Str::Escape
         mixin :root
       end

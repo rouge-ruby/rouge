@@ -79,6 +79,11 @@ The built-in formatters are:
   your code into lines, each contained in its own div. The `class` option will
   be used to add a class name to the div, given the line number.
 
+* `Rouge::Formatters::HTMLLineHighlighter.new(formatter, highlight_lines: [3, 5])`
+  will split your code into lines and wrap the lines specified by the
+  `highlight_lines` option in a span with a class name specified by the
+  `highlight_line_class` option (default: `hll`).
+
 * `Rouge::Formatters::HTMLLineTable.new(formatter, opts={})` will output an HTML
   table containing numbered lines, each contained in its own table-row. Options
   are:

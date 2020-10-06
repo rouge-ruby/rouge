@@ -38,6 +38,7 @@ module Rouge
         yield "font-weight: bold" if self[:bold]
         yield "font-style: italic" if self[:italic]
         yield "text-decoration: underline" if self[:underline]
+        yield "user-select: none" if self[:unselectable]
 
         (self[:rules] || []).each(&b)
       end
@@ -88,11 +89,12 @@ module Rouge
     end
 
     class << self
+      include Token::Tokens
       def style(*tokens)
         style = tokens.last.is_a?(Hash) ? tokens.pop : {}
 
         tokens.each do |tok|
-          styles[tok] = style
+          styles[tok] = unselectable_tokens.include?(tok) ? {:unselectable => true}.merge!(style) : style
         end
       end
 
@@ -129,6 +131,10 @@ module Rouge
 
       def registry
         @registry ||= {}
+      end
+      
+      def unselectable_tokens
+        [Generic::Lineno, Generic::Prompt]
       end
     end
   end

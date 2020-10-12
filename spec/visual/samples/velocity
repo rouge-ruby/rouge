@@ -20,6 +20,7 @@
 </table>
 #end
 #set( $monkey.Say = ["Not", $my, "fault", 10, false, null] ) ## ArrayList
+#set( $result = $foo($bar[$baz]) )
 ${mudSlinger}
 ${customer.Address}
 ${purchase.getTotal(true)}

@@ -63,7 +63,7 @@ module Rouge
         rule %r/0[xX][0-9a-fA-F]+[Ll]?/, Num::Hex
         rule %r/\b[0-9]+\b/, Num::Integer
         rule %r/(true|false|null)\b/, Keyword::Constant
-        rule %r/[(\[]/, Punctuation, :push!
+        rule %r/[(\[]/, Punctuation, :push
         rule %r/[)\]}]/, Punctuation, :pop!
       end
     end

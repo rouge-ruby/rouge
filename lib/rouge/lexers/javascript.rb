@@ -162,6 +162,10 @@ module Rouge
           push :template_string
         end
 
+        # special case for the safe navigation operator ?.
+        # so that we don't start detecting a ternary expr
+        rule %r/[?][.]/, Punctuation
+
         rule %r/[?]/ do
           token Punctuation
           push :ternary

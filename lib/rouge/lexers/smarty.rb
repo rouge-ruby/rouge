@@ -41,7 +41,7 @@ module Rouge
         end
 
 
-        rule(/.*?(?={[\/a-zA-Z0-9$#*"'])|.*/m) { delegate parent }
+        rule(/.+?(?={[\/a-zA-Z0-9$#*"'])/m) { delegate parent }
         rule(/.+/m) { delegate parent }
       end
 

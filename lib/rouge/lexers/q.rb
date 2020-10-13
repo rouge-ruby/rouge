@@ -118,7 +118,7 @@ module Rouge
       end
 
       state :bottom do
-        rule %r/.*\z/m, Comment::Multiline
+        rule %r/.+\z/m, Comment::Multiline
       end
     end
   end

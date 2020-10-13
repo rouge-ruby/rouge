@@ -18,7 +18,6 @@ module Rouge
 
       state :whitespaces_and_comments do
         rule %r/\s+/m, Text::Whitespace
-        rule %r/$+/m, Text::Whitespace
         rule %r(//.*$), Comment::Single
         rule %r(/\*(.|\s)*?\*/)m, Comment::Multiline
       end

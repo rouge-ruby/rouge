@@ -78,13 +78,13 @@ module Rouge
         rule %r/"/, Str::Double, :pop!
       end
 
-      # Multiple line string with tripple double quotes, e.g. """ multi """
+      # Multiple line string with triple double quotes, e.g. """ multi """
       state :multiline_string do
-        rule %r/\s*"""/, Str, :pop!
-        rule %r/.*/, Str
-        rule %r/\s*/, Str
+        rule %r/\\"/, Str::Escape
+        rule %r/"""/, Str, :pop!
+        rule %r/[^"]+/, Str
+        rule %r/"/, Str
       end
-
     end
   end
 end

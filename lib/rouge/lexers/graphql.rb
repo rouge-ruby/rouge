@@ -20,7 +20,7 @@ module Rouge
         end
 
         rule %r/\bfragment\b/, Keyword, :fragment_definition
-        
+
         rule %r/\bscalar\b/, Keyword, :value
 
         rule %r/\b(?:type|interface|enum)\b/, Keyword, :type_definition

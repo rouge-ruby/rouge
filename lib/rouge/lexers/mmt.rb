@@ -93,7 +93,7 @@ module Rouge
                  Text::Whitespace,
                  Punctuation, Text::Whitespace, Name::Variable,
                  Text::Whitespace
-          goto :moduleDefiniens
+          goto :moduleDefines
         end
       end
 
@@ -110,10 +110,10 @@ module Rouge
           groups Punctuation, Name::Variable
         end
 
-        rule(//) { goto :moduleDefiniens }
+        rule(//) { goto :moduleDefines }
       end
 
-      state :moduleDefiniens do
+      state :moduleDefines do
         rule %r/\s+/im, Text::Whitespace
         rule %r/\u2758/im, Text
         rule %r/#+/im, Punctuation, :notationExpression
@@ -135,7 +135,7 @@ module Rouge
                  Text, Text::Whitespace,
                  Punctuation, Text::Whitespace,
                  Text
-          goto :moduleDefiniens
+          goto :moduleDefines
         end
       end
 

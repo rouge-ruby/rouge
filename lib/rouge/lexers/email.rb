@@ -32,7 +32,7 @@ module Rouge
       state :root do
         rule %r/\n/, Text
         rule %r/^>.*/, Comment
-        rule %r/.*/, Text
+        rule %r/.+/, Text
       end
     end
   end

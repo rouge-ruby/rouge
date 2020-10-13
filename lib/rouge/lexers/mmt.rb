@@ -43,8 +43,6 @@ module Rouge
           groups Keyword,Text::Whitespace,Keyword,Text::Whitespace,Keyword::Declaration
           push :viewHeader
         end
-
-        rule %r/[^\u275a]*?\u275a/im, Generic::Error
       end
 
       state :expectMD do
@@ -180,7 +178,6 @@ module Rouge
         end
 
         rule %r/[^\s:=#\u2758\u2759\u275a]+/im, Name::Variable::Class, :constantDeclaration
-        rule %r/[^\u275a]*?\u2759/im, Generic::Error
 
         rule %r/\u275a/im, Text, :pop!
       end
@@ -208,8 +205,6 @@ module Rouge
         rule %r/\/\/[^\u2758\u2759]*/im, Comment::Multiline
         rule %r/\u2758/im, Text
         rule %r/\u2759/im, Text, :pop!
-        rule %r/[^\u2759\u275a]*?=[^\u275a]*?\u275a/im, Generic::Error, :pop!
-        rule %r/[^\u275a]*?\u2759/im, Generic::Error, :pop!
       end
 
       state :notationExpression do

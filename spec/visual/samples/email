@@ -1,0 +1,23 @@
+From: Me <me@example.com>
+To: You <you@example.com>
+Cc: Somebody <somebody@example.com>,
+ And One More <andonemore@example.com>
+Bcc: Secret Person <secretperson@email.com>
+X-Spam-Status: Definitely not spam
+Date: Tue, 21 Jul 2020 15:14:03 +0000
+Subject: RE: A very important message
+ that continues onto the next line.
+
+Greetings and salutations.
+
+>> A second-level quotation.
+>
+> Please investigate.  Thank you.
+
+I have investigated.
+
+Note: A space-stuffed line starting with > is not a quote.
+ > like this.
+
+--
+This message is highly confidential and will self-destruct.

@@ -232,7 +232,7 @@ module Rouge
         rule %r/\u2026/im, Literal::String::Interpol
 
         rule %r/(\bprec)(\s+)(-?\d+)/im do
-          groups Keyword,Text::Whitespace,Literal::Number::Integer
+          groups Keyword, Text::Whitespace, Literal::Number::Integer
           pop!
         end
 

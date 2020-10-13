@@ -117,7 +117,9 @@ module Rouge
         rule %r/\s+/im, Text::Whitespace
 
         rule %r/(\S+)(\s*)(:)(\s*)([^\u275a=]+)/im do
-          groups Name::Variable,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable
+          groups Name::Variable, Text::Whitespace,
+                 Punctuation, Text::Whitespace,
+                 Name::Variable
           goto :expression
         end
 

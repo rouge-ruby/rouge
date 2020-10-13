@@ -30,6 +30,7 @@ module Rouge
       def self.inflection_list
         @inflection_list ||= ['', '.', ':', '..', '.:', ':.', '::']
       end
+
       def self.primitive_table
         @primitive_table ||= Hash.new([:name]).tap do |h|
           {
@@ -53,8 +54,8 @@ module Rouge
             'ACeEIjorv' => [:name, :verb],
             'bdfHMT' => [:name, :modifier],
             'Dt' => [:name, :modifier, :modifier],
-            'F' => [:name, :modifier, :modifier,
-              :modifier, :modifier, :modifier, :modifier],
+            'F' => [:name, :modifier, :modifier, :modifier, :modifier,
+                    :modifier, :modifier],
             'iu' => [:name, :verb, :verb],
             'L' => [:name, :verb, :modifier],
             'mny' => [:param],
@@ -79,6 +80,7 @@ module Rouge
           fcase for if return select throw try while whilst
         )
       end
+
       def self.control_words_id
         @control_words_id ||= Set.new %w(for goto label)
       end

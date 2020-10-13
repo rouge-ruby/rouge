@@ -16,33 +16,24 @@ module Rouge
         rule %r/\/T .*?\u275a/im, Comment::Multiline
         rule %r/\/\/.*?\u275a/im, Comment::Multiline
 
-        rule %r/(document)((?: |\t)+)(\S+?)(?=\s+)/im do
-          groups Keyword::Declaration,Text::Whitespace,Name::Namespace
+        rule %r/(document)([ \t]+)(\S+)/im do
+          groups Keyword::Declaration, Text::Whitespace, Name::Namespace
         end
 
-        rule %r/(meta)(\s+)(\S+)(\s+)([^\u275a]+)(\s*)(\u275a)/im do
-          groups Keyword::Declaration,Text::Whitespace,Text,Text::Whitespace,Text,Text::Whitespace,Text
+        rule %r/(import)(\s+)(\S+)/im do
+          groups Keyword::Namespace, Text::Whitespace, Name::Namespace
         end
 
-        rule %r/(namespace)(\s+)(\S+?)(\s*)(\u275a)/im do
-          groups Keyword::Namespace,Text::Whitespace,Text,Text::Whitespace,Text
-        end
-
-        rule %r/(import)(\s+)(\S+)(\s+)(\S+?)(\s*)(\u275a)/im do
-          groups Keyword::Namespace,Text::Whitespace,Name::Namespace,Text::Whitespace,Text,Text::Whitespace,Text
-        end
-
-        rule %r/(fixmeta|ref|rule)(\s+)(\S+?)(\s*)(\u275a)/im do
-          groups Comment::Preproc,Text::Whitespace,Text,Text::Whitespace,Text
-        end
+        rule %r/meta\b/im, Keyword::Declaration
+        rule %r/namespace\b/im, Keyword::Namespace
+        rule %r/(fixmeta|ref|rule)\b/im, Comment::Preproc
+        rule %r/(total|implicit)\b/im, Keyword
 
         rule %r/(diagram)\b/im, Keyword::Declaration, :diagramHeader
         rule %r/(theory)\b/im, Keyword::Declaration, :theoryHeader
+        rule %r/view\b/im, Keyword::Declaration, :viewHeader
 
-        rule %r/(?:(total|implicit)(\s+))?(?:(total|implicit)(\s+))?(view)\b/im do
-          groups Keyword,Text::Whitespace,Keyword,Text::Whitespace,Keyword::Declaration
-          push :viewHeader
-        end
+        rule %r/./, Text
       end
 
       state :expectMD do

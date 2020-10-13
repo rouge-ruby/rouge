@@ -36,27 +36,6 @@ module Rouge
         rule %r/./, Text
       end
 
-      state :expectMD do
-        rule %r/(\s*)(\u275a)/im do
-          groups Text::Whitespace,Text
-          pop!
-        end
-      end
-
-      state :expectDD do
-        rule %r/(\s*)(\u2759)/im do
-          groups Text::Whitespace,Text
-          pop!
-        end
-      end
-
-      state :expectOD do
-        rule %r/(\s*)(\u2758)/im do
-          groups Text::Whitespace,Text
-          pop!
-        end
-      end
-
       state :theoryHeader do
         rule %r/\s+/im, Text::Whitespace
 

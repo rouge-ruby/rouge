@@ -137,48 +137,60 @@ module Rouge
         rule %r/\/\/.*?(\u2759|\u275a)/im, Comment::Multiline
 
         rule %r/(@_description)(\s+)([^\u2759])+(\u2759)/im do
-          groups Keyword,Text::Whitespace,Literal::String,Text
+          groups Keyword, Text::Whitespace, Literal::String,Text
         end
 
         rule %r/(meta)(\s+)(\S+)(\s+)([^\u2759\u275a]+)(\s*)(\u2759)/im do
-          groups Keyword::Declaration,Text::Whitespace,Text,Text::Whitespace,Text,Text::Whitespace,Text
+          groups Keyword::Declaration, Text::Whitespace,
+                 Text, Text::Whitespace,
+                 Text, Text::Whitespace,
+                 Text
         end
 
         rule %r/(include)(\s+)([^\u2759]+)(\u2759)/im do
-          groups Keyword::Namespace,Text::Whitespace,Text,Text
+          groups Keyword::Namespace, Text::Whitespace,
+                 Text, Text
         end
 
         rule %r/(constant)(\s+)([^\s:\u2758\u2759]+)/im do
-          groups Keyword::Declaration,Text::Whitespace,Name::Variable::Class
+          groups Keyword::Declaration, Text::Whitespace, Name::Variable::Class
           push :constantDeclaration
         end
 
         rule %r/(rule)(\s+)([^\u2759]+)(\s*)(\u2759)/im do
-          groups Keyword::Namespace,Text::Whitespace,Text,Text::Whitespace,Text
+          groups Keyword::Namespace, Text::Whitespace,
+                 Text, Text::Whitespace,
+                 Text
         end
 
         rule %r/(realize)(\s+)([^\u2759]+)(\s*)(\u2759)/im do
-          groups Keyword,Text::Whitespace,Text,Text::Whitespace,Text
+          groups Keyword, Text::Whitespace,
+                 Text, Text::Whitespace,
+                 Text
         end
 
         rule %r/(?:(total|implicit)(\s+))?(?:(total|implicit)(\s+))?(structure\b)/im do
-          groups Keyword,Text::Whitespace,Keyword,Text::Whitespace,Keyword::Declaration
+          groups Keyword, Text::Whitespace,
+                 Keyword, Text::Whitespace,
+                 Keyword::Declaration
           push :structuralFeatureHeader
         end
 
         rule %r/theory\b/im, Keyword::Declaration, :theoryHeader
 
         rule %r/(?:(total|implicit)(\s+))?(?:(total|implicit)(\s+))?(view\b)/im do
-          groups Keyword,Text::Whitespace,Keyword,Text::Whitespace,Keyword::Declaration
+          groups Keyword, Text::Whitespace,
+                 Keyword, Text::Whitespace,
+                 Keyword::Declaration
           push :viewHeader
         end
 
         rule %r/(#+)([^\u2759]+)(\u2759)/im do
-          groups Literal::String::Doc,Literal::String::Doc,Text
+          groups Literal::String::Doc, Literal::String::Doc, Text
         end
 
         rule %r/([^\s:=#\u2758\u2759\u275a]+)(\s+)(?=[^\s:=@#\u2758\u2759\u275a]+)/im do
-          groups Keyword::Declaration,Text::Whitespace
+          groups Keyword::Declaration, Text::Whitespace
           push :structuralFeatureHeader
         end
 

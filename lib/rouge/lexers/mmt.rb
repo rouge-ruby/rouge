@@ -74,10 +74,17 @@ module Rouge
       state :theoryHeader do
         rule %r/\s+/im, Text::Whitespace
 
-        rule %r/([^\s\u2759\u275a:=]+)(\s*)(?:(:)(\s*)([^\s\u2759\u275a=]+))?(\s*)(?:(>)([^\u2759\u275a=]+))?/im do
-          groups Name::Class,Text::Whitespace,Punctuation,Text::Whitespace,Text,Text::Whitespace,Punctuation,Name::Variable
-          goto :moduleDefiniens
+        rule %r/[^\s:=>]+/im, Name::Class
+
+        rule %r/(:)(\s*)([^\s=]+)/im do
+          groups Punctuation, Text::Whitespace, Text
         end
+
+        rule %r/(>)([^=]+)/im do
+          groups Punctuation, Name::Variable
+        end
+
+        rule(//) { goto :moduleDefiniens }
       end
 
       state :moduleDefiniens do

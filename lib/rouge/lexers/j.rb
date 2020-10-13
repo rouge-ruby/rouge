@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class J < RegexLexer
       title 'J'
-      desc "The J programming language (www.jsoftware.com)"
+      desc "The J programming language (jsoftware.com)"
       tag 'j'
       filenames '*.ijs', '*.ijt'
 

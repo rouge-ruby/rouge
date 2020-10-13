@@ -60,13 +60,39 @@ module Rouge
       state :structuralFeatureHeader do
         rule %r/\s+/im, Text::Whitespace
 
-        rule %r/([^\s(\u2759\u275a:=]+)(\s*)(?:(\()([^)]*)(\)))?(\s*)(?:(:)(\s*)([^\u2758\u2759\u275a=]+))?(\s*)(?:(=)(\s*)([^\s:\u2759\u275a]+))?(\s*)(\u2759)/im do
-          groups Name::Class,Text::Whitespace,Punctuation,Name::Variable,Punctuation,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable,Text::Whitespace,Punctuation,Text::Whitespace,Text,Text::Whitespace,Text
+        rule %r/([^\s(\u2759\u275a:=]+)
+                (\s*)
+                (?:(\()([^)]*)(\)))?
+                (\s*)
+                (?:(:)(\s*)([^\u2758\u2759\u275a=]+))?
+                (\s*)
+                (?:(=)(\s*)([^\s:\u2759\u275a]+))?
+                (\s*)
+                (\u2759)/imx do
+          groups Name::Class,
+                 Text::Whitespace,
+                 Punctuation, Name::Variable, Punctuation,
+                 Text::Whitespace,
+                 Punctuation, Text::Whitespace, Name::Variable,
+                 Text::Whitespace,
+                 Punctuation, Text::Whitespace, Text,
+                 Text::Whitespace,
+                 Text
           pop!
         end
 
-        rule %r/([^\s(\u2759\u275a:=]+)(\s*)(?:(\()([^)]*)(\)))?(\s*)(?:(:)(\s*)([^\u2758\u2759\u275a=]+))?(\s*)/im do
-          groups Name::Class,Text::Whitespace,Punctuation,Name::Variable,Punctuation,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable,Text::Whitespace
+        rule %r/([^\s(\u2759\u275a:=]+)
+                (\s*)
+                (?:(\()([^)]*)(\)))?
+                (\s*)
+                (?:(:)(\s*)([^\u2758\u2759\u275a=]+))?
+                (\s*)/imx do
+          groups Name::Class,
+                 Text::Whitespace,
+                 Punctuation, Name::Variable, Punctuation,
+                 Text::Whitespace,
+                 Punctuation, Text::Whitespace, Name::Variable,
+                 Text::Whitespace
           goto :moduleDefiniens
         end
       end

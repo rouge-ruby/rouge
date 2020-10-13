@@ -29,9 +29,9 @@ module Rouge
         rule %r/(fixmeta|ref|rule)\b/im, Comment::Preproc
         rule %r/(total|implicit)\b/im, Keyword
 
-        rule %r/(diagram)\b/im, Keyword::Declaration, :diagramHeader
-        rule %r/(theory)\b/im, Keyword::Declaration, :theoryHeader
+        rule %r/theory\b/im, Keyword::Declaration, :theoryHeader
         rule %r/view\b/im, Keyword::Declaration, :viewHeader
+        rule %r/diagram\b/im, Keyword::Declaration, :diagramHeader
 
         rule %r/./, Text
       end
@@ -55,6 +55,53 @@ module Rouge
           groups Text::Whitespace,Text
           pop!
         end
+      end
+
+      state :theoryHeader do
+        rule %r/\s+/im, Text::Whitespace
+
+        rule %r/[^\s:=>]+/im, Name::Class
+
+        rule %r/(:)(\s*)([^\s=]+)/im do
+          groups Punctuation, Text::Whitespace, Text
+        end
+
+        rule %r/(>)([^=]+)/im do
+          groups Punctuation, Name::Variable
+        end
+
+        rule(//) { goto :moduleDefines }
+      end
+
+      state :viewHeader do
+        rule %r/\s+/im, Text::Whitespace
+
+        rule %r/(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|\u2192)(\s*)([^\u275a=]+)/im do
+          groups Name::Class, Text::Whitespace,
+                 Punctuation, Text::Whitespace,
+                 Text, Text::Whitespace,
+                 Punctuation, Text::Whitespace,
+                 Text
+          goto :moduleDefines
+        end
+      end
+
+      state :diagramHeader do
+        rule %r/\s+/im, Text::Whitespace
+
+        rule %r/(\S+)(\s*)(:)(\s*)([^\u275a=]+)/im do
+          groups Name::Variable, Text::Whitespace,
+                 Punctuation, Text::Whitespace,
+                 Name::Variable
+          goto :expression
+        end
+
+        rule %r/[^\u275a=]+/im do
+          token Name::Variable
+          goto :expression
+        end
+
+        rule %r/\u275a/im, Text, :pop!
       end
 
       state :structuralFeatureHeader do
@@ -97,22 +144,6 @@ module Rouge
         end
       end
 
-      state :theoryHeader do
-        rule %r/\s+/im, Text::Whitespace
-
-        rule %r/[^\s:=>]+/im, Name::Class
-
-        rule %r/(:)(\s*)([^\s=]+)/im do
-          groups Punctuation, Text::Whitespace, Text
-        end
-
-        rule %r/(>)([^=]+)/im do
-          groups Punctuation, Name::Variable
-        end
-
-        rule(//) { goto :moduleDefines }
-      end
-
       state :moduleDefines do
         rule %r/\s+/im, Text::Whitespace
         rule %r/\u2758/im, Text
@@ -121,37 +152,6 @@ module Rouge
         rule %r/=/im do
           token Punctuation
           goto :moduleBody
-        end
-
-        rule %r/\u275a/im, Text, :pop!
-      end
-
-      state :viewHeader do
-        rule %r/\s+/im, Text::Whitespace
-
-        rule %r/(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|\u2192)(\s*)([^\u275a=]+)/im do
-          groups Name::Class, Text::Whitespace,
-                 Punctuation, Text::Whitespace,
-                 Text, Text::Whitespace,
-                 Punctuation, Text::Whitespace,
-                 Text
-          goto :moduleDefines
-        end
-      end
-
-      state :diagramHeader do
-        rule %r/\s+/im, Text::Whitespace
-
-        rule %r/(\S+)(\s*)(:)(\s*)([^\u275a=]+)/im do
-          groups Name::Variable, Text::Whitespace,
-                 Punctuation, Text::Whitespace,
-                 Name::Variable
-          goto :expression
-        end
-
-        rule %r/[^\u275a=]+/im do
-          token Name::Variable
-          goto :expression
         end
 
         rule %r/\u275a/im, Text, :pop!

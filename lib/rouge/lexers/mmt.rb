@@ -78,7 +78,7 @@ module Rouge
 
         rule %r/([^\s(\u2759\u275a:=]+)(\s*)(?:(\()([^)]*)(\)))?(\s*)(?:(:)(\s*)([^\u2758\u2759\u275a=]+))?(\s*)/im do
           groups Name::Class,Text::Whitespace,Punctuation,Name::Variable,Punctuation,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable,Text::Whitespace
-          push :moduleDefiniens
+          goto :moduleDefiniens
         end
       end
 
@@ -87,7 +87,7 @@ module Rouge
 
         rule %r/([^\s\u2759\u275a:=]+)(\s*)(?:(:)(\s*)([^\s\u2759\u275a=]+))?(\s*)(?:(>)([^\u2759\u275a=]+))?/im do
           groups Name::Class,Text::Whitespace,Punctuation,Text::Whitespace,Text,Text::Whitespace,Punctuation,Name::Variable
-          push :moduleDefiniens
+          goto :moduleDefiniens
         end
       end
 
@@ -95,18 +95,20 @@ module Rouge
         rule %r/\s+/im, Text::Whitespace
         rule %r/\u2758/im, Text
         rule %r/#+/im, Punctuation, :notationExpression
-        rule %r/=/im, Punctuation, :moduleBody
-        rule %r/\u275a/im do
-          token Text
-          pop!(2)
+
+        rule %r/=/im do
+          token Punctuation
+          goto :moduleBody
         end
+
+        rule %r/\u275a/im, Text, :pop!
       end
 
       state :viewHeader do
         rule %r/\s+/im, Text::Whitespace
         rule %r/(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|\u2192)(\s*)([^\u275a=]+)/im do
           groups Name::Class,Text::Whitespace,Punctuation,Text::Whitespace,Text,Text::Whitespace,Punctuation,Text::Whitespace,Text
-          push :moduleDefiniens
+          goto :moduleDefiniens
         end
       end
 
@@ -115,10 +117,14 @@ module Rouge
 
         rule %r/(\S+)(\s*)(:)(\s*)([^\u275a=]+)/im do
           groups Name::Variable,Text::Whitespace,Punctuation,Text::Whitespace,Name::Variable
-          push :expression
+          goto :expression
         end
 
-        rule %r/[^\u275a=]+/im, Name::Variable, :expression
+        rule %r/[^\u275a=]+/im do
+          token Name::Variable
+          goto :expression
+        end
+
         rule %r/\u275a/im, Text, :pop!
       end
 
@@ -176,10 +182,7 @@ module Rouge
         rule %r/[^\s:=#\u2758\u2759\u275a]+/im, Name::Variable::Class, :constantDeclaration
         rule %r/[^\u275a]*?\u2759/im, Generic::Error
 
-        rule %r/\u275a/im do
-          token Text
-          pop!(3)
-        end
+        rule %r/\u275a/im, Text, :pop!
       end
 
       state :constantDeclaration do

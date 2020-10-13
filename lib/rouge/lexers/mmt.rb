@@ -201,22 +201,23 @@ module Rouge
 
       state :constantDeclaration do
         rule %r/\s+/im, Text::Whitespace
-        rule %r/:/im, Punctuation, :expression
-        rule %r/=/im, Punctuation, :expression
+        rule %r/[:=]/im, Punctuation, :expression
         rule %r/#+/im, Punctuation, :notationExpression
 
         rule %r/(@_description)(\s+)([^\u2758\u2759])+/im do
-          groups Keyword,Text::Whitespace,Literal::String
+          groups Keyword, Text::Whitespace, Literal::String
         end
 
         rule %r/(@)([^\u2758\u2759]+)/im do
-          groups Punctuation,Name::Constant
+          groups Punctuation, Name::Constant
         end
 
         rule %r/role\b/im, Keyword, :expression
 
         rule %r/(meta)(\s+)(\S+)(\s+)([^\u2758\u2759]+)(\s*)(?=\u2758|\u2759)/im do
-          groups Keyword::Declaration,Text::Whitespace,Text,Text::Whitespace,Text,Text::Whitespace
+          groups Keyword::Declaration, Text::Whitespace,
+                 Text, Text::Whitespace,
+                 Text, Text::Whitespace
         end
 
         rule %r/\/\/[^\u2758\u2759]*/im, Comment::Multiline

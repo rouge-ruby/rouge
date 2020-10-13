@@ -102,8 +102,13 @@ module Rouge
 
       state :viewHeader do
         rule %r/\s+/im, Text::Whitespace
+
         rule %r/(\S+)(\s*)(:)(\s*)(\S+)(\s*)(->|\u2192)(\s*)([^\u275a=]+)/im do
-          groups Name::Class,Text::Whitespace,Punctuation,Text::Whitespace,Text,Text::Whitespace,Punctuation,Text::Whitespace,Text
+          groups Name::Class, Text::Whitespace,
+                 Punctuation, Text::Whitespace,
+                 Text, Text::Whitespace,
+                 Punctuation, Text::Whitespace,
+                 Text
           goto :moduleDefiniens
         end
       end

@@ -217,12 +217,12 @@ module Rouge
 
       state :note do
         mixin :delimiter
-        rule %r/.*\n?/, Comment::Multiline
+        rule %r/.+\n?/, Comment::Multiline
       end
 
       state :noun do
         mixin :delimiter
-        rule %r/.*\n?/, Str::Heredoc
+        rule %r/.+\n?/, Str::Heredoc
       end
 
       state :code do

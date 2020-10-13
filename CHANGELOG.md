@@ -4,6 +4,32 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.24.0: 2020-10-14
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.23.0...v3.24.0)
+
+- General
+  - Fix errors from new empty regex requirements ([#1606](https://github.com/rouge-ruby/rouge/pull/1606/) by Michael Camilleri)
+  - Restrict the use of empty-matching regular expressions ([#1548](https://github.com/rouge-ruby/rouge/pull/1548/) by Jeanine Adkisson)
+  - Add a CLI debug command that provides reasonable defaults ([#1593](https://github.com/rouge-ruby/rouge/pull/1593/) by Jeanine Adkisson)
+  - Update documentation to use bundle config set path ([#1583](https://github.com/rouge-ruby/rouge/pull/1583/) by ComFreek)
+  - Add line highlighting option ([#1426](https://github.com/rouge-ruby/rouge/pull/1426/) by Dan Allen)
+  - Add Lexer#with and Lexer.lookup_fancy ([#1565](https://github.com/rouge-ruby/rouge/pull/1565/) by Jeanine Adkisson)
+- Apex Lexer
+  - Fix invalid use of String#casecmp in Apex lexer ([#1596](https://github.com/rouge-ruby/rouge/pull/1596/) by Jeanine Adkisson)
+- E-mail Lexer (**NEW**)
+  - Add e-mail lexer ([#1567](https://github.com/rouge-ruby/rouge/pull/1567/) by Steve Mokris)
+- HTTP Lexer
+  - Add a :content option to HTTP lexer ([#1592](https://github.com/rouge-ruby/rouge/pull/1592/) by Jeanine Adkisson)
+- J Lexer (**NEW**)
+  - Add J lexer ([#1584](https://github.com/rouge-ruby/rouge/pull/1584/) by unsigned-wrong-wrong-int)
+- Janet Lexer
+  - Improve handling of quoted forms in Janet lexer ([#1586](https://github.com/rouge-ruby/rouge/pull/1586/) by Michael Camilleri)
+- JavaScript Lexer
+  - Improve optional chaining in JavaScript lexer ([#1594](https://github.com/rouge-ruby/rouge/pull/1594/) by Jeanine Adkisson)
+- Rust Lexer
+  - Fix lexing of await in Rust lexer ([#1587](https://github.com/rouge-ruby/rouge/pull/1587/) by nsfisis)
+
 ## version 3.23.0: 2020-09-09
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.22.0...v3.23.0)

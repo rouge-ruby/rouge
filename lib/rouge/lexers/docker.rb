@@ -7,7 +7,7 @@ module Rouge
       title "Docker"
       desc "Dockerfile syntax"
       tag 'docker'
-      aliases 'dockerfile', "Dockerfile"
+      aliases 'dockerfile', 'Dockerfile'
       filenames 'Dockerfile', '*.Dockerfile', '*.docker'
       mimetypes 'text/x-dockerfile-config'
 

@@ -57,17 +57,19 @@ module Rouge
         rule %r/import\b/, Keyword::Namespace, :import
 
         rule %r/([@$.]?)(#{id})([:(]?)/io do |m|
-          if self.class.keywords.include? m[0].downcase
+          lowercased = m[0].downcase
+          uppercased = m[0].upcase
+          if self.class.keywords.include? lowercased
             token Keyword
-          elsif self.class.soql.include? m[0].upcase
+          elsif self.class.soql.include? uppercased
             token Keyword
-          elsif self.class.declarations.include? m[0].downcase
+          elsif self.class.declarations.include? lowercased
             token Keyword::Declaration
-          elsif self.class.types.include? m[0].downcase
+          elsif self.class.types.include? lowercased
             token Keyword::Type
-          elsif self.class.constants.include? m[0].downcase
+          elsif self.class.constants.include? lowercased
             token Keyword::Constant
-          elsif m[0].downcase == 'package'
+          elsif lowercased == 'package'
             token Keyword::Namespace
           elsif m[1] == "@"
             token Name::Decorator

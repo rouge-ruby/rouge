@@ -1,0 +1,92 @@
+NB. Single line comment
+
+Note 'Multiline comment'
+The verb `Note` starts a multiline comment.
+')' in the next line ends this comment.
+)
+
+Note=: 'This is not a comment'
+
+NB. Primitives
+= =. =:     < <. <:     > >. >:
++ +. +:     - -. -:     * *. *:     % %. %:
+^ ^. ^:     $ $. $:     ~ ~. ~:     | |. |:
+. .. .:     : :. ::     , ,. ,:     ; ;. ;:
+# #. #:     ! !. !:     / /. /:     \ \. \:
+[    [:     ]           { {. {: {:: } }. }: }::
+" ". ":     `    `:     @ @. @:     & &. &: &.:
+? ?.
+a. a: A. b. C. d. D. D: e. E. f. F. F.. F.: F:
+F:. F:: H. i. i: I. j. L. L: M. o. p. p.. p: q:
+r. s: S: t. t: T. u. u: v. x: Z:
+_9: _8: _7: _6: _5: _4: _3: _2: _1: 0: 1: 2: 3:
+4: 5: 6: 7: 8: 9: _:
+
+NB. Control words
+do. end.
+if. elseif. else.
+select. case. fcase.
+for.
+while.
+whilst.
+break. continue.
+assert.
+try. catch. catchd. catcht.
+throw.
+return.
+
+NB. Control words with identifiers
+for_elem.
+label_lbl. goto_lbl.
+
+NB. Names
+foo       foo_bar
+foo_loc_  foo_bar_loc_  foo_1_  foo__   NB. Explicit locatives
+foo__obj  foo_bar__obj  foo__o1__o2     NB. Object locatives
+
+NB. Numeric constants
+0 1 _1                NB. Integers 0, 1, -1
+_ __ _.               NB. Infinity, negative infinity, NaN
+0.8 1.23e_9 _3e15     NB. Floating-point numbers
+1.5j2 3.3ar1 2ad60    NB. Complex numbers
+5r3 _1r2              NB. Rational numbers
+1.2p3 7x_1.5          NB. 1.2*π^3, 7*e^-1.5
+2b0010 16babc789.12   NB. Binary/hexadecimal numbers
+9999999999999999999x  NB. An extended precision integer
+
+NB. String literals
+'foo bar'
+'foo ''bar'''   NB. `''` escapes single-quote
+
+NB. Invalid tokens
+foo: for_. {::. .:. 10: NB..
+
+NB. Multiline String
+noun define
+This is a 'heredoc' string.
+You can include LF
+
+  or single-quote ' here.
+)
+
+NB. Explicit definitions
+verb define
+  NB. Monadic case
+  if. #y do.
+    echo y
+  end.
+:
+  NB. Dyadic case
+  if. x <: #y do.
+    echo x {. y
+  end.
+)
+adverb def '[: u^:_1 u/'  NB. Single line form
+NB. More complicated example
+0 define 13 def 0 noun : 0
+the right noun
+)
+  x , y
+)
+the left noun
+)

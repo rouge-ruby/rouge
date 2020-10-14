@@ -99,6 +99,7 @@ module Rouge
         rule %r/[*\/!@~&+%^<>=\?-]|\.{2,3}/, Operator
 
         rule %r/([.]\s*)?#{id}(?=\s*[(])/m, Name::Function
+        rule %r/[.]\s*await\b/, Keyword
         rule %r/[.]\s*#{id}/, Name::Property
         rule %r/[.]\s*\d+/, Name::Attribute
         rule %r/(#{id})(::)/m do

@@ -486,25 +486,10 @@ module Rouge
     # @option opts :continue
     #   Continue the lex from the previous state (i.e. don't call #reset!)
     #
-    # @note The use of :continue => true has been deprecated. A warning is
-    #       issued if run with `$VERBOSE` set to true.
-    #
-    # @note The use of arbitrary `opts` has never been supported, but we
-    #       previously ignored them with no error. We now warn unconditionally.
-    def lex(string, opts=nil, &b)
-      if opts
-        if (opts.keys - [:continue]).size > 0
-          # improper use of options hash
-          warn('Improper use of Lexer#lex - this method does not receive options.' +
-               ' This will become an error in a future version.')
-        end
-
-        if opts[:continue]
-          warn '`lex :continue => true` is deprecated, please use #continue_lex instead'
-          return continue_lex(string, &b)
-        end
-      end
-
+    # @note The use of :continue => true has been deprecated.
+    #       A warning was issued in v3, and support for any
+    #       option hash was removed in v4.0.0.
+    def lex(string, &b)
       return enum_for(:lex, string) unless block_given?
 
       Lexer.assert_utf8!(string)

@@ -16,6 +16,15 @@ describe Rouge::Lexer do
     assert { (Rouge::Lexer.guess(filename: 'foo.pl') rescue nil) == nil }
   end
 
+  it 'looks up a cached lexer by alias' do
+    Rouge::Lexer.cache :RougeTest, 'rouge-test' do
+      @tag = 'rouge-test'
+      @aliases = ['rouge-test-alias']
+    end
+
+    assert { Rouge::Lexer.find('rouge-test-alias').tag == 'rouge-test' }
+  end
+
   it 'customizes ambiguous cases in .guess' do
     assert { Rouge::Lexer.guess(filename: 'foo.pl') { :fallback } == :fallback }
   end

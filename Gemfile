@@ -6,6 +6,8 @@ gemspec
 
 gem 'rake'
 
+gem 'method_source'
+
 gem 'minitest', '>= 5.0'
 gem 'minitest-power_assert'
 
@@ -24,9 +26,9 @@ end
 gem 'git'
 gem 'yard'
 
-group :development do
-  gem 'pry'
+gem 'pry'
 
+group :development do
   # docs
   gem 'github-markup'
 

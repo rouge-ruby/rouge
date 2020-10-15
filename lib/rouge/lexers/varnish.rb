@@ -7,8 +7,8 @@ module Rouge
       title 'VCL: Varnish Configuration Language'
       desc 'The configuration language for Varnish HTTP Cache (varnish-cache.org)'
 
-      tag 'vcl'
-      aliases 'varnishconf', 'varnish'
+      tag 'varnish'
+      aliases 'varnishconf', 'vcl'
       filenames '*.vcl'
       mimetypes 'text/x-varnish', 'text/x-vcl'
 

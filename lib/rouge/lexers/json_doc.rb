@@ -3,12 +3,12 @@
 
 module Rouge
   module Lexers
-    load_lexer 'json.rb'
+    preload 'json'
 
     class JSONDOC < JSON
       desc "JavaScript Object Notation with extensions for documentation"
-      tag 'json-doc'
-      aliases 'jsonc'
+      tag 'json_doc'
+      aliases 'jsonc', 'json-doc'
 
       prepend :name do
         rule %r/([$\w]+)(\s*)(:)/ do

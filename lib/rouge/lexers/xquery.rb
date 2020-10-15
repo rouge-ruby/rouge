@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'xpath.rb'
+    preload 'xpath'
     class XQuery < XPath
       title 'XQuery'
       desc 'XQuery 3.1: An XML Query Language'

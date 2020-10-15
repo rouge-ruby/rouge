@@ -8,7 +8,7 @@ module Rouge
       desc "A boring lexer that doesn't highlight anything"
 
       tag 'plaintext'
-      aliases 'text'
+      aliases 'text', 'plain_text'
       filenames '*.txt', 'Messages'
       mimetypes 'text/plain'
 

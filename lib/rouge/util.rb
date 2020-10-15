@@ -34,6 +34,14 @@ module Rouge
       keys.uniq!
       keys
     end
+
+    def any?(&b)
+      super || parent.any?(&b)
+    end
+
+    def to_hash
+      parent.to_hash.merge(self)
+    end
   end
 
   class InheritableList

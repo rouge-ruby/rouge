@@ -3,12 +3,16 @@
 
 # stdlib
 require 'pathname'
+require 'monitor'
 
 # The containing module for Rouge
 module Rouge
   # cache value in a constant since `__dir__` allocates a new string
   # on every call.
   LIB_DIR = __dir__.freeze
+
+  LOAD_LOCK = Monitor.new
+  ROOT = File.dirname(LIB_DIR)
 
   class << self
     def reload!
@@ -42,18 +46,6 @@ module Rouge
     def load_file(path)
       Kernel::load File.join(LIB_DIR, "rouge/#{path}.rb")
     end
-
-    # Load the lexers in the `lib/rouge/lexers` directory.
-    #
-    # @api private
-    def load_lexers
-      # The trailing slash is necessary to avoid lexers being loaded multiple
-      # times by `Lexers.load_lexer`
-      lexer_dir = File.join(LIB_DIR, "rouge/lexers/")
-      Dir.glob(File.join(lexer_dir, '*.rb')).each do |f|
-        Lexers.load_lexer(f.sub(lexer_dir, ''))
-      end
-    end
   end
 end
 
@@ -66,7 +58,8 @@ Rouge.load_file 'lexer'
 Rouge.load_file 'regex_lexer'
 Rouge.load_file 'template_lexer'
 
-Rouge.load_lexers
+Rouge.load_file 'langspec'
+Rouge.load_file 'langspec_cache'
 
 Rouge.load_file 'guesser'
 Rouge.load_file 'guessers/util'

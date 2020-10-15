@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'sass/common.rb'
+    load_helper 'sass/common'
 
     class Sass < SassCommon
       include Indentation

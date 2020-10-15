@@ -15,9 +15,9 @@ module Rouge
     class GHCCmm < RegexLexer
       title "GHC Cmm (C--)"
       desc "GHC Cmm is the intermediate representation of the GHC Haskell compiler"
-      tag 'ghc-cmm'
+      tag 'ghc_cmm'
       filenames '*.cmm', '*.dump-cmm', '*.dump-cmm-*'
-      aliases 'cmm'
+      aliases 'cmm', 'ghc-cmm'
 
       ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
 

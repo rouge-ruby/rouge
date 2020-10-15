@@ -9,7 +9,7 @@ require "yard"
 
 # Add tasks
 task :check => ["check:specs", "check:style"]
-task :default => [:check]
+task :default => ['generate:cache', :check]
 task :test => [:check]
 
 # Add pre-requisites

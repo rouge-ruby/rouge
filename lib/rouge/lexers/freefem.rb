@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'cpp.rb'
+    preload 'cpp'
 
     class FreeFEM < Cpp
       title "FreeFEM"

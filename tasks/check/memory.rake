@@ -1,7 +1,9 @@
 
 namespace :check do
   desc "Analyse the memory profile of Rouge"
-  task :memory do
+  task :memory, [:preload] do |t, args|
+    should_preload = args.preload && args.preload != 'false'
+
     require 'memory_profiler'
 
     dir = Rake.application.original_dir
@@ -9,6 +11,7 @@ namespace :check do
     sample = File.read(source, encoding: 'utf-8')
     report = MemoryProfiler.report do
       require 'rouge'
+      Rouge::Lexers.preload! if should_preload
       formatter  = Rouge::Formatters::HTML.new
       ruby_lexer = Rouge::Lexers::Ruby.new
       guessed_lexer = Rouge::Lexer.find_fancy('guess', sample)

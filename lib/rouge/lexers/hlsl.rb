@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'c.rb'
+    preload 'c'
 
     class HLSL < C
       title "HLSL"

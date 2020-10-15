@@ -22,7 +22,7 @@ module Rouge
 
       state :root do
         # YAML frontmatter
-        rule(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m) { delegate YAML }
+        rule(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m) { delegate Lexers::YAML }
 
         rule %r/\\./, Str::Escape
 

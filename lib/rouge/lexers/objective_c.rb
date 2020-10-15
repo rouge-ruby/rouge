@@ -3,8 +3,8 @@
 
 module Rouge
   module Lexers
-    load_lexer 'c.rb'
-    load_lexer 'objective_c/common.rb'
+    preload 'c'
+    load_helper 'objective_c/common'
 
     class ObjectiveC < C
       extend ObjectiveCCommon

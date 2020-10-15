@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'hcl.rb'
+    preload 'hcl'
 
     class Terraform < Hcl
       title "Terraform"

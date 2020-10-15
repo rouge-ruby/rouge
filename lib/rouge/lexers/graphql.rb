@@ -37,7 +37,7 @@ module Rouge
         rule %r/(""")(\n)(.*?)(\n)(""")/m do |m|
           token Str::Double, m[1]
           token Text::Whitespace, m[2]
-          delegate Markdown, m[3]
+          delegate Lexers::Markdown, m[3]
           token Text::Whitespace, m[4]
           token Str::Double, m[5]
         end

@@ -13,8 +13,15 @@ module Rouge
     include Token::Tokens
 
     @option_docs = {}
+    @registry = {}
+    @lazy_constants = {}
 
     class << self
+      attr_reader :lazy_constants
+      def const_missing(name)
+        Lexer.lazy_constants.delete(name) { super }.lexer_class
+      end
+
       # Lexes `stream` with the given options.  The lex is delegated to a
       # new instance.
       #
@@ -45,8 +52,8 @@ module Rouge
       # Please note: the lexer class might be nil!
       def lookup_fancy(str, code=nil, default_options={})
         if str && !str.include?('?') && str != 'guess'
-          lexer_class = find(str)
-          return [lexer_class, default_options]
+          lang = find(str)
+          return [lang, default_options]
         end
 
         name, opts = str ? str.split('?', 2) : [nil, '']
@@ -64,14 +71,14 @@ module Rouge
 
         opts = default_options.merge(Hash[opts])
 
-        lexer_class = case name
+        lang = case name
         when 'guess', nil
           self.guess(:source => code, :mimetype => opts['mimetype'])
         when String
           self.find(name)
         end
 
-        [lexer_class, opts]
+        [lang, opts]
       end
 
       # Find a lexer, with fancy shiny features.
@@ -92,9 +99,9 @@ module Rouge
       # markdown lexer for highlighting internal code blocks.
       #
       def find_fancy(str, code=nil, default_options={})
-        lexer_class, opts = lookup_fancy(str, code, default_options)
+        lang, opts = lookup_fancy(str, code, default_options)
 
-        lexer_class && lexer_class.new(opts)
+        lang && lang.new(opts)
       end
 
       # Specify or get this lexer's title. Meant to be human-readable.
@@ -180,15 +187,15 @@ module Rouge
       # @see Lexer.guesses
       # @return [Class<Rouge::Lexer>]
       def guess(info={}, &fallback)
-        lexers = guesses(info)
+        langs = guesses(info)
 
-        return Lexers::PlainText if lexers.empty?
-        return lexers[0] if lexers.size == 1
+        return Lexers::PlainText if langs.empty?
+        return langs[0] if langs.size == 1
 
         if fallback
-          fallback.call(lexers)
+          fallback.call(langs)
         else
-          raise Guesser::Ambiguous.new(lexers)
+          raise Guesser::Ambiguous.new(langs)
         end
       end
 
@@ -223,12 +230,32 @@ module Rouge
         @detectable = singleton_methods(false).include?(:detect?)
       end
 
+      def cache(const_name, tag, &b)
+        lang = LangSpec.new(const_name, tag, &b)
+        @lazy_constants[const_name] = registry[tag] = lang
+
+        lang.aliases.each { |a| registry[a.to_s] = lang }
+      end
+
+      # compat with LangSpec
+      def lexer_class
+        self
+      end
+
+      attr_reader :last_registered
+
     protected
       # @private
       def register(name, lexer)
         # reset an existing list of lexers
         @all = nil if defined?(@all)
+        @last_registered = lexer
         registry[name.to_s] = lexer
+      end
+
+      def register_alias(name, lexer)
+        raise 'no tag' unless lexer.tag
+        registry[name.to_s] = registry[lexer.tag]
       end
 
     public
@@ -259,8 +286,10 @@ module Rouge
       #
       #   Lexer.find('eruby') # => Erb
       def aliases(*args)
+        raise 'no tag!' unless tag
+
         args.map!(&:to_s)
-        args.each { |arg| Lexer.register(arg, self) }
+        args.each { |arg| Lexer.register_alias(arg, self) }
         (@aliases ||= []).concat(args)
       end
 
@@ -304,7 +333,7 @@ module Rouge
 
     private
       def registry
-        @registry ||= {}
+        @registry
       end
     end
 
@@ -371,8 +400,8 @@ module Rouge
       when Lexer
         val
       when String
-        lexer_class = Lexer.find(val)
-        lexer_class && lexer_class.new(opts)
+        lang = Lexer.find(val)
+        lang && lang.new(opts)
       end
     end
 
@@ -540,13 +569,27 @@ module Rouge
   end
 
   module Lexers
-    BASE_DIR = "#{__dir__}/lexers".freeze
-    @_loaded_lexers = {}
+    BASE_DIR = "#{LIB_DIR}/rouge/lexers".freeze
 
-    def self.load_lexer(relpath)
-      return if @_loaded_lexers.key?(relpath)
-      @_loaded_lexers[relpath] = true
-      Kernel::load File.join(BASE_DIR, relpath)
+    # monkey-patched by generate:cache to do manual loads.
+    def self.preload(tag)
+      Lexer.find(tag).lexer_class
+    end
+
+    @_loaded = {}
+    def self.load_helper(path)
+      return if @_loaded.key?(path)
+      @_loaded[path] = true
+      load "#{BASE_DIR}/#{path}.rb"
+    end
+
+    def self.const_missing(name)
+      Lexer.lazy_constants.delete(name) { super }.lexer_class
+    end
+
+    def self.preload!
+      Lexer.all.each(&:lexer_class)
+      nil
     end
   end
 end

@@ -3,7 +3,7 @@
 require 'set'
 module Rouge
   module Lexers
-    load_lexer 'yaml.rb'
+    preload 'yaml'
 
     class Digdag < YAML
       title 'digdag'

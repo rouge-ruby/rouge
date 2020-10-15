@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'cpp.rb'
+    preload 'cpp'
 
     class CUDA < Cpp
       title "CUDA"

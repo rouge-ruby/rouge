@@ -7,7 +7,7 @@ module Rouge
       def initialize(alternatives); @alternatives = alternatives; end
 
       def message
-        "Ambiguous guess: can't decide between #{alternatives.map(&:tag).inspect}"
+        "Ambiguous guess: can't decide between #{alternatives.map(&:inspect)}"
       end
     end
 

@@ -5,18 +5,19 @@ describe Rouge::Lexers do
   spec_dir = Pathname.new(__FILE__).dirname
   samples_dir = spec_dir.join('visual/samples')
 
-  Rouge::Lexer.all.each do |lexer_class|
-    describe lexer_class do
+  Rouge::Lexer.all.each do |lang|
+    describe lang do
       include Support::Lexing
 
-      subject { lexer_class.new }
+      subject { lang.new }
 
       it 'lexes the demo with no errors' do
-        assert_no_errors(lexer_class.demo)
+        assert_no_errors(lang.demo)
       end
 
       it 'lexes the sample without throwing' do
-        sample = File.read(samples_dir.join(lexer_class.tag), encoding: 'utf-8')
+        raise 'no tag' unless lang.tag
+        sample = File.read(samples_dir.join(lang.tag), encoding: 'utf-8')
 
         out_buf = String.new("")
         subject.lex(sample) do |token, value|
@@ -24,11 +25,11 @@ describe Rouge::Lexers do
         end
 
         # Escape is allowed to drop characters from its input
-        next if lexer_class == Rouge::Lexers::Escape
+        next if lang.tag == 'escape'
 
         if out_buf != sample
           out_file = "tmp/mismatch.#{subject.tag}"
-          puts "mismatch with #{samples_dir.join(lexer_class.tag)}! logged to #{out_file}"
+          puts "mismatch with #{samples_dir.join(lang.tag)}! logged to #{out_file}"
           File.open(out_file, 'w') { |f| f << out_buf }
         end
 

@@ -18,6 +18,7 @@ module Rouge
     attr_reader :aliases
     attr_reader :filenames
     attr_reader :mimetypes
+    attr_reader :depends
 
     load_and_delegate :lex
     load_and_delegate :continue_lex

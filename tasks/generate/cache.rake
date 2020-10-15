@@ -16,6 +16,10 @@ def lexer_cache_source(lexer)
   yield "    @aliases = #{lexer.aliases.inspect}" if lexer.aliases.any?
   yield "    @filenames = #{lexer.filenames.inspect}" if lexer.filenames.any?
   yield "    @mimetypes = #{lexer.mimetypes.inspect}" if lexer.mimetypes.any?
+  depends = lexer.ancestors.find { |p| p != lexer && p <= Rouge::Lexer }
+  if depends && depends.tag
+    yield "    @depends = #{depends.tag.inspect}"
+  end
 
   if lexer.detectable?
     yield lexer.method(:detect?).source

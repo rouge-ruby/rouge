@@ -50,6 +50,7 @@ module Rouge
     @aliases = ["apiblueprint", "apib"]
     @filenames = ["*.apib"]
     @mimetypes = ["text/vnd.apiblueprint"]
+    @depends = "markdown"
     @detectable = false
   end
 
@@ -117,6 +118,7 @@ module Rouge
     @title = "BIML"
     @desc = "BIML, Business Intelligence Markup Language"
     @filenames = ["*.biml"]
+    @depends = "xml"
       def self.detect?(text)
         return true if text =~ /<\s*Biml\b/
       end
@@ -258,6 +260,7 @@ module Rouge
     @aliases = ["c++"]
     @filenames = ["*.cpp", "*.hpp", "*.c++", "*.h++", "*.cc", "*.hh", "*.cxx", "*.hxx", "*.pde", "*.ino", "*.tpp", "*.h"]
     @mimetypes = ["text/x-c++hdr", "text/x-c++src"]
+    @depends = "c"
     @detectable = false
   end
 
@@ -301,6 +304,7 @@ module Rouge
     @title = "CUDA"
     @desc = "Compute Unified Device Architecture, used for programming with NVIDIA GPU"
     @filenames = ["*.cu", "*.cuh"]
+    @depends = "cpp"
     @detectable = false
   end
 
@@ -319,6 +323,7 @@ module Rouge
     @aliases = ["pyx", "pyrex"]
     @filenames = ["*.pyx", "*.pxd", "*.pxi"]
     @mimetypes = ["text/x-cython", "application/x-cython"]
+    @depends = "python"
     @detectable = false
   end
 
@@ -366,6 +371,7 @@ module Rouge
     @desc = "A simple, open source, multi-cloud workflow engine (https://www.digdag.io/)"
     @filenames = ["*.dig"]
     @mimetypes = ["application/x-digdag"]
+    @depends = "yaml"
     @detectable = false
   end
 
@@ -496,6 +502,7 @@ module Rouge
     @aliases = ["ff"]
     @filenames = ["*.edp", "*.idp"]
     @mimetypes = ["text/x-ffhdr", "text/x-ffsrc"]
+    @depends = "cpp"
     @detectable = false
   end
 
@@ -549,6 +556,7 @@ module Rouge
     @desc = "The GLSL shader language"
     @filenames = ["*.glsl", "*.frag", "*.vert", "*.geom", "*.vs", "*.gs", "*.shader"]
     @mimetypes = ["x-shader/x-vertex", "x-shader/x-fragment", "x-shader/x-geometry"]
+    @depends = "c"
     @detectable = false
   end
 
@@ -566,6 +574,7 @@ module Rouge
     @desc = "A powerful build system for the JVM"
     @filenames = ["*.gradle"]
     @mimetypes = ["text/x-gradle"]
+    @depends = "groovy"
     @detectable = false
   end
 
@@ -594,6 +603,7 @@ module Rouge
     @option_docs = {"parent"=>"the parent language (default: html)", "start_inline"=>"Whether to start with inline php or require <?php ... ?>. (default: best guess)", "funcnamehighlighting"=>"Whether to highlight builtin functions (default: true)", "disabledmodules"=>"Disable certain modules from being highlighted as builtins (default: empty)"}
     @aliases = ["hack", "hh"]
     @filenames = ["*.php", "*.hh"]
+    @depends = "php"
       def self.detect?(text)
         return true if /<\?hh/ =~ text
         return true if text.shebang?('hhvm')
@@ -660,6 +670,7 @@ module Rouge
     @desc = "HLSL, the High Level Shading Language for DirectX (docs.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl)"
     @filenames = ["*.hlsl", "*.hlsli"]
     @mimetypes = ["text/x-hlsl"]
+    @depends = "c"
     @detectable = false
   end
 
@@ -667,6 +678,7 @@ module Rouge
     @title = "HOCON"
     @desc = "Human-Optimized Config Object Notation (https://github.com/lightbend/config)"
     @filenames = ["*.hocon"]
+    @depends = "json"
     @detectable = false
   end
 
@@ -674,6 +686,7 @@ module Rouge
     @title = "HQL"
     @desc = "Hive Query Language SQL dialect"
     @filenames = ["*.hql"]
+    @depends = "sql"
     @detectable = false
   end
 
@@ -744,12 +757,14 @@ module Rouge
     @title = "Irb"
     @desc = "Shell sessions in IRB or Pry"
     @aliases = ["pry"]
+    @depends = "console"
     @detectable = false
   end
 
   Lexer.cache :IRBOutputLexer, "irb_output" do
     @title = "Irb_output"
     @desc = nil
+    @depends = "ruby"
     @detectable = false
   end
 
@@ -826,6 +841,7 @@ module Rouge
     @title = "Json_doc"
     @desc = "JavaScript Object Notation with extensions for documentation"
     @aliases = ["jsonc", "json-doc"]
+    @depends = "json"
     @detectable = false
   end
 
@@ -852,6 +868,7 @@ module Rouge
     @aliases = ["jsx", "react"]
     @filenames = ["*.jsx"]
     @mimetypes = ["text/x-jsx", "application/x-jsx"]
+    @depends = "javascript"
     @detectable = false
   end
 
@@ -958,6 +975,7 @@ module Rouge
     @desc = "The Lutin programming language (Verimag)"
     @filenames = ["*.lut"]
     @mimetypes = ["text/x-lutin"]
+    @depends = "lustre"
     @detectable = false
   end
 
@@ -1113,6 +1131,7 @@ module Rouge
     @aliases = ["objc", "obj-c", "obj_c", "objectivec"]
     @filenames = ["*.m", "*.h"]
     @mimetypes = ["text/x-objective_c", "application/x-objective_c"]
+    @depends = "c"
     @detectable = false
   end
 
@@ -1122,6 +1141,7 @@ module Rouge
     @aliases = ["objcpp", "obj-cpp", "obj_cpp", "objectivecpp", "objc++", "obj-c++", "obj_c++", "objectivec++"]
     @filenames = ["*.mm", "*.h"]
     @mimetypes = ["text/x-objective-c++", "application/x-objective-c++"]
+    @depends = "cpp"
     @detectable = false
   end
 
@@ -1314,6 +1334,7 @@ module Rouge
     @aliases = ["qml"]
     @filenames = ["*.qml"]
     @mimetypes = ["application/x-qml", "text/x-qml"]
+    @depends = "javascript"
     @detectable = false
   end
 
@@ -1467,6 +1488,7 @@ module Rouge
     @desc = "Specification Language for Ice (doc.zeroc.com)"
     @filenames = ["*.ice"]
     @mimetypes = ["text/slice"]
+    @depends = "c"
     @detectable = false
   end
 
@@ -1596,6 +1618,7 @@ module Rouge
     @desc = "Terraform HCL Interpolations"
     @aliases = ["tf"]
     @filenames = ["*.tf"]
+    @depends = "hcl"
     @detectable = false
   end
 
@@ -1623,6 +1646,7 @@ module Rouge
     @title = "TSX"
     @desc = "TypeScript-compatible JSX (www.typescriptlang.org/docs/handbook/jsx.html)"
     @filenames = ["*.tsx"]
+    @depends = "jsx"
     @detectable = false
   end
 
@@ -1660,6 +1684,7 @@ module Rouge
     @option_docs = {"parent"=>"the parent language (default: html)"}
     @filenames = ["*.twig"]
     @mimetypes = ["application/x-twig", "text/html+twig"]
+    @depends = "jinja"
     @detectable = false
   end
 
@@ -1669,6 +1694,7 @@ module Rouge
     @aliases = ["ts"]
     @filenames = ["*.ts", "*.d.ts"]
     @mimetypes = ["text/typescript"]
+    @depends = "javascript"
     @detectable = false
   end
 
@@ -1738,6 +1764,7 @@ module Rouge
     @aliases = ["vuejs"]
     @filenames = ["*.vue"]
     @mimetypes = ["text/x-vue", "application/x-vue"]
+    @depends = "html"
     @detectable = false
   end
 
@@ -1781,6 +1808,7 @@ module Rouge
     @desc = "XQuery 3.1: An XML Query Language"
     @filenames = ["*.xquery", "*.xq"]
     @mimetypes = ["application/xquery"]
+    @depends = "xpath"
     @detectable = false
   end
 

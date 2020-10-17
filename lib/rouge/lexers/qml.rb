@@ -9,7 +9,6 @@ module Rouge
       title "QML"
       desc 'QML, a UI markup language'
       tag 'qml'
-      aliases 'qml'
       filenames '*.qml'
 
       mimetypes 'application/x-qml', 'text/x-qml'

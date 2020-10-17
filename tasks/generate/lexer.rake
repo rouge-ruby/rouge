@@ -17,9 +17,9 @@ def lexer_template(language)
 module Rouge
   module Lexers
     class #{language.capitalize} < RegexLexer
-      desc '#{language}'
+      desc 'A short description of the "#{language}" language (example.com)'
       tag '#{language}'
-      aliases '#{language}'
+      aliases '<alternate tags for this language>'
       filenames '*.???'
 
       mimetypes 'text/x-#{language}', 'application/x-#{language}'

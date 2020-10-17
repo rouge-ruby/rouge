@@ -7,7 +7,7 @@ module Rouge
       title "GDScript"
       desc "The Godot Engine programming language (https://godotengine.org/)"
       tag 'gdscript'
-      aliases 'gd', 'gdscript'
+      aliases 'gd'
       filenames '*.gd'
       mimetypes 'text/x-gdscript', 'application/x-gdscript'
 

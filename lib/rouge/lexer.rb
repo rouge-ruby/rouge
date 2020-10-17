@@ -247,12 +247,25 @@ module Rouge
       def register(name, lexer)
         # reset an existing list of lexers
         @all = nil if defined?(@all)
-        registry[name.to_s] = lexer
+        add_to_registry(name, lexer)
       end
 
       def register_alias(name, lexer)
         raise 'no tag' unless lexer.tag
-        registry[name.to_s] = registry[lexer.tag]
+        # in case end-user lexers are still duplicating tag/alias
+        return if name == lexer.tag && lexer == registry[name.to_s]
+        add_to_registry(name, registry.fetch(lexer.tag))
+      end
+
+    private
+      def add_to_registry(name, lexer)
+        name = name.to_s.downcase
+        if registry.key?(name) && !registry[name].is_a?(LangSpec)
+          raise KeyError,
+            "duplicate tags: #{name} assigned to #{lexer} and #{registry[name]}"
+        end
+
+        registry[name] = lexer
       end
 
     public
@@ -269,7 +282,7 @@ module Rouge
       def tag(t=nil)
         return @tag if t.nil?
 
-        @tag = t.to_s
+        @tag = t.to_s.downcase
         Lexer.register(@tag, self)
       end
 
@@ -286,6 +299,8 @@ module Rouge
         raise 'no tag!' unless tag
 
         args.map!(&:to_s)
+        args.map!(&:downcase)
+        args.uniq!
         args.each { |arg| Lexer.register_alias(arg, self) }
         (@aliases ||= []).concat(args)
       end

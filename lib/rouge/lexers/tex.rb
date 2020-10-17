@@ -7,7 +7,7 @@ module Rouge
       title "TeX"
       desc "The TeX typesetting system"
       tag 'tex'
-      aliases 'TeX', 'LaTeX', 'latex'
+      aliases 'latex'
 
       filenames '*.tex', '*.aux', '*.toc', '*.sty', '*.cls'
       mimetypes 'text/x-tex', 'text/x-latex'

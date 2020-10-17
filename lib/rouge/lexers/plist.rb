@@ -5,7 +5,6 @@ module Rouge
     class Plist < RegexLexer
       desc 'plist'
       tag 'plist'
-      aliases 'plist'
       filenames '*.plist', '*.pbxproj'
 
       mimetypes 'text/x-plist', 'application/x-plist'

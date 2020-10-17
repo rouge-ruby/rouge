@@ -7,7 +7,7 @@ module Rouge
       desc "Haxe Cross-platform Toolkit (http://haxe.org)"
 
       tag 'haxe'
-      aliases 'hx', 'haxe'
+      aliases 'hx'
       filenames '*.hx'
       mimetypes 'text/haxe', 'text/x-haxe', 'text/x-hx'
 

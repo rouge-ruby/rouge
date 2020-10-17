@@ -47,7 +47,7 @@ module Rouge
   Lexer.cache :APIBlueprint, "apiblueprint" do
     @title = "API Blueprint"
     @desc = "Markdown based API description language."
-    @aliases = ["apiblueprint", "apib"]
+    @aliases = ["apib"]
     @filenames = ["*.apib"]
     @mimetypes = ["text/vnd.apiblueprint"]
     @detectable = false
@@ -56,7 +56,6 @@ module Rouge
   Lexer.cache :AppleScript, "applescript" do
     @title = "AppleScript"
     @desc = "The AppleScript scripting language by Apple Inc. (http://developer.apple.com/applescript/)"
-    @aliases = ["applescript"]
     @filenames = ["*.applescript", "*.scpt"]
     @mimetypes = ["application/x-applescript"]
     @detectable = false
@@ -307,7 +306,6 @@ module Rouge
   Lexer.cache :Cypher, "cypher" do
     @title = "Cypher"
     @desc = "The Cypher query language (neo4j.com/docs/cypher-manual)"
-    @aliases = ["cypher"]
     @filenames = ["*.cypher"]
     @mimetypes = ["application/x-cypher-query"]
     @detectable = false
@@ -414,7 +412,7 @@ module Rouge
   Lexer.cache :Elixir, "elixir" do
     @title = "Elixir"
     @desc = "Elixir language (elixir-lang.org)"
-    @aliases = ["elixir", "exs"]
+    @aliases = ["exs"]
     @filenames = ["*.ex", "*.exs"]
     @mimetypes = ["text/x-elixir", "application/x-elixir"]
     @detectable = false
@@ -510,7 +508,7 @@ module Rouge
   Lexer.cache :GDScript, "gdscript" do
     @title = "GDScript"
     @desc = "The Godot Engine programming language (https://godotengine.org/)"
-    @aliases = ["gd", "gdscript"]
+    @aliases = ["gd"]
     @filenames = ["*.gd"]
     @mimetypes = ["text/x-gdscript", "application/x-gdscript"]
     @detectable = false
@@ -555,7 +553,7 @@ module Rouge
   Lexer.cache :Go, "go" do
     @title = "Go"
     @desc = "The Go programming language (http://golang.org)"
-    @aliases = ["go", "golang"]
+    @aliases = ["golang"]
     @filenames = ["*.go"]
     @mimetypes = ["text/x-go", "application/x-go"]
     @detectable = false
@@ -592,7 +590,7 @@ module Rouge
     @title = "Hack"
     @desc = "The Hack programming language (hacklang.org)"
     @option_docs = {"parent"=>"the parent language (default: html)", "start_inline"=>"Whether to start with inline php or require <?php ... ?>. (default: best guess)", "funcnamehighlighting"=>"Whether to highlight builtin functions (default: true)", "disabledmodules"=>"Disable certain modules from being highlighted as builtins (default: empty)"}
-    @aliases = ["hack", "hh"]
+    @aliases = ["hh"]
     @filenames = ["*.php", "*.hh"]
       def self.detect?(text)
         return true if /<\?hh/ =~ text
@@ -607,7 +605,6 @@ module Rouge
     @title = "Haml"
     @desc = "The Haml templating system for Ruby (haml.info)"
     @option_docs = {"filters[filter_name]"=>"Mapping of lexers to use for haml :filters"}
-    @aliases = ["HAML"]
     @filenames = ["*.haml"]
     @mimetypes = ["text/x-haml"]
     @detectable = false
@@ -638,7 +635,7 @@ module Rouge
   Lexer.cache :Haxe, "haxe" do
     @title = "Haxe"
     @desc = "Haxe Cross-platform Toolkit (http://haxe.org)"
-    @aliases = ["hx", "haxe"]
+    @aliases = ["hx"]
     @filenames = ["*.hx"]
     @mimetypes = ["text/haxe", "text/x-haxe", "text/x-hx"]
       def self.detect?(text)
@@ -847,7 +844,7 @@ module Rouge
   Lexer.cache :JSX, "jsx" do
     @title = "JSX"
     @desc = "An XML-like syntax extension to JavaScript (facebook.github.io/jsx/)"
-    @aliases = ["jsx", "react"]
+    @aliases = ["react"]
     @filenames = ["*.jsx"]
     @mimetypes = ["text/x-jsx", "application/x-jsx"]
     @detectable = false
@@ -1171,7 +1168,7 @@ module Rouge
     @title = "PHP"
     @desc = "The PHP scripting language (php.net)"
     @option_docs = {"parent"=>"the parent language (default: html)", "start_inline"=>"Whether to start with inline php or require <?php ... ?>. (default: best guess)", "funcnamehighlighting"=>"Whether to highlight builtin functions (default: true)", "disabledmodules"=>"Disable certain modules from being highlighted as builtins (default: empty)"}
-    @aliases = ["php", "php3", "php4", "php5"]
+    @aliases = ["php3", "php4", "php5"]
     @filenames = ["*.php", "*.php[345t]", "*.phtml", "*.module", "*.inc", "*.profile", "*.install", "*.test"]
     @mimetypes = ["text/x-php"]
       def self.detect?(text)
@@ -1194,7 +1191,6 @@ module Rouge
   Lexer.cache :Plist, "plist" do
     @title = "Plist"
     @desc = "plist"
-    @aliases = ["plist"]
     @filenames = ["*.plist", "*.pbxproj"]
     @mimetypes = ["text/x-plist", "application/x-plist"]
     @detectable = false
@@ -1210,7 +1206,7 @@ module Rouge
   Lexer.cache :PostScript, "postscript" do
     @title = "PostScript"
     @desc = "The PostScript language (adobe.com/devnet/postscript.html)"
-    @aliases = ["postscr", "postscript", "ps", "eps"]
+    @aliases = ["postscr", "ps", "eps"]
     @filenames = ["*.ps", "*.eps"]
     @mimetypes = ["application/postscript"]
       def self.detect?(text)
@@ -1241,7 +1237,6 @@ module Rouge
   Lexer.cache :Prolog, "prolog" do
     @title = "Prolog"
     @desc = "The Prolog programming language (http://en.wikipedia.org/wiki/Prolog)"
-    @aliases = ["prolog"]
     @filenames = ["*.pro", "*.P", "*.prolog", "*.pl"]
     @mimetypes = ["text/x-prolog"]
     @detectable = false
@@ -1250,7 +1245,6 @@ module Rouge
   Lexer.cache :Prometheus, "prometheus" do
     @title = "Prometheus"
     @desc = "prometheus"
-    @aliases = ["prometheus"]
     @filenames = ["*.prometheus"]
     @mimetypes = ["text/x-prometheus", "application/x-prometheus"]
     @detectable = false
@@ -1309,7 +1303,6 @@ module Rouge
   Lexer.cache :Qml, "qml" do
     @title = "QML"
     @desc = "QML, a UI markup language"
-    @aliases = ["qml"]
     @filenames = ["*.qml"]
     @mimetypes = ["application/x-qml", "text/x-qml"]
     @detectable = false
@@ -1318,7 +1311,7 @@ module Rouge
   Lexer.cache :R, "r" do
     @title = "R"
     @desc = "The R statistics language (r-project.org)"
-    @aliases = ["r", "R", "s", "S"]
+    @aliases = ["s"]
     @filenames = ["*.R", "*.r", ".Rhistory", ".Rprofile"]
     @mimetypes = ["text/x-r-source", "text/x-r", "text/x-R", "text/x-r", "application/x-r"]
       def self.detect?(text)
@@ -1408,7 +1401,6 @@ module Rouge
   Lexer.cache :Scala, "scala" do
     @title = "Scala"
     @desc = "The Scala programming language (scala-lang.org)"
-    @aliases = ["scala"]
     @filenames = ["*.scala", "*.sbt"]
     @mimetypes = ["text/x-scala", "application/x-scala"]
     @detectable = false
@@ -1488,7 +1480,6 @@ module Rouge
     @title = "Smarty"
     @desc = "Smarty Template Engine"
     @option_docs = {"parent"=>"the parent language (default: html)"}
-    @aliases = ["smarty"]
     @filenames = ["*.tpl", "*.smarty"]
     @mimetypes = ["application/x-smarty", "text/x-smarty"]
     @detectable = false
@@ -1570,7 +1561,6 @@ module Rouge
   Lexer.cache :Tap, "tap" do
     @title = "TAP"
     @desc = "Test Anything Protocol"
-    @aliases = ["tap"]
     @filenames = ["*.tap"]
     @mimetypes = ["text/x-tap", "application/x-tap"]
     @detectable = false
@@ -1600,7 +1590,7 @@ module Rouge
   Lexer.cache :TeX, "tex" do
     @title = "TeX"
     @desc = "The TeX typesetting system"
-    @aliases = ["TeX", "LaTeX", "latex"]
+    @aliases = ["latex"]
     @filenames = ["*.tex", "*.aux", "*.toc", "*.sty", "*.cls"]
     @mimetypes = ["text/x-tex", "text/x-latex"]
       def self.detect?(text)
@@ -1635,7 +1625,6 @@ module Rouge
   Lexer.cache :Tulip, "tulip" do
     @title = "Tulip"
     @desc = "the tulip programming language (twitter.com/tuliplang)"
-    @aliases = ["tulip"]
     @filenames = ["*.tlp"]
     @mimetypes = ["text/x-tulip", "application/x-tulip"]
       def self.detect?(text)

@@ -8,7 +8,6 @@ module Rouge
       desc "The AppleScript scripting language by Apple Inc. (http://developer.apple.com/applescript/)"
 
       tag 'applescript'
-      aliases 'applescript'
 
       filenames '*.applescript', '*.scpt'
 

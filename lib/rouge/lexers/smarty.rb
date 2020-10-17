@@ -7,7 +7,6 @@ module Rouge
       title "Smarty"
       desc 'Smarty Template Engine'
       tag 'smarty'
-      aliases 'smarty'
       filenames '*.tpl', '*.smarty'
       mimetypes 'application/x-smarty', 'text/x-smarty'
 

@@ -7,7 +7,7 @@ module Rouge
       title "PHP"
       desc "The PHP scripting language (php.net)"
       tag 'php'
-      aliases 'php', 'php3', 'php4', 'php5'
+      aliases 'php3', 'php4', 'php5'
       filenames '*.php', '*.php[345t]','*.phtml',
                 # Support Drupal file extensions, see:
                 # https://github.com/gitlabhq/gitlabhq/issues/8900

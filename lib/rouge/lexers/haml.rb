@@ -12,7 +12,6 @@ module Rouge
       desc "The Haml templating system for Ruby (haml.info)"
 
       tag 'haml'
-      aliases 'HAML'
 
       filenames '*.haml'
       mimetypes 'text/x-haml'

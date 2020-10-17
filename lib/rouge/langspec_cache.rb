@@ -370,7 +370,7 @@ module Rouge
   Lexer.cache :Docker, "docker" do
     @title = "Docker"
     @desc = "Dockerfile syntax"
-    @aliases = ["dockerfile", "Dockerfile"]
+    @aliases = ["dockerfile"]
     @filenames = ["Dockerfile", "*.Dockerfile", "*.docker"]
     @mimetypes = ["text/x-dockerfile-config"]
     @detectable = false

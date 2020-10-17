@@ -110,6 +110,8 @@ module Rouge
         next Cpp if matches?(/^\s*#include/)
         next Hack if matches?(/^<\?hh/)
         next Hack if matches?(/(\(|, ?)\$\$/)
+        next Hack if matches?(/async function [a-zA-Z]/)
+        next Hack if matches?(/\): Awaitable</)
 
         Cpp
       end

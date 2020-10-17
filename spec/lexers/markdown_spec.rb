@@ -41,9 +41,6 @@ describe Rouge::Lexers::Markdown do
 
     it 'picks a sub-lexer when the code-block-content is ambiguous' do
       source = "Index: ): Awaitable<\n"
-      assert_raises Rouge::Guesser::Ambiguous do
-        Rouge::Lexer.find_fancy(nil, source)
-      end
       assert_no_errors "```\n#{source}```\n"
     end
 

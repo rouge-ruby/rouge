@@ -15,8 +15,6 @@ module Rouge
       def self.detect?(text)
         return true if /<\?hh/ =~ text
         return true if text.shebang?('hhvm')
-        return true if /async function [a-zA-Z]/ =~ text
-        return true if /\): Awaitable</ =~ text
 
         return false
       end

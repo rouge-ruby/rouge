@@ -372,7 +372,7 @@ module Rouge
   Lexer.cache :Docker, "docker" do
     @title = "Docker"
     @desc = "Dockerfile syntax"
-    @aliases = ["dockerfile"]
+    @aliases = ["dockerfile", "Dockerfile"]
     @filenames = ["Dockerfile", "*.Dockerfile", "*.docker"]
     @mimetypes = ["text/x-dockerfile-config"]
     @detectable = false
@@ -597,8 +597,6 @@ module Rouge
       def self.detect?(text)
         return true if /<\?hh/ =~ text
         return true if text.shebang?('hhvm')
-        return true if /async function [a-zA-Z]/ =~ text
-        return true if /\): Awaitable</ =~ text
 
         return false
       end

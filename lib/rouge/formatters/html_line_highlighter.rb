@@ -13,9 +13,7 @@ module Rouge
       end
 
       def stream(tokens)
-        lineno = 0
-        token_lines(tokens) do |tokens_in_line|
-          lineno += 1
+        token_lines(tokens).with_index(1) do |tokens_in_line, lineno|
           line = %(#{@delegate.format(tokens_in_line)}\n)
           line = %(<span class="#{@highlight_line_class}">#{line}</span>) if @highlight_lines.include? lineno
           yield line

@@ -22,8 +22,8 @@ module Rouge
 
       def self.keywords
         @keywords ||= %w(
-          as assert async await break const copy do drop else enum extern fail false
-          fn for if impl let log loop match mod move mut priv pub pure
+          as assert async await break const continue copy do drop else enum extern
+          fail false fn for if impl let log loop match mod move mut priv pub pure
           ref return self static struct true trait type unsafe use where
           while box
         )

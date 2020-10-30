@@ -11,9 +11,8 @@ module Rouge
       end
 
       def stream(tokens, &b)
-        lineno = 0
-        token_lines(tokens) do |line_tokens|
-          yield %(<#{@tag_name} class="#{sprintf @class_format, lineno += 1}">)
+        token_lines(tokens).with_index(1) do |line_tokens, lineno|
+          yield %(<#{@tag_name} class="#{sprintf @class_format, lineno}">)
           @formatter.stream(line_tokens) {|formatted| yield formatted }
           yield %(\n</#{@tag_name}>)
         end

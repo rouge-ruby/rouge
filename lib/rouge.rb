@@ -12,21 +12,14 @@ module Rouge
   # cache value in a constant since `__dir__` allocates a new string
   # on every call.
   LIB_DIR = __dir__.freeze
-  RELOADABLE_CONSTANTS = []
-  RELOADABLE_FILES = []
 
   LOAD_LOCK = Monitor.new
   ROOT = File.dirname(LIB_DIR)
 
   class << self
     def reload!
-      consts = RELOADABLE_CONSTANTS
-      files = RELOADABLE_FILES
-
       Object::send :remove_const, :Rouge
-      consts.each { |c| Object::send :remove_const, c }
       Kernel::load __FILE__
-      files.each { |f| Kernel::load f }
     end
 
     # Highlight some text with a given lexer and formatter.

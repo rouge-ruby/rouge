@@ -37,6 +37,9 @@ module Rouge
   end
 
   class CLI
+    LOADED_FILES = Set.new
+    LOADED_CONSTANTS = Set.new
+
     def self.doc
       return enum_for(:doc) unless block_given?
 
@@ -90,8 +93,9 @@ module Rouge
     def self.require_file(file)
       toplevel = Object.constants
       require file
-      RELOADABLE_CONSTANTS.concat(Set.new(Object.constants) - toplevel)
-      RELOADABLE_FILES << file
+      new_constants = Set.new(Object.constants) - toplevel
+      LOADED_CONSTANTS.merge(new_constants)
+      LOADED_FILES << file
     end
 
     def initialize(options={})
@@ -418,6 +422,8 @@ module Rouge
       def run
         require 'rack'
         Kernel::load File.join(LIB_DIR, '../spec/visual/app.rb')
+        VisualTestApp::RELOADABLE_CONSTANTS.merge(LOADED_CONSTANTS)
+        VisualTestApp::RELOADABLE_FILES.merge(LOADED_FILES)
 
         Rack::Server.start app: VisualTestApp, Port: 9292
       end

@@ -8,6 +8,9 @@ require 'sinatra'
 require 'pathname'
 
 class VisualTestApp < Sinatra::Application
+  RELOADABLE_CONSTANTS = Set.new
+  RELOADABLE_FILES = Set.new
+
   BASE = Pathname.new(__FILE__).dirname
   SAMPLES = BASE.join('samples')
   ROOT = BASE.parent.parent
@@ -17,7 +20,9 @@ class VisualTestApp < Sinatra::Application
   DEMOS = ROOT.join('lib/rouge/demos')
 
   def reload_source!
+    RELOADABLE_CONSTANTS.each { |c| Object::send :remove_const, c }
     Rouge.reload!
+    RELOADABLE_FILES.each { |f| Kernel::load f }
   end
 
   def query_string

@@ -35,3 +35,4 @@ echo ^Hello
 echo Bye
 goto :eof
 :a
+streamlink --http-header "User-Agent: test" "https://example.com/master.m3u8" best -o output.ts

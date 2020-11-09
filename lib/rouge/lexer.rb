@@ -158,6 +158,7 @@ module Rouge
         @demo ||= if File.exists?(demo_file)
           File.read(demo_file, mode: 'rt:bom|utf-8')
         else
+          Kernel::warn "Rouge: missing demo for the lexer `#{tag}'"
           "<missing demo for #{tag}>"
         end
       end

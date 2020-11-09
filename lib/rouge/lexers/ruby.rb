@@ -267,7 +267,7 @@ module Rouge
       end
 
       state :test_heredoc do
-        rule %r/[^#\\\n]+$/ do |m|
+        rule %r/[^#\\\n]*$/ do |m|
           tolerant, heredoc_name = @heredoc_queue.first
           check = tolerant ? m[0].strip : m[0].rstrip
 

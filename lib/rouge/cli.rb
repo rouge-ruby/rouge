@@ -74,7 +74,7 @@ module Rouge
         when '-h', '--help', 'help', '-help'
           return Help.parse(argv)
         when '--require', '-r'
-          require argv.shift
+          require_file argv.shift
         else
           break
         end
@@ -85,6 +85,13 @@ module Rouge
 
       argv.unshift(head) if head
       Highlight.parse(argv)
+    end
+
+    def self.require_file(file)
+      toplevel = Object.constants
+      require file
+      RELOADABLE_CONSTANTS.concat(Set.new(Object.constants) - toplevel)
+      RELOADABLE_FILES << file
     end
 
     def initialize(options={})

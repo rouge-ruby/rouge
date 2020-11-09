@@ -435,7 +435,7 @@ module Rouge
         VisualTestApp::RELOADABLE_CONSTANTS.merge(LOADED_CONSTANTS)
         VisualTestApp::RELOADABLE_FILES.merge(LOADED_FILES)
 
-        Rack::Server.start app: VisualTestApp, Port: 9292
+        Rack::Server.start app: VisualTestApp, Port: @port
       end
     end
 

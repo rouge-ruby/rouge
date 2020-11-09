@@ -37,5 +37,5 @@ Gem::Specification.new do |s|
   }
 
   # for running the development server
-  s.add_development_dependency 'sinatra'
+  s.add_development_dependency 'sinatra', '~> 2.0'
 end

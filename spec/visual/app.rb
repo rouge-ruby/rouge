@@ -87,7 +87,7 @@ class VisualTestApp < Sinatra::Application
   get '/:lexer' do |lexer_name|
     @lexer = Rouge::Lexer.find_fancy("#{lexer_name}?#{query_string}")
     halt 404 unless @lexer
-    @sample = File.read(SAMPLES.join(@lexer.class.tag), encoding: 'utf-8')
+    @sample = @lexer.class.sample
 
     @title = "#{@lexer.class.tag} | Visual Test"
     @raw = Rouge.highlight(@sample, 'plaintext', @formatter)

@@ -420,7 +420,17 @@ module Rouge
       end
 
       def run
-        require 'rack'
+        begin
+          require 'rack'
+          require 'sinatra'
+        rescue LoadError
+          puts %|Could not load rack or sinatra: these are development|
+          puts %|dependencies required for running `rougify server`. Please|
+          puts %|use `gem install --development rouge` or add sinatra to your|
+          puts %|Gemfile.|
+          exit 1
+        end
+
         Kernel::load File.join(LIB_DIR, '../spec/visual/app.rb')
         VisualTestApp::RELOADABLE_CONSTANTS.merge(LOADED_CONSTANTS)
         VisualTestApp::RELOADABLE_FILES.merge(LOADED_FILES)

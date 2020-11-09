@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-require 'rubygems'
-require 'bundler'
-Bundler.require(:default, :development)
+require 'rack'
+require 'sinatra'
 
 # stdlib
 require 'pathname'

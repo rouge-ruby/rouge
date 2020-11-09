@@ -34,4 +34,7 @@ Gem::Specification.new do |s|
     "documentation_uri" => "https://rouge-ruby.github.io/docs/",
     "source_code_uri"   => "https://github.com/rouge-ruby/rouge"
   }
+
+  # for running the development server
+  s.add_development_dependency 'sinatra'
 end

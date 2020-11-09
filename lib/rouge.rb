@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+return if defined?(Rouge)
+
 # stdlib
 require 'pathname'
 require 'monitor'

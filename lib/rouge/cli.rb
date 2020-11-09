@@ -355,6 +355,7 @@ module Rouge
 
     class Debug < Highlight
       def self.desc
+        "highlight code with debug features"
       end
 
       def self.doc

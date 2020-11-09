@@ -53,7 +53,7 @@ module Rouge
           groups Keyword::Declaration, Text
           push :property
         end
-        rule %r'(return|continue|break|this|super)(@#{name})?' do
+        rule %r'(return|continue|break|this|super)(@#{name})?\b' do
           groups Keyword, Name::Decorator
         end
         rule %r'\bfun\b', Keyword

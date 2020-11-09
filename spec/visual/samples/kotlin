@@ -155,15 +155,19 @@ fun <T, V> genericFunction() {
 }
 
 fun String.extensionFunction() {
-   return
+    return
 }
 
 fun `String`.`backTickedExtensionFunction`() {
-   return
+    return
 }
 
 fun <T, V : Comparable> String.genericExtensionFunction() {
-   return
+    return
+}
+
+fun foo(supersedingStuff: List<String>): List<String> {
+    return supersedingStuff.map { it }
 }
 
 inline fun <reified T> membersOf() = T::class.members

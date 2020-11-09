@@ -135,22 +135,29 @@ module Rouge
         mixin :comments
         rule %r/"/, Str::Double, :dq
         rule %r/'/, Str::Single, :sq
-        rule %r/[{]/, Punctuation, :brace
+        rule %r/@"/, Str::Heredoc, :heredoc
+        rule %r/@'.*?'@/m, Str::Heredoc
+        rule %r/\d*\.\d+/, Num::Float
+        rule %r/\d+/, Num::Integer
+        rule %r/@\{/, Punctuation, :hasht
+        rule %r/@\(/, Punctuation, :array
+        rule %r/{/, Punctuation, :brace
+        rule %r/\[/, Punctuation, :bracket
       end
 
       state :hasht do
         rule %r/\}/, Punctuation, :pop!
-        rule %r/\w+/, Name::Other
         rule %r/=/, Operator
-        rule %r/,/, Punctuation
+        rule %r/[,;]/, Punctuation
         mixin :expr
+        rule %r/\w+/, Name::Other
         mixin :variable
       end
 
       state :array do
         rule %r/\s+/, Text::Whitespace
         rule %r/\)/, Punctuation, :pop!
-        rule %r/,/, Punctuation
+        rule %r/[,;]/, Punctuation
         mixin :expr
         mixin :variable
       end
@@ -193,13 +200,13 @@ module Rouge
         mixin :comments
         rule %r/#requires\s-version \d(?:\.\d+)?/, Comment::Preproc
 
-        rule %r/"/, Str::Double, :dq
-        rule %r/'/, Str::Single, :sq
-        rule %r/@"/, Str::Heredoc, :heredoc
-        rule %r/@'.*?'@/m, Str::Heredoc
+        # rule %r/"/, Str::Double, :dq
+        # rule %r/'/, Str::Single, :sq
+        # rule %r/@"/, Str::Heredoc, :heredoc
+        # rule %r/@'.*?'@/m, Str::Heredoc
 
-        rule %r/\d*\.\d+/, Num::Float
-        rule %r/\d+/, Num::Integer
+        # rule %r/\d*\.\d+/, Num::Float
+        # rule %r/\d+/, Num::Integer
 
         rule %r/\.\.(?=\.?\d)/, Operator
         rule %r/(?:#{OPERATORS})\b/i, Operator
@@ -220,23 +227,24 @@ module Rouge
           push :bracket
         end
 
-        rule %r/([\/\\~\w][-.:\/\\~\w]*)(\n)?/ do |m|
+        rule %r/([\/\\~[a-z]][-.:\/\\~\w]*)(\n)?/i do |m|
           groups Name, Text::Whitespace
           push :parameters
         end
 
-        rule %r/(\.)?([-\w]+)(?:(\()|(\n))?/ do |m|
+        rule %r/(\.)([-\w]+)(?:(\()|(\n))?/ do |m|
           groups Operator, Name::Function, Punctuation, Text::Whitespace
           push :parameters unless m[3].nil?
         end
 
         rule %r/\?/, Name::Function, :parameters
         rule %r/[-+*\/%=!.&|]/, Operator
-        rule %r/@\{/, Punctuation, :hasht
-        rule %r/@\(/, Punctuation, :array
-        rule %r/\[/, Punctuation, :bracket
+        # rule %r/@\{/, Punctuation, :hasht
+        # rule %r/@\(/, Punctuation, :array
+        # rule %r/\[/, Punctuation, :bracket
         rule %r/[{}(),:;]/, Punctuation
 
+        mixin :expr
         mixin :variable
       end
     end

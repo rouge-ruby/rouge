@@ -1,8 +1,7 @@
 int quote_delims = 100'000'000
 int float_delims = 100.00'00
 int hex_delims = 0xFF'Fa12
-
-int binary = 0b10'1000;
+int bin_delims = 0b10'1000;
 
 // string literal with encoding-prefix
 char str1[] = u8"UTF-8 string";

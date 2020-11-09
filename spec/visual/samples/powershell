@@ -52,6 +52,16 @@ $my_hash = @{
     thing = "table"
 }
 
+$my_complex_hash = @{
+  # comment
+  foo = {
+    if ($var1 -eq $var2)
+    {
+        return $true
+    }
+  }
+}
+
 $my_array = @("my" "array")
 
 ###########################

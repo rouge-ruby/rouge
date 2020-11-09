@@ -90,7 +90,7 @@ module Rouge
       end
 
       state :regex_flags do
-        rule %r/[mixounse]+/, Str::Regex, :pop!
+        rule %r/[mixounse]*/, Str::Regex, :pop!
       end
 
       # double-quoted string and symbol

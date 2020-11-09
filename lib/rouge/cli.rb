@@ -49,9 +49,10 @@ module Rouge
       yield %|	style		#{Style.desc}|
       yield %|	list		#{List.desc}|
       yield %|	guess		#{Guess.desc}|
+      yield %|	server		#{Server.desc}|
       yield %|	version		#{Version.desc}|
       yield %||
-      yield %|global options:|
+      yield %|and global options include:|
       yield %[	--require|-r <fname>	require <fname> after loading rouge]
       yield %||
       yield %|See `rougify help <command>` for more info.|
@@ -99,20 +100,14 @@ module Rouge
 
     def self.class_from_arg(arg)
       case arg
-      when 'version', '--version', '-v'
-        Version
-      when 'help', nil
-        Help
-      when 'highlight', 'hi'
-        Highlight
-      when 'debug'
-        Debug
-      when 'style'
-        Style
-      when 'list'
-        List
-      when 'guess'
-        Guess
+      when 'version', '--version', '-v' then Version
+      when 'help', nil then Help
+      when 'highlight', 'hi' then Highlight
+      when 'debug' then Debug
+      when 'style' then Style
+      when 'list' then List
+      when 'guess' then Guess
+      when 'server' then Server
       end
     end
 
@@ -371,6 +366,52 @@ module Rouge
         out[:formatter] = 'null'
 
         out
+      end
+    end
+
+    class Server < CLI
+      def self.desc
+        "run a server to view stress-test files"
+      end
+
+      def self.doc
+        return enum_for(:doc) unless block_given?
+
+        yield %|usage: rougify server [<options>]|
+        yield %||
+        yield %|Run a development server which can test various lexers'|
+        yield %|behavior on the included demo and stress-test files.|
+        yield %||
+        yield %|Visit / to see all the supported languages and their demos,|
+        yield %|and visit /<lexer-name> (e.g. /ruby) to view a specific|
+        yield %|lexer's stress-test file.|
+        yield %||
+        yield %|options:|
+        yield %[  --port|-p <port>	Specify the port. Default:9292]
+      end
+
+      def self.parse(argv)
+        opts = { debug: nil, port: '9292' }
+        while head = argv.shift
+          case head
+          when '-p', '--port' then opts[:port] = argv.shift
+          end
+        end
+
+        error!("invalid port #{opts[:port]})") unless opts[:port] =~ /\d+/
+
+        new(opts)
+      end
+
+      def initialize(opts)
+        @port = opts[:port].to_i
+      end
+
+      def run
+        require 'rack'
+        Kernel::load File.join(LIB_DIR, '../spec/visual/app.rb')
+
+        Rack::Server.start app: VisualTestApp, Port: 9292
       end
     end
 

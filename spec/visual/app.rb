@@ -62,6 +62,7 @@ class VisualTestApp < Sinatra::Application
   configure do
     set :root, BASE
     set :views, BASE.join('templates')
+    set :public_folder, BASE.join('public')
   end
 
   before do
@@ -93,6 +94,7 @@ class VisualTestApp < Sinatra::Application
 
 
   get '/' do
+    @title = 'Rouge development server'
     @samples = DEMOS.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
     @samples.map!(&Rouge::Lexer.method(:find))
 

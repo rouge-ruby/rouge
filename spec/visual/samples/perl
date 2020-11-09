@@ -170,6 +170,28 @@ foo(
     => 1
 )
 
+# sigils
+${ $sref }
+@{ $aref }
+$#{ $aref }
+%{ $href }
+&{ $cref }
+*{ $gref }
+@$aref[ ... ]
+@$href{ ... }
+%$aref[ ... ]
+%$href{ ... }
+$sref->$*;  # same as  ${ $sref }
+$aref->@*;  # same as  @{ $aref }
+$aref->$#*; # same as $#{ $aref }
+$href->%*;  # same as  %{ $href }
+$cref->&*;  # same as  &{ $cref }
+$gref->**;  # same as  *{ $gref }
+$aref->@[ ... ];  # same as @$aref[ ... ]
+$href->@{ ... };  # same as @$href{ ... }
+$aref->%[ ... ];  # same as %$aref[ ... ]
+$href->%{ ... };  # same as %$href{ ... }
+
 __DATA__
 
 This is just some end text; everything after DATA can be accessed

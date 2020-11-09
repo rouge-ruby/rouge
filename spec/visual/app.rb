@@ -100,8 +100,7 @@ class VisualTestApp < Sinatra::Application
 
   get '/' do
     @title = 'Rouge development server'
-    @samples = DEMOS.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
-    @samples.map!(&Rouge::Lexer.method(:find))
+    @samples = Rouge::Lexer.all
 
     erb :index
   end

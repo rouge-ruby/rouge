@@ -79,6 +79,7 @@ module Rouge
       state :basic do
         # Comments
         rule %r/@?\brem\b.*$/i, Comment
+
         # Empty Labels
         rule %r/^::.*$/, Comment
 
@@ -105,7 +106,7 @@ module Rouge
           end
         end
 
-        rule %r/([\/\-+][a-z]+)\s*/i, Name::Attribute
+        rule %r/((?:[\/\+]|--?)[a-z]+)\s*/i, Name::Attribute
 
         mixin :expansions
 

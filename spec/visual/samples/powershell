@@ -64,6 +64,22 @@ $my_complex_hash = @{
 
 $my_array = @("my" "array")
 
+$myobject = [PSCustomObject]@{
+   Name = 'Alice';
+   Age = 42;
+}
+
+$myarray = @(
+    [PSCustomObject]@{
+        Name = 'Bob';
+        Age = 31;
+    },
+    [PSCustomObject]@{
+        Name = 'Charlie';
+        Age = 41;
+    }
+)
+
 ###########################
 # Commands
 ###########################

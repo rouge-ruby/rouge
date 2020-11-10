@@ -4,6 +4,34 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.25.0: 2020-11-11
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.24.0...v3.25.0)
+
+- General
+  - Use `Enumerator#with_index` to detect line numbers ([#1615](https://github.com/rouge-ruby/rouge/pull/1615/) by takafumi.suzuki)
+- Batchfile Lexer
+  - Add support for long options to Batchfile lexer ([#1626](https://github.com/rouge-ruby/rouge/pull/1626/) by Michael Camilleri)
+- C++ Lexer
+  - Fix binary literal digit separator in C++ lexer ([#1620](https://github.com/rouge-ruby/rouge/pull/1620/) by swheaton)
+- Docker Lexer
+  - Add `Dockerfile` as an alias for the Docker lexer ([#1609](https://github.com/rouge-ruby/rouge/pull/1609/) by Konnor Rogers)
+- JavaScript Lexer
+  - Fix template string lexing in JavaScript lexer ([#1623](https://github.com/rouge-ruby/rouge/pull/1623/) by Michael Camilleri)
+- Kotlin Lexer
+  - Ensure word break follows keywords in Kotlin lexer ([#1621](https://github.com/rouge-ruby/rouge/pull/1621/) by Michael Camilleri)
+- Perl Lexer
+  - Improve support for sigils in Perl lexer ([#1625](https://github.com/rouge-ruby/rouge/pull/1625/) by Michael Camilleri)
+- PowerShell Lexer
+  - Improve lexing of nested data structures in PowerShell lexer ([#1622](https://github.com/rouge-ruby/rouge/pull/1622/) by Michael Camilleri)
+  - Improve handling of data structure literals in PowerShell lexer ([#1595](https://github.com/rouge-ruby/rouge/pull/1595/) by Jeanine Adkisson)
+- Ruby Lexer
+  - Revert empty patterns in Ruby lexer ([#1624](https://github.com/rouge-ruby/rouge/pull/1624/) by Michael Camilleri)
+- Rust Lexer
+  - Add continue to keywords in Rust lexer ([#1617](https://github.com/rouge-ruby/rouge/pull/1617/) by Aleksey Kladov)
+- Velocity Lexer
+  - Fix lexing of brackets in Velocity lexer ([#1605](https://github.com/rouge-ruby/rouge/pull/1605/) by domRowan)
+
 ## version 3.24.0: 2020-10-14
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.23.0...v3.24.0)

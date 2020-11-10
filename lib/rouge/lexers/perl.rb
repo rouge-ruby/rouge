@@ -110,9 +110,10 @@ module Rouge
 
         rule %r/(__(END|DATA)__)\b/, Comment::Preproc, :end_part
         rule %r/\$\^[ADEFHILMOPSTWX]/, Name::Variable::Global
-        rule %r/\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/-](?!\w)/, Name::Variable::Global
+        rule %r/\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/_-](?!\w)/, Name::Variable::Global
+        rule %r/[$@%&*][$@%&*#_]*(?=[a-z{\[;])/i, Name::Variable, :varname
+
         rule %r/[-+\/*%=<>&^\|!\\~]=?/, Operator
-        rule %r/[$@%#]+/, Name::Variable, :varname
 
         rule %r/0_?[0-7]+(_[0-7]+)*/, Num::Oct
         rule %r/0x[0-9A-Fa-f]+(_[0-9A-Fa-f]+)*/, Num::Hex
@@ -159,8 +160,9 @@ module Rouge
 
       state :varname do
         rule %r/\s+/, Text
-        rule %r/\{/, Punctuation, :pop! # hash syntax
-        rule %r/\)|,/, Punctuation, :pop! # arg specifier
+        rule %r/[{\[]/, Punctuation, :pop! # hash syntax
+        rule %r/[),]/, Punctuation, :pop! # arg specifier
+        rule %r/[;]/, Punctuation, :pop! # postfix
         mixin :name_common
       end
 

@@ -200,14 +200,6 @@ module Rouge
         mixin :comments
         rule %r/#requires\s-version \d(?:\.\d+)?/, Comment::Preproc
 
-        # rule %r/"/, Str::Double, :dq
-        # rule %r/'/, Str::Single, :sq
-        # rule %r/@"/, Str::Heredoc, :heredoc
-        # rule %r/@'.*?'@/m, Str::Heredoc
-
-        # rule %r/\d*\.\d+/, Num::Float
-        # rule %r/\d+/, Num::Integer
-
         rule %r/\.\.(?=\.?\d)/, Operator
         rule %r/(?:#{OPERATORS})\b/i, Operator
 
@@ -238,14 +230,12 @@ module Rouge
         end
 
         rule %r/\?/, Name::Function, :parameters
-        rule %r/[-+*\/%=!.&|]/, Operator
-        # rule %r/@\{/, Punctuation, :hasht
-        # rule %r/@\(/, Punctuation, :array
-        # rule %r/\[/, Punctuation, :bracket
-        rule %r/[{}(),:;]/, Punctuation
 
         mixin :expr
         mixin :variable
+
+        rule %r/[-+*\/%=!.&|]/, Operator
+        rule %r/[{}(),:;]/, Punctuation
       end
     end
   end

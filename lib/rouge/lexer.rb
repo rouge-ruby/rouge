@@ -155,7 +155,7 @@ module Rouge
       def demo(arg=:absent)
         return @demo = arg unless arg == :absent
 
-        @demo ||= if File.exists?(demo_file)
+        @demo ||= if File.exist?(demo_file)
           File.read(demo_file, mode: 'rt:bom|utf-8')
         else
           Kernel::warn "Rouge: missing demo for the lexer `#{tag}'"

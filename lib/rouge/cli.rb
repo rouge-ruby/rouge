@@ -72,7 +72,9 @@ module Rouge
     def self.parse(argv=ARGV)
       argv = normalize_syntax(argv)
 
-      while (head = argv.shift)
+      until argv.empty?
+        head = argv.shift
+
         case head
         when '-h', '--help', 'help', '-help'
           return Help.parse(argv)
@@ -91,6 +93,8 @@ module Rouge
     end
 
     def self.require_file(file)
+      error!("please specify a filename after -r|--require") if file.nil? || file.empty?
+
       toplevel = Object.constants
       require file
       new_constants = Set.new(Object.constants) - toplevel
@@ -404,13 +408,15 @@ module Rouge
 
       def self.parse(argv)
         opts = { debug: nil, port: '9292' }
-        while head = argv.shift
+        while argv.any?
+          head = argv.shift
           case head
-          when '-p', '--port' then opts[:port] = argv.shift
+          when '-p', '--port' then opts[:port] = argv.shift \
+                or error!("please provide a port after -p|--port")
           end
         end
 
-        error!("invalid port #{opts[:port]})") unless opts[:port] =~ /\d+/
+        error!("invalid port `#{opts[:port]}'") unless opts[:port] =~ /\d+/
 
         new(opts)
       end

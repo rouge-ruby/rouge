@@ -132,16 +132,41 @@ module Rouge
       # Specify or get the path name containing a small demo for
       # this lexer (can be overriden by {demo}).
       def demo_file(arg=:absent)
-        return @demo_file = Pathname.new(arg) unless arg == :absent
+        if arg == :absent
+          @demo_file ||= Pathname.new(File.join(__dir__, 'demos', tag))
+        else
+          @demo_file = Pathname.new(arg)
+          @demo = nil
+        end
+      end
 
-        @demo_file = Pathname.new(File.join(__dir__, 'demos', tag))
+      def sample_file(arg=:absent)
+        if arg == :absent
+          @sample_file ||= Pathname.new(File.join(
+            File.dirname(LIB_DIR), 'spec', 'visual', 'samples', tag
+          ))
+        else
+          @sample_file = Pathname.new(arg)
+          @sample = nil
+        end
       end
 
       # Specify or get a small demo string for this lexer
       def demo(arg=:absent)
         return @demo = arg unless arg == :absent
 
-        @demo = File.read(demo_file, mode: 'rt:bom|utf-8')
+        @demo ||= if File.exist?(demo_file)
+          File.read(demo_file, mode: 'rt:bom|utf-8')
+        else
+          Kernel::warn "Rouge: missing demo for the lexer `#{tag}'"
+          "<missing demo for #{tag}>"
+        end
+      end
+
+      def sample(arg=:absent)
+        return @sample = arg unless arg == :absent
+
+        @sample = File.read(sample_file, mode: 'rt:bom|utf-8')
       end
 
       # @return a list of all lexers.

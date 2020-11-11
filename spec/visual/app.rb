@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-require 'rubygems'
-require 'bundler'
-Bundler.require(:default, :development)
+require 'rack'
+require 'sinatra'
 
 # stdlib
 require 'pathname'
 
 class VisualTestApp < Sinatra::Application
+  RELOADABLE_CONSTANTS = Set.new
+  RELOADABLE_FILES = Set.new
+
   BASE = Pathname.new(__FILE__).dirname
   SAMPLES = BASE.join('samples')
   ROOT = BASE.parent.parent
@@ -18,7 +20,9 @@ class VisualTestApp < Sinatra::Application
   DEMOS = ROOT.join('lib/rouge/demos')
 
   def reload_source!
+    RELOADABLE_CONSTANTS.each { |c| Object::send :remove_const, c }
     Rouge.reload!
+    RELOADABLE_FILES.each { |f| Kernel::load f }
   end
 
   def query_string
@@ -63,6 +67,7 @@ class VisualTestApp < Sinatra::Application
   configure do
     set :root, BASE
     set :views, BASE.join('templates')
+    set :public_folder, BASE.join('public')
   end
 
   before do
@@ -82,7 +87,7 @@ class VisualTestApp < Sinatra::Application
   get '/:lexer' do |lexer_name|
     @lexer = Rouge::Lexer.find_fancy("#{lexer_name}?#{query_string}")
     halt 404 unless @lexer
-    @sample = File.read(SAMPLES.join(@lexer.class.tag), encoding: 'utf-8')
+    @sample = @lexer.class.sample
 
     @title = "#{@lexer.class.tag} | Visual Test"
     @raw = Rouge.highlight(@sample, 'plaintext', @formatter)
@@ -94,8 +99,8 @@ class VisualTestApp < Sinatra::Application
 
 
   get '/' do
-    @samples = DEMOS.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
-    @samples.map!(&Rouge::Lexer.method(:find))
+    @title = 'Rouge development server'
+    @samples = Rouge::Lexer.all
 
     erb :index
   end

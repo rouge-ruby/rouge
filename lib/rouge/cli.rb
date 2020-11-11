@@ -37,6 +37,9 @@ module Rouge
   end
 
   class CLI
+    LOADED_FILES = Set.new
+    LOADED_CONSTANTS = Set.new
+
     def self.doc
       return enum_for(:doc) unless block_given?
 
@@ -49,9 +52,10 @@ module Rouge
       yield %|	style		#{Style.desc}|
       yield %|	list		#{List.desc}|
       yield %|	guess		#{Guess.desc}|
+      yield %|	server		#{Server.desc}|
       yield %|	version		#{Version.desc}|
       yield %||
-      yield %|global options:|
+      yield %|and global options include:|
       yield %[	--require|-r <fname>	require <fname> after loading rouge]
       yield %||
       yield %|See `rougify help <command>` for more info.|
@@ -68,12 +72,14 @@ module Rouge
     def self.parse(argv=ARGV)
       argv = normalize_syntax(argv)
 
-      while (head = argv.shift)
+      until argv.empty?
+        head = argv.shift
+
         case head
         when '-h', '--help', 'help', '-help'
           return Help.parse(argv)
         when '--require', '-r'
-          require argv.shift
+          require_file argv.shift
         else
           break
         end
@@ -84,6 +90,16 @@ module Rouge
 
       argv.unshift(head) if head
       Highlight.parse(argv)
+    end
+
+    def self.require_file(file)
+      error!("please specify a filename after -r|--require") if file.nil? || file.empty?
+
+      toplevel = Object.constants
+      require file
+      new_constants = Set.new(Object.constants) - toplevel
+      LOADED_CONSTANTS.merge(new_constants)
+      LOADED_FILES << file
     end
 
     def initialize(options={})
@@ -99,20 +115,14 @@ module Rouge
 
     def self.class_from_arg(arg)
       case arg
-      when 'version', '--version', '-v'
-        Version
-      when 'help', nil
-        Help
-      when 'highlight', 'hi'
-        Highlight
-      when 'debug'
-        Debug
-      when 'style'
-        Style
-      when 'list'
-        List
-      when 'guess'
-        Guess
+      when 'version', '--version', '-v' then Version
+      when 'help', nil then Help
+      when 'highlight', 'hi' then Highlight
+      when 'debug' then Debug
+      when 'style' then Style
+      when 'list' then List
+      when 'guess' then Guess
+      when 'server' then Server
       end
     end
 
@@ -353,6 +363,7 @@ module Rouge
 
     class Debug < Highlight
       def self.desc
+        "highlight code with debug features"
       end
 
       def self.doc
@@ -371,6 +382,66 @@ module Rouge
         out[:formatter] = 'null'
 
         out
+      end
+    end
+
+    class Server < CLI
+      def self.desc
+        "run a server to view stress-test files"
+      end
+
+      def self.doc
+        return enum_for(:doc) unless block_given?
+
+        yield %|usage: rougify server [<options>]|
+        yield %||
+        yield %|Run a development server which can test various lexers'|
+        yield %|behavior on the included demo and stress-test files.|
+        yield %||
+        yield %|Visit / to see all the supported languages and their demos,|
+        yield %|and visit /<lexer-name> (e.g. /ruby) to view a specific|
+        yield %|lexer's stress-test file.|
+        yield %||
+        yield %|options:|
+        yield %[  --port|-p <port>	Specify the port. Default:9292]
+      end
+
+      def self.parse(argv)
+        opts = { debug: nil, port: '9292' }
+        while argv.any?
+          head = argv.shift
+          case head
+          when '-p', '--port' then opts[:port] = argv.shift \
+                or error!("please provide a port after -p|--port")
+          end
+        end
+
+        error!("invalid port `#{opts[:port]}'") unless opts[:port] =~ /\d+/
+
+        new(opts)
+      end
+
+      def initialize(opts)
+        @port = opts[:port].to_i
+      end
+
+      def run
+        begin
+          require 'rack'
+          require 'sinatra'
+        rescue LoadError
+          puts %|Could not load rack or sinatra: these are development|
+          puts %|dependencies required for running `rougify server`. Please|
+          puts %|use `gem install --development rouge` or add sinatra to your|
+          puts %|Gemfile.|
+          exit 1
+        end
+
+        Kernel::load File.join(LIB_DIR, '../spec/visual/app.rb')
+        VisualTestApp::RELOADABLE_CONSTANTS.merge(LOADED_CONSTANTS)
+        VisualTestApp::RELOADABLE_FILES.merge(LOADED_FILES)
+
+        Rack::Server.start app: VisualTestApp, Port: @port
       end
     end
 

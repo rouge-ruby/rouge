@@ -13,7 +13,19 @@ Gem::Specification.new do |s|
     for pygments.
   desc
   s.homepage = "http://rouge.jneen.net/"
-  s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'lib/**/*.yml', 'bin/rougify', 'lib/rouge/demos/*']
+  s.files = Dir[
+    'Gemfile',
+    'LICENSE',
+    'rouge.gemspec',
+    'lib/**/*.rb',
+    'lib/**/*.yml',
+    'bin/rougify',
+    'lib/rouge/demos/*',
+    'spec/visual/templates/*.erb',
+    'spec/visual/samples/*',
+    'spec/visual/*.rb',
+    'spec/visual/public/favicon.ico'
+  ]
   s.executables = %w(rougify)
   s.licenses = ['MIT', 'BSD-2-Clause']
   s.required_ruby_version = '>= 2.0'
@@ -23,4 +35,7 @@ Gem::Specification.new do |s|
     "documentation_uri" => "https://rouge-ruby.github.io/docs/",
     "source_code_uri"   => "https://github.com/rouge-ruby/rouge"
   }
+
+  # for running the development server
+  s.add_development_dependency 'sinatra', '~> 2.0'
 end

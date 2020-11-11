@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-return if defined?(Rouge)
-
 # stdlib
 require 'pathname'
 require 'monitor'
@@ -14,7 +12,7 @@ module Rouge
   LIB_DIR = __dir__.freeze
 
   LOAD_LOCK = Monitor.new
-  ROOT = File.dirname(LIB_DIR)
+  ROOT = File.dirname(LIB_DIR).freeze
 
   class << self
     def reload!
@@ -49,55 +47,55 @@ module Rouge
       Kernel::load File.join(LIB_DIR, "rouge/#{path}.rb")
     end
   end
-end
 
-Rouge.load_file 'version'
-Rouge.load_file 'util'
-Rouge.load_file 'text_analyzer'
-Rouge.load_file 'token'
+  load_file 'version'
+  load_file 'util'
+  load_file 'text_analyzer'
+  load_file 'token'
 
-Rouge.load_file 'lexer'
-Rouge.load_file 'regex_lexer'
-Rouge.load_file 'template_lexer'
+  load_file 'lexer'
+  load_file 'regex_lexer'
+  load_file 'template_lexer'
 
-Rouge.load_file 'langspec'
-Rouge.load_file 'langspec_cache'
+  load_file 'langspec'
+  load_file 'langspec_cache'
 
-Rouge.load_file 'guesser'
-Rouge.load_file 'guessers/util'
-Rouge.load_file 'guessers/glob_mapping'
-Rouge.load_file 'guessers/modeline'
-Rouge.load_file 'guessers/filename'
-Rouge.load_file 'guessers/mimetype'
-Rouge.load_file 'guessers/source'
-Rouge.load_file 'guessers/disambiguation'
+  load_file 'guesser'
+  load_file 'guessers/util'
+  load_file 'guessers/glob_mapping'
+  load_file 'guessers/modeline'
+  load_file 'guessers/filename'
+  load_file 'guessers/mimetype'
+  load_file 'guessers/source'
+  load_file 'guessers/disambiguation'
 
-Rouge.load_file 'formatter'
-Rouge.load_file 'formatters/html'
-Rouge.load_file 'formatters/html_table'
-Rouge.load_file 'formatters/html_pygments'
-Rouge.load_file 'formatters/html_legacy'
-Rouge.load_file 'formatters/html_linewise'
-Rouge.load_file 'formatters/html_line_highlighter'
-Rouge.load_file 'formatters/html_line_table'
-Rouge.load_file 'formatters/html_inline'
-Rouge.load_file 'formatters/terminal256'
-Rouge.load_file 'formatters/terminal_truecolor'
-Rouge.load_file 'formatters/tex'
-Rouge.load_file 'formatters/null'
+  load_file 'formatter'
+  load_file 'formatters/html'
+  load_file 'formatters/html_table'
+  load_file 'formatters/html_pygments'
+  load_file 'formatters/html_legacy'
+  load_file 'formatters/html_linewise'
+  load_file 'formatters/html_line_highlighter'
+  load_file 'formatters/html_line_table'
+  load_file 'formatters/html_inline'
+  load_file 'formatters/terminal256'
+  load_file 'formatters/terminal_truecolor'
+  load_file 'formatters/tex'
+  load_file 'formatters/null'
 
-Rouge.load_file 'theme'
-Rouge.load_file 'tex_theme_renderer'
-Rouge.load_file 'themes/thankful_eyes'
-Rouge.load_file 'themes/colorful'
-Rouge.load_file 'themes/base16'
-Rouge.load_file 'themes/github'
-Rouge.load_file 'themes/igor_pro'
-Rouge.load_file 'themes/monokai'
-Rouge.load_file 'themes/molokai'
-Rouge.load_file 'themes/monokai_sublime'
-Rouge.load_file 'themes/gruvbox'
-Rouge.load_file 'themes/tulip'
-Rouge.load_file 'themes/pastie'
-Rouge.load_file 'themes/bw'
-Rouge.load_file 'themes/magritte'
+  load_file 'theme'
+  load_file 'tex_theme_renderer'
+  load_file 'themes/thankful_eyes'
+  load_file 'themes/colorful'
+  load_file 'themes/base16'
+  load_file 'themes/github'
+  load_file 'themes/igor_pro'
+  load_file 'themes/monokai'
+  load_file 'themes/molokai'
+  load_file 'themes/monokai_sublime'
+  load_file 'themes/gruvbox'
+  load_file 'themes/tulip'
+  load_file 'themes/pastie'
+  load_file 'themes/bw'
+  load_file 'themes/magritte'
+end unless defined?(Rouge::ROOT)

@@ -22,6 +22,7 @@ module Rouge
     load_and_delegate :lex
     load_and_delegate :continue_lex
     load_and_delegate :new
+    load_and_delegate :sample
 
     # overridden with a `def self.detect?` in
     # the cache file, but some classes don't

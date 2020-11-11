@@ -10,6 +10,7 @@ describe Rouge::Lexers do
       include Support::Lexing
 
       subject { lang.new }
+      let(:sample) { lang.sample }
 
       it 'lexes the demo with no errors' do
         assert_no_errors(lang.demo)
@@ -17,7 +18,6 @@ describe Rouge::Lexers do
 
       it 'lexes the sample without throwing' do
         raise 'no tag' unless lang.tag
-        sample = File.read(samples_dir.join(lang.tag), encoding: 'utf-8')
 
         out_buf = String.new("")
         subject.lex(sample) do |token, value|

@@ -22,6 +22,7 @@ module Rouge
       }
 
       BUILTIN_COMMANDS = Set.new %w[
+        add_compile_definitions
         add_compile_options
         add_custom_command
         add_custom_target
@@ -29,6 +30,7 @@ module Rouge
         add_dependencies
         add_executable
         add_library
+        add_link_options
         add_subdirectory
         add_test
         aux_source_directory
@@ -36,7 +38,9 @@ module Rouge
         build_command
         build_name
         cmake_host_system_information
+        cmake_language
         cmake_minimum_required
+        cmake_parse_arguments
         cmake_policy
         configure_file
         create_test_sourcelist
@@ -74,6 +78,7 @@ module Rouge
         include
         include_directories
         include_external_msproject
+        include_guard
         include_regular_expression
         install
         install_files
@@ -110,9 +115,14 @@ module Rouge
         subdir_depends
         subdirs
         target_compile_definitions
+        target_compile_features
         target_compile_options
         target_include_directories
+        target_link_directories
         target_link_libraries
+        target_link_options
+        target_precompile_headers
+        target_sources
         try_compile
         try_run
         unset

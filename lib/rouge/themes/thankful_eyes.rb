@@ -59,6 +59,7 @@ module Rouge
             Literal::Date,
             Literal::String::Symbol, :fg => :pink_merengue, :bold => true
       style Literal::String, :fg => :dune, :bold => true
+      style Literal::String::Affix, :fg => :sandy, :bold => true
       style Literal::String::Escape,
             Literal::String::Char,
             Literal::String::Interpol, :fg => :backlit, :bold => true

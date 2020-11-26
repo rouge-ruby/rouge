@@ -67,6 +67,7 @@ module Rouge
       style Keyword::Declaration, :fg => :base09
 
       style Literal::String, :fg => :base0B
+      style Literal::String::Affix, :fg => :base0E
       style Literal::String::Regex, :fg => :base0C
 
       style Literal::String::Interpol,

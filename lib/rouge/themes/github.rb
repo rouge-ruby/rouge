@@ -35,6 +35,7 @@ module Rouge
       style Literal::Number::Integer,         :fg => '#009999'
       style Literal::Number::Oct,             :fg => '#009999'
       style Literal::Number,                  :fg => '#009999'
+      style Literal::String::Affix,           :fg => '#000000', :bold => true
       style Literal::String::Backtick,        :fg => '#d14'
       style Literal::String::Char,            :fg => '#d14'
       style Literal::String::Doc,             :fg => '#d14'

@@ -37,6 +37,7 @@ module Rouge
       style Name::Decorator,             :fg => "#555", :bold => true
 
       style Literal::String,             :bg => "#fff0f0"
+      style Literal::String::Affix,      :fg => "#080", :bold => true
       style Literal::String::Char,       :fg => "#04D"
       style Literal::String::Doc,        :fg => "#D42"
       style Literal::String::Interpol,   :bg => "#eee"

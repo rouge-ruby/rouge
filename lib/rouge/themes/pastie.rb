@@ -36,6 +36,7 @@ module Rouge
       style Num,                       :fg => '#0000dd', :bold => true
 
       style Str,                       :fg => '#dd2200', :bg => '#fff0f0'
+      style Str::Affix,                :fg => '#008800', :bold => true
       style Str::Escape,               :fg => '#0044dd', :bg => '#fff0f0'
       style Str::Interpol,             :fg => '#3333bb', :bg => '#fff0f0'
       style Str::Other,                :fg => '#22bb22', :bg => '#f0fff0'

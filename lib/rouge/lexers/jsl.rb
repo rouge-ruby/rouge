@@ -17,9 +17,7 @@ module Rouge
         rule %r'/[*].*', Comment::Multiline, :comment
 
         # messages
-        rule %r/(<<)(.*?)([(),;&|!=<>])/ do |m|
-          groups Operator, Name::Function, Punctuation
-        end
+        rule %r/<</, Operator, :message
 
         # covers built-in and custom functions
         rule %r/([a-z_][\w\s'%.\\]*)(\()/i do |m|
@@ -42,6 +40,13 @@ module Rouge
 
         rule %r/[-+*\/!%&<>\|=:]/, Operator
         rule %r/[\[\](){},;]/, Punctuation
+      end
+
+      state :message do
+        rule %r/\s+/m, Text::Whitespace
+        rule %r/[a-z_][\w\s'%.\\]*/i, Name::Function
+        rule %r/[(),;]/, Punctuation, :pop!
+        rule %r/[&|!=<>]/, Operator, :pop!
       end
 
       state :dq do

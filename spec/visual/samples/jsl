@@ -20,5 +20,7 @@ date = 01jan00;
 dateTime = 12dec1999:12:30:00.45;
 
 New Window( "Rouge Test",
-    Text Box( "Syntax highlighting is great!" )
+    tb = Text Box( "Syntax highlighting is great!" )
 );
+
+If(tb << Get Text != "", "I'm still formatted correctly!");

@@ -17,7 +17,7 @@ module Rouge
         rule %r(/\*.*?\*/)m, Comment::Multiline
 
         # messages
-        rule %r/(<<)(.*?)(\(|;)/ do |m|
+        rule %r/(<<)(.*?)([(),;&|!=<>])/ do |m|
           groups Operator, Name::Function, Punctuation
         end
 

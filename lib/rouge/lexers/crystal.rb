@@ -212,7 +212,7 @@ module Rouge
 
         rule %r/[a-zA-Z_]\w*[?!]/, Name, :expr_start
         rule %r/[a-zA-Z_]\w*/, Name, :method_call
-        rule %r/\*\*|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\./,
+        rule %r/\*\*|\/\/|<<?|>>?|>=|<=|<=>|=~|={3}|!~|&&?|\|\||\./,
           Operator, :expr_start
         rule %r/[-+\/*%=<>&!^|~]=?/, Operator, :expr_start
         rule(/[?]/) { token Punctuation; push :ternary; push :expr_start }

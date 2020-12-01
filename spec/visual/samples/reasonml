@@ -1,3 +1,5 @@
+let x = 6 // This is single line comment
+
 let c: char = 'A'; /* comment with link https://example and - = */
 
 let respond_no_content = reqd => {
@@ -43,6 +45,7 @@ let ignore: 'a => unit = _ => ();
 /* comment ****/
 /* comment *****/
 
+// Another single line comment
 let testingNotQuiteEndOfLineComments = [
   "Item 1" /* Comment For First Item */,
   "Item 2" /* Comment For Second Item */,

@@ -24,7 +24,8 @@ module Rouge
         rule %r/#{@@upper_id}(?=\s*[.])/, Name::Namespace, :dotted
         rule %r/`#{@@id}/, Name::Tag
         rule @@upper_id, Name::Class
-        rule %r/[\/][*](?![\/])/, Comment, :comment
+        rule %r(//.*), Comment::Single
+        rule %r(/\*), Comment::Multiline, :comment
         rule @@id do |m|
           match = m[0]
           if self.class.keywords.include? match
@@ -55,10 +56,10 @@ module Rouge
       end
 
       state :comment do
-        rule %r|[^/*)]+|, Comment
-        rule %r|[/][*]|, Comment, :push
-        rule %r|[*][/]|, Comment, :pop!
-        rule %r|[*/]|, Comment
+        rule %r([^/\*]+), Comment::Multiline
+        rule %r(/\*), Comment::Multiline, :comment
+        rule %r(\*/), Comment::Multiline, :pop!
+        rule %r([*/]), Comment::Multiline
       end
     end
   end

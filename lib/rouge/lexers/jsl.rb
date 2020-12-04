@@ -24,9 +24,9 @@ module Rouge
           groups Keyword, Punctuation
         end
 
-        rule %r/\b[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+|\.)(?:e[+-]?[0-9]+)?i?\b/i, Num
-
         rule %r/\d{2}(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\d{2}(\d{2})?(:\d{2}:\d{2}(:\d{2}(\.\d*)?)?)?/i, Literal::Date
+
+        rule %r/-?(?:[0-9]+(?:[.][0-9]+)?|[.][0-9]*)(?:e[+-]?[0-9]+)?i?/i, Num
 
         rule %r/::[a-z_][\w\s'%.\\]*/i, Name::Variable
         rule %r/:\w+/, Name

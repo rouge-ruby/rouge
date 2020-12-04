@@ -38,7 +38,7 @@ module Rouge
         end
         rule %r/"/, Str::Double, :dq
 
-        rule %r/[-+*\/!%&<>\|=:]/, Operator
+        rule %r/[-+*\/!%&<>\|=:`^]/, Operator
         rule %r/[\[\](){},;]/, Punctuation
       end
 

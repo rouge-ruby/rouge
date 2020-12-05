@@ -150,6 +150,8 @@ module Rouge
             Literal::String::Interpol,
             Literal::String::Regex, :fg => :green, :italic => true
 
+      style Literal::String::Affix, :fg => :red
+
       style Literal::String::Escape, :fg => :orange
 
       style Name::Namespace,

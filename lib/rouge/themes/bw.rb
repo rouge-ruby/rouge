@@ -26,6 +26,7 @@ module Rouge
       style Name::Tag,                   :bold => true
 
       style Literal::String,             :italic => true
+      style Literal::String::Affix,      :bold => true
       style Literal::String::Interpol,   :bold => true
       style Literal::String::Escape,     :bold => true
 

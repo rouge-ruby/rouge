@@ -59,6 +59,7 @@ module Rouge
             Literal::Number::Oct,
             Literal::Number,
             Literal::String::Escape,          :fg => :light_violet
+      style Literal::String::Affix,           :fg => :soft_cyan, :bold => true
       style Literal::String::Backtick,
             Literal::String::Char,
             Literal::String::Doc,

@@ -62,6 +62,7 @@ module Rouge
             Literal::Date,                :fg => :forest, :bold => true
       style Literal::String::Symbol,      :fg => :forest
       style Literal::String,              :fg => :wine, :bold => true
+      style Literal::String::Affix,       :fg => :royal, :bold => true
       style Literal::String::Escape,
             Literal::String::Char,
             Literal::String::Interpol,    :fg => :purple, :bold => true

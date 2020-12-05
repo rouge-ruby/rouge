@@ -15,6 +15,7 @@ module Rouge
       style Keyword::Reserved,                :fg => '#007575'
       style Keyword,                          :fg => '#0000FF'
       style Literal::String,                  :fg => '#009C00'
+      style Literal::String::Affix,           :fg => '#0000FF'
       style Name::Builtin,                    :fg => '#C34E00'
     end
   end

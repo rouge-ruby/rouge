@@ -12,8 +12,6 @@ module Rouge
       filenames '*.res', '*.resi'
       mimetypes 'text/x-rescript'
 
-      operators = %r([;_!$%&*+/<=>@^|-]+)
-
       def self.keywords
         @keywords ||= Set.new(%w(
           open let rec and as exception assert lazy if else
@@ -74,7 +72,7 @@ module Rouge
         rule %r/[(){}\[\];]+/, Punctuation
 
         # Operators
-        rule operators, Operator
+        rule %r([;_!$%&*+/<=>@^|-]+), Operator
 
         # Numbers
         rule %r/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float

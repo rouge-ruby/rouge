@@ -5,6 +5,14 @@ dt << Distribution( Column( :age ), Histograms Only( 1 ) );
     Multi-line comment
 */
 
+/*
+    Nested
+    /*
+        Comments
+    */
+    Work
+*/
+
 escapeSequence = "This is an \!b escaped sequence";
 escapeQuote = "This is a \!" quotation mark";
 escapeStr = "\[This is """"""" an escaped string]\"
@@ -16,9 +24,12 @@ a name with spaces = 5;
 
 scientificNotation = 5e9;
 decimal = 1.234;
+missing = .;
 date = 01jan00;
 dateTime = 12dec1999:12:30:00.45;
 
 New Window( "Rouge Test",
-    Text Box( "Syntax highlighting is great!" )
+    tb = Text Box( "Syntax highlighting is great!" )
 );
+
+If(tb << Get Text != "", "I'm still formatted correctly!");

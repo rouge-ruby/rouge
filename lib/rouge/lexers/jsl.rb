@@ -14,21 +14,19 @@ module Rouge
         rule %r/\s+/m, Text::Whitespace
 
         rule %r(//.*?$), Comment::Single
-        rule %r(/\*.*?\*/)m, Comment::Multiline
+        rule %r'/[*].*', Comment::Multiline, :comment
 
         # messages
-        rule %r/(<<)(.*?)(\(|;)/ do |m|
-          groups Operator, Name::Function, Punctuation
-        end
+        rule %r/<</, Operator, :message
 
         # covers built-in and custom functions
         rule %r/([a-z_][\w\s'%.\\]*)(\()/i do |m|
           groups Keyword, Punctuation
         end
 
-        rule %r/\b[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+|\.)(?:e[+-]?[0-9]+)?i?\b/i, Num
-
         rule %r/\d{2}(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\d{2}(\d{2})?(:\d{2}:\d{2}(:\d{2}(\.\d*)?)?)?/i, Literal::Date
+
+        rule %r/-?(?:[0-9]+(?:[.][0-9]+)?|[.][0-9]*)(?:e[+-]?[0-9]+)?i?/i, Num
 
         rule %r/::[a-z_][\w\s'%.\\]*/i, Name::Variable
         rule %r/:\w+/, Name
@@ -40,8 +38,15 @@ module Rouge
         end
         rule %r/"/, Str::Double, :dq
 
-        rule %r/[-+*\/!%&<>\|=:]/, Operator
+        rule %r/[-+*\/!%&<>\|=:`^]/, Operator
         rule %r/[\[\](){},;]/, Punctuation
+      end
+
+      state :message do
+        rule %r/\s+/m, Text::Whitespace
+        rule %r/[a-z_][\w\s'%.\\]*/i, Name::Function
+        rule %r/[(),;]/, Punctuation, :pop!
+        rule %r/[&|!=<>]/, Operator, :pop!
       end
 
       state :dq do
@@ -49,6 +54,13 @@ module Rouge
         rule %r/\\/, Str::Double
         rule %r/"/, Str::Double, :pop!
         rule %r/[^\\"]+/m, Str::Double
+      end
+
+      state :comment do
+        rule %r'/[*]', Comment::Multiline, :comment
+        rule %r'[*]/', Comment::Multiline, :pop!
+        rule %r'[^/*]+', Comment::Multiline
+        rule %r'[/*]', Comment::Multiline
       end
     end
   end

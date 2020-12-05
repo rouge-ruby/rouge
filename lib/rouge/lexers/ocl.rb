@@ -2,7 +2,7 @@ module Rouge
     module Lexers
         class OCL < RegexLexer
             title "OCL"
-            desc "OMG Object Constraint Language v. 2.4"
+            desc "OMG Object Constraint Language (omg.org/spec/OCL)"
             tag 'ocl'
             aliases 'OCL'
             filenames '*.ocl'

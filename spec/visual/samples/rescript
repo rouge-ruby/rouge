@@ -1,0 +1,1574 @@
+// Single line comment
+let foo = #Bar
+let s1 = "s1"
+let s2 = `HI ${s2} BYE`
+let s3 = j`HI ${s2} BYE`
+
+let f = _ => 2
+
+let \"let" = 2
+let \"let" = "foo bar \n"
+let \"let" = '\''
+
+module Person = {
+  type t = Teacher | Director | Student(string)
+
+  let greeting = person =>
+    switch person {
+    | Teacher => "Hey Professor!"
+    | Director => "Hello Director."
+    | Student("Richard") => "Still here Ricky?"
+    | Student(other) => "Hey, " ++ other ++ "."
+    }
+}
+
+module Button = {
+  @react.component
+  let make = (~count: int, ~onClick) => {
+    let times = switch count {
+    | 1 => "once"
+    | 2 => "twice"
+    | n => Belt.Int.toString(n) ++ " times"
+    }
+
+    let msg = "Click me " ++ times
+
+    <button onClick> {msg->React.string} </button>
+  }
+}
+
+/*
+
+## Properties:
+
+- size: The total number of items.
+*/
+
+type nodeColor =
+  | Red
+  | Black
+
+/*
+Property of a red-black tree, taken from Wikipedia:
+1. A node is either red or black.
+2. Root is black.
+3. Leaves are all null and considered black.
+4. Both children of a red node are black.
+5. Every path from a node to any of its descendent leaves contains the same
+number of black nodes.
+*/
+
+type rec node<'value> = {
+  mutable left: option<node<'value>>,
+  mutable right: option<node<'value>>,
+  mutable parent: option<node<'value>>,
+  mutable sum: float,
+  mutable color : nodeColor,
+  mutable height: float,
+  mutable value: 'value,
+}
+
+type t<'value> = {
+  mutable size: int,
+  mutable root: option<node<'value>>,
+  compare: (. 'value, 'value) => int,
+}
+
+let createNode = (~color, ~value, ~height) =>
+  {left:None, right:None, parent:None, sum:0., height, value, color}
+
+external castNotOption: option<'a> => 'a = "%identity"
+
+let updateSum = (node) => {
+  let leftSum = switch node.left {
+  | None => 0.
+  | Some(left) => left.sum
+  }
+  let rightSum = switch node.right {
+  | None => 0.
+  | Some(right) => right.sum
+  }
+  node.sum = leftSum +. rightSum +. node.height
+}
+
+/* Update the sum for the node and parents recursively. */
+let rec updateSumRecursive = (rbt, node) => {
+  updateSum(node)
+  switch node.parent {
+  | None => ()
+  | Some(parent) =>
+    rbt->updateSumRecursive(parent)
+  }
+}
+
+let grandParentOf = node => {
+  switch node.parent {
+  | None => None
+  | Some(ref_) => ref_.parent
+  }
+}
+
+let isLeft = node => {
+  switch node.parent {
+  | None => false
+  | Some(parent) => Some(node) === parent.left
+  }
+}
+
+let leftOrRightSet = (~node, x, value) => {
+  isLeft(node) ? x.left=value : x.right=value
+}
+
+let siblingOf = node => {
+  if isLeft(node) {
+    castNotOption(node.parent).right
+  } else {
+    castNotOption(node.parent).left
+  }
+}
+
+let uncleOf = node => {
+  switch grandParentOf(node) {
+  | None => None
+  | Some(grandParentOfNode) =>
+    if isLeft(castNotOption(node.parent)) {
+      grandParentOfNode.right
+    } else {
+      grandParentOfNode.left
+    }
+  }
+}
+
+let rec findNode = (rbt, node, value) => {
+  switch node {
+  | None => None
+  | Some(node) =>
+    let cmp = rbt.compare(. value, node.value)
+    if cmp === 0 {
+      Some(node)
+    } else if cmp < 0 {
+      findNode(rbt, node.left, value)
+    } else {
+      findNode(rbt, node.right, value)
+    }
+  }
+}
+
+let has = (rbt, value) => findNode(rbt, rbt.root, value) !== None
+
+let rec peekMinNode = node => switch node {
+  | None => None
+  | Some(node) =>
+    node.left === None ? Some(node) : node.left->peekMinNode
+}
+
+let rec peekMaxNode = node => switch node {
+  | None => None
+  | Some(node) =>
+    node.right === None ? Some(node) : node.right->peekMaxNode
+}
+
+let rotateLeft = (rbt, node) => {
+  let parent = node.parent
+  let right = node.right
+  switch parent {
+    | Some(parent) =>
+      parent->leftOrRightSet(~node, right)
+    | None =>
+      rbt.root = right
+  }
+  node.parent = right
+  let right = right->castNotOption // precondition
+  let rightLeft = right.left
+  node.right = rightLeft
+  switch rightLeft {
+    | Some(rightLeft) =>
+      rightLeft.parent = Some(node)
+    | None =>
+      ()
+  }
+  right.parent = parent
+  right.left = Some(node)
+  updateSum(node)
+  updateSum(right)
+}
+
+let rotateRight = (rbt, node) => {
+  let parent = node.parent
+  let left = node.left
+  switch parent {
+    | Some(parent) =>
+      parent->leftOrRightSet(~node, left)
+    | None =>
+      rbt.root = left
+  }
+  node.parent = left
+  let left = left->castNotOption // precondition
+  let leftRight = left.right
+  node.left = leftRight
+  switch leftRight {
+    | Some(leftRight) =>
+      leftRight.parent = Some(node)
+    | None =>
+      ()
+  }
+  left.parent = parent
+  left.right = Some(node)
+  updateSum(node)
+  updateSum(left)
+}
+
+let rec findInsert = (rbt, node, nodeToInsert, value) => {
+  switch node {
+    | None => None
+    | Some(node) => {
+      let cmp = rbt.compare(. value, node.value)
+      if cmp === 0 {
+        Some(node)
+      } else {
+        if cmp < 0 {
+          if node.left !== None {
+            rbt->findInsert(node.left, nodeToInsert, value)
+          } else {
+            nodeToInsert.parent = Some(node)
+            node.left = Some(nodeToInsert)
+            None
+          }
+        } else {
+          if node.right !== None {
+            rbt->findInsert(node.right, nodeToInsert, value)
+          } else {
+            nodeToInsert.parent = Some(node)
+            node.right = Some(nodeToInsert)
+            None
+          }
+        }
+      }
+    }
+  }
+}
+
+// After adding the node, we need to operate on it to preserve the tree's
+// properties by filtering it through a series of cases. It'd be easier if
+// there's tail recursion in JavaScript, as some cases fix the node but
+// restart the cases on the node's ancestor. We'll have to use loops for now.
+
+let rec _addLoop = (rbt, currentNode) => {
+  // Case 1: node is root. Violates 1. Paint it black.
+  if Some(currentNode) === rbt.root {
+    currentNode.color = Black
+  }
+
+  // Case 2: parent black. No properties violated. After that, parent is sure
+  // to be red.
+  else if (currentNode.parent->castNotOption).color === Black {
+    ()
+  }
+
+  // Case 3: if node's parent and uncle are red, they are painted black.
+  // Their parent (node's grandparent) should be painted red, and the
+  // grandparent red. Note that node certainly has a grandparent, since at
+  // this point, its parent's red, which can't be the root.
+
+  // After the painting, the grandparent might violate 2 or 4.
+  else if({
+      let uncle = uncleOf(currentNode)
+      uncle !== None && (uncle->castNotOption).color === Red
+    }) {
+    (currentNode.parent->castNotOption).color = Black
+    (uncleOf(currentNode)->castNotOption).color = Black
+    (grandParentOf(currentNode)->castNotOption).color = Red
+    _addLoop(rbt, grandParentOf(currentNode)->castNotOption)
+  }
+  else {
+    // At this point, uncle is either black or doesn't exist.
+
+    // Case 4: parent red, uncle black, node is right child, parent is left
+    // child. Do a left rotation. Then, former parent passes through case 5.
+    let currentNode =
+      if !isLeft(currentNode) && isLeft(currentNode.parent->castNotOption) {
+        rotateLeft(rbt, currentNode.parent->castNotOption)
+        currentNode.left->castNotOption
+      } else if isLeft(currentNode) && !isLeft(currentNode.parent->castNotOption) {
+        rotateRight(rbt, currentNode.parent->castNotOption)
+        currentNode.right->castNotOption
+      } else {
+        currentNode
+      }
+
+    // Case 5: parent red, uncle black, node is left child, parent is left
+    // child. Right rotation. Switch parent and grandparent's color.
+    (currentNode.parent->castNotOption).color = Black
+    (grandParentOf(currentNode)->castNotOption).color = Red
+    if isLeft(currentNode) {
+      rotateRight(rbt, grandParentOf(currentNode)->castNotOption)
+    } else {
+      rotateLeft(rbt, grandParentOf(currentNode)->castNotOption)
+    }
+  }
+}
+
+let add = (rbt, value, ~height) => {
+  // Again, make sure to not pass a value already in the tree.
+  //
+  // _Returns:_ value added.
+  rbt.size = rbt.size + 1
+  let nodeToInsert = createNode(~value, ~color=Red, ~height)
+  let inserted =
+    if rbt.root === None {
+      rbt.root = Some(nodeToInsert)
+      true
+    }
+    else {
+      let foundNode = findInsert(rbt, rbt.root, nodeToInsert, value)
+      foundNode === None
+    }
+  if inserted {
+    rbt->updateSumRecursive(nodeToInsert)
+
+    _addLoop(rbt, nodeToInsert)
+    Some(nodeToInsert)
+  } else {
+    None
+  }
+}
+
+
+// To simplify removal cases, we can notice this:
+// 1. Node has no child.
+// 2. Node has two children. Select the smallest child on the right branch
+// (leftmost) and copy its value into the node to delete. This replacement node
+// certainly has less than two children or it wouldn't be the smallest. Then
+// delete this replacement node.
+// 3. Node has one child.
+// They all come down to removing a node with maximum one child.
+let removeNode = (rbt, node) => {
+  let nodeToRemove =
+    switch (node.left, node.right) {
+    | (Some(_), Some(_)) =>
+      let successor = peekMinNode(node.right)->castNotOption
+      node.value = successor.value
+      node.height = successor.height
+      successor
+    | _ => node
+    }
+  // At this point, the node to remove has only one child.
+  let successor = switch nodeToRemove.left {
+  | None => nodeToRemove.right
+  | left => left
+  }
+  let (successor, isLeaf) = switch successor {
+    | None =>
+      let leaf = createNode(~value=%bs.raw("0"), ~color=Black, ~height=0.)
+      let isLeaf = (. x) => x === leaf;
+      (leaf, isLeaf)
+    | Some(successor) =>
+      (successor, (. _) => false)
+  }
+  let nodeParent = nodeToRemove.parent
+  successor.parent = nodeParent
+  switch nodeParent {
+  | None => ()
+  | Some(parent) =>
+    parent->leftOrRightSet(~node=nodeToRemove, Some(successor))
+  }
+
+  rbt->updateSumRecursive(successor)
+
+  // We're done if node's red. If it's black and its child that took its place
+  // is red, change it to black. If both are black, we do cases checking like
+  // in insert.
+  if nodeToRemove.color === Black {
+    if successor.color === Red {
+      successor.color = Black
+      if successor.parent === None {
+        rbt.root = Some(successor)
+      }
+    } else {
+      let break = ref(false)
+      let successorRef = ref(successor)
+      while !break.contents {
+        let successor = successorRef.contents
+        // Case 1: node is root. Done.
+        switch successor.parent {
+        | None =>
+          rbt.root = Some(successor)
+          break.contents = true
+        | Some(successorParent) =>
+          // Case 2: sibling red. Flip color of P and S. Left rotate P.
+          let sibling = siblingOf(successor)
+          if sibling !== None && (sibling->castNotOption).color === Red {
+            successorParent.color = Red
+            (sibling->castNotOption).color = Black
+            if isLeft(successor) {
+              rotateLeft(rbt, successorParent)
+            } else {
+              rotateRight(rbt, successorParent)
+            }
+          }
+
+          // Case 3: parent, sibling and sibling children all black. Paint
+          // sibling red. Rebalance parent.
+          let sibling = siblingOf(successor)
+          let siblingNN = sibling->castNotOption
+          if
+            successorParent.color === Black &&
+            ( sibling === None ||
+              ( siblingNN.color === Black &&
+                ( siblingNN.left === None ||
+                  (siblingNN.left->castNotOption).color === Black ) &&
+                ( siblingNN.right === None ||
+                  (siblingNN.right->castNotOption).color === Black)))
+             {
+            if sibling !== None {
+              siblingNN.color = Red
+            }
+            successorRef.contents = successorParent
+            // continue
+          } else if
+            // Case 4: sibling and sibling children black. Node parent red. Swap
+            // color of sibling and node parent.
+            successorParent.color === Red &&
+            ( sibling === None ||
+              ( siblingNN.color === Black &&
+              ( siblingNN.left === None ||
+                (siblingNN.left->castNotOption).color === Black) &&
+              ( siblingNN.right === None ||
+                (siblingNN.right->castNotOption).color === Black)))
+             {
+            if sibling !== None {
+              siblingNN.color = Red
+            }
+            successorParent.color = Black
+            break.contents = true
+          } else if
+            // Case 5: sibling black, sibling left child red, right child black,
+            // node is left child. Rotate right sibling. Swap color of sibling and
+            // its new parent.
+            sibling !== None && (sibling->castNotOption).color === Black
+             {
+            let sibling = sibling->castNotOption
+            if
+              isLeft(successor) &&
+              (sibling.right === None || (sibling.right->castNotOption).color === Black) &&
+              sibling.left !== None &&
+              (sibling.left->castNotOption).color === Red {
+              sibling.color = Red
+              (sibling.left->castNotOption).color = Black
+              rotateRight(rbt, sibling)
+            } else if
+              !isLeft(successor) &&
+              (sibling.left === None || (sibling.left->castNotOption).color === Black) &&
+              sibling.right !== None &&
+              (sibling.right->castNotOption).color === Red
+               {
+              sibling.color = Red
+              (sibling.right->castNotOption).color = Black
+              rotateLeft(rbt, sibling)
+            }
+            break.contents = true
+          } else {
+            // Case 6: sibling black, sibling right child red, node is left child.
+            // Rotate left node parent. Swap color of parent and sibling. Paint
+            // sibling right child black.
+            let sibling = siblingOf(successor)
+            let sibling = sibling->castNotOption
+            sibling.color = successorParent.color
+            if isLeft(successor) {
+              (sibling.right->castNotOption).color = Black
+              rotateRight(rbt, successorParent)
+            } else {
+              (sibling.left->castNotOption).color = Black
+              rotateLeft(rbt, successorParent)
+            }
+          }
+        }
+      }
+    }
+  }
+  // Don't forget to detatch the artificially created leaf.
+  if isLeaf(. successor) {
+    if rbt.root === Some(successor) {
+      rbt.root = None
+    }
+    switch successor.parent {
+    | None => ()
+    | Some(parent) =>
+      parent->leftOrRightSet(~node=successor, None)
+    }
+  }
+}
+
+let remove = (rbt, value) => {
+  switch findNode(rbt, rbt.root, value) {
+    | Some(node) =>
+      rbt->removeNode(node)
+      rbt.size = rbt.size - 1
+      true
+    | None =>
+      false
+  }
+}
+
+let rec findNodeThroughCallback = (rbt, node, cb) => {
+  switch node {
+  | None => None
+  | Some(node) =>
+    let cmp = cb(. node)
+    if cmp === 0 {
+      Some(node)
+    } else if cmp < 0 {
+      findNodeThroughCallback(rbt, node.left, cb)
+    } else {
+      findNodeThroughCallback(rbt, node.right, cb)
+    }
+  }
+}
+
+let removeThroughCallback = (rbt, cb) => {
+  switch findNodeThroughCallback(rbt, rbt.root, cb) {
+    | Some(node) =>
+      rbt->removeNode(node)
+      rbt.size = rbt.size - 1
+      true
+    | None =>
+      false
+  }
+}
+
+let make = (~compare) => {size: 0, root: None, compare}
+
+let makeWith = (array, ~compare) => {
+  let rbt = make(~compare)
+  array->Js.Array2.forEach(((value, height)) => add(rbt,value, ~height)->ignore)
+  rbt
+}
+
+// sum of the heights of the elements in [lhs ... rhs]
+// both lhs and rhs are optional
+let rec heightOfInterval = (rbt, node, lhs, rhs) => {
+  switch node {
+  | None => 0.
+  | Some(n) =>
+    //Js.log4("heightOfInterval n:", n.value, lhs, rhs)
+    if lhs === None && rhs === None {
+      n.sum
+    } else if lhs !== None && rbt.compare(. n.value, lhs->castNotOption) < 0 {
+      // to the lhs of the interval
+      rbt->heightOfInterval(n.right, lhs, rhs)
+    } else if rhs !== None && rbt.compare(. n.value, rhs->castNotOption) > 0 {
+      // to the rhs of the interval
+      rbt->heightOfInterval(n.left, lhs, rhs)
+    } else {
+      // in the interval
+      n.height +.
+      rbt->heightOfInterval(n.left, lhs, None) +.
+      rbt->heightOfInterval(n.right, None, rhs)
+    }
+  }
+}
+
+let heightOfInterval = (rbt, lhs, rhs) => {
+  //Js.log("-----------")
+  heightOfInterval(rbt, rbt.root, lhs, rhs)
+}
+
+// Return a node at y such that y <= top < y + node.height
+let rec firstVisibleNode = (node, top) => {
+  switch node {
+  | None => None
+  | Some(node) =>
+    //Js.log4("firstVisibleNode", node.value, "top:", top)
+    if node.sum <= top {
+    // no node is visible
+    None
+    } else {
+      let nodeHeight = node.height
+      let sumLeft = switch node.left {
+        | None => 0.0
+        | Some(left) => left.sum
+      }
+      if sumLeft > top {
+        firstVisibleNode(node.left, top)
+      } else if sumLeft +. nodeHeight > top {
+        // found
+        Some(node)
+      } else {
+        let offset = sumLeft +. nodeHeight
+        firstVisibleNode(node.right, top -. offset)
+      }
+    }
+  }
+}
+
+let lastVisibleNode = (node, top) => {
+  switch firstVisibleNode(node, top) {
+  | None =>
+    node->peekMaxNode
+  | first => first
+  }
+}
+
+// Find the value of the first visible node starting from top
+let firstVisibleValue = (rbt, ~top) =>
+  switch firstVisibleNode(rbt.root, top) {
+  | None => None
+  | Some(node) => Some(node.value)
+}
+
+let rec leftmost = node => switch node.left {
+  | None => node
+  | Some(node) => node->leftmost
+}
+
+let rec firstRightParent = node => {
+  switch node.parent {
+    | None => None
+    | Some(parent) =>
+      isLeft(node) ? Some(parent) : parent->firstRightParent
+  }
+}
+
+let nextNode = node => {
+  switch node.right {
+  | None =>
+    node->firstRightParent
+  | Some(right) =>
+    Some(right->leftmost)
+  }
+}
+
+let rec sumLeftSpine = (node, ~fromRightChild) => {
+  let leftSpine = switch node.left {
+    | None => node.height
+    | Some(left) => fromRightChild ? node.height +. left.sum : 0.0
+  }
+  switch node.parent {
+  | None =>
+    leftSpine
+  | Some(parent) =>
+    leftSpine +. parent->sumLeftSpine(~fromRightChild = parent.right === Some(node))
+  }
+}
+
+let getY = node =>
+  node->sumLeftSpine(~fromRightChild=true) -. node.height
+
+let rec iterate = (~inclusive, firstNode, lastNode, ~callback) => {
+  switch firstNode {
+    | None => ()
+    | Some(node) =>
+      if inclusive { callback(. node) }
+      if firstNode !== lastNode {
+        if !inclusive { callback (.node) }
+        iterate(~inclusive, node->nextNode, lastNode, ~callback)
+      }
+  }
+}
+
+let rec iterateWithY = (~y=?, ~inclusive, firstNode, lastNode, ~callback) => {
+  switch firstNode {
+    | None => ()
+    | Some(node) =>
+      let y = switch y {
+        | None => node->getY
+        | Some(y) => y
+      }
+      if inclusive {
+        callback(. node, y)
+      }
+      if firstNode !== lastNode {
+        if !inclusive {
+          callback (.node, y)
+        }
+        iterateWithY(~y=y+.node.height, ~inclusive, node->nextNode, lastNode, ~callback)
+      }
+  }
+}
+
+let rec updateSum = (node, ~delta) => switch node {
+  | None => ()
+  | Some(node) =>
+    node.sum = node.sum +. delta
+    node.parent->updateSum(~delta)
+}
+
+let updateHeight = (node, ~height) => {
+  let delta = height -. node.height
+  node.height = height
+  Some(node)->updateSum(~delta)
+}
+
+type oldNewVisible<'value> = {
+  mutable old: array<'value>,
+  mutable new: array<'value>,
+};
+
+let getAnchorDelta = (rbt, ~anchor) => {
+  switch anchor {
+    | None => 0.0
+    | Some((value, y)) =>
+      switch rbt->findNode(rbt.root, value) {
+        | Some(node) => y -. node->getY
+        | None => 0.0
+      }
+  }
+}
+
+let onChangedVisible =
+    (
+      ~anchor=None,
+      rbt,
+      ~oldNewVisible,
+      ~top as top_,
+      ~bottom as bottom_,
+      ~appear,
+      ~remained,
+      ~disappear,
+    ) =>
+ {
+  let old = oldNewVisible.new
+  let new = oldNewVisible.old
+  // empty new
+  new->Js.Array2.removeCountInPlace(~pos=0, ~count=new->Js.Array2.length)->ignore
+  oldNewVisible.old = old
+  oldNewVisible.new = new
+
+  let anchorDelta = rbt->getAnchorDelta(~anchor)
+  //Js.log2("anchorDelta", anchorDelta)
+  let top = top_ -. anchorDelta
+  let top = top < 0.0 ? 0.0 : top // anchoring can make top negative
+  let bottom = bottom_ -. anchorDelta
+
+  let first = firstVisibleNode(rbt.root, top)
+  let last = lastVisibleNode(rbt.root, bottom)
+
+  let oldLen = old->Js.Array2.length
+  let oldIter = ref(0)
+  iterateWithY(~inclusive=true, first, last, ~callback=(. node, y_) => {
+    let y = y_ +. anchorDelta
+    if y >= 0.0 { // anchoring can make y negative
+      while (
+        oldIter.contents < oldLen &&
+        rbt.compare(. Js.Array2.unsafe_get(old, oldIter.contents), node.value) < 0
+      ) {
+        disappear(. Js.Array2.unsafe_get(old, oldIter.contents))
+        oldIter.contents = oldIter.contents + 1
+      }
+      new->Js.Array2.push(node.value)->ignore
+      if (oldIter.contents < oldLen) {
+        let cmp = rbt.compare(. Js.Array2.unsafe_get(old, oldIter.contents), node.value)
+        if cmp == 0 {
+          remained(. node, y)
+          oldIter.contents = oldIter.contents + 1
+        } else {
+          appear(. node, y)
+        }
+      } else {
+        appear(. node, y)
+      }
+    }
+  })
+  while (oldIter.contents < oldLen) {
+    disappear(. Js.Array2.unsafe_get(old, oldIter.contents))
+    oldIter.contents = oldIter.contents + 1
+  }
+};
+
+
+
+let c: char = 'A' /* comment with link https://example and - = */
+
+let respond_no_content = reqd => Reqd.respond_with_string(reqd, Response.create(#No_content), "")
+
+let to_meth = x =>
+  switch x {
+  | #GET => #GET
+  | #POST => #POST
+  | #HEAD => #HEAD
+  | #DELETE => #DELETE
+  | #PUT => #PUT
+  | #OPTIONS => #OPTIONS
+  | #TRACE => #TRACE
+  | #CONNECT => #CONNECT
+  | #Other(w) => failwith(w ++ " is not supported")
+  }
+
+let ignore: 'a => unit = _ => ()
+
+/* ** comment */
+/* *** comment */
+/* **** comment */
+
+/* ** */
+/* *** */
+
+/* ** */
+
+/* (** comment *) */
+/* (*** comment *) */
+/* *(*** comment *) */
+
+/* comment * */
+/* comment ** */
+/* comment *** */
+/* comment **** */
+
+let testingNotQuiteEndOfLineComments = list{
+  "Item 1" /* Comment For First Item */,
+  "Item 2" /* Comment For Second Item */,
+  "Item 3" /* Comment For Third Item */,
+  "Item 4" /* Comment For Fourth Item - but no semi */,
+  /* Comment after last item in list. */
+} /* Comment after list bracket */
+
+let testingEndOfLineComments = list{
+  "Item 1" /* Comment For First Item */,
+  "Item 2" /* Comment For Second Item */,
+  "Item 3" /* Comment For Third Item */,
+  "Item 4" /* Comment For Fourth Item - but before semi */,
+  /* Comment after last item in list. */
+} /* Comment after list bracket */
+
+/* This time no space between bracket and comment */
+let testingEndOfLineComments = list{} /* Comment after list bracket */
+
+type t = (int, int) /* End of line on t */
+
+type t22 = /* End of t22 line on type t22 = */
+(int, int)
+
+type variant =
+  /* Comment above X */
+  | X(int) /* End of line on X */
+  /* Comment above Y */
+  | Y(int) /* End of line on Y */
+/* Comment on entire type def for variant */
+
+type rec x = {
+  /* not attached *above* x */
+  fieldOne: int,
+} /* Attached end of line after x */
+and y = {
+  /* not attached *above* y */
+  fieldTwo: int,
+} /* Attached end of line after y */
+
+let result = switch X(3) {
+| X(x) =>
+  /* Where does this comment go? */
+  let tmp = x
+  x + tmp
+| Y(x) =>
+  /* How about this one */
+  let tmp = x
+  x + tmp
+}
+
+let result = switch None {
+| Some({fieldOne: 20}) =>
+  /* Where does this comment go? */
+  let tmp = 0
+  2 + tmp
+| Some({fieldOne: n}) =>
+  /* How about this one */
+  let tmp = n
+  n + tmp
+| None => 20
+}
+
+type pointWithManyKindsOfComments = {
+  /* Line before x */
+  x: string /* x field */,
+  /* Line before y */
+  y: string /* y field */,
+  /* Final row of record */
+}
+
+type typeParamPointWithComments<'a> = {
+  /* Line before x */
+  x: 'a /* x field */,
+  /* Line before y */
+  y: 'a /* y field */,
+  /* Final row of record */
+}
+
+let name_equal = (x, y) => x == y
+
+let equal = (i1, i2) => i1.contents === i2.contents && true /* most unlikely first */
+
+let equal = (i1, i2) => compare(compare(0, 0), compare(1, 1)) /* END OF LINE HERE */
+
+module Temp = {
+  let v = true
+  let logIt = (str, ()) => print_string(str)
+}
+
+let store_attributes = arg => {
+  let attributes_file = "test"
+  let proc_name = attributes_file ++ ".proc"
+  let should_write =
+    /* only overwrite defined procedures */
+    Temp.v || !Temp.v
+  if should_write {
+    Temp.logIt(proc_name, ())
+  }
+}
+
+let run = () => TestUtils.printSection("Basic Structures")
+
+while something {
+  print_string("You're in a while loop")
+  print_newline()
+}
+
+for i in 0 to 5 {
+  print_int(i)
+  print_newline()
+  for i in 10 downto 0 {
+    print_string("Counting in reverse direction")
+    print_newline()
+  }
+}
+
+for i in 0 to endOfRangeMustBeSimple(expr, soWrap) {
+  print_int(i)
+  print_newline()
+  for i in theSame(isTrue, ofThe, startOfRange) downto 0 {
+    print_string("Counting in reverse direction")
+    print_newline()
+  }
+}
+
+let x = \"!"(\"!"(foo)).bar.contents
+
+let x = foo.bar.contents
+
+let x = \"!"(foo).bar.contents
+
+/* Prefix operators:
+ * ! followed by zero or more appropriate_operator_suffix_chars (see the
+ * lexer).
+ * ? or ~ followed by at least one appropriate_operator_suffix_chars.
+ */
+let x = !(!(!foo)).bar
+
+let x = !foo.bar
+
+let x = !(!foo).bar
+
+let x = !(!foo.bar)
+
+let x = \"?!"(!foo.bar)
+
+let x = !\"?!"(foo.bar)
+
+let x = \"~!"(!foo.bar)
+
+let x = !\"~!"(foo.bar)
+
+let x = \"~!"(\"~!"(foo.bar))
+
+let x = \"!!"(foo.bar)
+
+let x = \"!~"(foo.bar)
+
+let noParensNeeded = !blah.foo.bar
+
+let parensNeededAroundFirst = (!blah).foo.bar
+
+let parensNeededAroundSecond = (!blah.foo).bar
+
+let x = !(!foo.bar)
+
+let x = -10
+
+let x = -5.0
+
+let x = Some(-10)
+
+let x = Some(-5.0)
+
+let lazy x = 10
+let lazy x: int = 10
+let lazy list{} = 10
+let lazy true = 10
+let lazy #...x = 10
+let lazy #Variant = 10
+let lazy #variant = 10
+let lazy '0' .. '9' = 10
+let lazy lazy true = 10
+let lazy %extend = 10
+
+/* Test precedence on access sugar */
+let x = arr.contents[0]
+
+let x = arr.contents[0]
+
+let x = String.get(str.contents, 0)
+
+let x = String.get(str.contents, 0)
+
+let x = arr.contents[0] = 1
+
+let x = arr.contents[0] = 1
+
+let \"/++" = \"+" /* // indicates the start of a comment, not an infix op */
+
+let something = if self.ext.logSuccess {
+  print_string("Did tap")
+  print_newline()
+}
+
+let logTapSuccess = self =>
+  if self.ext.logSuccess {
+    print_string("Did tap")
+    print_newline()
+  } else {
+    ()
+  }
+
+let logTapSuccess = self =>
+  if self.ext.logSuccess {
+    print_string("Did tap")
+    print_newline()
+  }
+
+(!data).field = true
+(!data).field1.field2 = true
+(!data.field1).field2 = true
+(!data).field1.field2 = true
+(!data.field1).field2 = true
+
+let loop = (appTime, frameTime) => {
+  if hasSetup.contents {
+    setupScene()
+    renderIntoTop()
+    hasSetup.contents = true
+  }
+  process(appTime, frameTime)
+}
+
+/* These parens should be kept around the entire last if/then/else */
+if something {
+  if somethingElse {
+    ()
+  } else {
+    "blah"
+  }
+}
+
+/* These parens should be kept around just the last if/then */
+if something {
+  if somethingElse {
+    ()
+  } else {
+    "blah"
+  }
+}
+
+/* Parens should be generated to wrap the entire final if then else.
+ * To test that it's being parsed correclty, should print "one". */
+if true {
+  if true {
+    print_string("one")
+  } else {
+    print_string("two")
+  }
+}
+
+/* Should print two */
+if true {
+  if false {
+    print_string("one")
+  } else {
+    print_string("two")
+  }
+}
+
+/* Should not print */
+if false {
+  if true {
+    print_string("one")
+  } else {
+    print_string("two")
+  }
+}
+
+/* Should wrap (if a > b then a else b).
+ * printer(
+ */
+let printIfFirstArgGreater = true
+let result = if printIfFirstArgGreater {
+  (a, b) =>
+    if a > b {
+      print_string("a > b")
+    } else {
+      print_string("b >= a")
+    }
+} else if (
+  (a, b) =>
+    if a > b {
+      print_string("b < a")
+    } else {
+      print_string("a <= b")
+    }
+) {
+  print_string("That could never possibly type check")
+  print_newline()
+}
+
+let myRecord = {
+  nestedRecord: {
+    anotherNestedRecord: (instaComp, displayRect) =>
+      if (
+        Graphics.cgRectIntersectsWithSlop(
+          defaultCompositeTimerRectSlop,
+          instaComp.relativeRect,
+          displayRect,
+        )
+      ) {
+        IoEligible
+      } else {
+        IoInelibleButTryComposition
+      },
+  },
+}
+
+if printIfFirstArgGreater {
+  (a, b) =>
+    if a > b {
+      print_string("a > b")
+    }
+} else {
+  (a, b) =>
+    if a > b {
+      print_string("b < a")
+    }
+}
+/* Should Be Parsed As: Cleary a type error, but at least the parsing makes that clear */
+if printIfFirstArgGreater {
+  (a, b) =>
+    if a > b {
+      print_string("a > b")
+    } else {
+      (a, b) =>
+        if a > b {
+          print_string("b < a")
+        }
+    }
+}
+
+(a, b) =>
+  if a > b {
+    print_string("a > b")
+  }
+
+/* What you probably wanted was: */
+if printIfFirstArgGreater {
+  (a, b) =>
+    if a > b {
+      print_string("a > b")
+    }
+} else {
+  (a, b) =>
+    if a > b {
+      print_string("b < a")
+    }
+}
+
+/* Mutative if statement: Not used to evaluate to something. */
+if 10 < 100 {
+  let msg = "If there was any doubt, 10 is in fact less than 100."
+  print_string(msg)
+} else {
+  let msg = "All bets are off."
+  print_string(msg)
+}
+
+if 10 < 100 {
+  print_string("If there was any doubt, 10 is in fact less than 100.")
+} else {
+  print_string("All bets are off.")
+}
+
+let x: int = 10
+let x: int = 10
+let x: int = 10
+let x: int = (10: int)
+
+/* In Reason, types look like the data they model! Tuples are no exception. */
+type pairOfInts = (int, int)
+let letBindingWithTypeConstraint: int = 10
+let (tupleItem: int, withTypeConstraint: int) = (10, 20)
+
+/* To make sure that tuple field annotations are annotating the entire field */
+let _dummyFunc = x => 10
+let annotatingFuncApplication = ((_dummyFunc("a"): int), (_dummyFunc("a"): int))
+
+/* Pretty printer might stick the [int] at the label. */
+let annotatingSingleFuncApplication: int = _dummyFunc("a")
+
+/* So lets try a place where it won't */
+let annotatingSingleFuncApplication = {
+  /* Commenting a let binding. */
+  let a = 100
+  /* Commenting another let binding. */
+  let int = 200
+  /*
+   * This demonstrates why named arguments cannot simply have the form (func
+   * arg:val) - it is indistinguishable from a type constraint.
+   */
+  2 + (_dummyFunc(a): int)
+}
+
+let (tupleItem: int, constrainedWithoutGrouping: int) = (10, 20)
+let (tupleItem, withOutsideTypeConstraint): (int, int) = (10, 20)
+
+/* Trailing commas */
+let trailingCommaAccepted = (1, 2)
+let moreTrailing = (1, 2, 3, 4, 5, 7)
+
+
+/* Anatomy:        -Head-      --------- Tail---------  nil: You can't see nil */
+let x: list<int> = list{1, 2, 3, 4, 5, 6, 7, 8, 9}
+let hd = "appendedToHead"
+let tl = list{"listTo", "append", "to"}
+
+/* To push *one* and only *one* item to the front of a list - use [hd, ...tl] */
+let result: list<string> = list{hd, ...tl}
+
+/* Is the same as writing */
+let result: list<string> = list{"appendedToHead", "listTo", "append", "to"}
+
+/* To operate on lists, use pattern matching */
+let rec size = x =>
+  switch x {
+  | list{} => 0
+  | list{hd, ...tl} => 1 + size(tl)
+  }
+
+/* Optimize for tail recursion */
+let rec size = (soFar, lst) =>
+  switch lst {
+  | list{} => 0
+  | list{hd, ...tl} => size(soFar + 1, tl)
+  }
+
+let nestedMatch = lstLst =>
+  switch lstLst {
+  | list{hd, ...tl} when false => 10
+  | list{hd, ...tl} =>
+    switch tl {
+    | list{} => 0 + 0
+    | list{tlHd, ...tlTl} => 0 + 1
+    }
+  | list{} => 0
+  }
+
+let nestedMatchWithWhen = lstLst =>
+  switch lstLst {
+  | list{hd, ...tl} when false => 10
+  | list{hd, ...tl} when true =>
+    switch tl {
+    | list{} when false => 0 + 0
+    | list{} when true => 0 + 0
+    | list{tlHd, ...tlTl} => 0 + 1
+    }
+  | list{} => 0
+  }
+
+type mine =
+  | MyThing(int)
+  | YourThing(int)
+/*
+ * Reason parses "as" aliases differently than OCaml.
+ */
+let ppp = switch MyThing(20) {
+| MyThing(x) as ppp
+| YourThing(x) as ppp => ppp
+}
+
+let MyThing(_) as ppp | YourThing(_) as ppp = ppp
+
+/*
+ * in order to achieve the previous example in ocaml, you would have to group
+ * as:
+ */
+let ppp = switch MyThing(20) {
+| MyThing(x) as ppp
+| YourThing(x) as ppp => ppp
+}
+
+let MyThing(_) as ppp | YourThing(_) as ppp = ppp
+let emptyArray = []
+let arrayWithOne = [10]
+let arrayWithTwo = [10, 10]
+let secondItem = arrayWithTwo[1]
+
+/* Getting And Setting: Yeah, we should really change this */
+/* Get an array item at index 1 */
+let secondItem = arrayWithTwo[1]
+/* Set an array item at index 1 */
+arrayWithTwo[1] = 300
+
+let myString = "asdf"
+String.set(myString, 2, '9') /* Replacing a character: I could do without this sugar */
+
+/* FUNCTIONS
+ *=============================================================================
+ */
+
+/* TYPE ANNOTATIONS
+ * =============================================================================
+ */
+
+let one = 900
+let two = 10000
+/* Tuple expressions can be annotated without additional paren wrapping */
+let myTuple = ((one: int), (two: int))
+type myTupleType = (int, int)
+let myTuple: myTupleType = myTuple
+
+/* Anything *outside* of a tuple, must still be annotated within parens. */
+let myTuple: myTupleType = ((one: int), (two: int))
+
+/* Now functions that accept a single argument being a tuple look familiar */
+let addValues = (a: int, b: int) => a + b
+
+let addValues = (a: int, b: int) => a + b
+
+let myFunction = (a: int, b: int): int => a + b
+
+let functionReturnValueType = (i: int, s: string): (int => int) => x => x + 1
+
+let curriedFormOne = (i: int, s: string) => s ++ string_of_int(i)
+
+let curriedFormTwo = (i: int, x: int): (int, int) => (i, x)
+/* let nonCurriedFormTwo = fun (i:int, x:int) (:(int, int)) => (i, x); */
+
+let curriedFormThree = (i: int, (a: int, b: int): (int, int)): (int, int, int) => (i, a, b)
+
+
+type myFuncType = (int, int) => int
+
+let myFunc: myFuncType = (a, b) => a + b
+
+let funcWithTypeLocallyAbstractTypes = (type atype btype, a, b, c: (atype, btype) => unit) =>
+  c(a, b)
+
+/* Checks that function types aren't unnecessary wrapped */
+type a = unit => unit
+
+type rec b =
+  | Foo(unit => unit)
+  | Bar(unit => unit, unit => unit, (a, b) => c)
+  | Baz(unit => unit, unit => unit, (a, b) => c)
+
+type c =
+  | Foo((a, b) => unit)
+  | Bar((a, b) => unit)
+
+type d = [> #Foo(unit => unit)]
+
+type withThreeFields = {
+  name: string,
+  age: int,
+  occupation: string,
+}
+
+let testRecord = {
+  name: "joe",
+  age: 20,
+  occupation: "engineer",
+}
+let anotherRecord = {
+  ...testRecord,
+  name: "joe++",
+  age: testRecord.age + 10,
+}
+
+let makeRecordBase = () => {
+  name: "Joe",
+  age: 30,
+  occupation: "Engineer",
+}
+let anotherRecord = {
+  .../* These parens should be evaporated. */
+  makeRecordBase(),
+  name: "joe++",
+  age: testRecord.age + 10,
+}
+
+let anotherRecord = {
+  .../* Comments should be correctly placed before ... expression */
+  makeRecordBase(),
+  /* Comment after record extension */
+  name: "joe++",
+  age: testRecord.age + 10,
+}
+
+let anotherRecord = {
+  ...(
+    /* Currently, type annotations must be wrapped in parens - that's easy to improve */
+    makeRecordBase(): withThreeFields
+  ),
+  name: "joe++",
+  age: testRecord.age + 10,
+}
+
+let anotherRecord = {
+  .../* This is meaningless, sure */
+  String.set(someArray, 0, 20),
+  name: "joe++",
+  age: testRecord.age + 10,
+}
+
+let anotherRecord = {
+  ...SomeReally.longFunctionCall({
+    passingRecordField: 0,
+    andThisOtherRecordField: 10,
+  }),
+  name: "joe++",
+  age: testRecord.age + 10,
+}
+
+let anotherRecord = {
+  ...SomeReally.longFunctionCall(withArguments, (thatWrap: bool)),
+  name: "joe++",
+  age: testRecord.age + 10,
+}
+
+let anotherRecord = {
+  ...SomeReally.longFunctionCall(withArg, list{"and", "final", "list", "that", "should", "break"}),
+  name: "joe++",
+  age: testRecord.age + 10,
+}
+
+/* Record type punning */
+type props = {title: string}
+
+type state = unit
+
+type component = {props: props}
+
+type component2 = {
+  props: props,
+  state: state,
+  updater: unit,
+}
+
+type component3 = {
+  props: M.props,
+  state: state,
+}
+
+type mutableComponent = {mutable props: props}
+
+type mutabeleComponent2 = {
+  mutable props: props,
+  mutable state: state,
+  style: int,
+}
+
+/* Don't pun parameterized types */
+type description<'props> = {
+  element: string,
+  tag: tag<'props>,
+}
+
+/* Don't pun types from other modules */
+module Foo = {
+  type bar = {foo: Baz.foo}
+}
+
+/* Don't pun field names that aren't "simple" */
+type foo = {
+  bar: Baz.bar,
+  qux: qux,
+  fooo: Fooo.fooo,
+}
+
+let moreFoo = {
+  bar: Baz.bar,
+  qux: qux,
+  fooo: Fooo.fooo,
+}
+
+/* record value punning */
+
+let props = {title: "hi"}
+/* no punning available for a single field. Can't tell the difference with a scope + expression */
+let componentA = {props: props}
+/* pun for real */
+let componentB = {props: props, state: ()}
+/* pun fields with module prefix too */
+let foo = {Foo.foo: foo}
+let bar = {Foo.foo: foo, bar: 1}
+let bar = {bar: 1, Foo.foo: foo}
+let bar = {Foo.foo: foo, Bar.bar: bar}
+
+({M.x: x, y}) => 1
+
+switch foo {
+| {y: 1, M.x: x} => 2
+}
+
+/* Requested in #566 */
+let break_after_equal = no_break_from_here(some_call(to_here))
+
+/* Pexp_letexception */
+let () = {
+  exception E
+  raise(E)
+}
+
+/* # 1587: don't print fun keyword when printing Pexp_fun in a record expression */
+{contents: (): unit => ()}
+
+/* #1556: Always break nested record/obj */
+let z = {
+  a: {
+    b: c,
+    d: e,
+  },
+  f: g,
+}
+
+let z = {
+  a: {
+    "b": c,
+    "d": e,
+  },
+  f: g,
+}
+
+let z = {
+  "a": {
+    "b": c,
+    "d": e,
+  },
+  "f": g,
+}
+
+let z = {
+  "a": {
+    b: c,
+    d: e,
+  },
+  "f": g,
+}
+
+let unitLambda = () => ()
+let identifierLambda = a => ()
+let underscoreLambda = _ => ()
+it("should remove parens", a => {
+  print_string("did it work?")
+  print_string("did it work?")
+})
+
+foo(preserveBraces => inCallback)
+
+foo(preserveBraces => inFirstPos, secondArg)
+
+foo(oneArg, preserveBraces => inFirstPos, secondArg)

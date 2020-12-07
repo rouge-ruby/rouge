@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    # shared states with Reasonml
+    # shared states with Reasonml and ReScript
     class OCamlCommon < RegexLexer
       def self.keywords
         @keywords ||= Set.new %w(

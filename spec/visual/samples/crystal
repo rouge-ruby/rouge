@@ -99,7 +99,7 @@ module Money
       # implement conversion ...
     end
   end
-Vend
+end
 
 ## Class definitions
 

@@ -42,3 +42,4 @@ inv: self.transition->stateMachine->notEmpty() implies
 		self.transition.stateMachine.context@pre)
 
 endpackage
+body: self.employees->collect(salary) -> collect(x | x/6.55957)

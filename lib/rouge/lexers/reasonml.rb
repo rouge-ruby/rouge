@@ -56,7 +56,7 @@ module Rouge
       end
 
       state :comment do
-        rule %r([^/\*]+), Comment::Multiline
+        rule %r([^/*]+), Comment::Multiline
         rule %r(/\*), Comment::Multiline, :comment
         rule %r(\*/), Comment::Multiline, :pop!
         rule %r([*/]), Comment::Multiline

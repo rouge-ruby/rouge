@@ -4,6 +4,28 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.26.0: 2020-12-09
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.25.0...v3.26.0)
+
+- CMake Lexer
+  - Add missing CMake commands to CMake lexer ([#1630](https://github.com/rouge-ruby/rouge/pull/1630/) by gnaggnoyil)
+- Crystal Lexer
+  - Improve visual sample and macro support for Crystal lexer ([#1644](https://github.com/rouge-ruby/rouge/pull/1644/) by Michael Camilleri)
+  - Support floor division operator in Crystal lexer ([#1639](https://github.com/rouge-ruby/rouge/pull/1639/) by Rymiel)
+- JSL Lexer
+  - Fix lexing of messages, nested comments, missing operators and decimals in JSL lexer ([#1638](https://github.com/rouge-ruby/rouge/pull/1638/) by Ben Peachey Higdon)
+- OCL Lexer (**NEW**)
+  - Add OCL lexer ([#1637](https://github.com/rouge-ruby/rouge/pull/1637/) by Gerson Sunyé)
+- Python Lexer
+  - Use String::Affix token for string prefixes in Python lexer ([#1635](https://github.com/rouge-ruby/rouge/pull/1635/) by Tan Le)
+- ReasonML Lexer
+  - Improve support for comments in ReasonML lexer ([#1641](https://github.com/rouge-ruby/rouge/pull/1641/) by Amirali Esmaeili)
+- ReScript Lexer (**NEW**)
+  - Add ReScript lexer ([#1633](https://github.com/rouge-ruby/rouge/pull/1633/) by Amirali Esmaeili)
+- Rust Lexer
+  - Add support for octal literals to Rust lexer ([#1643](https://github.com/rouge-ruby/rouge/pull/1643/) by nsfisis)
+
 ## version 3.25.0: 2020-11-11
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.24.0...v3.25.0)

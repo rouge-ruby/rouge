@@ -45,7 +45,8 @@ let ignore: 'a => unit = _ => ();
 /* comment ****/
 /* comment *****/
 
-// Another single line comment
+// A single line comment
+
 let testingNotQuiteEndOfLineComments = [
   "Item 1" /* Comment For First Item */,
   "Item 2" /* Comment For Second Item */,

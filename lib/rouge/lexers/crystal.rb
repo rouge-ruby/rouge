@@ -25,8 +25,7 @@ module Rouge
         )xi, Str::Symbol
 
         # special symbols
-        rule %r(:(?:\*\*|[-+]@|[/\%&\|^`~]|\[\]=?|<<|>>|<=?>|<=?|===?)),
-          Str::Symbol
+        rule %r(:(?:===|=?~|\[\][=?]?|\*\*=?|\/\/=?|[=^*/+-]=?|&[&*+-]?=?|\|\|?=?|![=~]?|%=?|<=>|<<?=?|>>?=?|\.\.\.?)), Str::Symbol
 
         rule %r/:'(\\\\|\\'|[^'])*'/, Str::Symbol
         rule %r/:"/, Str::Symbol, :simple_sym
@@ -36,7 +35,7 @@ module Rouge
         # %-sigiled strings
         # %(abc), %[abc], %<abc>, %.abc., %r.abc., etc
         delimiter_map = { '{' => '}', '[' => ']', '(' => ')', '<' => '>' }
-        rule %r/%([rqswQWxiI])?([^\w\s])/ do |m|
+        rule %r/%([rqswQWxiI])?([^\w\s}])/ do |m|
           open = Regexp.escape(m[2])
           close = Regexp.escape(delimiter_map[m[2]] || m[2])
           interp = /[rQWxI]/ === m[1]
@@ -79,9 +78,11 @@ module Rouge
       state :strings do
         mixin :symbols
         rule %r/\b[a-z_]\w*?[?!]?:\s+/, Str::Symbol, :expr_start
-        rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
         rule %r/"/, Str::Double, :simple_string
         rule %r/(?<!\.)`/, Str::Backtick, :simple_backtick
+        rule %r/(')(\\u[a-fA-F0-9]{4}|\\u\{[a-fA-F0-9]{1,6}\}|\\[abefnrtv])?(\\\\|\\'|[^'])*(')/ do
+          groups Str::Single, Str::Escape, Str::Single, Str::Single
+        end
       end
 
       state :regex_flags do
@@ -154,11 +155,13 @@ module Rouge
         mixin :whitespace
         rule %r/__END__/, Comment::Preproc, :end_part
 
-        rule %r/0_?[0-7]+(?:_[0-7]+)*/, Num::Oct
+        rule %r/0o[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule %r/0x[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*/, Num::Hex
         rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
-        rule %r/\d+\.\d+(e[\+\-]?\d+)?/, Num::Float
-        rule %r/[\d]+(?:_\d+)*/, Num::Integer
+        rule %r/\d+\.\d+(e[\+\-]?\d+)?(_f32)?/i, Num::Float
+        rule %r/\d+(e[\+\-]?\d+)/i, Num::Float
+        rule %r/\d+_f32/i, Num::Float
+        rule %r/[\d]+(?:_\d+)*(_[iu]\d+)?/, Num::Integer
 
         rule %r/@\[([^\]]+)\]/, Name::Decorator
 
@@ -183,7 +186,7 @@ module Rouge
           groups Keyword, Text, Name::Namespace
         end
 
-        rule %r/(def\b)(\s*)/ do
+        rule %r/(def|macro\b)(\s*)/ do
           groups Keyword, Text
           push :funcname
         end
@@ -214,6 +217,7 @@ module Rouge
         rule %r/[a-zA-Z_]\w*/, Name, :method_call
         rule %r/\*\*|\/\/|>=|<=|<=>|<<?|>>?|=~|={3}|!~|&&?|\|\||\./,
           Operator, :expr_start
+        rule %r/{%|%}/, Punctuation
         rule %r/[-+\/*%=<>&!^|~]=?/, Operator, :expr_start
         rule(/[?]/) { token Punctuation; push :ternary; push :expr_start }
         rule %r<[\[({,:\\;/]>, Punctuation, :expr_start
@@ -346,6 +350,7 @@ module Rouge
         mixin :string_intp
         rule %r/\\([\\abefnrstv#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})/,
           Str::Escape
+        rule %r/\\u([a-fA-F0-9]{4}|\{[^}]+\})/, Str::Escape
         rule %r/\\./, Str::Escape
       end
 

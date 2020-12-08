@@ -1,45 +1,687 @@
-lib LibC
-  WNOHANG = 0x00000001
+# Examples taken from http://crystal-lang.org/docs/
+# Copyright 2012-2018 Manas Technology Solutions.
+# Based on the sample in the Pygments project (github.com/pygments/pygments)
 
-  @[ReturnsTwice]
-  fun fork : PidT
-  fun getpgid(pid : PidT) : PidT
-  fun kill(pid : PidT, signal : Int) : Int
-  fun getpid : PidT
-  fun getppid : PidT
-  fun exit(status : Int) : NoReturn
+## Constants
 
-  ifdef x86_64
-    alias ClockT = UInt64
+LUCKY_NUMBERS     = [3, 7, 11]
+DOCUMENTATION_URL = "http://crystal-lang.org/docs"
+
+## Assignments
+
+i = 0
+items = Items.new
+channel = Channel(Int32).new(2)
+a = [] of Person
+hash = {} of Int32 => String
+nest = [1, ["b", [:c, ['d']]]]
+
+## Require statements
+
+require "http/server"
+
+## Blocks
+
+x = a.map { |f| f.name } # Error: can't infer block return type
+
+spawn do
+  channel.send(1)
+  channel.send(2)
+  channel.send(3)
+end
+
+3.times do |i|
+  puts channel.receive
+end
+
+server = HTTP::Server.new(8080) do |context|
+  context.response.content_type = "text/plain"
+  context.response.print "Hello world! The time is #{Time.now}"
+end
+
+## Loops
+
+while i < 10
+  proc = ->(x : Int32) do
+    spawn do
+      puts(x)
+    end
+  end
+  proc.call(i)
+  i += 1
+end
+
+until some_condition
+  do_this
+end
+
+## Module definitions
+
+module HTTP
+  class RequestHandler
+  end
+end
+
+module Base64
+  extend self
+
+  def encode64(string)
+    # ...
+  end
+end
+
+module Moo(T)
+  def t
+    T
+  end
+end
+
+module Money
+  CURRENCIES = {
+    "EUR" => 1.0,
+    "ARS" => 10.55,
+    "USD" => 1.12,
+    "JPY" => 134.15,
+  }
+
+  class Amount
+    getter :currency, :value
+
+    def initialize(@currency, @value)
+    end
+  end
+
+  class CurrencyConversion
+    def initialize(@amount, @target_currency)
+    end
+
+    def amount
+      # implement conversion ...
+    end
+  end
+end
+
+## Class definitions
+
+class Greeting
+  class_property global_greeting = "Hello world"
+
+  @@default_greeting = "Hello world"
+
+  def initialize(@custom_greeting = nil)
+  end
+
+  def print_greeting
+    greeting = @custom_greeting || @@default_greeting
+    puts greeting
+  end
+end
+
+class MyArray
+  def [](index)
+    # ...
+  end
+
+  def [](index1, index2, index3)
+    # ...
+  end
+
+  def []=(index, value)
+    # ...
+  end
+end
+
+class MyDictionary(K, V)
+end
+
+class Foo(U)
+  include Moo(U)
+
+  def initialize(@value : U)
+  end
+end
+
+class Int32Child < Parent(Int32)
+end
+
+class Global
+  class_property global1 = 1
+  class_getter global2 = 2
+  class_setter global3 = 3
+
+  # Fails on nil
+  class_property! global4 = 4
+  class_getter! global5 = 5
+  class_setter! global6 = 6
+end
+
+class Testing
+  # Assigns to an instance variable
+  @instance = 2
+
+  # Assigns to a class variable
+  @@class = 3
+end
+
+abstract class Animal
+  # Makes this animal talk
+  abstract def talk
+end
+
+## Struct definitions
+
+struct Vector2
+  getter x, y
+
+  def initialize(@x, @y)
+  end
+
+  def +(other)
+    Vector2.new(x + other.x, y + other.y)
+  end
+end
+
+struct Vector2
+  def -
+    Vector2.new(-x, -y)
+  end
+end
+
+## Library definitions
+
+lib C
+  # In C: double cos(double x)
+  fun cos(value : Float64) : Float64
+
+  fun getch : Int32
+
+  fun srand(seed : UInt32)
+
+  fun exit(status : Int32) : NoReturn
+
+  fun printf(format : UInt8*, ...) : Int32
+end
+
+@[Link("pcre")]
+lib LibPCRE
+end
+
+lib LibFoo
+  fun store_callback(callback : ->)
+
+  @[Raises]
+  fun execute_callback
+end
+
+lib C
+  {% if flag?(:x86_64) %}
+    alias SizeT = UInt64
+  {% else %}
+    alias SizeT = UInt32
+  {% end %}
+
+  fun memcmp(p1 : Void*, p2 : Void*, size : C::SizeT) : Int32
+end
+
+lib U
+  union IntOrFloat
+    some_int : Int32
+    some_float : Float64
+  end
+end
+
+## Aliase declarations
+
+alias NumericValue = Float32 | Float64 | Int32 | Int64
+alias Int32OrNil = Int32?
+alias Int32OrNil_ = Int32 | ::Nil
+alias Int32Ptr = Int32*
+alias Int32Ptr_ = Pointer(Int32)
+alias Int32_8 = Int32[8]
+alias Int32_8_ = StaticArray(Int32, 8)
+alias Int32StringTuple = {Int32, String}
+alias Int32StringTuple_ = Tuple(Int32, String)
+alias Int32ToString = Int32 -> String
+alias Int32ToString_ = Proc(Int32, String)
+alias ProcThatReturnsInt32 = -> Int32
+alias Int32AndCharToString = Int32, Char -> String
+alias ComplexProc = (Int32 -> Int32) -> String
+
+## Enum declarations
+
+enum Time::DayOfWeek
+end
+
+enum Color : UInt8
+  Red        # 0
+  Green      # 1
+  Blue   = 5 # overwritten to 5
+  Yellow     # 6 (5 + 1)
+
+  def red?
+    self == Color::Red
+  end
+end
+
+@[Flags]
+enum IOMode
+  Read  # 1
+  Write # 2
+  Async # 4
+end
+
+## Method definitions
+
+def foo(x : Int32)
+  "instance"
+end
+
+def foo(x : Int32.class)
+  "class"
+end
+
+def foo(x : _)
+end
+
+def foo(x : _, _ -> Int32)
+end
+
+def some_proc(&block : Int32 -> Int32)
+  block
+end
+
+def twice(&block)
+  yield
+  yield
+end
+
+
+def paint(color : Color)
+  case color
+  when Color::Red
+    # ...
   else
-    alias ClockT = UInt32
-  end
-
-  SC_CLK_TCK = 3
-
-  struct Tms
-    utime : ClockT
-    stime : ClockT
-    cutime : ClockT
-    cstime : ClockT
-  end
-
-  fun times(buffer : Tms*) : ClockT
-  fun sysconf(name : Int) : Long
-end
-
-class Process
-  def self.exit(status = 0)
-    LibC.exit(status)
-  end
-
-  def self.pid
-    LibC.getpid
-  end
-
-  def self.getpgid(pid : Int32)
-    ret = LibC.getpgid(pid)
-    raise Errno.new(ret) if ret < 0
-    ret
+    # Unusual, but still can happen
+    raise "unknown color: #{color}"
   end
 end
+
+def counter
+  x = 0
+  ->{ x += 1; x }
+end
+
+## Method calls
+
+puts "Listening on http://0.0.0.0:8080"
+server.listen
+Fiber.yield
+Curses::Window.new
+foo 1     # "instance"
+foo Int32 # "class"
+a.+(b)
+C.printf "%d + %d = %d\n", a, b, a + b
+
+array[1]       # invokes the first method
+array[1, 2, 3] # invokes the second method
+array[1] = 2   # invokes the third method
+array[4]? # returns nil because of index out of bounds
+array.[](1)       # invokes the first method
+array.[](1, 2, 3) # invokes the second method
+array.[]=(1, 2)   # invokes the third method
+
+## Operators
+
+john == another_john # => true
+
+ary << Child1
+ary << Child2
+
+local += 1 # same as: local = local + 1
+local ||= 1 # same as: local || (local = 1)
+local &&= 1 # same as: local && (local = 1)
+
+x..y  # an inclusive range, in mathematics: [x, y]
+x...y # an exclusive range, in mathematics: [x, y)
+
+## Conditionals
+
+a = some_condition ? 1 : "hello"
+a = 1 > 2 ? 3 : 4
+
+if some_condition
+  a = 1
+else
+  a = "hello"
+end
+
+if a.is_a?(String)
+  # here a is a String
+end
+
+if a.is_a?(Number)
+  # a : Int32
+else
+  # a : String
+end
+
+if some_condition
+  do_something
+elsif some_other_condition
+  do_something_else
+else
+  do_that
+end
+
+if a.is_a?(String) && b.is_a?(Number)
+  # here a is a String and b is a Number
+end
+
+unless some_condition
+  then_expression
+else
+  else_expression
+end
+
+a = 2 if some_condition
+close_door unless door_closed?
+
+case exp
+when value1, value2
+  do_something
+when value3
+  do_something_else
+else
+  do_another_thing
+end
+
+## Exceptions
+
+raise "OH NO!"
+raise Exception.new("Some error")
+
+begin
+  raise MyException.new("OH NO!")
+rescue ex : MyException
+  puts "Rescued MyException: #{ex.message}"
+end
+
+begin
+  # ...
+rescue ex : MyException | MyOtherException
+  # only MyException or MyOtherException
+rescue
+  # any other kind of exception
+ensure
+  puts "Cleanup..."
+end
+
+def some_method
+  something_dangerous
+rescue
+  # execute if an exception is raised
+end
+
+## Procs
+
+proc = ->(i : Int32) { x += i }
+proc = some_proc(&proc)
+proc.call(1)  # => 1
+adder = ->add(Int32, Int32)
+adder.call(1, 2) # => 3
+twice &proc
+twice &->{ puts "Hello" }
+
+## Macros
+
+{% if flag?(:x86_64) %}
+  # some specific code for 64 bits platforms
+{% else %}
+  # some specific code for non-64 bits platforms
+{% end %}
+
+{% if flag?(:linux) && flag?(:x86_64) %}
+  # some specific code for linux 64 bits
+{% end %}
+
+{% if env("TEST") %}
+  puts "We are in test mode"
+{% end %}
+
+macro fresh_vars_sample(*names)
+  # First declare vars
+  {% for name, index in names %}
+    print "Declaring: ", "%name{index}", '\n'
+    %name{index} = {{index}}
+  {% end %}
+
+  # Then print them
+  {% for name, index in names %}
+    print "%name{index}: ", %name{index}, '\n'
+  {% end %}
+end
+
+macro method_missing(name, args, block)
+  print "Got ", {{name.id.stringify}}, " with ", {{args.size}}, " arguments", '\n'
+end
+
+macro define_method(name, content)
+  def {{name}}
+    {% if content == 1 %}
+      "one"
+    {% else %}
+      {{content}}
+    {% end %}
+  end
+end
+
+## Numbers
+
+1.0     # Float64
+1.0_f32 # Float32
+1_f32   # Float32
+
+1e10   # Float64
+1.5e10 # Float64
+1.5e-7 # Float64
+
++1.3 # Float64
+-0.5 # Float64
+
+1_000_000.111_111 # better than 1000000.111111
+
+1 # Int32
+
+1_i8  # Int8
+1_i16 # Int16
+1_i32 # Int32
+1_i64 # Int64
+
+1_u8  # UInt8
+1_u16 # UInt16
+1_u32 # UInt32
+1_u64 # UInt64
+
++10 # Int32
+-20 # Int32
+
+2147483648          # Int64
+9223372036854775808 # UInt64
+
+1_000_000 # better than 1000000
+
+0b1101 # == 13
+
+0o123 # == 83
+
+0xFE012D # == 16646445
+0xfe012d # == 16646445
+
+## Regular expressions
+
+foo_or_bar = /foo|bar/
+heeello = /h(e+)llo/
+integer = /\d+/
+r = /foo/imx
+slash = /\//
+r = %r(regex with slash: /)
+
+## Strings
+
+"hello world"
+
+"\"" # double quote
+"\\" # backslash
+"\e" # escape
+"\f" # form feed
+"\n" # newline
+"\r" # carriage return
+"\t" # tab
+"\v" # vertical tab
+
+"\101" # == "A"
+"\123" # == "S"
+"\12"  # == "\n"
+"\1"   # string with one character with code point 1
+
+"\u0041" # == "A"
+
+"\u{41}"    # == "A"
+"\u{1F52E}" # == "🔮"
+"ã‚"
+
+"hello
+      world" # same as "hello\n      world"
+
+"hello " \
+"world, " \
+"no newlines" # same as "hello world, no newlines"
+
+"hello \
+     world, \
+     no newlines" # same as "hello world, no newlines"
+
+# Supports double quotes and nested parenthesis
+%(hello ("world")) # same as "hello (\"world\")"
+
+# Supports double quotes and nested brackets
+%[hello ["world"]] # same as "hello [\"world\"]"
+
+# Supports double quotes and nested curlies
+%{hello {"world"}} # same as "hello {\"world\"}"
+
+# Supports double quotes and nested angles
+%<hello <"world">> # same as "hello <\"world\">"
+
+## Heredoc strings
+
+<<-XML
+<parent>
+  <child />
+</parent>
+XML
+
+<<-STRING
+  Hello
+    world
+  STRING
+
+## Characters
+
+'a'
+'z'
+'0'
+'_'
+
+'\'' # single quote
+'\\' # backslash
+'\e' # escape
+'\f' # form feed
+'\n' # newline
+'\r' # carriage return
+'\t' # tab
+'\v' # vertical tab
+
+"\101" # == 'A'
+"\123" # == 'S'
+"\12"  # == '\n'
+"\1"   # code point 1
+
+'\u0041' # == 'A'
+
+'\u{41}'    # == 'A'
+'\u{1F52E}' # == '🔮'
+
+## Symbols
+
+:hello
+:good_bye
+
+# With spaces and symbols
+:"symbol with spaces"
+
+# Ending with question and exclamation marks
+:question?
+:exclamation!
+
+# For the operators
+:+
+:-
+:*
+:/
+:==
+:<
+:<=
+:>
+:>=
+:!
+:!=
+:=~
+:!~
+:&
+:|
+:^
+:~
+:**
+:>>
+:<<
+:%
+:[]
+:[]?
+:[]=
+:<=>
+:===
+
+## Hashes
+
+{1 => 2, 3 => 4}   # Hash(Int32, Int32)
+{1 => 2, 'a' => 3} # Hash(Int32 | Char, Int32)
+{} of Int32 => Int32 # same as Hash(Int32, Int32).new
+{key1: 'a', key2: 'b'} # Hash(Symbol, Char)
+{"key1": 'a', "key2": 'b'} # Hash(String, Char)
+
+MyType{"foo" => "bar"}
+MyType(String, String){"foo" => "bar"}
+
+## Tuples
+
+tuple = {1, "hello", 'x'} # Tuple(Int32, String, Char)
+tuple[0]                  # => 1       (Int32)
+tuple[1]                  # => "hello" (String)
+tuple[2]                  # => 'x'     (Char)
+
+## Arrays
+
+[1, 2, 3]         # Array(Int32)
+[1, "hello", 'x'] # Array(Int32 | String | Char)
+
+[] of Int32 # same as Array(Int32).new
+
+%w(one two three) # ["one", "two", "three"]
+%i(one two three) # [:one, :two, :three]
+
+## Keywords
+
+nil
+true  # A Bool that is true
+false # A Bool that is false

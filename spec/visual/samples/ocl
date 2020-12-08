@@ -1,0 +1,45 @@
+package uml::Activities
+
+context uml::Activities::Activity
+	inv maximum_one_parameter_node:
+		ownedParameter->forAll(p | p.direction <> UML::Classification::ParameterDirectionKind::inout implies
+		  node->select(
+		    (
+		      oclIsKindOf(activities::ActivityParameterNode) and
+		      oclAsType(activities::ActivityParameterNode).parameter = p
+		    ))
+		  ->size() = 1)
+
+context Action::allActions() : Set(uml::Actions::Action)
+	body:
+	(self->asSet())
+
+context Action::allOwnedNodes() : Set(uml::Activities::ActivityNode)
+	body:
+	(input.oclAsType(Pin)->asSet()->union(output->asSet()))
+
+context Action::containingBehavior() : uml::CommonBehavior::Behavior
+	body:
+	(if inStructuredNode<>null then inStructuredNode.containingBehavior()
+else if activity<>null then activity
+else interaction
+endif
+endif
+)
+
+context uml::Actions::Action::isLocallyReentrant : Boolean
+init:
+	false
+
+context uml::Actions::ExpansionRegion::mode : uml::Actions::ExpansionKind
+init:
+	UML::Actions::ExpansionKind::iterative
+
+context Guard
+-- [1] A guard should not have side effects.
+inv: self.transition->stateMachine->notEmpty() implies
+		(self.transition.stateMachine.context =
+		self.transition.stateMachine.context@pre)
+
+endpackage
+body: self.employees->collect(salary) -> collect(x | x/6.55957)

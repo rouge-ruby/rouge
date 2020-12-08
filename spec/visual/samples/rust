@@ -16,7 +16,7 @@ fn h(a: i32) -> i32 {
   let b = (a / 4 + 1_000) * 2 - 3;
   let c = (a | 0b0100) & 0xF;
 
-  c ^ !b
+  c ^ !b ^ 0o707
 }
 
 fn main() {

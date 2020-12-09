@@ -32,7 +32,7 @@ module Rouge
       arrayType = /array(?:1[0-9]+|[2-9][0-9]*)\??/
       bvType = /bv(?:0|[1-9][0-9]*)/
 
-      id = /[a-zA-Z?][a-zA-Z0-9_?']*/
+      id = /[a-zA-Z][a-zA-Z0-9_?']*/i
 
       digit = /[0-9]/
       digits = /#{digit}+(?:_#{digit}+)*/
@@ -74,13 +74,13 @@ module Rouge
         rule %r/0x[_0-9a-zA-Z'\?]*/, Error
         rule %r/0x$/, Error
         rule %r/#{digits}\b/, Num::Integer
-        rule %r/[_#{digit}]+\b/, Error
+        rule %r/[0-9_]+/, Error
 
         rule %r/(?:object\?|#{arrayType}|#{bvType})/, Keyword::Type
         rule %r/array1\??/, Name
         rule %r/array\??/, Keyword::Type
 
-        rule /[a-zA-Z0-9][a-zA-Z0-9_?']*/ do |m|
+        rule id do |m|
           if types.include?(m[0])
             token Keyword::Type
           elsif keywords.include?(m[0])
@@ -88,9 +88,8 @@ module Rouge
           elsif
             token Name
           end
-       end
+        end
 
-        rule %r/#{id}/, Name
         rule %r/\.\./, Operator
         rule %r/as|is/, Operator
         rule %r/[*!%&\[\](){}<>\|^+=:;,.\/-]/, Operator

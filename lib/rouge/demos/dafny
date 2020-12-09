@@ -3,8 +3,8 @@ module A {
 }
 
 method m(b: bool, s: string) {
-  var x := b;
-  var i := 7;
+  var x: string;
+  var i: int;
   assert b;
 }
 

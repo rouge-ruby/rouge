@@ -12,32 +12,41 @@ module Rouge
 
       keywords = %w(
         abstract assert assume
-        break calc case class codatatype const
-        constructor datatype decreases default else ensures exists
-        extends false forall fresh function
-        ghost greatest if import in include
-        inductive invariant
-        iterator label least lemma match method
-        modifies modify module multisets 
+        break calc case class codatatype const constructor
+        datatype decreases default
+        else ensures exists expect extends
+        false forall fresh function
+        ghost greatest
+        if import include inductive invariant iterator
+        label least lemma
+        match method modifies modify module
         new newtype null old opened
-        predicate print provides reads
-        refines requires return returns reveals
+        predicate print provides
+        reads refines requires return returns reveals
         static 
         then this trait true twostate type
         unchanged var where while yield yields
       )
 
-      types = %w(bool char int real string object 
-                 seq set iset map imap nat )
-      arrayType = /array(?:1[0-9]+|[2-9][0-9]*)\??/
-      bvType = /bv(?:0|[1-9][0-9]*)/
+      literals = %w{ true false null }
 
-      id = /[a-zA-Z][a-zA-Z0-9_?']*/i
+      textOperators = %w{ as is in }
 
-      digit = /[0-9]/
+      types = %w(bool char int real string nat
+                 array array? object object?
+                 seq set iset map imap multiset )
+
+      idstart = /[0-9a-zA-Z?]/
+      idchar = /[0-9a-zA-Z_'?]/
+      id = /#{idstart}#{idchar}*/
+
+      arrayType = /array(?:1[0-9]+|[2-9][0-9]*)\??(?!#{idchar})/
+      bvType = /bv(?:0|[1-9][0-9]*)(?!#{idchar})/
+
+      digit = /\d/
       digits = /#{digit}+(?:_#{digit}+)*/
       bin_digits = /[01]+(?:_[01]+)*/
-      hex_digit = /(?:[0-9]|[a-f]|[A-F])/
+      hex_digit = /(?:[0-9a-fA-F])/
       hex_digits = /#{hex_digit}+(?:_#{hex_digit}+)*/
 
       cchar = /(?:[^\\'\n\r]|\\["'ntr\\0])/
@@ -54,35 +63,35 @@ module Rouge
 
         rule %r/'#{cchar}'/, Str::Char           # standard or escape char
         rule %r/'#{uchar}'/, Str::Char           # unicode char
-        rule %r/'[^'\n]*'/, Error                # bad any other enclosed char
-        rule %r/'[^'\n]*$/, Error                # bad unclosed char
+        rule %r/'[^'\n\r]*'/, Error              # bad any other enclosed char
+        rule %r/'[^'\n\r]*$/, Error              # bad unclosed char
 
         rule %r/"(?:#{schar}|#{uchar})*"/, Str::Double        # valid string
         rule %r/".*"/, Error                     # anything else that is closed
         rule %r/".*$/, Error                     # bad unclosed string
 
         rule %r/@"([^"]|"")*"/, Str::Double     # valid verbatim string
-        rule %r/@"([^"]|")*/, Error             # anything else unclosed
-
-        rule %r/(?:true|false|null)\b/, Keyword::Constant
+        rule %r/@".*/m, Error             # anything else , multiline unclosed
 
 
-        rule %r/#{digits}\.#{digits}\b/, Num::Float
-        rule %r/0b#{bin_digits}\b/, Num::Bin
-        rule %r/0b[_0-9a-zA-Z'\?]*/, Error
-        rule %r/0x#{hex_digits}\b/, Num::Hex
-        rule %r/0x[_0-9a-zA-Z'\?]*/, Error
-        rule %r/0x$/, Error
-        rule %r/#{digits}\b/, Num::Integer
-        rule %r/[0-9_]+/, Error
+        rule %r/#{digits}\.#{digits}(?!#{idchar})/, Num::Float
+        rule %r/0b#{bin_digits}(?!#{idchar})/, Num::Bin
+        rule %r/0b#{idchar}*/, Error
+        rule %r/0x#{hex_digits}(?!#{idchar})/, Num::Hex
+        rule %r/0x#{idchar}*/, Error
+        rule %r/#{digits}(?!#{idchar})/, Num::Integer
+        rule %r/[0-9_]+/, Name
 
-        rule %r/(?:object\?|#{arrayType}|#{bvType})/, Keyword::Type
-        rule %r/array1\??/, Name
-        rule %r/array\??/, Keyword::Type
+        rule %r/#{arrayType}/, Keyword::Type
+        rule %r/#{bvType}/, Keyword::Type
 
         rule id do |m|
           if types.include?(m[0])
             token Keyword::Type
+          elsif literals.include?(m[0])
+            token Keyword::Constant
+          elsif textOperators.include?(m[0])
+            token Operator
           elsif keywords.include?(m[0])
             token Keyword
           elsif
@@ -91,8 +100,8 @@ module Rouge
         end
 
         rule %r/\.\./, Operator
-        rule %r/as|is/, Operator
-        rule %r/[*!%&\[\](){}<>\|^+=:;,.\/-]/, Operator
+        rule %r/[*!%&<>\|^+=:;`.\/-]/, Operator
+        rule %r/[\[\](){},]/, Operator # Punctuation
 
         rule %r/[^\S\n]+/, Text
         rule %r/\n/, Text

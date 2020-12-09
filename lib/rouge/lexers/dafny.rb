@@ -80,6 +80,7 @@ module Rouge
         rule %r/0x#{hex_digits}(?!#{idchar})/, Num::Hex
         rule %r/0x#{idchar}*/, Error
         rule %r/#{digits}(?!#{idchar})/, Num::Integer
+        rule %r/_[0-9_]+/, Error
         rule %r/[0-9_]+/, Name
 
         rule %r/#{arrayType}/, Keyword::Type

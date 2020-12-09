@@ -76,11 +76,11 @@ const ss: string := @"asd '"" xyz
 7 is nat
 
 // Errors?
-# @ ~
+# @ ~ __
 
 // Identifiers
 abc def_ ghi? klm'pqr
- A9090 
+ A9090  _
 setxxx set000 ifxxx asxx isxx truexxx true000
 set_ if_ as_ is_ int_ true_
 set' if' as' is' int' true'

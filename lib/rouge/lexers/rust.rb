@@ -212,7 +212,8 @@ module Rouge
 
       state :has_literals do
         # constants
-        rule %r/\b(?:true|false|nil)\b/, Keyword::Constant
+        rule %r/\b(?:true|false)\b/, Keyword::Constant
+
         # characters/bytes
         rule %r(
           b?' (?: #{escapes} | [^\\] ) '

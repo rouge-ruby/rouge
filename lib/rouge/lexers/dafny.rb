@@ -101,8 +101,8 @@ module Rouge
         end
 
         rule %r/\.\./, Operator
-        rule %r/[*!%&<>\|^+=:;`.\/-]/, Operator
-        rule %r/[\[\](){},]/, Operator # Punctuation
+        rule %r/[*!%&<>\|^+=:`.\/-]/, Operator
+        rule %r/[\[\](){},;]/, Operator # Punctuation
 
         rule %r/[^\S\n]+/, Text
         rule %r/\n/, Text

@@ -8,6 +8,7 @@ module Rouge
       desc "graph description language"
 
       tag 'dot'
+      aliases 'graphviz'
       filenames '*.dot'
       mimetypes 'text/vnd.graphviz'
 

@@ -70,7 +70,7 @@ module Rouge
         rule %r/".*"/, Error                     # anything else that is closed
         rule %r/".*$/, Error                     # bad unclosed string
 
-        rule %r/@"([^"]|"")*"/, Str::Double     # valid verbatim string
+        rule %r/@"([^"]|"")*"/, Str::Other     # valid verbatim string
         rule %r/@".*/m, Error             # anything else , multiline unclosed
 
 
@@ -80,8 +80,10 @@ module Rouge
         rule %r/0x#{hex_digits}(?!#{idchar})/, Num::Hex
         rule %r/0x#{idchar}*/, Error
         rule %r/#{digits}(?!#{idchar})/, Num::Integer
-        rule %r/_[0-9_]+/, Error
-        rule %r/[0-9_]+/, Name
+        rule %r/_(?!#{idchar})/, Name
+        rule %r/_[0-9_]+[_]?(?!#{idchar})/, Error
+        rule %r/[0-9_]+_(?!#{idchar})/, Error
+        rule %r/[0-9]#{idchar}+/, Error
 
         rule %r/#{arrayType}/, Keyword::Type
         rule %r/#{bvType}/, Keyword::Type
@@ -92,17 +94,17 @@ module Rouge
           elsif literals.include?(m[0])
             token Keyword::Constant
           elsif textOperators.include?(m[0])
-            token Operator
+            token Operator::Word
           elsif keywords.include?(m[0])
-            token Keyword
-          elsif
+            token Keyword::Reserved
+          else
             token Name
           end
         end
 
         rule %r/\.\./, Operator
         rule %r/[*!%&<>\|^+=:.\/-]/, Operator
-        rule %r/[\[\](){},;`]/, Operator # Punctuation
+        rule %r/[\[\](){},;`]/, Punctuation
 
         rule %r/[^\S\n]+/, Text
         rule %r/\n/, Text

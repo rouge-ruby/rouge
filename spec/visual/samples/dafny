@@ -27,6 +27,7 @@ function f(i: int): int { i + 1 }
 const i: int := 123_456
 const i: int := _123_456 // Error
 const i: int := 123_456_ // Error
+const i: int := 123abc // Error
 const h: int := 0x0123456789_abcdef_ABCDEF
 const h: int := 0x0123456789_abcdef_ABCDEF_ // Error
 const b: int := 0b0101_0101_010

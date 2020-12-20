@@ -1,0 +1,5 @@
+gen myvar = 10
+
+replace myvar = 30
+
+gen newvar = "hello"

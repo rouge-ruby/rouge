@@ -1,6 +1,7 @@
 * Example Stata script showing syntax highlighting
 
 * This is a single-line comment
+ * This is a single-line comment
 // This is also a single-line comment
 
 gen foo = 3 // This is an in-line comment
@@ -28,14 +29,6 @@ di 123E3
 di 1.23e-3
 di 1.23e3
 
-* Hex numbers -- need to fix
-di 0xabcdefABCDEF01234
-di 0xabcp123
-di 0xabcP123
-
-* Not hex
-0xg
-
 * Functions
 gen foo = cos(bar)
 gen foo = tan(bar)
@@ -54,12 +47,16 @@ local foo = 3
 global bar = "foo"
 scalar foo = 3
 matrix foo = 3
+gen foo = `bar'
+gen foo = "`bar'"
+gen foo = $bar
+gen foo = "$bar"
 
-* Control structures and programs
-if (x==3) {
+* Control structures
+if (`x'==3) {
 	display "foo"
 }
-else if (x==4) {
+else if (`x'==4) {
 	display "bar"
 }
 else display "foobar"
@@ -83,11 +80,20 @@ while (`i' < 5) {
     if (`i' > 3) break
 }
 
+foreach v of varlist mpg weight-turn {
+	di "`v'"
+}
+foreach v of newlist newvar1 newvar2 {
+	di "`v'"
+}
+foreach v of numlist 1/5 12 {
+	di `v'
+}
+
 * Programs
 program define myprog
 	di "`0'"
 end
-
 
 * Indexing
 matrix input foo = (1,2,3,4\5,6,7,8\9,10,11,12)
@@ -120,6 +126,39 @@ di 1 + (2 + 3)
 * Strings
 gen foo = "hello, world!"
 gen foo = `"hello, world!"'
-gen foo = `mylocal'
-gen foo = $myglobal
+gen foo = `"hello," world!"'
+gen foo = "`hello, world!'"
+
+
+
+* Estimation and data manipulation commands
+do "$MyProject/scripts/programs/_config.do"
+use "$MyProject/auto_uncleaned.dta", clear
+
+foreach v of varlist * {
+	cap confirm numeric var `v'
+	if _rc continue
+	
+	gen imp_`v' = mi(`v')
+	label var imp_`v' "Imputed value for `v'"
+	summ `v', detail
+	replace `v' = r(p50) if mi(`v')
+}
+
+compress
+save "$MyProject/processed/auto.dta", replace
+
+tempfile results
+local replace replace
+foreach rhs in "mpg" "mpg weight" {
+	
+	* Domestic cars
+	reg price `rhs' if foreign=="Domestic", robust
+	regsave using "`results'", t p autoid `replace' addlabel(rhs,"`rhs'",origin,Domestic) 
+	local replace append
+	
+	* Foreign cars
+	reg price `rhs' if foreign=="Foreign", robust
+	regsave using "`results'", t p autoid append addlabel(rhs,"`rhs'",origin,"Foreign") 
+}
 

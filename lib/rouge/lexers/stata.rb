@@ -14,7 +14,7 @@ module Rouge
 	  KEYWORDS = %w(if else foreach forval to while in of continue break program define end set mata by using use sysuse insheet save
 	     cap capture confirm creturn ereturn return list error estimates exit file open read write close frame
 		 gettoken levelsof macro shift mkmat svmat more  pause plugin preserve restore syntax adopath tokenize trace
-		 unab varabbrev version clear run do net tempfile tempvar tempname drop rename mi missing label var order compress 
+		 unab varabbrev version clear run do net tempfile tempvar tempname drop rename mi missing label var order compress append merge
 		 gen generate egen replace isid duplicates di display
 		 lincom test testnl predict suest 
 		 reg regress probit logit ivregress logistic svy gmm ivprobit ivtobit 

@@ -1,180 +1,125 @@
 * Example Stata script showing syntax highlighting
 
-* This is also a comment
+* This is a single-line comment
+// This is also a single-line comment
 
-## Valid names
-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789._a <- NULL
-f2_bar <- NULL
-F2_BAR <- NULL
-.foo_ <- NULL
-._foo <- NULL
-. <- NULL
-.. <- NULL
-... <- NULL
-c <- NULL
-c(T, F)
+gen foo = 3 // This is an in-line comment
 
-## Invalid names
-0abc <- NULL
-.0abc <- NULL
-abc+cde <- NULL
-_ <- NULL
-_x <- NULL
+/*
+This is a multi-line 
+comment
+*/
 
-## Reserved Words
-NA
-NA_integer_
-NA_real_
-NA_character_
-NA_complex_
-NULL
-NaN
-Inf
-## Not reserved
-NULLa <- NULL
-NULL1 <- NULL
-NULL. <- NULL
-NA_foo_ <- NULL
+* Valid names
+gen foo = 3
+gen foo1 = 3
+gen _myvar = 3
 
-## Numbers
-12345678901
-123456.78901
-123e3
-123E3
-1.23e-3
-1.23e3
-1.23e-3
-.25
-## integer constants
-123L
-1.23L
-## imaginary numbers
-123i
--123i
-123e4i
-123e-4i
-## Hex numbers
-0xabcdefABCDEF01234
-0xabcp123
-0xabcP123
-## Not hex
+* Invalid names
+gen 0foo = 3
+gen ^foo = 3
+gen foo% = 3
+
+* Numbers
+di 12345678901
+di 123456.78901
+di 123e3
+di 123E3
+di 1.23e-3
+di 1.23e3
+
+* Hex numbers -- need to fix
+di 0xabcdefABCDEF01234
+di 0xabcp123
+di 0xabcP123
+
+* Not hex
 0xg
 
-## Special operators %xyz%
-## %xyz%
-1 %% 2
-diag(2) %*% diag(2)
-1 %/% 2
-1 %in% 1:10
-diag(2) %o% diag(2)
-diag(2) %x% diag(2)
-`%foo bar%` <- function(x, y) x + y
-1 %foo bar% 2
+* Functions
+gen foo = cos(bar)
+gen foo = tan(bar)
+gen foo = runiform()
+gen foo = e(sample)
 
-## Control Structures (3.2) and Function
-## if, else
-if (TRUE) print("foo") else print("bar")
-## For, in
-for(i in 1:5) {
-    print(i)
-}
-## While, break
-i <- 1
-while (TRUE) {
-    i <- i + 1
-    if (i > 3) break
-}
-## Repeat
-repeat {1+1}
-## Switch
-x <- 3
-switch(x, 2+2, mean(1:10), rnorm(5))
-## Function, dot-dot-dot, return
-foo <- function(...) {
-    return(sum(...))
-}
-# Not keywords
-functiona <- 2 + 2
-function. <- 2 + 2
-function1 <- 2 + 2
+* Types, macros, scalars, and matrices
+gen byte foo = 4
+gen int foo = 3
+gen long foo = 3
+gen float bar = 3.2
+gen double bar = 3.2
+gen str foo = "bar"
+gen strL foo = "bar"
+local foo = 3
+global bar = "foo"
+scalar foo = 3
+matrix foo = 3
 
+* Control structures and programs
+if (x==3) {
+	display "foo"
+}
+else if (x==4) {
+	display "bar"
+}
+else display "foobar"
 
-## Grouping Tokens 10.3.7
-## Parentheses
-1 + (2 + 3)
-## brackets
-foo <- function(a) {
-    a + 1
+foreach i in "foo" "bar" {
+    di "`i'"
 }
 
-## Indexing 10.3.8
-## []
-bar <- 1:10
-bar[3]
-## [[]]
-foo <- list(a=1, b=2, c=3)
-foo[["a"]]
-## $
-foo$a
-foo$"a"
+forval i = 1/5 {
+	di `i'
+}
 
-## Operators
-2 - 2
-2 + 2
-2 ~ 2
-! TRUE
-?"help"
-1:2
-2 * 2
-2 / 2
-2^2
-2 < 2
-2 > 2
-2 == 2
-2 >= 2
-2 <= 2
-2 != 2
-TRUE & FALSE
-TRUE && FALSE
-TRUE | FALSE
-TRUE || FALSE
-foo <- 2 + 2
-foo = 2 + 2
-2 + 2 -> foo
-foo <<- 2 + 2
-2 + 2 ->> foo
-base:::sum
-base::sum
+forval i = 1 5 to 10 {
+	di `i'
+}
 
-## Strings
-foo <- "hello, world!"
-foo <- 'hello, world!'
-foo <- "Hello, 'world!"
-foo <- 'Hello, "world!'
-foo <- 'Hello, \'world!\''
-foo <- "Hello, \"world!\""
-foo <- "Hello,
-world!"
-foo <- 'Hello,
-world!'
+local i = 1
+while (`i' < 5) {
+    local i = `i'+1
+    if (`i'<3) continue
+    if (`i' > 3) break
+}
 
-## Backtick strings
-`foo123 +!"bar'baz` <- 2 + 2
-x = ` ` % % 2
+* Programs
+program define myprog
+	di "`0'"
+end
 
-## Builtin names
 
-LETTERS
-letters
-month.abb
-month.name
-pi
+* Indexing
+matrix input foo = (1,2,3,4\5,6,7,8\9,10,11,12)
+matrix bar  = foo[1..., 2..4]/2
+matrix symmetric = (2,1\1,2)
+matrix foobar = cholesky(0.1*I(rowsof(symmetric)) + 0.9*symmetric)
 
-## Roxygen
+* Operators
+di 2 - 2
+di 2 + 2
+di 2 * 2
+di 2 / 2
+di 2^2
 
-#' A description
-#'
-#' Long description
-#' @param x the object
-#' @return A logical indicating whether \code{x == 0}
-is_zero = function (x) x == 0
+di 1 & 0
+di 1 | 0
+di !1
+di ~1
+
+di 2 < 2
+di 2 > 2
+di 2 >= 2
+di 2 <= 2
+di 2 == 2
+di 2 != 2
+di 2 ~= 2
+di 2 + 2 == 4
+di 1 + (2 + 3)
+
+* Strings
+gen foo = "hello, world!"
+gen foo = `"hello, world!"'
+gen foo = `mylocal'
+gen foo = $myglobal
+

@@ -60,3 +60,20 @@ WHERE
 {
     ?item a :Test .
 }
+
+# unicode variable names
+SELECT ?název_44
+WHERE {
+    ovm:00025593 schema:name ?název_44 .
+}
+
+# unicode prefixed name
+PREFIX podmínky-užití: <https://data.gov.cz/slovník/podmínky-užití/>
+SELECT ?název
+WHERE {
+    ?distribuce a dcat:Distribution ;
+        podmínky-užití:specifikace ?spec .
+
+    ?spec a podmínky-užití:Specifikace ;
+        podmínky-užití:databáze-chráněná-zvláštními-právy ?zvláštníPrávo .
+}

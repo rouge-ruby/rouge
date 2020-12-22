@@ -252,5 +252,58 @@ describe Rouge::Lexers::J do
           ['Punctuation', "'"]
       end
     end
+
+    describe 'direct definitions' do
+      it 'lexes delimiters {{ and }}' do
+        assert_tokens_equal '{{ }}',
+          ['Punctuation', '{{'], ['Text', ' '], ['Punctuation', '}}']
+        assert_tokens_equal '{{.',
+          ['Name.Function', '{{.']
+        assert_tokens_equal '}}:',
+          ['Operator', '}'], ['Name.Function', '}:']
+      end
+
+      it 'recognizes control information' do
+        %w'm d v a c *'.each do |c|
+          assert_tokens_equal "{{)#{c}",
+            ['Punctuation', '{{)'], ['Keyword', c]
+        end
+        assert_tokens_equal '{{)b',
+          ['Punctuation', '{{)'], ['Error', 'b']
+        assert_tokens_equal '{{)a bc',
+          ['Punctuation', '{{)'], ['Keyword', 'a'], ['Text', ' '],
+          ['Error', 'bc']
+        assert_tokens_equal '{{)aNB.',
+          ['Punctuation', '{{)'], ['Error', 'aNB.']
+        assert_tokens_equal '{{)a NB.',
+          ['Punctuation', '{{)'], ['Keyword', 'a'], ['Text', ' '],
+          ['Comment.Single', 'NB.']
+        assert_tokens_equal '{{).',
+          ['Punctuation', '{{'], ['Error', ').']
+      end
+
+      it 'recognizes nouns' do
+        assert_tokens_equal '{{)n line 1}}',
+          ['Punctuation', '{{)'], ['Keyword', 'n'],
+          ['Literal.String.Heredoc', ' line 1'],
+          ['Punctuation', '}}']
+        assert_tokens_equal "{{)nline 1\nline 2}}\n }}\n}}",
+          ['Punctuation', '{{)'], ['Keyword', 'n'],
+          ['Literal.String.Heredoc', "line 1\nline 2}}\n }}\n"],
+          ['Punctuation', '}}']
+        assert_tokens_equal '{{)n}}.',
+          ['Punctuation', '{{)'], ['Keyword', 'n'],
+          ['Punctuation', '}}'], ['Operator', '.']
+      end
+
+      it 'rejects {{ }} in a explicit definition literal' do
+        assert_tokens_equal "1 :'{{y}}m'",
+          ['Keyword.Pseudo', '1'], ['Text', ' '],
+          ['Keyword.Pseudo', ':'], ['Punctuation', "'"],
+          ['Error', '{{'], ['Name.Builtin.Pseudo', 'y'],
+          ['Error', '}}'], ['Name.Builtin.Pseudo', 'm'],
+          ['Punctuation', "'"]
+      end
+    end
   end
 end

@@ -88,6 +88,17 @@ module Rouge
       state :expr do
         rule %r/\s+/, Text
 
+        # https://code.jsoftware.com/wiki/Vocabulary/DirectDefinition
+        rule %r/\{\{(\))?(?![.:])/ do |m|
+          token Punctuation
+          push :dd if m[1]
+        end
+        rule %r/\}\}(?![.:])/, Punctuation
+
+        rule %r/^([ \t]*)(:)([ \t\r]*\n)/ do
+          groups Text, Punctuation, Text
+        end
+
         rule %r'([!-&(-/:-@\[-^`{-~]|[A-Za-z]\b)([.:]*)' do |m|
           token J.primitive(m[1], m[2])
         end
@@ -168,7 +179,6 @@ module Rouge
           @note_next = true
         end
 
-        rule %r/[mnuvxy]\b(?![.:])/, Name
         mixin :expr
       end
 
@@ -205,6 +215,7 @@ module Rouge
         rule %r/''/, Str::Single, :q_str
         rule %r/'|$/, Punctuation, :pop!
         rule %r/NB\.(?![.:])([^'\n]|'')*/, Comment::Single
+        rule %r/(?:\{\{|\}\})(?![.:])/, Error
         mixin :expr
       end
 
@@ -217,19 +228,16 @@ module Rouge
 
       state :note do
         mixin :delimiter
-        rule %r/.+\n?/, Comment::Multiline
+        rule %r/.+\n*/, Comment::Multiline
       end
 
       state :noun do
         mixin :delimiter
-        rule %r/.+\n?/, Str::Heredoc
+        rule %r/.+\n*/, Str::Heredoc
       end
 
       state :code do
         mixin :delimiter
-        rule %r/^([ \t]*)(:)([ \t\r]*)$/ do
-          groups Text, Punctuation, Text
-        end
         mixin :expr
       end
 
@@ -238,6 +246,43 @@ module Rouge
           groups Text, Punctuation, Text
           pop!
         end
+      end
+
+      state :dd do
+        rule %r/n/ do
+          token Keyword
+          goto :dd_noun
+        end
+        rule %r/[acdmv](?!\w)|\*/ do
+          token Keyword
+          goto :dd_ctrl
+        end
+        # `)aNB.`, as well as `)b`, is invalid.
+        rule %r/.N?/ do
+          token Error
+          goto :dd_ctrl
+        end
+        rule(/$/) { pop! }
+      end
+
+      state :dd_ctrl do
+        rule %r/[ \t\r]+/, Text
+        rule %r/NB\.(?![.:]).*/, Comment::Single
+        rule(/$/) { pop! }
+      end
+
+      state :dd_noun do
+        rule %r/(?:[^}\n]|\}(?!\}))+/, Str::Heredoc
+        rule %r/\}\}/, Punctuation, :pop!
+        rule %r/\n+/ do
+          token Str::Heredoc
+          goto :dd_noun_m
+        end
+      end
+
+      state :dd_noun_m do
+        rule %r/[^\}].*\n*/, Str::Heredoc
+        rule %r/^\}\}/, Punctuation, :pop!
       end
     end
   end

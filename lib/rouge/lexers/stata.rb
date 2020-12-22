@@ -10,18 +10,42 @@ module Rouge
       filenames '*.do', '*.ado'
 	  mimetypes 'application/x-stata', 'text/x-stata'
 
-      # Partial list of common programming and estimation commands
-	  KEYWORDS = %w(if else foreach forval to while in of continue break program define end set mata by using use sysuse insheet save
-	     cap capture confirm creturn ereturn return list error estimates exit file open read write close frame
-		 gettoken levelsof macro shift mkmat svmat more  pause plugin preserve restore syntax adopath tokenize trace
-		 unab varabbrev version clear run do net tempfile tempvar tempname drop rename mi missing label var order compress append merge
-		 gen generate egen replace isid duplicates di display
-		 lincom test testnl predict suest 
-		 reg regress probit logit ivregress logistic svy gmm ivprobit ivtobit 
+      KEYWORD_TYPES = %w(byte int long float double str strL local global numlist varlist newlist scalar matrix numeric string integer)
+	  
+      # Complete list of programming commands, as of Stata 16  (excludes options that come after a comma)
+	  # Note: not all abbreviations are included
+	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break)	 
+
+      # Partial list of common programming and estimation commands, as of Stata 16
+	  # Note: not all abbreviations are included
+	  KEYWORDS = %w(
+	    do run include clear assert
+		set mata on off
+	    by capture char class classutil which cdir confirm new existence creturn 
+	    _datasignature discard di dis disp displ displa display ereturn error _estimates exit file open read write seek close query findfile fvexpand
+	    gettoken java home heapmax java_heapmax initialize javacall levelsof 
+ 	    tempvar tempname tempfile macro shift uniq dups retokenize clean sizeof posof
+  	    makecns matcproc marksample mark markout markin svymarkout matlist
+	    accum define dissimilarity eigenvalues get rowjoinbyname rownames score svd symeigen dir list ren rename
+	    more pause plugin call postfile _predict preserve restore program define drop end python qui quietly _return return _rmcoll rmsg _robust 
+	    serset locale_functions locale_ui signestimationsample checkestimationsample sleep syntax sysdir adopath adosize
+	    tabdisp timer tokenize trace unab unabcmd varabbrev version viewsource 
+	    window fopen fsave manage menu push stopbox
+	    net from cd link search install sj stb ado update uninstall pwd ssc ls
+	    using insheet mkmat svmat
+		mi miss missing var varname order compress append
+		gen gene gener genera generat generate egen replace duplicates
+		estimates  lincom test testnl predict suest 
+		_regress reg regr regre regres regress probit logit ivregress logistic svy gmm ivprobit ivtobit
+		bsample assert codebook collapse compare contract copy count cross datasignature d ds desc describe destring 
+		drawnorm edit encode decode erase expand export filefilter fillin format frame frget frlink gsort 
+		import dbase delimited excel fred haver sas sasxport5 sasxport8 spss infile infix input insobs inspect ipolate isid
+		joinby label language labelbook lookfor memory mem merge mkdir mvencode notes obs odbc order outfile
+		pctile putmata range recast recode rename group reshape rmdir sample save separate shell snapshot sort split splitsample stack statsby sysuse 
+		type unicode use varmanage vl webuse xpose zipfile 
+		number
 	  )
 	  
-	  KEYWORD_TYPES = %w(byte int long float double str strL local global numlist varlist newlist scalar matrix)
-
       # Complete list of functions by name, as of Stata 16
       PRIMITIVE_FUNCTIONS = %w(
         abbrev abs acos acosh age age_frac asin asinh atan atan2 atanh autocode
@@ -63,13 +87,19 @@ module Rouge
 	  
 	    rule %r/\s+/m, Text::Whitespace
 	  
+		# Pre-processor commands: #
+		rule %r/^\s*#.*$/, Comment::Preproc
+		
+		# Hashbang comments: *!
+		rule %r/^\*!.*$/, Comment::Hashbang
+
 		# Single-line comment: *
 		# Ideally, this match would be anchored to start of line + optional white space
 		# That would avoid matching when * is used as an operator (eg 3*5)
 		#   Example: match "   * text" and "*text" but not "text*text"
 		#   Solution: rule %r/^\s*\*.*$/, Comment::Single
-		#   Problem: This solution above works on rubular.com, but the '^' does not match "   * text" in rouge for some reason
-		# Instead, use solution below, which matchs all * comments correctly but incorrectly matches the * operator
+		#   Problem: This solution above works on rubular.com, but won't match "text*text" in rouge for some reason
+		# Instead, use solution below, which matchs all * comments correctly but incorrectly matches * when used as an operator
 		rule %r/\*.*$/, Comment::Single
 
 		# in-line comment: //
@@ -79,7 +109,7 @@ module Rouge
 		rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
 		
 		# Strings indicated by double-quotes
-		 rule %r/"(\\.|.)*?"/, Str::Double
+		rule %r/"(\\.|.)*?"/, Str::Double
 		
 		# Format locals (`') and globals ($) as strings
 		rule %r/`(\\.|.)*?'/, Str::Double
@@ -88,15 +118,15 @@ module Rouge
         rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
         rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/, Num
 
-        # Only recognize built-in functions when they are actually used as a
-        # function call, i.e. followed by an opening parenthesis.
-        # `Name::Builtin` would be more logical, but is usually not
-        # highlighted specifically; thus use `Name::Function`.
+        # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
+        # `Name::Builtin` would be more logical, but is usually not highlighted specifically; thus use `Name::Function`
         rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 
 		rule %r/\w+/ do |m|
           if KEYWORDS.include? m[0]
             token Keyword
+          elsif KEYWORDS_RESERVED.include? m[0]
+            token Keyword::Reserved	
           elsif KEYWORD_TYPES.include? m[0]
             token Keyword::Type
           else

@@ -1,7 +1,6 @@
-* Example Stata script showing syntax highlighting
+*! Example Stata script showing syntax highlighting
 
 * This is a single-line comment
- * This is a single-line comment
 // This is also a single-line comment
 
 gen foo = 3 // This is an in-line comment
@@ -10,6 +9,9 @@ gen foo = 3 // This is an in-line comment
 This is a multi-line 
 comment
 */
+
+* Preprocessor command
+#delimit ;
 
 * Valid names
 gen foo = 3
@@ -35,7 +37,7 @@ gen foo = tan(bar)
 gen foo = runiform()
 gen foo = e(sample)
 
-* Types, macros, scalars, and matrices
+* Types and macros
 gen byte foo = 4
 gen int foo = 3
 gen long foo = 3
@@ -43,10 +45,13 @@ gen float bar = 3.2
 gen double bar = 3.2
 gen str foo = "bar"
 gen strL foo = "bar"
-local foo = 3
-global bar = "foo"
+confirm numeric 3
+confirm string "foo"
+confirm integer number 3
 scalar foo = 3
 matrix foo = 3
+local foo = 3
+global bar = "foo"
 gen foo = `bar'
 gen foo = "`bar'"
 gen foo = $bar
@@ -130,7 +135,6 @@ gen foo = `"hello," world!"'
 gen foo = "`hello, world!'"
 
 
-
 * Estimation and data manipulation commands
 do "$MyProject/scripts/programs/_config.do"
 use "$MyProject/auto_uncleaned.dta", clear
@@ -161,4 +165,6 @@ foreach rhs in "mpg" "mpg weight" {
 	reg price `rhs' if foreign=="Foreign", robust
 	regsave using "`results'", t p autoid append addlabel(rhs,"`rhs'",origin,"Foreign") 
 }
+
+reg price i.post#i.treat
 

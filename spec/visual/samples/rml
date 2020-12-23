@@ -1,0 +1,100 @@
+// A system agnostic domain specific language for runtime monitoring and verification
+// Basic events
+insert(index,elem) matches {event:'func_pre',name:'my_insert',args:[index,elem]};
+remove(index,elem) matches  {event:'func_post',name:'my_remove',args:[index],res:elem};
+size(size) matches {event:'func_post',name:'my_size',args:[],res:size};
+get(index,elem) matches {event:'func_post',name:'my_get',args:[index],res:elem};
+
+// set1: single set with add and delete
+del_false matches del(_,false);
+not_add_true_del(el) not matches add(el,true) | del(el,_);
+
+// Additional events for Main
+relevant matches insert(_,_)|remove(_,_)|size(_)|get(_,_);
+add_rm_get matches insert(_,_)|remove(_,_)|get(_,_);
+
+Main = relevant >> Resources;
+Resources =
+    {let id; acquire(id)
+        ((Resources | use(id)* release(id)) /\
+        acqRel(id) >> release(id) all)
+    }?;
+
+msg(ty) matches {event:'func_pre',name:'msg',args:[ty]};
+relevant matches msg(_);
+
+Msg<inf,sup> = if(inf<=sup) msg(inf) Msg<inf+1,sup> else empty;
+Main=relevant>>Msg<1,4>*!;
+
+Main = relevant >> (CheckIndex<0> /\ add_rm_get >> CheckElem)!;
+CheckIndex<size> =
+    get_size(size)* (insert_in_bounds(size) CheckIndex<size+1> \/ remove_in_bounds(size) CheckIndex<size-1>);
+CheckElem =
+    not_insert* {let index,elem; insert(index,elem) (GetElem<index,elem> /\ CheckElem)};
+GetElem<index,elem> =
+    (irrelevant(index) \/ get(index,elem)) GetElem<index,elem> \/
+    increased(index) GetElem<index+1,elem> \/
+    decreased(index) GetElem<index-1,elem> \/
+    remove(index,elem) all;
+
+// Additional events for CheckIndex
+insert_in_bounds(size) matches insert(index,_) with index >= 0 && index <= size;
+remove_in_bounds(size) matches remove(index,_) with index >= 0 && index < size;
+get_in_bounds(size) matches get(index,_) with index >= 0 && index < size;
+get_size(size) matches size(size)|get_in_bounds(size);
+
+// Additional events for CheckElem
+not_insert not matches  insert(_,_);
+
+// Additional events for GetElem
+increased(i) matches insert(index,_) with index <= i;
+decreased(i) matches remove(index,_) with index < i;
+irrelevant_modification(i) matches insert(index,_) | remove(index,_) with index > i;
+irrelevant_get(i) matches get(index,_)  with index != i;
+irrelevant(i) matches irrelevant_modification(i) | irrelevant_get(i);
+
+// alternating bit protocol: simpler version
+msg(ty) matches {event:'func_pre',name:'msg',args:[ty]};
+ack(ty) matches {event:'func_pre',name:'ack',args:[ty]};
+no_msg not matches msg(_);
+
+relevant matches msg(_) | ack(_);
+
+Main = relevant>>Prop1_2/\Prop3;
+Prop1_2 = (msg(1)ack(1))* | (msg(2)ack(2))*;
+Prop3 = (msg(1) no_msg* msg(2) no_msg*)*;
+
+// alternating bit protocol: version where Prop3 uses shuffle
+msg(ty) matches {event:'func_pre',name:'msg',args:[ty]};
+ack(ty) matches {event:'func_pre',name:'ack',args:[ty]};
+no_msg not matches msg(_);
+
+relevant matches msg(_) | ack(_);
+
+Main = relevant>>Prop1_2/\Prop3;
+Prop1_2 = (msg(1)ack(1))* | (msg(2)ack(2))*;
+Prop3 = (msg(1) msg(2))* | no_msg*;
+
+// exclusive
+// non exclusive use of resources
+// works with traces generated from exclusive.js
+
+acquire(id) matches {event:'func_pre',name:'acquire',args:[_,id,...]};
+release(id) matches {event:'func_pre',name:'release',args:[_,id,...]};
+use(id) matches {event:'func_pre',name:'use',args:[_,id,...]};
+
+acqRel(id) matches acquire(id) | release(id);
+relevant matches acquire(_) | release(_) | use(_);
+
+// rover
+// speed control of Curiosity rover
+// works with traces generated from curiosity-rover.js
+
+left_speed matches {event:'func_pre', name:'command', args:[{topic:'wheels_control',direction:'left',speed:val}]} with val <= 10;
+right_speed matches {event:'func_pre', name:'command', args:[{topic:'wheels_control',direction:'right',speed:val}]} with val <= 10;
+forward_speed matches {event:'func_pre', name:'command', args:[{topic:'wheels_control',direction:'forward',speed:val}]} with val <= 15;
+backward_speed matches {event:'func_pre', name:'command', args:[{topic:'wheels_control',direction:'backward',speed:val}]} with val <= 15;
+
+relevant matches {event:'func_pre', name:'command'};
+
+Main = relevant>>(left_speed \/ right_speed \/ forward_speed \/ backward_speed)*;

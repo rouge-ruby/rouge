@@ -12,6 +12,11 @@ module Rouge
 
       KEYWORD_TYPES = %w(byte int long float double str strL local global numlist varlist newlist scalar matrix numeric string integer)
 	  
+	  # TO DO
+	  # 1. Handle numeric formats, eg %x.xfc
+	  # 2. Nested quotes/locals
+	  # 3. KEYWORDS - only highlight when they are the first word of the line
+	  
       # Stata commands used with braces {}
 	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break)	 
 
@@ -20,7 +25,7 @@ module Rouge
 	  KEYWORDS = %w(
 	    do run include clear assert
 		set mata on off
-	    by capture char class classutil which cdir confirm new existence creturn 
+	    by cap capt capture char class classutil which cdir confirm new existence creturn 
 	    _datasignature discard di dis disp displ displa display ereturn error _estimates exit file open read write seek close query findfile fvexpand
 	    gettoken java home heapmax java_heapmax initialize javacall levelsof 
  	    tempvar tempname tempfile macro shift uniq dups retokenize clean sizeof posof
@@ -31,12 +36,13 @@ module Rouge
 	    tabdisp timer tokenize trace unab unabcmd varabbrev version viewsource 
 	    window fopen fsave manage menu push stopbox
 	    net from cd link search install sj stb ado update uninstall pwd ssc ls
-	    using insheet mkmat svmat
+	    using insheet mkmat svmat summ summarize
+		graph twoway histogram 
 		mi miss missing var varname order compress append
 		gen gene gener genera generat generate egen replace duplicates
 		estimates  lincom test testnl predict suest 
 		_regress reg regr regre regres regress probit logit ivregress logistic svy gmm ivprobit ivtobit
-		bsample assert codebook collapse compare contract copy count cross datasignature d ds desc describe destring 
+		bsample assert codebook collapse compare contract copy count cross datasignature d ds desc describe destring tostring
 		drawnorm edit encode decode erase expand export filefilter fillin format frame frget frlink gsort 
 		import dbase delimited excel fred haver sas sasxport5 sasxport8 spss infile infix input insobs inspect ipolate isid
 		joinby label language labelbook lookfor memory mem merge mkdir mvencode notes obs odbc order outfile
@@ -132,7 +138,7 @@ module Rouge
 
         rule %r/[\[\]{}();,]/, Punctuation
 
-		rule %r([-<>?*+^/\\!#.=~:&|]), Operator
+		rule %r([-<>?*+'^/\\!#.=~:&|]), Operator
       end
     end
   end

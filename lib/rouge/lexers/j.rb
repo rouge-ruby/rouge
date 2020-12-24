@@ -93,7 +93,16 @@ module Rouge
           token Punctuation
           push :dd if m[1]
         end
+
         rule %r/\}\}(?![.:])/, Punctuation
+
+        rule %r/(\{)(\})(?![.:])/ do
+          groups Name::Function, Operator
+        end
+
+        rule %r/(\})(\{)(?![.:])/ do
+          groups Operator, Name::Function
+        end
 
         rule %r/^([ \t]*)(:)([ \t\r]*\n)/ do
           groups Text, Punctuation, Text

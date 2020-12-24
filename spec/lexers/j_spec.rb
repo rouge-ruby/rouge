@@ -261,6 +261,15 @@ describe Rouge::Lexers::J do
           ['Name.Function', '{{.']
         assert_tokens_equal '}}:',
           ['Operator', '}'], ['Name.Function', '}:']
+        assert_tokens_equal '}{{',
+          ['Operator', '}'], ['Name.Function', '{{']
+        assert_tokens_equal '{}}',
+          ['Name.Function', '{'], ['Operator', '}}']
+        assert_tokens_equal '} {{ {}}}',
+          ['Operator', '}'], ['Text', ' '],
+          ['Punctuation', '{{'], ['Text', ' '],
+          ['Name.Function', '{'], ['Operator', '}'],
+          ['Punctuation', '}}']
       end
 
       it 'recognizes control information' do

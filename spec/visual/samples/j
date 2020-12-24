@@ -111,9 +111,9 @@ string
 
 NB. Delimiters / primitives
 {{ }} {{. }}:
+{}} }{{
 {{)a b
 {{)ab
-{{)a.
-{{)NB.}}
-{{)a NB.
+{{)v.
+{{)a NB.}}
 {{)}}

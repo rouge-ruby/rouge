@@ -1,9 +1,10 @@
 *! Example Stata script showing syntax highlighting
 
 * This is a single-line comment
+ * This is a single-line comment
 // This is also a single-line comment
 
-gen foo = 3 // This is an in-line comment
+gen foo = 3*3 // This is an in-line comment
 
 /*
 This is a multi-line 

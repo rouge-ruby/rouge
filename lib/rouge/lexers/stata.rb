@@ -12,8 +12,7 @@ module Rouge
 
       KEYWORD_TYPES = %w(byte int long float double str strL local global numlist varlist newlist scalar matrix numeric string integer)
 	  
-      # Complete list of programming commands, as of Stata 16  (excludes options that come after a comma)
-	  # Note: not all abbreviations are included
+      # Stata commands used with braces {}
 	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break)	 
 
       # Partial list of common programming and estimation commands, as of Stata 16
@@ -85,8 +84,6 @@ module Rouge
 	
       state :root do
 	  
-	    rule %r/\s+/m, Text::Whitespace
-	  
 		# Pre-processor commands: #
 		rule %r/^\s*#.*$/, Comment::Preproc
 		
@@ -94,13 +91,10 @@ module Rouge
 		rule %r/^\*!.*$/, Comment::Hashbang
 
 		# Single-line comment: *
-		# Ideally, this match would be anchored to start of line + optional white space
-		# That would avoid matching when * is used as an operator (eg 3*5)
-		#   Example: match "   * text" and "*text" but not "text*text"
-		#   Solution: rule %r/^\s*\*.*$/, Comment::Single
-		#   Problem: This solution above works on rubular.com, but won't match "text*text" in rouge for some reason
-		# Instead, use solution below, which matchs all * comments correctly but incorrectly matches * when used as an operator
-		rule %r/\*.*$/, Comment::Single
+		rule %r/^\s*\*.*$/, Comment::Single
+		
+		# Whitespace
+		rule(/[ \t]+/, Text::Whitespace)
 
 		# in-line comment: //
 		rule %r/\/\/.*?$/, Comment::Single

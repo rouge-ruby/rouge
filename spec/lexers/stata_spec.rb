@@ -17,9 +17,6 @@ describe Rouge::Lexers::Stata do
       assert_guess :mimetype => 'application/x-stata'
     end
 
-    it 'guesses by source' do
-      assert_guess :source => '#!/usr/bin/stata'
-    end
   end
 end
 

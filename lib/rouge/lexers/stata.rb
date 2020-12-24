@@ -93,8 +93,9 @@ module Rouge
 		# Single-line comment: *
 		rule %r/^\s*\*.*$/, Comment::Single
 		
-		# Whitespace
-		rule(/[ \t]+/, Text::Whitespace)
+		# Whitespace. Classify `\n` as `Text` to avoid interference with single-line comment `*`
+		rule(/[ \t]+/, Text::Whitespace)		
+		rule(/[\n]+/, Text)
 
 		# in-line comment: //
 		rule %r/\/\/.*?$/, Comment::Single
@@ -109,11 +110,12 @@ module Rouge
 		rule %r/`(\\.|.)*?'/, Str::Double
 		rule %r/(?<!\w)\$\w+/, Str::Double
 
+		# Numbers
         rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
         rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/, Num
 
         # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
-        # `Name::Builtin` would be more logical, but is usually not highlighted specifically; thus use `Name::Function`
+        # `Name::Builtin` would be more logical, but is not usually highlighted; thus use `Name::Function`
         rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 
 		rule %r/\w+/ do |m|
@@ -126,7 +128,7 @@ module Rouge
           else
             token Name
           end
-        end
+		end
 
         rule %r/[\[\]{}();,]/, Punctuation
 

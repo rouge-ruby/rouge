@@ -8,7 +8,7 @@ regress price i.foreign
 local num_obs = e(N)
 global myglobal = 4
 
-
+* Generate and manipulate variables
 generate newvar1 = "string"
 generate newvar2 = 34 - `num_obs'
 replace newvar2 = $myglobal

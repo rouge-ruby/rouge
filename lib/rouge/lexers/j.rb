@@ -253,22 +253,8 @@ module Rouge
           token Keyword
           goto :dd_noun
         end
-        rule %r/[acdmv](?!\w)|\*/ do
-          token Keyword
-          goto :dd_ctrl
-        end
-        # `)aNB.`, as well as `)b`, is invalid.
-        rule %r/.N?/ do
-          token Error
-          goto :dd_ctrl
-        end
-        rule(/$/) { pop! }
-      end
-
-      state :dd_ctrl do
-        rule %r/[ \t\r]+/, Text
-        rule %r/NB\.(?![.:]).*/, Comment::Single
-        rule(/$/) { pop! }
+        rule %r/[acdmv](?![\w.:])|\*(?![.:])/, Keyword
+        rule(//) { pop! }
       end
 
       state :dd_noun do

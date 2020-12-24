@@ -268,18 +268,18 @@ describe Rouge::Lexers::J do
           assert_tokens_equal "{{)#{c}",
             ['Punctuation', '{{)'], ['Keyword', c]
         end
-        assert_tokens_equal '{{)b',
-          ['Punctuation', '{{)'], ['Error', 'b']
-        assert_tokens_equal '{{)a bc',
-          ['Punctuation', '{{)'], ['Keyword', 'a'], ['Text', ' '],
-          ['Error', 'bc']
-        assert_tokens_equal '{{)aNB.',
-          ['Punctuation', '{{)'], ['Error', 'aNB.']
-        assert_tokens_equal '{{)a NB.',
-          ['Punctuation', '{{)'], ['Keyword', 'a'], ['Text', ' '],
-          ['Comment.Single', 'NB.']
         assert_tokens_equal '{{).',
           ['Punctuation', '{{'], ['Error', ').']
+        assert_tokens_equal '{{)abc',
+          ['Punctuation', '{{)'], ['Name', 'abc']
+        assert_tokens_equal '{{)a bc',
+          ['Punctuation', '{{)'], ['Keyword', 'a'], ['Text', ' '],
+          ['Name', 'bc']
+        assert_tokens_equal '{{)a}}',
+          ['Punctuation', '{{)'], ['Keyword', 'a'], ['Punctuation', '}}']
+        assert_tokens_equal '{{)a NB.}}',
+          ['Punctuation', '{{)'], ['Keyword', 'a'], ['Text', ' '],
+          ['Comment.Single', 'NB.}}']
       end
 
       it 'recognizes nouns' do

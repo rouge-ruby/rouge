@@ -116,9 +116,10 @@ module Rouge
 		rule %r/`(\\.|.)*?'/, Str::Double
 		rule %r/(?<!\w)\$\w+/, Str::Double
 
-		# Numbers
-        rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
+		# Numbers: regular, hex, %fmt
         rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/, Num
+		rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
+		rule %r/\%\S+/, Name::Property
 
         # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
         # `Name::Builtin` would be more logical, but is not usually highlighted; thus use `Name::Function`

@@ -24,13 +24,15 @@ gen 0foo = 3
 gen ^foo = 3
 gen foo% = 3
 
-* Numbers
+* Numbers and formats
 di 12345678901
 di 123456.78901
 di 123e3
 di 123E3
 di 1.23e-3
 di 1.23e3
+di %5.3fc 32.32146
+format foo %12.3gc
 
 * Functions
 gen foo = cos(bar)

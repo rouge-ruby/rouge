@@ -82,7 +82,9 @@ module Rouge
       end
 
       def self.control_words_id
-        @control_words_id ||= Set.new %w(for goto label)
+        @control_words_id ||= {
+          'for' => Name, 'goto' => Name::Label, 'label' => Name::Label,
+        }
       end
 
       state :expr do
@@ -124,24 +126,21 @@ module Rouge
 
         rule %r/NB\.(?![.:]).*/, Comment::Single
 
-        rule %r/([A-Za-z]\w*)([.:]*)/ do |m|
-          if m[2] == '.'
-            word, sep, id = m[1].partition '_'
-            list = if sep.empty?
-              J.control_words
-            elsif not id.empty?
-              J.control_words_id
+        rule %r/([A-Za-z][\dA-Za-z]*)(?:(_)(\w*))?([.:]*)/ do |m|
+          t = Error
+          if m[4] == '.'
+            if m[2]
+              if (n = J.control_words_id[m[1]]) and not m[3].empty?
+                groups Keyword, Keyword, n, Keyword
+                t = nil
+              end
+            elsif J.control_words.include? m[1]
+              t = Keyword
             end
-            if list and list.include? word
-              token Keyword, word + sep
-              token((word == 'for' ? Name : Name::Label), id)
-              token Keyword, m[2]
-            else
-              token Error
-            end
-          else
-            token m[2].empty? ? Name : Error
+          elsif m[4].empty?
+            t = Name
           end
+          token t if t
         end
       end
 

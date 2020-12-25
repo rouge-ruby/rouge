@@ -84,7 +84,7 @@ module Rouge
       )
 	
       state :root do
-	  
+	  	  
 		# Pre-processor commands: #
 		rule %r/^\s*#.*$/, Comment::Preproc
 		
@@ -115,10 +115,9 @@ module Rouge
 		rule %r/`(\\.|.)*?'/, Str::Double
 		rule %r/(?<!\w)\$\w+/, Str::Double
 
-		# Numbers: regular, hex
-        rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/, Num
-		rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
-		
+		# Numbers
+        rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?/, Num
+	
 		# Display formats
 		rule %r/\%\S+/, Name::Property
 		
@@ -128,6 +127,10 @@ module Rouge
         # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
         # `Name::Builtin` would be more logical, but is not usually highlighted, so use `Name::Function` instead
         rule %r/\b(#{PRIMITIVE_FUNCTIONS.join('|')})\(/, Name::Function
+		
+		# Factor variable and time series operators
+		rule %r/[ICOicoLFDSlfds]\w*\./, Operator
+		rule %r/[ICOicoLFDSlfds]\w*\(/, Operator
 		
 		rule %r/\w+/ do |m|
           if KEYWORDS_RESERVED.include? m[0]
@@ -142,6 +145,7 @@ module Rouge
         rule %r/[\[\]{}();,]/, Punctuation
 
 		rule %r([-<>?*+'^/\\!#.=~:&|]), Operator
+		
       end
     end
   end

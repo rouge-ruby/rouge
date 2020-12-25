@@ -15,8 +15,6 @@ module Rouge
 	  
 	  # TO DO
 	  # 1. Nested quotes/locals
-	  # 2. KEYWORDS - only highlight when they are the first word of the line
-	  # For in-line comments - maybe \b would be better???
 	  
       # Stata commands used with braces
 	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break nobreak)
@@ -100,7 +98,10 @@ module Rouge
 		# Single-line comment: *
 		rule %r/^\s*\*.*$/, Comment::Single
 		
-		# Whitespace. Classify `\n` as `Text` to avoid interference with single-line comment `*`
+		# Keywords: recognize only when they are the first word
+		rule %r/^\s*(#{KEYWORDS.join('|')})\b/, Keyword		
+		
+		# Whitespace. Classify `\n` as `Text` to avoid interference with single-line comment `*` and `Keyword`
 		rule(/[ \t]+/, Text::Whitespace)		
 		rule(/[\n]+/, Text)
 
@@ -128,11 +129,9 @@ module Rouge
         # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
         # `Name::Builtin` would be more logical, but is not usually highlighted; thus use `Name::Function`
         rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
-
+		
 		rule %r/\w+/ do |m|
-          if KEYWORDS.include? m[0]
-            token Keyword
-          elsif KEYWORDS_RESERVED.include? m[0]
+          if KEYWORDS_RESERVED.include? m[0]
             token Keyword::Reserved	
           elsif KEYWORD_TYPES.include? m[0]
             token Keyword::Type

@@ -6,6 +6,13 @@
 
 gen foo = 3*3 // This is an in-line comment
 
+gen foo = "hello, world!"
+gen foo = `"hello, world!"'
+gen foo = `"hello," world!"'
+gen foo = "`hello, world!'"
+
+gen foo = `"`mylocal'"'
+
 /*
 This is a multi-line 
 comment

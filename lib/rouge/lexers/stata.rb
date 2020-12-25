@@ -12,10 +12,7 @@ module Rouge
 
       # Note: types `str1-str2045` handled separately below
       KEYWORD_TYPES = %w(byte int long float double str strL numeric string integer scalar matrix local global numlist varlist newlist)
-	  
-	  # TO DO
-	  # 1. Nested quotes/locals
-	  
+	  	  
       # Stata commands used with braces
 	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break nobreak)
 
@@ -111,7 +108,8 @@ module Rouge
 		# Multi-line comment: /* and */
 		rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
 		
-		# Strings indicated by double-quotes
+		# Strings indicated by compound double-quotes and double-quotes
+		rule %r/`"(\\.|.)*?"'/, Str::Double
 		rule %r/"(\\.|.)*?"/, Str::Double
 		
 		# Format locals (`') and globals ($) as strings

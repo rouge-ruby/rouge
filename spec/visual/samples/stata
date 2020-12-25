@@ -47,6 +47,8 @@ gen long foo = 3
 gen float bar = 3.2
 gen double bar = 3.2
 gen str foo = "bar"
+gen str132 foo = "bar"
+gen str2045 foo = "bar"
 gen strL foo = "bar"
 confirm numeric 3
 confirm string "foo"
@@ -54,11 +56,14 @@ confirm integer number 3
 scalar foo = 3
 matrix foo = 3
 local foo = 3
-global bar = "foo"
-gen foo = `bar'
-gen foo = "`bar'"
-gen foo = $bar
-gen foo = "$bar"
+global foo = 3
+gen bar1 = `foo'
+gen bar2 = $foo
+
+
+* Invalid types
+gen str0 foo = "bar"
+gen str2046 foo = "bar"
 
 * Control structures
 if (`x'==3) {

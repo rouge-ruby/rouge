@@ -10,15 +10,16 @@ module Rouge
       filenames '*.do', '*.ado'
 	  mimetypes 'application/x-stata', 'text/x-stata'
 
-      KEYWORD_TYPES = %w(byte int long float double str strL local global numlist varlist newlist scalar matrix numeric string integer)
+      # str1-str2045 handled separately below
+      KEYWORD_TYPES = %w(byte int long float double str strL numeric string integer scalar matrix local global numlist varlist newlist)
 	  
 	  # TO DO
-	  # 1. Handle numeric formats, eg %x.xfc
-	  # 2. Nested quotes/locals
-	  # 3. KEYWORDS - only highlight when they are the first word of the line
+	  # 1. Nested quotes/locals
+	  # 2. KEYWORDS - only highlight when they are the first word of the line
+	  # For in-line comments - maybe \b would be better???
 	  
-      # Stata commands used with braces {}
-	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break)	 
+      # Stata commands used with braces
+	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break)
 
       # Partial list of common programming and estimation commands, as of Stata 16
 	  # Note: not all abbreviations are included
@@ -120,6 +121,9 @@ module Rouge
         rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/, Num
 		rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
 		rule %r/\%\S+/, Name::Property
+		
+		# Additional types: str1-str2045
+		rule %r/\s*str(204[0-5]|20[0-3][0-9]|[01][0-9][0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9]|[1-9])\b/, Keyword::Type
 
         # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
         # `Name::Builtin` would be more logical, but is not usually highlighted; thus use `Name::Function`

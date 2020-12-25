@@ -313,6 +313,13 @@ describe Rouge::Lexers::J do
           ['Error', '}}'], ['Name.Builtin.Pseudo', 'm'],
           ['Punctuation', "'"]
       end
+
+      it 'does not highlight explicit definitions inside {{ }}' do
+        assert_tokens_equal '{{3 :0 y}}',
+          ['Punctuation', '{{'], ['Literal.Number', '3'], ['Text', ' '],
+          ['Operator', ':'], ['Literal.Number', '0'], ['Text', ' '],
+          ['Name.Builtin.Pseudo', 'y'], ['Punctuation', '}}']
+      end
     end
   end
 end

@@ -108,6 +108,7 @@ string
   }}
 }}
 3 : '{{x + y}}~y NB. invalid'
+{{3 : 0 y}}
 
 NB. Delimiters / primitives
 {{ }} {{. }}:

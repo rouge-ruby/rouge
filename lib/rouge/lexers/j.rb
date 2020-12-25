@@ -93,7 +93,7 @@ module Rouge
         # https://code.jsoftware.com/wiki/Vocabulary/DirectDefinition
         rule %r/\{\{(\))?(?![.:])/ do |m|
           token Punctuation
-          push :dd if m[1]
+          push(m[1] ? :dd : :dd_expr)
         end
 
         rule %r/\}\}(?![.:])/, Punctuation
@@ -261,8 +261,11 @@ module Rouge
           token Keyword
           goto :dd_noun
         end
-        rule %r/[acdmv](?![\w.:])|\*(?![.:])/, Keyword
-        rule(//) { pop! }
+        rule %r/[acdmv](?![\w.:])|\*(?![.:])/ do
+          token Keyword
+          goto :dd_expr
+        end
+        rule(//) { goto :dd_expr }
       end
 
       state :dd_noun do
@@ -277,6 +280,11 @@ module Rouge
       state :dd_noun_m do
         rule %r/[^\}].*\n*/, Str::Heredoc
         rule %r/^\}\}/, Punctuation, :pop!
+      end
+
+      state :dd_expr do
+        rule %r/\}\}(?![.:])/, Punctuation, :pop!
+        mixin :expr
       end
     end
   end

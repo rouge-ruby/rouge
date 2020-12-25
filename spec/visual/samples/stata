@@ -6,13 +6,6 @@
 
 gen foo = 3*3 // This is an in-line comment
 
-gen foo = "hello, world!"
-gen foo = `"hello, world!"'
-gen foo = `"hello," world!"'
-gen foo = "`hello, world!'"
-
-gen foo = `"`mylocal'"'
-
 /*
 This is a multi-line 
 comment
@@ -47,6 +40,9 @@ gen foo = tan(bar)
 gen foo = runiform()
 gen foo = e(sample)
 
+gen foo = cos=(bar)
+gen foo = cvcos=()
+
 * Types and macros
 gen byte foo = 4
 gen int foo = 3
@@ -66,7 +62,6 @@ local foo = 3
 global foo = 3
 gen bar1 = `foo'
 gen bar2 = $foo
-
 
 * Invalid types
 gen str0 foo = "bar"
@@ -147,13 +142,11 @@ di 1 + (2 + 3)
 gen foo = "hello, world!"
 gen foo = `"hello, world!"'
 gen foo = `"hello," world!"'
-gen foo = "`hello, world!'"
-
+gen foo = "`mylocal'"
+gen foo = `"`mylocal'"'
 
 * Estimation and data manipulation commands
-do "$MyProject/scripts/programs/_config.do"
-use "$MyProject/auto_uncleaned.dta", clear
-
+sysuse auto, clear
 foreach v of varlist * {
 	cap confirm numeric var `v'
 	if _rc continue
@@ -163,23 +156,12 @@ foreach v of varlist * {
 	summ `v', detail
 	replace `v' = r(p50) if mi(`v')
 }
-
 compress
-save "$MyProject/processed/auto.dta", replace
 
-tempfile results
-local replace replace
 foreach rhs in "mpg" "mpg weight" {
 	
-	* Domestic cars
-	reg price `rhs' if foreign=="Domestic", robust
-	regsave using "`results'", t p autoid `replace' addlabel(rhs,"`rhs'",origin,Domestic) 
-	local replace append
-	
-	* Foreign cars
-	reg price `rhs' if foreign=="Foreign", robust
-	regsave using "`results'", t p autoid append addlabel(rhs,"`rhs'",origin,"Foreign") 
+	reg price `rhs' if foreign=="Domestic":origin, robust
+	reg price `rhs' if foreign=="Foreign":origin, robust
 }
-
-reg price i.post#i.treat
+reg price i.foreign#c.price
 

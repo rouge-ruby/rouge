@@ -19,8 +19,7 @@ module Rouge
       # Partial list of common programming and estimation commands, as of Stata 16
 	  # Note: not all abbreviations are included
 	  KEYWORDS = %w(
-	    do run include clear assert
-		set mata on off
+	    do run include clear assert set mata
 	    by cap capt capture char class classutil which cdir confirm new existence creturn 
 	    _datasignature discard di dis disp displ displa display ereturn error _estimates exit file open read write seek close query findfile fvexpand
 	    gettoken java home heapmax java_heapmax initialize javacall levelsof 
@@ -33,7 +32,7 @@ module Rouge
 	    window fopen fsave manage menu push stopbox
 	    net from cd link search install sj stb ado update uninstall pwd ssc ls
 	    using insheet mkmat svmat summ summarize
-		graph twoway histogram 
+		graph twoway histogram kdensity spikeplot 
 		mi miss missing var varname order compress append
 		gen gene gener genera generat generate egen replace duplicates
 		estimates  lincom test testnl predict suest 
@@ -108,7 +107,7 @@ module Rouge
 		# Multi-line comment: /* and */
 		rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
 		
-		# Strings indicated by compound double-quotes and double-quotes
+		# Strings indicated by compound double-quotes (`""') and double-quotes ("")
 		rule %r/`"(\\.|.)*?"'/, Str::Double
 		rule %r/"(\\.|.)*?"/, Str::Double
 		
@@ -116,17 +115,19 @@ module Rouge
 		rule %r/`(\\.|.)*?'/, Str::Double
 		rule %r/(?<!\w)\$\w+/, Str::Double
 
-		# Numbers: regular, hex, %fmt
+		# Numbers: regular, hex
         rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?[Li]?/, Num
 		rule %r/0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/, Num::Hex
+		
+		# Display formats
 		rule %r/\%\S+/, Name::Property
 		
-		# Additional types: str1-str2045
-		rule %r/\s*str(204[0-5]|20[0-3][0-9]|[01][0-9][0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9]|[1-9])\b/, Keyword::Type
+		# Additional string types: str1-str2045
+		rule %r/\bstr(204[0-5]|20[0-3][0-9]|[01][0-9][0-9][0-9]|[0-9][0-9][0-9]|[0-9][0-9]|[1-9])\b/, Keyword::Type
 
         # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
-        # `Name::Builtin` would be more logical, but is not usually highlighted; thus use `Name::Function`
-        rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
+        # `Name::Builtin` would be more logical, but is not usually highlighted, so use `Name::Function` instead
+        rule %r/\b(#{PRIMITIVE_FUNCTIONS.join('|')})\(/, Name::Function
 		
 		rule %r/\w+/ do |m|
           if KEYWORDS_RESERVED.include? m[0]

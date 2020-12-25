@@ -114,6 +114,9 @@ module Rouge
 		# Format locals (`') and globals ($) as strings
 		rule %r/`(\\.|.)*?'/, Str::Double
 		rule %r/(?<!\w)\$\w+/, Str::Double
+		
+		# Matrix operator `..` (avoid interference with numbers)
+		rule %r/\.\.(?=.*])/, Operator
 
 		# Numbers
         rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?/, Num

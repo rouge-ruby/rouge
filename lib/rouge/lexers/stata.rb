@@ -10,7 +10,7 @@ module Rouge
       filenames '*.do', '*.ado'
 	  mimetypes 'application/x-stata', 'text/x-stata'
 
-      # str1-str2045 handled separately below
+      # Note: types `str1-str2045` handled separately below
       KEYWORD_TYPES = %w(byte int long float double str strL numeric string integer scalar matrix local global numlist varlist newlist)
 	  
 	  # TO DO
@@ -19,7 +19,7 @@ module Rouge
 	  # For in-line comments - maybe \b would be better???
 	  
       # Stata commands used with braces
-	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break)
+	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break nobreak)
 
       # Partial list of common programming and estimation commands, as of Stata 16
 	  # Note: not all abbreviations are included

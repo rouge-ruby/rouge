@@ -126,11 +126,11 @@ module Rouge
 
         # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
         # `Name::Builtin` would be more logical, but is not usually highlighted, so use `Name::Function` instead
-        rule %r/\b(#{PRIMITIVE_FUNCTIONS.join('|')})\(/, Name::Function
+        rule %r/\b(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 		
 		# Factor variable and time series operators
-		rule %r/[ICOicoLFDSlfds]\w*\./, Operator
-		rule %r/[ICOicoLFDSlfds]\w*\(/, Operator
+		rule %r/\b[ICOicoLFDSlfds]\w*\./, Operator
+		rule %r/\b[ICOicoLFDSlfds]\w*(?=\(.*\)\.)/, Operator
 		
 		rule %r/\w+/ do |m|
           if KEYWORDS_RESERVED.include? m[0]

@@ -35,7 +35,7 @@ module Rouge
 		graph gr_edit twoway histogram kdensity spikeplot 
 		mi miss missing var varname order compress append
 		gen gene gener genera generat generate egen replace duplicates
-		estimates  lincom test testnl predict suest 
+		estimates  nlcom lincom test testnl predict suest 
 		_regress reg regr regre regres regress probit logit ivregress logistic svy gmm ivprobit ivtobit
 		bsample assert codebook collapse compare contract copy count cross datasignature d ds desc describe destring tostring
 		drawnorm edit encode decode erase expand export filefilter fillin format frame frget frlink gsort 

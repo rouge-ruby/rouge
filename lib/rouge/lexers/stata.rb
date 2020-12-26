@@ -97,9 +97,9 @@ module Rouge
 		# Keywords: recognize only when they are the first word
 		rule %r/^\s*(#{KEYWORDS.join('|')})\b/, Keyword		
 		
-		# Whitespace. Classify `\n` as `Text` to avoid interference with single-line comment `*` and `Keyword`
+		# Whitespace. Classify `\n` as `Text` to avoid interference with `Comment` and `Keyword` above
 		rule(/[ \t]+/, Text::Whitespace)		
-		rule(/[\n]+/, Text)
+		rule(/[\n\r]+/, Text)
 
 		# in-line comment: //
 		rule %r/\/\/.*?$/, Comment::Single
@@ -114,13 +114,7 @@ module Rouge
 		# Format locals (`') and globals ($) as strings
 		rule %r/`(\\.|.)*?'/, Str::Double
 		rule %r/(?<!\w)\$\w+/, Str::Double
-		
-		# Matrix operator `..` (avoid interference with numbers)
-		rule %r/\.\.(?=.*])/, Operator
-
-		# Numbers
-        rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?/, Num
-	
+			
 		# Display formats
 		rule %r/\%\S+/, Name::Property
 		
@@ -130,6 +124,12 @@ module Rouge
         # Only recognize primitive functions when they are actually used as a function call, i.e. followed by an opening parenthesis
         # `Name::Builtin` would be more logical, but is not usually highlighted, so use `Name::Function` instead
         rule %r/\b(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
+		
+		# Matrix operator `..` (avoid interference with numbers)
+		rule %r/\.\.(?=.*])/, Operator
+
+		# Numbers
+        rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?/, Num		
 		
 		# Factor variable and time series operators
 		rule %r/\b[ICOicoLFDSlfds]\w*\./, Operator

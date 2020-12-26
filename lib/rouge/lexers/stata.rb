@@ -126,7 +126,7 @@ module Rouge
         rule %r/\b(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 		
 		# Matrix operator `..` (avoid interference with numbers)
-		rule %r/\.\.(?=.*])/, Operator
+		rule %r/\.\.(?=.*\])/, Operator
 
 		# Numbers
         rule %r/[+-]?(\d+([.]\d+)?|[.]\d+)([eE][+-]?\d+)?/, Num		

@@ -14,25 +14,25 @@ module Rouge
       KEYWORD_TYPES = %w(byte int long float double str strL numeric string integer scalar matrix local global numlist varlist newlist)
 	  	  
       # Stata commands used with braces
-	  KEYWORDS_RESERVED = %w(if else foreach forval to while in of continue break nobreak)
+	  KEYWORDS_RESERVED = %w(if else foreach forv forva forval forvalu forvalue forvalues to while in of continue break nobreak)
 
       # Partial list of common programming and estimation commands, as of Stata 16
 	  # Note: not all abbreviations are included
 	  KEYWORDS = %w(
-	    do run include clear assert set mata
-	    by cap capt capture char class classutil which cdir confirm new existence creturn 
+	    do run include clear assert set mata log
+	    by bys bysort cap capt capture char class classutil which cdir confirm new existence creturn 
 	    _datasignature discard di dis disp displ displa display ereturn error _estimates exit file open read write seek close query findfile fvexpand
-	    gettoken java home heapmax java_heapmax initialize javacall levelsof 
+	    gettoken java home heapmax java_heapmax icd9 icd9p icd10 icd10cm icd10pcs initialize javacall levelsof 
  	    tempvar tempname tempfile macro shift uniq dups retokenize clean sizeof posof
   	    makecns matcproc marksample mark markout markin svymarkout matlist
 	    accum define dissimilarity eigenvalues get rowjoinbyname rownames score svd symeigen dir list ren rename
-	    more pause plugin call postfile _predict preserve restore program define drop end python qui quietly _return return _rmcoll rmsg _robust 
+	    more pause plugin call postfile _predict preserve restore program define drop end python qui quietly noi noisily _return return _rmcoll rmsg _robust 
 	    serset locale_functions locale_ui signestimationsample checkestimationsample sleep syntax sysdir adopath adosize
 	    tabdisp timer tokenize trace unab unabcmd varabbrev version viewsource 
 	    window fopen fsave manage menu push stopbox
 	    net from cd link search install sj stb ado update uninstall pwd ssc ls
-	    using insheet mkmat svmat summ summarize
-		graph twoway histogram kdensity spikeplot 
+	    using insheet outsheet mkmat svmat sum summ summarize
+		graph gr_edit twoway histogram kdensity spikeplot 
 		mi miss missing var varname order compress append
 		gen gene gener genera generat generate egen replace duplicates
 		estimates  lincom test testnl predict suest 
@@ -41,9 +41,9 @@ module Rouge
 		drawnorm edit encode decode erase expand export filefilter fillin format frame frget frlink gsort 
 		import dbase delimited excel fred haver sas sasxport5 sasxport8 spss infile infix input insobs inspect ipolate isid
 		joinby label language labelbook lookfor memory mem merge mkdir mvencode notes obs odbc order outfile
-		pctile putmata range recast recode rename group reshape rmdir sample save separate shell snapshot sort split splitsample stack statsby sysuse 
+		pctile xtile _pctile putmata range recast recode rename group reshape rm rmdir sample save saveold separate shell snapshot sort split splitsample stack statsby sysuse 
 		type unicode use varmanage vl webuse xpose zipfile 
-		number
+		number keep tab table tabulate stset stcox tsset xtset
 	  )
 	  
       # Complete list of functions by name, as of Stata 16

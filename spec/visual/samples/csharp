@@ -376,5 +376,31 @@ namespace Diva.Core {
                         var m = $"interpolation with nested strings: { @"Ooga\" } and { "booga\"" }".Length;
                 }
         }
-        
+
+        public static class Csharp7And8And9Tests
+        {
+                record NamedEntity(string Name);
+
+                record Person(string Name) : NamedEntity("Mr " + Name)
+                {
+                        public nint Age { get; init; }
+
+                        public static void WeaveSomeBobbins()
+                        {
+                                Person bob = new("Bob");
+                                var bobbin = bob with { Name = "Bobbin" };
+                                var birthdayBobbin = bobbin.OneYearOlder();
+                        }
+                }
+
+                static Person OneYearOlder<T>(this T person)
+                        where T : notnull, Person
+                {
+                        return person switch
+                        {
+                                Person p when p.Age is > 5 and < 10 => p with { Age = p.Age + 1 },
+                                _                                   => person,
+                        };
+                }
+        }
 }

@@ -81,12 +81,13 @@ module Rouge
         rule %r/@"(""|[^"])*"/m, Str
         rule %r/"(\\.|.)*?["\n]/, Str
         rule %r/'(\\.|.)'/, Str::Char
-        rule %r/0x[0-9a-f]+[lu]?/i, Num
+        rule %r/0b[_01]+[lu]?/i, Num
+        rule %r/0x[_0-9a-f]+[lu]?/i, Num
         rule %r(
-          [0-9]
-          ([.][0-9]*)? # decimal
-          (e[+-][0-9]+)? # exponent
-          [fldu]? # type
+          [0-9](?:[_0-9]*[0-9])?
+          ([.][0-9](?:[_0-9]*[0-9])?)? # decimal
+          (e[+-]?[0-9](?:[_0-9]*[0-9])?)? # exponent
+          [fldum]? # type
         )ix, Num
         rule %r/\b(?:class|record|struct|interface)\b/, Keyword, :class
         rule %r/\b(?:namespace|using)\b/, Keyword, :namespace

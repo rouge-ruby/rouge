@@ -18,7 +18,8 @@ escapeQuote = "This is a \!" quotation mark";
 escapeStr = "\[This is """"""" an escaped string]\"
 
 list = List( 1, 3, 5 );
-alsoAList = {7,9,11};index = 1::10::2;
+alsoAList = {7,9,11};
+index = 1::10::2;
 a name with spaces = 5;
 "a-name!with\!"special\characters"n = 5;
 ::globalVar = 1;

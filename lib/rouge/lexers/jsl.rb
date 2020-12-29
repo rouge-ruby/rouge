@@ -14,7 +14,8 @@ module Rouge
         rule %r/\s+/m, Text::Whitespace
 
         rule %r(//.*?$), Comment::Single
-        rule %r'/[*].*', Comment::Multiline, :comment
+        rule %r'/[*].*[*]/', Comment::Multiline # single line block comment
+        rule %r'/[*].*', Comment::Multiline, :comment # multiline block comment
 
         # messages
         rule %r/<</, Operator, :message

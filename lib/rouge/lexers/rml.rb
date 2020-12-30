@@ -176,5 +176,5 @@ module Rouge
         rule %r/;/, Operator, :pop!
       end
     end
-   end
- end
+    end
+end

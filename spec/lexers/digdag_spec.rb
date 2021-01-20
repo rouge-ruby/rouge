@@ -21,7 +21,7 @@ describe Rouge::Lexers::Digdag do
 
     it 'recognizes one line comment on last line even when not terminated by a new line (#360)' do
       assert_tokens_equal "+step1:\n  echo> Hello!\n",
-        ["Literal.String", "+step1"],
+        ["Name.Attribute", "+step1"],
         ["Punctuation.Indicator", ":"],
         ["Text", "\n  "],
         ["Literal.String", "echo> Hello!"],

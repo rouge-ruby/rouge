@@ -4,7 +4,7 @@ dt << Distribution( Column( :age ), Histograms Only( 1 ) );
 /*
     Multi-line comment
 */
-
+/* Single line block comment */
 /*
     Nested
     /*
@@ -36,3 +36,7 @@ New Window( "Rouge Test",
 );
 
 If(tb << Get Text != "", "I'm still formatted correctly!");
+
+New Namespace("rouge");
+rouge:scoped.func = function({x, y}, x + y);
+rouge:scoped.func(1, 2);

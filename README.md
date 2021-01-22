@@ -13,6 +13,20 @@ compatible with stylesheets designed for [Pygments][].
 
 [Pygments]: http://pygments.org "Pygments"
 
+## Installation
+
+In your Gemfile, add:
+
+```ruby
+gem 'rouge'
+```
+
+or
+
+```bash
+$ gem install rouge
+```
+
 ## Usage
 
 Rouge's most common uses are as a Ruby library, as part of Jekyll and as a

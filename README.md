@@ -18,7 +18,7 @@ compatible with stylesheets designed for [Pygments][].
 In your Gemfile, add:
 
 ```ruby
-gem 'rouge', '~> 3.26.0'
+gem 'rouge'
 ```
 
 or

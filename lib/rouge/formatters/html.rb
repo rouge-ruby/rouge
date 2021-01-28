@@ -33,7 +33,9 @@ module Rouge
         '&' => '&amp;',
         '<' => '&lt;',
         '>' => '&gt;',
-      }
+      }.freeze
+
+      ESCAPE_REGEX = /[&<>]/.freeze
 
     private
       # A performance-oriented helper method to escape `&`, `<` and `>` for the rendered
@@ -41,15 +43,19 @@ module Rouge
       #
       # `String#gsub` will always return a new string instance irrespective of whether
       # a substitution occurs. This method however invokes `String#gsub` only if
-      # a substitution is imminent.
+      # a substitution is imminent. Where possible it will perform the substitution in-place
+      # using gsub!
       #
       # Returns either the given `value` argument string as is or a new string with the
       # special characters replaced with their escaped counterparts.
       def escape_special_html_chars(value)
-        escape_regex = /[&<>]/
-        return value unless value =~ escape_regex
+        if value.frozen?
+          return value unless value =~ ESCAPE_REGEX
 
-        value.gsub(escape_regex, TABLE_FOR_ESCAPE_HTML)
+          value.gsub(ESCAPE_REGEX, TABLE_FOR_ESCAPE_HTML)
+        else
+          value.gsub!(ESCAPE_REGEX, TABLE_FOR_ESCAPE_HTML) || value
+        end
       end
     end
   end

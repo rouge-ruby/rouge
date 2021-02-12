@@ -26,6 +26,7 @@ gem 'yard'
 
 group :development do
   gem 'pry'
+  gem 'byebug'
 
   # docs
   gem 'github-markup'

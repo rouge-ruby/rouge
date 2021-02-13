@@ -4,8 +4,6 @@
 module Rouge
   module Lexers
     module ObjectiveCCommon
-      id = /[a-z$_][a-z0-9$_]*/i
-
       def at_keywords
         @at_keywords ||= %w(
           selector private protected public encode synchronized try

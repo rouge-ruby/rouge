@@ -115,7 +115,7 @@ module Rouge
         rule %r/"/, Name::Variable, :double_string
         rule %r/`/, Name::Variable, :backtick
 
-        rule %r/\w[\w\d]*/ do |m|
+        rule %r/[[:alpha:]][\w]*/ do |m|
           if self.class.keywords_type.include? m[0].upcase
             token Name::Builtin
           elsif self.class.keywords.include? m[0].upcase

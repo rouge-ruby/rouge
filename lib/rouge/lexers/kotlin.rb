@@ -24,7 +24,7 @@ module Rouge
         while yield
       )
 
-      name_chars = %r'[-_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
+      name_chars = %r'[-\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*'
 
       class_name = %r'`?[\p{Lu}]#{name_chars}`?'
       name = %r'`?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}]#{name_chars}`?'

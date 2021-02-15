@@ -10,7 +10,7 @@ module Rouge
       filenames '*.yang'
       mimetypes 'application/yang'
 
-      id = /[\w_-]+(?=[^\w\-\:])\b/
+      id = /[\w-]+(?=[^\w\-\:])\b/
 
       #Keywords from RFC7950 ; oriented at BNF style
       def self.top_stmts_keywords

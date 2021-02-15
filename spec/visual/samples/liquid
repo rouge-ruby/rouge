@@ -14,28 +14,26 @@ Just regular text - what happens?
 {% endcomment %}
 
 {% custom_tag param1: true param2 : nil %}
-{% custom_block my="abc" c = false %}
+{% custom_block my="abc" c = var %}
   Just usual {{liquid}}.
 {% endcustom_block %}
 
 {% another_tag "my string param" %}
 
 {{ variable | upcase }}
-{{ var.field | textilize | markdownify }}
+{{ var . field | textilize | markdownify }}
 {{ var.field.property | textilize | markdownify }}
 {{ -3.14 | abs }}
 {{ 'string' | truncate: 100 param='df"g' }}
-{{ variable-nil? }}
+{{ variable.null? }}
 
 {% capture name %}
 {{- title | downcase | slice: -3, 2 -}}
 {% endcapture %}
 
-{%- assign life = 'infinite' | upcase -%}
-
-{% cycle '1', 2, var %}
+{% cycle "width: 1em", 2, var %}
 {% cycle 'group1': '1', var, 2 %}
-{% cycle group2: '1', var, 2 %}
+{% cycle group2 : '1', var, 2 %}
 
 {% if a == 'B' %}
 Testing {{ some }} stuff.
@@ -44,30 +42,30 @@ Testing {{ some }} stuff.
 {% else %}
 {% endif %}
 
-{% unless a %}
+{% unless a.empty? %}
 Some {{ output }} right here.
 {% else %}
 {% endunless %}
 
-{% case a %}
-{% when 'B' %}
+{% case a.first %}
+{% when 'B' or -1 %}
 Some {{ output }}!
-{% when 'C' %}
+{% when 'C', 4 %}
 Some other {{ output }}!
 {% else %}
 {% endcase %}
 
-{% include dir/file.html param = 'example.com' param2 = object %}
-{% include 'snippet', param: 'example.com', param2: object %}
-{% include product_page with products[0] %}
-{% include {{product_page | split: "." | first}} for products %}
+{% include dir/file.html param="example.com" param2 = object.property %}
+{% include 'snippet', param: 'example.com', param2 : object.property %}
+{% include product_pages[3] with products[0] as product %}
+{% include {{-product_page | split: "." | first-}} for products %}
 
 {% assign page_has_image = false %}
-{% assign img_tag = '<' | append: 'img' %}
+{%-assign img_tag = '<' | append: "img" | downcase-%}
 {% if link.object.content contains img_tag %}
   {% assign src = link.object.content | split: 'src="' %}
   {% assign src = src[1] | split: '"' | first %}
-    {% if src.size %}
+    {% if src.size > 0 %}
       {% assign page_has_image = true %}
       {% assign image_src = src | replace: '_small', '' | replace: '_compact', '' | replace: '_medium', '' |
                                   replace: '_large', '' | replace: '_grande', '' %}
@@ -84,8 +82,8 @@ Some other {{ output }}!
   </a>
 {% endif %}
 
-{% tablerow page in site.pages %}
-  {% if page.layout == 'home' %}
+{% tablerow page in site.pages cols:num limit:3 %}
+  {% if page.layout == 'home' and tablerowloop.col_first %}
     {{ page.excerpt }}
   {% endif %}
 {% endtablerow %}
@@ -99,24 +97,25 @@ Some other {{ output }}!
 {% endfor %}
 
 {% for item in array reversed limit:2 %}
-  Item {{ forloop.index }}: {{ item.name }}
+  Item {{ forloop.index0 }}: {{ item.name }}
 {% endfor %}
 
-{% for item in array offset:2 %}
+{% for item in array, offset:continue %}
   {% increment var %}
 {% endfor %}
 
-{% for item in array reversed %}
+{% for item in site.data[path] reversed %}
   {% decrement var %}
 {% endfor %}
 
-{% for i in (3..5) %}
+{% assign range = (3 .. 5) %}
+{% for i in range %}
   {% render "snippet", number: i %}
 {% endfor %}
 
 {% assign num- = 4 %}
 {% for i in (1..num-) %}
-  {%-if forloop.last-%}{{ i }}{%-endif-%}
+  {%-if forloop.first-%}{{ i }}{%-endif-%}
 {% endfor %}
 
 {% for char in 'The Quick Brown Fox' %}
@@ -124,5 +123,16 @@ Some other {{ output }}!
 {% endfor %}
 
 {% for char in "Hello World" reversed %}
-  {% echo char | upcase %}
+  {% echo char | url_encode %}
 {% endfor %}
+
+{% liquid %}
+{% liquid
+  assign size = "one two" | split: " "
+  for value in size
+    echo value
+    unless forloop.last
+      echo ", "
+    endunless
+  endfor
+%}

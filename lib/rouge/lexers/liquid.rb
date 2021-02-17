@@ -8,6 +8,7 @@ module Rouge
       desc 'Liquid is a templating engine for Ruby (liquidmarkup.org)'
       tag 'liquid'
       filenames '*.liquid'
+      mimetypes 'text/html+liquid'
 
       state :root do
         rule %r/[^\{]+/, Text

@@ -38,6 +38,8 @@ module Rouge
             pop! until state? :liquid
           end
         end
+
+        mixin :whitespace
       end
 
       state :end_output do
@@ -106,6 +108,8 @@ module Rouge
 
         # custom tags or blocks
         rule %r/(\w+)\b/, Name::Tag, :block_args
+
+        mixin :end_logic
       end
 
       state :output do
@@ -231,6 +235,8 @@ module Rouge
 
       state :filter do
         rule %r/[a-zA-Z_](?:\w|-(?![%}]))*/, Name::Function, :pop!
+        
+        mixin :whitespace
       end
 
       state :args do
@@ -255,6 +261,7 @@ module Rouge
 
       state :whitespace do
         rule %r/\s+/, Text::Whitespace
+        rule %r/#.*?(?=$|-?[}%]})/, Comment
       end
 
       state :number do

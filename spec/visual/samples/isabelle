@@ -1,4 +1,3 @@
-(* Isabelle demo *)
 theory demo imports Main begin
 
 section ‹Inductive predicates for lists›
@@ -12,6 +11,7 @@ inductive ζ :: "'a list ⇒ nat ⇒ bool" where
 Nil[intro!]:  "ζ [] 0" |
 Cons[intro]: "ζ xs l ⟹ ζ (x # xs) (1 + l)"
 
+(* Not the answer? *)
 lemma "ζ xs 42"
   oops
 

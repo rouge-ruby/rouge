@@ -1,0 +1,9 @@
+theory demo
+  imports Main
+begin
+
+fun length :: "'a list ⇒ nat" where
+  "length [] = 0"
+| "length (x # xs) = 1 + length xs"
+
+end

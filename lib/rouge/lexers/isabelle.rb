@@ -130,8 +130,8 @@ module Rouge
         rule %r/\(\*/, Comment, :comment
         rule %r/\{\*|‹/, Text, :text
 
-        rule %r/::|:|\(|\)|\[|\]|_|=|,|\||\+|-|!|\?/, Operator
-        rule %r/\{|\}|\.|\.\./, Operator::Word
+        rule %r/::|\[|\]|-|[:()_=,|+!?]/, Operator
+        rule %r/[{}.]|\.\./, Operator::Word
 
         def word(keywords)
           return %r/\b(#{keywords.join('|')})\b/
@@ -157,17 +157,16 @@ module Rouge
 
         rule %r/\\<\w*>/, Str::Symbol
 
-        rule %r/[^\W\d][.\w']*/, Name
-        rule %r/\?[^\W\d][.\w']*/, Name
         rule %r/'[^\W\d][.\w']*/, Name::Variable
 
-        rule %r/\d[\d_]*/, Name # display numbers as name
         rule %r/0[xX][\da-fA-F][\da-fA-F_]*/, Num::Hex
         rule %r/0[oO][0-7][0-7_]*/, Num::Oct
         rule %r/0[bB][01][01_]*/, Num::Bin
 
         rule %r/"/, Str, :string
         rule %r/`/, Str::Other, :fact
+        # Everything except for (most) operators whitespaces may be name
+        rule %r/[^\s:|\[\]\-()=,+!?{}._][^\s:|\[\]\-()=,+!?{}]*/, Name
       end
 
       state :comment do

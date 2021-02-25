@@ -14,5 +14,14 @@ describe Rouge::Lexers::Isabelle do
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-isabelle'
     end
+
+  end
+
+  describe 'specifying' do
+    it 'finds by specified language' do
+      assert { Rouge::Lexer.find('isabelle') == Rouge::Lexers::Isabelle }
+      assert { Rouge::Lexer.find('isa') == Rouge::Lexers::Isabelle }
+      assert { Rouge::Lexer.find('Isabelle') == Rouge::Lexers::Isabelle }
+    end
   end
 end

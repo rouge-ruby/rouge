@@ -8,7 +8,7 @@ module Rouge
       title "Isabelle"
       desc 'Isabelle theories (isabelle.in.tum.de)'
       tag 'isabelle'
-      aliases 'isa'
+      aliases 'isa', 'Isabelle'
       filenames '*.thy'
       mimetypes 'text/x-isabelle'
 

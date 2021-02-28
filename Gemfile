@@ -39,5 +39,3 @@ group :development do
   end
   gem 'shotgun'
 end
-
-gem "puma", "~> 5.2"

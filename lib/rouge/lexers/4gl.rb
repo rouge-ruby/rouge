@@ -1,6 +1,7 @@
 
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
+#
 # Author: Luis Ariel Vega Soliz (vluisariel@aol.com)
 
 module Rouge
@@ -129,30 +130,22 @@ module Rouge
         rule /DEFINE/i, Keyword::Declaration
 
         rule /CONTROL-[A-Z]/i, Keyword::Constant
-
+        rule /CLEAR\s+FORM/i, Name::Builtin
+        rule /(DISPLAY\s+FORM)(\s+)(\w+)/m do
+          groups Name::Builtin, Text, Name
+        end
         rule /WHENEVER/i, Name::Builtin, :whenever_condition
         rule /OPTIONS/i, Name::Builtin, :options
         rule /PROMPT/i, Name::Builtin, :prompt
         rule /DEFER/i, Name::Builtin, :defer
-        rule /OPEN FORM/i, Name::Builtin, :open_form
-        rule /(OPEN WINDOW)(\s+)([a-zA-Z_]\w*)(\s+)(AT)(\s+)(\d+)(\s*)(,)(\s*)(\d+)/i do |m|
+        rule /OPEN\s+FORM/i, Name::Builtin, :open_form
+        rule /(OPEN\s+WINDOW)(\s+)([a-zA-Z_]\w*)(\s+)(AT)(\s+)(\d+)(\s*)(,)(\s*)(\d+)/i do |m|
           groups Name::Builtin, Text, Name, Text, Name::Builtin, Text, Num::Integer, Text, Punctuation, Text, Num::Integer
           push :open_window
         end
-        rule /OPEN WINDOW/i, Name::Builtin
-        rule /EXIT MENU/i, Name::Builtin
-        rule /CLOSE WINDOW/i, Name::Builtin
-        rule /CLOSE FORM/i, Name::Builtin
-        rule /CLEAR SCREEN/i, Name::Builtin
-        rule /DISPLAY BY NAME/i, Name::Builtin
+        rule /OPEN\s+WINDOW|EXIT\s+MENU|CLOSE\s+WINDOW|CLOSE\s+FORM|CLEAR\s+SCREEN|DISPLAY\s+BY\s+NAME/i, Name::Builtin
 
-        rule /DELETE FROM/i, Keyword::Pseudo
-        rule /PRIMARY KEY/i, Keyword::Pseudo
-        rule /FOREIGN KEY/i, Keyword::Pseudo
-        rule /INSERT INTO/i, Keyword::Pseudo
-        rule /NOT IN/i, Keyword::Pseudo
-        rule /GROUP BY/i, Keyword::Pseudo
-        rule /ORDER BY/i, Keyword::Pseudo
+        rule /DELETE\s+FROM|PRIMARY\s+KEY|FOREIGN\s+KEY|INSERT\s+INTO|NOT\s+IN|GROUP\s+BY|ORDER\s+BY/i, Keyword::Pseudo
 
         rule /([a-zA-Z_]\w*)(\()/ do |m| #is a function or array!
           puts "matches: #{[m[0], m[1], m[2]].inspect}" if @debug
@@ -213,8 +206,7 @@ module Rouge
       end
 
       state :comments do
-        rule /--.*/, Comment::Single
-        rule /#.*/, Comment::Single
+        rule /--.*|#.*/, Comment::Single
         rule %r(\{.*?\})m, Comment::Multiline
       end
 
@@ -228,12 +220,7 @@ module Rouge
 
       state :whenever_condition do
         rule /\s+/, Text
-        rule /ERROR/i, Keyword::Constant, :whenever_action
-        rule /ANY/i, Keyword::Constant, :whenever_action
-        rule /NOT FOUND/i, Keyword::Constant, :whenever_action
-        rule /SQLERROR/i, Keyword::Constant, :whenever_action
-        rule /SQLWARNING/i, Keyword::Constant, :whenever_action
-        rule /WARNING/i, Keyword::Constant, :whenever_action
+        rule /ERROR|ANY|NOT\s+FOUND|SQLERROR|SQLWARNING|WARNING/i, Name::Builtin, :whenever_action
 
         rule(//) { pop! }
       end
@@ -245,7 +232,7 @@ module Rouge
           groups Name::Builtin, Text, Name::Label
           pop!
         end
-        rule /(GO TO)(\s+)([a-zA-Z_]\w*)/i do |m|
+        rule /(GO\s+TO)(\s+)([a-zA-Z_]\w*)/i do |m|
           groups Name::Builtin, Text, Name::Label
           pop!
         end
@@ -295,7 +282,7 @@ module Rouge
       end
 
       state :input_options do
-        rule /(INPUT)(\s+)(WRAP|NO WRAP)/i do |m|
+        rule /(INPUT)(\s+)(WRAP|NO\s+WRAP)/i do |m|
           groups Name::Builtin, Text, Keyword::Constant
         end
         rule /(INPUT)/, Name::Builtin, :display_attributes
@@ -313,7 +300,7 @@ module Rouge
       end
 
       state :display_attribute_value do
-        rule /(BLACK|BLUE|CYAN|GREEN|MAGENTA|RED|WHITE|YELLOW)/i, Keyword::Constant
+        mixin :colors
         rule /(BOLD|DIM|INVISIBLE|NORMAL)/i, Keyword::Constant
         rule /(FORM|WINDOW)/i, Name::Builtin
         rule /(,)(\s*)(BLINK|REVERSE|UNDERLINE)/i do |m|
@@ -369,13 +356,17 @@ module Rouge
       end
 
       state :window_attribute_value do
-        rule /(BLACK|BLUE|CYAN|GREEN|MAGENTA|RED|WHITE|YELLOW)/i, Keyword::Constant
+        mixin :colors
         rule /(BOLD|DIM|NORMAL)/i, Keyword::Constant
         rule /(BORDER|REVERSE)/i, Keyword::Constant
         mixin :line_options
         rule /,/, Punctuation, :window_attribute_value
 
         rule(//) { pop! }
+      end
+
+      state :colors do
+        rule /(BLACK|BLUE|CYAN|GREEN|MAGENTA|RED|WHITE|YELLOW)/i, Keyword::Constant
       end
 
       state :open_form do

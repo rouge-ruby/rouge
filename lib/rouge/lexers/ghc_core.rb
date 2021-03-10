@@ -17,7 +17,7 @@ module Rouge
         rule %r/^=====.*=====$/, Generic::Heading
         # timestamps
         rule %r/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ UTC$/, Comment::Single
-        rule %r/^Result size of .+\s*.*}/, Comment::Multiline
+        rule %r/^Result size of .+\n.+{[^}]*}/, Comment::Multiline
         rule %r/--.*$/, Comment::Single
 
         rule %r/\[/, Comment::Special, :annotation

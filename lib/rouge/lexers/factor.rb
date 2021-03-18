@@ -243,8 +243,8 @@ module Rouge
         end
 
         # strings
-        rule %r/"""[^"].*?[^"]"""/, Str
-        rule %r/"(\\.|[^\\])*?"/, Str
+        rule %r/"(?:\\\\|\\"|[^"])*"/, Str
+        rule %r/\S+"\s+(?:\\\\|\\"|[^"])*"/, Str
         rule %r/(CHAR:)(\s+)(\\[\\abfnrstv]*|\S)(?=\s)/, Str::Char
 
         # comments

@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.0
+  TargetRubyVersion: 2.5
   DisplayCopNames: true
   Exclude:
     - "tasks/**/*"

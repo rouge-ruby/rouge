@@ -1,0 +1,21 @@
+# Based on: https://github.com/google/syzkaller/blob/master/sys/linux/dev_usb_hiddev.txt
+
+resource fd_hiddev[fd]
+
+syz_open_dev$hiddev(dev ptr[in, string["/dev/usb/hiddev#"]],
+		    id intptr, flags flags[open_flags]) fd_hiddev (timeout[50])
+
+ioctl$HIDIOCGCOLLECTIONINDEX(fd fd_hiddev, cmd const[HIDIOCGCOLLECTIONINDEX],
+			     arg ptr[in, hiddev_usage_ref])
+
+hiddev_usage_ref {
+	report_type	int32[HID_REPORT_TYPE_MIN:HID_REPORT_TYPE_MAX]
+	report_id	flags[hid_report_ids, int32]
+	field_index	int32
+	usage_index	int32
+	usage_code	int32
+	value		int32
+}
+
+hid_report_ids = 1, 2, 3, HID_REPORT_ID_UNKNOWN,
+		 HID_REPORT_ID_FIRST, HID_REPORT_ID_NEXT

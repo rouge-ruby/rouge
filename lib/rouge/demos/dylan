@@ -1,0 +1,8 @@
+// Various keywords and constants
+define method demo(x :: <integer>, #key y = "demo") => ()
+  let z = #xFEE8 + #o277;
+  let w = '\n';
+  format-out("%d %s %d %c", x + 100, y, z, w);
+end method;
+
+demo(99, y: "hello");

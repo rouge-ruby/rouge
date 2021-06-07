@@ -45,6 +45,7 @@ module Rouge
       state :root do
         rule %r/[\s]+/, Text
         rule %r(//.*?$), Comment::Single
+        rule %r(/\*), Comment::Multiline, :multiline_comments
 
         rule %r([*+\-<>=&|~%^]), Operator
         rule %r/[{}),;\[\]]/, Str::Symbol
@@ -102,6 +103,13 @@ module Rouge
         rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
         rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
         rule %r/`(\\\\|\\`|[^`])*`/, Str::Backtick
+      end
+
+      state :multiline_comments do
+        rule %r(/[*]), Comment::Multiline, :multiline_comments
+        rule %r([*]/), Comment::Multiline, :pop!
+        rule %r([^/*]+), Comment::Multiline
+        rule %r([/*]), Comment::Multiline
       end
     end
   end

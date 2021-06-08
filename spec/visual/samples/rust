@@ -418,3 +418,25 @@ fn tuple_access() {
     let t: (i32, i32) = (42, 13);
     let f: t.0;
 }
+
+// Some smoke tests for comments.
+// See the spec tests for more thorough checking.
+
+/// line-style docs (outer)
+mod external_line_docs {}
+
+mod internal_line_docs {
+    //! also line-style docs (inner)
+    //! still line docs
+}
+
+let _ = /**/ "<- self-closing non-doc comment";
+let _ = /***/ "<- another self-closing non-doc comment";
+
+/**
+ * multiline block doc (outer)
+ * including /* nesting */
+ */
+fn docs_block() {}
+
+mod bar { /*! docs for bar */ }

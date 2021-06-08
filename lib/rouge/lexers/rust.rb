@@ -85,8 +85,62 @@ module Rouge
 
       state :whitespace do
         rule %r/\s+/, Text
-        rule %r(//[^\n]*), Comment
-        rule %r(/[*].*?[*]/)m, Comment::Multiline
+        mixin :comments
+      end
+
+      state :comments do
+        # Only 3 slashes are doc comments, `////` and beyond become normal
+        # comments again (for some reason), so match this before the
+        # doc line comments rather than figure out a
+        rule %r(////+[^\n]*), Comment::Single
+        # doc line comments — either inner (`//!`), or outer (`///`).
+        rule %r(//[/!][^\n]*), Comment::Doc
+        # otherwise, `//` is just a plain line comme
+        rule %r(//[^\n]*), Comment::Single
+        # /**/ and /***/ are self-closing block comments, not doc. Because this
+        # is self-closing, it doesn't enter the states for nested comments
+        rule %r(/\*\*\*?/), Comment::Multiline
+        # 3+ stars and it's a normal non-doc block comment.
+        rule %r(/\*\*\*+), Comment::Multiline, :nested_plain_block
+        # `/*!` and `/**` begin doc comments. These nest and can have internal
+        # block/doc comments, but they're still part of the documentation
+        # inside.
+        rule %r(/[*][*!]), Comment::Doc, :nested_doc_block
+        # any other /* is a plain multiline comment
+        rule %r(/[*]), Comment::Multiline, :nested_plain_block
+      end
+
+      # Multiline/block comments fully nest. This is true for ones that are
+      # marked as documentation too. The behavior here is:
+      #
+      # - Anything inside a block doc comment is still included in the
+      #   documentation, even if it's a nested non-doc block comment. For
+      #   example: `/** /* still docs */ */`
+      # - Anything inside of a block non-doc comment is still just a normal
+      #   comment, even if it's a nested block documentation comment. For
+      #   example: `/* /** not docs */ */`
+      #
+      # This basically means: if (on the outermost level) the comment starts as
+      # one kind of block comment (either doc/non-doc), then everything inside
+      # of it, including nested block comments of the opposite type, needs to
+      # stay that type.
+      #
+      # Also note that single line comments do nothing anywhere inside of block
+      # comments, thankfully.
+      #
+      # We just define this as two states, because this seems easier than
+      # tracking it with instance vars.
+      [
+        [:nested_plain_block, Comment::Multiline],
+        [:nested_doc_block, Comment::Doc]
+      ].each do |state_name, comment_token|
+        state state_name do
+          rule %r(\*/), comment_token, :pop!
+          rule %r(/\*), comment_token, state_name
+          # We only want to eat at most one `[*/]` at a time,
+          # but we can skip past non-`[*/]` in bulk.
+          rule %r([^*/]+|[*/]), comment_token
+        end
       end
 
       state :root do

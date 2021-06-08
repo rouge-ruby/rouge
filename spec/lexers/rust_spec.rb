@@ -63,6 +63,76 @@ describe Rouge::Lexers::Rust do
       assert_tokens_equal %q(br##"ab"c\xffd"#ef"##),
         ['Literal.String', %q(br##"ab"c\xffd"#ef"##)]
     end
+
+    it 'can lex multiline and doc comments' do
+      assert_tokens_equal "// single line",
+        ['Comment.Single', '// single line']
+      assert_tokens_equal "/// line-style docs (outer)",
+        ['Comment.Doc', '/// line-style docs (outer)']
+      assert_tokens_equal "//! line-style docs (inner)",
+        ['Comment.Doc', '//! line-style docs (inner)']
+      assert_tokens_equal "//// not a doc anymore",
+        ['Comment.Single', '//// not a doc anymore']
+      assert_tokens_equal "///! still doc (but not inner, not that we care)",
+        ['Comment.Doc', '///! still doc (but not inner, not that we care)']
+      assert_tokens_equal "////! plain again",
+        ['Comment.Single', '////! plain again']
+      assert_tokens_equal "1 /**/ 2",
+        ['Literal.Number.Integer', '1'],
+        ['Text', ' '],
+        ['Comment.Multiline', '/**/'],
+        ['Text', ' '],
+        ['Literal.Number.Integer', '2']
+      assert_tokens_equal "1 /***/ 2",
+        ['Literal.Number.Integer', '1'],
+        ['Text', ' '],
+        ['Comment.Multiline', '/***/'],
+        ['Text', ' '],
+        ['Literal.Number.Integer', '2']
+      assert_tokens_equal "/** outer docs */",
+        ['Comment.Doc', '/** outer docs */']
+      assert_tokens_equal "/*! inner docs */",
+        ['Comment.Doc', '/*! inner docs */']
+      assert_tokens_equal "/*** not docs */",
+        ['Comment.Multiline', '/*** not docs */']
+      assert_tokens_equal "1 /* /* /* nested */ */ */ 2",
+        ['Literal.Number.Integer', '1'],
+        ['Text', ' '],
+        ['Comment.Multiline', '/* /* /* nested */ */ */'],
+        ['Text', ' '],
+        ['Literal.Number.Integer', '2']
+      assert_tokens_equal "1 /** /* /* doc nested */ */ */ 2",
+        ['Literal.Number.Integer', '1'],
+        ['Text', ' '],
+        ['Comment.Doc', '/** /* /* doc nested */ */ */'],
+        ['Text', ' '],
+        ['Literal.Number.Integer', '2']
+      assert_tokens_equal "1 /* /** /* not doc, still nested */ */ */ 2",
+        ['Literal.Number.Integer', '1'],
+        ['Text', ' '],
+        ['Comment.Multiline', '/* /** /* not doc, still nested */ */ */'],
+        ['Text', ' '],
+        ['Literal.Number.Integer', '2']
+      assert_tokens_equal "/**/// this is still commented\n\"this is not\"",
+        ['Comment.Multiline', '/**/'],
+        ['Comment.Single', '// this is still commented'],
+        ['Text', "\n"],
+        ['Literal.String', '"this is not"']
+      assert_tokens_equal '/* /*/ / * // */ */ "tricky"',
+        ['Comment.Multiline', "/* /*/ / * // */ */"],
+        ['Text', ' '],
+        ['Literal.String', '"tricky"']
+      assert_tokens_equal "/*! abcd /* ef */\n/**/ //! /***/ // */ \"uncommented\"",
+        ['Comment.Doc', "/*! abcd /* ef */\n/**/ //! /***/ // */"],
+        ['Text', ' '],
+        ['Literal.String', '"uncommented"']
+      assert_tokens_equal "8/**//4",
+        ['Literal.Number.Integer', '8'],
+        ['Comment.Multiline', "/**/"],
+        ['Operator', '/'],
+        ['Literal.Number.Integer', '4']
+    end
+
     it 'can lex unicode escapes' do
       assert_tokens_equal %q("abc\u{0}def"),
         ['Literal.String', '"abc'],

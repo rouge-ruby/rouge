@@ -43,9 +43,12 @@ describe Rouge::Lexers::Rust do
         ["Literal.Number.Integer", "5_000"],
         ["Name.Property", "._"]
     end
-    it 'can lex underscore' do
+    it 'can lex identifier edge cases' do
       assert_tokens_equal '_', ['Name', '_']
       assert_tokens_equal '_0', ["Name", "_0"]
+      assert_tokens_equal 'garçon', ['Name', 'garçon']
+      assert_tokens_equal 'Москва.東京', ["Name", "Москва"], ["Name.Property", ".東京"]
+      assert_tokens_equal '東京', ["Name", "東京"]
     end
     it 'can lex unicode escapes' do
       assert_tokens_equal %q("abc\u{0}def"),

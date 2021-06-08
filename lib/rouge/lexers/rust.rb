@@ -54,7 +54,7 @@ module Rouge
 
       delim_map = { '[' => ']', '(' => ')', '{' => '}' }
 
-      id = /[a-z_]\w*/i
+      id = /[\p{XID_Start}_]\p{XID_Continue}*/
       hex = /[0-9a-f]/i
       escapes = %r(
         \\ ([nrt'"\\0] | x#{hex}{2} | u\{(#{hex}_*){1,6}\})
@@ -173,7 +173,7 @@ module Rouge
           (#{dot}  #{exp}? #{flt}?
           |#{dot}? #{exp}  #{flt}?
           |#{dot}? #{exp}? #{flt}
-          |[.](?![._a-z])
+          |[.](?![._\p{XID_Start}])
           )
         )x, Num::Float
 

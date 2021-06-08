@@ -29,5 +29,19 @@ describe Rouge::Lexers::Rust do
       assert_tokens_equal '0u128', ['Literal.Number.Integer', '0u128']
       assert_tokens_equal '0o5_0_0', ['Literal.Number.Integer', '0o5_0_0']
     end
+    it 'can lex unicode escapes' do
+      assert_tokens_equal %q("abc\u{0}def"),
+        ['Literal.String', '"abc'],
+        ['Literal.String.Escape', '\u{0}'],
+        ['Literal.String', 'def"']
+      assert_tokens_equal %q("abc\u{FDFD}def"),
+        ['Literal.String', '"abc'],
+        ['Literal.String.Escape', '\u{FDFD}'],
+        ['Literal.String', 'def"']
+      assert_tokens_equal %q('\u{10ffff}'),
+        ['Literal.String.Char', %q('\u{10ffff}')]
+      assert_tokens_equal %q('\u{f_f___f_f}'),
+        ['Literal.String.Char', %q('\u{f_f___f_f}')]
+    end
   end
 end

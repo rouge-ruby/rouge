@@ -57,7 +57,7 @@ module Rouge
       id = /[a-z_]\w*/i
       hex = /[0-9a-f]/i
       escapes = %r(
-        \\ ([nrt'"\\0] | x#{hex}{2} | u#{hex}{4} | U#{hex}{8})
+        \\ ([nrt'"\\0] | x#{hex}{2} | u\{(#{hex}_*){1,6}\})
       )x
       size = /8|16|32|64|128|size/
 

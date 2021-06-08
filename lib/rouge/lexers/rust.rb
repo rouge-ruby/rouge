@@ -164,15 +164,16 @@ module Rouge
         rule %r/r(#*)".*?"\1/m, Str
 
         # numbers
-        dot = /[.][0-9_]+/
-        exp = /e[-+]?[0-9_]+/
+        dot = /[.][0-9][0-9_]*/
+        exp = /[eE][-+]?[0-9_]+/
         flt = /f32|f64/
 
         rule %r(
-          [0-9_]+
+          [0-9][0-9_]*
           (#{dot}  #{exp}? #{flt}?
           |#{dot}? #{exp}  #{flt}?
           |#{dot}? #{exp}? #{flt}
+          |[.](?![._a-z])
           )
         )x, Num::Float
 
@@ -180,7 +181,7 @@ module Rouge
           ( 0b[10_]+
           | 0x[0-9a-fA-F_]+
           | 0o[0-7_]+
-          | [0-9_]+
+          | [0-9][0-9_]*
           ) (u#{size}?|i#{size})?
         )x, Num::Integer
 

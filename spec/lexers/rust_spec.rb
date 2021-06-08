@@ -29,6 +29,24 @@ describe Rouge::Lexers::Rust do
       assert_tokens_equal '0u128', ['Literal.Number.Integer', '0u128']
       assert_tokens_equal '0o5_0_0', ['Literal.Number.Integer', '0o5_0_0']
     end
+    it 'is not confused by float edge cases' do
+      assert_tokens_equal '0.1E4', ['Literal.Number.Float', '0.1E4']
+      assert_tokens_equal '0._1',
+        ["Literal.Number.Integer", "0"],
+        ["Name.Property", "._1"]
+      assert_tokens_equal '1.',
+        ["Literal.Number.Float", "1."]
+      assert_tokens_equal '102. ',
+        ["Literal.Number.Float", "102."],
+        ["Text", " "]
+      assert_tokens_equal '5_000._',
+        ["Literal.Number.Integer", "5_000"],
+        ["Name.Property", "._"]
+    end
+    it 'can lex underscore' do
+      assert_tokens_equal '_', ['Name', '_']
+      assert_tokens_equal '_0', ["Name", "_0"]
+    end
     it 'can lex unicode escapes' do
       assert_tokens_equal %q("abc\u{0}def"),
         ['Literal.String', '"abc'],

@@ -22,10 +22,10 @@ module Rouge
 
       def self.keywords
         @keywords ||= %w(
-          as assert async await break const continue copy do drop else enum extern
-          fail false fn for if impl let log loop match mod move mut priv pub pure
-          ref return self static struct true trait type unsafe use where
-          while box
+          as assert async await break crate const continue copy do drop dyn else enum extern
+          fail false fn for if impl let log loop macro match mod move mut priv pub pure
+          ref return self Self static struct super true try trait type union unsafe use
+          where while yield box
         )
       end
 
@@ -40,6 +40,9 @@ module Rouge
           Right Send Shl Shr size_t Some ssize_t str Sub Success time_t
           u16 u32 u64 u8 usize uint uintptr_t
           Box Vec String Gc Rc Arc
+          u128 i128 Result Sync Pin Unpin Sized Drop drop Fn FnMut FnOnce
+          Clone PartialEq PartialOrd AsMut AsRef From Into Default
+          DoubleEndedIterator ExactSizeIterator Extend IntoIterator Iterator
         )
       end
 
@@ -110,6 +113,7 @@ module Rouge
         rule %r/\bmacro_rules!/, Name::Decorator, :macro_rules
         rule %r/#{id}!/, Name::Decorator, :macro
 
+        rule %r/'static\b/, Keyword
         rule %r/'#{id}/, Name::Variable
         rule %r/#{id}/ do |m|
           name = m[0]

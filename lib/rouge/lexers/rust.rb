@@ -59,7 +59,7 @@ module Rouge
       escapes = %r(
         \\ ([nrt'"\\0] | x#{hex}{2} | u#{hex}{4} | U#{hex}{8})
       )x
-      size = /8|16|32|64/
+      size = /8|16|32|64|128|size/
 
       # Although not officially part of Rust, the rustdoc tool allows code in
       # comments to begin with `#`. Code like this will be evaluated but not
@@ -179,7 +179,7 @@ module Rouge
         rule %r(
           ( 0b[10_]+
           | 0x[0-9a-fA-F_]+
-          | 0o[0-7]+
+          | 0o[0-7_]+
           | [0-9_]+
           ) (u#{size}?|i#{size})?
         )x, Num::Integer

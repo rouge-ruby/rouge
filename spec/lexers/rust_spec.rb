@@ -19,4 +19,15 @@ describe Rouge::Lexers::Rust do
       assert_guess :source => '#!/usr/bin/env rustc --jit'
     end
   end
+  describe 'lexing' do
+    include Support::Lexing;
+
+    it 'can lex integers' do
+      assert_tokens_equal '123usize', ['Literal.Number.Integer', '123usize']
+      assert_tokens_equal '1_2_3_isize', ['Literal.Number.Integer', '1_2_3_isize']
+      assert_tokens_equal '30_000i128', ['Literal.Number.Integer', '30_000i128']
+      assert_tokens_equal '0u128', ['Literal.Number.Integer', '0u128']
+      assert_tokens_equal '0o5_0_0', ['Literal.Number.Integer', '0o5_0_0']
+    end
+  end
 end

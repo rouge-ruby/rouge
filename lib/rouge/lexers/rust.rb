@@ -159,13 +159,13 @@ module Rouge
       state :has_literals do
         # constants
         rule %r/\b(?:true|false|nil)\b/, Keyword::Constant
-        # characters
+        # characters/bytes
         rule %r(
-          ' (?: #{escapes} | [^\\] ) '
+          b?' (?: #{escapes} | [^\\] ) '
         )x, Str::Char
 
-        rule %r/"/, Str, :string
-        rule %r/r(#*)".*?"\1/m, Str
+        rule %r/b?"/, Str, :string
+        rule %r/b?r(#*)".*?"\1/m, Str
 
         # numbers
         dot = /[.][0-9][0-9_]*/

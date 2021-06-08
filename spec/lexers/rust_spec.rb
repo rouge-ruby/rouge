@@ -50,6 +50,19 @@ describe Rouge::Lexers::Rust do
       assert_tokens_equal 'Москва.東京', ["Name", "Москва"], ["Name.Property", ".東京"]
       assert_tokens_equal '東京', ["Name", "東京"]
     end
+    it 'can lex (possibly raw) byte chars/strings' do
+      assert_tokens_equal %q(b'1'),
+        ['Literal.String.Char', %q(b'1')]
+      assert_tokens_equal %q(b'\xff'),
+        ['Literal.String.Char', %q(b'\xff')]
+      assert_tokens_equal %q(b"abc\xffdef"),
+        ['Literal.String', 'b"abc'],
+        ['Literal.String.Escape', '\xff'],
+        ['Literal.String', 'def"']
+      # raw string: no escape
+      assert_tokens_equal %q(br##"ab"c\xffd"#ef"##),
+        ['Literal.String', %q(br##"ab"c\xffd"#ef"##)]
+    end
     it 'can lex unicode escapes' do
       assert_tokens_equal %q("abc\u{0}def"),
         ['Literal.String', '"abc'],

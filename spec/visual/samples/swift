@@ -452,4 +452,12 @@ func test(t: Types?) -> Bool {
 	}
 }
 
+actor AnActor {
+  nonisolated func funcA() {}
+  func funcB(otherActor: isolated AnActor) async {
+    await otherActor.funcB()
+    async let v = funcA()
+  }
+}
+
 foo() // end-of-file comment

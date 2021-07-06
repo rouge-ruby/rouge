@@ -52,6 +52,20 @@ Rouge::Themes::Base16.mode(:light).render(scope: '.highlight')
 Rouge::Theme.find('base16.light').render(scope: '.highlight')
 ```
 
+[All available themes](https://github.com/rouge-ruby/rouge/tree/master/lib/rouge/themes):
+* Tulip
+* ThankfulEyes
+* Pastie
+* MonokaiSublime
+* Monokai
+* Magritte
+* IgorPro
+* Gruvbox
+* Github
+* Colorful
+* BlackWhiteTheme
+* Base16
+
 ### Jekyll
 
 Rouge is Jekyll's default syntax highlighter. Out of the box, Rouge will be

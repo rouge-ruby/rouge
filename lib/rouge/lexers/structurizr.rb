@@ -12,33 +12,25 @@ module Rouge
       # TODO: Verify all examples parse from https://github.com/structurizr/dsl/tree/master/examples
 
       def self.keywords
-        @keywords ||= Set.new %w(workspace model enterprise group person
+        @keywords ||= Set.new(%w(workspace model enterprise group person
         softwareSystem container component deploymentEnvironment
         deploymentGroup deploymentNode infrastructureNode
         softwareSystemInstance containerInstance healthCheck element tags url
         properties perspectives views systemLandscape systemContext container
         component filtered dynamic deployment custom include exclude autoLayout
         animation title styles element relationship theme themes branding
-        terminology configuration users)
+        terminology configuration users).map { |s| s.downcase })
       end
 
       def self.keywords_include
-        @keywords_include ||= Set.new %w(!include)
+        @keywords_include ||= Set.new ["!include"]
       end
 
       def self.keywords_doc_include
-        @keywords_doc_include ||= Set.new %w(!docs !adrs)
+        @keywords_doc_include ||= Set.new ["!docs", "!adrs"]
       end
 
-      keywords = self.keywords
-      keywords_include = self.keywords_include
-      keywords_doc_include = self.keywords_doc_include
-
-      def self.identifier
-        %r(\w+)
-      end
-
-      identifier = self.identifier
+      identifier = %r(\w+)
 
       state :identifier do
         mixin :whitespace
@@ -52,16 +44,20 @@ module Rouge
       state :comment do
         rule %r/\/\/.*$/, Comment
         rule %r/#.*$/, Comment
+        # TODO: Verify that whitespace after comment-close doesn't break the lexer
         rule %r(\/\*.*?\*\/$)m, Comment::Multiline
       end
 
       state :include do
         mixin :whitespace
-        rule %r/(#{keywords_include.join('|')})\b(\p{Blank}+)([^\n]+)/i do
-          groups Keyword, Text::Whitespace, Text
-        end
-        rule %r/(#{keywords_doc_include.join('|')})\b(\p{Blank}+)([^\n]+)/i do
-          groups Comment, Text::Whitespace, Text
+        rule %r/(\!#{identifier})\b(\p{Blank}+)([^\n]+)$/i do |m|
+          if self.class.keywords_include.include? m[1].downcase
+            groups Keyword, Text::Whitespace, Text
+          elsif self.class.keywords_doc_include.include? m[1].downcase
+            groups Comment, Text::Whitespace, Text
+          else
+            token Error, m[0]
+          end
         end
       end
 
@@ -93,7 +89,7 @@ module Rouge
 
       state :string_body do
         #rule %r/[$][{]/, Str::Interpol, :string_intp
-        rule %r/($\{)([a-zA-Z0-9-_.]+?)(\})/i do
+        rule %r/($\{)([a-zA-Z0-9\-_.]+?)(\})/i do
           groups Str::Interpol, Name::Variable, Str::Interpol
         end
         rule %r/"/, Str::Double, :pop!
@@ -113,9 +109,15 @@ module Rouge
       end
 
       state :construct do
-        # TODO: Avoid interp
-        # https://github.com/rouge-ruby/rouge/blob/master/docs/LexerDevelopment.md#special-words
-        rule %r/\b(#{keywords.join('|')})\b/i, Keyword::Type, :construct_args
+        rule %r/(#{identifier})\b(\p{Blank}*)/i do |m|
+          if self.class.keywords.include? m[1].downcase
+            groups Keyword::Type, Text::Whitespace
+            push :construct_args
+          else
+            groups Keyword::Declaration, Text::Whitespace
+            push :value
+          end
+        end
       end
 
       state :construct_args do
@@ -185,8 +187,8 @@ module Rouge
 
         mixin :construct
         mixin :property
-        mixin :include
         mixin :constant
+        mixin :include
       end
 
       state :root do

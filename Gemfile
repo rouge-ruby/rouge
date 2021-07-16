@@ -36,6 +36,7 @@ group :development do
     gem 'sinatra', '~> 1.4.8'
   else
     gem 'sinatra'
+    gem 'thin'
   end
   gem 'shotgun'
 end

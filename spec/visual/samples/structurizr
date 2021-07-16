@@ -1,0 +1,814 @@
+# From https://github.com/structurizr/dsl/blob/master/docs/language-reference.md
+
+# https://github.com/structurizr/dsl/blob/master/docs/language-reference.md#string-substitution
+!constant ORGANISATION_NAME "Organisation"
+!constant GROUP_NAME "Group"
+
+workspace {
+
+    model {
+        enterprise "${ORGANISATION_NAME} - ${GROUP_NAME}" {
+            user = person "User"
+        }
+    }
+
+}
+
+
+# https://github.com/structurizr/dsl/blob/master/docs/language-reference.md#comments
+/*
+    multi-line comment
+*/
+
+
+/* single-line comment */
+
+
+# single line comment
+
+
+// single line comment
+
+
+# https://github.com/structurizr/dsl/blob/master/docs/language-reference.md#includes
+!include child.dsl
+!include subdirectory/child.dsl
+
+
+# TODO: Remove
+!constant ORGANISATION_NAME "Organisation"
+!constant GROUP_NAME "Group for ${ORGANISATION_NAME}"
+
+
+# https://github.com/structurizr/dsl/blob/master/examples/big-bank-plc/system-landscape.dsl
+!constant INTERNET_BANKING_SYSTEM_INCLUDE "summary.dsl"
+
+workspace "Big Bank plc - System Landscape" "The system landscape for Big Bank plc." {
+
+    model {
+        !include model/people-and-software-systems.dsl
+    }
+
+    views {
+        systemlandscape "SystemLandscape" {
+            include *
+        }
+
+        styles {
+            !include views/styles-people.dsl
+
+            element "Software System" {
+                background #999999
+                color #ffffff
+            }
+        }
+    }
+}
+
+
+# https://github.com/structurizr/dsl/blob/965b521b95540bf756333043e3bcd4a5a9442e8a/examples/big-bank-plc/model/internet-banking-system/details.dsl
+singlePageApplication = container "Single-Page Application" "Provides all of the Internet banking functionality to customers via their web browser." "JavaScript and Angular" "Web Browser"
+mobileApp = container "Mobile App" "Provides a limited subset of the Internet banking functionality to customers via their mobile device." "Xamarin" "Mobile App"
+webApplication = container "Web Application" "Delivers the static content and the Internet banking single page application." "Java and Spring MVC"
+apiApplication = container "API Application" "Provides Internet banking functionality via a JSON/HTTPS API." "Java and Spring MVC" {
+    signinController = component "Sign In Controller" "Allows users to sign in to the Internet Banking System." "Spring MVC Rest Controller"
+    accountsSummaryController = component "Accounts Summary Controller" "Provides customers with a summary of their bank accounts." "Spring MVC Rest Controller"
+    resetPasswordController = component "Reset Password Controller" "Allows users to reset their passwords with a single use URL." "Spring MVC Rest Controller"
+    securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "Spring Bean"
+    mainframeBankingSystemFacade = component "Mainframe Banking System Facade" "A facade onto the mainframe banking system." "Spring Bean"
+    emailComponent = component "E-mail Component" "Sends e-mails to users." "Spring Bean"
+}
+database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "Oracle Database Schema" "Database"
+
+!docs docs
+!adrs adrs
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/amazon-web-services.dsl
+workspace "Amazon Web Services Example" "An example AWS deployment architecture." {
+    model {
+        springPetClinic = softwaresystem "Spring PetClinic" "Allows employees to view and manage information regarding the veterinarians, the clients, and their pets." "Spring Boot Application" {
+            webApplication = container "Web Application" "Allows employees to view and manage information regarding the veterinarians, the clients, and their pets." "Java and Spring Boot"
+            database = container "Database" "Stores information regarding the veterinarians, the clients, and their pets." "Relational database schema" "Database"
+        }
+
+        webApplication -> database "Reads from and writes to" "JDBC/SSL"
+
+        deploymentEnvironment "Live" {
+            deploymentNode "Amazon Web Services" "" "" "Amazon Web Services - Cloud" {
+                deploymentNode "US-East-1" "" "" "Amazon Web Services - Region" {
+                    route53 = infrastructureNode "Route 53" "" "" "Amazon Web Services - Route 53"
+                    elb = infrastructureNode "Elastic Load Balancer" "" "" "Amazon Web Services - Elastic Load Balancing"
+
+                    deploymentNode "Autoscaling group" "" "" "Amazon Web Services - Auto Scaling" {
+                        deploymentNode "Amazon EC2" "" "" "Amazon Web Services - EC2" {
+                            webApplicationInstance = containerInstance webApplication
+                        }
+                    }
+
+                    deploymentNode "Amazon RDS" "" "" "Amazon Web Services - RDS" {
+                        deploymentNode "MySQL" "" "" "Amazon Web Services - RDS MySQL instance" {
+                            databaseInstance = containerInstance database
+                        }
+                    }
+
+                }
+            }
+
+            route53 -> elb "Forwards requests to" "HTTPS"
+            elb -> webApplicationInstance "Forwards requests to" "HTTPS"
+        }
+    }
+         
+    views {
+        deployment springPetClinic "Live" "AmazonWebServicesDeployment" {
+            include *
+            autolayout lr
+
+            animation {
+                route53
+                elb
+                webApplicationInstance
+                databaseInstance
+            }
+        }
+
+        styles {
+            element "Element" {
+                shape roundedbox
+                background #ffffff
+            }
+            element "Database" {
+                shape cylinder
+            }
+            element "Infrastructure Node" {
+                shape roundedbox
+            }
+        }
+
+        themes https://static.structurizr.com/themes/amazon-web-services-2020.04.30/theme.json
+    }
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/big-bank-plc.dsl
+/*
+ * This is a combined version of the following workspaces:
+ *
+ * - "Big Bank plc - System Landscape" (https://structurizr.com/share/28201/)
+ * - "Big Bank plc - Internet Banking System" (https://structurizr.com/share/36141/)
+*/
+workspace "Big Bank plc" "This is an example workspace to illustrate the key features of Structurizr, via the DSL, based around a fictional online banking system." {
+
+    model {
+        customer = person "Personal Banking Customer" "A customer of the bank, with personal bank accounts." "Customer"
+
+        enterprise "Big Bank plc" {
+            supportStaff = person "Customer Service Staff" "Customer service staff within the bank." "Bank Staff"
+            backoffice = person "Back Office Staff" "Administration and support staff within the bank." "Bank Staff"
+
+            mainframe = softwaresystem "Mainframe Banking System" "Stores all of the core banking information about customers, accounts, transactions, etc." "Existing System"
+            email = softwaresystem "E-mail System" "The internal Microsoft Exchange e-mail system." "Existing System"
+            atm = softwaresystem "ATM" "Allows customers to withdraw cash." "Existing System"
+
+            internetBankingSystem = softwaresystem "Internet Banking System" "Allows customers to view information about their bank accounts, and make payments." {
+                singlePageApplication = container "Single-Page Application" "Provides all of the Internet banking functionality to customers via their web browser." "JavaScript and Angular" "Web Browser"
+                mobileApp = container "Mobile App" "Provides a limited subset of the Internet banking functionality to customers via their mobile device." "Xamarin" "Mobile App"
+                webApplication = container "Web Application" "Delivers the static content and the Internet banking single page application." "Java and Spring MVC"
+                apiApplication = container "API Application" "Provides Internet banking functionality via a JSON/HTTPS API." "Java and Spring MVC" {
+                    signinController = component "Sign In Controller" "Allows users to sign in to the Internet Banking System." "Spring MVC Rest Controller"
+                    accountsSummaryController = component "Accounts Summary Controller" "Provides customers with a summary of their bank accounts." "Spring MVC Rest Controller"
+                    resetPasswordController = component "Reset Password Controller" "Allows users to reset their passwords with a single use URL." "Spring MVC Rest Controller"
+                    securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "Spring Bean"
+                    mainframeBankingSystemFacade = component "Mainframe Banking System Facade" "A facade onto the mainframe banking system." "Spring Bean"
+                    emailComponent = component "E-mail Component" "Sends e-mails to users." "Spring Bean"
+                }
+                database = container "Database" "Stores user registration information, hashed authentication credentials, access logs, etc." "Oracle Database Schema" "Database"
+            }
+        }
+
+        # relationships between people and software systems
+        customer -> internetBankingSystem "Views account balances, and makes payments using"
+        internetBankingSystem -> mainframe "Gets account information from, and makes payments using"
+        internetBankingSystem -> email "Sends e-mail using"
+        email -> customer "Sends e-mails to"
+        customer -> supportStaff "Asks questions to" "Telephone"
+        supportStaff -> mainframe "Uses"
+        customer -> atm "Withdraws cash using"
+        atm -> mainframe "Uses"
+        backoffice -> mainframe "Uses"
+
+        # relationships to/from containers
+        customer -> webApplication "Visits bigbank.com/ib using" "HTTPS"
+        customer -> singlePageApplication "Views account balances, and makes payments using"
+        customer -> mobileApp "Views account balances, and makes payments using"
+        webApplication -> singlePageApplication "Delivers to the customer's web browser"
+
+        # relationships to/from components
+        singlePageApplication -> signinController "Makes API calls to" "JSON/HTTPS"
+        singlePageApplication -> accountsSummaryController "Makes API calls to" "JSON/HTTPS"
+        singlePageApplication -> resetPasswordController "Makes API calls to" "JSON/HTTPS"
+        mobileApp -> signinController "Makes API calls to" "JSON/HTTPS"
+        mobileApp -> accountsSummaryController "Makes API calls to" "JSON/HTTPS"
+        mobileApp -> resetPasswordController "Makes API calls to" "JSON/HTTPS"
+        signinController -> securityComponent "Uses"
+        accountsSummaryController -> mainframeBankingSystemFacade "Uses"
+        resetPasswordController -> securityComponent "Uses"
+        resetPasswordController -> emailComponent "Uses"
+        securityComponent -> database "Reads from and writes to" "JDBC"
+        mainframeBankingSystemFacade -> mainframe "Makes API calls to" "XML/HTTPS"
+        emailComponent -> email "Sends e-mail using"
+
+        deploymentEnvironment "Development" {
+            deploymentNode "Developer Laptop" "" "Microsoft Windows 10 or Apple macOS" {
+                deploymentNode "Web Browser" "" "Chrome, Firefox, Safari, or Edge" {
+                    developerSinglePageApplicationInstance = containerInstance singlePageApplication
+                }
+                deploymentNode "Docker Container - Web Server" "" "Docker" {
+                    deploymentNode "Apache Tomcat" "" "Apache Tomcat 8.x" {
+                        developerWebApplicationInstance = containerInstance webApplication
+                        developerApiApplicationInstance = containerInstance apiApplication
+                    }
+                }
+                deploymentNode "Docker Container - Database Server" "" "Docker" {
+                    deploymentNode "Database Server" "" "Oracle 12c" {
+                        developerDatabaseInstance = containerInstance database
+                    }
+                }
+            }
+            deploymentNode "Big Bank plc" "" "Big Bank plc data center" "" {
+                deploymentNode "bigbank-dev001" "" "" "" {
+                    softwareSystemInstance mainframe
+                }
+            }
+
+        }
+
+        deploymentEnvironment "Live" {
+            deploymentNode "Customer's mobile device" "" "Apple iOS or Android" {
+                liveMobileAppInstance = containerInstance mobileApp
+            }
+            deploymentNode "Customer's computer" "" "Microsoft Windows or Apple macOS" {
+                deploymentNode "Web Browser" "" "Chrome, Firefox, Safari, or Edge" {
+                    liveSinglePageApplicationInstance = containerInstance singlePageApplication
+                }
+            }
+
+            deploymentNode "Big Bank plc" "" "Big Bank plc data center" {
+                deploymentNode "bigbank-web***" "" "Ubuntu 16.04 LTS" "" 4 {
+                    deploymentNode "Apache Tomcat" "" "Apache Tomcat 8.x" {
+                        liveWebApplicationInstance = containerInstance webApplication
+                    }
+                }
+                deploymentNode "bigbank-api***" "" "Ubuntu 16.04 LTS" "" 8 {
+                    deploymentNode "Apache Tomcat" "" "Apache Tomcat 8.x" {
+                        liveApiApplicationInstance = containerInstance apiApplication
+                    }
+                }
+
+                deploymentNode "bigbank-db01" "" "Ubuntu 16.04 LTS" {
+                    primaryDatabaseServer = deploymentNode "Oracle - Primary" "" "Oracle 12c" {
+                        livePrimaryDatabaseInstance = containerInstance database
+                    }
+                }
+                deploymentNode "bigbank-db02" "" "Ubuntu 16.04 LTS" "Failover" {
+                    secondaryDatabaseServer = deploymentNode "Oracle - Secondary" "" "Oracle 12c" "Failover" {
+                        liveSecondaryDatabaseInstance = containerInstance database "Failover"
+                    }
+                }
+                deploymentNode "bigbank-prod001" "" "" "" {
+                    softwareSystemInstance mainframe
+                }
+            }
+
+            primaryDatabaseServer -> secondaryDatabaseServer "Replicates data to"
+        }
+    }
+
+    views {
+        systemlandscape "SystemLandscape" {
+            include *
+            autoLayout
+        }
+
+        systemcontext internetBankingSystem "SystemContext" {
+            include *
+            animation {
+                internetBankingSystem
+                customer
+                mainframe
+                email
+            }
+            autoLayout
+        }
+
+        container internetBankingSystem "Containers" {
+            include *
+            animation {
+                customer mainframe email
+                webApplication
+                singlePageApplication
+                mobileApp
+                apiApplication
+                database
+            }
+            autoLayout
+        }
+
+        component apiApplication "Components" {
+            include *
+            animation {
+                singlePageApplication mobileApp database email mainframe
+                signinController securityComponent
+                accountsSummaryController mainframeBankingSystemFacade
+                resetPasswordController emailComponent
+            }
+            autoLayout
+        }
+
+        dynamic apiApplication "SignIn" "Summarises how the sign in feature works in the single-page application." {
+            singlePageApplication -> signinController "Submits credentials to"
+            signinController -> securityComponent "Validates credentials using"
+            securityComponent -> database "select * from users where username = ?"
+            database -> securityComponent "Returns user data to"
+            securityComponent -> signinController "Returns true if the hashed password matches"
+            signinController -> singlePageApplication "Sends back an authentication token to"
+            autoLayout
+        }
+
+        deployment internetBankingSystem "Development" "DevelopmentDeployment" {
+            include *
+            animation {
+                developerSinglePageApplicationInstance
+                developerWebApplicationInstance developerApiApplicationInstance
+                developerDatabaseInstance
+            }
+            autoLayout
+        }
+
+        deployment internetBankingSystem "Live" "LiveDeployment" {
+            include *
+            animation {
+                liveSinglePageApplicationInstance
+                liveMobileAppInstance
+                liveWebApplicationInstance liveApiApplicationInstance
+                livePrimaryDatabaseInstance
+                liveSecondaryDatabaseInstance
+            }
+            autoLayout
+        }
+
+        styles {
+            element "Person" {
+                color #ffffff
+                fontSize 22
+                shape Person
+            }
+            element "Customer" {
+                background #08427b
+            }
+            element "Bank Staff" {
+                background #999999
+            }
+            element "Software System" {
+                background #1168bd
+                color #ffffff
+            }
+            element "Existing System" {
+                background #999999
+                color #ffffff
+            }
+            element "Container" {
+                background #438dd5
+                color #ffffff
+            }
+            element "Web Browser" {
+                shape WebBrowser
+            }
+            element "Mobile App" {
+                shape MobileDeviceLandscape
+            }
+            element "Database" {
+                shape Cylinder
+            }
+            element "Component" {
+                background #85bbf0
+                color #000000
+            }
+            element "Failover" {
+                opacity 25
+            }
+        }
+    }
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/deployment-groups.dsl
+workspace {
+
+    model {
+        softwareSystem = softwareSystem "Software System" {
+            database = container "Database"
+            api = container "Service API" {
+                -> database "Uses"
+            }
+        }
+
+        deploymentEnvironment "Example 1" {
+            deploymentNode "Server 1" {
+                containerInstance api
+                containerInstance database
+            }
+            deploymentNode "Server 2" {
+                containerInstance api
+                containerInstance database
+            }
+        }
+
+        deploymentEnvironment "Example 2" {
+            serviceInstance1 = deploymentGroup "Service Instance 1"
+            serviceInstance2 = deploymentGroup "Service Instance 2"
+            deploymentNode "Server 1" {
+                containerInstance api serviceInstance1
+                containerInstance database serviceInstance1
+            }
+            deploymentNode "Server 2" {
+                containerInstance api serviceInstance2
+                containerInstance database serviceInstance2
+            }
+        }
+    }
+
+    views {
+        deployment * "Example 1" {
+            include *
+            autolayout
+        }
+
+        deployment * "Example 2" {
+            include *
+            autolayout
+        }
+    }
+
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/dynamic.dsl
+workspace {
+
+    model {
+        a = softwareSystem "A"
+        b = softwareSystem "B"
+
+        a -> b "Sends data to"
+    }
+
+    views {
+        dynamic * {
+            // with this example, the relationship uses the same description as defined in the static model
+            a -> b
+            autoLayout
+        }
+
+        dynamic * {
+            // with this example, the relationship description is overriden to describe a particular feature/use case/etc
+            a -> b "Sends customer data to"
+            autoLayout
+        }
+    }
+
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/filteredviews.dsl
+workspace "FilteredDemo" "This is an example of Filtered views" {
+
+    # This will render the two diagrams at https://structurizr.com/help/filtered-views
+
+    model {
+
+        user = person "Customer" "A description of the user."
+        sysa = softwareSystem "Software System A" "A description of software system A."
+
+        user -> sysa "Uses for tasks 1 and 2" "" Current
+
+        sysb = softwareSystem "Software System B" "A description of software system B." Future
+
+        user -> sysa "Uses for task 1" "" Future
+        user -> sysb "Uses for task 2" "" Future
+
+    }
+
+    views {
+
+        systemLandscape FullLandscape "System Landscape, current and future" {
+            include *
+        }
+
+        filtered FullLandscape exclude Future CurrentLandscape "The current system landscape."
+        filtered FullLandscape exclude Current FutureLandscape "The future state system landscape after Software System B is live."
+
+        styles {
+            element "Software System" {
+                background #91a437
+                shape RoundedBox
+            }
+
+            element "Person" {
+                background #6a7b15
+                shape Person
+            }
+        }
+
+    }
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/financial-risk-system.dsl
+workspace "Financial Risk System" "This is a simple (incomplete) example C4 model based upon the financial risk system architecture kata, which can be found at http://bit.ly/sa4d-risksystem" {
+
+    model {
+        businessUser = person "Business User" "A regular business user."
+        configurationUser = person "Configuration User" "A regular business user who can also configure the parameters used in the risk calculations."
+
+        financialRiskSystem = softwareSystem "Financial Risk System" "Calculates the bank's exposure to risk for product X." "Financial Risk System"
+        tradeDataSystem = softwareSystem "Trade Data System" "The system of record for trades of type X."
+        referenceDataSystem = softwareSystem "Reference Data System" "Manages reference data for all counterparties the bank interacts with."
+        referenceDataSystemV2 = softwareSystem "Reference Data System v2.0" "Manages reference data for all counterparties the bank interacts with." "Future State"
+        emailSystem = softwareSystem "E-mail system" "The bank's Microsoft Exchange system."
+        centralMonitoringService = softwareSystem "Central Monitoring Service" "The bank's central monitoring and alerting dashboard."
+        activeDirectory = softwareSystem "Active Directory" "The bank's authentication and authorisation system."
+
+        businessUser -> financialRiskSystem "Views reports using"
+        financialRiskSystem -> tradeDataSystem "Gets trade data from"
+        financialRiskSystem -> referenceDataSystem "Gets counterparty data from"
+        financialRiskSystem -> referenceDataSystemV2 "Gets counterparty data from" "" "Future State"
+        configurationUser -> financialRiskSystem "Configures parameters using"
+        financialRiskSystem -> emailSystem "Sends a notification that a report is ready to"
+        emailSystem -> businessUser "Sends a notification that a report is ready to" "E-mail message" "Asynchronous"
+        financialRiskSystem -> centralMonitoringService "Sends critical failure alerts to" "SNMP" "Asynchronous, Alert"
+        financialRiskSystem -> activeDirectory "Uses for user authentication and authorisation"
+    }
+         
+    views {
+
+        systemContext financialRiskSystem "Context" "An example System Context diagram for the Financial Risk System architecture kata." {
+            include *
+            autoLayout
+        }
+
+        styles {
+            element "Element" {
+                color #ffffff
+            }
+            element "Software System" {
+                background #801515
+                shape RoundedBox
+            }
+            element "Financial Risk System" {
+                background #550000
+                color #ffffff
+            }
+            element "Future State" {
+                opacity 30
+            }
+            element "Person" {
+                background #d46a6a
+                shape Person
+            }
+            relationship "Relationship" {
+                dashed false
+            }
+            relationship "Asynchronous" {
+                dashed true
+            }
+            relationship "Alert" {
+                color #ff0000
+            }
+            relationship "Future State" {
+                opacity 30
+            }
+       }
+
+    }
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/getting-started-short.dsl
+workspace {
+
+    model {
+        user = person "User" "A user of my software system."
+        softwareSystem = softwareSystem "Software System" "My software system."
+
+        user -> softwareSystem "Uses"
+    }
+
+    views {
+        systemContext softwareSystem {
+            include *
+            autoLayout
+        }
+    }
+    
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/getting-started.dsl
+workspace {
+
+    model {
+        user = person "User" "A user of my software system."
+        softwareSystem = softwareSystem "Software System" "My software system."
+
+        user -> softwareSystem "Uses"
+    }
+
+    views {
+        systemContext softwareSystem {
+            include *
+            autoLayout
+        }
+
+        styles {
+            element "Software System" {
+                background #1168bd
+                color #ffffff
+            }
+            element "Person" {
+                shape person
+                background #08427b
+                color #ffffff
+            }
+        }
+    }
+    
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/groups.dsl
+workspace {
+
+    model {
+        softwareSystem = softwareSystem "Software System" {
+            service1 = group "Service 1" {
+                service1Api = container "Service 1 API"
+                service1Database = container "Service 1 Database"
+
+                service1Api -> service1Database "Reads from and writes to"
+            }
+            service2 = group "Service 2" {
+                service2Api = container "Service 2 API"
+                service2Database = container "Service 2 Database"
+
+                service2Api -> service2Database "Reads from and writes to"
+            }
+        }
+
+        live = deploymentEnvironment "Live" {
+            deploymentNode "Server 1" {
+                containerInstance service1Api
+                containerInstance service1Database
+            }
+            deploymentNode "Server 2" {
+                containerInstance service2Api
+                containerInstance service2Database
+            }
+        }
+
+        service1Api -> service2Api "Uses"
+    }
+
+    views {
+        container softwareSystem {
+            include service1 service2
+            autolayout
+        }
+
+        deployment softwareSystem live {
+            include service1 service2
+            autolayout
+        }
+    }
+    
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/include-from-file.dsl
+workspace "Getting Started" "This is a model of my software system." {
+
+    model {
+        !include include/model.dsl
+    }
+
+    views {
+        systemContext softwareSystem "SystemContext" "An example of a System Context diagram." {
+            include *
+            autoLayout
+        }
+
+        styles {
+            element "Software System" {
+                background #1168bd
+                color #ffffff
+            }
+            element "Person" {
+                shape person
+                background #08427b
+                color #ffffff
+            }
+        }
+    }
+
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/include-from-url.dsl
+workspace "Getting Started" "This is a model of my software system." {
+
+    model {
+        !include https://raw.githubusercontent.com/structurizr/dsl/master/examples/include/model.dsl
+    }
+
+    views {
+        systemContext softwareSystem "SystemContext" "An example of a System Context diagram." {
+            include *
+            autoLayout
+        }
+
+        styles {
+            element "Software System" {
+                background #1168bd
+                color #ffffff
+            }
+            element "Person" {
+                shape person
+                background #08427b
+                color #ffffff
+            }
+        }
+    }
+
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/parallel.dsl
+workspace {
+
+    model {
+        user = person "User"
+        softwareSystem = softwareSystem "Software System" {
+            webapp = container "Web Application"
+            bus = container "Message Bus"
+            app1 = container "App 1"
+            app2 = container "App 2"
+        }
+
+        user -> webapp "Updates details"
+        webapp -> bus "Sends update event"
+        bus -> app1 "Broadcasts update event"
+        bus -> app2 "Broadcasts update event"
+    }
+
+    views {
+        dynamic softwareSystem {
+            user -> webapp
+            webapp -> bus
+            {
+                bus -> app1
+            }
+            {
+                bus -> app2
+            }
+
+            autoLayout
+        }
+    }
+
+}
+
+
+# https://github.com/structurizr/dsl/blob/8f28c468858b7fd819c0bbea8397a2b2b49e925b/examples/ref.dsl
+workspace extends https://raw.githubusercontent.com/structurizr/dsl/master/examples/amazon-web-services.dsl {
+
+    model {
+
+        region = ref "DeploymentNode://Live/Amazon Web Services/US-East-1" {
+            deploymentNode "New deployment node" {
+                infrastructureNode "New infrastructure node" {
+                    -> route53
+                }
+            }
+        }
+
+    }
+
+    views {
+        deployment * "Live" {
+            include region
+            autolayout lr
+        }
+    }
+
+}

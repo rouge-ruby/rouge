@@ -15,12 +15,12 @@ module Rouge
         break calc case class codatatype const constructor
         datatype decreases default
         else ensures exists expect extends
-        false forall fresh function
+        false for forall fresh function
         ghost greatest
         if import include inductive invariant iterator
         label least lemma
         match method modifies modify module
-        new newtype null old opened
+        nameonly new newtype null old opened
         predicate print provides
         reads refines requires return returns reveals
         static 

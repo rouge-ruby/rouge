@@ -87,36 +87,36 @@ set_ if_ as_ is_ int_ true_
 set' if' as' is' int' true'
 
 // Types
-        bool char int real string object object?
-        seq set map iset imap multiset
-        array array2 array10 array?
-        bv0 bv1 bv10 bv9
+bool char int real string object object?
+seq set map iset imap multiset
+array array2 array10 array?
+bv0 bv1 bv10 bv9
 
 // Ids
-        array1 array1? arrayxx array?xx array2xx array2?xxx
+array1 array1? arrayxx array?xx array2xx array2?xxx
 
 // Constants
-        false true null
+false true null
 
 // Text Operators
-        as is in !in
+as is in !in
 
 // Keywords
-        abstract assert assume
-        break calc case class codatatype constructor
-        datatype decreases default
-        else ensures exists expect extends
-        forall fresh function
-        ghost greatest if import include
-        inductive invariant 
-        iterator label least lemma match method
-        modifies modify module
-        new newtype old opened
-        predicate print provides reads
-        refines requires return returns reveals
-        static 
-        then this trait twostate type
-        unchanged var where while yield yields
+abstract assert assume
+break calc case class codatatype constructor
+datatype decreases default
+else ensures exists expect extends
+forall fresh function
+ghost greatest if import include
+inductive invariant
+iterator label least lemma match method
+modifies modify module
+new newtype old opened
+predicate print provides reads
+refines requires return returns reveals
+static
+then this trait twostate type
+unchanged var where while yield yields
 
 // At end of file
 const ss: string := @"unclosed verbatim string

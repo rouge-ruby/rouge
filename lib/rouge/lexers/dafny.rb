@@ -11,21 +11,26 @@ module Rouge
       mimetypes "text/x-dafny"
 
       keywords = %w(
-        abstract assert assume
-        break calc case class codatatype const constructor
-        datatype decreases default
-        else ensures exists expect extends
+        abstract allocated assert assume
+        break by
+        calc case class codatatype const constructor
+        datatype decreases downto
+        else ensures exists expect export extends
         false for forall fresh function
         ghost greatest
-        if import include inductive invariant iterator
+        if import include invariant iterator
         label least lemma
         match method modifies modify module
-        nameonly new newtype null old opened
+        nameonly new newtype null
+        old opened
         predicate print provides
-        reads refines requires return returns reveals
-        static 
-        then this trait true twostate type
-        unchanged var where while yield yields
+        reads refines requires return returns reveal reveals
+        static
+        then this to trait true twostate type
+        unchanged
+        var
+        while witness
+        yield yields
       )
 
       literals = %w{ true false null }
@@ -33,7 +38,7 @@ module Rouge
       textOperators = %w{ as is in }
 
       types = %w(bool char int real string nat
-                 array array? object object?
+                 array array? object object? ORDINAL
                  seq set iset map imap multiset )
 
       idstart = /[0-9a-zA-Z?]/

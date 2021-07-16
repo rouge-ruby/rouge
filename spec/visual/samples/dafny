@@ -89,7 +89,7 @@ set' if' as' is' int' true'
 // Types
 bool char int real string object object?
 seq set map iset imap multiset
-array array2 array10 array?
+array array2 array10 array? array2? array10?
 bv0 bv1 bv10 bv9
 
 // Ids

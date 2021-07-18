@@ -87,11 +87,8 @@ module Rouge
         end
         rule %r{\]}, Punctuation, :pop!
 
-        # Expression Separators
-        rule %r{(,|;|:)}, Punctuation
-
-        # Other "Punctuation"
-        rule %r{(@|\.)}, Punctuation
+        # Punctuation
+        rule %r{[,;:\.@]}, Punctuation
 
         # Piping Operators
         rule %r{(\|\>)}, Operator
@@ -128,20 +125,24 @@ module Rouge
 
       # Double-Quote String (nested rules)
       state :string_double do
-        rule %r{\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]}, Str::Escape
-        rule %r{\\x[0-9a-fA-F][0-9a-fA-F]}, Str::Escape
+        rule %r/\\u[0-9a-fA-F]{4}/, Str::Escape
+        rule %r/\\x[0-9a-fA-F]{2}/, Str::Escape
         rule %r{\\[bfnrt\\"]}, Str::Escape
+        rule %r{\\"}, Str::Escape
         rule %r{"}, Str::Double, :pop!
-        rule %r{.}, Str::Double
+        rule %r{[^\\"]+}, Str::Double
+        rule %r{.}, Error
       end
 
       # Single-Char String (nested rules)
       state :string_char do
-        rule %r{\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]}, Str::Escape
-        rule %r{\\x[0-9a-fA-F][0-9a-fA-F]}, Str::Escape
+        rule %r/\\u[0-9a-fA-F]{4}/, Str::Escape
+        rule %r/\\x[0-9a-fA-F]{2}/, Str::Escape
         rule %r{\\[bfnrt\\"]}, Str::Escape
+        rule %r{\\'}, Str::Escape
         rule %r{'}, Str::Char, :pop!
-        rule %r{.}, Str::Char
+        rule %r{[^\\']+}, Str::Char
+        rule %r{.}, Error
       end
     end
   end

@@ -1,0 +1,17 @@
+:import "spec"
+
+:actor Main
+  :new (env)
+    Specs.run(env, [
+      SpecRun(AdditionSpec).new(env)
+    ])
+
+:class AdditionSpec
+  :is Spec
+  :const describes: "Addition"
+
+  :: Return the number 2 (written in hex, just for fun).
+  :const two U64'val: 0x02
+
+  :it "adds two twos"
+    @assert = @two + '\x02' == 4

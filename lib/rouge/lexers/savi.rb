@@ -45,8 +45,8 @@ module Rouge
         rule %r{([_A-Z]\w*)}, Name::Class
 
         # Declare
-        rule %r{^(\s*)(:)(\w+)} do
-          groups Text, Name::Tag, Name::Tag
+        rule %r{^([ \t]*)(:)(\w+)} do
+          groups Text::Whitespace, Name::Tag, Name::Tag
           push :decl
         end
 
@@ -63,13 +63,17 @@ module Rouge
         rule %r{\b0b([01_]+)\b}, Num::Bin
 
         # Function Call (with braces)
-        rule %r{(\w+(?:\?|\!)?)(?=\()}, Name::Function
+        rule %r{\w+(?=\()}, Name::Function
 
         # Function Call (with receiver)
-        rule %r{(?<=\.)(\w+(?:\?|\!)?)}, Name::Function
+        rule %r{(\.)(\s*)(\w+)} do
+          groups Punctuation, Text::Whitespace, Name::Function
+        end
 
         # Function Call (with self receiver)
-        rule %r{(?<=@)(\w+(?:\?|\!)?)}, Name::Function
+        rule %r{(@)(\w+)} do
+          groups Punctuation, Name::Function
+        end
 
         # Parenthesis
         rule %r{\(}, Punctuation, :root
@@ -112,14 +116,14 @@ module Rouge
         rule %r{\b\w+\b}, Name
 
         # Whitespace
-        rule %r{\s+}, Text
+        rule %r{[ \t\r]+\n*|\n+}, Text::Whitespace
       end
 
       # Declare (nested rules)
       state :decl do
         rule %r{\b[a-z_]\w*\b(?!\!)}, Keyword::Declaration
         rule %r{:}, Punctuation, :pop!
-        rule %r{\n}, Text, :pop!
+        rule %r{\n}, Text::Whitespace, :pop!
         mixin :root
       end
 

@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    # The `github-workflow-test` can be used to test changes without making a PR
+    branches: [ master, github-workflow-test ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: [ '2.5', '2.6', '2.7', '3.0']
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        # runs 'bundle install' and caches installed gems automatically
+        bundler-cache: true
+    - name: Run tests
+      run: bundle exec rake
+
+    # Those are only run with the latest supported version
+    # Make sure to update the `if` when changing supported versions
+    - name: Profile Memory Allocation
+      if: matrix.ruby-version == '3.0'
+      run: bundle exec rake check:memory
+    - name: Interpreter Warnings Test
+      if: matrix.ruby-version == '3.0'
+      env:
+        RUBYOPT: '-w'
+      run: bundle exec rake check:specs

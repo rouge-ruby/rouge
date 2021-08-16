@@ -39,7 +39,7 @@ module Rouge
         rule %r/\\/, Text
 
         rule %r/(in|and|or|not)\b/, Operator::Word
-        rule %r/[-~+\/*%=<>]=?|!=/, Operator
+        rule %r/[-+\/*%=<>]=?|!=/, Operator
 
         rule %r/([f]?)('''|['])/i do |m|
           groups Str::Affix, Str

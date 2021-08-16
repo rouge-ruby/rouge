@@ -22,12 +22,6 @@ module Rouge
         )
       end
 
-      def self.builtins
-        @builtins ||= %w(
-        
-        )
-      end
-
       identifier =        /[[:alpha:]_][[:alnum:]_]*/
       dotted_identifier = /[[:alpha:]_.][[:alnum:]_.]*/
 
@@ -58,8 +52,6 @@ module Rouge
             token Keyword::Reserved
           elsif self.class.keywords.include? m[0]
             token Keyword
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
           else
             token Name
           end

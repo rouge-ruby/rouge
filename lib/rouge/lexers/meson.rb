@@ -16,9 +16,23 @@ module Rouge
         )
       end
 
-      def self.reserved
-        @reserved ||= %w(
-          import meson
+      def self.builtin_variables
+        @builtin_variables ||= %w(
+          meson host_machine build_machine target_machine
+        )
+      end
+    
+      def self.builtin_functions
+        @builtin_functions ||= %w(
+          add_global_arguments add_project_arguments
+          add_global_link_arguments add_project_link_arguments add_test_setup add_languages
+          alias_target assert benchmark both_libraries build_target configuration_data configure_file
+          custom_target declare_dependency dependency disabler environment error executable
+          generator gettext get_option get_variable files find_library find_program
+          include_directories import install_data install_headers install_man install_subdir
+          is_disabler is_variable jar join_paths library message option project
+          run_target run_command set_variable subdir subdir_done
+          subproject summary shared_library shared_module static_library test vcs_tag warning
         )
       end
 
@@ -47,9 +61,17 @@ module Rouge
           push :generic_string
         end
 
-        rule %r/(?<!\.)#{identifier}/ do |m|
-          if self.class.reserved.include? m[0]
-            token Keyword::Reserved
+        rule %r/(?<!\.)#{identifier}\b\s*(?=\()/ do  |m|
+          if self.class.builtin_functions.include? m[0]
+            token Name::Builtin
+          else
+            token Name
+          end
+        end
+
+        rule %r/(?<!\.)#{identifier}(?!\s*?:)/ do |m|
+          if self.class.builtin_variables.include? m[0]
+            token Name::Builtin
           elsif self.class.keywords.include? m[0]
             token Keyword
           else
@@ -58,9 +80,6 @@ module Rouge
         end
 
         rule identifier, Name
-
-        digits = /[0-9](_?[0-9])*/
-        decimal = /((#{digits})?\.#{digits}|#{digits}\.)/
 
         rule %r/0b(_?[0-1])+/i, Num::Bin
         rule %r/0o(_?[0-7])+/i, Num::Oct

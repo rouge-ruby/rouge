@@ -37,12 +37,15 @@ module Rouge
       )
 
       state :root do
-        # Comments can stick behind some (but not all!) punctuation
-        rule %r/(^|\s|\(|\)|\(\||\|\)|\{|\}|⦃|⦄|\.\.\.|;)--.*$/, Comment
+        # Comments can stick behind some punctuation
+        rule %r/(^|[\s\(\)\{\}\.;])(--.*)$/ do
+          groups Punctuation, Comment
+        end
         rule %r/{-#/, Comment::Preproc, :pragma
         rule %r/{-/, Comment::Multiline, :comment
         rule %r/{!/, Comment::Special, :hole
 
+        # Keywords
         rule %r/\b(#{reserved.join('|')})\b/, Keyword::Reserved
 
         # Agda primitives (see https://agda.github.io/agda-stdlib/Agda.Primitive.html)
@@ -51,38 +54,38 @@ module Rouge
         rule %r/\b(lsuc|lzero)/, Name::Builtin
         rule %r/\b(Prop[₀₁₂₃₄₅₆₇₈₉]*|S?Set(ω?|[₀₁₂₃₄₅₆₇₈₉]*))\b/, Keyword::Type
 
-        # Agda has custom operator syntax so there isn't really anything we can
-        # truly parse as operators; I'm considering anything that needs spaces
-        # around them (i.e. can be part of names) to be considered not-names as
-        # "operators", while other symbol-like tokens are "punctuation".
+        # Attributes
+        rule %r/@flat|@♭|@⊤/, Name::Attribute
+        rule %r/(@)(\()(tactic)/ do
+          groups Name::Attribute, Punctuation, Name::Attribute
+        end
 
+        # Punctuation, including idiom brackets, instance arguments
+        # The way that ..., .., and . are handled could be more refined
+        # Should unmatched parentheses, braces, and brackets be lexical errors?
+        rule %r/[\(\)\{\}\.;]/, Punctuation
         rule %r/\(\|\)/, Punctuation
-        rule %r/\(\||\|\)/, Punctuation
-        rule %r/⦇|⦈/, Punctuation
-        rule %r/\(|\)/, Punctuation
-        rule %r/\{|\}/, Punctuation
-        rule %r/⦃|⦄/, Punctuation
-        rule %r/\.\.\./, Punctuation
-        rule %r/\.\./, Punctuation
-        rule %r/\./, Punctuation
-        rule %r/;/, Punctuation
-        rule %r/@/, Punctuation
+        rule %r/(\(\|)(\s+)/ do
+          groups Punctuation, Text
+        end
+        rule %r/(\s+)(\|\))/ do
+          groups Text, Punctuation
+        end
+        rule %r/(\s+)[⦇⦈⦃⦄](\s+)/ do
+          groups Text, Punctuation, Text
+        end
 
-        # TODO: How should lambdas be done? e.g. \x → x, λx → x
-        # Note that something like x\ is a valid name
-
-        rule %r/\s+⊔\s+/, Operator
-        rule %r/\s+\?\s+/, Operator
-        rule %r/\s+_\s+/, Operator
-        rule %r/\s+\|\s+/, Operator
-        rule %r/\s+=\s+/, Operator
-        rule %r/\s+:\s+/, Operator
-        rule %r/\s+∀\s+/, Operator
-        rule %r/\s+->\s+|\s+→\s+/, Operator
+        # Special operators with characters that could appear in regular names
+        # require spaces after them to distinguish them from names
+        # No name can begin with a lambda, and @ is disallowed in names
+        rule %r/λ|\\|@/, Operator
+        rule %r/(->|[∀→⊔=:_\|\?])(\s+)/ do
+          groups Operator, Text
+        end
 
         # TODO: Strings and numbers (incl. escape codes, floats, binary, hex)
 
-        rule %r/\w+/, Name
+        rule %r/[^\s\(\)\{\}\.\;\@]+/, Name
         rule %r/\s+/, Text
       end
 

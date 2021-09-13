@@ -110,7 +110,7 @@ compatible with stylesheets designed for [Pygments][].
 * JSL (`jsl`)
 * JSON (`json`)
 * Json-doc (`json-doc`)
-* Jsonnet (`jsonnet" selected="`)
+* Jsonnet (`jsonnet`)
 * Jsp (`jsp`)
 * JSX (`jsx`)
 * Julia (`julia`)

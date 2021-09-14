@@ -1,8 +1,9 @@
 #include lib.stan
 
 functions {
-  // Solution to drug concentration ODE given inital concentration, time elapsed,
-  // and diffusion parameters.
+  /** Solution to drug concentration ODE given inital concentration, time elapsed,
+   * and diffusion parameters.
+   */
   vector[] drug_conc(vector y_cen, vector y_per, vector kappa_cen,
                      vector kappa_per, vector ts, int N) {
     vector[N] y_cen_out = exp(-kappa_cen .* ts) .* y_cen;
@@ -25,9 +26,10 @@ functions {
     // All of the intervals are tau.
     vector[n] ts = rep_vector(tau, n);
 
-    // The first n entries of y are the concentrations in the central chambers,
-    // while the last n entries of y are the concentrations in the peripheral
-    // chambers. Likewise for kappa.
+    /* The first n entries of y are the concentrations in the central chambers,
+     * while the last n entries of y are the concentrations in the peripheral
+     * chambers. Likewise for kappa.
+     */
     vector[n] y_cen = y[:n];
     vector[n] y_per = y[(n+1):];
     vector[n] kappa_cen = kappas[:n];
@@ -36,9 +38,10 @@ functions {
     // Calculate the concentrations after tau.
     vector[n] y_res[2] = drug_conc(y_cen, y_per, kappa_cen, kappa_per, ts, n);
 
-    // If a steady state has been reached, the difference between the
-    // concentration after tau (with a dose delta) should be the same as the
-    // current state.
+    /* If a steady state has been reached, the difference between the
+     * concentration after tau (with a dose delta) should be the same as the
+     * current state.
+     */
     return append_row(y_res[1] + rep_vector(delta, n), y_res[2]) - y;
   }
 }
@@ -71,14 +74,14 @@ transformed parameters {
   // Reshape dispersion parameters for algebra solver.
   vector[2*n] kappas = append_row(kappa_cen, kappa_per);
 
-  // Get the steady-state for each patient. (Our initial guess is slightly more
-  // than the total dose in both chambers.)
+  // Get the steady-state for each patient.
   vector[2*n] y_steady = algebra_solver(f, y_guess, kappas, x_r, x_i);
   vector[n] y_steady_cen = y_steady[:n];
   vector[n] y_steady_per = y_steady[(n+1):];
 
-  // Get the concentrations in the central chamber at each time observation,
-  // given the currently sampled diffusion parameters.
+  /* Get the concentrations in the central chamber at each time observation,
+   * given the currently sampled diffusion parameters.
+   */
   vector[m] y_true[2] = drug_conc(y_steady_cen[idx], y_steady_per[idx],
                                   kappa_cen[idx], kappa_per[idx], ts, m);
 }

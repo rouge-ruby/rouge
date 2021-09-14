@@ -14,6 +14,7 @@ module Rouge
       # optional comment or whitespace
       WS = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       ID = /[a-zA-Z_][a-zA-Z0-9_]*/
+      RT = /(?:(?:[a-z_]\s*(?:\[[0-9, ]\])?)\s+)*/
 
       def self.keywords
         @keywords ||= Set.new %w(
@@ -228,64 +229,68 @@ module Rouge
       end
 
       def self.distributions
-        @distributions ||= Set.new [
-          # Discrete Distributions
+        @distributions ||= Set.new(
+          [
+            # Discrete Distributions
 
-          ## Binary Distributions
-          "bernoulli", "bernoulli_logit", "bernoulli_logit_glm",
+            ## Binary Distributions
+            "bernoulli", "bernoulli_logit", "bernoulli_logit_glm",
 
-          ## Bounded Discrete Distributions
-          "binomial", "binomial_logit", "beta_binomial", "hypergeometric",
-          "categorical", "categorical_logit_glm", "discrete_range",
-          "ordered_logistic", "ordered_logistic_glm", "ordered_probit",
+            ## Bounded Discrete Distributions
+            "binomial", "binomial_logit", "beta_binomial", "hypergeometric",
+            "categorical", "categorical_logit_glm", "discrete_range",
+            "ordered_logistic", "ordered_logistic_glm", "ordered_probit",
 
-          ## Unbounded Discrete Distributions
-          "neg_binomial", "neg_binomial_2", "neg_binomial_2_log",
-          "neg_binomial_2_log_glm", "poisson", "poisson_log", "poisson_log_glm",
+            ## Unbounded Discrete Distributions
+            "neg_binomial", "neg_binomial_2", "neg_binomial_2_log",
+            "neg_binomial_2_log_glm", "poisson", "poisson_log",
+            "poisson_log_glm",
 
-          ## Multivariate Discrete Distributions
-          "multinomial", "multinomial_logit",
+            ## Multivariate Discrete Distributions
+            "multinomial", "multinomial_logit",
 
-          # Continuous Distributions
+            # Continuous Distributions
 
-          ## Unbounded Continuous Distributions
-          "normal", "std_normal", "normal_id_glm", "exp_mod_normal",
-          "skew_normal", "student_t", "cauchy", "double_exponential",
-          "logistic", "gumbel", "skew_double_exponential",
+            ## Unbounded Continuous Distributions
+            "normal", "std_normal", "normal_id_glm", "exp_mod_normal",
+            "skew_normal", "student_t", "cauchy", "double_exponential",
+            "logistic", "gumbel", "skew_double_exponential",
 
-          ## Positive Continuous Distributions
-          "lognormal", "chi_square", "inv_chi_square", "scaled_inv_chi_square",
-          "exponential", "gamma", "inv_gamma", "weibull", "frechet", "rayleigh",
+            ## Positive Continuous Distributions
+            "lognormal", "chi_square", "inv_chi_square",
+            "scaled_inv_chi_square", "exponential", "gamma", "inv_gamma",
+            "weibull", "frechet", "rayleigh",
 
-          ## Positive Lower-Bounded Distributions
-          "pareto", "pareto_type_2", "wiener",
+            ## Positive Lower-Bounded Distributions
+            "pareto", "pareto_type_2", "wiener",
 
-          ## Continuous Distributions on [0, 1]
-          "beta", "beta_proportion",
+            ## Continuous Distributions on [0, 1]
+            "beta", "beta_proportion",
 
-          ## Circular Distributions
-          "von_mises",
+            ## Circular Distributions
+            "von_mises",
 
-          ## Bounded Continuous Distributions
-          "uniform",
+            ## Bounded Continuous Distributions
+            "uniform",
 
-          ## Distributions over Unbounded Vectors
-          "multi_normal", "multi_normal_prec", "multi_normal_cholesky",
-          "multi_gp", "multi_gp_cholesky", "multi_student_t",
-          "gaussian_dlm_obs",
+            ## Distributions over Unbounded Vectors
+            "multi_normal", "multi_normal_prec", "multi_normal_cholesky",
+            "multi_gp", "multi_gp_cholesky", "multi_student_t",
+            "gaussian_dlm_obs",
 
-          ## Simplex Distributions
-          "dirichlet",
+            ## Simplex Distributions
+            "dirichlet",
 
-          ## Correlation Matrix Distributions
-          "lkj_corr", "lkj_corr_cholesky",
+            ## Correlation Matrix Distributions
+            "lkj_corr", "lkj_corr_cholesky",
 
-          ## Covariance Matrix Distributions
-          "wishart", "inv_wishart"
-        ].product([
-          "", "_lpmf", "_lupmf", "_lpdf", "_lcdf", "_lccdf", "_rng", "_log",
-          "_cdf_log", "_ccdf_log"
-        ]).map {|s| "#{s[0]}#{s[1]}"}
+            ## Covariance Matrix Distributions
+            "wishart", "inv_wishart"
+          ].product([
+            "", "_lpmf", "_lupmf", "_lpdf", "_lcdf", "_lccdf", "_rng", "_log",
+            "_cdf_log", "_ccdf_log"
+          ]).map {|s| "#{s[0]}#{s[1]}"}
+        )
       end
 
       def self.constants
@@ -338,7 +343,7 @@ module Rouge
 
       state :include do
         mixin :inline_whitespace
-        rule /#include .*$/, Comment::Preproc, :root
+        rule %r(#include .*$), Comment::Preproc, :root
         rule(//) { pop! }
       end
 
@@ -351,33 +356,33 @@ module Rouge
           |model
           |generated\s+quantities
         )x, Name::Namespace
-        rule /\{/, Punctuation, :bracket_scope
+        rule %r(\{), Punctuation, :bracket_scope
         mixin :scope
       end
 
       state :whitespace do
-        rule /\n+/m, Text
+        rule %r(\n+)m, Text
         rule %r(//(\\.|.)*?$), Comment::Single
-        rule /#(\\.|.)*?$/, Comment::Single
+        rule %r(#(\\.|.)*?$), Comment::Single
         mixin :inline_whitespace
       end
 
       state :inline_whitespace do
-        rule /[ \t\r]+/, Text
+        rule %r([ \t\r]+), Text
         rule %r(/(\\\n)?[*].*?[*](\\\n)?/)m, Comment::Multiline
       end
 
       state :statements do
         mixin :whitespace
-        rule %r/"/, Str, :string
+        rule %r("), Str, :string
         rule %r((\d+[.]\d*|[.]?\d+)e[+-]?\d+), Num::Float
         rule %r(\d+e[+-]?\d+), Num::Float
         rule %r/\d+/, Num::Integer
         rule %r(\*/), Error
-        rule %r/#{OPERATORS.join("|")}/, Operator
-        rule %r/[\[\],.;]/, Punctuation
-        rule %r/T\b/, Keyword::Reserved
-        rule %r/(lower|upper)\b/, Name::Attribute
+        rule %r(#{OPERATORS.join("|")}), Operator
+        rule %r([\[\],.;]), Punctuation
+        rule %r(T\b), Keyword::Reserved
+        rule %r((lower|upper)\b), Name::Attribute
         rule ID do |m|
           name = m[0]
 
@@ -396,9 +401,9 @@ module Rouge
       state :scope do
         mixin :whitespace
         rule %r(
-          ((?:[\w\[,\]]+\s+)*)  # Return type
-          (#{ID})               # Function name
-          (?=\([^;]*?\))        # Signature or arguments
+          (#{RT})         # Return type
+          (#{ID})         # Function name
+          (?=\([^;]*?\))  # Signature or arguments
         )mx do |m|
           recurse m[1]
 
@@ -413,19 +418,19 @@ module Rouge
             token Name::Function, name
           end
         end
-        rule %r/\{/, Punctuation, :bracket_scope
-        rule %r/\(/, Punctuation, :parens_scope
+        rule %r(\{), Punctuation, :bracket_scope
+        rule %r(\(), Punctuation, :parens_scope
         mixin :statements
       end
 
       state :bracket_scope do
         mixin :scope
-        rule %r/\}/, Punctuation, :pop!
+        rule %r(\}), Punctuation, :pop!
       end
 
       state :parens_scope do
         mixin :scope
-        rule %r/\)/, Punctuation, :pop!
+        rule %r(\)), Punctuation, :pop!
       end
     end
   end

@@ -351,7 +351,7 @@ module Rouge
           |model
           |generated\s+quantities
         )x, Name::Namespace
-        rule /\{/, Punctuation, :scope
+        rule /\{/, Punctuation, :bracket_scope
         mixin :scope
       end
 
@@ -375,7 +375,7 @@ module Rouge
         rule %r/\d+/, Num::Integer
         rule %r(\*/), Error
         rule %r/#{OPERATORS.join("|")}/, Operator
-        rule %r/[()\[\],.;]/, Punctuation
+        rule %r/[\[\],.;]/, Punctuation
         rule %r/T\b/, Keyword::Reserved
         rule %r/(lower|upper)\b/, Name::Attribute
         rule ID do |m|
@@ -398,7 +398,7 @@ module Rouge
         rule %r(
           ((?:[\w\[,\]]+\s+)*)  # Return type
           (#{ID})               # Function name
-          (\([^;]*?\))          # Signature
+          (?=\([^;]*?\))        # Signature or arguments
         )mx do |m|
           recurse m[1]
 
@@ -412,11 +412,20 @@ module Rouge
           else
             token Name::Function, name
           end
-          recurse m[3]
         end
-        rule %r/\{/, Punctuation, :scope
-        rule %r/\}/, Punctuation, :pop!
+        rule %r/\{/, Punctuation, :bracket_scope
+        rule %r/\(/, Punctuation, :parens_scope
         mixin :statements
+      end
+
+      state :bracket_scope do
+        mixin :scope
+        rule %r/\}/, Punctuation, :pop!
+      end
+
+      state :parens_scope do
+        mixin :scope
+        rule %r/\)/, Punctuation, :pop!
       end
     end
   end

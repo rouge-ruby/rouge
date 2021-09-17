@@ -4,6 +4,21 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.26.1: 2021-09-17
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.26.0...v3.26.1)
+
+- CPP Lexer
+  - Add year and date chrono literals, add std::complex literals, fix chrono literals with digit separator ([#1665](https://github.com/rouge-ruby/rouge/pull/1665/) by swheaton)
+- Factor and GHC Core Lexer
+  - Fix catastrophic backtrack ([#1690](https://github.com/rouge-ruby/rouge/pull/1690) by Ravlen)
+- JSL Lexer
+  - Fix single line block comments, scoped variables and functions ([#1663](https://github.com/rouge-ruby/rouge/pull/1663) by BenPH)
+- YAML Lexer
+  - Fix YAML key containing special character ([#1667](https://github.com/rouge-ruby/rouge/pull/1667) by tancnle)
+- Fix Ruby 2.7 keyword parameter deprecation warning ([#1597](https://github.com/rouge-ruby/rouge/pull/1666) by stanhu)
+- Updated README ([#1666](https://github.com/rouge-ruby/rouge/pull/1666) by dchacke)
+
 ## version 3.26.0: 2020-12-09
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.25.0...v3.26.0)

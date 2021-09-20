@@ -15,16 +15,3 @@ where:
   node4 = node(4, leaf, leaf)
   tree-sum(node(5, node4, leaf)) is 9
 end
-
-for map(n from [list: 1,2,3]): n * n end
-# ==> [list: 1, 4, 9]
-
-for filter(n from [list: 1, 2, 3]):
-  n >= 2
-end
-# ==> [list: 2, 3]
-
-for fold(sum from 0, n from [list: 4, 5, 6]):
-  sum + n
-end
-# ==> 15

@@ -12,10 +12,35 @@ module Rouge
       mimetypes "application/pyret"
       
       def self.keywords
-        @keywords ||= Set.new %w(as ask block cases data doc else end for from fun if import is lam method otherwise provide provide-types rec satisfies sharing type var where with)
+        @keywords ||= Set.new ["as",
+          "ask",
+          "block",
+          "cases",
+          "data",
+          "doc",
+          "else",
+          "end",
+          "for",
+          "from",
+          "fun",
+          "if",
+          "import",
+          " is ",
+          "lam",
+          "method",
+          "otherwise",
+          "provide",
+          "provide-types",
+          "rec",
+          "satisfies",
+          "sharing",
+          "type",
+          "var",
+          "where",
+          "with"]
       end
 
-      name = %r{^[_a-zA-Z][_a-zA-Z0-9]*(?:-+[_a-zA-Z0-9]+)*}
+      name = %r{[_a-zA-Z][_a-zA-Z0-9]*(?:-+[_a-zA-Z0-9]+)*}
 
       state :root do
         # comments
@@ -25,13 +50,13 @@ module Rouge
         rule %r/#\|/, Comment::Multiline, :block_comment
         rule %r/\s+/m, Text
 
-        rule %r{^[-+]?[0-9]+(?:\\.[0-9]+)?(?:[eE][-+]?[0-9]+)?}, Num
+        rule %r{[-+]?[0-9]+(?:\\.[0-9]+)?(?:[eE][-+]?[0-9]+)?}, Num
 
         rule %r/"/, Str::Double, :string
         rule %r/'/, Str::Single
         rule %r/\`\`\`/, Str::Other
 
-        rule %r/\w+/ do |m|
+        rule name do |m|
           if self.class.keywords.include?(m[0])
             token Keyword
           else 
@@ -44,8 +69,6 @@ module Rouge
         rule %r/(,|:|\||\.)/, Punctuation
         rule %r/(<<|>>|\/\/|\*\*)=?/, Operator
         rule %r/[-~+\/*%=<>&^|@]=?|!=/, Operator
-
-        rule name, Name::Variable
       end
 
       state :block_comment do

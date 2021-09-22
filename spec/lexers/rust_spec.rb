@@ -19,8 +19,9 @@ describe Rouge::Lexers::Rust do
       assert_guess :source => '#!/usr/bin/env rustc --jit'
     end
   end
+
   describe 'lexing' do
-    include Support::Lexing;
+    include Support::Lexing
 
     it 'can lex integers' do
       assert_tokens_equal '123usize', ['Literal.Number.Integer', '123usize']
@@ -29,6 +30,7 @@ describe Rouge::Lexers::Rust do
       assert_tokens_equal '0u128', ['Literal.Number.Integer', '0u128']
       assert_tokens_equal '0o5_0_0', ['Literal.Number.Integer', '0o5_0_0']
     end
+
     it 'is not confused by float edge cases' do
       assert_tokens_equal '0.1E4', ['Literal.Number.Float', '0.1E4']
       assert_tokens_equal '0._1',
@@ -43,6 +45,7 @@ describe Rouge::Lexers::Rust do
         ["Literal.Number.Integer", "5_000"],
         ["Name.Property", "._"]
     end
+
     it 'can lex identifier edge cases' do
       assert_tokens_equal '_', ['Name', '_']
       assert_tokens_equal '_0', ["Name", "_0"]
@@ -50,6 +53,7 @@ describe Rouge::Lexers::Rust do
       assert_tokens_equal 'Москва.東京', ["Name", "Москва"], ["Name.Property", ".東京"]
       assert_tokens_equal '東京', ["Name", "東京"]
     end
+
     it 'can lex (possibly raw) byte chars/strings' do
       assert_tokens_equal %q(b'1'),
         ['Literal.String.Char', %q(b'1')]

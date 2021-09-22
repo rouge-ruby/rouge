@@ -16,7 +16,7 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
   - Fix single line block comments, scoped variables and functions ([#1663](https://github.com/rouge-ruby/rouge/pull/1663) by BenPH)
 - YAML Lexer
   - Fix YAML key containing special character ([#1667](https://github.com/rouge-ruby/rouge/pull/1667) by tancnle)
-- Fix Ruby 2.7 keyword parameter deprecation warning ([#1597](https://github.com/rouge-ruby/rouge/pull/1666) by stanhu)
+- Fix Ruby 2.7 keyword parameter deprecation warning ([#1597](https://github.com/rouge-ruby/rouge/pull/1597) by stanhu)
 - Updated README ([#1666](https://github.com/rouge-ruby/rouge/pull/1666) by dchacke)
 
 ## version 3.26.0: 2020-12-09

@@ -15,17 +15,17 @@ module Rouge
       id = /#{id_head}#{id_rest}*/
 
       keywords = Set.new %w(
-        break case continue default do else fallthrough if in for return switch where while try catch throw guard defer repeat
+        await break case continue default do else fallthrough if in for return switch where while try catch throw guard defer repeat
 
         as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
 
-        associativity didSet get infix inout mutating none nonmutating operator override postfix precedence prefix set unowned weak willSet throws rethrows precedencegroup
+        associativity async didSet get infix inout isolated mutating none nonmutating operator override postfix precedence prefix set unowned weak willSet throws rethrows precedencegroup
 
         #available #colorLiteral #column #else #elseif #endif #error #file #fileLiteral #function #if #imageLiteral #line #selector #sourceLocation #warning
       )
 
       declarations = Set.new %w(
-        class deinit enum convenience extension final func import init internal lazy let optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype open fileprivate some
+        actor class deinit enum convenience extension final func import init internal lazy let nonisolated optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype open fileprivate some
       )
 
       constants = Set.new %w(

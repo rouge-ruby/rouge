@@ -7,9 +7,9 @@ module Rouge
       desc "Embedded Elixir"
 
       tag 'eex'
-      aliases 'leex'
+      aliases 'leex', 'heex'
 
-      filenames '*.eex', '*.leex'
+      filenames '*.eex', '*.leex', '*.heex'
 
       def initialize(opts={})
         @elixir_lexer = Elixir.new(opts)

@@ -208,3 +208,4 @@
 * YAML (`yaml`)
 * YANG (`yang`)
 * Zig (`zig`)
+- Dafny (`dafny`)

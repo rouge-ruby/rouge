@@ -5,13 +5,15 @@
 [![YARD Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rouge-ruby.github.io/docs/)
 
 
-[Rouge][] is a pure Ruby syntax highlighter. It can highlight over 100 different
-languages, and output HTML or ANSI 256-color text. Its HTML output is
-compatible with stylesheets designed for [Pygments][].
+[Rouge][] is a pure Ruby syntax highlighter. It can highlight
+[over 200 different languages][], and output HTML or ANSI 256-color text.
+Its HTML output is compatible with stylesheets designed for [Pygments][].
 
 [Rouge]: http://rouge.jneen.net/ "Rouge"
 
 [Pygments]: http://pygments.org "Pygments"
+
+[over 200 different languages]: https://rouge-ruby.github.io/docs/file.Languages.html "Languages"
 
 ## Installation
 

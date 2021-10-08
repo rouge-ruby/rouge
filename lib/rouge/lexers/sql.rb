@@ -126,7 +126,7 @@ module Rouge
         end
 
         rule %r([+*/<>=~!@#%&|?^-]), Operator
-        rule %r/[;:()\[\],.]/, Punctuation
+        rule %r/[;:()\[\]\{\},.]/, Punctuation
       end
 
       state :multiline_comments do

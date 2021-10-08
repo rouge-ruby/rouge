@@ -1,5 +1,66 @@
 SELECT e.first_name, e.last_name, d.department_name
-FROM   employees e
-JOIN   departments d ON e.department_id = d.department_id;
+FROM employees e
+JOIN departments d ON e.department_id = d.department_id;
+WHERE e.first_name = 'Bruce' AND e.last_name = 'Lee'
+ORDER BY d.department_name
 
 update `table` set name='abc' where xyz is null;
+
+-- DuckDB
+CREATE FUNCTION main.myavg(x) AS SUM(x) / COUNT(x);
+SELECT [['duck', 'goose', 'heron'], NULL, ['frog', 'toad'], []];
+
+SELECT {'birds':
+            {'yes': 'duck', 'maybe': 'goose', 'huh': NULL, 'no': 'heron'},
+        'aliens':
+            NULL,
+        'amphibians':
+            {'yes':'frog', 'maybe': 'salamander', 'huh': 'dragon', 'no':'toad'}
+        };
+
+-- T-SQL
+CREATE FUNCTION [dbo].[Find_Unicode]
+(
+    @in_string nvarchar(max)
+)
+RETURNS @unicode_char TABLE(id INT IDENTITY(1,1), Char_ NVARCHAR(4), position BIGINT)
+AS
+BEGIN
+    DECLARE @character nvarchar(1)
+    DECLARE @index int
+
+    SET @index = 1
+    WHILE @index <= LEN(@in_string)
+    BEGIN
+        SET @character = SUBSTRING(@in_string, @index, 1)
+        IF((UNICODE(@character) NOT BETWEEN 32 AND 127) AND UNICODE(@character) NOT IN (10,11))
+        BEGIN
+      INSERT INTO @unicode_char(Char_, position)
+      VALUES(@character, @index)
+    END
+    SET @index = @index + 1
+    END
+    RETURN
+END
+GO
+
+-- PL/SQL
+CREATE OR REPLACE TRIGGER EVAL_CHANGE_TRIGGER
+  AFTER INSERT OR UPDATE OR DELETE
+  ON EVALUATIONS
+DECLARE
+  log_action  EVALUATIONS_LOG.action%TYPE;
+BEGIN
+  IF INSERTING THEN
+    log_action := 'Insert';   -- Insert action
+  ELSIF UPDATING THEN
+    log_action := 'Update';   -- Update action
+  ELSIF DELETING THEN
+    log_action := 'Delete';   -- Delete action
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('This code is not reachable.');
+  END IF;
+
+  INSERT INTO EVALUATIONS_LOG (log_date, action)
+    VALUES (SYSDATE, log_action);
+END;

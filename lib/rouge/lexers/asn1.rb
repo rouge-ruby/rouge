@@ -63,14 +63,6 @@ module Rouge
       end
 
       state :root do
-        mixin :whitespace
-        mixin :values
-        mixin :statements
-      end
-
-      state :statements do
-        rule %r/\b#{Rouge::Lexers::Asn1.multiple_word_keywords_type.join('|')}\b/, Keyword::Type
-
         rule %r/(&?[a-zA-Z][-a-zA-Z0-9]*)/ do |m|
           if self.class.keywords_type.include? m[0]
             token Keyword::Type
@@ -81,7 +73,55 @@ module Rouge
           end
         end
 
-        rule %r/::=|\.\.\.|\.\.|\[\[|\]\]/, Operator
+        mixin :whitespace
+        mixin :values
+        mixin :statements
+      end
+
+      state :block do
+        rule %r/(&?[a-zA-Z][-a-zA-Z0-9]*)/ do |m|
+          if self.class.keywords_type.include? m[0]
+            token Keyword::Type
+          elsif self.class.reserved.include? m[0]
+            token Keyword
+          else
+            token Name::Property
+            goto :block2
+          end
+        end
+
+        mixin :whitespace
+        mixin :values
+        mixin :statements
+      end
+
+      state :block2 do
+        rule %r/(&?[a-zA-Z][-a-zA-Z0-9]*)/ do |m|
+          if self.class.keywords_type.include? m[0]
+            token Keyword::Type
+          elsif self.class.reserved.include? m[0]
+            token Keyword
+          else
+            token Name
+          end
+        end
+
+        rule %r/,/ do
+          token Punctuation
+          goto :block
+        end
+
+        mixin :whitespace
+        mixin :values
+        mixin :statements
+      end
+
+      state :statements do
+        rule %r/\b#{Rouge::Lexers::Asn1.multiple_word_keywords_type.join('|')}\b/, Keyword::Type
+
+        rule %r/\[\[|\{/, Punctuation, :block
+        rule %r/\]\]|\}/, Punctuation, :pop!
+        rule %r/::=|\.\.\.|\.\./, Operator
 
         rule %r/./ do |m|
           # Single character lexical items (X.680 02/2021 clause 12.37)

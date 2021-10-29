@@ -214,6 +214,8 @@ module Rouge
 
         rule %r/-{1,2}\w+/, Name::Tag
 
+        rule %r/[12]>/, Operator
+
         rule %r/(\.)?([-\w]+)(\[)/ do |m|
           groups Operator, Name, Punctuation
           push :bracket
@@ -221,7 +223,7 @@ module Rouge
 
         rule %r/([\/\\~[a-z]][-.:\/\\~\w]*)(\n)?/i do |m|
           groups Name, Text::Whitespace
-          push :parameters
+          push :parameters unless m[3].nil?
         end
 
         rule %r/(\.)([-\w]+)(?:(\()|(\n))?/ do |m|

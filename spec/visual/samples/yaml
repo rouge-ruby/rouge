@@ -353,3 +353,8 @@ Stack:
   语言: français
   référence: &réf_01
   alias: *λ-01
+
+# Scalars with special characters
+foo/bar: We are great
+foo.bar: Are we really?
+foo+bar: Maybe not

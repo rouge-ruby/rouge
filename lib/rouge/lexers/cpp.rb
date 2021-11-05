@@ -59,7 +59,7 @@ module Rouge
       prepend :statements do
         rule %r/(class|struct)\b/, Keyword, :classname
         rule %r/template\b/, Keyword, :template
-        rule %r/\d+(\.\d+)?(?:h|(?:min)|s|(?:ms)|(?:us)|(?:ns))/, Num::Other
+        rule %r/#{dq}(\.#{dq})?(?:y|d|h|(?:min)|s|(?:ms)|(?:us)|(?:ns)|i|(?:if)|(?:il))\b/, Num::Other
         rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lu]*)?)i, Num::Float
         rule %r(#{dq}e[+-]?#{dq}[lu]*)i, Num::Float
         rule %r/0x\h('?\h)*[lu]*/i, Num::Hex

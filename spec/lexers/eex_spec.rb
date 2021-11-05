@@ -10,6 +10,7 @@ describe Rouge::Lexers::EEX do
       assert_guess :filename => 'foo.eex'
       assert_guess :filename => 'foo.html.eex'
       assert_guess :filename => 'foo.html.leex'
+      assert_guess :filename => 'foo.html.heex'
     end
   end
 end

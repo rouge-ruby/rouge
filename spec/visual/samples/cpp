@@ -18,13 +18,23 @@ char16_t raw_str3[] = uR"(\w+ \d+)";
 // time literal
 #include <chrono>
 using namespace std::chrono_literals;
+auto oneDecade = 10y;
+auto oneYear = 365.2'425d;
 auto oneDay = 24h;
 auto halfAnHour = 30min;
+auto oneYearInMins = 525'949.2min;
 auto halfAnHour = 0.5h;
 auto oneMin = 60s;
 auto oneSec = 1000ms;
 auto oneMilliSec = 1000us;
 auto oneMicroSec = 1000ns;
+
+// complex literal
+#include <complex>
+using namespace std::complex_literals;
+auto complexNumber = 1 + 1i;
+auto complexNumberl = 1 + 1il;
+auto complexNumberf = 1 + 1if;
 
 // null pointer
 int *a = nullptr;

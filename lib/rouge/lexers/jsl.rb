@@ -14,24 +14,23 @@ module Rouge
         rule %r/\s+/m, Text::Whitespace
 
         rule %r(//.*?$), Comment::Single
-        rule %r'/[*].*', Comment::Multiline, :comment
+        rule %r'/[*].*?', Comment::Multiline, :comment # multiline block comment
 
         # messages
         rule %r/<</, Operator, :message
 
         # covers built-in and custom functions
-        rule %r/([a-z_][\w\s'%.\\]*)(\()/i do |m|
-          groups Keyword, Punctuation
+        rule %r/(::|:)?([a-z_][\w\s'%.\\]*)(\()/i do |m|
+          groups Punctuation, Keyword, Punctuation
         end
 
         rule %r/\d{2}(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\d{2}(\d{2})?(:\d{2}:\d{2}(:\d{2}(\.\d*)?)?)?/i, Literal::Date
 
         rule %r/-?(?:[0-9]+(?:[.][0-9]+)?|[.][0-9]*)(?:e[+-]?[0-9]+)?i?/i, Num
 
-        rule %r/::[a-z_][\w\s'%.\\]*/i, Name::Variable
-        rule %r/:\w+/, Name
-        rule %r/[a-z_][\w\s'%.\\]*/i, Name::Variable
-        rule %r/"(?:\\!"|[^"])*?"n/m, Name::Variable
+        rule %r/(::|:)?([a-z_][\w\s'%.\\]*|"(?:\\!"|[^"])*?"n)/i do |m|
+          groups Punctuation, Name::Variable
+        end
 
         rule %r/(")(\\\[)(.*?)(\]\\)(")/m do
           groups Str::Double, Str::Escape, Str::Double, Str::Escape, Str::Double  # escaped string

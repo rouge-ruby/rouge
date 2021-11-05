@@ -12,7 +12,7 @@ module Rouge
       #keywords method
       def self.keywords
         @keywords ||= Set.new %w(
-          matches not with empty all if else
+          matches not with empty all if else true false
         )
       end
 
@@ -59,8 +59,6 @@ module Rouge
             push :dataExp
           elsif self.class.keywords.include? m[0]
             token Keyword
-          elsif m[0] == 'true' || m[0] == 'false'
-            token Keyword::Type
           else
             token Name::Function
           end
@@ -84,9 +82,7 @@ module Rouge
         rule %r/#{lowercase_id}(?=:)/, Name::Entity
 
         rule %r/(#{lowercase_id})/ do |m|
-          if m[0] == 'false' || m[0] == 'true'
-            token Keyword::Type
-          elsif self.class.keywords.include? m[0]
+        if self.class.keywords.include? m[0]
             token Keyword
           else
             token Literal::String::Regex
@@ -152,9 +148,7 @@ module Rouge
         mixin :whitespace_and_comments
 
         rule %r/#{lowercase_id}/ do |m|
-          if m[0] == 'true' || m[0] == 'false'
-            token Keyword::Type
-          elsif self.class.arithmetic_keywords.include? m[0]
+          if self.class.arithmetic_keywords.include? m[0]
             token Keyword
           else
             token Literal::String::Regex

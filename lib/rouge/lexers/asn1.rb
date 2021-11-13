@@ -30,7 +30,7 @@ module Rouge
       end
 
       def self.multiple_word_keywords_type
-        @multiple_word_type ||= self.keywords_type.filter { |v| v.include? ' ' }
+        @multiple_word_type ||= self.keywords_type.select { |v| v.include? ' ' }
       end
 
       def self.reserved

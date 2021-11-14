@@ -17,6 +17,7 @@ Notation "A /\ B" := (and A B) : type_scope.
 Theorem progress : ∀t T,
   empty ⊢ t ∈ T →
   value t ∨ ∃t', t --> t'.
+Proof. Admitted.
 
 Theorem ev_plus4 : ∀n, even n → even (4 + n).
 Proof.
@@ -26,12 +27,82 @@ Proof.
   apply H.
 Qed.
 
+(*
+   The iris examples here are used under this license:
+
+   > All files in this development, excluding those in docs/ and tex/, are
+   distributed under the terms of the 3-clause BSD license
+   (https://opensource.org/licenses/BSD-3-Clause), included below.
+   > Copyright: Iris developers and contributors
+*)
+
+(* Unicode next to braces, mixed ascii/unicode operators. *)
 Lemma ghost_var_update γ b' b c :
   own γ (●E b) -∗ own γ (◯E c) ==∗ own γ (●E b') ∗ own γ (◯E b').
 Proof.
-  iIntros "Hγ● Hγ◯".
-  iMod (own_update_2 _ _ _ (●E b' ⋅ ◯E b') with "Hγ● Hγ◯") as "[$$]".
-  { by apply excl_auth_update. }
-  done.
   something (a ={n}= b).
+  - by apply case1.
+  - apply case2. eauto.
+Qed.
+
+
+(* #[], {Σ}, `{!xxx}, (?)
+   https://gitlab.mpi-sws.org/iris/iris/-/blob/f1e2242daa0e448135a5074ce99b41e6058ea1c3/iris_heap_lang/adequacy.v *)
+Definition heapΣ : gFunctors :=
+  #[invΣ; gen_heapΣ loc (option val); inv_heapΣ loc (option val); proph_mapΣ proph_id (val * val)].
+Global Instance subG_heapGpreS {Σ} : subG heapΣ Σ → heapGpreS Σ.
+Proof. solve_inG. Qed.
+
+(* (?), `{!class}, greek lettering *)
+Definition heap_adequacy Σ `{!heapGpreS Σ} s e σ φ :
+  (∀ `{!heapGS Σ}, ⊢ inv_heap_inv -∗ WP e @ s; ⊤ {{ v, ⌜φ v⌝ }}) →
+  adequate s e σ (λ v _, φ v).
+Proof.
+  intros Hwp; eapply (wp_adequacy _ _); iIntros (? κs) "".
+  iMod (gen_heap_init σ.(heap)) as (?) "[Hh _]".
+  iMod (inv_heap_init loc (option val)) as (?) ">Hi".
+  iMod (proph_map_init κs σ.(used_proph_id)) as (?) "Hp".
+  (* lambda should highlight as an operator *)
+  iModIntro. iExists
+    (λ σ κs, (gen_heap_interp σ.(heap) ∗ proph_map_interp κs σ.(used_proph_id))%I),
+    (λ _, True%I).
+  iFrame. iApply (Hwp (HeapGS _ _ _ _ _)). done.
+Qed.
+
+(* thorny ops + braces + lettering
+   https://gitlab.mpi-sws.org/iris/iris/-/blob/f1e2242daa0e448135a5074ce99b41e6058ea1c3/iris_heap_lang/primitive_laws.value
+   BSD licensed *)
+Lemma wp_rec_löb s E f x e Φ Ψ :
+  □ ( □ (∀ v, Ψ v -∗ WP (rec: f x := e)%V v @ s; E {{ Φ }}) -∗
+     ∀ v, Ψ v -∗ WP (subst' x v (subst' f (rec: f x := e) e)) @ s; E {{ Φ }}) -∗
+  ∀ v, Ψ v -∗ WP (rec: f x := e)%V v @ s; E {{ Φ }}.
+Proof.
+  iIntros "#Hrec". iLöb as "IH". iIntros (v) "HΨ".
+  (* dotted gives a path *)
+  iApply lifting.wp_pure_step_later; first done.
+  iNext. iApply ("Hrec" with "[] HΨ"). iIntros "!>" (w) "HΨ".
+  iApply ("IH" with "HΨ").
+Qed.
+
+(* unicode symbols distinct from braces and idents *)
+Lemma mapsto_frac_ne l1 l2 dq1 dq2 v1 v2 :
+  ¬ ✓(dq1 ⋅ dq2) → l1 ↦{dq1} v1 -∗ l2 ↦{dq2} v2 -∗ ⌜l1 ≠ l2⌝.
+Proof. apply mapsto_frac_ne. Qed.
+
+Lemma inv_mapsto_own_acc E l v I:
+  ↑inv_heapN ⊆ E →
+  inv_heap_inv -∗ l ↦_I v ={E, E ∖ ↑inv_heapN}=∗
+    (⌜I v⌝ ∗ l ↦ v ∗ (∀ w, ⌜I w ⌝ -∗ l ↦ w ={E ∖ ↑inv_heapN, E}=∗ l ↦_I w)).
+Proof. (*snip*) Qed.
+
+Lemma mapsto_persist l dq v : l ↦{dq} v ==∗ l ↦□ v.
+Proof.
+  refine ?[named]. refine ?[named2].
+  [named]: done.
+  [named2]: { done. }
+  - done.
+    + done.
+      -- done.
+    + apply (f -888).
+  all: nice.
 Qed.

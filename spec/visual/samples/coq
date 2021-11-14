@@ -100,9 +100,10 @@ Proof.
   refine ?[named]. refine ?[named2].
   [named]: done.
   [named2]: { done. }
+  (* Bullets are distinct from operators, and are treated as Punctuation *)
   - done.
     + done.
       -- done.
-    + apply (f -888).
+    + apply (f -888 + 5).
   all: nice.
 Qed.

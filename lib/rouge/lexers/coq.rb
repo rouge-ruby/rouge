@@ -76,8 +76,12 @@ module Rouge
         end
       end
 
-      id_trail = /(?:\p{L}|\p{N}|_|')/
-      id = /(?:\p{Ll}#{id_trail}*)|(?:(?:_|\p{Ll})#{id_trail}+)/i
+      # https://github.com/coq/coq/blob/110921a449fcb830ec2a1cd07e3acc32319feae6/clib/unicode.ml#L67
+      # https://coq.inria.fr/refman/language/core/basic.html#grammar-token-ident
+      id_first = /\p{L}/
+      id_first_underscore = /(?:\p{L}|_)/
+      id_subsequent = /(?:\p{L}|\p{N}|_|')/ # a few missing? some mathematical ' primes and subscripts
+      id = /(?:#{id_first}#{id_subsequent}*)|(?:#{id_first_underscore}#{id_subsequent}+)/i
       dot_id = /\.(#{id})/i
       dot_space = /\.(\s+)/
       module_type = /Module(\s+)Type(\s+)/

@@ -106,4 +106,7 @@ Proof.
       -- done.
     + apply (f -888 + 5).
   all: nice.
+  1: { done. }
+  1,2: { done. }
+  1,2,3: { done. }
 Qed.

@@ -135,6 +135,8 @@ module Rouge
           token Keyword::Pseudo, m[1]
           token Punctuation, ':'.dup
         end
+        # numbered goals 1: {} 1,2: {}
+        rule %r/\d+/, Num::Integer, :numeric_labels
         # [named_goal]: { ... }
         rule %r/\[(\s*)(#{id})(\s*)(\])(\s*)(:)/ do |m|
           token Punctuation, '['
@@ -154,9 +156,22 @@ module Rouge
         end
       end
 
+      state :numeric_labels do
+        mixin :whitespace
+        rule %r(,(\s*)(\d+)) do |m|
+          token Punctuation, ','
+          token Text::Whitespace, m[1]
+          token Num::Integer, m[2]
+        end
+        rule %r(:), Punctuation, :pop!
+      end
+
+      state :whitespace do
+        rule %r/\s+/m, Text::Whitespace
+      end
       state :comment_whitespace do
         rule %r/[(][*](?![)])/, Comment, :comment
-        rule %r/\s+/m, Text::Whitespace
+        mixin :whitespace
       end
 
       state :module_setopts do

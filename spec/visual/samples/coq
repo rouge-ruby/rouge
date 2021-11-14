@@ -25,3 +25,13 @@ Proof.
   apply ev_SS.
   apply H.
 Qed.
+
+Lemma ghost_var_update γ b' b c :
+  own γ (●E b) -∗ own γ (◯E c) ==∗ own γ (●E b') ∗ own γ (◯E b').
+Proof.
+  iIntros "Hγ● Hγ◯".
+  iMod (own_update_2 _ _ _ (●E b' ⋅ ◯E b') with "Hγ● Hγ◯") as "[$$]".
+  { by apply excl_auth_update. }
+  done.
+  something (a ={n}= b).
+Qed.

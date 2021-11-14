@@ -56,12 +56,6 @@ module Rouge
         )
       end
 
-      def self.keyopts
-        @keyopts ||= Set.new %w(
-          := => -> /\\ \\/ _ ; :> : ⇒ → ↔ ⇔ ≔ ≡ ∀ ∃ ∧ ∨ ¬ ⊤ ⊥ ⊢ ⊨ ∈
-        )
-      end
-
       def self.end_sentence
         @end_sentence ||= Punctuation::Indicator
       end
@@ -82,7 +76,6 @@ module Rouge
         end
       end
 
-      operator = %r([\[\];,{}_()!$%&*+./:<=>?@^|~#-]+)
       id = /(?:[a-z][\w']*)|(?:[_a-z][\w']+)/i
       dot_id = /\.((?:[a-z][\w']*)|(?:[_a-z][\w']+))/i
       dot_space = /\.(\s+)/
@@ -124,16 +117,17 @@ module Rouge
         rule %r/"/, Str::Double, :string
         rule %r/[~?]#{id}/, Name::Variable
 
-        rule %r/./ do |m|
-          match = m[0]
-          if self.class.keyopts.include? match
-            token Punctuation
-          elsif match =~ operator
-            token Operator
-          else
-            token Error
-          end
-        end
+        rule %r([;,()@^|~#.]+), Punctuation
+        # match these *on their own* as punctuation (note negative lookahead)
+        # may be followed by a couple of other punctuation chars, though.
+        rule %r([\[\]{}\-*+?@^|~#]+[.};\]]?(?!\p{S}|\p{P})), Punctuation
+        # these are so common in Coq we won't point them out as operators
+        rule %r(:=|=>|->|/\\|\\/|_|;|:>|:|[⇒→↔⇔≔≡∀∃∧∨¬⊤⊥⊢⊨∈]), Punctuation
+        # any other combo of S (symbol), P (punctuation) and some extras just to be sure
+        rule %r((?:\p{S}|\p{P}|[./\:\<=>\-+/*])+), Operator
+
+        # let people use anything else as a name
+        rule %r/./, Name::Constant
       end
 
       state :comment do

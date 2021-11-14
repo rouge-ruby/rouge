@@ -76,8 +76,9 @@ module Rouge
         end
       end
 
-      id = /(?:[a-z][\w']*)|(?:[_a-z][\w']+)/i
-      dot_id = /\.((?:[a-z][\w']*)|(?:[_a-z][\w']+))/i
+      id_trail = /(?:\p{L}|\p{N}|_|')/
+      id = /(?:\p{Ll}#{id_trail}*)|(?:(?:_|\p{Ll})#{id_trail}+)/i
+      dot_id = /\.(#{id})/i
       dot_space = /\.(\s+)/
       module_type = /Module(\s+)Type(\s+)/
       set_options = /(Set|Unset)(\s+)(Universe|Printing|Implicit|Strict)(\s+)(Polymorphism|All|Notations|Arguments|Universes|Implicit)(\s*)\./m
@@ -126,8 +127,7 @@ module Rouge
         # any other combo of S (symbol), P (punctuation) and some extras just to be sure
         rule %r((?:\p{S}|\p{P}|[./\:\<=>\-+/*])+), Operator
 
-        # let people use anything else as a name
-        rule %r/./, Name::Constant
+        rule %r/./, Error
       end
 
       state :comment do

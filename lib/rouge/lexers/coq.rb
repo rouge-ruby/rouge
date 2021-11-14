@@ -25,7 +25,7 @@ module Rouge
           Variables Class Instance Global Local Include
           Printing Notation Infix Arguments Hint Rewrite Immediate
           Qed Defined Opaque Transparent Existing
-          Compute Eval Print SearchAbout Search About Check
+          Compute Eval Print SearchAbout Search About Check Admitted
         )
       end
 
@@ -102,30 +102,29 @@ module Rouge
           end
           token self.class.end_sentence , '.'
         end
+
+        # up here to beat the id rule for lambda
+        rule %r(:=|=>|;|:>|:|::|_), Punctuation
+        rule %r(->|/\\|\\/|;|:>|[⇒→↔⇔≔≡∀∃∧∨¬⊤⊥⊢⊨∈λ]), Operator
+
         rule id do |m|
           @name = m[0]
           @continue = false
           push :continue_id
         end
-        rule %r(/\\), Operator
-        rule %r/\\\//, Operator
 
         rule %r/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
-        rule %r/\d[\d_]*/, Num::Integer
+        rule %r/-?\d[\d_]*/, Num::Integer
 
         rule %r/'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char
         rule %r/'/, Keyword
         rule %r/"/, Str::Double, :string
         rule %r/[~?]#{id}/, Name::Variable
 
-        rule %r([;,()@^|~#.]+), Punctuation
-        # match these *on their own* as punctuation (note negative lookahead)
-        # may be followed by a couple of other punctuation chars, though.
-        rule %r([\[\]{}\-*+?@^|~#]+[.};\]]?(?!\p{S}|\p{P})), Punctuation
-        # these are so common in Coq we won't point them out as operators
-        rule %r(:=|=>|->|/\\|\\/|_|;|:>|:|[⇒→↔⇔≔≡∀∃∧∨¬⊤⊥⊢⊨∈]), Punctuation
+        rule %r(`{|[{}\[\]()?|;,.]), Punctuation
+        rule %r([!@^|~#.%/]+), Operator
         # any other combo of S (symbol), P (punctuation) and some extras just to be sure
-        rule %r((?:\p{S}|\p{P}|[./\:\<=>\-+/*])+), Operator
+        rule %r((?:\p{S}|\p{Pc}|[./\:\<=>\-+*])+), Operator
 
         rule %r/./, Error
       end

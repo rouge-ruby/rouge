@@ -8,7 +8,7 @@ module Rouge
       desc 'Stan Modeling Language (mc-stan.org)'
       tag 'stan'
       aliases 'stan'
-      filenames '*.stan'
+      filenames '*.stan', '*.stanfunctions'
       mimetypes nil
 
       # optional comment or whitespace
@@ -26,7 +26,7 @@ module Rouge
         @types ||= Set.new %w(
           int real vector ordered positive_ordered simplex unit_vector
           row_vector matrix cholesky_factor_corr cholesky_factor_cov corr_matrix
-          cov_matrix data void complex
+          cov_matrix data void complex array
         )
       end
 

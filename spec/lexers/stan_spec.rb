@@ -9,6 +9,7 @@ describe Rouge::Lexers::Stan do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.stan'
+      assert_guess :filename => 'foo.stanfunctions'
     end
   end
 end

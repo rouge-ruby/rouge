@@ -66,8 +66,9 @@ transformed data {
 }
 
 parameters {
-  vector<lower=0>[n] kappa_cen; // Dispersion from central chamber
-  vector<lower=0>[n] kappa_per; // Dispersion from peripheral chamber
+  vector<lower=0>[n] kappa_cen;   // Dispersion from central chamber
+  vector<lower=0>[n] kappa_per;   // Dispersion from peripheral chamber
+  array[n] real dummy_variables;  // Dummy variables
 }
 
 transformed parameters {

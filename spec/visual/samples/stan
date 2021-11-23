@@ -87,8 +87,8 @@ transformed parameters {
 }
 
 model {
-  kappa_cen ~ normal(0, 1.0/4) T[0, ];
-  kappa_per ~ normal(0, pi()/4) T[0, ];
+  target += normal_lpdf(kappa_cen | 0 + 0.0i, 1.0/4) T[0, ];
+  target += normal_lpdf(kappa_per | 0 + 0i, pi()/4) T[0, ];
   obs ~ lognormal(log(y_true[2]), 1.0/4);
 }
 

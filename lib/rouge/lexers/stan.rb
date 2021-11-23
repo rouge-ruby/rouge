@@ -26,7 +26,7 @@ module Rouge
         @types ||= Set.new %w(
           int real vector ordered positive_ordered simplex unit_vector
           row_vector matrix cholesky_factor_corr cholesky_factor_cov corr_matrix
-          cov_matrix data void
+          cov_matrix data void complex
         )
       end
 
@@ -117,6 +117,14 @@ module Rouge
 
           ## Special functions
           "lambert_w0", "lambert_wm1",
+
+          ## Complex Conversion Functions
+          "get_real", "get_imag",
+
+          # Complex-Valued Basic Functions
+
+          ## Complex Construction Functions
+          "to_complex",
 
           # Array Operations
 
@@ -375,12 +383,28 @@ module Rouge
       state :statements do
         mixin :whitespace
         rule %r("), Str, :string
-        rule %r((\d+[.]\d*|[.]?\d+)e[+-]?\d+), Num::Float
-        rule %r(\d+e[+-]?\d+), Num::Float
-        rule %r/\d+/, Num::Integer
+        rule %r(((\d+[.]\d*|[.]?\d+)e[+-]?\d+)(i)?) do |m|
+          token Num::Float, m[1]
+          if m[2]
+            token Num::Float, m[2]
+          end
+        end
+        rule %r((\d+[.]\d+)(i)?) do |m|
+          token Num::Float, m[1]
+          if m[2]
+            token Num::Float, m[2]
+          end
+        end
+        rule %r/(\d+)(i)?/ do |m|
+          token Num::Integer, m[1]
+          if m[2]
+            token Num::Integer, m[2]
+          end
+        end
         rule %r(\*/), Error
         rule %r(#{OPERATORS.join("|")}), Operator
         rule %r([\[\],.;]), Punctuation
+        rule %r([|](?![|])), Punctuation
         rule %r(T\b), Keyword::Reserved
         rule %r((lower|upper)\b), Name::Attribute
         rule ID do |m|

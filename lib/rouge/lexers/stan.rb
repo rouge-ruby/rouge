@@ -383,24 +383,16 @@ module Rouge
       state :statements do
         mixin :whitespace
         rule %r("), Str, :string
-        rule %r(((\d+[.]\d*|[.]?\d+)e[+-]?\d+)(i)?) do |m|
-          token Num::Float, m[1]
-          if m[2]
-            token Num::Float, m[2]
-          end
-        end
-        rule %r((\d+[.]\d+)(i)?) do |m|
-          token Num::Float, m[1]
-          if m[2]
-            token Num::Float, m[2]
-          end
-        end
-        rule %r/(\d+)(i)?/ do |m|
-          token Num::Integer, m[1]
-          if m[2]
-            token Num::Integer, m[2]
-          end
-        end
+        rule %r(
+          (
+            ((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+|\d+) 
+            (#{WS})[+-](#{WS})
+            ((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+|\d+)i
+          )
+          |((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+) 
+          |((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+|\d+)i
+        )mx, Num::Float
+        rule %r/\d+/, Num::Integer
         rule %r(\*/), Error
         rule %r(#{OPERATORS.join("|")}), Operator
         rule %r([\[\],.;]), Punctuation

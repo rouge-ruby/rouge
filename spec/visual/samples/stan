@@ -69,6 +69,7 @@ parameters {
   vector<lower=0>[n] kappa_cen;   // Dispersion from central chamber
   vector<lower=0>[n] kappa_per;   // Dispersion from peripheral chamber
   array[n] real dummy_variables;  // Dummy variables
+  complex complex_dummy_variable; // complex dummy variable
 }
 
 transformed parameters {
@@ -85,11 +86,14 @@ transformed parameters {
    */
   vector[m] y_true[2] = drug_conc(y_steady_cen[idx], y_steady_per[idx],
                                   kappa_cen[idx], kappa_per[idx], ts, m);
+
+  // Add a constant to the complex dummy variable
+  complex_dummy_variable += 3i - 40e-3i + 1e10i
 }
 
 model {
-  target += normal_lpdf(kappa_cen | 0 + 0.0i, 1.0/4) T[0, ];
-  target += normal_lpdf(kappa_per | 0 + 0i, pi()/4) T[0, ];
+  target += normal_lpdf(kappa_cen | get_real(0 + 0.0i), 1.0/4) T[0, ];
+  target += normal_lpdf(kappa_per | get_imag(0 + 0i), pi()/4) T[0, ];
   obs ~ lognormal(log(y_true[2]), 1.0/4);
 }
 

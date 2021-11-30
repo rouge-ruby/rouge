@@ -118,13 +118,13 @@ module Rouge
           ## Special functions
           "lambert_w0", "lambert_wm1",
 
-          ## Complex Conversion Functions
-          "get_real", "get_imag",
-
           # Complex-Valued Basic Functions
 
-          ## Complex Construction Functions
-          "to_complex",
+          ## Complex constructors and accessors
+          "to_complex", "get_real", "get_imag",
+
+          ## Complex special functions
+          "arg", "norm", "conj", "proj", "polar",
 
           # Array Operations
 
@@ -157,7 +157,7 @@ module Rouge
           "dot_product", "columns_dot_product", "rows_dot_product", "dot_self",
           "columns_dot_self", "rows_dot_self", "tcrossprod", "crossprod",
           "quad_form", "quad_form_diag", "quad_form_sym", "trace_quad_form",
-          "trace_gen_quad_form", "multply_lower_tri_self_transpose",
+          "trace_gen_quad_form", "multiply_lower_tri_self_transpose",
           "diag_pre_multiply", "diag_post_multiply",
 
           ## Broadcast functions

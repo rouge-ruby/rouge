@@ -170,12 +170,22 @@ module Rouge
       end
 
       state :macro do
-        # NB: pop! goes back to :bol
-        rule %r/\n/, Comment::Preproc, :pop!
+        mixin :include
         rule %r([^/\n\\]+), Comment::Preproc
         rule %r/\\./m, Comment::Preproc
         mixin :inline_whitespace
         rule %r(/), Comment::Preproc
+        # NB: pop! goes back to :bol
+        rule %r/\n/, Comment::Preproc, :pop!
+      end
+
+      state :include do
+        rule %r/(include)(\s*)(<[^>]+>)([^\n]*)/ do
+          groups Comment::Preproc, Text, Comment::PreprocFile, Comment::Single
+        end
+        rule %r/(include)(\s*)("[^"]+")([^\n]*)/ do
+          groups Comment::Preproc, Text, Comment::PreprocFile, Comment::Single
+        end
       end
 
       state :if_0 do

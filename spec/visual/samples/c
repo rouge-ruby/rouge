@@ -51,6 +51,13 @@ void foo() {
     }
   }
 
+#include <string.h> /* this is a comment */
+#include <string.h> // this is a comment
+#include "string.h" /* this is a comment */
+#include "string.h" // this is a comment
+#include<string>/* this is a comment */
+#include<string>// this is a comment
+
 /* Execute compiled code */
 
 /* XXX TO DO:

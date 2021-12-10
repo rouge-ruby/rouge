@@ -1,6 +1,6 @@
 # Rouge
 
-[![Build Status](https://secure.travis-ci.org/rouge-ruby/rouge.svg)](https://travis-ci.org/rouge-ruby/rouge)
+![Build Status](https://github.com/rouge-ruby/rouge/actions/workflows/ruby.yml/badge.svg)
 [![Gem Version](https://badge.fury.io/rb/rouge.svg)](https://rubygems.org/gems/rouge)
 [![YARD Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rouge-ruby.github.io/docs/)
 

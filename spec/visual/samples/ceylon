@@ -32,3 +32,6 @@ module com.acme.test "1.0.0" {
 }
 
 package com.example;
+
+print("Hello, ``person.firstName`` ``person.lastName``, the time is ``Time()``.");
+print("1 + 1 = ``1 + 1``");

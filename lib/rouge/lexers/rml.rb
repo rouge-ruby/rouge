@@ -12,7 +12,8 @@ module Rouge
       #keywords method
       def self.keywords
         @keywords ||= Set.new %w(
-          matches not with empty all if else true false
+          matches not with empty
+          all if else true false
         )
       end
 
@@ -39,24 +40,25 @@ module Rouge
       comment = /\/\/[^\r\n]*/
 
       #The following state is an auxiliary one containing rules shared between states
-      state :whitespace_and_comments do
+      state :common_rules do
         rule %r/#{whitespace}/, Text
         rule %r/#{comment}/, Comment::Single
+        rule %r/#{string}/, Literal::String
+        rule %r/#{float}/, Num::Float
+        rule %r/#{int}/, Num::Integer
       end
 
       state :root do
 
-        mixin :whitespace_and_comments
-
+        mixin :common_rules
         rule %r/(#{lowercase_id})(\()/ do
           groups Name::Function, Operator
           push :evTypeParam
         end
-
         rule %r/#{lowercase_id}/ do |m|
           if m[0] == 'with'
             token Keyword
-            push :dataExp
+            push :dataExp_with
           elsif self.class.keywords.include? m[0]
             token Keyword
           else
@@ -65,22 +67,18 @@ module Rouge
         end
 
         rule %r/\(|\{|\[/, Operator, :evTypeParam
+        rule %r/[_\|]/, Operator
         rule %r/#{uppercase_id}/, Name::Class, :equation_blockExp
-        rule %r/#{string}/, Literal::String
-        rule %r/#{float}/, Num::Float
-        rule %r/#{int}/, Num::Integer
-        rule %r/[\|;]/, Operator
-      end
+        rule %r/;/, Operator
+      end #closing :root state
 
       state :evTypeParam do
 
-        mixin :whitespace_and_comments
+        mixin :common_rules
 
-        rule %r/#{string}/, Literal::String
-        rule %r/#{float}/, Num::Float
-        rule %r/#{int}/, Num::Integer
+        rule %r/\(|\{|\[/, Operator, :push
+        rule %r/\)|\}|\]/, Operator, :pop!
         rule %r/#{lowercase_id}(?=:)/, Name::Entity
-
         rule %r/(#{lowercase_id})/ do |m|
         if self.class.keywords.include? m[0]
             token Keyword
@@ -89,44 +87,34 @@ module Rouge
           end
         end
 
-        rule %r/\(|\{|\[/, Operator, :push
-        rule %r/\)|\}|\]/, Operator, :pop!
-
         rule %r/#{ellipsis}/, Literal::String::Symbol
-        rule %r/[*&%!+\/\\_\|=:,;<>\^-]/, Operator
-
-      end
+        rule %r/[_\|;,:]/, Operator
+      end #closing :evTypeParam state
 
       state :equation_blockExp do
 
-        mixin :whitespace_and_comments
+        mixin :common_rules
         rule %r/[<,>]/, Operator
         rule %r/#{lowercase_id}/, Literal::String::Regex
-
-        rule %r(=) do
+        rule %r/=/ do
           token Operator
           goto :exp
         end
-
         rule %r/;/, Operator, :pop!
-
-      end
+      end #closing :equation_blockExp state
 
       state :exp do
-        mixin :whitespace_and_comments
 
+        mixin :common_rules
         rule %r/(if)(\()/ do
           groups Keyword, Operator
           push :dataExp
         end
-
-        rule %r/(?:let|var)\b/, Keyword, :equation_blockExp
-
+        rule %r/let|var/, Keyword, :equation_blockExp
         rule %r/(#{lowercase_id})(\()/ do
           groups Name::Function, Operator
           push :evTypeParam
         end
-
         rule %r/(#{lowercase_id})/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
@@ -134,41 +122,45 @@ module Rouge
             token Name::Function
           end
         end
-
         rule %r/#{uppercase_id}(?=<)/, Name::Class, :dataExp
         rule %r/#{uppercase_id}/, Name::Class
-
-        rule %r/[()*+\/\\_\|=,{}!<>?-]/, Operator
+        rule %r/[=(){}*+\/\\\|!>?]/, Operator
         rule %r/;/, Operator, :pop!
-
       end
 
       state :dataExp do
 
-        mixin :whitespace_and_comments
-
+        mixin :common_rules
         rule %r/#{lowercase_id}/ do |m|
-          if self.class.arithmetic_keywords.include? m[0]
+        if (self.class.arithmetic_keywords | self.class.keywords).include? m[0]
             token Keyword
           else
             token Literal::String::Regex
           end
         end
-
+        rule %r/(>)(?=\s*else)/, Operator, :pop!
         rule %r/\(/, Operator, :push
         rule %r/\)/, Operator, :pop!
-
-        rule %r/>(?=\s*else)/, Operator, :pop!
-        rule %r/>(?=\s*#{lowercase_id}(?!\())/, Operator
-        rule %r/>(?!\s*(=|abs|sin|cos|tan|min|max|true|false|
-                    #{float}|#{int}|-|\())/, Operator, :pop!
-
+        rule %r/(>)(?=[^A-Z;>]+[A-Z;])/, Operator, :pop!
         rule %r/[*^?!%&\[\]<>\|+=:,.\/\\_-]/, Operator
-        rule %r/#{float}/, Num::Float
-        rule %r/#{int}/, Num::Integer
-
         rule %r/;/, Operator, :pop!
-      end
-    end
-    end
-end
+      end #closing :dataExp state
+
+      state :dataExp_with do
+
+        mixin :common_rules
+        rule %r/#{lowercase_id}/ do |m|
+        if (self.class.arithmetic_keywords | self.class.keywords).include? m[0]
+            token Keyword
+          else
+            token Literal::String::Regex
+          end
+        end
+        rule %r/\(/, Operator, :push
+        rule %r/\)/, Operator, :pop!
+        rule %r/[*^?!%&\[\]<>\|+=:,.\/\\_-]/, Operator
+        rule %r/;/, Operator, :pop!
+      end #closing :dataExp_with state
+    end #closing RML Class
+  end #closing Lexers module
+end #closing Rouge module

@@ -40,6 +40,11 @@ module Rouge
 				]
 			end
 
+			# Used to store import alias names which are classed as Name::Namespace tokens
+			def self.aliases
+				@aliases ||= []
+			end
+
 			def processtokens(m, t)
 				if self.class.reserved.include? m[0]
 					token Keyword::Reserved
@@ -64,11 +69,8 @@ module Rouge
 				rule %r/(\.)(#{identifier})(?!\s*\()/ do
 					groups Punctuation, Name::Property
 				end
-				# Match import statements - import x, y, z
-				rule %r/(import)(\s+)(#{identifier})/ do
-					groups Keyword::Namespace, Text, Name::Namespace
-					push :inlineimport
-				end
+				# Match import statements
+				rule %r/import/, Keyword::Namespace, :import
 				# Match method declarations and name if not anonymous
 				rule %r/(def)(\s*)(#{identifier}|(?=\s*\())/ do
 					groups Keyword::Declaration, Text, Name::Function       
@@ -84,7 +86,9 @@ module Rouge
 				end
 				# Match keywords or default name token
 				rule %r/(?<!\.)#{identifier}/ do |m|
-					if self.class.constants.include? m[0]
+					if self.class.aliases.include? m[0]
+						token Name::Namespace
+					elsif self.class.constants.include? m[0]
 						token Keyword::Constant
 					elsif 'var' == m[0]
 						token Keyword::Declaration
@@ -132,6 +136,8 @@ module Rouge
 			# Match format interpolation in a string
 			state :format do
 				rule %r/%[-+\s#]?(\0?\d+)?(\.\d+)?[doxXfeEgGcsq%]/, Str::Interpol
+				# Catch % character not part of interpolation spec
+				rule %r/%/, Str
 			end
 
 			# Match :child
@@ -143,15 +149,33 @@ module Rouge
 				rule %r/\s*/, Text::Whitespace, :pop!
 			end
 
-			# Match import a,b,c etc
-			state :inlineimport do 
-				rule %r/(\s*)(,)(\s*)(#{identifier})/ do
-					groups Text, Punctuation, Text, Name::Namespace
+			# Match import x,y,z  or import x as y
+			state :import do
+				# Match import x as y
+				rule %r/(\s+)(#{identifier})(\s*)(as)(\s*)(#{identifier})/ do |m|
+					if !self.class.aliases.include? m[6]
+						self.class.aliases << m[6]
+					end
+					groups Text, Name::Namespace, Text, Keyword::Reserved, Text, Name::Namespace
 					pop!
-					push :inlineimport
 				end
-				rule %r/\s*/, Text::Whitespace, :pop!
+				# Match comma separated imports
+				rule %r/(\s+)(#{identifier})(\s*)(,)/ do |m|
+					if !self.class.aliases.include? m[2]
+						self.class.aliases << m[2]
+					end
+					groups Text, Name::Namespace, Text, Punctuation
+				end
+				# Match single import 
+				rule %r/(\s+)(#{identifier})/ do |m|
+					if !self.class.aliases.include? m[2]
+						self.class.aliases << m[2]
+					end
+					groups Text, Name::Namespace, Text
+					pop!
+				end
 			end
+			
 		end
 	end
 end

@@ -51,8 +51,8 @@ module Rouge
 
         rule %r("(\\\\|\\"|[^"])*"), Literal::String
         rule %r('\\.'|'[^\\]'|'\\\{#[0-9a-fA-F]{4}\}'), Literal::String::Char
-        rule %r(".*``.*``.*"', String::Interpol
-        rule %r(\.)([a-z_]\w*)) do
+        rule %r("[^`]*``[^`]*``[^`]*"), Literal::String::Interpol
+        rule %r((\.)([a-z_]\w*)) do
           groups Operator, Name::Attribute
         end
         rule %r([a-zA-Z_]\w*:), Name::Label

@@ -1,0 +1,124 @@
+module A {
+  const i: int := 56_78
+}
+
+method m(b: bool, s: string) {
+  var x: string;
+  var i: int;
+  assert b;
+}
+
+function f(i: int): int { i + 1 }
+
+// comment
+// comment /* not a nested comment 
+/* comment
+   // nested comment
+   more comment
+ */
+/* nested /* comment */ more comment */
+/* bad nested // comment */
+   more bad comment
+   */
+/* bad nested " comment */a xyz //"
+   more bad comment
+   */
+
+const i: int := 123_456
+const i: int := _123_456 // Error
+const i: int := 123_456_ // Error
+const i: int := 123abc // Error
+const h: int := 0x0123456789_abcdef_ABCDEF
+const h: int := 0x0123456789_abcdef_ABCDEF_ // Error
+const b: int := 0b0101_0101_010
+const b: int := 0b0101_0101_010_ // Error
+const b: int := 0bZ0101  // Error
+const b: int := 0b010145  // Tail is not bin
+const h: int := 0xabcXYZa // Tail is not hex
+const h: int := 0xZ4545 // Error
+const b: int := 0b
+const h: int := 0x
+
+const c: char := 'z'
+const c: char := '"'
+const c: char := '\0'
+const c: char := '\\'
+const c: char := ' '
+const c: char := '\Z' // Error
+const c: char := 'a\' // Error
+const c: char := 'a  // Error
+const c: char := 'a  // Error
+const c: char := '\z  // Error
+const c: char := ''  // Error - and the next line, which ends with a '
+const c: char := '
+
+const s: string := "asd\"\'\\\n\r\t"
+const s: string := "Z\u1234Z"
+const s: string := ""
+const s: string := "asd\"\'\\\n\r\txyz   // Error -- next line also
+const s: string := "
+const s: string := "\z"            // Error -- bad escape -- next 2 lines also
+const s: string := "\t
+const s: string := "\z
+
+const ss: string := @"asd '	"
+const ss: string := @"asd '"" xyz
+                     XYZ	"
+
+// Operators
++ - * / % ! << >> ==> <== <==> & | ^ && || != == := :- 
+< > <= >= . .. =
+
+// Punctuation
+( ) [ ] { } , ; `
+
+5..6
+5 as nat
+7 is nat
+
+// Errors?
+# @ ~ __
+
+// Identifiers
+abc def_ ghi? klm'pqr
+ A9090  _
+setxxx set000 ifxxx asxx isxx truexxx true000
+set_ if_ as_ is_ int_ true_
+set' if' as' is' int' true'
+
+// Types
+bool char int real string object object?
+seq set map iset imap multiset
+array array2 array10 array? array2? array10?
+bv0 bv1 bv10 bv9
+
+// Ids
+array1 array1? arrayxx array?xx array2xx array2?xxx
+
+// Constants
+false true null
+
+// Text Operators
+as is in !in
+
+// Keywords
+abstract assert assume
+break calc case class codatatype constructor
+datatype decreases default
+else ensures exists expect extends
+forall fresh function
+ghost greatest if import include
+inductive invariant
+iterator label least lemma match method
+modifies modify module
+new newtype old opened
+predicate print provides reads
+refines requires return returns reveals
+static
+then this trait twostate type
+unchanged var where while yield yields
+
+// At end of file
+const ss: string := @"unclosed verbatim string
+                      more
+   

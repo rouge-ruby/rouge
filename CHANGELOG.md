@@ -4,6 +4,46 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.27.0: 2021-12-15
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.26.1...v3.27.0)
+
+- Ceylon Lexer
+  - Backtracking fix in interpolation regex ([#1773](https://github.com/rouge-ruby/rouge/pull/1773) by thewoolleyman)
+- Dafny Lexer
+  - Add Dafny Lexer ([#1647](https://github.com/rouge-ruby/rouge/pull/1647/) by davidcok, mschlaipfer)
+- Elixir Lexer
+  - Add support for HEEX templates ([#1736](https://github.com/rouge-ruby/rouge/pull/1736) by sineed
+- Rust Lexer
+  - Fix lexing of integers, escapes, identifiers, unicode idents, keywords and builtins, byte strings and multiline and doc comments ([#1711](https://github.com/rouge-ruby/rouge/pull/1711/commits) by thomcc)
+- SQL Lexer
+  - Curly brace support ([#1714](https://github.com/rouge-ruby/rouge/pull/1714) by hawkfish)
+  - Add more SQL dialects in visual samples ([#1751](https://github.com/rouge-ruby/rouge/pull/1751) by tancnle)
+  - Windowing keywords support ([#1754](https://github.com/rouge-ruby/rouge/pull/1754) by hawkfish)
+- Swift Lexer
+  - Add 5.5 keywords ([#1715](https://github.com/rouge-ruby/rouge/pull/1715) by johnfairh))
+- Rouge CI
+  - Migrate from Travis CI to GitHub ([#1728](https://github.com/rouge-ruby/rouge/pull/1728) by Geod24)
+- Documentation
+  - Full list of supported languages ([#1739](https://github.com/rouge-ruby/rouge/pull/1739) by gdubicki)
+  - Various fixes and improvements ([#1741](https://github.com/rouge-ruby/rouge/pull/1741), [#1745](https://github.com/rouge-ruby/rouge/pull/1745), [#1747](https://github.com/rouge-ruby/rouge/pull/1747),
+    [#1748](https://github.com/rouge-ruby/rouge/pull/1748), [#1749](https://github.com/rouge-ruby/rouge/pull/1749), [#1756](https://github.com/rouge-ruby/rouge/pull/1756) by tancnle)
+
+## version 3.26.1: 2021-09-17
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.26.0...v3.26.1)
+
+- CPP Lexer
+  - Add year and date chrono literals, add std::complex literals, fix chrono literals with digit separator ([#1665](https://github.com/rouge-ruby/rouge/pull/1665/) by swheaton)
+- Factor and GHC Core Lexer
+  - Fix catastrophic backtrack ([#1690](https://github.com/rouge-ruby/rouge/pull/1690) by Ravlen)
+- JSL Lexer
+  - Fix single line block comments, scoped variables and functions ([#1663](https://github.com/rouge-ruby/rouge/pull/1663) by BenPH)
+- YAML Lexer
+  - Fix YAML key containing special character ([#1667](https://github.com/rouge-ruby/rouge/pull/1667) by tancnle)
+- Fix Ruby 2.7 keyword parameter deprecation warning ([#1597](https://github.com/rouge-ruby/rouge/pull/1597) by stanhu)
+- Updated README ([#1666](https://github.com/rouge-ruby/rouge/pull/1666) by dchacke)
+
 ## version 3.26.0: 2020-12-09
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.25.0...v3.26.0)

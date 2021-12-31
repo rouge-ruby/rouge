@@ -22,10 +22,10 @@ module Rouge
 
       def self.keywords
         @keywords ||= %w(
-          as assert async await break const continue copy do drop else enum extern
-          fail false fn for if impl let log loop match mod move mut priv pub pure
-          ref return self static struct true trait type unsafe use where
-          while box
+          as assert async await break crate const continue copy do drop dyn else enum extern
+          fail false fn for if impl let log loop macro match mod move mut priv pub pure
+          ref return self Self static struct super true try trait type union unsafe use
+          where while yield box
         )
       end
 
@@ -40,6 +40,9 @@ module Rouge
           Right Send Shl Shr size_t Some ssize_t str Sub Success time_t
           u16 u32 u64 u8 usize uint uintptr_t
           Box Vec String Gc Rc Arc
+          u128 i128 Result Sync Pin Unpin Sized Drop drop Fn FnMut FnOnce
+          Clone PartialEq PartialOrd AsMut AsRef From Into Default
+          DoubleEndedIterator ExactSizeIterator Extend IntoIterator Iterator
         )
       end
 
@@ -54,12 +57,12 @@ module Rouge
 
       delim_map = { '[' => ']', '(' => ')', '{' => '}' }
 
-      id = /[a-z_]\w*/i
+      id = /[\p{XID_Start}_]\p{XID_Continue}*/
       hex = /[0-9a-f]/i
       escapes = %r(
-        \\ ([nrt'"\\0] | x#{hex}{2} | u#{hex}{4} | U#{hex}{8})
+        \\ ([nrt'"\\0] | x#{hex}{2} | u\{(#{hex}_*){1,6}\})
       )x
-      size = /8|16|32|64/
+      size = /8|16|32|64|128|size/
 
       # Although not officially part of Rust, the rustdoc tool allows code in
       # comments to begin with `#`. Code like this will be evaluated but not
@@ -82,8 +85,62 @@ module Rouge
 
       state :whitespace do
         rule %r/\s+/, Text
-        rule %r(//[^\n]*), Comment
-        rule %r(/[*].*?[*]/)m, Comment::Multiline
+        mixin :comments
+      end
+
+      state :comments do
+        # Only 3 slashes are doc comments, `////` and beyond become normal
+        # comments again (for some reason), so match this before the
+        # doc line comments rather than figure out a
+        rule %r(////+[^\n]*), Comment::Single
+        # doc line comments — either inner (`//!`), or outer (`///`).
+        rule %r(//[/!][^\n]*), Comment::Doc
+        # otherwise, `//` is just a plain line comme
+        rule %r(//[^\n]*), Comment::Single
+        # /**/ and /***/ are self-closing block comments, not doc. Because this
+        # is self-closing, it doesn't enter the states for nested comments
+        rule %r(/\*\*\*?/), Comment::Multiline
+        # 3+ stars and it's a normal non-doc block comment.
+        rule %r(/\*\*\*+), Comment::Multiline, :nested_plain_block
+        # `/*!` and `/**` begin doc comments. These nest and can have internal
+        # block/doc comments, but they're still part of the documentation
+        # inside.
+        rule %r(/[*][*!]), Comment::Doc, :nested_doc_block
+        # any other /* is a plain multiline comment
+        rule %r(/[*]), Comment::Multiline, :nested_plain_block
+      end
+
+      # Multiline/block comments fully nest. This is true for ones that are
+      # marked as documentation too. The behavior here is:
+      #
+      # - Anything inside a block doc comment is still included in the
+      #   documentation, even if it's a nested non-doc block comment. For
+      #   example: `/** /* still docs */ */`
+      # - Anything inside of a block non-doc comment is still just a normal
+      #   comment, even if it's a nested block documentation comment. For
+      #   example: `/* /** not docs */ */`
+      #
+      # This basically means: if (on the outermost level) the comment starts as
+      # one kind of block comment (either doc/non-doc), then everything inside
+      # of it, including nested block comments of the opposite type, needs to
+      # stay that type.
+      #
+      # Also note that single line comments do nothing anywhere inside of block
+      # comments, thankfully.
+      #
+      # We just define this as two states, because this seems easier than
+      # tracking it with instance vars.
+      [
+        [:nested_plain_block, Comment::Multiline],
+        [:nested_doc_block, Comment::Doc]
+      ].each do |state_name, comment_token|
+        state state_name do
+          rule %r(\*/), comment_token, :pop!
+          rule %r(/\*), comment_token, state_name
+          # We only want to eat at most one `[*/]` at a time,
+          # but we can skip past non-`[*/]` in bulk.
+          rule %r([^*/]+|[*/]), comment_token
+        end
       end
 
       state :root do
@@ -110,6 +167,7 @@ module Rouge
         rule %r/\bmacro_rules!/, Name::Decorator, :macro_rules
         rule %r/#{id}!/, Name::Decorator, :macro
 
+        rule %r/'static\b/, Keyword
         rule %r/'#{id}/, Name::Variable
         rule %r/#{id}/ do |m|
           name = m[0]
@@ -155,32 +213,33 @@ module Rouge
       state :has_literals do
         # constants
         rule %r/\b(?:true|false|nil)\b/, Keyword::Constant
-        # characters
+        # characters/bytes
         rule %r(
-          ' (?: #{escapes} | [^\\] ) '
+          b?' (?: #{escapes} | [^\\] ) '
         )x, Str::Char
 
-        rule %r/"/, Str, :string
-        rule %r/r(#*)".*?"\1/m, Str
+        rule %r/b?"/, Str, :string
+        rule %r/b?r(#*)".*?"\1/m, Str
 
         # numbers
-        dot = /[.][0-9_]+/
-        exp = /e[-+]?[0-9_]+/
+        dot = /[.][0-9][0-9_]*/
+        exp = /[eE][-+]?[0-9_]+/
         flt = /f32|f64/
 
         rule %r(
-          [0-9_]+
+          [0-9][0-9_]*
           (#{dot}  #{exp}? #{flt}?
           |#{dot}? #{exp}  #{flt}?
           |#{dot}? #{exp}? #{flt}
+          |[.](?![._\p{XID_Start}])
           )
         )x, Num::Float
 
         rule %r(
           ( 0b[10_]+
           | 0x[0-9a-fA-F_]+
-          | 0o[0-7]+
-          | [0-9_]+
+          | 0o[0-7_]+
+          | [0-9][0-9_]*
           ) (u#{size}?|i#{size})?
         )x, Num::Integer
 

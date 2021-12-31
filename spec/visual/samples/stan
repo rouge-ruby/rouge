@@ -44,6 +44,8 @@ functions {
      */
     return append_row(y_res[1] + rep_vector(delta, n), y_res[2]) - y;
   }
+
+  #include addl_functions.stanfunctions
 }
 
 data {

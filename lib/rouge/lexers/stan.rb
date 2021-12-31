@@ -7,14 +7,43 @@ module Rouge
       title "Stan"
       desc 'Stan Modeling Language (mc-stan.org)'
       tag 'stan'
-      aliases 'stan'
       filenames '*.stan', '*.stanfunctions'
-      mimetypes nil
 
       # optional comment or whitespace
       WS = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       ID = /[a-zA-Z_][a-zA-Z0-9_]*/
       RT = /(?:(?:[a-z_]\s*(?:\[[0-9, ]\])?)\s+)*/
+      OP = Regexp.new([
+        # Assigment operators
+        "=",
+
+        # Comparison operators
+        "<", "<=", ">", ">=", "==", "!=",
+
+        # Boolean operators
+        "!", "&&", "\\|\\|",
+
+        # Real-valued arithmetic operators
+        "\\+", "-", "\\*", "/", "\\^",
+
+        # Transposition operator
+        "'",
+
+        # Elementwise functions
+        "\\.\\+", "\\.-", "\\.\\*", "\\./", "\\.\\^",
+
+        # Matrix division operators
+        "\\\\",
+
+        # Compound assigment operators
+        "\\+=", "-=", "\\*=", "/=", "\\.\\*=", "\\./=",
+
+        # Sampling
+        "~",
+
+        # Conditional operator
+        "\\?", ":"
+      ].join("|"))
 
       def self.keywords
         @keywords ||= Set.new %w(
@@ -31,7 +60,7 @@ module Rouge
       end
 
       def self.reserved
-        @reserved =  Set.new [
+        @reserved ||= Set.new [
           # Reserved words from Stan language
           "for", "in", "while", "repeat", "until", "if", "then", "else", "true",
           "false", "target", "functions", "model", "data", "parameters",
@@ -312,49 +341,6 @@ module Rouge
         ]
       end
 
-      # NOTE: These characters must be escaped before being passed into the
-      # regex.
-      OPERATORS = [
-        # Assigment operators
-        "=",
-
-        # Comparison operators
-        "<", "<=", ">", ">=", "==", "!=",
-
-        # Boolean operators
-        "!", "&&", "\\|\\|",
-
-        # Real-valued arithmetic operators
-        "\\+", "-", "\\*", "/", "\\^",
-
-        # Transposition operator
-        "'",
-
-        # Elementwise functions
-        "\\.\\+", "\\.-", "\\.\\*", "\\./", "\\.\\^",
-
-        # Matrix division operators
-        "\\\\",
-
-        # Compound assigment operators
-        "\\+=", "-=", "\\*=", "/=", "\\.\\*=", "\\./=",
-
-        # Sampling
-        "~",
-
-        # Conditional operator
-        "\\?", ":"
-      ]
-
-      # Start by looking for the single legal include directive
-      start { push :include }
-
-      state :include do
-        mixin :inline_whitespace
-        rule %r(#include .*$), Comment::Preproc, :root
-        rule(//) { pop! }
-      end
-
       state :root do
         mixin :whitespace
         rule %r(
@@ -371,6 +357,12 @@ module Rouge
       state :whitespace do
         rule %r(\n+)m, Text
         rule %r(//(\\.|.)*?$), Comment::Single
+        rule %r((#{WS})?(#include)(#{WS})(\S+)) do |m|
+          token Text, m[1]
+          token Comment::Preproc, m[2]
+          token Text, m[3]
+          token Comment::PreprocFile, m[4]
+        end
         rule %r(#(\\.|.)*?$), Comment::Single
         mixin :inline_whitespace
       end
@@ -394,7 +386,7 @@ module Rouge
         )mx, Num::Float
         rule %r/\d+/, Num::Integer
         rule %r(\*/), Error
-        rule %r(#{OPERATORS.join("|")}), Operator
+        rule OP, Operator
         rule %r([\[\],.;]), Punctuation
         rule %r([|](?![|])), Punctuation
         rule %r(T\b), Keyword::Reserved

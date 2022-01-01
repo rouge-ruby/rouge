@@ -116,12 +116,14 @@ module Rouge
         rule class_name, Name::Class
         rule %r'(<)', Punctuation, :generic_parameters
         rule %r'(reified|out|in)', Keyword
-        rule %r'([,:])', Punctuation
+        rule %r'([,:.?])', Punctuation
         rule %r'(\s+)', Text
         rule %r'(>)', Punctuation, :pop!
       end
 
       state :property do
+        rule %r'(<)', Punctuation, :generic_parameters
+        rule %r'(\s+)', Text
         rule name, Name::Property, :pop!
       end
 

@@ -192,4 +192,14 @@ val hexes = listOf(0xFF, 0Xa, 0x10L, 0X0UL)
 val exponents = listOf(1e10, -1E10F, 1.5e10, 1e-10)
 val doublesAndFloats = listOf(3.14, .99, 22f, 1_000.000_1, 19.95F)
 
+// The ? is not an error #1760
+fun <T : Any> foo(a: Array<T?>): Int = a.size
+
+// The < is not an error #1760
+val <T> T.exhaustive get() = this
+
+// The . in Map.Entry is not an error #1760
+fun foo(props: Iterable<Map.Entry<String, JsonNode>>) =
+    TODO()
+
 // comment at EOF (#797)

@@ -11,14 +11,15 @@ module Rouge
       filenames '*.toml', 'Pipfile'
       mimetypes 'text/x-toml'
 
-      identifier = /\S+/
+      # bare keys and quoted keys
+      identifier = %r/(?:\S+|"[^"]+"|'[^']+')/
 
       state :basic do
         rule %r/\s+/, Text
         rule %r/#.*?$/, Comment
         rule %r/(true|false)/, Keyword::Constant
 
-        rule %r/(\S+)(\s*)(=)(\s*)(\{)/ do |m|
+        rule %r/(#{identifier})(\s*)(=)(\s*)(\{)/ do
           groups Name::Namespace, Text, Operator, Text, Punctuation
           push :inline
         end
@@ -48,6 +49,11 @@ module Rouge
 
       state :content do
         mixin :basic
+
+        rule %r/(#{identifier})(\s*)(=)/ do
+          groups Name::Property, Text, Punctuation
+        end
+
         rule %r/"""/, Str, :mdq
         rule %r/"/, Str, :dq
         rule %r/'''/, Str, :msq
@@ -94,10 +100,6 @@ module Rouge
 
       state :inline do
         mixin :content
-
-        rule %r/(#{identifier})(\s*)(=)/ do
-          groups Name::Property, Text, Punctuation
-        end
 
         rule %r/\}/, Punctuation, :pop!
       end

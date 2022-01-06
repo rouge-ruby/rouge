@@ -102,5 +102,19 @@ test_string = "You'll hate me after this - #"          # " Annoying, isn't it?
 
 東京都 = 123
 
+# Inline table
 name = { first = "Tom", last = "Preston-Werner" }
 point = { x = 1, y = 2 }
+'student names' = { "first name" = "Tom", "last name" = "Preston-Werner" }
+
+# Quoted keys
+"127.0.0.1" = "value"
+"character encoding" = "value"
+"ʎǝʞ" = "value"
+'key2' = "value"
+'quoted "value"' = "value"
+
+# Dotted keys
+physical.color = "orange"
+physical.shape = "round"
+site."google.com" = true

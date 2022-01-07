@@ -343,7 +343,8 @@ module Rouge
 
       state :root do
         mixin :whitespace
-        rule %r/#/, Comment::Preproc, :include
+        rule %r/#include/, Comment::Preproc, :include
+        rule %r/#.*$/, Generic::Deleted
         rule %r(
           functions
           |(?:transformed\s+)?data
@@ -356,11 +357,10 @@ module Rouge
       end
 
       state :include do
-        rule %r((include)(\s+)(\S+)(\s*)) do |m|
-          token Comment::Preproc, m[1]               
-          token Text, m[2]                          
-          token Comment::PreprocFile, m[3]           
-          token Text, m[4]
+        rule %r((\s+)(\S+)(\s*)) do |m|
+          token Text, m[1]                          
+          token Comment::PreprocFile, m[2]           
+          token Text, m[3]
           pop!
         end
       end
@@ -378,7 +378,8 @@ module Rouge
 
       state :statements do
         mixin :whitespace
-        rule %r/#/, Comment::Preproc, :include
+        rule %r/#include/, Comment::Preproc, :include
+        rule %r/#.*$/, Generic::Deleted
         rule %r("), Str, :string
         rule %r(
           (

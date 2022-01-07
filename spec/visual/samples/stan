@@ -1,5 +1,7 @@
 #include lib.stan
 
+# This is a deprecated way to write a comment!
+
 functions {
   /** Solution to drug concentration ODE given inital concentration, time elapsed,
    * and diffusion parameters.

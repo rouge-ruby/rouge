@@ -180,6 +180,7 @@
 - SQF (`sqf`)
 - SQL (`sql`)
 - SSH Config File (`ssh`)
+- Stan (`stan`)
 - SuperCollider (`supercollider`)
 - Swift (`swift`)
 - Systemd (`systemd`)

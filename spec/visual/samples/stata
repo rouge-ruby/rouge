@@ -71,7 +71,9 @@ if (`x'==3) {
 else if (`x'==4) {
     display "bar"
 }
-else display "foobar"
+else {
+    display "foobar"
+}
 
 foreach i in "foo" "bar" {
     di "`i'"

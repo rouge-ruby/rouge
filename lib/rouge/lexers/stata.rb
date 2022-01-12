@@ -112,7 +112,7 @@ module Rouge
         rule(/[ \t]+/, Text::Whitespace)
         rule(/[\n\r]+/, Text)
 
-        # in-line comment: //
+        # In-line comment: //
         rule %r/\/\/.*?$/, Comment::Single
 
         # Multi-line comment: /* and */
@@ -136,7 +136,7 @@ module Rouge
         # `Name::Builtin` would be more logical, but is not usually highlighted, so use `Name::Function` instead
         rule %r/\b(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 
-        # Matrix operator `..` (avoid interference with numbers)
+        # Matrix operator `..` (declare here instead of with other operators, in order to avoid conflict with numbers below)
         rule %r/\.\.(?=.*\])/, Operator
 
         # Numbers

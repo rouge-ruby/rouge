@@ -103,7 +103,7 @@ module Rouge
       end
 
       def line_regex
-        /(\\.|[^\\])*?(\n|$)/m
+        /(.*?)(\n|$)/
       end
 
       def output_lexer

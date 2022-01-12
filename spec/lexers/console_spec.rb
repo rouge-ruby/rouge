@@ -22,6 +22,17 @@ describe Rouge::Lexers::ConsoleLexer do
       ['Text', 'foo']
   end
 
+  it 'does not crash if argument ends with backslash' do
+    assert_tokens_equal '$ cd application\\bin\\',
+      ['Generic.Prompt', '$'],
+      ['Text.Whitespace', ' '],
+      ['Name.Builtin', 'cd '],
+      ['Text', 'application'],
+      ['Literal.String.Escape', '\\b'],
+      ['Keyword', 'in'],
+      ['Literal.String.Escape', '\\']
+  end
+
   it 'parses a custom error' do
     subject_with_options = klass.new({ error: 'No command,Unhandled' })
     assert_tokens_equal 'No command \'foo\' found, did you mean:', subject_with_options,

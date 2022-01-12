@@ -181,6 +181,7 @@
 - SQL (`sql`)
 - SSH Config File (`ssh`)
 - Stan (`stan`)
+- Stata (`stata`)
 - SuperCollider (`supercollider`)
 - Swift (`swift`)
 - Systemd (`systemd`)

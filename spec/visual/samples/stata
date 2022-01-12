@@ -1,0 +1,170 @@
+*! Example Stata script showing syntax highlighting
+
+* This is a single-line comment
+ * This is a single-line comment
+// This is also a single-line comment
+
+gen foo = 3*3 // This is an in-line comment
+
+/*
+This is a multi-line 
+comment
+*/
+
+* Preprocessor command
+#delimit ;
+
+* Valid names
+gen foo = 3
+gen foo1 = 3
+gen _myvar = 3
+
+* Invalid names
+gen 0foo = 3
+gen ^foo = 3
+gen foo% = 3
+
+* Numbers and formats
+di 12345678901
+di 123456.78901
+di 123e3
+di 123E3
+di 1.23e-3
+di 1.23e3
+di %5.3fc 32.32146
+format foo %12.3gc
+
+* Functions
+gen foo = cos(bar)
+gen foo = tan(bar)
+gen foo = runiform()
+gen foo = e(sample)
+
+* Types and macros
+gen byte foo = 4
+gen int foo = 3
+gen long foo = 3
+gen float bar = 3.2
+gen double bar = 3.2
+gen str foo = "bar"
+gen str132 foo = "bar"
+gen str2045 foo = "bar"
+gen strL foo = "bar"
+confirm numeric 3
+confirm string "foo"
+confirm integer number 3
+scalar foo = 3
+matrix foo = 3
+local foo = 3
+global foo = 3
+gen bar1 = `foo'
+gen bar2 = $foo
+
+* Invalid types
+gen str0 foo = "bar"
+gen str2046 foo = "bar"
+
+* Control structures
+if (`x'==3) {
+    display "foo"
+}
+else if (`x'==4) {
+    display "bar"
+}
+else {
+    display "foobar"
+}
+
+foreach i in "foo" "bar" {
+    di "`i'"
+}
+
+forval i = 1/5 {
+    di `i'
+}
+
+forval i = 1 5 to 10 {
+    di `i'
+}
+
+local i = 1
+while (`i' < 5) {
+    local i = `i'+1
+    if (`i'<3) continue
+    if (`i' > 3) break
+}
+
+foreach v of varlist mpg weight-turn {
+    di "`v'"
+}
+foreach v of newlist newvar1 newvar2 {
+    di "`v'"
+}
+foreach v of numlist 1/5 12 {
+    di `v'
+}
+
+* Programs
+program define myprog
+    di "`0'"
+end
+
+* Indexing
+matrix input foo = (1,2,3,4\5,6,7,8\9,10,11,12)
+matrix bar  = foo[1..., 2..4]/2
+matrix symmetric = (2,1\1,2)
+matrix foobar = cholesky(0.1*I(rowsof(symmetric)) + 0.9*symmetric)
+
+* Operators
+di 2 - 2
+di 2 + 2
+di 2 * 2
+di 2 / 2
+di 2^2
+
+di 1 & 0
+di 1 | 0
+di !1
+di ~1
+
+di 2 < 2
+di 2 > 2
+di 2 >= 2
+di 2 <= 2
+di 2 == 2
+di 2 != 2
+di 2 ~= 2
+di 2 + 2 == 4
+di 1 + (2 + 3)
+
+reg y i.foo#c.bar
+reg foo io(2 3 4).bar
+gen foo = L3.bar
+gen foo = L(1/3).bar
+
+* Strings
+gen foo = "hello, world!"
+gen foo = `"hello, world!"'
+gen foo = `"hello," world!"'
+gen foo = "`mylocal'"
+gen foo = `"`mylocal'"'
+
+* Estimation and data manipulation commands
+sysuse auto, clear
+foreach v of varlist * {
+	cap confirm numeric var `v'
+	if _rc continue
+	
+	gen imp_`v' = mi(`v')
+	label var imp_`v' "Imputed value for `v'"
+	summ `v', detail
+	replace `v' = r(p50) if mi(`v')
+}
+compress
+
+foreach rhs in "mpg" "mpg weight" {
+	reg price `rhs' if foreign=="Domestic":origin, robust
+	reg price `rhs' if foreign=="Foreign":origin, robust
+}
+
+** EOF

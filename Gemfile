@@ -39,6 +39,6 @@ group :development do
   end
 
   # Ruby 3 no longer ships with a web server
-  gem 'puma' if RUBY_VERSION.to_i >= 3
+  gem 'puma' if RUBY_VERSION >= '3'
   gem 'shotgun'
 end

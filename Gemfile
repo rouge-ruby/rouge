@@ -37,5 +37,8 @@ group :development do
   else
     gem 'sinatra'
   end
+
+  # Ruby 3 no longer ships with a web server
+  gem 'puma' if RUBY_VERSION >= '3'
   gem 'shotgun'
 end

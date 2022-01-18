@@ -87,7 +87,7 @@ module Rouge
         rule %r/\b(?:#{Idris.reserved_keywords.join('|')})\b/, Keyword::Reserved
         rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword::Constant
         # function signature
-        rule %r/^([\w']+)\s*(:)/, Name::Function
+        rule %r/^[\w']+\s*:/, Name::Function
         # should be below as you can override names defined in Prelude
         mixin :prelude
         rule %r/[_a-z][\w']*/, Name

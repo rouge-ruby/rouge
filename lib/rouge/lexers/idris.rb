@@ -12,31 +12,36 @@ module Rouge
       filenames '*.idr'
       mimetypes 'text/x-idris'
 
-      reserved = %w(
-        _
-        data class instance namespace
-        infix[lr]? let where of with type 
-        do if then else case in
-      )
+      def self.reserved_keywords
+        @reserved_keywords ||= %w(
+          _ data class instance namespace
+          infix[lr]? let where of with type
+          do if then else case in
+        )
+      end
 
-      ascii = %w(
-        NUL SOH [SE]TX EOT ENQ ACK BEL BS HT LF VT FF CR S[OI] DLE
-        DC[1-4] NAK SYN ETB CAN EM SUB ESC [FGRU]S SP DEL [abfnrtv\\\"'\&]
-      )
+      def self.ascii
+        @ascii ||= %w(
+          NUL SOH [SE]TX EOT ENQ ACK BEL BS HT LF VT FF CR S[OI] DLE
+          DC[1-4] NAK SYN ETB CAN EM SUB ESC [FGRU]S SP DEL
+        )
+      end
 
-      prelude_function = %w(
-        abs acos all and any asin atan atan2 break ceiling compare concat
-        concatMap const cos cosh curry cycle div drop dropWhile elem
-        encodeFloat enumFrom enumFromThen enumFromThenTo enumFromTo exp
-        fail filter flip floor foldl foldl1 foldr foldr1 fromInteger fst
-        gcd getChar getLine head id init iterate last lcm length lines log
-        lookup map max maxBound maximum maybe min minBound minimum mod
-        negate not null or pi pred print product putChar putStr putStrLn
-        readFile recip repeat replicate return reverse scanl scanl1 sequence
-        sequence_ show sin sinh snd span splitAt sqrt succ sum tail take
-        takeWhile tan tanh uncurry unlines unwords unzip unzip3 words
-        writeFile zip zip3 zipWith zipWith3
-      )
+      def self.prelude_functions
+        @prelude_functions ||= %w(
+          abs acos all and any asin atan atan2 break ceiling compare concat
+          concatMap const cos cosh curry cycle div drop dropWhile elem
+          encodeFloat enumFrom enumFromThen enumFromThenTo enumFromTo exp
+          fail filter flip floor foldl foldl1 foldr foldr1 fromInteger fst
+          gcd getChar getLine head id init iterate last lcm length lines log
+          lookup map max maxBound maximum maybe min minBound minimum mod
+          negate not null or pi pred print product putChar putStr putStrLn
+          readFile recip repeat replicate return reverse scanl scanl1 sequence
+          sequence_ show sin sinh snd span splitAt sqrt succ sum tail take
+          takeWhile tan tanh uncurry unlines unwords unzip unzip3 words
+          writeFile zip zip3 zipWith zipWith3
+        )
+      end
 
       state :basic do
         rule %r/\s+/m, Text
@@ -70,7 +75,7 @@ module Rouge
       state :prelude do
         rule %r/\b(Type|Exists|World|IO|IntTy|FTy|File|Mode|Dec|Bool|Ordering|Either|IsJust|List|Maybe|Nat|Stream|StrM|Not|Lazy|Inf)\s/, Keyword::Type
         rule %r/\b(Eq|Ord|Num|MinBound|MaxBound|Integral|Applicative|Alternative|Cast|Foldable|Functor|Monad|Traversable|Uninhabited|Semigroup|Monoid)\s/, Name::Class
-        rule %r/\b(?:#{prelude_function.join('|')})[ ]+(?![=:-])/, Name::Builtin
+        rule %r/\b(?:#{Idris.prelude_functions.join('|')})[ ]+(?![=:-])/, Name::Builtin
       end
 
       state :root do
@@ -79,7 +84,7 @@ module Rouge
 
         rule %r/\bimport\b/, Keyword::Reserved, :import
         rule %r/\bmodule\b/, Keyword::Reserved, :module
-        rule %r/\b(?:#{reserved.join('|')})\b/, Keyword::Reserved
+        rule %r/\b(?:#{Idris.reserved_keywords.join('|')})\b/, Keyword::Reserved
         rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword::Constant
         # function signature
         rule %r/^([\w']+)\s*(:)/, Name::Function
@@ -195,7 +200,7 @@ module Rouge
       state :escape do
         rule %r/[abfnrtv"'&\\]/, Str::Escape, :pop!
         rule %r/\^[\]\[A-Z@\^_]/, Str::Escape, :pop!
-        rule %r/#{ascii.join('|')}/, Str::Escape, :pop!
+        rule %r/#{Idris.ascii.join('|')}/, Str::Escape, :pop!
         rule %r/o[0-7]+/i, Str::Escape, :pop!
         rule %r/x[\da-f]+/i, Str::Escape, :pop!
         rule %r/\d+/, Str::Escape, :pop!

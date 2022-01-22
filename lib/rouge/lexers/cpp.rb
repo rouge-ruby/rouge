@@ -22,12 +22,14 @@ module Rouge
 
       def self.keywords
         @keywords ||= super + Set.new(%w(
-          asm auto catch const_cast delete dynamic_cast explicit export friend
+          asm auto catch char8_t concept
+          consteval constexpr constinit const_cast co_await co_return co_yield
+          delete dynamic_cast explicit export friend
           mutable namespace new operator private protected public
-          reinterpret_cast restrict size_of static_cast this throw throws
+          reinterpret_cast requires restrict size_of static_cast this throw throws
           typeid typename using virtual final override
 
-          alignas alignof constexpr decltype noexcept static_assert
+          alignas alignof decltype noexcept static_assert
           thread_local try
         ))
       end
@@ -68,7 +70,7 @@ module Rouge
         rule %r/#{dq}[lu]*/i, Num::Integer
         rule %r/\bnullptr\b/, Name::Builtin
         rule %r/(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
-        rule %r/::/, Operator
+        rule %r/(::|<=>)/, Operator
       end
 
       state :classname do

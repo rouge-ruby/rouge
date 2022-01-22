@@ -31,7 +31,6 @@ describe Rouge::Lexers::Cypher do
           assert_tokens_includes "RETURN /* drum\nrolls */ 42",
                                  ["Comment.Multiline", "/* drum\nrolls */"],
                                  ["Literal.Number.Integer", "42"]
-
         end
       end
     end

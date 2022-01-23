@@ -43,5 +43,16 @@ module Support
       actual = lexer.lex(text).map { |token, value| [ token.qualname, value ] }
       assert { expected == actual }
     end
+
+    def assert_tokens_includes(text, *expected)
+      if expected.first.is_a? Rouge::Lexer
+        lexer = expected.shift
+      else
+        lexer = subject
+      end
+
+      actual = lexer.lex(text).map { |token, value| [ token.qualname, value ] }
+      expected.all? { |e| assert_includes actual, e  }
+    end
   end
 end

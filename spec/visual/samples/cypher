@@ -100,3 +100,5 @@ MATCH (p:Person)-[rel]->(:Movie {title:'The Matrix'})
 RETURN p.name, type(rel)
 
 RETURN sign(-17), sign(0.1), sign(0xABCDEF), sign(000)
+
+RETURN point({longitude: 2.2105491 /* x */, latitude: 48.9250016 /* y */, srid: 4326}) AS home

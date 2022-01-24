@@ -294,7 +294,8 @@ Rouge uses [Semantic Versioning 2.0.0][sv2].
 
 Rouge is largely the result of the hard work of unpaid volunteers. It was
 originally developed by Jeanine Adkisson (@jneen) and is currently maintained by
-Jeanine Adkisson, Drew Blessing (@dblessing) and Goro Fuji (@gfx).
+Jeanine Adkisson, Drew Blessing (@dblessing), Goro Fuji (@gfx) and Tan Le
+(@tancnle).
 
 ## License
 

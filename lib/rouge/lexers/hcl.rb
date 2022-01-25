@@ -5,6 +5,7 @@ module Rouge
   module Lexers
     class Hcl < RegexLexer
       tag 'hcl'
+      filenames '*.hcl', '*.nomad'
 
       title 'Hashicorp Configuration Language'
       desc 'Hashicorp Configuration Language, used by Terraform and other Hashicorp tools'

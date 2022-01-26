@@ -57,7 +57,7 @@ module Rouge
           push :interpol
           push :expr_start
         end
-        rule %r/\w+/, Name::Attribute
+        rule %r/\w[\w-]*/, Name::Attribute
         rule %r/=/, Punctuation
         rule %r/(["']).*?(\1)/, Str
       end

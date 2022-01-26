@@ -15,5 +15,20 @@ describe Rouge::Lexers::JSX do
       assert_guess :mimetype => 'application/x-jsx'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'parse attribute with dashes' do
+      assert_tokens_equal '<button aria-label="hello"/>',
+        ['Punctuation', '<'],
+        ['Name.Tag', 'button'],
+        ['Text', ' '],
+        ['Name.Attribute', 'aria-label'],
+        ['Punctuation', '='],
+        ['Literal.String', '"hello"'],
+        ['Punctuation', '/>']
+    end
+  end
 end
 

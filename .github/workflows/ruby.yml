@@ -8,6 +8,13 @@ on:
     branches: [ master ]
 
 jobs:
+  linelint:
+    name: Linelint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: fernandrone/linelint@master
+
   test:
     runs-on: ubuntu-latest
     strategy:

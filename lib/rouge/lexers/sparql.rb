@@ -42,7 +42,7 @@ module Rouge
         rule %r('), Str::Single, :string_single
 
         rule %r([$?][[:word:]]+), Name::Variable
-        rule %r((([[:word:]]|[_-])*)(:)(([[:word:]]|[_-])+)?) do |m|
+        rule %r(([[:word:]-]*)(:)([[:word:]-]+)?) do |m|
           token Name::Namespace, m[1]
           token Operator, m[3]
           token Str::Symbol, m[4]

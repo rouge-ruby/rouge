@@ -44,8 +44,8 @@ module Rouge
         rule %r([$?][[:word:]]+), Name::Variable
         rule %r(([[:word:]-]*)(:)([[:word:]-]+)?) do |m|
           token Name::Namespace, m[1]
-          token Operator, m[3]
-          token Str::Symbol, m[4]
+          token Operator, m[2]
+          token Str::Symbol, m[3]
         end
         rule %r(<[^>]*>), Name::Namespace
         rule %r(true|false)i, Keyword::Constant

@@ -4,6 +4,40 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.28.0: 2022-01-26
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.27.0...v3.28.0)
+
+- C Lexer
+  - Fix highlight of #include statement ([#1770](https://github.com/rouge-ruby/rouge/pull/1770) by cdown)
+- Console Lexer
+  - Fix issue with console line ends with backlash ([#1779](https://github.com/rouge-ruby/rouge/pull/1779) by mojavelinux)
+- CPP Lexer
+  - Add keywords and operators introduced in C++20 ([#1784](https://github.com/rouge-ruby/rouge/pull/1784) by tchaikov)
+- Cypher Lexer
+  - Support multi-line comments ([#1710](https://github.com/rouge-ruby/rouge/pull/1710) by Mogztter)
+- Dart Lexer
+  - Add new keywords and types ([#1691](https://github.com/rouge-ruby/rouge/pull/1691) by parlough)
+- Fluent Lexer (**NEW**)
+  - Add Fluent lexer ([#1697](https://github.com/rouge-ruby/rouge/pull/1697) by rkh)
+- HCL Lexer
+  - Add new file extensions ([#1769](https://github.com/rouge-ruby/rouge/pull/1769) by maximd)
+- JSX Lexer
+  - Allow dashes in attribute names ([#1650](https://github.com/rouge-ruby/rouge/pull/1650) by bpl)
+- Kotlin Lexer
+  - Fix highlight of interface, nullable type and generic property ([#1762](https://github.com/rouge-ruby/rouge/pull/1762) by vidarh)
+- Rust Lexer
+  - Update keywords for a new version ([#1649](https://github.com/rouge-ruby/rouge/pull/1649) by nsfisis)
+- SPARQL Lexer
+  - Support unicode names ([#1654](https://github.com/rouge-ruby/rouge/pull/1654) by jakubklimek)
+- Stan Lexer (**NEW**)
+  - Add Stan lexer ([#1735](https://github.com/rouge-ruby/rouge/pull/1735) by jgaeb)
+- Stata Lexer (**NEW**)
+  - Add Stata lexer ([#1637](https://github.com/rouge-ruby/rouge/pull/1658) by reifjulian)
+- TOML Lexer
+  - Support quoted keys ([#1777](https://github.com/rouge-ruby/rouge/pull/1777) by tancnle)
+- Fix visual test app on Ruby 3.0 ([#1696](https://github.com/rouge-ruby/rouge/pull/1696) by rkh)
+
 ## version 3.27.0: 2021-12-15
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.26.1...v3.27.0)

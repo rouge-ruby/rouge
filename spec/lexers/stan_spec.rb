@@ -13,4 +13,3 @@ describe Rouge::Lexers::Stan do
     end
   end
 end
-

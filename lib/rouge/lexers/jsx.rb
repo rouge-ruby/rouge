@@ -89,4 +89,3 @@ module Rouge
     end
   end
 end
-

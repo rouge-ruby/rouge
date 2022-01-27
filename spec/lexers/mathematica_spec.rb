@@ -18,4 +18,3 @@ describe Rouge::Lexers::Mathematica do
     end
   end
 end
-

@@ -24,4 +24,3 @@ describe Rouge::Lexers::R do
     end
   end
 end
-

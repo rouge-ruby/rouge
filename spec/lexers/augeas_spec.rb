@@ -16,4 +16,3 @@ describe Rouge::Lexers::Augeas do
     end
   end
 end
-

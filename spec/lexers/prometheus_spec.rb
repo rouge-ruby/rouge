@@ -16,4 +16,3 @@ describe Rouge::Lexers::Prometheus do
     end
   end
 end
-

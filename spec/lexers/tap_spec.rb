@@ -16,4 +16,3 @@ describe Rouge::Lexers::Tap do
     end
   end
 end
-

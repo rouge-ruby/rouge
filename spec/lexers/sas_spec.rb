@@ -17,4 +17,3 @@ describe Rouge::Lexers::SAS do
     end
   end
 end
-

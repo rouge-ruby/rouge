@@ -31,4 +31,3 @@ describe Rouge::Lexers::JSX do
     end
   end
 end
-

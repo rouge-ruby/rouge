@@ -12,4 +12,3 @@ describe Rouge::Lexers::BibTeX do
     end
   end
 end
-

@@ -31,4 +31,3 @@ describe Rouge::Lexers::OCaml do
     end
   end
 end
-

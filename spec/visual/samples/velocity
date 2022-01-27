@@ -25,5 +25,3 @@ ${mudSlinger}
 ${customer.Address}
 ${purchase.getTotal(true)}
 $title.set( "Homage to Catalonia" )
-
-

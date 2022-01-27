@@ -16,4 +16,3 @@ describe Rouge::Lexers::Q do
     end
   end
 end
-

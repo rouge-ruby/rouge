@@ -1,5 +1,7 @@
+inherit_from: .rubocop_todo.yml
+
 AllCops:
-  TargetRubyVersion: 2.0
+  TargetRubyVersion: 2.5
   DisplayCopNames: true
   Exclude:
     - "tasks/**/*"
@@ -17,9 +19,6 @@ Metrics:
 Bundler:
   Enabled: false
 
-Performance/RedundantBlockCall:
-  Enabled: false
-
 Lint/UselessAssignment:
   Enabled: false
 
@@ -32,13 +31,10 @@ Lint/UnusedMethodArgument:
 Lint/UnusedBlockArgument:
   Enabled: false
 
-Lint/EndAlignment:
-  Enabled: false
-
 Lint/EmptyWhen:
   Enabled: false
 
-Lint/UnneededSplatExpansion:
+Lint/RedundantSplatExpansion:
   Enabled: false
 
 Lint/IneffectiveAccessModifier:

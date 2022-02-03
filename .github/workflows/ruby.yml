@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: [ '2.5', '2.6', '2.7', '3.0']
+        ruby-version: [ '2.5', '2.6', '2.7', '3.0', '3.1']
 
     steps:
     - uses: actions/checkout@v2
@@ -28,10 +28,10 @@ jobs:
     # Those are only run with the latest supported version
     # Make sure to update the `if` when changing supported versions
     - name: Profile Memory Allocation
-      if: matrix.ruby-version == '3.0'
+      if: matrix.ruby-version == '3.1'
       run: bundle exec rake check:memory
     - name: Interpreter Warnings Test
-      if: matrix.ruby-version == '3.0'
+      if: matrix.ruby-version == '3.1'
       env:
         RUBYOPT: '-w'
       run: bundle exec rake check:specs

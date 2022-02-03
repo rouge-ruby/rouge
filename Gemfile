@@ -11,7 +11,8 @@ gem 'minitest-power_assert'
 gem 'power_assert', '~> 1.2'
 
 gem 'parallel', '~> 1.13.0' if RUBY_VERSION < '2.2.0'
-gem 'rubocop', '~> 0.49.1'
+gem 'rubocop', '~> 1.0', '<= 1.11'
+gem 'rubocop-performance'
 
 # don't try to install redcarpet under jruby
 gem 'redcarpet', :platforms => :ruby

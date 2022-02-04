@@ -1125,5 +1125,3 @@ SAVE_THREAD_STATE();'
     end
   end
 end
-
-

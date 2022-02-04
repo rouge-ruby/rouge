@@ -256,4 +256,3 @@ Main.$trModule :: ghc-prim-0.5.3:GHC.Types.Module
          WorkFree=True, Expandable=True, Guidance=IF_ARGS [] 10 30}]
 Main.$trModule
   = ghc-prim-0.5.3:GHC.Types.Module Main.$trModule3 Main.$trModule1
-

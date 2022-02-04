@@ -61,4 +61,3 @@ timezone: UTC
     - type: script
       command: scripts/hello.sh
       args: [foo, bar]
-

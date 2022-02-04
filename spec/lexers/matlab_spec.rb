@@ -35,4 +35,3 @@ describe Rouge::Lexers::Matlab do
     end
   end
 end
-

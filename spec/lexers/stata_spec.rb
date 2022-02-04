@@ -19,4 +19,3 @@ describe Rouge::Lexers::Stata do
 
   end
 end
-

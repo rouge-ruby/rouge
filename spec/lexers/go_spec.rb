@@ -17,4 +17,3 @@ describe Rouge::Lexers::Go do
     end
   end
 end
-

@@ -2868,4 +2868,3 @@ EOF
 	  if test "$deplibs_check_method" != pass_all; then
 	    # We're trying link a shared library against a static one
 	    # but the system doesn't support it.
-

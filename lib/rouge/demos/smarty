@@ -9,4 +9,3 @@
 </ul>
 
 <div class="{if $foo}class1{else}class2{/if}">{$foo.bar.baz}</div>
-

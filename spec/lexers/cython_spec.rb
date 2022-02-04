@@ -19,4 +19,3 @@ describe Rouge::Lexers::Cython do
     end
   end
 end
-

@@ -18,4 +18,3 @@ select * from TABLE1 where COL1 like %VAR1%; //utiliser la variable VAR1 dans un
 
 select * from TEST_TABLE; //exécution d'une requête Select pour ramener des valeurs
 Affect_LastColumns("TEST1"); //création du paramètre TEST1
-

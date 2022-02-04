@@ -6,4 +6,3 @@ namespace :check do
     t.pattern = FileList['spec/**/*_spec.rb']
   end
 end
-

@@ -34,4 +34,3 @@ not obj.foo.bar.bar
 some_rule[msg] {
   msg := "hey"
 }
-

@@ -22,4 +22,3 @@ describe Rouge::Lexers::ObjectiveC do
     end
   end
 end
-

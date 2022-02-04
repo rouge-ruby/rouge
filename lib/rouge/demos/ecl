@@ -15,4 +15,3 @@ somePeople := allPeople(LastName = 'Smith');
 
 //  Outputs  ---
 somePeople;
-

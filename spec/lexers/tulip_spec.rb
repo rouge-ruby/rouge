@@ -20,4 +20,3 @@ describe Rouge::Lexers::Tulip do
     end
   end
 end
-

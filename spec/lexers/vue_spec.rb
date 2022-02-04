@@ -11,4 +11,3 @@ describe Rouge::Lexers::Vue do
     end
   end
 end
-

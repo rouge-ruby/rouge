@@ -138,4 +138,3 @@ pub fn main() !void {
     try show(&e5, &stdout);
     try stdout.print(" = {}\n", .{eval(&e5)});
 }
-

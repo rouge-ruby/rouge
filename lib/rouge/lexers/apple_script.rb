@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class AppleScript < RegexLexer
       title "AppleScript"
-      desc "The AppleScript scripting language by Apple Inc. (http://developer.apple.com/applescript/)"
+      desc "The AppleScript scripting language by Apple Inc. (https://developer.apple.com/library/mac/documentation/AppleScript/Conceptual/AppleScriptX/AppleScriptX.html)"
 
       tag 'applescript'
       aliases 'applescript'

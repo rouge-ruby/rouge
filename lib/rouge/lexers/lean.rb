@@ -13,40 +13,90 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
+          abbreviation
+          add_rewrite
+          alias
           assume
           axiom
           begin
           by
           calc
+          calc_refl
+          calc_subst
+          calc_trans
           #check
+          coercion
+          conjecture
           constant
           constants
+          context
+          corollary
           def
+          definition
           end
-          example
           #eval
+          example
+          export
+          expose
+          exposing
+          exit
+          extends
           from
           fun
           have
+          help
+          hiding
+          hott
+          hypothesis
           import
           include
+          including
+          infix
+          infixl
+          infixr
+          inline
           instance
+          irreducible
           lemma
           match
           namespace
           notation
+          opaque
+          opaque_hint
           open
+          options
+          parameter
+          parameters
+          postfix
+          precedence
+          prefix
           #print
+          private
+          protected
+          reducible
+          renaming
           repeat
+          section
           set_option
           show
+          tactic_hint
           theorem
           universe
+          universes
+          using
           variable
           variables
           with
         )
       end
+
+      operators = %w(
+        != # & && \* \+ - / @ ! ` -\. ->
+        \. \.\. \.\.\. :: :> ; ;; <
+        <- = == > _ \| \|\| ~ => <= >=
+        /\ \/ ∀ Π λ ↔ ∧ ∨ ≠ ≤ ≥ ⊎
+        ¬ ⁻¹ ⬝ ▸ → ∃ ℕ ℤ ≈ × ⌞ ⌟ ≡ ⟨ ⟩
+      )
 
       state :root do
 
@@ -86,11 +136,8 @@ module Rouge
 
         rule %r/\:=?/, Text
         rule %r/\.[0-9]*/, Operator
-        rule %r/\.\.\.*/, Operator
 
-        rule %r/(->)|(<-)|[=\|\+\*\^><&@`]/, Operator
-        # common operators (unicode)
-        rule %r/[→←↔≠∀∃¬≥≤⊓⊔⟨⟩Π∨∧ℕ]/, Operator
+        rule %r(#{operators.join('|')}), Operator
 
         # unmatched symbols
         rule %r/[\s\(\),\[\]αβ‹›]+/, Text

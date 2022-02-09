@@ -12,7 +12,7 @@ after expr ;
 2 + 3 # multiline comment2
 after expr
 
-% Control Structures
+% Control Structures ;
 FOR x WITH 1 2 3 DO
     write x;
 ENDFOR ;

@@ -71,7 +71,7 @@ module Rouge
                                     "loaddefs", "nonlocal", "max", "match", "log",
                                     "lt", "lower", "lte", "mate", "min", "maxlength",
                                     "mod", "mix", "minus", "nialroot", "mold", "not",
-                                    "numeric", "null", "no_op", "no_expr", "notin",
+                                    "numeric", "no_op", "no_expr", "notin",
                                     "operation", "open", "or", "opposite", "opp",
                                     "operators", "plus", "pick", "pack", "pass", "pair", "parse",
                                     "paste", "phrase", "place", "picture", "placeall",

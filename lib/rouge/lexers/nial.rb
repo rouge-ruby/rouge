@@ -137,7 +137,7 @@ module Rouge
                     end
                 end
                 
-                rule %r/\b[A-Za-z]\w*\b/ do |m|
+                rule %r/\b[_A-Za-z]\w*\b/ do |m|
                     lower = m[0].downcase
                     if self.class.keywords.include?(lower)
                         token Keyword
@@ -157,7 +157,7 @@ module Rouge
             
             state :str do
                 rule %r/''/, Str::Escape
-                rule %r/[^'\n]+/, Str::Single
+                rule %r/[^']+/, Str::Single
                 rule %r/'|$/, Str::Single, :pop!
             end
         end

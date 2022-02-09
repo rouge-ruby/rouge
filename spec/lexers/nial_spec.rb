@@ -53,7 +53,7 @@ describe Rouge::Lexers::Nial do
                     "div", "divide", "drop", "dropright", "edit",
                     "empty", "expression", "exit", "except", "erase",
                     "equal", "eval", "eraserecord", "execute", "exp",
-                    "external", "exprs", "findall", "find", "false",
+                    "external", "exprs", "findall", "find",
                     "fault", "falsehood", "filestatus", "filelength",
                     "filepath", "filetally", "floor", "first",
                     "flip", "fuse", "fromraw", "front",
@@ -67,10 +67,10 @@ describe Rouge::Lexers::Nial do
                     "loaddefs", "nonlocal", "max", "match", "log",
                     "lt", "lower", "lte", "mate", "min", "maxlength",
                     "mod", "mix", "minus", "nialroot", "mold", "not",
-                    "numeric", "null", "no_op", "no_expr", "notin",
+                    "numeric", "no_op", "no_expr", "notin",
                     "operation", "open", "or", "opposite", "opp",
                     "operators", "plus", "pick", "pack", "pass", "pair", "parse",
-                    "paste", "phrase", "pi", "place", "picture", "placeall",
+                    "paste", "phrase", "place", "picture", "placeall",
                     "power", "positions", "post", "quotient", "putfile",
                     "profile", "prod", "product", "profiletree",
                     "profiletable", "quiet_fault", "raise", "reach",
@@ -94,7 +94,7 @@ describe Rouge::Lexers::Nial do
                     "tanh", "tell", "times", "third", "time",
                     "toupper", "tolower", "timestamp", "tonumber",
                     "toraw", "toplevel", "transformer", "type",
-                    "transpose", "true", "trs", "truth", "unequal",
+                    "transpose",  "trs", "truth", "unequal",
                     "variable", "valence", "up", "updateall",
                     "update", "vacate", "value", "version", "vars",
                     "void", "watch", "watchlist", "write", "writechars",
@@ -117,6 +117,12 @@ describe Rouge::Lexers::Nial do
                     "reduce", "reducecols", "reducerows",
                     "sort", "team", "timeit", "twig"].each do |transformer| 
                         assert_tokens_equal transformer, ['Name.Builtin', transformer]
+                end
+            end
+            
+            it 'covers all predefined constants' do
+                %w(false null pi true).each do |constant|
+                    assert_tokens_equal constant, ['Keyword.Constant', constant]
                 end
             end
         end
@@ -188,6 +194,11 @@ describe Rouge::Lexers::Nial do
                 assert_tokens_equal '-90.4e3', ["Literal.Number.Float", '-90.4e3']
                 assert_tokens_equal '-90.4e+30', ["Literal.Number.Float", '-90.4e+30']
                 assert_tokens_equal '-90.4e-30', ["Literal.Number.Float", '-90.4e-30']
+            end
+            it 'recognizes booleans' do
+                assert_tokens_equal 'l', ['Literal.Number.Bin', 'l']
+                assert_tokens_equal 'o', ['Literal.Number.Bin', 'o']
+                assert_tokens_equal 'loololoolololollool', ['Literal.Number.Bin', 'loololoolololollool']
             end
         end
 

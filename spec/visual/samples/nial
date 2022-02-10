@@ -1,3 +1,4 @@
+
 % multiline
 comment
 #1 ;
@@ -112,4 +113,9 @@ String'
 '
 
 % Non-keyword names ;
-thing here there NotAKeyword 
+thing here there NotAKeyword
+
+% ops and punctuation ;
+/[sum, tally]
+
+(adasd +)

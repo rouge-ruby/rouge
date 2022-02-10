@@ -23,7 +23,7 @@ module Rouge
             end
 
             def self.punctuation
-                @punctuation ||= Set.new ["[", "]", ",", "(", ")", ":=", ":", ";"]
+                @punctuation ||= Set.new [ "{", "}", "[", "]", ",", "(", ")", ":=", ":", ";"]
             end
 
             def self.transformers
@@ -120,7 +120,7 @@ module Rouge
                 rule %r/\?[^\s()\[\]{}#,;]*/, Generic::Error
                 rule %r/%[^;]+;/, Comment::Multiline
                 rule %r/#(.+\n)+\n/, Comment::Multiline
-                rule %r/:=|[\[\]\(\),;]/ do |m|
+                rule %r/:=|[\{\}\[\]\(\),:;]/ do |m|
                     if self.class.punctuation.include?(m[0])
                         token Punctuation
                     else

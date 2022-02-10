@@ -18,3 +18,20 @@ prod := 1;
   ENDWHILE;
   prod
 }
+
+     % A basic divide by zero error: ;
+     1 / 0
+# OUTPUT:
+?div
+
+     % Errors are also values called faults, giving you their location: ;
+     5 / 5 10 0 8
+# OUTPUT:
+1. 0.5 ?div 0.625
+
+     % You can also define custom faults using 'fault': ;
+     fault 'this is an error'
+# OUTPUT:
+this is an error
+
+

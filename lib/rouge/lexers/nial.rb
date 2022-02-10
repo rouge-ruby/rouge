@@ -120,16 +120,16 @@ module Rouge
                 rule %r/\?[^\s()\[\]{}#,;]*/, Generic::Error
                 rule %r/%[^;]+;/, Comment::Multiline
                 rule %r/#(.+\n)+\n/, Comment::Multiline
-                rule %r/[\[\],\(\):=;:]{1,2}/ do |m|
+                rule %r/:=|[\[\]\(\),;]/ do |m|
                     if self.class.punctuation.include?(m[0])
                         token Punctuation
-                    elsif self.class.operators.include?(m[0])
-                        token Operator
                     else
                         token Text
                     end
                 end
-                rule %r'[~=|}{\]\[@>=></\-*+)#!(\.]{1,2}' do |m|
+                # [".",  "!", "#", "+", "*", "-", "<<",
+                #     "/", "<", ">>", "<=", ">", "=", ">=", "@", "|", "~="]
+                rule %r'>>|>=|<=|~=|[\.!#+*\-=></|@]' do |m|
                     if self.class.operators.include?(m[0])
                         token Operator
                     else

@@ -119,7 +119,7 @@ module Rouge
                 rule %r/"[^\s()\[\]{}#,;]*/, Str::Symbol
                 rule %r/\?[^\s()\[\]{}#,;]*/, Generic::Error
                 rule %r/%[^;]+;/, Comment::Multiline
-                rule %r/#(.+\n)+\n/, Comment::Multiline
+                rule %r/^#(.+\n)+\n/, Comment::Multiline
                 rule %r/:=|[\{\}\[\]\(\),:;]/ do |m|
                     if self.class.punctuation.include?(m[0])
                         token Punctuation

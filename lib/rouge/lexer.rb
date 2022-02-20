@@ -293,8 +293,8 @@ module Rouge
 
       # @private
       def assert_utf8!(str)
-        encoding = str.encoding.name
-        return if encoding == 'US-ASCII' || encoding == 'UTF-8' || encoding == 'ASCII-8BIT'
+        encoding = str.encoding
+        return if encoding == Encoding::US_ASCII || encoding == Encoding::UTF_8 || encoding == Encoding::BINARY
 
         raise EncodingError.new(
           "Bad encoding: #{str.encoding.names.join(',')}. " +

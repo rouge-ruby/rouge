@@ -148,6 +148,7 @@ module Rouge
 
       state :flags_list do
         rule inline_spaces, Text
+        rule %r/\./, Punctuation
         mixin :mixin_name
         mixin :mixin_number
         mixin :mixin_string
@@ -158,6 +159,7 @@ module Rouge
       state :syscall_args do
         rule spaces, Text
         rule comment, Comment
+        rule %r/\./, Punctuation
         rule id do
           token Name
           push :arg_type

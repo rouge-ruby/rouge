@@ -301,6 +301,31 @@ describe Rouge::Lexers::Syzlang do
         ['Keyword.Type', 'int16']
     end
 
+    # The tests below check that the lexer can process inputs with lists and
+    # syscall arguments replaced with "...". This is useful for highlighting
+    # syzlang snippets that are shortened for readability.
+
+    it 'recognizes shortened flags lists' do
+      assert_tokens_equal "flags = FLAG1, FLAG2, ...",
+        ['Name', 'flags'],
+        ['Text', ' '],
+        ['Punctuation', '='],
+        ['Text', ' '],
+        ['Name', 'FLAG1'],
+        ['Punctuation', ','],
+        ['Text', ' '],
+        ['Name', 'FLAG2'],
+        ['Punctuation', ','],
+        ['Text', ' '],
+        ['Punctuation', '...']
+    end
+
+    it 'recognizes shortened syscalls' do
+      assert_tokens_equal 'foo(...)',
+        ['Name.Function', 'foo'],
+        ['Punctuation', '(...)']
+    end
+
     # The tests below check that the lexer can process inputs with relaxed
     # whitespace usage and after-line comments. This is useful for highlighting
     # syzlang snippets that are split into multiple lines for readability and

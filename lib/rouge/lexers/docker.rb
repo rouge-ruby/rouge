@@ -20,8 +20,8 @@ module Rouge
       state :root do
         rule %r/\s+/, Text
 
-        rule %r/^(FROM)(.*)(AS)(.*)/io do
-          groups Keyword, Str, Keyword, Str
+        rule %r/^(FROM)(\s+)(.*)(\s+)(AS)(\s+)(.*)/io do
+          groups Keyword, Text::Whitespace, Str, Text::Whitespace, Keyword, Text::Whitespace, Str
         end
 
         rule %r/^(ONBUILD)(\s+)(#{KEYWORDS})(.*)/io do

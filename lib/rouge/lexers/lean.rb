@@ -90,25 +90,25 @@ module Rouge
         )
       end
 
-      operators = %w(
-        != # & && \* \+ - / @ ! ` -\. ->
-        \. \.\. \.\.\. :: :> ; ;; <
-        <- = == > _ \| \|\| ~ => <= >=
-        /\ \/ ∀ Π λ ↔ ∧ ∨ ≠ ≤ ≥ ⊎
-        ¬ ⁻¹ ⬝ ▸ → ∃ ℕ ℤ ≈ × ⌞ ⌟ ≡ ⟨ ⟩
-      )
+      def self.operators
+        @operators ||= %w(
+          != # & && \* \+ - / @ ! ` -\. ->
+          \. \.\. \.\.\. :: :> ; ;; <
+          <- = == > _ \| \|\| ~ => <= >=
+          /\ \/ ∀ Π λ ↔ ∧ ∨ ≠ ≤ ≥ ⊎
+          ¬ ⁻¹ ⬝ ▸ → ∃ ℕ ℤ ≈ × ⌞ ⌟ ≡ ⟨ ⟩
+        )
+      end
 
       state :root do
-
-        # FIXME: using /^\s*--\s+.*?$/ makes it not match
         # comments starting after some space
         rule %r/\s*--+\s+.*?$/, Comment::Doc
 
         rule %r/"/, Str, :string
         rule %r/\d+/, Num::Integer
 
-        # special commands
-        rule(/#\w+/) do |m|
+        # special commands or keywords
+        rule(/#?\w+/) do |m|
           match = m[0]
           if self.class.keywords.include?(match)
             token Keyword
@@ -120,16 +120,6 @@ module Rouge
         # special unicode keywords
         rule %r/[λ]/, Keyword
 
-        # match keywords
-        rule(/\w+/) do |m|
-          match = m[0]
-          if self.class.keywords.include?(match)
-            token Keyword
-          else
-            token Name
-          end
-        end
-
         # ----------------
         # operators rules
         # ----------------
@@ -137,7 +127,7 @@ module Rouge
         rule %r/\:=?/, Text
         rule %r/\.[0-9]*/, Operator
 
-        rule %r(#{operators.join('|')}), Operator
+        rule %r(#{Lean.operators.join('|')}), Operator
 
         # unmatched symbols
         rule %r/[\s\(\),\[\]αβ‹›]+/, Text
@@ -153,6 +143,10 @@ module Rouge
         rule %r/[^\\"]+/, Str
       end
 
+      state :escape do
+        rule %r/[nrt"'\\]/, Str::Escape, :pop!
+        rule %r/x[\da-f]+/i, Str::Escape, :pop!
+      end
     end
   end
 end

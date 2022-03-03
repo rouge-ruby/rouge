@@ -66,6 +66,10 @@ show p, from hp
 #check ¬p → p ↔ false
 #check p ∨ q → q ∨ p
 
+#eval "String"
+#eval string.join ["\"Hello",  "\n", "World\""]
+#eval "\xF0" -- "ð"
+
 --------------------------
 -- Calculational Proofs --
 --------------------------

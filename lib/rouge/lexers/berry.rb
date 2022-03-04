@@ -64,7 +64,7 @@ module Rouge
 				rule %r/\s+/, Text::Whitespace
 				# Match comments
 				rule %r/#-(.|\n)*?-#/, Comment::Multiline
-				rule %r/#(\n|[\w\W]*?\n)/, Comment::Single
+				rule %r/#.*?$/, Comment::Single
 				# Match dotted identifiers / properties
 				rule %r/(\.)(#{identifier})(?!\s*\()/ do
 					groups Punctuation, Name::Property

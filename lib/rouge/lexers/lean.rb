@@ -51,6 +51,7 @@ module Rouge
           import
           include
           including
+          inductive
           infix
           infixl
           infixr
@@ -73,6 +74,7 @@ module Rouge
           #print
           private
           protected
+          #reduce
           reducible
           renaming
           repeat
@@ -87,6 +89,14 @@ module Rouge
           variable
           variables
           with
+        )
+      end
+
+      def self.types
+        @types ||= %w(
+          Sort
+          Prop
+          Type
         )
       end
 
@@ -112,6 +122,8 @@ module Rouge
           match = m[0]
           if self.class.keywords.include?(match)
             token Keyword
+          elsif self.class.types.include?(match)
+            token Keyword::Type
           else
             token Name
           end

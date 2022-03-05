@@ -1,0 +1,102 @@
+import data.nat.basic
+
+namespace sandbox
+
+@[derive decidable_eq]
+inductive Nat
+    | zero : Nat
+    | succ (n : Nat) : Nat
+
+open Nat
+
+-- instance
+instance : has_zero Nat := ⟨zero⟩
+
+axiom zero_is_nat : zero = 0
+
+def add : Nat → Nat → Nat
+| m 0 := m
+| m (succ n) := succ (add m n)
+
+-- Defines the + operator
+instance : has_add Nat := ⟨add⟩
+
+axiom add_zero (n : Nat) : n + 0 = n
+axiom add_succ (m n: Nat) : m + succ n = succ (m + n)
+
+lemma zero_add (n : Nat) : 0 + n = n :=
+  begin
+  induction n with d hd,
+
+  -- base
+  rw zero_is_nat,
+  rw add_zero,
+
+  -- inductive step
+  rw add_succ,
+  rw hd,
+  end
+
+-- alternative to →
+#check Nat -> Nat
+
+universe u
+
+constant list   : Type u → Type u
+constant cons   : Π α : Type u, α → list α → list α
+
+variable α : Type
+variable β : α → Type
+variable a : α
+variable b : β a
+
+#check sigma.mk a b      -- Σ (a : α), β a
+#check (sigma.mk a b).1  -- α
+#check (sigma.mk a b).2  -- β (sigma.fst (sigma.mk a b))
+
+-- show ... from ...
+constants p q : Prop
+
+lemma t1 : p → q → p :=
+assume hp : p,
+assume hq : q,
+show p, from hp
+
+#check p → q → p ∧ q
+#check ¬p → p ↔ false
+#check p ∨ q → q ∨ p
+
+#eval "String"
+#eval string.join ["\"Hello",  "\n", "World\""]
+#eval "\xF0" -- "ð"
+
+--------------------------
+-- Calculational Proofs --
+--------------------------
+
+import data.nat.basic
+
+variables (a b c d e : ℕ)
+variable h1 : a = b
+variable h2 : b = c + 1
+variable h3 : c = d
+variable h4 : e = 1 + d
+
+include h1 h2 h3 h4
+theorem T : a = e :=
+calc
+  a     = d + 1  : by rw [h1, h2, h3]
+    ... = 1 + d  : by rw add_comm
+    ... = e      : by rw h4
+
+end sandbox
+
+--------------------------------
+-- The Existential Quantifier --
+--------------------------------
+
+example : ∃ x : ℕ, x > 0 :=
+have h : 1 > 0, from zero_lt_succ 0,
+exists.intro 1 h
+
+notation `‹` p `›` := show p, by assumption

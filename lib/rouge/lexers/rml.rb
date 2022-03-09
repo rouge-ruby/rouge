@@ -82,9 +82,9 @@ module Rouge
         rule %r/(#{lowercase_id})/ do |m|
         if self.class.keywords.include? m[0]
             token Keyword
-          else
+        else
             token Literal::String::Regex
-          end
+        end
         end
 
         rule %r/#{ellipsis}/, Literal::String::Symbol
@@ -134,14 +134,13 @@ module Rouge
         rule %r/#{lowercase_id}/ do |m|
         if (self.class.arithmetic_keywords | self.class.keywords).include? m[0]
             token Keyword
-          else
+        else
             token Literal::String::Regex
-          end
         end
-        rule %r/(>)(?=\s*else)/, Operator, :pop!
+        end
         rule %r/\(/, Operator, :push
         rule %r/\)/, Operator, :pop!
-        rule %r/(>)(?=[^A-Z;>]+[A-Z;])/, Operator, :pop!
+        rule %r/(>)(?=[^A-Z;]+[A-Z;>])/, Operator, :pop!
         rule %r/[*^?!%&\[\]<>\|+=:,.\/\\_-]/, Operator
         rule %r/;/, Operator, :pop!
       end #closing :dataExp state
@@ -149,18 +148,10 @@ module Rouge
       state :dataExp_with do
 
         mixin :common_rules
-        rule %r/#{lowercase_id}/ do |m|
-        if (self.class.arithmetic_keywords | self.class.keywords).include? m[0]
-            token Keyword
-          else
-            token Literal::String::Regex
-          end
-        end
-        rule %r/\(/, Operator, :push
-        rule %r/\)/, Operator, :pop!
-        rule %r/[*^?!%&\[\]<>\|+=:,.\/\\_-]/, Operator
-        rule %r/;/, Operator, :pop!
+        rule %r/>/, Operator
+        mixin :dataExp
+
       end #closing :dataExp_with state
     end #closing RML Class
-  end #closing Lexers module
+    end #closing Lexers module
 end #closing Rouge module

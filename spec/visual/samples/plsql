@@ -32,8 +32,12 @@ CREATE OR REPLACE PACKAGE BODY sample_pkg
  -- quoted string with embedded newline
         c_strip_comments_regexp CONSTANT VARCHAR2(32767) := q'+[[:blank:]](--|#).*($|
 )+';
+$IF $$is_dummy_needed $then
         c_dummy                 CONSTANT VARCHAR2(30) := 'newline>
 <anotherline';
+        v_rec hr.employees%ROWTYPE;
+        v_dummy2 hr.employees.employee_id%type;
+$End
         
     BEGIN
     -- note that \n, \r and \t will be replaced if not preceded by a \

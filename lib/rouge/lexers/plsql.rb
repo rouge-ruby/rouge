@@ -443,7 +443,7 @@ module Rouge
         FLOAT DOUBLE PRECISION REAL
         SDO_GEOMETRY SDO_TOPO_GEOMETRY SDO_GEORASTER
         REF ANYTYPE ANYDATA ANYDATASET XMLTYPE HTTPURITYPE XDBURITYPE DUBRITYPE
-        BOOLEAN 
+        BOOLEAN PLS_INTEGER BINARY_INTEGER SIMPLE_FLOAT SIMPLE_INTEGER SIMPLE_DOUBLE SYS_REFCURSOR
         ))
       end
 
@@ -474,14 +474,26 @@ module Rouge
         rule %r/[+-]?(?:(?:\.\d+(?:[eE][+-]?\d+)?)|\d+\.(?:\d+(?:[eE][+-]?\d+)?)?)/, Num::Float
         rule %r/[+-]?\d+/, Num::Integer
         
+        rule %r/%(?:TYPE|ROWTYPE)\b/i, Name::Attribute
+
         # longer ones come first on purpose!
         rule %r/=>|\|\||\*\*|<<|>>|\.\.|<>|[:!~^<>]=|[-+%\/*=<>@&!^\[\]]/, Operator
+        rule %r/(NOT|AND|OR|LIKE|BETWEEN|IN)(\s)/im do
+            groups Operator, Text
+        end
+        rule %r/(IS)(\s+)(?:(NOT)(\s+))?(NULL\b)/im do
+            groups Operator, Text, Operator, Text, Operator
+        end
 
         rule %r/[;:()\[\],.]/, Punctuation
 
         # this madness is to keep the word "replace" from being treated as a builtin function in this context
         rule %r/(?:(replace)(\s+))?(package|function|procedure|type)(?:(\s+)(body))?(\s+)(\w[\w\d\$]*)/im do
             groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Name
+        end
+
+        rule %r/(\$(?:IF|THEN|ELSE|ELSIF|ERROR|END|(?:\$\w+)))(\s+)/im do
+            groups Comment::Preproc, Text
         end
 
         rule %r/\w[\w\d\$]*/ do |m|

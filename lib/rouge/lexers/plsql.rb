@@ -453,26 +453,36 @@ module Rouge
         rule %r/\s+/m, Text
         rule %r/--.*/, Comment::Single
         rule %r(/\*), Comment::Multiline, :multiline_comments
-        rule %r/[+-]?(?:(?:\.\d+(?:[eE][+-]?\d+)?)|\d+\.(?:\d+(?:[eE][+-]?\d+)?)?)/, Num::Float
-        rule %r/[+-]?\d+/, Num::Integer
         rule %r/q'(.)/i  do |m|
-            open = Regexp.escape(m[1])
+            #open = Regexp.escape(m[1])
             close = Regexp.escape(delimiter_map[m[1]] || m[1])
+            # the opening q'X
             token Operator
             push do
-                rule %r/#{close}'/, Operator, :pop!
                 rule %r/(?:#{close}[^']|[^#{close}]'|[^#{close}'])+/m, Str::Other
+                rule %r/#{close}'/, Operator, :pop!
             end
         end
         rule %r/'/, Operator, :single_string
+        #
         # A double-quoted string refers to a database object in our default SQL
         rule %r/"/, Operator, :double_string
-        #rule %r/`/, Name::Variable, :backtick
-        # longer ones come first
+
+        ### we do not use backticks in Oracle. I do not know the rules for other sql engines
+        ###rule %r/`/, Name::Variable, :backtick
+        
+        rule %r/[+-]?(?:(?:\.\d+(?:[eE][+-]?\d+)?)|\d+\.(?:\d+(?:[eE][+-]?\d+)?)?)/, Num::Float
+        rule %r/[+-]?\d+/, Num::Integer
+        
+        # longer ones come first on purpose!
         rule %r/=>|\|\||\*\*|<<|>>|\.\.|<>|[:!~^<>]=|[-+%\/*=<>@&!^\[\]]/, Operator
+
         rule %r/[;:()\[\],.]/, Punctuation
 
-        rule %r/function|procedure|type/i, Keyword::Reserved, :function_decl 
+        # this madness is to keep the word "replace" from being treated as a builtin function in this context
+        rule %r/(?:(replace)(\s+))?(package|function|procedure|type)(?:(\s+)(body))?(\s+)(\w[\w\d\$]*)/im do
+            groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Name
+        end
 
         rule %r/\w[\w\d\$]*/ do |m|
           if self.class.keywords_type.include? m[0].upcase
@@ -492,7 +502,7 @@ module Rouge
       end
 
       state :multiline_comments do
-        rule %r/([*][^\/]|[^*])+/, Comment::Multiline
+        rule %r/([*][^\/]|[^*])+/m, Comment::Multiline
         rule %r([*]\/), Comment::Multiline, :pop!
       end
 
@@ -508,20 +518,16 @@ module Rouge
         rule %r/\\./, Str::Escape
         rule %r/''/, Str::Escape
         rule %r/'/, Operator, :pop!
-        rule %r/[^\\']+/, Str::Single
+        rule %r/[^\\']+/m, Str::Single
       end
 
       state :double_string do
         rule %r/\\./, Str::Escape
         rule %r/""/, Str::Escape
         rule %r/"/, Operator, :pop!
-        rule %r/[^\\"]+/, Name::Variable
+        rule %r/[^\\"]+/m, Name::Variable
       end
 
-      state :function_decl do
-        rule %r/\s+/m, Text
-        rule %r/\w[\w\d\$]*/m, Name, :pop!
-      end
 
     end
   end

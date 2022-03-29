@@ -488,8 +488,12 @@ module Rouge
         rule %r/[;:()\[\],.]/, Punctuation
 
         # this madness is to keep the word "replace" from being treated as a builtin function in this context
-        rule %r/(?:(replace)(\s+))?(package|function|procedure|type)(?:(\s+)(body))?(\s+)(\w[\w\d\$]*)/im do
-            groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Name
+        rule %r/(create)(\s+)(?:(or)(\s+)(replace)(\s+))?(package|function|procedure|type)(?:(\s+)(body))?(\s+)(\w[\w\d\$]*)/im do
+            groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Name
+        end
+        # similar for MERGE keywords
+        rule %r/(when)(\s+)(?:(not)(\s+))?(matched)(\s+)(then)(\s+)(update|insert)\b(?:(\s+)(set)(\s+))?/im do
+            groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text
         end
 
         rule %r/(\$(?:IF|THEN|ELSE|ELSIF|ERROR|END|(?:\$\w+)))(\s+)/im do

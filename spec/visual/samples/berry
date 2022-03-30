@@ -52,7 +52,15 @@ class my_static_class: my_parent_class
     end
 end
 
-
+var foo = {
+  a: "\test",
+  b: "\nest",
+  c: "\\test",
+  d: "\\nest",
+  e: "\\",
+  f: "Using \\ in a string",
+  g: "\error"
+}
 
 # anonymous function and closure
 def count(x)
@@ -68,6 +76,20 @@ def count(x)
     end
     return arr
 end
+
+def definitive(s)
+    return s
+end
+
+print(definitive ('test'))
+
+class classclass
+    var a
+end
+
+var c = classclass()
+c.a = 'classclass.a'
+print(c.a)
 
 for xx : count(6)
     print(xx()) # 0, 1, 4 ... n * n
@@ -397,3 +419,6 @@ print(string.format('%.3f', 12))
 print(string.format('%20.7f', 14.5))
 print(string.format('-- %-40s ---', 'this is a string format test'))
 print(string.format('-- %40s ---', 'this is a string format test'))
+
+# Test single line comment not terminating with \n
+#

@@ -2,11 +2,11 @@ SELECT e.first_name AS "First Name", e.last_name AS "Last Name"
     , d.department_name AS "Department 
 Name"
     , 123 AS "integer val" , .7 as "trailing dec", 123. as "really an int"
-    , 123.456 as "float" , 1.27E-2 as "exp not"
-    , -123 AS "n integer val" , -.7 as "n trailing dec", -123. as "n really an int"
-    , -123.456 as "n float" , -1.27E-2 as "n exp not"
+    , 123.456 as "float" , 1.27E-2 as "exp notation"
+    , -123 AS "n integer val" , -.7 as "n trailing dec", -123.D as "n really an int"
+    , -123.456 as "n float" , -1.27E-2 as "n exp notation"
     , +123 AS "p integer val" , +.7 as "p trailing dec", +123. as "p really an int"
-    , +123.456 as "p float" , +1.27E-2 as "p exp not"
+    , +123.456f as "p float" , +1.27E2D as "p exp notation, double"
 FROM hr.employees e
 JOIN hr.departments d
     ON e.department_id = d.department_id

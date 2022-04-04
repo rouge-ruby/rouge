@@ -10,8 +10,8 @@ module Rouge
       filenames '*.pls', '*.typ', '*.tps', '*.tpb', '*.pks', '*.pkb', '*.pkg', '*.trg'
       mimetypes 'text/x-plsql'
 
-      def self.keywords
-        @keywords ||= Set.new(%w(
+      def self.keywords_reserved
+        @keywords_reserved ||= Set.new(%w(
         ACCESSIBLE AGENT ALL ALTER AND ANY AS ASC BETWEEN BFILE_BASE BLOB_BASE BY
         C CALLING CHARSET CHARSETFORM CHARSETID CHAR_BASE CHECK CLOB_BASE CLUSTER
         COLLATE COMPILED COMPRESS CONNECT CONNECT_BY_ROOT CONSTRUCTOR CREATE CUSTOMDATUM
@@ -29,8 +29,9 @@ module Rouge
         VALUES VARIABLE VIEW VOID WHERE WHILE WITH
         ))
       end
-      def self.keywords_nresvd
-        @keywords_nresvd ||= Set.new(%w(
+
+      def self.keywords
+        @keywords ||= Set.new(%w(
         ABORT ABS ABSENT ACCESS ACCESSED ACCOUNT ACL ACOS ACROSS ACTION ACTIONS
         ACTIVATE ACTIVE ACTIVE_COMPONENT ACTIVE_DATA ACTIVE_FUNCTION ACTIVE_TAG ACTIVITY
         ADAPTIVE_PLAN ADD ADD_COLUMN ADD_GROUP ADD_MONTHS ADG_REDIRECT_DML ADG_REDIRECT_PLSQL
@@ -387,6 +388,7 @@ module Rouge
         XPATHTABLE XS XS_SYS_CONTEXT X_DYN_PRUNE YEARS YES ZONEMAP
         ))
       end
+
       def self.keywords_func
         @keywords_func ||= Set.new(%w(
         ABS ACOS ADD_MONTHS APPROX_COUNT APPROX_COUNT_DISTINCT APPROX_COUNT_DISTINCT_AGG
@@ -430,7 +432,6 @@ module Rouge
       end
 
       def self.keywords_type
-        # sources:
         @keywords_type ||= Set.new(%w(
         CHAR BYTE VARCHAR2 NCHAR NVARCHAR2
         NUMBER FLOAT BINARY_FLOAT BINARY_DOUBLE
@@ -447,77 +448,67 @@ module Rouge
         ))
       end
 
-
       state :root do
         delimiter_map = { '{' => '}', '[' => ']', '(' => ')', '<' => '>' }
         # eat whitespace including newlines
         rule %r/\s+/m, Text
 
-        #
         # Comments
-        #
         rule %r/--.*/, Comment::Single
         rule %r(/\*), Comment::Multiline, :multiline_comments
+
+        # literals
         # Q' operator quoted string literal
         rule %r/q'(.)/i  do |m|
-            #open = Regexp.escape(m[1])
-            close = Regexp.escape(delimiter_map[m[1]] || m[1])
-            # the opening q'X
-            token Operator
-            push do
-                rule %r/(?:#{close}[^']|[^#{close}]'|[^#{close}'])+/m, Str::Other
-                rule %r/#{close}'/, Operator, :pop!
-            end
+          close = Regexp.escape(delimiter_map[m[1]] || m[1])
+          # the opening q'X
+          token Operator
+          push do
+            rule %r/(?:#{close}[^']|[^#{close}]'|[^#{close}'])+/m, Str::Other
+            rule %r/#{close}'/, Operator, :pop!
+          end
         end
         rule %r/'/, Operator, :single_string
         # A double-quoted string refers to a database object in our default SQL
         rule %r/"/, Operator, :double_string
+        # preprocessor directive treated as special comment
         rule %r/(\$(?:IF|THEN|ELSE|ELSIF|ERROR|END|(?:\$\$?\w[\w\d]*)))(\s+)/im do
-            groups Comment::Preproc, Text
+          groups Comment::Preproc, Text
         end
-        ### we do not use backticks in Oracle. I do not know the rules for other sql engines
-        ###rule %r/`/, Name::Variable, :backtick
 
-        #
         # Numbers
-        #
-        rule %r/[+-]?(?:(?:\.\d+(?:[eE][+-]?\d+)?)|\d+\.(?:\d+(?:[eE][+-]?\d+)?))/, Num::Float
+        rule %r/[+-]?(?:(?:\.\d+(?:[eE][+-]?\d+)?)|\d+\.(?:\d+(?:[eE][+-]?\d+)?)?)[fFdD]?/, Num::Float
         rule %r/[+-]?\d+/, Num::Integer
         
-        # 
         # Operators
-        #
         # Special semi-operator, but this seems an appropriate classification
-        rule %r/%(?:TYPE|ROWTYPE)\b/i, Name::Attribute
+        rule %r/%(?:TYPE|ROWTYPE|FOUND|ISOPEN|NOTFOUND|ROWCOUNT)\b/i, Name::Attribute
         # longer ones come first on purpose! It matters to regex engine
         rule %r/=>|\|\||\*\*|<<|>>|\.\.|<>|[:!~^<>]=|[-+%\/*=<>@&!^\[\]]/, Operator
         rule %r/(NOT|AND|OR|LIKE|BETWEEN|IN)(\s)/im do
-            groups Operator::Word, Text
+          groups Operator::Word, Text
         end
         rule %r/(IS)(\s+)(?:(NOT)(\s+))?(NULL\b)/im do
-            groups Operator::Word, Text, Operator::Word, Text, Operator::Word
+          groups Operator::Word, Text, Operator::Word, Text, Operator::Word
         end
 
-        # 
         # Punctuation
-        #
         # special case of dot followed by a name. notice the lookahead assertion
         rule %r/\.(?=\w)/ do
-            token Punctuation
-            push :dotnames
+          token Punctuation
+          push :dotnames
         end
         rule %r/[;:()\[\],.]/, Punctuation
 
-        #
         # Special processing for keywords with multiple contexts
         #
         # this madness is to keep the word "replace" from being treated as a builtin function in this context
         rule %r/(create)(\s+)(?:(or)(\s+)(replace)(\s+))?(package|function|procedure|type)(?:(\s+)(body))?(\s+)(\w[\w\d\$]*)/im do
-            groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Name
+          groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Name
         end
         # similar for MERGE keywords
         rule %r/(when)(\s+)(?:(not)(\s+))?(matched)(\s+)(then)(\s+)(update|insert)\b(?:(\s+)(set)(\s+))?/im do
-            groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text
+          groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text
         end
 
         #
@@ -527,12 +518,11 @@ module Rouge
         rule %r/(\w[\w\d\$]*)(\.(?=\w))?/ do |m|
           if self.class.keywords_type.include? m[1].upcase
             tok = Keyword::Type 
-            #Name::Builtin
           elsif self.class.keywords_func.include? m[1].upcase
             tok = Name::Function
-          elsif self.class.keywords.include? m[1].upcase
+          elsif self.class.keywords_reserved.include? m[1].upcase
             tok = Keyword::Reserved
-          elsif self.class.keywords_nresvd.include? m[1].upcase
+          elsif self.class.keywords.include? m[1].upcase
             tok = Keyword
           else
             tok = Name
@@ -550,14 +540,6 @@ module Rouge
         rule %r([*]\/), Comment::Multiline, :pop!
       end
 
-
-      #state :backtick do
-      #  rule %r/\\./, Str::Escape
-      #  rule %r/``/, Str::Escape
-      #  rule %r/`/, Name::Variable, :pop!
-      #  rule %r/[^\\`]+/, Name::Variable
-      #end
-
       state :single_string do
         rule %r/\\./, Str::Escape
         rule %r/''/, Str::Escape
@@ -573,22 +555,22 @@ module Rouge
       end
 
       state :dotnames do
-            # if we are followed by a dot and another name, we are an ordinairy name
-            rule %r/(\w[\w\d\$]*)(\.(?=\w))/ do
-                groups Name, Punctuation
-            end
-            # this rule WILL be true if something pushed into our state. That is our state contract
-            rule %r/\w[\w\d\$]*/ do |m|
-                if self.class.keywords_func.include? m[0].upcase
-                    # The Function lookup allows collection methods like COUNT, FIRST, LAST, etc.. to be 
-                    # classified correctly. Occasionally misidentifies ordinary names as builtin functions,
-                    # but seems to be as correct as we can get without becoming a full blown parser
-                    token Name::Function
-                else
-                    token Name 
-                end
-                pop!
-            end
+        # if we are followed by a dot and another name, we are an ordinary name
+        rule %r/(\w[\w\d\$]*)(\.(?=\w))/ do
+          groups Name, Punctuation
+        end
+        # this rule WILL be true if something pushed into our state. That is our state contract
+        rule %r/\w[\w\d\$]*/ do |m|
+          if self.class.keywords_func.include? m[0].upcase
+            # The Function lookup allows collection methods like COUNT, FIRST, LAST, etc.. to be 
+            # classified correctly. Occasionally misidentifies ordinary names as builtin functions,
+            # but seems to be as correct as we can get without becoming a full blown parser
+            token Name::Function
+          else
+            token Name 
+          end
+          pop!
+        end
       end
 
     end

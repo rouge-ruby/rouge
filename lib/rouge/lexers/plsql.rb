@@ -470,8 +470,8 @@ module Rouge
 
         ### we do not use backticks in Oracle. I do not know the rules for other sql engines
         ###rule %r/`/, Name::Variable, :backtick
-        
-        rule %r/[+-]?(?:(?:\.\d+(?:[eE][+-]?\d+)?)|\d+\.(?:\d+(?:[eE][+-]?\d+)?)?)/, Num::Float
+
+        rule %r/[+-]?(?:(?:\.\d+(?:[eE][+-]?\d+)?)|\d+\.(?:\d+(?:[eE][+-]?\d+)?))/, Num::Float
         rule %r/[+-]?\d+/, Num::Integer
         
         rule %r/%(?:TYPE|ROWTYPE)\b/i, Name::Attribute
@@ -479,10 +479,10 @@ module Rouge
         # longer ones come first on purpose!
         rule %r/=>|\|\||\*\*|<<|>>|\.\.|<>|[:!~^<>]=|[-+%\/*=<>@&!^\[\]]/, Operator
         rule %r/(NOT|AND|OR|LIKE|BETWEEN|IN)(\s)/im do
-            groups Operator, Text
+            groups Operator::Word, Text
         end
         rule %r/(IS)(\s+)(?:(NOT)(\s+))?(NULL\b)/im do
-            groups Operator, Text, Operator, Text, Operator
+            groups Operator::Word, Text, Operator::Word, Text, Operator::Word
         end
 
         rule %r/[;:()\[\],.]/, Punctuation
@@ -500,20 +500,40 @@ module Rouge
             groups Comment::Preproc, Text
         end
 
-        rule %r/\w[\w\d\$]*/ do |m|
-          if self.class.keywords_type.include? m[0].upcase
-            token Keyword::Type 
+        rule %r/(\w[\w\d\$]*)(\.(?=\w))?/ do |m|
+          if self.class.keywords_type.include? m[1].upcase
+            tok = Keyword::Type 
             #Name::Builtin
-          elsif self.class.keywords_func.include? m[0].upcase
-            token Name::Function
-          elsif self.class.keywords.include? m[0].upcase
-            token Keyword::Reserved
-          elsif self.class.keywords_nresvd.include? m[0].upcase
-            token Keyword
+          elsif self.class.keywords_func.include? m[1].upcase
+            tok = Name::Function
+          elsif self.class.keywords.include? m[1].upcase
+            tok = Keyword::Reserved
+          elsif self.class.keywords_nresvd.include? m[1].upcase
+            tok = Keyword
           else
-            token Name
+            tok = Name
+          end
+          groups tok, Punctuation
+
+          if m[2] == "."
+            push :dotnames
           end
         end
+
+#        rule %r/\w[\w\d\$]*/ do |m|
+#          if self.class.keywords_type.include? m[0].upcase
+#            token Keyword::Type 
+#            #Name::Builtin
+#          elsif self.class.keywords_func.include? m[0].upcase
+#            token Name::Function
+#          elsif self.class.keywords.include? m[0].upcase
+#            token Keyword::Reserved
+#          elsif self.class.keywords_nresvd.include? m[0].upcase
+#            token Keyword
+#          else
+#            token Name
+#          end
+#        end
 
       end
 
@@ -544,6 +564,19 @@ module Rouge
         rule %r/[^\\"]+/m, Name::Variable
       end
 
+      state :dotnames do
+            rule %r/(\w[\w\d\$]*)(\.(?=\w))/ do
+                groups Name, Punctuation
+            end
+            rule %r/\w[\w\d\$]*/ do |m|
+                if self.class.keywords_func.include? m[0].upcase
+                    token Name::Function
+                else
+                    token Name 
+                end
+                pop!
+            end
+      end
 
     end
   end

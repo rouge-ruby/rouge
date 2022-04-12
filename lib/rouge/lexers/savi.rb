@@ -41,8 +41,13 @@ module Rouge
         # Single-Char String
         rule %r{'}, Str::Char, :string_char
 
-        # Class (or other type)
+        # Type Name
         rule %r{(_?[A-Z]\w*)}, Name::Class
+
+        # Nested Type Name
+        rule %r{(\.)(\s*)(_?[A-Z]\w*)} do
+          groups Punctuation, Text::Whitespace, Name::Class
+        end
 
         # Declare
         rule %r{^([ \t]*)(:\w+)} do

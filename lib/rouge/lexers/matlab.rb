@@ -13,8 +13,9 @@ module Rouge
 
       def self.keywords
         @keywords = Set.new %w(
-          break case catch classdef continue else elseif end for function
-          global if otherwise parfor persistent return spmd switch try while
+          arguments break case catch classdef continue else elseif end for
+          function global if import methods otherwise parfor persistent
+          properties return spmd switch try while
         )
       end
 

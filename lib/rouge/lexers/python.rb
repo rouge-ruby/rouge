@@ -218,9 +218,11 @@ module Rouge
       end
 
       state :generic_interpol do
-        rule %r/[^{}]+/ do |m|
+        rule %r/[^{}!:]+/ do |m|
           recurse m[0]
         end
+        rule %r/![asr]/, Str::Interpol
+        rule %r/:/, Str::Interpol
         rule %r/{/, Str::Interpol, :generic_interpol
         rule %r/}/, Str::Interpol, :pop!
       end

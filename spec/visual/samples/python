@@ -150,6 +150,7 @@ x @= y
 f'{hello} world {int(x) + 1}'
 f'{{ {4*10} }}'
 f'result: {value:{width}.{precision}}'
+f'{value!r}
 
 # Unicode identifiers
 α = 10

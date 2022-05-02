@@ -459,7 +459,7 @@ module Rouge
 
         # literals
         # Q' operator quoted string literal
-        rule %r/q'(.)/i  do |m|
+        rule %r/q'(.)/i do |m|
           close = Regexp.escape(delimiter_map[m[1]] || m[1])
           # the opening q'X
           token Operator

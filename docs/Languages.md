@@ -144,6 +144,7 @@
 - PHP (`php`)
 - Plain Text (`plaintext`)
 - Plist (`plist`)
+- PLSQL (`plsql`)
 - Pony (`pony`)
 - PostScript (`postscript`)
 - powershell (`powershell`)

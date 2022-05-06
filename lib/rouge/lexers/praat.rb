@@ -58,6 +58,16 @@ module Rouge
         linear randomGauss randomInteger randomUniform zero
       )
 
+      functions_matrix = %w(
+        linear mul mul_fast mul_metal mul_nt mul_tn mul_tt outer peaks
+        randomGamma randomGauss randomInteger randomUniform softmaxPerRow
+        solve transpose zero
+      )
+
+      functions_string_vector = %w(
+        empty fileNames folderNames readLinesFromFile splitByWhitespace
+      )
+
       objects = %w(
         Activation AffineTransform AmplitudeTier Art Artword Autosegment
         BarkFilter BarkSpectrogram CCA Categories Cepstrogram Cepstrum
@@ -142,6 +152,7 @@ module Rouge
 
         mixin :variable_name
         mixin :number
+        mixin :vector_literal
 
         rule %r/"/, Literal::String, :string
 
@@ -196,6 +207,8 @@ module Rouge
       state :function_call do
         rule %r/\b(#{functions_string.join('|')})\$(?=\s*[:(])/, Name::Function, :function
         rule %r/\b(#{functions_array.join('|')})#(?=\s*[:(])/,   Name::Function, :function
+        rule %r/\b(#{functions_matrix.join('|')})##(?=\s*[:(])/,   Name::Function, :function
+        rule %r/\b(#{functions_string_vector.join('|')})\$#(?=\s*[:(])/,   Name::Function, :function
         rule %r/\b(#{functions_numeric.join('|')})(?=\s*[:(])/,  Name::Function, :function
       end
 
@@ -214,7 +227,7 @@ module Rouge
           groups Text, Punctuation
         end
 
-        rule %r/\s*[\])\n]/, Text, :pop!
+        rule %r/\s*[\]\})\n]/, Text, :pop!
 
         rule %r/\s+/, Text
         rule %r/"/,   Literal::String, :string
@@ -224,6 +237,7 @@ module Rouge
         mixin :variable_name
         mixin :operator
         mixin :number
+        mixin :vector_literal
 
         rule %r/[()]/, Text
         rule %r/,/, Punctuation
@@ -257,9 +271,13 @@ module Rouge
           push :object_reference
         end
 
-        rule %r/\.?[a-z][a-zA-Z0-9_.]*(\$|#)?/, Text
+        rule %r/\.?[a-z][a-zA-Z0-9_.]*(\$#|##|\$|#)?/, Text
         rule %r/[\[\]]/, Text, :comma_list
         mixin :string_interpolated
+      end
+
+      state :vector_literal do
+        rule %r/(\{)/, Text, :comma_list
       end
 
       state :object_reference do

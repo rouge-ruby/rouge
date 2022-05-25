@@ -1,6 +1,9 @@
+{-# OPTIONS --prop #-}
+
 module agda where
 
 open import Level
+open import Agda.Primitive
 
 data Id {ℓ : Level} (A : Set ℓ) : A → A → Set ℓ where
   refl : (x : A) → Id A x x
@@ -44,3 +47,8 @@ S m + n = S (m + n)
 +-assoc : ∀ m n o → ((m + n) + o) =[ ℕ ] (m + (n + o))
 +-assoc Z     n o = refl (n + o)
 +-assoc (S m) n o = cong S (+-assoc m n o)
+
+{- Large identity function
+  The type of the argument is left implicit. -}
+identity : ∀ {A : Setω} → A → A
+identity = λ { x → x }

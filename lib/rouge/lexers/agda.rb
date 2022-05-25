@@ -10,6 +10,8 @@ module Rouge
       filenames "*.agda"
       mimetypes "text/x-agda"
 
+      # Primary reference: https://github.com/agda/agda/blob/master/src/full/Agda/Syntax/Parser/Lexer.x
+
       pragmas = %w(
         BUILTIN CATCHALL COMPILE FOREIGN DISPLAY ETA IMPOSSIBLE INJECTIVE
         INLINE NOINLINE LINE MEASURE NO_POSITIVITY_CHECK NO_TERMINATION_CHECK
@@ -36,9 +38,15 @@ module Rouge
         using hiding renaming to public
       )
 
+      escapes = %w(
+        a b f n r t v
+        NUL SOH STX ETX EOT ENQ ACK BEL BS HT LF VT FF CR SO SI DLE
+        DC1 DC2 DC3 DC4 NAK SYN ETB CAN EM SUB ESC FS GS RS US SP DEL
+      )
+
       state :root do
         # Comments can stick behind some punctuation
-        rule %r/(^|[\s\(\)\{\}\.;])(--.*)$/ do
+        rule %r/(^|[\s\(\)\}\.;])(--.*)$/ do
           groups Punctuation, Comment
         end
         rule %r/{-#/, Comment::Preproc, :pragma
@@ -75,15 +83,23 @@ module Rouge
           groups Text, Punctuation, Text
         end
 
+        # Numbers
+        rule %r/-?0x[\da-fA-F]+(_[\da-fA-F]+)*/, Num::Hex
+        rule %r/-?0b[\d01]+(_[\d01]+)*/, Num::Hex
+        rule %r/-?\d+(\.\d+)?[eE][+-]?\d+/, Num::Float
+        rule %r/-?\d+(_\d+)*/, Num::Integer
+
+        # Characters and strings with escape codes
+        rule %r/'/, Str::Char, :char
+        rule %r/"/, Str, :string
+
         # Special operators with characters that could appear in regular names
         # require spaces after them to distinguish them from names
         # No name can begin with a lambda, and @ is disallowed in names
         rule %r/λ|\\|@/, Operator
-        rule %r/(->|[∀→⊔=:_\|\?])(\s+)/ do
+        rule %r/(->|<-|[∀→←⊔=:_\|\?])(\s+)/ do
           groups Operator, Text
         end
-
-        # TODO: Strings and numbers (incl. escape codes, floats, binary, hex)
 
         rule %r/[^\s\(\)\{\}\.\;\@]+/, Name
         rule %r/\s+/, Text
@@ -94,13 +110,15 @@ module Rouge
         rule %r/\s+/, Comment::Preproc
         rule %r/\w+/ do |m|
           if pragmas.include?(m[0])
+            # Agda pragmas must begin with a pragma name;
+            # here, the lexer is more lax
             token Keyword::Pseudo
           elsif builtins.include?(m[0])
             token Keyword::Pseudo
           else
-            # This could be a little more restrictive.
-            # For instance, if we're in the OPTIONS pragma,
-            # we enter an :options state in which we lex only flags.
+            # This could be a little more restrictive:
+            # for instance, if we're in the OPTIONS pragma,
+            # we enter an :options state in which we lex only flags
             token Comment::Preproc
           end
         end
@@ -117,6 +135,17 @@ module Rouge
         rule %r/!}/, Comment::Special, :pop!
         rule %r/{!/, Comment::Special, :hole
         rule %r/./, Comment::Special
+      end
+
+      state :char do
+        rule %r/\\(#{escapes.join('|')}|x[\da-fA-F]+|o[0-7]+|\d+|\\|')'/, Str::Escape, :pop!
+        rule %r/.'/, Str::Char, :pop!
+      end
+
+      state :string do
+        rule %r/"/, Str, :pop!
+        rule %r/\\(#{escapes.join('|')}|x[\da-fA-F]+|o[0-7]+|\d+|\\|")/, Str::Escape
+        rule %r/./, Str
       end
     end
   end

@@ -7,6 +7,7 @@
 - ABAP (`abap`)
 - ActionScript (`actionscript`)
 - Ada (`ada`)
+- Agda (`agda`)
 - Apache (`apache`)
 - Apex (`apex`)
 - API Blueprint (`apiblueprint`)

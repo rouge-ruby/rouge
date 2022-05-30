@@ -4,6 +4,35 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.29.0: 2022-05-30
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.28.0...v3.29.0)
+
+- General
+  - Stop checking encoding names ([#1806](https://github.com/rouge-ruby/rouge/pull/1806) by casperisfine)
+- Docker Lexer
+  - Fix notation of named stages in multi-stage docker builds ([#1809](https://github.com/rouge-ruby/rouge/pull/1809) by bartbroere)
+- Idris Lexer
+  - Add support for Idris language ([#1464](https://github.com/rouge-ruby/rouge/pull/1464) by bmwant)
+- Lean Lexer (**NEW**)
+  - Initial support for lean 3 ([#1798](https://github.com/rouge-ruby/rouge/pull/1798) by kunigami)
+- Matlab Lexer
+  - Add new Matlab keywords (fixes #1589) ([#1669](https://github.com/rouge-ruby/rouge/pull/1669) by siko1056)
+- PLSQL Lexer (**NEW**)
+  - Oracle PLSQL lexer (suitable for Oracle SQL as well) ([#1811](https://github.com/rouge-ruby/rouge/pull/1811) by lee-lindley)
+- Python Lexer
+  - Python: Support conversion specifiers in format strings ([#1801](https://github.com/rouge-ruby/rouge/pull/1801) by chvp)
+- Syzlang and Syzprog Lexer (**NEW**)
+  - Add lexers for syzkaller DSLs ([#1699](https://github.com/rouge-ruby/rouge/pull/1699) by xairy)
+  - Highlight shortened lists for syzlang DSL ([#1808](https://github.com/rouge-ruby/rouge/pull/1808) by xairy)
+- Rouge CI
+  - Run Rubocop and Profile CI on CI build once ([#1805](https://github.com/rouge-ruby/rouge/pull/1805) by tancnle)
+  - Add linting for new lines ([#1790](https://github.com/rouge-ruby/rouge/pull/1790) by tancnle)
+  - Add Ruby 3.1 to CI ([#1791](https://github.com/rouge-ruby/rouge/pull/1791) by petergoldstein)
+- Documentation
+  - Add Code of Conduct v2.1 ([#1821](https://github.com/rouge-ruby/rouge/pull/1821) by tancnle)
+  - Add new lexers to supported language doc ([#1810](https://github.com/rouge-ruby/rouge/pull/1810) by tancnle)
+
 ## version 3.28.0: 2022-01-26
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.27.0...v3.28.0)

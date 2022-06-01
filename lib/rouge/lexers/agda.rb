@@ -58,9 +58,9 @@ module Rouge
 
         # Agda primitives (see https://agda.github.io/agda-stdlib/Agda.Primitive.html)
         # Do we also want to do built-ins (see https://agda.readthedocs.io/en/latest/language/built-ins.html)?
-        rule %r/\b(Level)\b/, Keyword::Type
-        rule %r/\b(lsuc|lzero)/, Name::Builtin
-        rule %r/\b(Prop[₀₁₂₃₄₅₆₇₈₉]*|S?Set(ω?|[₀₁₂₃₄₅₆₇₈₉]*))\b/, Keyword::Type
+        rule %r/\b(Level|lsuc|lzero)\b/, Name::Builtin
+        rule %r/\bProp[₀₁₂₃₄₅₆₇₈₉]*/, Keyword::Type
+        rule %r/\bS?Set(ω|[₀₁₂₃₄₅₆₇₈₉]*)/, Keyword::Type
 
         # Attributes
         rule %r/@flat|@♭|@⊤/, Name::Attribute
@@ -84,10 +84,10 @@ module Rouge
         end
 
         # Numbers
-        rule %r/-?0x[\da-fA-F]+(_[\da-fA-F]+)*/, Num::Hex
-        rule %r/-?0b[\d01]+(_[\d01]+)*/, Num::Hex
-        rule %r/-?\d+(\.\d+)?[eE][+-]?\d+/, Num::Float
-        rule %r/-?\d+(_\d+)*/, Num::Integer
+        rule %r/-?0x[\da-fA-F]+(_[\da-fA-F]+)*\b/, Num::Hex
+        rule %r/-?0b[01]+(_[01]+)*\b/, Num::Hex
+        rule %r/-?\d+(\.\d+)?[eE][+-]?\d+\b/, Num::Float
+        rule %r/-?\d+(_\d+)*\b/, Num::Integer
 
         # Characters and strings with escape codes
         rule %r/'/, Str::Char, :char

@@ -92,6 +92,7 @@
 - Io (`io`)
 - Irb (`irb`)
 - Irb_output (`irb_output`)
+- Isabelle (`isabelle`)
 - ISBL (`isbl`)
 - J (`j`)
 - Janet (`janet`)

@@ -13,7 +13,7 @@ module Rouge
       mimetypes 'text/x-isabelle'
 
       def self.keyword_minor
-        @keyword_minor ||= %w(
+        @keyword_minor ||= Set.new %w(
           and assumes attach avoids binder checking
           class_instance class_relation code_module congs
           constant constrains datatypes defines file fixes
@@ -27,7 +27,7 @@ module Rouge
       end
 
       def self.keyword_diag
-        @keyword_diag ||= %w(
+        @keyword_diag ||= Set.new %w(
           ML_command ML_val class_deps code_deps code_thms
           display_drafts find_consts find_theorems find_unused_assms
           full_prf help locale_deps nitpick pr prf
@@ -51,19 +51,19 @@ module Rouge
       end
 
       def self.keyword_thy
-        @keyword_thy ||= %w(theory begin end)
+        @keyword_thy ||= Set.new %w(theory begin end)
       end
 
       def self.keyword_section
-        @keyword_section ||= %w(header chapter)
+        @keyword_section ||= Set.new %w(header chapter)
       end
 
       def self.keyword_subsection
-        @keyword_subsection ||= %w(section subsection subsubsection sect subsect subsubsect)
+        @keyword_subsection ||= Set.new %w(section subsection subsubsection sect subsect subsubsect)
       end
 
       def self.keyword_theory_decl
-        @keyword_theory_decl ||= %w(
+        @keyword_theory_decl ||= Set.new %w(
           ML ML_file abbreviation adhoc_overloading arities
           atom_decl attribute_setup axiomatization bundle
           case_of_simps class classes classrel codatatype
@@ -103,11 +103,11 @@ module Rouge
       end
 
       def self.keyword_theory_script
-        @keyword_theory_script ||= %w(inductive_cases inductive_simps)
+        @keyword_theory_script ||= Set.new %w(inductive_cases inductive_simps)
       end
 
       def self.keyword_theory_goal
-        @keyword_theory_goal ||= %w(
+        @keyword_theory_goal ||= Set.new %w(
           ax_specification bnf code_pred corollary cpodef
           crunch crunch_ignore
           enriched_type function instance interpretation lemma
@@ -121,42 +121,42 @@ module Rouge
       end
 
       def self.keyword_qed
-        @keyword_qed ||= %w(by done qed)
+        @keyword_qed ||= Set.new %w(by done qed)
       end
 
       def self.keyword_abandon_proof
-        @keyword_abandon_proof ||= %w(sorry oops)
+        @keyword_abandon_proof ||= Set.new %w(sorry oops)
       end
 
       def self.keyword_proof_goal
-        @keyword_proof_goal ||= %w(have hence interpret)
+        @keyword_proof_goal ||= Set.new %w(have hence interpret)
       end
 
       def self.keyword_proof_block
-        @keyword_proof_block ||= %w(next proof)
+        @keyword_proof_block ||= Set.new %w(next proof)
       end
 
       def self.keyword_proof_chain
-        @keyword_proof_chain ||= %w(finally from then ultimately with)
+        @keyword_proof_chain ||= Set.new %w(finally from then ultimately with)
       end
 
       def self.keyword_proof_decl
-        @keyword_proof_decl ||= %w(
+        @keyword_proof_decl ||= Set.new %w(
           ML_prf also include including let moreover note
           txt txt_raw unfolding using write
         )
       end
 
       def self.keyword_proof_asm
-        @keyword_proof_asm ||= %w(assume case def fix presume)
+        @keyword_proof_asm ||= Set.new %w(assume case def fix presume)
       end
 
       def self.keyword_proof_asm_goal
-        @keyword_proof_asm_goal ||= %w(guess obtain show thus)
+        @keyword_proof_asm_goal ||= Set.new %w(guess obtain show thus)
       end
 
       def self.keyword_proof_script
-        @keyword_proof_script ||= %w(apply apply_end apply_trace back defer prefer)
+        @keyword_proof_script ||= Set.new %w(apply apply_end apply_trace back defer prefer)
       end
 
       state :root do
@@ -171,23 +171,37 @@ module Rouge
           return %r/\b(#{keywords.join('|')})\b/
         end
 
-        rule word(Isabelle.keyword_minor), Keyword::Pseudo
-        rule word(Isabelle.keyword_diag), Keyword::Type
-        rule word(Isabelle.keyword_thy), Keyword
-        rule word(Isabelle.keyword_theory_decl), Keyword
-        rule word(Isabelle.keyword_section), Generic::Heading
-        rule word(Isabelle.keyword_subsection), Generic::Subheading
-        rule word(Isabelle.keyword_theory_goal), Keyword::Namespace
-        rule word(Isabelle.keyword_theory_script), Keyword::Namespace
-        rule word(Isabelle.keyword_abandon_proof), Generic::Error
-        rule word(Isabelle.keyword_qed), Keyword
-        rule word(Isabelle.keyword_proof_goal), Keyword
-        rule word(Isabelle.keyword_proof_block), Keyword
-        rule word(Isabelle.keyword_proof_decl), Keyword
-        rule word(Isabelle.keyword_proof_chain), Keyword
-        rule word(Isabelle.keyword_proof_asm), Keyword
-        rule word(Isabelle.keyword_proof_asm_goal), Keyword
-        rule word(Isabelle.keyword_proof_script), Keyword::Pseudo
+        rule %r/[a-zA-Z]\w*/ do |m|
+          sym = m[0]
+
+          if self.class.keyword_minor.include?(sym) ||
+            self.class.keyword_proof_script.include?(sym)
+            token Keyword::Pseudo
+          elsif self.class.keyword_diag.include?(sym)
+            token Keyword::Type
+          elsif self.class.keyword_thy.include?(sym) ||
+            self.class.keyword_theory_decl.include?(sym) ||
+            self.class.keyword_qed.include?(sym) ||
+            self.class.keyword_proof_goal.include?(sym) ||
+            self.class.keyword_proof_block.include?(sym) ||
+            self.class.keyword_proof_decl.include?(sym) ||
+            self.class.keyword_proof_chain.include?(sym) ||
+            self.class.keyword_proof_asm.include?(sym) ||
+            self.class.keyword_proof_asm_goal.include?(sym)
+            token Keyword
+          elsif self.class.keyword_section.include?(sym)
+            token Generic::Heading
+          elsif self.class.keyword_subsection.include?(sym)
+            token Generic::Subheading
+          elsif self.class.keyword_theory_goal.include?(sym) ||
+            self.class.keyword_theory_script.include?(sym)
+            token Keyword::Namespace
+          elsif self.class.keyword_abandon_proof.include?(sym)
+            token Generic::Error
+          else
+            token Name
+          end
+        end
 
         rule %r/\\<\w*>/, Str::Symbol
 

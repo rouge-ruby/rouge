@@ -366,7 +366,8 @@ module Rouge
       end
 
       state :in_visibility do
-        rule %r/(?=(abstract|const|function|static)\b)/i, Keyword, :pop!
+        rule %r/\bstatic\b/i, Keyword
+        rule %r/(?=(abstract|const|function)\b)/i, Keyword, :pop!
         rule %r/\??#{id}/, Keyword::Type, :pop!
         mixin :escape
         mixin :whitespace

@@ -305,6 +305,7 @@ module Rouge
         rule %r/,/, Punctuation
         rule %r/[.]{3}/, Punctuation
         rule %r/=/, Operator, :in_assign
+        rule %r/\b(?:public|protected|private|readonly)\b/i, Keyword
         rule %r/\??#{id}/, Keyword::Type, :in_assign
         mixin :escape
         mixin :whitespace

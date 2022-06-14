@@ -118,3 +118,23 @@ point = { x = 1, y = 2 }
 physical.color = "orange"
 physical.shape = "round"
 site."google.com" = true
+
+# floating point numbers
+float_space1 = 3.141_592_653
+float_space2 = 123_456.789_012e+1_000
+just_inf = inf
+pos_inf  = +inf
+neg_inf  = -inf
+just_nan = nan
+pos_nan  = +nan
+neg_nan  = -nan
+
+# integer formats
+dec         = 123456
+dec_spacing = 123_456
+hex         = 0xdeadBEEF
+hex_spacing = 0xdead_BEEF
+oct         = 0o755
+oct_spacing = 0o755_777
+bin         = 0b1100
+bin_spacing = 0b0101_1100

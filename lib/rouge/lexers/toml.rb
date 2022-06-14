@@ -28,9 +28,9 @@ module Rouge
 
         rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
 
-        rule %r/\d+\.\d+([eE][+-]?[0-9]+)?/, Num::Float
-        rule %r/\d+[eE][+-]?[0-9]+/, Num::Float
-        rule %r/\-?\d+/, Num::Integer
+        rule %r/[+-]?\d+\.\d+([eE][+-]?[0-9]+)?/, Num::Float
+        rule %r/[+-]?\d+[eE][+-]?[0-9]+/, Num::Float
+        rule %r/[+-]?\d+/, Num::Integer
       end
 
       state :root do

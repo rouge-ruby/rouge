@@ -30,6 +30,7 @@ module Rouge
 
         rule %r/[+-]?\d+\.\d+([eE][+-]?[0-9]+)?/, Num::Float
         rule %r/[+-]?\d+[eE][+-]?[0-9]+/, Num::Float
+        rule %r/[+-]?(nan|inf)/, Num::Float
         rule %r/[+-]?\d+/, Num::Integer
       end
 

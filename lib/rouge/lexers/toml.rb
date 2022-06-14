@@ -28,14 +28,14 @@ module Rouge
 
         rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
 
-        rule %r/[+-]?\d+\.\d+([eE][+-]?[0-9]+)?/, Num::Float
-        rule %r/[+-]?\d+[eE][+-]?[0-9]+/, Num::Float
+        rule %r/[+-]?\d+(_\d+)*\.\d+(_\d+)*([eE][+-]?\d+(_\d+)*)?/, Num::Float
+        rule %r/[+-]?\d+(_\d+)*[eE][+-]?\d+(_\d+)*/, Num::Float
         rule %r/[+-]?(nan|inf)/, Num::Float
 
         rule %r/0x\h+(_\h+)*/, Num::Integer
         rule %r/0o[0-7]+(_[0-7]+)*/, Num::Integer
         rule %r/0b[0-1]+(_[0-1]+)*/, Num::Integer
-        rule %r/[+-]?\d+/, Num::Integer
+        rule %r/[+-]?\d+(_\d+)*/, Num::Integer
       end
 
       state :root do

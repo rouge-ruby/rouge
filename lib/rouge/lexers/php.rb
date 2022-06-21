@@ -39,12 +39,12 @@ module Rouge
           old_function cfunction
           __class__ __dir__ __file__ __function__ __halt_compiler __line__
           __method__ __namespace__ __trait__ abstract and array as break case
-          catch clone continue declare default die do echo else elseif
+          catch clone continue declare default die do echo else elseif empty
           enddeclare endfor endforeach endif endswitch endwhile eval exit
           extends final finally fn for foreach global goto if implements
-          include include_once instanceof insteadof isset list new or parent
-          print private protected public require require_once return self
-          static switch throw try var while xor yield
+          include include_once instanceof insteadof isset list match new or
+          parent print private protected public readonly require require_once
+          return self static switch throw try unset var while xor yield
         )
       end
 
@@ -305,6 +305,7 @@ module Rouge
         rule %r/,/, Punctuation
         rule %r/[.]{3}/, Punctuation
         rule %r/=/, Operator, :in_assign
+        rule %r/\b(?:public|protected|private|readonly)\b/i, Keyword
         rule %r/\??#{id}/, Keyword::Type, :in_assign
         mixin :escape
         mixin :whitespace
@@ -366,7 +367,8 @@ module Rouge
       end
 
       state :in_visibility do
-        rule %r/(?=(abstract|const|function|static)\b)/i, Keyword, :pop!
+        rule %r/\b(?:readonly|static)\b/i, Keyword
+        rule %r/(?=(abstract|const|function)\b)/i, Keyword, :pop!
         rule %r/\??#{id}/, Keyword::Type, :pop!
         mixin :escape
         mixin :whitespace

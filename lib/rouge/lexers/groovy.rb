@@ -7,7 +7,7 @@ module Rouge
       title "Groovy"
       desc 'The Groovy programming language (http://www.groovy-lang.org/)'
       tag 'groovy'
-      filenames '*.groovy', 'Jenkinsfile'
+      filenames '*.groovy', 'Jenkinsfile', '*.Jenkinsfile'
       mimetypes 'text/x-groovy'
 
       def self.detect?(text)

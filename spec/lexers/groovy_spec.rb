@@ -9,6 +9,8 @@ describe Rouge::Lexers::Groovy do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.groovy'
+      assert_guess :filename => 'Jenkinsfile'
+      assert_guess :filename => 'foo.Jenkinsfile'
     end
 
     it 'guesses by mimetype' do

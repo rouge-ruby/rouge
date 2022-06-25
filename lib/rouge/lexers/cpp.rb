@@ -71,6 +71,7 @@ module Rouge
         rule %r/\bnullptr\b/, Name::Builtin
         rule %r/(?:u8|u|U|L)?R"([a-zA-Z0-9_{}\[\]#<>%:;.?*\+\-\/\^&|~!=,"']{,16})\(.*?\)\1"/m, Str
         rule %r/(::|<=>)/, Operator
+        rule %r/[{}]/, Punctuation
       end
 
       state :classname do

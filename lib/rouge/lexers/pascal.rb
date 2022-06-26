@@ -55,6 +55,7 @@ module Rouge
         mixin :whitespace
 
         rule %r{((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?}, Num
+        rule %r/\$[0-9A-Fa-f]+/, Num::Hex
         rule %r{[~!@#\$%\^&\*\(\)\+`\-={}\[\]:;<>\?,\.\/\|\\]}, Punctuation
         rule %r{'([^']|'')*'}, Str
         rule %r/(true|false|nil)\b/i, Name::Builtin

@@ -112,6 +112,13 @@ void forward_args(F f, Args... args) {
     f(std::forward<Args>(args)...);
 }
 
+// using auto
+template<auto F = requires { foo(); }>
+void func();
+
+template<auto F = []{}>
+void func();
+
 // namespace
 namespace printing {
     inline namespace latest {

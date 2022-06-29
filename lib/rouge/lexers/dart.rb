@@ -61,7 +61,8 @@ module Rouge
 
         rule %r/#{id}:/, Name::Label
         rule %r/\$?#{id}/, Name
-        rule %r/[~^*!%&\[\](){}<>\|+=:;,.\/?-]/, Operator
+        rule %r/[~^*!%&\|+=:\/?-]/, Operator
+        rule %r/[\[\](){}<>\.,;]/, Punctuation
         rule %r/\d*\.\d+([eE]\-?\d+)?/, Num::Float
         rule %r/0x[\da-fA-F]+/, Num::Hex
         rule %r/\d+L?/, Num::Integer

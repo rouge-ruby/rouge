@@ -8,6 +8,7 @@ module Rouge
             desc 'The Nial programming language (nial-array-language.org)'
             tag 'nial'
             filenames '*.ndf', '*.nlg'
+            
             def self.keywords
                 @keywords ||= Set.new ["is", "gets", "op", "tr", ";",
                                        "if", "then", "elseif", "else",
@@ -22,8 +23,8 @@ module Rouge
                                  "/", "<", ">>", "<=", ">", "=", ">=", "@", "|", "~="]
             end
 
-            def self.punctuation
-                @punctuation ||= Set.new [ "{", "}", "[", "]", ",", "(", ")", ":=", ":", ";"]
+            def self.punctuations
+                @punctuations ||= Set.new [ "{", "}", "[", "]", ",", "(", ")", ":=", ":", ";"]
             end
 
             def self.transformers
@@ -121,7 +122,7 @@ module Rouge
                 rule %r/%[^;]+;/, Comment::Multiline
                 rule %r/^#(.+\n)+\n/, Comment::Multiline
                 rule %r/:=|[\{\}\[\]\(\),:;]/ do |m|
-                    if self.class.punctuation.include?(m[0])
+                    if self.class.punctuations.include?(m[0])
                         token Punctuation
                     else
                         token Text

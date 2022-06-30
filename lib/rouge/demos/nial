@@ -33,5 +33,3 @@ prod := 1;
      fault 'this is an error'
 # OUTPUT:
 this is an error
-
-

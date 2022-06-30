@@ -132,6 +132,7 @@
 - Nasm (`nasm`)
 - NesAsm (`nesasm`)
 - nginx (`nginx`)
+- Nial (`nial`)
 - Nim (`nim`)
 - Nix (`nix`)
 - Objective-C (`objective_c`)

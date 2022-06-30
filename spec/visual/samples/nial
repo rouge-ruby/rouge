@@ -1,0 +1,121 @@
+
+% multiline
+comment
+#1 ;
+
+# multiline
+comment
+#2
+
+1 + 1 % multiline comment
+after expr ;
+
+2 + 3 # multiline comment2
+after expr
+
+% Control Structures ;
+FOR x WITH 1 2 3 DO
+    write x;
+ENDFOR ;
+
+WHILE n > 4
+    write n;
+    n := n - 1;
+ENDWHILE ;
+
+CASE c FROM
+    1: "one"; END
+    2: "two"; END
+    3: "three"; END
+ENDCASE ;
+
+REPEAT
+    x := opposite x
+UNTIL done ENDREPEAT ;
+
+IF true THEN
+    "true
+ELSEIF untrue THEN
+    "untrue
+ELSE 
+    "false
+ENDIF
+
+% Constant literals ;
+
+% Integers ;
+ 123
+ -123
+ 123 456
+ 456-789 % - is part of the number -789 ;
+
+% Floats ;
+ 123.
+ 1. 2. 3.
+ 12.56
+ 78e3
+ 78e+3
+ 78e-3
+ 90.4e3
+ 90.4e+30
+ 90.4e-30
+ -123.
+ -1. 2. 3.
+ -12.56
+ -78e3
+ -78e+3
+ -78e-3
+ -90.4e3
+ -90.4e+30
+ -90.4e-30
+
+% Characters ;
+`3
+``
+`a`b`c
+`
+% the previous must not work. ;
+
+% Phrases ;
+"hello
+"thing
+"many"""quotes
+"""""
+"
+"in[]"between
+
+% Faults ;
+?hello
+?thing
+?many???question??marks
+????
+?
+?in{}?between
+
+% Booleans ;
+l
+o
+looololollllol
+lover % must not be parsed as boolean. ;
+
+% Predefined constants ;
+true
+false
+pi
+null
+
+% Strings ;
+'hello world'
+'multiline
+String'
+'escaped''string''here'
+'
+'
+
+% Non-keyword names ;
+thing here there NotAKeyword
+
+% ops and punctuation ;
+/[sum, tally]
+
+(adasd +)

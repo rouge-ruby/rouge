@@ -131,6 +131,13 @@ module Rouge
         next TeX if matches?(/\A\s*(?:\\|%)/)
         next Apex
       end
+
+      disambiguate '*.pp' do
+        next Pascal if matches?(/\b(function|begin|var)\b/)
+        next Pascal if matches?(/\b(end(;|\.))/)
+
+        Puppet
+      end
     end
   end
 end

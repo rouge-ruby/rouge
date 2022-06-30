@@ -9,7 +9,10 @@ describe Rouge::Lexers::Pascal do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.pas'
-      assert_guess :filename => 'foo.lpr'      
+      assert_guess :filename => 'foo.lpr'
+
+      # *.pp needs source hints because it's also used by Puppet
+      assert_guess :filename => 'foo.pp', :source => 'begin end.'
     end
 
     it 'guesses by mimetype' do

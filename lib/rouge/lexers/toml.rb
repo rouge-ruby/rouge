@@ -30,7 +30,7 @@ module Rouge
 
         rule %r/[+-]?\d+(_\d+)*\.\d+(_\d+)*([eE][+-]?\d+(_\d+)*)?/, Num::Float
         rule %r/[+-]?\d+(_\d+)*[eE][+-]?\d+(_\d+)*/, Num::Float
-        rule %r/[+-]?(nan|inf)/, Num::Float
+        rule %r/[+-]?(?:nan|inf)/, Num::Float
 
         rule %r/0x\h+(?:_\h+)*/, Num::Hex
         rule %r/0o[0-7]+(?:_[0-7]+)*/, Num::Oct

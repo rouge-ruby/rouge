@@ -28,8 +28,8 @@ module Rouge
 
         rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
 
-        rule %r/[+-]?\d+(_\d+)*\.\d+(_\d+)*([eE][+-]?\d+(_\d+)*)?/, Num::Float
-        rule %r/[+-]?\d+(_\d+)*[eE][+-]?\d+(_\d+)*/, Num::Float
+        rule %r/[+-]?\d+(?:_\d+)*\.\d+(?:_\d+)*(?:[eE][+-]?\d+(?:_\d+)*)?/, Num::Float
+        rule %r/[+-]?\d+(?:_\d+)*[eE][+-]?\d+(?:_\d+)*/, Num::Float
         rule %r/[+-]?(?:nan|inf)/, Num::Float
 
         rule %r/0x\h+(?:_\h+)*/, Num::Hex

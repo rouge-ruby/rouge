@@ -33,7 +33,7 @@ module Rouge
         rule %r/[+-]?(nan|inf)/, Num::Float
 
         rule %r/0x\h+(_\h+)*/, Num::Integer
-        rule %r/0o[0-7]+(_[0-7]+)*/, Num::Integer
+        rule %r/0o[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule %r/0b[0-1]+(_[0-1]+)*/, Num::Integer
         rule %r/[+-]?\d+(_\d+)*/, Num::Integer
       end

@@ -35,7 +35,7 @@ module Rouge
         rule %r/0x\h+(?:_\h+)*/, Num::Hex
         rule %r/0o[0-7]+(?:_[0-7]+)*/, Num::Oct
         rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
-        rule %r/[+-]?\d+(_\d+)*/, Num::Integer
+        rule %r/[+-]?\d+(?:_\d+)*/, Num::Integer
       end
 
       state :root do

@@ -149,7 +149,7 @@ module Rouge
         rule %r/\A\s*#!.*?\n/m, Comment::Preproc, :statement
         rule %r((?<=\n)(?=\s|/|<!--)), Text, :expr_start
         mixin :comments_and_whitespace
-        rule %r(\+\+ | -- | ~ | && | \|\| | \\(?=\n) | << | >>>? | ===
+        rule %r(\+\+ | -- | ~ | \?\?=? | && | \|\| | \\(?=\n) | << | >>>? | ===
                | !== )x,
           Operator, :expr_start
         rule %r([-<>+*%&|\^/!=]=?), Operator, :expr_start

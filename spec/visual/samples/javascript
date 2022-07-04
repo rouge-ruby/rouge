@@ -282,3 +282,13 @@ class Œuvre {
     书名 = "Les Misérables";
   }
 }
+
+// Nullish coalescing operator (??)
+let ret = "";
+let foo, bar;
+
+ret += `// ${foo ?? "Unk"}: ${bar ?? "Just do it"}`;
+ret += "\n";
+
+let baz;
+baz ??= 'default';

@@ -76,4 +76,40 @@ describe Rouge::Guesser do
       assert_guess(Rouge::Lexers::Ruby, :source => '# v' + 'im: syntax=ruby')
     end
   end
+
+  describe 'disambiguation guessing' do
+    describe 'guesses *.pp filename' do
+      it 'guesses pascal' do
+        assert_guess(
+          Rouge::Lexers::Pascal,
+          filename: 'foo.pp',
+          source: <<~SOURCE
+            function sum(a, b: integer): integer;
+            var tempSum: integer
+            begin
+              tempSum := a + b;
+              sum := tempSum;
+            end;
+          SOURCE
+        )
+      end
+
+      it 'guesses puppet' do
+        assert_guess(
+          Rouge::Lexers::Puppet,
+          filename: 'foo.pp',
+          source: <<~SOURCE
+            class foo::bar (
+              Array[String] = foo::bar::baz,
+            ) {
+              $foo = [
+                'bar',
+                'baz',
+              ]
+            }
+          SOURCE
+        )
+      end
+    end
+  end
 end

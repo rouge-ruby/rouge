@@ -8,7 +8,8 @@ describe Rouge::Lexers::Puppet do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.pp'
+      # *.pp needs source hints because it's also used by Pascal
+      assert_guess :filename => 'foo.pp', :source => 'class privileges { }'
     end
 
     it 'guesses by source' do

@@ -124,13 +124,12 @@ module Rouge
 
         # using negative lookbehind so we don't match property names
         rule %r/(?<!\.)#{identifier}/ do |m|
-          if self.class.keywords.include? m[0]
+          if self.class.keywords.include?(m[0])
             token Keyword
-          elsif self.class.exceptions.include? m[0]
+          elsif self.class.exceptions.include?(m[0]) ||
+                self.class.builtins.include?(m[0])
             token Name::Builtin
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          elsif self.class.builtins_pseudo.include? m[0]
+          elsif self.class.builtins_pseudo.include?(m[0])
             token Name::Builtin::Pseudo
           else
             token Name

@@ -255,17 +255,16 @@ module Rouge
 
         rule %r/#{name}/m do |m|
           match = m[0].upcase
-          if self.class.keywords.include? match
+          if self.class.keywords.include?(match) ||
+             self.class.conditionals.include?(match)
             token Keyword
-          elsif self.class.conditionals.include? match
-            token Keyword
-          elsif self.class.decorators.include? match
+          elsif self.class.decorators.include?(match)
             token Name::Decorator
-          elsif self.class.standalone_statements.include? match
+          elsif self.class.standalone_statements.include?(match)
             token Keyword::Reserved
-          elsif self.class.operators.include? match
+          elsif self.class.operators.include?(match)
             token Operator::Word
-          elsif self.class.routines.include? match
+          elsif self.class.routines.include?(match)
             token Name::Builtin
           else
             token Name

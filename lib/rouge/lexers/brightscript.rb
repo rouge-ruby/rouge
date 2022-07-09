@@ -125,11 +125,9 @@ module Rouge
           caseSensitiveChunk = m[0]
           caseInsensitiveChunk = m[0].upcase
 
-          if self.class.builtins.include?(caseSensitiveChunk)
-            token Keyword::Reserved
-          elsif self.class.keyword_reserved.include?(caseInsensitiveChunk)
-            token Keyword::Reserved
-          elsif self.class.keyword_reserved_unsupported.include?(caseInsensitiveChunk)
+          if self.class.builtins.include?(caseSensitiveChunk) ||
+             self.class.keyword_reserved.include?(caseInsensitiveChunk) ||
+             self.class.keyword_reserved_unsupported.include?(caseInsensitiveChunk)
             token Keyword::Reserved
           elsif self.class.keyword_type.include?(caseInsensitiveChunk)
             token Keyword::Type

@@ -59,15 +59,14 @@ module Rouge
         rule %r/([@$.]?)(#{id})([:(]?)/io do |m|
           lowercased = m[0].downcase
           uppercased = m[0].upcase
-          if self.class.keywords.include? lowercased
+          if self.class.keywords.include?(lowercased) ||
+             self.class.soql.include?(uppercased)
             token Keyword
-          elsif self.class.soql.include? uppercased
-            token Keyword
-          elsif self.class.declarations.include? lowercased
+          elsif self.class.declarations.include?(lowercased)
             token Keyword::Declaration
-          elsif self.class.types.include? lowercased
+          elsif self.class.types.include?(lowercased)
             token Keyword::Type
-          elsif self.class.constants.include? lowercased
+          elsif self.class.constants.include?(lowercased)
             token Keyword::Constant
           elsif lowercased == 'package'
             token Keyword::Namespace

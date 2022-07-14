@@ -7,7 +7,7 @@ module Rouge
       title "Meson"
       desc "Meson's specification language"
       tag 'meson'
-      filenames 'meson.build'
+      filenames 'meson.build', 'meson_options.txt'
 
       def self.keywords
         @keywords ||= %w(

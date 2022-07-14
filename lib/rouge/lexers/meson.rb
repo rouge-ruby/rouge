@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class Meson < RegexLexer
       title "Meson"
-      desc "Meson's specification language"
+      desc "Meson's specification language (mesonbuild.com)"
       tag 'meson'
       filenames 'meson.build', 'meson_options.txt'
 

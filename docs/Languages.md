@@ -124,6 +124,7 @@
 - Mason (`mason`)
 - Mathematica (`mathematica`)
 - MATLAB (`matlab`)
+- Meson (`meson`)
 - MiniZinc (`minizinc`)
 - MoonScript (`moonscript`)
 - Mosel (`mosel`)

@@ -8,6 +8,7 @@ module Rouge
       desc "Meson's specification language (mesonbuild.com)"
       tag 'meson'
       filenames 'meson.build', 'meson_options.txt'
+      mimetypes 'text/x-meson'
 
       def self.keywords
         @keywords ||= %w(
@@ -40,7 +41,7 @@ module Rouge
       dotted_identifier = /[[:alpha:]_.][[:alnum:]_.]*/
 
       def current_string
-        @string_register ||= StringRegister.new
+        @current_string ||= StringRegister.new
       end
 
       state :root do

@@ -41,7 +41,7 @@ module Rouge
       dotted_identifier = /[[:alpha:]_.][[:alnum:]_.]*/
 
       def current_string
-        @string_register ||= StringRegister.new
+        @current_string ||= StringRegister.new
       end
 
       state :root do

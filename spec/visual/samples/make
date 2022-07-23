@@ -112,3 +112,19 @@ endif
 
 print_path:
 	echo $$PATH
+
+# The define Directive
+define variable
+define variable =
+define variable :=
+define variable ::=
+define variable +=
+define variable ?=
+# The override Directive
+override define foo =
+endef
+
+override variable = value
+override variable := value
+override variable += more text
+override CFLAGS += -g

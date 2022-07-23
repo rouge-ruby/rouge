@@ -55,10 +55,8 @@ module Rouge
         rule %r/export[\t ]+/, Keyword
 
         # assignment
-        rule %r/([\w${}().-]+)([\t ]*)([!?:+]?=)/m do |m|
-          token Name::Variable, m[1]
-          token Text, m[2]
-          token Operator, m[3]
+        rule %r/(override\b)*([\t ]*)([\w${}().-]+)([\t ]*)([!?:+]?=)/m do |m|
+          groups Name::Builtin, Text, Name::Variable, Text, Operator
           push :shell_line
         end
 
@@ -67,6 +65,10 @@ module Rouge
         rule %r/([^\n:]+)(:+)([ \t]*)/ do
           groups Name::Label, Operator, Text
           push :block_header
+        end
+
+        rule %r/(override\b)*([\t ])*(define)([\t ]+)([^#\n]+)/ do
+          groups Name::Builtin, Text, Keyword, Text, Name::Variable
         end
       end
 

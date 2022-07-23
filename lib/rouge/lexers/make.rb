@@ -65,6 +65,11 @@ module Rouge
         rule %r/(override\b)*([\t ])*(define)([\t ]+)([^#\n]+)/ do
           groups Name::Builtin, Text, Keyword, Text, Name::Variable
         end
+
+        rule %r/(\$[({])([\t ]*)(#{Make.functions.join('|')})([\t ]+)/m do
+          groups Name::Function, Text, Name::Builtin, Text
+          push :shell_expr
+        end
       end
 
       state :export do

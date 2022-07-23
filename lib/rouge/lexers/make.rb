@@ -73,7 +73,7 @@ module Rouge
       end
 
       state :export do
-        rule %r/[\w\${}()-]/, Name::Variable
+        rule %r/[\w[\$]{1,2}{}()-]/, Name::Variable
         rule %r/\n/, Text, :pop!
         rule %r/[\t ]+/, Text
       end
@@ -109,22 +109,29 @@ module Rouge
 
       state :shell do
         # macro interpolation
-        rule %r/\$[({][\t ]*\w[\w:=%.]*[\t ]*[)}]/i, Name::Variable
+        rule %r/[\$]{1,2}[({]/, Punctuation, :macro_expr
+
         # function invocation
         rule %r/(\$[({])([\t ]*)(#{Make.functions.join('|')})([\t ]+)/m do
-          groups Name::Function, Text, Name::Builtin, Text
+          groups Punctuation, Text, Name::Builtin, Text
           push :shell_expr
         end
 
         rule(/\\./m) { delegate @shell }
-        stop = /\$\(|\$\{|\(|\)|\}|\\|$/
+        stop = /[\$]{1,2}\(|[\$]{1,2}\{|\(|\)|\}|\\|$/
         rule(/.+?(?=#{stop})/m) { delegate @shell }
         rule(stop) { delegate @shell }
       end
 
+      state :macro_expr do
+        rule %r/[)}]/, Punctuation, :pop!
+        rule %r/\n/, Text, :pop!
+        mixin :shell
+      end
+
       state :shell_expr do
         rule(/[({]/) { delegate @shell; push }
-        rule %r/[)}]/, Name::Function, :pop!
+        rule %r/[)}]/, Punctuation, :pop!
         mixin :shell
       end
 

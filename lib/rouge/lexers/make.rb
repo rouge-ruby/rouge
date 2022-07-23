@@ -20,11 +20,6 @@ module Rouge
         )
       end
 
-      # TODO: Add support for special keywords
-      # bsd_special = %w(
-      #   include undef error warning if else elif endif for endfor
-      # )
-
       def initialize(opts={})
         super
         @shell = Shell.new(opts)
@@ -45,7 +40,7 @@ module Rouge
           groups Keyword, Text, Name::Variable
         end
 
-        rule %r/(?:else|endif)[\t ]*(?=[#\n])/, Keyword
+        rule %r/(?:else|endif|endef|endfor)[\t ]*(?=[#\n])/, Keyword
 
         rule %r/(export)([\t ]+)(?=[\w\${}()\t -]+\n)/ do
           groups Keyword, Text

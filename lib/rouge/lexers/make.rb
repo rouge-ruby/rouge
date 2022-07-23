@@ -36,7 +36,7 @@ module Rouge
           groups Keyword, Literal::String::Other
         end
 
-        rule %r/(ifn?def|ifn?eq)([\t ]+)([^#\n]+)/ do
+        rule %r/((?:ifn?def|ifn?eq|unexport)\b)([\t ]+)([^#\n]+)/ do
           groups Keyword, Text, Name::Variable
         end
 

@@ -145,3 +145,10 @@ override variable = value
 override variable := value
 override variable += more text
 override CFLAGS += -g
+
+# export/unexport
+export variable = value
+export variable := value
+export variable += value
+export variable
+unexport variable

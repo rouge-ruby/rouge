@@ -14,6 +14,8 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
   - Dart: Distinguish between punctuation and operators ([#1838](https://github.com/rouge-ruby/rouge/pull/1838/) by Gareth Thackeray)
 - Groovy Lexer
   - Support more Jenkins pipeline name variations in groovy lexer ([#1836](https://github.com/rouge-ruby/rouge/pull/1836/) by Danila Malyutin)
+- Isabelle Lexer (**NEW**)
+  - Feature.isabelle lexer ([#1682](https://github.com/rouge-ruby/rouge/pull/1682/) by Dacit)
 - JavaScript Lexer
   - Fix highlight of nullish coalescing operator in JS ([#1846](https://github.com/rouge-ruby/rouge/pull/1846/) by Tan Le)
 - Meson Lexer (**NEW**)

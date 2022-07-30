@@ -40,7 +40,7 @@ module Rouge
         end
         rule(/^\w.*$\n?/, Punctuation)
         rule(/^=.*$\n?/, Generic::Heading)
-        rule(/\s.*$\n?/, Text)
+        rule(/.+$\n?/, Text)
       end
     end
   end

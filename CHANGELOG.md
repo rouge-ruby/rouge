@@ -4,6 +4,34 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 3.30.0: 2022-07-28
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.29.0...v3.30.0)
+
+- CPP Lexer
+  - Fix template highlight of braces in CPP lexer ([#1839](https://github.com/rouge-ruby/rouge/pull/1839/) by Tan Le)
+- Dart Lexer
+  - Dart: Distinguish between punctuation and operators ([#1838](https://github.com/rouge-ruby/rouge/pull/1838/) by Gareth Thackeray)
+- Groovy Lexer
+  - Support more Jenkins pipeline name variations in groovy lexer ([#1836](https://github.com/rouge-ruby/rouge/pull/1836/) by Danila Malyutin)
+- JavaScript Lexer
+  - Fix highlight of nullish coalescing operator in JS ([#1846](https://github.com/rouge-ruby/rouge/pull/1846/) by Tan Le)
+- Meson Lexer (**NEW**)
+  - Add Meson specs ([#1848](https://github.com/rouge-ruby/rouge/pull/1848/) by Tan Le)
+  - Add Meson Lexer ([#1732](https://github.com/rouge-ruby/rouge/pull/1732/) by funatsufumiya)
+- Nial Lexer (**NEW**)
+  - Add Nial Lexer (feature branch) ([#1844](https://github.com/rouge-ruby/rouge/pull/1844/) by Raghu R)
+- Pascal Lexer
+  - Disambiguate free pascal and puppet ([#1845](https://github.com/rouge-ruby/rouge/pull/1845/) by Tan Le)
+  - Fix highlight of hex numbers in Pascal lexer ([#1840](https://github.com/rouge-ruby/rouge/pull/1840/) by Tan Le)
+- PHP Lexer
+  - PHP: support new syntax (constructor property promotion, readonly modifier, etc.) ([#1829](https://github.com/rouge-ruby/rouge/pull/1829/) by nsfisis)
+- TOML Lexer
+  - lexer: TOML: Support more integer and floating formats ([#1832](https://github.com/rouge-ruby/rouge/pull/1832/) by Toru Niina)
+- Documentation
+  - fix --help to show --formatter-preset and possible options ([#1830](https://github.com/rouge-ruby/rouge/pull/1830/) by Jeanine Adkisson)
+  - Update the URL of AppleScript documentation ([#1799](https://github.com/rouge-ruby/rouge/pull/1799/) by MAEDA Go)
+
 ## version 3.29.0: 2022-05-30
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.28.0...v3.29.0)

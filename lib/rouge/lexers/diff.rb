@@ -20,9 +20,19 @@ module Rouge
       state :root do
         rule(/^ .*$\n?/, Text)
         rule(/^---$\n?/, Punctuation)
-        rule(/^[+>]+.*$\n?/, Generic::Inserted)
-        rule(/^\+.*$\n?/, Generic::Inserted)
-        rule(/^[-<]+.*$\n?/, Generic::Deleted)
+
+        rule %r(
+          (^\++.*$\n?) |
+          (^>+[ \t]+.*$\n?) |
+          (^>+$\n?)
+        )x, Generic::Inserted
+
+        rule %r(
+          (^-+.*$\n?) |
+          (^<+[ \t]+.*$\n?) |
+          (^<+$\n?)
+        )x, Generic::Deleted
+
         rule(/^!.*$\n?/, Generic::Strong)
         rule(/^([Ii]ndex|diff).*$\n?/, Generic::Heading)
         rule(/^(@@[^@]*@@)([^\n]*\n)/) do
@@ -30,7 +40,7 @@ module Rouge
         end
         rule(/^\w.*$\n?/, Punctuation)
         rule(/^=.*$\n?/, Generic::Heading)
-        rule(/\s.*$\n?/, Text)
+        rule(/.+$\n?/, Text)
       end
     end
   end

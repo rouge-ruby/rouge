@@ -13,7 +13,7 @@ index 87f10f4..09ba8c0 100644
  ``` ruby
 -formatter = Rouge::Formatters::HTML.new
 +# make some nice lexed html, compatible with pygments stylesheets
-+formatter = Rouge::Formatters::HTML.new(:css_class => '.highlight')
+!formatter = Rouge::Formatters::HTML.new(:css_class => '.highlight')
  Rouge.highlight(File.read('/etc/bash.bashrc'), 'shell', formatter)
 +
 +# apply a theme
@@ -56,8 +56,23 @@ index ab1701b..155fa52 100644
 
 $ diff a b
 1a2
-> Added line
+>
+> This paragraph contains
+> important new additions
+> to this document.
+> <p>Work with tag</p>
 3c4
-< diff
+< This paragraph contains
+< text that is outdated.
+< It will be deleted in the
+< near future.
+< <p>Work with tag</p>
+<
 ---
 > Line before was removed
+
+
+<div>
+-  <p></p>
++  <span></span>
+</div>

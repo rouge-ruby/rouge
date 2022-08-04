@@ -112,3 +112,43 @@ endif
 
 print_path:
 	echo $$PATH
+
+# The define Directive
+define variable
+define variable =
+define variable :=
+define variable ::=
+define variable +=
+define variable ?=
+
+define PROGRAM_template =
+	$(1): $$($(1)_OBJS) $$($(1)_LIBS:%=-l%)
+	ALL_OBJS += $$($(1)_OBJS)
+endef
+
+# Secondary expansion
+.SECONDEXPANSION:
+ONEVAR = onefile
+TWOVAR = twofile
+myfile: $(ONEVAR) $$(TWOVAR)
+
+main lib: $$(patsubst %.c,%.o,$$($$@_SRCS))
+
+# The eval function
+$(foreach prog,$(PROGRAMS),$(eval $(call PROGRAM_template,$(prog))))
+
+# The override Directive
+override define foo =
+endef
+
+override variable = value
+override variable := value
+override variable += more text
+override CFLAGS += -g
+
+# export/unexport
+export variable = value
+export variable := value
+export variable += value
+export variable
+unexport variable

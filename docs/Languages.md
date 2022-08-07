@@ -165,6 +165,7 @@
 - ReasonML (`reasonml`)
 - Rego (`rego`)
 - ReScript (`rescript`)
+- RML (`rml`)
 - Robot Framework (`robot_framework`)
 - Ruby (`ruby`)
 - Rust (`rust`)

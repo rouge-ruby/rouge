@@ -1,5 +1,9 @@
 package a.b.c;
 
+import haxe.macro.*;
+import String.fromCharCode in f;
+using my.package.SomeStaticExtension;
+
 // one line comment
 /*
   multiline

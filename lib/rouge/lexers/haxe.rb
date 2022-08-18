@@ -17,7 +17,7 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          break case cast catch class continue default do else enum false for
+          as break case cast catch class continue default do else enum false for
           function if import in interface macro new null override package private
           public return switch this throw true try untyped while
         )
@@ -83,7 +83,7 @@ module Rouge
 
         rule %r/
            (#{dotted_id})
-           (\s+)(in)(\s+)
+           (\s+)(in|as)(\s+)
            (#{id})
          /x do
           groups(Name::Namespace, Text::Whitespace, Keyword, Text::Whitespace, Name)

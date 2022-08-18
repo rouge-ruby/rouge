@@ -2,6 +2,7 @@ package a.b.c;
 
 import haxe.macro.*;
 import String.fromCharCode in f;
+import String.fromCharCode as f;
 using my.package.SomeStaticExtension;
 
 // one line comment

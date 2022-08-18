@@ -17,15 +17,15 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          break case cast catch class continue default do else enum false for
-          function if import interface macro new null override package private
+          as break case cast catch class continue default do else enum false for
+          function if import in interface macro new null override package private
           public return switch this throw true try untyped while
         )
       end
 
       def self.imports
         @imports ||= Set.new %w(
-          import using
+          package import using
         )
       end
 
@@ -55,6 +55,7 @@ module Rouge
       end
 
       id = /[$a-zA-Z_][a-zA-Z0-9_]*/
+      dotted_id = /[$a-zA-Z_][a-zA-Z0-9_.]*/
 
       state :comments_and_whitespace do
         rule %r/\s+/, Text
@@ -75,6 +76,22 @@ module Rouge
         rule %r/[{]/, Punctuation, :object
 
         rule %r//, Text, :pop!
+      end
+
+      state :namespace do
+        mixin :comments_and_whitespace
+
+        rule %r/
+           (#{dotted_id})
+           (\s+)(in|as)(\s+)
+           (#{id})
+         /x do
+          groups(Name::Namespace, Text::Whitespace, Keyword, Text::Whitespace, Name)
+        end
+
+        rule %r/#{dotted_id}/, Name::Namespace
+
+        rule(//) { pop! }
       end
 
       state :regex do
@@ -141,20 +158,22 @@ module Rouge
         end
 
         rule id do |m|
-          if self.class.keywords.include? m[0]
+          match = m[0]
+
+          if self.class.imports.include?(match)
+            token Keyword::Namespace
+            push :namespace
+          elsif self.class.keywords.include?(match)
             token Keyword
             push :expr_start
-          elsif self.class.imports.include? m[0]
-            token Keyword
-            push :namespace
-          elsif self.class.declarations.include? m[0]
+          elsif self.class.declarations.include?(match)
             token Keyword::Declaration
             push :expr_start
-          elsif self.class.reserved.include? m[0]
+          elsif self.class.reserved.include?(match)
             token Keyword::Reserved
-          elsif self.class.constants.include? m[0]
+          elsif self.class.constants.include?(match)
             token Keyword::Constant
-          elsif self.class.builtins.include? m[0]
+          elsif self.class.builtins.include?(match)
             token Name::Builtin
           else
             token Name::Other

@@ -24,8 +24,6 @@ module Rouge
           push :inline
         end
 
-        rule %r/(?<!=)\s*\[[\S]+\]/, Name::Namespace
-
         rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
 
         rule %r/[+-]?\d+(?:_\d+)*\.\d+(?:_\d+)*(?:[eE][+-]?\d+(?:_\d+)*)?/, Num::Float
@@ -40,6 +38,8 @@ module Rouge
 
       state :root do
         mixin :basic
+
+        rule %r/(?<!=)\s*\[.*?\]+/, Name::Namespace
 
         rule %r/(#{identifier})(\s*)(=)/ do
           groups Name::Property, Text, Punctuation

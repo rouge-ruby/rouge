@@ -108,3 +108,20 @@ const withAuthRedirect = (route: string, redirectIfAuthed: boolean) => <P,>(
 
 export const withLoginRedirect = withAuthRedirect('/login', false);
 export const withDashboardRedirect = withAuthRedirect('/dashboard', true);
+
+const render = () => (
+    <MyComponent attr={value} foo="bar" />
+);
+
+const render2 = () => (
+    <MyComponent<Type> attr={value} foo="bar" />
+);
+
+const render = () => (
+  <>
+    <MyComponent<Type1, Type2> attr={value} foo="bar" />
+    <MyComponent<Omit<Type, 'field'>> attr={value} foo="bar" />
+    <MyComponent<{field: string}> attr={value} foo="bar" />
+    <MyComponent<{field1: Omit<Type1, 'field2'>}, Type2> attr={value} foo="bar" />
+  </>
+);

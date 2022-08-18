@@ -25,6 +25,9 @@ enabled = true
   ip = "10.0.0.2"
   dc = "eqdc10"
 
+[dog."tater.man"]
+type.name = "pug"
+
 [clients]
 data = [ ["gamma", "delta"], [1, 2] ] # just an update to make sure parsers support it
 
@@ -114,6 +117,14 @@ point = { x = 1, y = 2 }
 'key2' = "value"
 'quoted "value"' = "value"
 
+# Array
+integers = [ 1, 2, 3 ]
+colors = [ "red", "yellow", "green" ]
+nested_arrays_of_ints = [ [ 1, 2 ], [3, 4, 5] ]
+nested_mixed_array = [ [ 1, 2 ], ["a", "b", "c"] ]
+string_array = [ "all", 'strings', """are the same""", '''type''' ]
+link-libraries = ["mylib::mylib"]
+
 # Dotted keys
 physical.color = "orange"
 physical.shape = "round"
@@ -138,3 +149,15 @@ oct         = 0o755
 oct_spacing = 0o755_777
 bin         = 0b1100
 bin_spacing = 0b0101_1100
+
+[[products]]
+name = "array of table"
+sku = 738594937
+emptyTableAreAllowed = true
+
+[[products]]
+
+[[products]]
+name = "Nail"
+sku = 284758393
+color = "gray"

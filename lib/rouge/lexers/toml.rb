@@ -39,7 +39,7 @@ module Rouge
       state :root do
         mixin :basic
 
-        rule %r/(?<!=)\s*\[\s*[\S]+\s*\]/, Name::Namespace
+        rule %r/(?<!=)\s*\[.*?\]+/, Name::Namespace
 
         rule %r/(#{identifier})(\s*)(=)/ do
           groups Name::Property, Text, Punctuation

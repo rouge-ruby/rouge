@@ -5,10 +5,10 @@ module Rouge
   module Lexers
     class TOML < RegexLexer
       title "TOML"
-      desc 'the TOML configuration format (https://github.com/mojombo/toml)'
+      desc 'the TOML configuration format (https://github.com/toml-lang/toml)'
       tag 'toml'
 
-      filenames '*.toml', 'Pipfile'
+      filenames '*.toml', 'Pipfile', 'poetry.lock'
       mimetypes 'text/x-toml'
 
       # bare keys and quoted keys

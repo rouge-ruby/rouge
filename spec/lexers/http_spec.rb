@@ -36,4 +36,14 @@ describe Rouge::Lexers::HTTP do
                                   ["Literal.Number", "200"],
                                   ["Text", " "]
   end
+
+  it 'lexes an empty HTTP/2 response' do
+    response = "HTTP/2 200 "
+    assert_tokens_equal response, ["Keyword", "HTTP"],
+                                  ["Operator", "/"], 
+                                  ["Literal.Number", "2"],
+                                  ["Text", " "],
+                                  ["Literal.Number", "200"],
+                                  ["Text", " "]
+  end
 end

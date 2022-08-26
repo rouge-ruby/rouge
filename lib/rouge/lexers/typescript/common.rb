@@ -26,7 +26,10 @@ module Rouge
 
       def builtins
         @builtins ||= super + %w(
-          Pick Partial Readonly Record
+          Capitalize ConstructorParameters Exclude Extract InstanceType
+          Lowercase NonNullable Omit OmitThisParameter Parameters
+          Partial Pick Readonly Record Required
+          ReturnType ThisParameterType ThisType Uncapitalize Uppercase
         )
       end
 

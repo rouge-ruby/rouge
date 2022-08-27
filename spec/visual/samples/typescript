@@ -207,3 +207,37 @@ const z = `Hello world`;
 // Nullish coalescing in template strings
 const content = `Value is ${value ?? 'not set'}`;
 const description = "Highlighting is not broken now";
+
+// Utility types
+function updateTodo(todo: Todo, fieldsToUpdate: Partial<Todo>) {
+  return { ...todo, ...fieldsToUpdate };
+}
+const obj2: Required<Props> = { a: 5 };
+function freeze<Type>(obj: Type): Readonly<Type>;
+const cats: Record<CatName, CatInfo> = {
+  miffy: { age: 10, breed: "Persian" },
+  boris: { age: 5, breed: "Maine Coon" },
+  mordred: { age: 16, breed: "British Shorthair" },
+};
+type TodoPreview = Pick<Todo, "title" | "completed">;
+type TodoPreview = Omit<Todo, "description">;
+type T0 = Exclude<"a" | "b" | "c", "a">;
+type T0 = Extract<"a" | "b" | "c", "a" | "f">;
+type T0 = NonNullable<string | number | undefined>;
+type T2 = Parameters<<T>(arg: T) => T>;
+type T0 = ConstructorParameters<ErrorConstructor>;
+type T3 = ReturnType<<T extends U, U extends number[]>() => T>;
+type T0 = InstanceType<typeof C>;
+function numberToString(n: ThisParameterType<typeof toHex>) {
+  return toHex.apply(n);
+}
+const fiveToHex: OmitThisParameter<typeof toHex> = toHex.bind(5);
+type ObjectDescriptor<D, M> = {
+  data?: D;
+  methods?: M & ThisType<D & M>; // Type of 'this' in methods is D & M
+};
+
+type ShoutyGreeting = Uppercase<Greeting>
+type QuietGreeting = Lowercase<Greeting>
+type Greeting = Capitalize<LowercaseGreeting>;
+type UncomfortableGreeting = Uncapitalize<UppercaseGreeting>;

@@ -20,6 +20,13 @@ module Rouge
           groups Name::Other, Punctuation
           pop! 3
         end
+
+        rule %r/</, Punctuation, :type
+      end
+
+      state :type do
+        mixin :object
+        rule %r/>/, Punctuation, :pop!
       end
     end
   end

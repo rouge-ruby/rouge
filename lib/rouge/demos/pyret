@@ -1,0 +1,17 @@
+data BinTree:
+  | leaf
+  | node(value, left, right)
+end
+
+fun tree-sum(t):
+  doc: "Calculate the sum of node values"
+  cases (BinTree) t:
+    | leaf => 0
+    | node(v, l, r) =>
+      v + tree-sum(l) + tree-sum(r)
+  end
+where:
+  tree-sum(leaf) is 0
+  node4 = node(4, leaf, leaf)
+  tree-sum(node(5, node4, leaf)) is 9
+end

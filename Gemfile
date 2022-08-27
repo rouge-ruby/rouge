@@ -9,7 +9,7 @@ gem 'rake'
 gem 'minitest', '>= 5.0'
 gem 'minitest-power_assert'
 gem 'power_assert', '~> 1.2'
-
+gem 'puma'
 gem 'parallel', '~> 1.13.0' if RUBY_VERSION < '2.2.0'
 gem 'rubocop', '~> 1.0', '<= 1.11'
 gem 'rubocop-performance'

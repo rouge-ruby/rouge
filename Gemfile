@@ -37,6 +37,7 @@ group :development do
     gem 'sinatra', '~> 1.4.8'
   else
     gem 'sinatra'
+    gem 'thin'
   end
 
   # Ruby 3 no longer ships with a web server

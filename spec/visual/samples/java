@@ -89,6 +89,47 @@ public class PlatformManagerImpl implements PlatformManager
     //T: PlatformManagerCapabilities
     private final HashSet capabilitySet = new HashSet();
 
+    private static final String exampleTextBlock = """
+        <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap-env:Body>
+                <p>Hello, world</p>
+            </soap-env:Body>
+        </soap-env:Envelope>
+        """;
+
+    private static final String emptyTextBlock = """
+        """;
+
+    private static final String withoutFinalNewlineTextBlock = """
+        line 1
+        line 2""";
+
+    private static final String quotesEscapingTextBlock = """
+        String text = \"""
+            A text block inside a text block
+        \""";
+        """;
+
+    private static final String quotesEscaping2TextBlock = """
+        The empty string literal
+        is formed from " characters
+        as follows: \"\"""";
+
+    private static final String quotesEscaping3TextBlock = """
+         1 "
+         2 ""
+         3 ""\"
+         4 ""\""
+         5 ""\"""
+         6 ""\"""\"
+         7 ""\"""\""
+         8 ""\"""\"""
+         9 ""\"""\"""\"
+        10 ""\"""\"""\""
+        11 ""\"""\"""\"""
+        12 ""\"""\"""\"""\"
+        """;
+
     /**
      * Gets the platform manager singleton, which was already initialized
      */

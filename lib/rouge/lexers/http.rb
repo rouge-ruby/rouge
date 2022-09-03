@@ -46,7 +46,7 @@ module Rouge
 
         # response
         rule %r(
-          (HTTPS?)(/)(\d(?:\.\d))([ ]+)  # http version
+          (HTTPS?)(/)(\d(?:\.\d)?)([ ]+) # http version
           (\d{3})([ ]+)?                 # status
           ([^\r\n]*)?(\r?\n|$)           # status message
         )x do

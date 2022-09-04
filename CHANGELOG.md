@@ -4,6 +4,40 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.0.0: 2022-09-04
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.30.0...v4.0.0)
+
+**This is a major release** and includes some breaking changes:
+
+- General
+  - Drop support for Ruby < 2.7 ([#1862](https://github.com/rouge-ruby/rouge/pull/1862/) by Tan Le)
+- Solidity Lexer
+  - remove support for languages related to pyramid schemes ([045d7bc](https://github.com/rouge-ruby/rouge/commit/045d7bcaebae7992f77c69bad4a6fe4a41652422) by Jeanine Adkisson)
+
+### Other changes
+
+- HTTP Lexer
+  - Add support for HTTP/2 responses to HTTP lexer ([#1864](https://github.com/rouge-ruby/rouge/pull/1864/) by aschmitz)
+- TSX Lexer
+  - Add more Typescript utility types ([#1865](https://github.com/rouge-ruby/rouge/pull/1865/) by Tan Le)
+  - Support type arguments in TSX ([#1860](https://github.com/rouge-ruby/rouge/pull/1860/) by Tan Le)
+- TOML Lexer
+  - Add poetry.lock file to TOML lexer ([#1861](https://github.com/rouge-ruby/rouge/pull/1861/) by Tan Le)
+  - Fix array being parsed as table header in TOML ([#1859](https://github.com/rouge-ruby/rouge/pull/1859/) by Tan Le)
+- Haxe Lexer
+  - Define missing namespace state for haxe lexer ([#1858](https://github.com/rouge-ruby/rouge/pull/1858/) by Tan Le)
+- Praat Lexer
+  - Praat: support matrix and string vector type ([#1820](https://github.com/rouge-ruby/rouge/pull/1820/) by Syuparn)
+- RML Lexer
+  - Add support for RML language ([#1659](https://github.com/rouge-ruby/rouge/pull/1659/) by Pietro Cattaneo)
+- Make Lexer
+  - Add more directives in Makefile lexer ([#1849](https://github.com/rouge-ruby/rouge/pull/1849/) by Tan Le)
+- Diff Lexer
+  - Fix angle bracket being confused as diff  ([#1854](https://github.com/rouge-ruby/rouge/pull/1854/) by Tan Le)
+- Documentation
+  - Add missing Isabelle Lexer entry in change log ([#1853](https://github.com/rouge-ruby/rouge/pull/1853/) by Tan Le)
+
 ## version 3.30.0: 2022-07-28
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.29.0...v3.30.0)

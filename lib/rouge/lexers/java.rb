@@ -53,6 +53,7 @@ module Rouge
         rule %r/(?:true|false|null)\b/, Keyword::Constant
         rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
         rule %r/(?:import|package)\b/, Keyword::Namespace, :import
+        rule %r/"""\s*\n.*?(?<!\\)"""/m, Str::Heredoc
         rule %r/"(\\\\|\\"|[^"])*"/, Str
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
         rule %r/(\.)(#{id})/ do

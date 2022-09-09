@@ -10,7 +10,13 @@ Section with_T.
     end.
 End with_T.
 
-Definition a_string := "hello\" world".
+
+Definition a_string := "hello...\n \r \\ \
+world".
+Definition zero_string := "0".
+Definition b_string := "b".
+Definition escape_string := """ hello  world ".
+
 
 Notation "A /\ B" := (and A B) : type_scope.
 

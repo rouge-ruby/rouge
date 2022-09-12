@@ -131,21 +131,14 @@ module Rouge
         rule %r/(?:\-+|\++|\*+)/, Punctuation
         rule %r/[{}]/, Punctuation
         # toplevel_selector
-        rule %r/(!|all|par):/ do |m|
-          token Keyword::Pseudo, m[1]
-          token Punctuation, ':'.dup
+        rule %r/(!|all|par)(:)/ do
+          groups Keyword::Pseudo, Punctuation
         end
         # numbered goals 1: {} 1,2: {}
         rule %r/\d+/, Num::Integer, :numeric_labels
         # [named_goal]: { ... }
-        rule %r/\[(\s*)(#{id})(\s*)(\])(\s*)(:)/ do |m|
-          token Punctuation, '['
-          token Text::Whitespace, m[1]
-          token Name::Constant, m[2]
-          token Text::Whitespace, m[3]
-          token Punctuation, ']'.dup # without dup, you get an error when you attempt to appending to it with ':'
-          token Text::Whitespace, m[5]
-          token Punctuation, ':'.dup
+        rule %r/(\[)(\s*)(#{id})(\s*)(\])(\s*)(:)/ do
+          groups Punctuation, Text::Whitespace, Name::Constant, Text::Whitespace, Punctuation, Text::Whitespace, Punctuation
         end
         # After parsing the id, end up in sentence_postid
         rule id do |m|
@@ -158,10 +151,8 @@ module Rouge
 
       state :numeric_labels do
         mixin :whitespace
-        rule %r(,(\s*)(\d+)) do |m|
-          token Punctuation, ','
-          token Text::Whitespace, m[1]
-          token Num::Integer, m[2]
+        rule %r/(,)(\s*)(\d+)/ do |m|
+          groups Punctuation, Text::Whitespace, Num::Integer
         end
         rule %r(:), Punctuation, :pop!
       end

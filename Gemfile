@@ -38,6 +38,4 @@ group :development do
     gem 'sinatra'
   end
   gem 'shotgun'
-  # ruby 3+
-  gem 'webrick'
 end

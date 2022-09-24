@@ -25,7 +25,7 @@ module Rouge
           Variables Class Instance Global Local Include
           Printing Notation Infix Arguments Hint Rewrite Immediate
           Qed Defined Opaque Transparent Existing
-          Compute Eval Print SearchAbout Search About Check
+          Compute Eval Print SearchAbout Search About Check Admitted
         )
       end
 
@@ -56,12 +56,6 @@ module Rouge
         )
       end
 
-      def self.keyopts
-        @keyopts ||= Set.new %w(
-          := => -> /\\ \\/ _ ; :> : ⇒ → ↔ ⇔ ≔ ≡ ∀ ∃ ∧ ∨ ¬ ⊤ ⊥ ⊢ ⊨ ∈
-        )
-      end
-
       def self.end_sentence
         @end_sentence ||= Punctuation::Indicator
       end
@@ -82,16 +76,96 @@ module Rouge
         end
       end
 
-      operator = %r([\[\];,{}_()!$%&*+./:<=>?@^|~#-]+)
-      id = /(?:[a-z][\w']*)|(?:[_a-z][\w']+)/i
-      dot_id = /\.((?:[a-z][\w']*)|(?:[_a-z][\w']+))/i
+      # https://github.com/coq/coq/blob/110921a449fcb830ec2a1cd07e3acc32319feae6/clib/unicode.ml#L67
+      # https://coq.inria.fr/refman/language/core/basic.html#grammar-token-ident
+      id_first = /\p{L}/
+      id_first_underscore = /(?:\p{L}|_)/
+      id_subsequent = /(?:\p{L}|\p{N}|_|')/ # a few missing? some mathematical ' primes and subscripts
+      id = /(?:#{id_first}#{id_subsequent}*)|(?:#{id_first_underscore}#{id_subsequent}+)/i
+      dot_id = /\.(#{id})/i
       dot_space = /\.(\s+)/
+      proof = /Proof(\s*).(\s+)/i
+      qed = /(Qed|Defined|Save|Admitted)(\s*).(\s+)/i
       module_type = /Module(\s+)Type(\s+)/
       set_options = /(Set|Unset)(\s+)(Universe|Printing|Implicit|Strict)(\s+)(Polymorphism|All|Notations|Arguments|Universes|Implicit)(\s*)\./m
 
       state :root do
-        rule %r/[(][*](?![)])/, Comment, :comment
+        mixin :begin_proof
+        mixin :sentence
+      end
+
+      state :sentence do
+        mixin :comment_whitespace
+        mixin :module_setopts
+        # After parsing the id, end up in sentence_postid
+        rule id do |m|
+          @name = m[0]
+          @id_dotted = false
+          push :sentence_postid
+          push :continue_id
+        end
+      end
+
+      state :begin_proof do
+        rule proof do |m|
+          token Keyword, "Proof"
+          token Text::Whitespace, m[1]
+          token Punctuation::Indicator, '.'
+          token Text::Whitespace, m[2]
+          push :proof_mode
+        end
+      end
+
+      state :proof_mode do
+        mixin :comment_whitespace
+        mixin :module_setopts
+        mixin :begin_proof
+        rule qed do |m|
+          token Keyword, m[1]
+          token Text::Whitespace, m[2]
+          token Punctuation::Indicator, '.'
+          token Text::Whitespace, m[3]
+          pop! # :proof_mode
+        end
+        # the whole point of parsing Proof/Qed, normally some of these will be operators
+        rule %r/(?:\-+|\++|\*+)/, Punctuation
+        rule %r/[{}]/, Punctuation
+        # toplevel_selector
+        rule %r/(!|all|par)(:)/ do
+          groups Keyword::Pseudo, Punctuation
+        end
+        # numbered goals 1: {} 1,2: {}
+        rule %r/\d+/, Num::Integer, :numeric_labels
+        # [named_goal]: { ... }
+        rule %r/(\[)(\s*)(#{id})(\s*)(\])(\s*)(:)/ do
+          groups Punctuation, Text::Whitespace, Name::Constant, Text::Whitespace, Punctuation, Text::Whitespace, Punctuation
+        end
+        # After parsing the id, end up in sentence_postid
+        rule id do |m|
+          @name = m[0]
+          @id_dotted = false
+          push :sentence_postid
+          push :continue_id
+        end
+      end
+
+      state :numeric_labels do
+        mixin :whitespace
+        rule %r/(,)(\s*)(\d+)/ do |m|
+          groups Punctuation, Text::Whitespace, Num::Integer
+        end
+        rule %r(:), Punctuation, :pop!
+      end
+
+      state :whitespace do
         rule %r/\s+/m, Text::Whitespace
+      end
+      state :comment_whitespace do
+        rule %r/[(][*](?![)])/, Comment, :comment
+        mixin :whitespace
+      end
+
+      state :module_setopts do
         rule module_type do |m|
           token Keyword , 'Module'
           token Text::Whitespace , m[1]
@@ -108,32 +182,39 @@ module Rouge
           end
           token self.class.end_sentence , '.'
         end
+      end
+
+      state :sentence_postid do
+        mixin :comment_whitespace
+        mixin :module_setopts
+
+        # up here to beat the id rule for lambda
+        rule %r(:=|=>|;|:>|:|::|_), Punctuation
+        rule %r(->|/\\|\\/|;|:>|[⇒→↔⇔≔≡∀∃∧∨¬⊤⊥⊢⊨∈λ]), Operator
+
         rule id do |m|
           @name = m[0]
-          @continue = false
+          @id_dotted = false
           push :continue_id
         end
-        rule %r(/\\), Operator
-        rule %r/\\\//, Operator
+
+        # must be followed by whitespace, so that we don't match notations like sym.(a + b)
+        rule %r/\.(?=\s)/, Punctuation::Indicator, :pop! # :sentence_postid
 
         rule %r/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
-        rule %r/\d[\d_]*/, Num::Integer
+        rule %r/-?\d[\d_]*/, Num::Integer
 
         rule %r/'(?:(\\[\\"'ntbr ])|(\\[0-9]{3})|(\\x\h{2}))'/, Str::Char
         rule %r/'/, Keyword
         rule %r/"/, Str::Double, :string
         rule %r/[~?]#{id}/, Name::Variable
 
-        rule %r/./ do |m|
-          match = m[0]
-          if self.class.keyopts.include? match
-            token Punctuation
-          elsif match =~ operator
-            token Operator
-          else
-            token Error
-          end
-        end
+        rule %r(`{|[{}\[\]()?|;,.]), Punctuation
+        rule %r([!@^|~#.%/]+), Operator
+        # any other combo of S (symbol), P (punctuation) and some extras just to be sure
+        rule %r((?:\p{S}|\p{Pc}|[./\:\<=>\-+*])+), Operator
+
+        rule %r/./, Error
       end
 
       state :comment do
@@ -159,11 +240,11 @@ module Rouge
         rule dot_id do |m|
           token Name::Namespace , @name
           token Punctuation , '.'
-          @continue = true
+          @id_dotted = true
           @name = m[1]
         end
         rule dot_space do |m|
-          if @continue
+          if @id_dotted
             token Name::Constant , @name
           else
             token self.class.classify(@name) , @name
@@ -171,18 +252,20 @@ module Rouge
           token self.class.end_sentence , '.'
           token Text::Whitespace , m[1]
           @name = false
-          @continue = false
-          pop!
+          @id_dotted = false
+          pop! # :continue_id
+          pop! # :sentence_postid
         end
         rule %r// do
-          if @continue
+          if @id_dotted
             token Name::Constant , @name
           else
             token self.class.classify(@name) , @name
           end
           @name = false
-          @continue = false
-          pop!
+          @id_dotted = false
+          # we finished parsing an id, drop back into the sentence_postid that was pushed first.
+          pop! # :continue_id
         end
       end
 

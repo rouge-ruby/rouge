@@ -16,3 +16,7 @@ rouge-memory.tmp
 
 # IntelliJ IDEA / RubyMine
 .idea/
+
+# RVM/rbenv configuration files
+.ruby-version
+.ruby-gemset

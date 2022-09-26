@@ -8,10 +8,10 @@ organization = "GitHub"
 bio = "GitHub Cofounder & CEO\nLikes tater tots and beer."
 # First class dates? Why not?
 dob = [
-	1979-05-27T07:32:00Z,
-	1979-05-27 07:32:00
-	1979-05-27,
-	07:32:00,
+  1979-05-27T07:32:00Z,
+  1979-05-27 07:32:00
+  1979-05-27,
+  07:32:00,
 ]
 
 [database]
@@ -106,15 +106,13 @@ test_string = "You'll hate me after this - #"          # " Annoying, isn't it?
     harder_test_string = " And when \"'s are in the string, along with # \""   # "and comments are there too"
     # Things will get harder
     
-        [the.hard.bit#]
-        what? = "You don't think some user won't do that?"
+        [the.hard."bit#"]
+        "what?" = "You don't think some user won't do that?"
         multi_line_array = [
             "]",
             "Oi!\n",
             # ] Oh yes I did
             ]
-
-東京都 = 123
 
 # Inline table
 name = { first = "Tom", last = "Preston-Werner" }
@@ -127,6 +125,7 @@ point = { x = 1, y = 2 }
 "ʎǝʞ" = "value"
 'key2' = "value"
 'quoted "value"' = "value"
+"東京都" = 123
 
 # Array
 integers = [ 1, 2, 3 ]
@@ -187,8 +186,21 @@ inf-3 = {inf=inf, nan=nan}
 str-inf-1 = 'inf'
 str-inf-2 = "inf"
 str-inf-3 = """ inf nan
-	inf nan
+  inf nan
 """
 str-inf-4 = """ inf nan
-	inf nan
+  inf nan
 """
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+idna = "3.4"
+inflection = "0.5.1"
+influxdb = "5.3.1"
+requests = "2.28.1"
+pywinpty = {version = ">=1.1.0", markers = "os_name == \"nt\""}
+
+dependencies = [
+  "aiohttp>=3.11.16,<4.0.0",
+  "backoff>=2.2.1,<3.0.0",
+]

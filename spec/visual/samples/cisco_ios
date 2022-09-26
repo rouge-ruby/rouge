@@ -2,21 +2,21 @@
 ! http://www.glitchwrks.com/2016/10/06/cisco-access-points
 
 interface FastEthernet0
-    no ip address
-    no ip route-cache
-    duplex auto
-    speed auto
+  no ip address
+  no ip route-cache
+  duplex auto
+  speed auto
 
 interface FastEthernet0.20
-    encapsulation dot1Q 20
-    no ip route-cache
-    bridge-group 1
-    no bridge-group 1 source-learning
-    bridge-group 1 spanning-disabled
+  encapsulation dot1Q 20
+  no ip route-cache
+  bridge-group 1
+  no bridge-group 1 source-learning
+  bridge-group 1 spanning-disabled
 
 interface BVI1
-    ip address dhcp client-id FastEthernet0
-    no ip route cache
+  ip address dhcp client-id FastEthernet0
+  no ip route cache
 
 ! Supports shortened versions of config words, too
 conf ter

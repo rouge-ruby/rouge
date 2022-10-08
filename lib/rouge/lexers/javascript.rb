@@ -271,7 +271,7 @@ module Rouge
       state :template_string do
         rule %r/[$]{/, Punctuation, :template_string_expr
         rule %r/`/, Str::Double, :pop!
-        rule %r/\\[$`]/, Str::Escape
+        rule %r/\\[$`\\]/, Str::Escape
         rule %r/[^$`\\]+/, Str::Double
         rule %r/[\\$]/, Str::Double
       end

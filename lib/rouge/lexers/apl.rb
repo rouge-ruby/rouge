@@ -13,16 +13,20 @@ module Rouge
       end
 
       state :root do
+        rule %r/^#!.+$/, Comment::Special
         rule %r/'/, Str::Single, :str
         rule %r/⍝.*/, Comment::Single
-        rule %r/¯?[0-9][¯0-9A-Za-z]*(?:\.[¯0-9Ee][¯0-9A-Za-z]*)*|¯?\.[0-9Ee][¯0-9A-Za-z]/, Num::Number
+        rule %r/:[A-Za-z]+/, Keyword
+        rule %r/[◊⋄;:←→\[\]\{\}\(\).]/, Punctuation
+        rule %r/⎕[A-Z_a-zÀ-ÖØ-Ýßà-öø-üþ∆⍙Ⓐ-Ⓩ][A-Z_a-zÀ-ÖØ-Ýßà-öø-üþ∆⍙Ⓐ-Ⓩ¯0-9]*/, Keyword::Reserved
         rule %r/(?x)^\s*([A-Z_a-zÀ-ÖØ-Ýßà-öø-üþ∆⍙Ⓐ-Ⓩ][A-Z_a-zÀ-ÖØ-Ýßà-öø-üþ∆⍙Ⓐ-Ⓩ¯0-9]*)(:)/, Name::Label
-        rule %r'[+×÷⌊⌈⍟○!∧∨⍲⍱<≤=≥>≠?⍷,⍪⌷⍳⍴↑↓⊣⊢⊤⊥\/⌿⍀⌽⊖⍉⍋⍒⌹≡≢⊂⊃∩∪⍎⍕⊆⍸]', Keyword
-        rule %r/[¨⍤⌸⍨⍣\\.∘⍠&⌶⌺@]/, Operator
-        rule %r/[⍺⍵⍶⍹χ∇λ]/, Keyword::Variable
-        rule %r/◊;¯←→\[\]\{\}\(\)/, Punctuation
         rule %r/[A-Z_a-zÀ-ÖØ-Ýßà-öø-üþ∆⍙Ⓐ-Ⓩ][A-Z_a-zÀ-ÖØ-Ýßà-öø-üþ∆⍙Ⓐ-Ⓩ¯0-9]*/, Name::Variable
-        rule %/\s+/, Text
+        rule %r/¯?[0-9][¯0-9A-Za-z]*(?:\.[¯0-9Ee][¯0-9A-Za-z]*)*|¯?\.[0-9Ee][¯0-9A-Za-z]/, Num::Number
+        rule %r'[¨⍨⍣∘⍤⍥@⌸⍨⍣⌿⍀/\\∘⍠&⌶⌺@]', Operator
+        rule %r'[+-×÷*⍟⌹○!?|⌈⌊⊥⊤⊣⊢=≠≤<>≥≡≢∨∧⍲⍱↑↓⊂⊃⊆⌷⍋⍒⍳⍸∊⍷∪∩~,⍪⍴⌽⊖⍉⍎⎕⍞⍕]', Keyword
+        rule %r/[⍬]/, Keyword::Constant
+        rule %r/[⍺⍵⍶⍹χ∇λ]/, Keyword::Variable
+        rule %r/\s+/, Text
       end
 
       state :str do

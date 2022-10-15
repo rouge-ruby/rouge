@@ -1,0 +1,32 @@
+\ Sample Forth program
+
+REQUIRE compat.fs
+
+: square ( n -- n ) DUP * ;
+
+10 CONSTANT pad-size
+CREATE extra-pad pad-size square CELLS ALLOT
+VARIABLE color $ec627a color !
+DEFER main
+
+: ix>weekday ( u -- c-addr u )
+  CASE
+    0 OF s" Sunday"    ENDOF
+    1 OF s" Monday"    ENDOF
+    2 OF s" Tuesday"   ENDOF
+    3 OF s" Wednesday" ENDOF
+    4 OF s" Thursday"  ENDOF
+    5 OF s" Friday"    ENDOF
+    6 OF s" Saturday"  ENDOF
+  ENDCASE ;
+
+: .weekdays ( -- )
+  7 0 ?DO
+    [CHAR] - EMIT SPACE
+    I ix>weekday TYPE CR
+    [ 10 square ]L MS
+  LOOP ;
+
+:noname ( -- )
+  ." Hello World!"
+  .weekdays BYE ; IS main

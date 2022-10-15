@@ -61,6 +61,7 @@
 - Erlang (`erlang`)
 - Escape (`escape`)
 - Factor (`factor`)
+- Forth (`forth`)
 - Fortran (`fortran`)
 - FreeFEM (`freefem`)
 - FSharp (`fsharp`)

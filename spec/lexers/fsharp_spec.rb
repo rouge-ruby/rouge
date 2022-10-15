@@ -8,7 +8,7 @@ describe Rouge::Lexers::FSharp do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.fs'
+      assert_guess :filename => 'foo.fs', :source => 'let foo = bar()'
       assert_guess :filename => 'foo.fsx'
     end
 

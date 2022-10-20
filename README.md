@@ -10,7 +10,7 @@ or ANSI 256-color text. Its HTML output is compatible with
 stylesheets designed for [Pygments][].
 
 [rouge]: http://rouge.jneen.net/ "Rouge"
-[languages-doc]: docs/Languages.md "Languages"
+[languages-doc]: https://rouge-ruby.github.io/docs/file.Languages.html "Languages"
 [pygments]: http://pygments.org "Pygments"
 
 ## Installation
@@ -254,7 +254,7 @@ for a year are automatically closed by GitHub's [Probot][].
 **NOTE**: Please don't submit lexers that are copy-pasted from other files.
 These submission will be rejected and we don't want you to waste your time.
 
-We want to make it as easy as we can for anyone to contribute a lexer to Rouge.
+We want to make it as easy as we can for anyone to contribute a lexer to RouEge.
 To help get you started, we have [a shiny new guide][lexer-dev-doc] on lexer
 development in the documentation. The best place is to start there.
 

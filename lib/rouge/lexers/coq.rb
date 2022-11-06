@@ -56,10 +56,6 @@ module Rouge
         )
       end
 
-      def self.end_sentence
-        @end_sentence ||= Punctuation::Indicator
-      end
-
       def self.classify(x)
         if self.coq.include? x
           return Keyword
@@ -84,10 +80,6 @@ module Rouge
       id = /(?:#{id_first}#{id_subsequent}*)|(?:#{id_first_underscore}#{id_subsequent}+)/i
       dot_id = /\.(#{id})/i
       dot_space = /\.(\s+)/
-      proof = /Proof(\s*).(\s+)/i
-      qed = /(Qed|Defined|Save|Admitted)(\s*).(\s+)/i
-      module_type = /Module(\s+)Type(\s+)/
-      set_options = /(Set|Unset)(\s+)(Universe|Printing|Implicit|Strict)(\s+)(Polymorphism|All|Notations|Arguments|Universes|Implicit)(\s*)\./m
 
       state :root do
         mixin :begin_proof
@@ -107,11 +99,8 @@ module Rouge
       end
 
       state :begin_proof do
-        rule proof do |m|
-          token Keyword, "Proof"
-          token Text::Whitespace, m[1]
-          token Punctuation::Indicator, '.'
-          token Text::Whitespace, m[2]
+        rule %r/(Proof)(\s*)(\.)(\s+)/i do
+          groups Keyword, Text::Whitespace, Punctuation::Indicator, Text::Whitespace
           push :proof_mode
         end
       end
@@ -120,12 +109,10 @@ module Rouge
         mixin :comment_whitespace
         mixin :module_setopts
         mixin :begin_proof
-        rule qed do |m|
-          token Keyword, m[1]
-          token Text::Whitespace, m[2]
-          token Punctuation::Indicator, '.'
-          token Text::Whitespace, m[3]
-          pop! # :proof_mode
+
+        rule %r/(Qed|Defined|Save|Admitted)(\s*)(\.)(\s+)/i do
+          groups Keyword, Text::Whitespace, Punctuation::Indicator, Text::Whitespace
+          pop!
         end
         # the whole point of parsing Proof/Qed, normally some of these will be operators
         rule %r/(?:\-+|\++|\*+)/, Punctuation
@@ -151,36 +138,33 @@ module Rouge
 
       state :numeric_labels do
         mixin :whitespace
-        rule %r/(,)(\s*)(\d+)/ do |m|
+        rule %r/(,)(\s*)(\d+)/ do
           groups Punctuation, Text::Whitespace, Num::Integer
         end
+
         rule %r(:), Punctuation, :pop!
       end
 
       state :whitespace do
         rule %r/\s+/m, Text::Whitespace
       end
+
       state :comment_whitespace do
         rule %r/[(][*](?![)])/, Comment, :comment
         mixin :whitespace
       end
 
       state :module_setopts do
-        rule module_type do |m|
-          token Keyword , 'Module'
-          token Text::Whitespace , m[1]
-          token Keyword , 'Type'
-          token Text::Whitespace , m[2]
+        rule %r/(Module)(\s+)(Type)(\s+)/ do
+          groups Keyword, Text::Whitespace, Keyword, Text::Whitespace
         end
-        rule set_options do |m|
-          token Keyword , m[1]
-          i = 2
-          while m[i] != ''
-            token Text::Whitespace , m[i]
-            token Keyword , m[i+1]
-            i += 2
-          end
-          token self.class.end_sentence , '.'
+
+        rule %r(
+          (Set|Unset)(\s+)
+          (Universe|Printing|Implicit|Strict)(\s+)
+          (Polymorphism|All|Notations|Arguments|Universes|Implicit)?(\s*)(\.)
+        )x do
+          groups Keyword, Text::Whitespace, Keyword, Text::Whitespace, Keyword, Text::Whitespace, Punctuation::Indicator
         end
       end
 
@@ -238,29 +222,32 @@ module Rouge
       state :continue_id do
         # the stream starts with an id (stored in @name) and continues here
         rule dot_id do |m|
-          token Name::Namespace , @name
-          token Punctuation , '.'
+          token Name::Namespace, @name
+          token Punctuation, '.'
           @id_dotted = true
           @name = m[1]
         end
+
         rule dot_space do |m|
           if @id_dotted
-            token Name::Constant , @name
+            token Name::Constant, @name
           else
-            token self.class.classify(@name) , @name
+            token self.class.classify(@name), @name
           end
-          token self.class.end_sentence , '.'
-          token Text::Whitespace , m[1]
+
+          token Punctuation::Indicator, '.'
+          token Text::Whitespace, m[1]
           @name = false
           @id_dotted = false
           pop! # :continue_id
           pop! # :sentence_postid
         end
+
         rule %r// do
           if @id_dotted
-            token Name::Constant , @name
+            token Name::Constant, @name
           else
-            token self.class.classify(@name) , @name
+            token self.class.classify(@name), @name
           end
           @name = false
           @id_dotted = false
@@ -268,7 +255,6 @@ module Rouge
           pop! # :continue_id
         end
       end
-
     end
   end
 end

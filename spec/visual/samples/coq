@@ -110,3 +110,14 @@ Proof.
   1,2: { done. }
   1,2,3: { done. }
 Qed.
+
+Unset Implicit Arguments.
+Set Strict Implicit.
+Set Printing Notations.
+CoInductive Trace (A:automaton) : states A -> LList (actions A) -> Prop :=
+| empty_trace : forall q:states A, deadlock A q -> Trace A q LNil
+| lcons_trace :
+    forall (q q':states A) (a:actions A) (l:LList (actions A)),
+      In q' (transitions A q a) -> Trace A q' l -> Trace A q (LCons a l).
+Set Implicit Arguments.
+Unset Strict Implicit.

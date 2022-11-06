@@ -10,7 +10,7 @@ or ANSI 256-color text. Its HTML output is compatible with
 stylesheets designed for [Pygments][].
 
 [rouge]: http://rouge.jneen.net/ "Rouge"
-[languages-doc]: docs/Languages.md "Languages"
+[languages-doc]: https://rouge-ruby.github.io/docs/file.Languages.html "Languages"
 [pygments]: http://pygments.org "Pygments"
 
 ## Installation

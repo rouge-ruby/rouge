@@ -27,7 +27,7 @@ To develop a lexer, you need to have set up a development environment. If you
 haven't done that yet, we've got a [guide][dev-environment-docs] that can
 help.
 
-[dev-environment-docs]: DevEnvironment.md
+[dev-environment-docs]: https://rouge-ruby.github.io/docs/file.DevEnvironment.html "Rouge's environment setup guide"
 
 The rest of this guide assumes that you have set up such an environment and,
 importantly, that you have installed the gems on which Rouge depends to a

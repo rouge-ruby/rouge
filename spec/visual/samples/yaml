@@ -358,3 +358,4 @@ Stack:
 foo/bar: We are great
 foo.bar: Are we really?
 foo+bar: Maybe not
+foo:bar: ...or maybe we are?

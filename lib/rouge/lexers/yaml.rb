@@ -175,7 +175,7 @@ module Rouge
 
       state :block_nodes do
         # implicit key
-        rule %r/([^#,:?\[\]{}"'\n]+)(:)(?=\s|$)/ do |m|
+        rule %r/([^#,?\[\]{}"'\n]+)(:)(?=\s|$)/ do |m|
           groups Name::Attribute, Punctuation::Indicator
           set_indent m[0], :implicit => true
         end

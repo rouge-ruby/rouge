@@ -9,6 +9,7 @@ describe Rouge::Lexers::Vala do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.vala'
+      assert_guess :filename => 'foo.vapi'
     end
 
     it 'guesses by mimetype' do

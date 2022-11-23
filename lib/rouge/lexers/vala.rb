@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class Vala < RegexLexer
       tag 'vala'
-      filenames '*.vala'
+      filenames '*.vala', '*.vapi'
       mimetypes 'text/x-vala'
 
       title "Vala"

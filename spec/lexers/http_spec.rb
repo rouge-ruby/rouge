@@ -15,8 +15,19 @@ describe Rouge::Lexers::HTTP do
                                  ["Operator", "/"],
                                  ["Literal.Number", "2"]
   end
-  
-  it 'lexes a HTTP/1.1 request' do
+
+  it 'lexes a HTTP/1.1 QUERY request' do
+    request = "QUERY / HTTP/1.1"
+    assert_tokens_equal request, ["Name.Function", "QUERY"],
+                                 ["Text", " "],
+                                 ["Name.Namespace", "/"],
+                                 ["Text", " "],
+                                 ["Keyword", "HTTP"],
+                                 ["Operator", "/"],
+                                 ["Literal.Number", "1.1"]
+  end
+
+  it 'lexes a HTTP/1.1 GET request' do
     request = "GET / HTTP/1.1"
     assert_tokens_equal request, ["Name.Function", "GET"],
                                  ["Text", " "],
@@ -30,7 +41,7 @@ describe Rouge::Lexers::HTTP do
   it 'lexes an empty HTTP/1.1 response' do
     response = "HTTP/1.1 200 "
     assert_tokens_equal response, ["Keyword", "HTTP"],
-                                  ["Operator", "/"], 
+                                  ["Operator", "/"],
                                   ["Literal.Number", "1.1"],
                                   ["Text", " "],
                                   ["Literal.Number", "200"],
@@ -40,7 +51,7 @@ describe Rouge::Lexers::HTTP do
   it 'lexes an empty HTTP/2 response' do
     response = "HTTP/2 200 "
     assert_tokens_equal response, ["Keyword", "HTTP"],
-                                  ["Operator", "/"], 
+                                  ["Operator", "/"],
                                   ["Literal.Number", "2"],
                                   ["Text", " "],
                                   ["Literal.Number", "200"],

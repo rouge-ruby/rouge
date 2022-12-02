@@ -209,14 +209,9 @@ module Rouge
       end
 
       state :string do
-        rule %r/(?:\\")+|[^"]/, Str::Double
-        mixin :escape_sequence
-        rule %r/\\\n/, Str::Double
+        rule %r/[^"]+/, Str::Double
+        rule %r/""/, Str::Double
         rule %r/"/, Str::Double, :pop!
-      end
-
-      state :escape_sequence do
-        rule %r/\\[\\"'ntbr]/, Str::Escape
       end
 
       state :continue_id do

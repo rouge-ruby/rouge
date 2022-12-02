@@ -10,4 +10,7 @@ Section with_T.
     end.
 End with_T.
 
-Definition a_string := "hello \" world".
+Definition a_string := "hello
+world".
+Definition escape_string := "0123".
+Definition zero_string := "0".

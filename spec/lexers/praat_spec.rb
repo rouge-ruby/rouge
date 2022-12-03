@@ -31,7 +31,7 @@ describe Rouge::Lexers::Praat do
 
     it 'string variable' do
       assert_tokens_equal "string$",
-        ['Text',           'string$']
+        ['Name.Variable', 'string$']
     end
 
     it 'shorthand procedure call' do
@@ -43,7 +43,8 @@ describe Rouge::Lexers::Praat do
         ['Literal.String', '"arg"'],
         ['Text',           ' '],
         ['Literal.Number', '1'],
-        ['Text',           ' unquoted']
+        ['Text',           ' '],
+        ['Name.Variable',  'unquoted']
     end
 
     it 'new-style procedure call' do

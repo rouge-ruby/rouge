@@ -182,6 +182,10 @@ module Rouge
 
       state :parameters do
         rule %r/`./m, Str::Escape
+        rule %r/\)/ do
+          token Punctuation
+          pop!(2) if in_state?(:interpol) # pop :parameters and :interpol
+        end
         rule %r/\s*?\n/, Text::Whitespace, :pop!
         rule %r/[;(){}\]]/, Punctuation, :pop!
         rule %r/[|=]/, Operator, :pop!

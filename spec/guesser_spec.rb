@@ -103,8 +103,8 @@ describe Rouge::Guesser do
               Array[String] = foo::bar::baz,
             ) {
               $foo = [
-                'bar',
-                'baz',
+                'var',
+                'end.',
               ]
             }
           SOURCE

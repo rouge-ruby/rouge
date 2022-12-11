@@ -3,7 +3,8 @@
 
 require 'open-uri'
 
-LLVM_SYNTAX_URI = "https://raw.githubusercontent.com/llvm/llvm-project/master/llvm/lib/AsmParser/LLLexer.cpp"
+# TODO: Newer versions require parsing Attributes.td separately.
+LLVM_SYNTAX_URI = "https://raw.githubusercontent.com/llvm/llvm-project/9de7b93bc00804585a8e36fc35f6449329d8225a/llvm/lib/AsmParser/LLLexer.cpp"
 LLVM_KEYWORDS_FILE = "./lib/rouge/lexers/llvm/keywords.rb"
 
 namespace :builtins do
@@ -45,6 +46,9 @@ module Rouge
 
             keywords[kind].push $1
           end
+
+          # Does not use TYPEKEYWORD() due to special handling.
+          keywords["types"].push "ptr"
 
           keywords.transform_values! { |v| v.sort }
         end

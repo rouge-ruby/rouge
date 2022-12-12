@@ -133,7 +133,8 @@ module Rouge
       end
 
       disambiguate '*.pp' do
-        next Pascal if matches?(/\b(function|begin|var)\b/)
+        next Puppet if matches?(/(::)?([a-z]\w*::)/)
+        next Pascal if matches?(/^(function|begin|var)\b/)
         next Pascal if matches?(/\b(end(;|\.))/)
 
         Puppet

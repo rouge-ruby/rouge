@@ -215,6 +215,7 @@ Function Get-IPv4Scopes
 } #end function
 
 Write-Output "Updating: $($file.FullName)"
+Write-Output "PowerShell PID: $(Get-Process powershell | Select -ExpandProperty Id) and Notepad PID: $(Get-Process notepad | Select -ExpandProperty Id)"
 # $content = Get-Content $file.FullName
 
 # Without Error
@@ -228,3 +229,23 @@ Write-Output `$hello
 
 # Where-Object alias
 Get-process | ? {$_.workingset -gt 25000*1024}
+
+# Handle subexpressions nested within strings
+function Write-Log {
+    Param(
+        $Message,
+        $Path = "L:\IISSiteAudit.txt"
+    )
+
+    function TS { return "[{0:MM/dd/yy} {0:HH:mm:ss}]" -f (Get-Date) }
+    "$(TS) $Message" | Tee-Object -FilePath $Path -Append | Write-Verbose
+}
+
+function NewVMSnapshot {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$VM,
+        [string[]]$Name = (Get-Date -Format 'yyyy-MM-dd_HH:mm:ss') + "_$VM",
+        [string[]]$Description = "`Snapshot taken via $(Split-Path $PSCommandPath -leaf) by $global:vsphereuser."
+    )
+}

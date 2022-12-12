@@ -240,6 +240,8 @@ module Rouge
 
         rule %r/[-+*\/%=!.&|]/, Operator
         rule %r/[{}(),:;]/, Punctuation
+
+        rule %r/`$/, Str::Escape # line continuation
       end
     end
   end

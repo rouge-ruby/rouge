@@ -249,3 +249,10 @@ function NewVMSnapshot {
         [string[]]$Description = "`Snapshot taken via $(Split-Path $PSCommandPath -leaf) by $global:vsphereuser."
     )
 }
+
+# Handle line continuation in string interpolation
+Get-CimInstance -ComputerName localhost win32_logicaldisk `
+| where caption -eq "C:" `
+| foreach-object {write " $($_.caption) $('{0:N2}' `
+-f ($_.Size/1gb)) GB total, $('{0:N2}' `
+-f ($_.FreeSpace/1gb)) GB free "}

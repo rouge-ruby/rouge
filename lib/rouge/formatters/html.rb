@@ -5,6 +5,14 @@ module Rouge
   module Formatters
     # Transforms a token stream into HTML output.
     class HTML < Formatter
+      TABLE_FOR_ESCAPE_HTML = {
+        '&' => '&amp;',
+        '<' => '&lt;',
+        '>' => '&gt;',
+      }.freeze
+
+      ESCAPE_REGEX = /[&<>]/.freeze
+
       tag 'html'
 
       # @yield the html output.
@@ -22,20 +30,14 @@ module Rouge
         if tok == Token::Tokens::Text
           safe_val
         else
-          shortname = tok.shortname \
-            or raise "unknown token: #{tok.inspect} for #{safe_val.inspect}"
+          shortname = tok.shortname or raise "unknown token: #{tok.inspect} for #{safe_val.inspect}"
 
           "<span class=\"#{shortname}\">#{safe_val}</span>"
         end
       end
 
-      TABLE_FOR_ESCAPE_HTML = {
-        '&' => '&amp;',
-        '<' => '&lt;',
-        '>' => '&gt;',
-      }
+      private
 
-    private
       # A performance-oriented helper method to escape `&`, `<` and `>` for the rendered
       # HTML from this formatter.
       #
@@ -46,10 +48,9 @@ module Rouge
       # Returns either the given `value` argument string as is or a new string with the
       # special characters replaced with their escaped counterparts.
       def escape_special_html_chars(value)
-        escape_regex = /[&<>]/
-        return value unless value =~ escape_regex
+        return value unless value =~ ESCAPE_REGEX
 
-        value.gsub(escape_regex, TABLE_FOR_ESCAPE_HTML)
+        value.gsub(ESCAPE_REGEX, TABLE_FOR_ESCAPE_HTML)
       end
     end
   end

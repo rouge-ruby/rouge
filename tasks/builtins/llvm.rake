@@ -75,6 +75,7 @@ module Rouge
           yield "    end"
           yield "  end"
           yield "end"
+          yield ""
         end
       end
     end

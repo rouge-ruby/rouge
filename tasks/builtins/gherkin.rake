@@ -32,7 +32,7 @@ module Rouge
               case k
               when "feature"
                 keywords[:feature].merge v
-              when "background", "scenario", "scenarioOutline"
+              when "background", "rule", "scenario", "scenarioOutline"
                 keywords[:element].merge v
               when "examples"
                 keywords[:examples].merge v
@@ -66,6 +66,7 @@ module Rouge
           yield   "    end"
           yield   "  end"
           yield   "end"
+          yield   ""
         end
       end
     end

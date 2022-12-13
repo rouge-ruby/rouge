@@ -4,7 +4,7 @@
 require 'open-uri'
 require 'json'
 
-GHERKIN_SYNTAX_URI = "https://raw.githubusercontent.com/cucumber/cucumber/master/gherkin/gherkin-languages.json"
+GHERKIN_SYNTAX_URI = "https://raw.githubusercontent.com/cucumber/gherkin/main/gherkin-languages.json"
 GHERKIN_KEYWORDS_FILE = "./lib/rouge/lexers/gherkin/keywords.rb"
 
 namespace :builtins do

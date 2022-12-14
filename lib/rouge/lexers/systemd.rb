@@ -27,7 +27,7 @@ module Rouge
         rule %r/(.*?)(\\\n)/ do
           groups Text, Str::Escape
         end
-        rule %r/(.*)'/, Text, :pop!
+        rule %r/(.*)'?/, Text, :pop!
       end
     end
   end

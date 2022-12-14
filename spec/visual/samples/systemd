@@ -1,5 +1,7 @@
 [Unit]
-Description=Snap Daemon
+Description=Snap Daemon \
+            with a continued \
+            description
 Requires=snapd.socket
 OnFailure=snapd.failure.service
 # This is handled by snapd

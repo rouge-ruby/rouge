@@ -4,7 +4,7 @@
 require 'open-uri'
 require 'json'
 
-GHERKIN_SYNTAX_URI = "https://raw.githubusercontent.com/cucumber/cucumber/master/gherkin/gherkin-languages.json"
+GHERKIN_SYNTAX_URI = "https://raw.githubusercontent.com/cucumber/gherkin/main/gherkin-languages.json"
 GHERKIN_KEYWORDS_FILE = "./lib/rouge/lexers/gherkin/keywords.rb"
 
 namespace :builtins do
@@ -32,7 +32,7 @@ module Rouge
               case k
               when "feature"
                 keywords[:feature].merge v
-              when "background", "scenario", "scenarioOutline"
+              when "background", "rule", "scenario", "scenarioOutline"
                 keywords[:element].merge v
               when "examples"
                 keywords[:examples].merge v
@@ -66,6 +66,7 @@ module Rouge
           yield   "    end"
           yield   "  end"
           yield   "end"
+          yield   ""
         end
       end
     end

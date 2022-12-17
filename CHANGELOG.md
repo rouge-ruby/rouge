@@ -4,6 +4,46 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.0.1: 2022-12-17
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.0.0...v4.0.1)
+
+- General
+  - Extract regex to constant in HTML formatter ([#1904](https://github.com/rouge-ruby/rouge/pull/1904/) by Tan Le)
+  - Improve disambiguation rules on .pp extension ([#1898](https://github.com/rouge-ruby/rouge/pull/1898/) by Tan Le)
+  - Ignoring RVM/rbenv version and gemset config files ([#1874](https://github.com/rouge-ruby/rouge/pull/1874/) by chapmajs)
+- Coq Lexer
+  - Coq has non-standard string escapes. ([#1872](https://github.com/rouge-ruby/rouge/pull/1872/) by Gregory Malecha)
+  - Simplify rules with groups syntax on coq lexer ([#1876](https://github.com/rouge-ruby/rouge/pull/1876/) by Tan Le)
+  - Coq unicode improvements ([#1764](https://github.com/rouge-ruby/rouge/pull/1764/) by Cormac Relf)
+- Gherkin Lexer
+  - Update Gherkin keywords ([#1905](https://github.com/rouge-ruby/rouge/pull/1905/) by Tan Le)
+- HTTP Lexer
+  - Add support for the HTTP QUERY method ([#1896](https://github.com/rouge-ruby/rouge/pull/1896/) by Asbjørn Ulsberg)
+- Java Lexer
+  - Support JEP 378 Text Blocks in Java [Closes #1687] ([#1867](https://github.com/rouge-ruby/rouge/pull/1867/) by Filip Procházka)
+- JavaScript Lexer
+  - Fix template strings problem in javascript lexer ([#1878](https://github.com/rouge-ruby/rouge/pull/1878/) by DGCK81LNN)
+- LLVM Lexer
+  - Update LLVM keywords ([#1903](https://github.com/rouge-ruby/rouge/pull/1903/) by Nikita Popov)
+- Powershell Lexer
+  - Handle common line continuation in PS ([#1901](https://github.com/rouge-ruby/rouge/pull/1901/) by Tan Le)
+  - Fix handling of PS subexpressions in interpolation ([#1900](https://github.com/rouge-ruby/rouge/pull/1900/) by Tan Le)
+- Praat Lexer
+  - Replace complex rules with block matchers ([#1855](https://github.com/rouge-ruby/rouge/pull/1855/) by Tan Le)
+- SystemD Lexer
+  - Allow quoteless continuations in Systemd ([#1899](https://github.com/rouge-ruby/rouge/pull/1899/) by Michael Herold)
+- Vala Lexer
+  - Add .vapi extension to vala lexer ([#1892](https://github.com/rouge-ruby/rouge/pull/1892/) by Tan Le)
+- YAML Lexer
+  - Accept colon(s) in YAML key names ([#1888](https://github.com/rouge-ruby/rouge/pull/1888/) by Greg Dubicki)
+- Rouge CI
+  - Update GitHub actions/checkout@v3 ([#1897](https://github.com/rouge-ruby/rouge/pull/1897/) by Tan Le)
+- Documentation
+  - docs: Fix Languages LanguagesLink ([#1884](https://github.com/rouge-ruby/rouge/pull/1884/) by Trillium S)
+  - docs: Fix broken link to environment setup ([#1883](https://github.com/rouge-ruby/rouge/pull/1883/) by Trillium S)
+  - Add contact emails to Code of Conduct ([#1871](https://github.com/rouge-ruby/rouge/pull/1871/) by dmr)
+
 ## version 4.0.0: 2022-09-04
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v3.30.0...v4.0.0)

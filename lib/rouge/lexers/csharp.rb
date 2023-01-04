@@ -27,19 +27,19 @@ module Rouge
         static switch this throw true try typeof unchecked unsafe
         virtual void volatile while
         add alias async await get global partial remove set value where
-        yield nameof
-        ascending by descending equals from group in into join let on
-        orderby select
+        yield nameof notnull
+        ascending by descending equals from group in init into join let
+        on orderby select unmanaged when and not or with
       )
 
       keywords_type = %w(
-        bool byte char decimal double dynamic float int long object
-        sbyte short string uint ulong ushort var
+        bool byte char decimal double dynamic float int long nint nuint
+        object sbyte short string uint ulong ushort var
       )
 
       cpp_keywords = %w(
         if endif else elif define undef line error warning region
-        endregion pragma
+        endregion pragma nullable
       )
 
       state :whitespace do
@@ -81,14 +81,15 @@ module Rouge
         rule %r/@"(""|[^"])*"/m, Str
         rule %r/"(\\.|.)*?["\n]/, Str
         rule %r/'(\\.|.)'/, Str::Char
-        rule %r/0x[0-9a-f]+[lu]?/i, Num
+        rule %r/0b[_01]+[lu]?/i, Num
+        rule %r/0x[_0-9a-f]+[lu]?/i, Num
         rule %r(
-          [0-9]
-          ([.][0-9]*)? # decimal
-          (e[+-][0-9]+)? # exponent
-          [fldu]? # type
+          [0-9](?:[_0-9]*[0-9])?
+          ([.][0-9](?:[_0-9]*[0-9])?)? # decimal
+          (e[+-]?[0-9](?:[_0-9]*[0-9])?)? # exponent
+          [fldum]? # type
         )ix, Num
-        rule %r/\b(?:class|struct|interface)\b/, Keyword, :class
+        rule %r/\b(?:class|record|struct|interface)\b/, Keyword, :class
         rule %r/\b(?:namespace|using)\b/, Keyword, :namespace
         rule %r/^#[ \t]*(#{cpp_keywords.join('|')})\b.*?\n/,
           Comment::Preproc

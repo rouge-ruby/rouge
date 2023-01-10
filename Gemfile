@@ -8,7 +8,7 @@ gem 'rake'
 
 gem 'minitest', '>= 5.0'
 gem 'minitest-power_assert'
-gem 'power_assert', '~> 1.2'
+gem 'power_assert', '~> 2.0'
 
 gem 'rubocop', '~> 1.0', '<= 1.11'
 gem 'rubocop-performance'

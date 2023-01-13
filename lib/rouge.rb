@@ -47,11 +47,9 @@ module Rouge
     #
     # @api private
     def load_lexers
-      # The trailing slash is necessary to avoid lexers being loaded multiple
-      # times by `Lexers.load_lexer`
-      lexer_dir = File.join(LIB_DIR, "rouge/lexers/")
-      Dir.glob(File.join(lexer_dir, '*.rb')).each do |f|
-        Lexers.load_lexer(f.sub(lexer_dir, ''))
+      lexer_dir = Pathname.new(LIB_DIR) / "rouge/lexers"
+      Pathname.glob(lexer_dir / '*.rb').each do |f|
+        Lexers.load_lexer(f.relative_path_from(lexer_dir))
       end
     end
   end

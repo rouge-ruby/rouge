@@ -22,7 +22,7 @@ module Rouge
       ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
 
       # Make sure that this is not a preprocessor macro, e.g. `#if` or `#define`.
-      id = %r((?!#[a-zA-Z])[\w#\$%_']+)
+      id = %r((?!\#[a-zA-Z])[\w#\$%_']+)
 
       complex_id = %r(
         (?:[\w#$%_']|\(\)|\(,\)|\[\]|[0-9])*

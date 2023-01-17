@@ -211,7 +211,7 @@ module Rouge
 
       state :whitespace do
         rule %r/\s+/, Text
-        rule %r/#.*?$/, Comment::Single
+        rule %r/#[^\[].*?$/, Comment::Single
         rule %r(//.*?$), Comment::Single
         rule %r(/\*\*(?!/).*?\*/)m, Comment::Doc
         rule %r(/\*.*?\*/)m, Comment::Multiline
@@ -234,6 +234,8 @@ module Rouge
                 (#{id_with_ns})/ix do |m|
           groups Keyword::Namespace, Text, Name::Namespace
         end
+
+        rule %r/#\[.*\]$/, Name::Attribute
 
         rule %r/(class|interface|trait|extends|implements)
                 (\s+)

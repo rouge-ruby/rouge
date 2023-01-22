@@ -6,68 +6,139 @@ module Rouge
     class Github < CSSTheme
       name 'github'
 
-      style Comment::Multiline,               :fg => '#999988', :italic => true
-      style Comment::Preproc,                 :fg => '#999999', :bold => true
-      style Comment::Single,                  :fg => '#999988', :italic => true
-      style Comment::Special,                 :fg => '#999999', :italic => true, :bold => true
-      style Comment,                          :fg => '#999988', :italic => true
-      style Error,                            :fg => '#a61717', :bg => '#e3d2d2'
-      style Generic::Deleted,                 :fg => '#000000', :bg => '#ffdddd'
-      style Generic::Emph,                    :fg => '#000000', :italic => true
-      style Generic::Error,                   :fg => '#aa0000'
-      style Generic::Heading,                 :fg => '#999999'
-      style Generic::Inserted,                :fg => '#000000', :bg => '#ddffdd'
-      style Generic::Output,                  :fg => '#888888'
-      style Generic::Prompt,                  :fg => '#555555'
-      style Generic::Strong,                  :bold => true
-      style Generic::Subheading,              :fg => '#aaaaaa'
-      style Generic::Traceback,               :fg => '#aa0000'
-      style Keyword::Constant,                :fg => '#000000', :bold => true
-      style Keyword::Declaration,             :fg => '#000000', :bold => true
-      style Keyword::Namespace,               :fg => '#000000', :bold => true
-      style Keyword::Pseudo,                  :fg => '#000000', :bold => true
-      style Keyword::Reserved,                :fg => '#000000', :bold => true
-      style Keyword::Type,                    :fg => '#445588', :bold => true
-      style Keyword,                          :fg => '#000000', :bold => true
-      style Literal::Number::Float,           :fg => '#009999'
-      style Literal::Number::Hex,             :fg => '#009999'
-      style Literal::Number::Integer::Long,   :fg => '#009999'
-      style Literal::Number::Integer,         :fg => '#009999'
-      style Literal::Number::Oct,             :fg => '#009999'
-      style Literal::Number,                  :fg => '#009999'
-      style Literal::String::Affix,           :fg => '#000000', :bold => true
-      style Literal::String::Backtick,        :fg => '#d14'
-      style Literal::String::Char,            :fg => '#d14'
-      style Literal::String::Doc,             :fg => '#d14'
-      style Literal::String::Double,          :fg => '#d14'
-      style Literal::String::Escape,          :fg => '#d14'
-      style Literal::String::Heredoc,         :fg => '#d14'
-      style Literal::String::Interpol,        :fg => '#d14'
-      style Literal::String::Other,           :fg => '#d14'
-      style Literal::String::Regex,           :fg => '#009926'
-      style Literal::String::Single,          :fg => '#d14'
-      style Literal::String::Symbol,          :fg => '#990073'
-      style Literal::String,                  :fg => '#d14'
-      style Name::Attribute,                  :fg => '#008080'
-      style Name::Builtin::Pseudo,            :fg => '#999999'
-      style Name::Builtin,                    :fg => '#0086B3'
-      style Name::Class,                      :fg => '#445588', :bold => true
-      style Name::Constant,                   :fg => '#008080'
-      style Name::Decorator,                  :fg => '#3c5d5d', :bold => true
-      style Name::Entity,                     :fg => '#800080'
-      style Name::Exception,                  :fg => '#990000', :bold => true
-      style Name::Function,                   :fg => '#990000', :bold => true
-      style Name::Label,                      :fg => '#990000', :bold => true
-      style Name::Namespace,                  :fg => '#555555'
-      style Name::Tag,                        :fg => '#000080'
-      style Name::Variable::Class,            :fg => '#008080'
-      style Name::Variable::Global,           :fg => '#008080'
-      style Name::Variable::Instance,         :fg => '#008080'
-      style Name::Variable,                   :fg => '#008080'
-      style Operator::Word,                   :fg => '#000000', :bold => true
-      style Operator,                         :fg => '#000000', :bold => true
-      style Text::Whitespace,                 :fg => '#bbbbbb'
-      style Text,                             :bg => '#f8f8f8'
+      # Primer primitives
+      # https://github.com/primer/primitives/tree/main/src/tokens
+      P_RED_0        = {:light => '#ffebe9', :dark => '#ffdcd7'}
+      P_RED_3        = {:dark => '#ff7b72'}
+      P_RED_5        = {:light => '#cf222e'}
+      P_RED_7        = {:light => '#82071e', :dark => '#8e1519'}
+      P_RED_8        = {:dark => '#67060c'}
+      P_ORANGE_2     = {:dark => '#ffa657'}
+      P_ORANGE_6     = {:light => '#953800'}
+      P_GREEN_0      = {:light => '#dafbe1', :dark => '#aff5b4'}
+      P_GREEN_1      = {:dark => '#7ee787'}
+      P_GREEN_6      = {:light => '#116329'}
+      P_GREEN_8      = {:dark => '#033a16'}
+      P_BLUE_1       = {:dark => '#a5d6ff'}
+      P_BLUE_2       = {:dark => '#79c0ff'}
+      P_BLUE_5       = {:dark => '#1f6feb'}
+      P_BLUE_6       = {:light => '#0550ae'}
+      P_BLUE_8       = {:light => '#0a3069'}
+      P_PURPLE_2     = {:dark => '#d2a8ff'}
+      P_PURPLE_5     = {:light => '#8250df'}
+      P_GRAY_0       = {:light => '#f6f8fa', :dark => '#f0f6fc'}
+      P_GRAY_1       = {:dark => '#c9d1d9'}
+      P_GRAY_3       = {:dark => '#8b949e'}
+      P_GRAY_5       = {:light => '#6e7781'}
+      P_GRAY_9       = {:light => '#24292f'}
+
+      extend HasModes
+
+      def self.light!
+        mode :dark # indicate that there is a dark variant
+        mode! :light
+      end
+
+      def self.dark!
+        mode :light # indicate that there is a light variant
+        mode! :dark
+      end
+
+      def self.make_dark!
+        palette :comment     => P_GRAY_3[@mode]
+        palette :constant    => P_BLUE_2[@mode]
+        palette :entity      => P_PURPLE_2[@mode]
+        palette :heading     => P_BLUE_5[@mode]
+        palette :keyword     => P_RED_3[@mode]
+        palette :string      => P_BLUE_1[@mode]
+        palette :tag         => P_GREEN_1[@mode]
+        palette :variable    => P_ORANGE_2[@mode]
+
+        palette :fgDefault   => P_GRAY_1[@mode]
+
+        palette :fgInserted  => P_GREEN_0[@mode]
+        palette :bgInserted  => P_GREEN_8[@mode]
+
+        palette :fgDeleted   => P_RED_0[@mode]
+        palette :bgDeleted   => P_RED_8[@mode]
+
+        palette :fgError     => P_GRAY_0[@mode]
+        palette :bgError     => P_RED_7[@mode]
+      end
+
+      def self.make_light!
+        palette :comment     => P_GRAY_5[@mode]
+        palette :constant    => P_BLUE_6[@mode]
+        palette :entity      => P_PURPLE_5[@mode]
+        palette :heading     => P_BLUE_6[@mode]
+        palette :keyword     => P_RED_5[@mode]
+        palette :string      => P_BLUE_8[@mode]
+        palette :tag         => P_GREEN_6[@mode]
+        palette :variable    => P_ORANGE_6[@mode]
+
+        palette :fgDefault   => P_GRAY_9[@mode]
+
+        palette :fgInserted  => P_GREEN_6[@mode]
+        palette :bgInserted  => P_GREEN_0[@mode]
+
+        palette :fgDeleted   => P_RED_7[@mode]
+        palette :bgDeleted   => P_RED_0[@mode]
+
+        palette :fgError     => P_GRAY_0[@mode]
+        palette :bgError     => P_RED_7[@mode]
+      end
+
+      light!
+
+      style Keyword,                    :fg => :keyword
+
+      style Generic::Error,             :fg => :fgError
+
+      style Generic::Deleted,           :fg => :fgDeleted, :bg => :bgDeleted
+
+      style Name::Builtin,
+            Name::Class,
+            Name::Constant,
+            Name::Namespace,            :fg => :variable
+
+      style Literal::String::Regex,
+            Name::Attribute,
+            Name::Tag,                  :fg => :tag
+
+      style Generic::Inserted,          :fg => :fgInserted, :bg => :bgInserted
+
+      style Keyword::Constant,
+            Literal,
+            Literal::String::Backtick,
+            Name::Builtin::Pseudo,
+            Name::Exception,
+            Name::Label,
+            Name::Property,
+            Name::Variable,
+            Operator,                   :fg => :constant
+
+      style Generic::Heading,
+            Generic::Subheading,        :fg => :heading, :bold => true
+
+      style Literal::String,            :fg => :string
+
+      style Name::Decorator,
+            Name::Function,             :fg => :entity
+
+      style Error,                      :fg => :fgError, :bg => :bgError
+
+      style Comment,
+            Generic::Lineno,
+            Generic::Traceback,         :fg => :comment
+
+      style Name::Entity,
+            Literal::String::Interpol,
+            Text,                       :fg => :fgDefault
+
+      style Generic::Emph,              :fg => :fgDefault, :italic => true
+
+      style Generic::Strong,            :fg => :fgDefault, :bold => true
+
     end
   end
 end

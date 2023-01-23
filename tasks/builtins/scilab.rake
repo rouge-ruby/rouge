@@ -53,6 +53,7 @@ module Rouge
           yield   "    end"
           yield   "  end"
           yield   "end"
+          yield   "" # Needed to pass lint checks
         end
       end
     end
@@ -98,6 +99,7 @@ module Rouge
           yield   "    end"
           yield   "  end"
           yield   "end"
+          yield   "" # Needed to pass lint checks
         end
       end
     end
@@ -143,6 +145,7 @@ module Rouge
           yield   "    end"
           yield   "  end"
           yield   "end"
+          yield   "" # Needed to pass lint checks
         end
       end
     end
@@ -188,6 +191,7 @@ module Rouge
           yield   "    end"
           yield   "  end"
           yield   "end"
+          yield   "" # Needed to pass lint checks
         end
       end
     end

@@ -30,6 +30,7 @@ module Rouge
       P_GRAY_1       = {:dark => '#c9d1d9'}
       P_GRAY_3       = {:dark => '#8b949e'}
       P_GRAY_5       = {:light => '#6e7781'}
+      P_GRAY_8       = {:dark => '#161b22'}
       P_GRAY_9       = {:light => '#24292f'}
 
       extend HasModes
@@ -55,6 +56,7 @@ module Rouge
         palette :variable    => P_ORANGE_2[@mode]
 
         palette :fgDefault   => P_GRAY_1[@mode]
+        palette :bgDefault   => P_GRAY_8[@mode]
 
         palette :fgInserted  => P_GREEN_0[@mode]
         palette :bgInserted  => P_GREEN_8[@mode]
@@ -77,6 +79,7 @@ module Rouge
         palette :variable    => P_ORANGE_6[@mode]
 
         palette :fgDefault   => P_GRAY_9[@mode]
+        palette :bgDefault   => P_GRAY_0[@mode]
 
         palette :fgInserted  => P_GREEN_6[@mode]
         palette :bgInserted  => P_GREEN_0[@mode]
@@ -89,6 +92,8 @@ module Rouge
       end
 
       light!
+
+      style Text,                       :fg => :fgDefault, :bg => :bgDefault
 
       style Keyword,                    :fg => :keyword
 
@@ -132,8 +137,7 @@ module Rouge
             Generic::Traceback,         :fg => :comment
 
       style Name::Entity,
-            Literal::String::Interpol,
-            Text,                       :fg => :fgDefault
+            Literal::String::Interpol,  :fg => :fgDefault
 
       style Generic::Emph,              :fg => :fgDefault, :italic => true
 

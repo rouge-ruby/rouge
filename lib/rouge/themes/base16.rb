@@ -49,43 +49,43 @@ module Rouge
       light!
 
       style Error, :fg => :base00, :bg => :base08
-      style Comment, :fg => :base03
 
-      style Comment::Preproc,
-            Name::Tag, :fg => :base0A
+      style Comment, :fg => :base03
 
       style Operator,
             Punctuation, :fg => :base05
 
-      style Generic::Inserted, :fg => :base0B
       style Generic::Deleted, :fg => :base08
-      style Generic::Heading, :fg => :base0D, :bg => :base00, :bold => true
 
       style Generic::Emph, :italic => true
       style Generic::EmphStrong, :italic => true, :bold => true
       style Generic::Strong, :bold => true
 
-      style Keyword, :fg => :base0E
       style Keyword::Constant,
+            Keyword::Declaration,
             Keyword::Type, :fg => :base09
 
-      style Keyword::Declaration, :fg => :base09
+      style Comment::Preproc,
+            Name::Class,
+            Name::Constant,
+            Name::Namespace,
+            Name::Tag, :fg => :base0A
 
-      style Literal::String, :fg => :base0B
-      style Literal::String::Affix, :fg => :base0E
+      style Generic::Inserted,
+            Literal::Number,
+            Literal::String,
+            Literal::String::Symbol, :fg => :base0B
+
       style Literal::String::Regex, :fg => :base0C
 
-      style Literal::String::Interpol,
-            Literal::String::Escape, :fg => :base0F
-
-      style Name::Namespace,
-            Name::Class,
-            Name::Constant, :fg => :base0A
-
       style Name::Attribute, :fg => :base0D
+      style Generic::Heading, :fg => :base0D, :bg => :base00, :bold => true
 
-      style Literal::Number,
-            Literal::String::Symbol, :fg => :base0B
+      style Keyword,
+            Literal::String::Affix, :fg => :base0E
+
+      style Literal::String::Escape,
+            Literal::String::Interpol, :fg => :base0F
 
       class Solarized < Base16
         name 'base16.solarized'

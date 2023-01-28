@@ -324,6 +324,8 @@ class Test {
             throw new MyException();
         } catch (MyException | MyOtherException $e) {
             var_dump(get_class($e));
+        } catch (\Exception $x) {
+            throw $x;
         }
     }
 }
@@ -360,6 +362,9 @@ class SetUp {
 
    #[SetUp]
    public function fileExists() {}
+}
+
+function f(\Ns1\Ns2\Ns3\Class $x) {
 }
 
 ?>

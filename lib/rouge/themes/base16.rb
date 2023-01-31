@@ -54,7 +54,8 @@ module Rouge
       style Operator,
             Punctuation, :fg => :base05
 
-      style Generic::Deleted, :fg => :base08
+      style Generic::Deleted,
+            Name, :fg => :base08
 
       style Keyword::Constant,
             Keyword::Declaration,
@@ -73,7 +74,8 @@ module Rouge
 
       style Literal::String::Regex, :fg => :base0C
 
-      style Name::Attribute, :fg => :base0D
+      style Name::Attribute,
+            Name::Function, :fg => :base0D
       style Generic::Heading, :fg => :base0D, :bg => :base00, :bold => true
 
       style Keyword,

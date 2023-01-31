@@ -63,7 +63,8 @@ module Rouge
 
       style Keyword::Constant,
             Keyword::Declaration,
-            Keyword::Type, :fg => :base09
+            Keyword::Type,
+            Literal::Number, :fg => :base09
 
       style Comment::Preproc,
             Name::Class,
@@ -72,7 +73,6 @@ module Rouge
             Name::Tag, :fg => :base0A
 
       style Generic::Inserted,
-            Literal::Number,
             Literal::String,
             Literal::String::Symbol, :fg => :base0B
 

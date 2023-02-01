@@ -40,7 +40,7 @@ module Rouge
       end
 
       def self.builtins_pseudo
-        @builtins_pseudo ||= %w(self None Ellipsis NotImplemented False True)
+        @builtins_pseudo ||= %w(None Ellipsis NotImplemented False True)
       end
 
       def self.exceptions
@@ -86,6 +86,8 @@ module Rouge
         rule %r/\\\n/, Text
         rule %r/\\/, Text
 
+        rule %r/@#{dotted_identifier}/i, Name::Decorator
+
         rule %r/(in|is|and|or|not)\b/, Operator::Word
         rule %r/(<<|>>|\/\/|\*\*)=?/, Operator
         rule %r/[-~+\/*%=<>&^|@]=?|!=/, Operator
@@ -93,13 +95,13 @@ module Rouge
         rule %r/(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(import)/ do
           groups Keyword::Namespace,
                  Text,
-                 Name::Namespace,
+                 Name,
                  Text,
                  Keyword::Namespace
         end
 
         rule %r/(import)(\s+)(#{dotted_identifier})/ do
-          groups Keyword::Namespace, Text, Name::Namespace
+          groups Keyword::Namespace, Text, Name
         end
 
         rule %r/(def)((?:\s|\\\s)+)/ do
@@ -112,6 +114,9 @@ module Rouge
           push :classname
         end
 
+        rule %r/([a-z_]\w*)[ \t]*(?=(\(.*\)))/m, Name::Function
+        rule %r/([A-Z_]\w*)[ \t]*(?=(\(.*\)))/m, Name::Class
+
         # TODO: not in python 3
         rule %r/`.*?`/, Str::Backtick
         rule %r/([rfbu]{0,2})('''|"""|['"])/i do |m|
@@ -119,8 +124,6 @@ module Rouge
           current_string.register type: m[1].downcase, delim: m[2]
           push :generic_string
         end
-
-        rule %r/@#{dotted_identifier}/i, Name::Decorator
 
         # using negative lookbehind so we don't match property names
         rule %r/(?<!\.)#{identifier}/ do |m|

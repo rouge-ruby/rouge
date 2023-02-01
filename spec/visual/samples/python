@@ -150,9 +150,26 @@ x @= y
 f'{hello} world {int(x) + 1}'
 f'{{ {4*10} }}'
 f'result: {value:{width}.{precision}}'
-f'{value!r}
+f'{value!r}'
 
 # Unicode identifiers
 α = 10
 def coöperative(б):
     return f"{б} is Russian"
+
+def __init__(self, input_dim: list, output_dim: int, **kwargs):
+    super(AverageEmbedding, self).__init__(**kwargs)
+    self.input_dim = input_dim
+    self.output_dim = output_dim
+
+@abstractmethod
+def evaluate(self, *args, **kwargs):
+    raise NotImplementedError
+
+def _get_metadata(self, input_samples: list[InputSample]) -> Tuple[str, str, int]:
+    project_name, id = self._get_info()
+
+class Spam:
+    pass
+
+spam = Spam()

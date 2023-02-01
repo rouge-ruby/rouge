@@ -168,3 +168,8 @@ def evaluate(self, *args, **kwargs):
 
 def _get_metadata(self, input_samples: list[InputSample]) -> Tuple[str, str, int]:
     project_name, id = self._get_info()
+
+class Spam:
+    pass
+
+spam = Spam()

@@ -177,6 +177,21 @@ module Rouge
           push :expr_start
         end
 
+        rule %r/(class)((?:\s|\\\s)+)/ do
+          groups Keyword::Declaration, Text
+          push :classname
+        end
+
+        rule %r/([\p{Nl}$_]*\p{Lu}[\p{Word}]*)[ \t]*(?=(\(.*\)))/m, Name::Class
+
+        rule %r/(function)((?:\s|\\\s)+)(#{id})/ do
+          groups Keyword::Declaration, Text, Name::Function
+        end
+
+        rule %r/function(?=(\(.*\)))/, Keyword::Declaration # For anonymous functions
+
+        rule %r/(#{id})[ \t]*(?=(\(.*\)))/m, Name::Function
+
         rule %r/[{}]/, Punctuation, :statement
 
         rule id do |m|
@@ -218,6 +233,14 @@ module Rouge
         rule %r/\\[\\nrt']?/, Str::Escape
         rule %r/[^\\']+/, Str::Single
         rule %r/'/, Str::Delimiter, :pop!
+      end
+
+      state :classname do
+        rule %r/(#{id})((?:\s|\\\s)+)(extends)((?:\s|\\\s)+)/ do
+          groups Name::Class, Text, Keyword::Declaration, Text
+        end
+
+        rule id, Name::Class, :pop!
       end
 
       # braced parts that aren't object literals

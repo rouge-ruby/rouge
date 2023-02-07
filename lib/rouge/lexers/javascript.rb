@@ -177,6 +177,12 @@ module Rouge
           push :expr_start
         end
 
+        rule %r/(class)((?:\s|\\\s)+)(#{id})/ do
+          groups Keyword::Declaration, Text, Name::Class
+        end
+
+        rule %r/([\p{Nl}$_]*\p{Lu}[\p{Word}]*)[ \t]*(?=(\(.*\)))/m, Name::Class
+
         rule %r/(function)((?:\s|\\\s)+)(#{id})/ do
           groups Keyword::Declaration, Text, Name::Function
         end

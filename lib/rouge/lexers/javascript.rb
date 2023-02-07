@@ -181,6 +181,8 @@ module Rouge
           groups Keyword::Declaration, Text, Name::Function
         end
 
+        rule %r/function(?=(\(.*\)))/, Keyword::Declaration # For anonymous functions
+
         rule %r/(#{id})[ \t]*(?=(\(.*\)))/m, Name::Function
 
         rule %r/[{}]/, Punctuation, :statement

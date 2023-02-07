@@ -181,7 +181,7 @@ module Rouge
           groups Keyword::Declaration, Text, Name::Function
         end
 
-        rule %r/([a-z_]\w*)[ \t]*(?=(\(.*\)))/m, Name::Function
+        rule %r/(#{id})[ \t]*(?=(\(.*\)))/m, Name::Function
 
         rule %r/[{}]/, Punctuation, :statement
 

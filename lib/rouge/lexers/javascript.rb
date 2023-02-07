@@ -177,9 +177,8 @@ module Rouge
           push :expr_start
         end
 
-        rule %r/(function)((?:\s|\\\s)+)/ do
-          groups Keyword, Text
-          push :funcname
+        rule %r/(function)((?:\s|\\\s)+)(#{id})/ do
+          groups Keyword::Declaration, Text, Name::Function
         end
 
         rule %r/([a-z_]\w*)[ \t]*(?=(\(.*\)))/m, Name::Function
@@ -225,10 +224,6 @@ module Rouge
         rule %r/\\[\\nrt']?/, Str::Escape
         rule %r/[^\\']+/, Str::Single
         rule %r/'/, Str::Delimiter, :pop!
-      end
-
-      state :funcname do
-        rule id, Name::Function, :pop!
       end
 
       # braced parts that aren't object literals

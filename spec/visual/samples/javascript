@@ -148,6 +148,9 @@ Blag.ReadMore = (function($) {
   $(document).ready(init);
 })(jQuery);
 
+underscoreFunc = _underscoreFunc()
+underscoreClass = _UnderscoreClass()
+
 // evil regexes, from pygments
 
 /regexp/.test(foo) || x = [/regexp/,/regexp/, /regexp/, // comment
@@ -282,6 +285,8 @@ class Œuvre {
     书名 = "Les Misérables";
   }
 }
+
+unicodeClass = Œuvre()
 
 // Nullish coalescing operator (??)
 let ret = "";

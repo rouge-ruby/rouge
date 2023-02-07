@@ -25,6 +25,7 @@
 - C (`c`)
 - Ceylon (`ceylon`)
 - CFScript (`cfscript`)
+- Cisco IOS (`cisco_ios`)
 - Clean (`clean`)
 - Clojure (`clojure`)
 - CMake (`cmake`)

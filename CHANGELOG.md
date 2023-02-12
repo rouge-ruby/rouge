@@ -4,6 +4,31 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.1.0: 2023-02-11
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.0.1...v4.1.0)
+
+- General
+  - Use File.basename instead sub to correctly handle long paths on Windows ([#1911](https://github.com/rouge-ruby/rouge/pull/1911/) by Alex Babrykovich)
+  - Update GitHub theme, add dark mode ([#1918](https://github.com/rouge-ruby/rouge/pull/1918/) by George Waters)
+- C# Lexer
+  - Update C# lexer: new keywords and numeric literal syntax improvements ([#1660](https://github.com/rouge-ruby/rouge/pull/1660/) by Dominique Schuppli)
+- Cisco IOS Lexer (**NEW**)
+  - Porting Cisco IOS configuration lexer from pygments-routerlexers ([#1875](https://github.com/rouge-ruby/rouge/pull/1875/) by chapmajs)
+  - Add Cisco IOS lexer to Languages doc ([#1929](https://github.com/rouge-ruby/rouge/pull/1929/) by Tan Le)
+- CPP Lexer
+  - Fix highlight of functions in CPP lexer ([#1928](https://github.com/rouge-ruby/rouge/pull/1928/) by Tan Le)
+- JavaScript Lexer
+  - Recognize javascript functions & classes ([#1920](https://github.com/rouge-ruby/rouge/pull/1920/) by George Waters)
+- PHP Lexer
+  - Support attributes in PHP lexer ([#1915](https://github.com/rouge-ruby/rouge/pull/1915/) by Tan Le)
+- Python Lexer
+  - Improve Python lexer ([#1919](https://github.com/rouge-ruby/rouge/pull/1919/) by George Waters)
+- YAML Lexer
+  - Fix already initialized constant warning in YAML ([#1926](https://github.com/rouge-ruby/rouge/pull/1926/) by Tan Le)
+- Rouge CI
+  - Add Ruby 3.2 to CI build ([#1912](https://github.com/rouge-ruby/rouge/pull/1912/) by Tan Le)
+
 ## version 4.0.1: 2022-12-17
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.0.0...v4.0.1)

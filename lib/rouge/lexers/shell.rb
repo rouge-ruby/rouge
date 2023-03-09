@@ -7,6 +7,7 @@ module Rouge
       title "shell"
       desc "Various shell languages, including sh and bash"
 
+      tag 'shell'
       aliases 'bash', 'zsh', 'ksh', 'sh'
       filenames '*.sh', '*.bash', '*.zsh', '*.ksh', '.bashrc', '.zshrc', 'zshrc',
                 '.kshrc', '.profile', '.zshenv', 'zshenv', '.zprofile', 'zprofile',
@@ -17,7 +18,8 @@ module Rouge
                 'text/x-shellscript'
 
       def self.detect?(text)
-        return true if text.shebang?(/(ba|z|k)?sh/) or text.start_with?('#compdef', '#autoload')
+        return true if text.shebang?(/(ba|z|k)?sh/) ||
+            (!text.nil? && text.start_with?('#compdef', '#autoload'))
       end
 
       KEYWORDS = %w(

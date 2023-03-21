@@ -53,7 +53,7 @@ module Rouge
         rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule %r/(?:#{types.join('|')})\b/, Keyword::Type
         rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/(?:class|interface|mixin)\b/, Keyword::Declaration, :class
+        rule %r/(?:class|mixin)\b/, Keyword::Declaration, :class
         rule %r/(?:#{imports.join('|')})\b/, Keyword::Namespace, :import
         rule %r/(\.)(#{id})/ do
           groups Operator, Name::Attribute

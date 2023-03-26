@@ -10,11 +10,12 @@ targetScope = 'subscription' // To create a resource group
 @description('The Azure region to create the resources in.')
 param location string
 
-var suffix = padLeft('my-suffix', 10)
+var suffix = uniqueString(subscription().subscriptionId, 'my-project')
 
-var array = [
+var someTags = [
   {
-    fldmfl: 'fldmlfd'
+    key: 'location'
+    value: location
   }
 ]
 
@@ -22,4 +23,6 @@ var array = [
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: 'rg-${suffix}'
   location: location
+
+  tags: toObject(someTags, tag => tag.key, tag => tag.value)
 }

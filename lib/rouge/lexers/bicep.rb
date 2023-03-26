@@ -22,11 +22,12 @@ module Rouge
           resourceGroup subscription tenant base64 base64ToJson base64ToString dataUri dataUriToString 
           endsWith format guid indexOf lastIndexOf length newGuid padLeft replace split startsWith 
           string substring toLower toUpper trim uniqueString uri uriComponent uriComponentToString
+          toObject
       )
 
       operators = %w(+ - * / % < <= > >= == != && || !)
 
-      punctuation = %w(( ) { } [ ] , : ; =)
+      punctuation = %w(( ) { } [ ] , : ; = .)
 
       state :root do
           mixin :comments

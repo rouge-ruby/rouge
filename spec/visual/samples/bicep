@@ -1,0 +1,25 @@
+/*
+  Target scope can be set using the following values:
+    - resourceGroup (default)
+    - subscription
+    - managementGroup
+    - tenant
+*/
+targetScope = 'subscription' // To create a resource group
+
+@description('The Azure region to create the resources in.')
+param location string
+
+var suffix = padLeft('my-suffix', 10)
+
+var array = [
+  {
+    fldmfl: 'fldmlfd'
+  }
+]
+
+// Create a resource group
+resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  name: 'rg-${suffix}'
+  location: location
+}

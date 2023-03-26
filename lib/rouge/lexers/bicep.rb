@@ -7,14 +7,19 @@ module Rouge
       title "Bicep"
       desc 'Bicep is a domain-specific language (DSL) that uses declarative syntax to deploy Azure resources.'
 
-      keywords = %w(
+      def self.keywords
+        @keywords ||= Set.new %w(
           resource module param var output targetScope dependsOn
           existing for in if else true false null
-      )
+        )
+      end
 
-      datatypes = %w(array bool int object string)
+      def self.datatypes
+        @datatypes ||= Set.new %w(array bool int object string)
+      end
 
-      functions = %w(
+      def self.functions
+        @functions ||= Set.new %w(
           any array concat contains empty first intersection items last length min max range skip 
           take union dateTimeAdd utcNow deployment environment loadFileAsBase64 loadTextContent int 
           json extensionResourceId getSecret list listKeys listKeyValue listAccountSas listSecrets 
@@ -23,7 +28,8 @@ module Rouge
           endsWith format guid indexOf lastIndexOf length newGuid padLeft replace split startsWith 
           string substring toLower toUpper trim uniqueString uri uriComponent uriComponentToString
           toObject
-      )
+        )
+      end
 
       operators = %w(+ - * / % < <= > >= == != && || !)
 
@@ -38,14 +44,18 @@ module Rouge
           # Match numbers
           rule %r/\b\d+\b/, Num
 
-          # Match keywords
-          rule %r/\b(#{keywords.join('|')})\b/, Keyword
-
-          # Match data types
-          rule %r/\b(#{datatypes.join('|')})\b/, Keyword::Type
-
-          # Match functions
-          rule %r/\b(#{functions.join('|')})\b/, Name::Function
+          # Rules for sets of reserved keywords 
+          rule %r/\b\w+\b/ do |m|
+            if self.class.keywords.include? m[0]
+              token Keyword
+            elsif self.class.datatypes.include? m[0]
+              token Keyword::Type
+            elsif self.class.functions.include? m[0]
+              token Name::Function
+            else
+              token Name
+            end
+          end
 
           # Match operators
           rule %r/#{operators.map { |o| Regexp.escape(o) }.join('|')}/, Operator
@@ -89,20 +99,8 @@ module Rouge
         # Match property names
         rule %r/\b([a-zA-Z_]\w*)\b(?=\s*:)/, Name::Property
 
-        # Match property values that are strings
-        rule %r/(?<=[:]\s)('[^']*')/, Str, :string
-
-        # Match property values that are numbers
-        rule %r/(?<=[:]\s)\b\d+\b/, Num
-
-        # Match property values that are keywords
-        rule %r/\b(#{keywords.join('|')})\b(?=[,}])/, Keyword::Constant
-
         # Match closing curly brackets
         rule %r/}/, Punctuation::Indicator, :pop!
-
-        # Match nested curly brackets
-        rule %r/{/, Punctuation::Indicator, :block
 
         # Include the root state for nested tokens
         mixin :root

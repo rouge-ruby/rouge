@@ -17,6 +17,10 @@ var someTags = [
     key: 'location'
     value: location
   }
+  {
+    key: 'isTest'
+    value: true
+  }
 ]
 
 // Create a resource group

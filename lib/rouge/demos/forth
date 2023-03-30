@@ -1,0 +1,5 @@
+: greet ( c-addr u -- )
+  10 20 at-xy
+  ." Hello" type cr ;
+
+s" World" greet bye

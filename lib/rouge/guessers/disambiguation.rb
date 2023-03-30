@@ -139,6 +139,11 @@ module Rouge
 
         Puppet
       end
+
+      disambiguate '*.fs' do
+        next Forth if matches?(/:\s+.+?\s+\(\s+--\s+\)/)
+        next FSharp
+      end
     end
   end
 end

@@ -6,11 +6,11 @@ module Rouge
     class OpenEdge < RegexLexer
       tag 'openedge'
       aliases 'abl'
-      filenames '*.w', '*.i', "*.p", "*.cls", "*.df"
+      filenames '*.w', '*.i', '*.p', '*.cls', '*.df'
       mimetypes 'text/x-openedge'
 
-      title "OpenEdge ABL"
-      desc "The OpenEdge ABL programming language"
+      title 'OpenEdge ABL'
+      desc 'The OpenEdge ABL programming language'
 
       # optional comment or whitespace
       ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
@@ -533,6 +533,7 @@ module Rouge
       state :multilinecomment do
         rule %r(/[*]), Comment::Multiline, :multilinecomment_content
       end
+
       state :multilinecomment_content do
         rule %r([*]/), Comment::Multiline, :pop!
         rule %r(/[*]), Comment::Multiline, :multilinecomment_content
@@ -544,6 +545,7 @@ module Rouge
         rule %r/"/, Str::Delimiter, :doublequotedstring
         rule %r/'/, Str::Delimiter, :singlequotedstring
       end
+
       state :numeric do
         rule %r((?:\d+[.]\d*|[.]\d+)(?:e[+-]?\d+[lu]*)?)i, Num::Float
         rule %r(\d+e[+-]?\d+[lu]*)i, Num::Float
@@ -551,13 +553,14 @@ module Rouge
         rule %r/0[0-7]+[lu]*/i, Num::Oct
         rule %r/\d+[lu]*/i, Num::Integer
       end
+
       state :constant do
         rule %r/(?:TRUE|FALSE|YES|NO(?!\-)|\?)\b/i, Keyword::Constant
       end
+
       state :operator do
         rule %r([~!%^*+=\|?:<>/-]), Operator
         rule %r/[()\[\],.]/, Punctuation
-        
       end
       
       state :doublequotedstring do
@@ -565,18 +568,19 @@ module Rouge
         rule %r/[^\\"]+/, Str::Double
         rule %r/"/, Str::Delimiter, :pop!
       end
+
       state :singlequotedstring do
         rule %r/\~[~nrt']?/, Str::Escape
         rule %r/[^\\']+/, Str::Single
         rule %r/'/, Str::Delimiter, :pop!
       end
       
-
       state :preproc do
         rule %r/(\&analyze-suspend|\&analyze-resume)/i, Comment::Preproc, :analyze_suspend_resume_content
         rule %r/(\&scoped-define|\&global-define)\s*([\.\w\\\/-]*)/i , Comment::Preproc, :analyze_suspend_resume_content
         mixin :include_file
       end
+
       state :analyze_suspend_resume_content do
         rule %r/.*(?=(?:\/\/|\/\*))/, Comment::Preproc, :pop!
         rule %r/.*\n/, Comment::Preproc, :pop!
@@ -603,7 +607,6 @@ module Rouge
 
       state :decorator do
         rule %r/@#{id}/, Name::Decorator #, :decorator_content
-        
       end
 
       state :function do
@@ -612,7 +615,6 @@ module Rouge
 
       state :root do
         mixin :statements
-
 
         rule id do |m|
           name = m[0].upcase

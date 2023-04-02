@@ -145,8 +145,6 @@ module Rouge
         next Prolog if matches?(/\A\w+(\(\w+\,\s*\w+\))*\./)
         next OpenEdge
       end
-
-
     end
   end
 end

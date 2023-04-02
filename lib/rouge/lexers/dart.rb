@@ -12,16 +12,16 @@ module Rouge
       mimetypes 'text/x-dart'
 
       keywords = %w(
-        as assert await break case catch continue default do else finally for
-        if in is new rethrow return super switch this throw try while with yield
+        as assert await break case catch continue default do else finally for if
+        in is new rethrow return super switch this throw try while when with yield
       )
 
       declarations = %w(
-        abstract async dynamic const covariant external extends factory final get
-        implements late native on operator required set static sync typedef var
+        abstract base async dynamic const covariant external extends factory final get implements
+        inline interface late native on operator required sealed set static sync typedef var
       )
 
-      types = %w(bool Comparable double Dynamic enum Function int List Map Never Null num Object Pattern Set String Symbol Type Uri void)
+      types = %w(bool Comparable double Dynamic enum Function int List Map Never Null num Object Pattern Record Set String Symbol Type Uri void)
 
       imports = %w(import deferred export library part\s*of part source)
 
@@ -53,7 +53,7 @@ module Rouge
         rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule %r/(?:#{types.join('|')})\b/, Keyword::Type
         rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/(?:class|interface|mixin)\b/, Keyword::Declaration, :class
+        rule %r/(?:class|mixin)\b/, Keyword::Declaration, :class
         rule %r/(?:#{imports.join('|')})\b/, Keyword::Namespace, :import
         rule %r/(\.)(#{id})/ do
           groups Operator, Name::Attribute

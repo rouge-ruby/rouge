@@ -9,7 +9,7 @@ describe Rouge::Lexers::Prolog do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.pro'
-      assert_guess :filename => 'foo.P'
+      assert_guess :filename => 'foo.P', :source => ':-'
       assert_guess :filename => 'foo.prolog'
       assert_guess :filename => 'foo.pl', :source => ':-'
     end

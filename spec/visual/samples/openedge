@@ -1,8 +1,17 @@
+/****** Sample of .w or .p file ******/
+
 /*          This .W file was created with the Progress UIB.             */
 
+&ANALYZE-SUSPEND _VERSION-NUMBER UIB_v8r12 // hello
 &ANALYZE-SUSPEND _VERSION-NUMBER UIB_v8r12
-
+// hello
 DEFINE VARIABLE w AS HANDLE NO-UNDO.
+/**** /*
+hello
+*/ / */
+
+
+&SCOPED-DEFINE preprocessor-name definition 
 
 CREATE WINDOW w ASSIGN
     WIDTH = 50
@@ -10,7 +19,25 @@ CREATE WINDOW w ASSIGN
     MESSAGE-AREA = FALSE
     STATUS-AREA = FALSE.
 
+&IF PROVERSION > "12" &THEN
 CURRENT-WINDOW = w.
+&ENDIF
+
+DEFINE TEMP-TABLE inventario
+    FIELD fecInv       AS DATE format 99/99/9999
+    FIELD almInv       AS CHARACTER
+    FIELD linInv       AS CHARACTER
+    FIELD invIni       LIKE in_qty_oh  FORMAT "->>>,>>9.999"
+    FIELD entProd      LIKE in_qty_oh  FORMAT "->>>,>>9.999"
+    FIELD entProdCedis LIKE in_qty_oh  FORMAT "->>>,>>9.999"
+    FIELD entTransf    LIKE in_qty_oh  FORMAT "->>,>>9.999"
+    FIELD embCedis     LIKE in_qty_oh  FORMAT "->>>,>>9.999"
+    FIELD uniEmbCedis  AS   DECIMAL    FORMAT ">,>>9.<<"
+    FIELD embPlanta    LIKE in_qty_oh  FORMAT "->>>,>>9.999"
+    FIELD uniEmbPlanta AS   DECIMAL    FORMAT ">,>>9.<<"
+    FIELD invFin       LIKE in_qty_oh  FORMAT "->>>,>>9.999"
+    FIELD tonEmb       LIKE in_qty_oh  FORMAT "->>>,>>9.999"
+    FIELD uniEmb       AS INTEGER FORMAT ">,>>9".
 
 DEFINE BUTTON btnOK LABEL "OK" SIZE 12 BY 1.2.
 
@@ -25,3 +52,88 @@ WAIT-FOR "CHOOSE" OF btnOK.
 DELETE OBJECT w.
 
 &ANALYZE-RESUME
+
+PROCEDURE GetCurrentProcessId EXTERNAL "KERNEL32.DLL":
+    DEFINE RETURN PARAMETER intProcessHandle AS LONG.
+END PROCEDURE.
+
+procedure 'TpFrame.TaskPanel.ItemClick':U:
+
+end procedure.
+{ test.i "{&Test}" }
+{ test.i &abc = ABC &def    = 'D E  F' &hij="H   I   J" }
+{ test.i 
+    &abc = ABC 
+    &def    = 'D E  F' 
+    &hij="H   I   J" }
+
+/****** Sample of .cls file ******/
+
+block-level on error undo, throw.
+
+using OpenEdge.Core.Collections.IList.
+using OpenEdge.Core.Collections.List FROM PROPATH.
+using OpenEdge.Core.Util.Token FROM ASSEMBLY.
+using OpenEdge.Core.Util.*.
+using OpenEdge.Logging.Filter.* FROM PROPATH.
+using OpenEdge.Logging.Filter.* FROM ASSEMBLY.
+using OpenEdge.Logging.Filter.LoggerFilterNode.
+using OpenEdge.Logging.Format.ISupportFormatting.
+using OpenEdge.Logging.ILogWriter.
+using OpenEdge.Logging.LogEvent.
+using OpenEdge.Logging.LogLevelEnum.
+using OpenEdge.Logging.LogMessage.
+using OpenEdge.Logging.Logger.
+
+class OpenEdge.Logging.Logger final implements ILogWriter, ISupportFormatting:
+        {Consultingwerk/Framework/ttServiceLoader.i}
+
+
+
+    // (mandatory) Holds filters for formatting the messagesto this logger
+    define public property LogFilters as ILoggerFilter extent no-undo
+        get.
+        private set.
+    
+    // (mandatory) The level being logged at
+    define public property LogLevel as LogLevelEnum no-undo get. private set. 
+    
+
+    
+    /* Constructor
+       
+       @param character The name of this logger implementation
+       @param LogLevelEnum The level we're logging at
+       @param LoggerFilterList A list of filters to format and write the log data */
+    @Test(expected="Progress.Lang.AppError"). //coucou
+    constructor public Logger(input pcName as character,
+                              input poLevel as LogLevelEnum,
+                              input poLogFilters as ILoggerFilter extent):
+        
+    end constructor.
+
+    /* Log for a simple message 
+       
+       @param LogMessage The message to log. */
+    @Test.
+    method public void Fatal(input poMessage as LogMessage):
+        if this-object:LogLevel lt LogLevelEnum:FATAL then
+            return.
+        DEFINE VARIABLE var1 AS LOGICAL NO-UNDO INITIAL NO.
+        DEFINE VARIABLE var2 AS CHARACTER NO-UNDO.
+        var2 = "hello".
+        var2 = 'hello'.
+        var2 = 'hello':U.
+        var2 = "hello":U.
+        var2 = "hello ~r~n".
+        var2 = "hello ""World""".
+        var2 = "hello{&hello}":U.
+        var2 = {&hello}.
+        READ-XML(LogLevelEnum:FATAL, poMessage, ?).
+        WriteMessage(LogLevelEnum:FATAL, poMessage, ?).
+
+        ASSIGN toto = 2 + var1 * (toto + 4).
+        ASSIGN toto = 2 + var1 (toto + 4).
+    end method.
+    
+end class.

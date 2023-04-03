@@ -13,10 +13,6 @@ module Rouge
 
       mimetypes 'text/x-mosel'
 
-      def self.detect?(text)
-        return true if text =~ /^\s*(model|package)\s+/
-      end
-
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
       ############################################################################################################################

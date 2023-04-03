@@ -80,6 +80,8 @@ module Rouge
           groups Punctuation, Text, Str::Doc
         end
 
+        rule %r/\.\.\.\B$/, Name::Builtin::Pseudo
+
         rule %r/[^\S\n]+/, Text
         rule %r(#(.*)?\n?), Comment::Single
         rule %r/[\[\]{}:(),;.]/, Punctuation
@@ -87,6 +89,8 @@ module Rouge
         rule %r/\\/, Text
 
         rule %r/@#{dotted_identifier}/i, Name::Decorator
+
+        rule %r/(>>>|\.\.\.)\B/, Generic::Prompt
 
         rule %r/(in|is|and|or|not)\b/, Operator::Word
         rule %r/(<<|>>|\/\/|\*\*)=?/, Operator
@@ -120,7 +124,7 @@ module Rouge
         # TODO: not in python 3
         rule %r/`.*?`/, Str::Backtick
         rule %r/([rfbu]{0,2})('''|"""|['"])/i do |m|
-          groups Str::Affix, Str
+          groups Str::Affix, Str::Heredoc
           current_string.register type: m[1].downcase, delim: m[2]
           push :generic_string
         end
@@ -178,11 +182,12 @@ module Rouge
       end
 
       state :generic_string do
-        rule %r/[^'"\\{]+/, Str
+        rule %r/>>>|\.\.\./, Generic::Prompt, :doctest
+        rule %r/[^'"\\{]+?/, Str
         rule %r/{{/, Str
 
         rule %r/'''|"""|['"]/ do |m|
-          token Str
+          token Str::Heredoc
           if current_string.delim? m[0]
             current_string.remove
             pop!
@@ -218,6 +223,17 @@ module Rouge
         end
 
         rule %r/\\./, Str, :pop!
+      end
+
+      state :doctest do
+        rule %r/\n\n/, Text, :pop!
+
+        rule %r/'''|"""/ do
+          token Str::Heredoc
+          pop!(2) if in_state?(:generic_string) # pop :doctest and :generic_string
+        end
+
+        mixin :root
       end
 
       state :generic_interpol do

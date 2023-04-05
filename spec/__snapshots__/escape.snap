@@ -1,0 +1,5 @@
+Text:  "If Formatter.enable_escape! is called, this allows escaping into html<newline>or the parent format with a special delimiter. For example, here is<newline>some "
+Escape:  "<span style=\"text-decoration: underline\">"
+Text:  "underlined text"
+Escape:  "</span>"
+Text:  " that flows with the rest of the document.<newline><newline>When visually speccing this, you should see the escaped portions rendered as an<newline>error. This is because for safety reasons we don't allow escaping to html without<newline>explicit opting in. If you provide the ?escape=1 option in the url, you should<newline>see underlined text.<newline>"

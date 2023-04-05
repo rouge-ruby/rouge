@@ -8,6 +8,7 @@ describe Rouge::Lexers do
   Rouge::Lexer.all.each do |lexer_class|
     describe lexer_class do
       include Support::Lexing
+      include Support::Snapshot
 
       subject { lexer_class.new }
 
@@ -33,6 +34,21 @@ describe Rouge::Lexers do
         end
 
         assert { out_buf == sample }
+      end
+
+      it 'lexes the sample without changes' do
+        sample = File.read(samples_dir.join(lexer_class.tag), encoding: 'utf-8')
+
+        out_buf = String.new("")
+        subject.lex(sample) do |token, value|
+          # Workaround for minitest:
+          # If a compared value contains both of newlines and escaped newlines,
+          # the diff result is shown in a single line, which is unreadable.
+          value_dumped = value.gsub('\n', '<newline>').gsub("\n", '<newline>').dump
+          out_buf << "#{token.qualname}:  #{value_dumped}\n"
+        end
+
+        assert_snapshot out_buf, subject.tag
       end
     end
   end

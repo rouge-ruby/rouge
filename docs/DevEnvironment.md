@@ -180,7 +180,12 @@ your cloned repository:
    and you'll (hopefully) be greeted by a series of dots that indicate a
    successful test.
 
-3. **Check Code Quality**: Rouge uses the popular library [RuboCop][] for
+3. **Update the Snapshots**: Rouge also has snapshot tests. If you change a
+   lexer's behavior, please update the snapshot data by running
+   `UPDATE_SNAPSHOTS=true bundle exec rake`. The updated snapshots must be
+   committed.
+
+4. **Check Code Quality**: Rouge uses the popular library [RuboCop][] for
    checking code quality. You can run RuboCop by—you guessed it—typing
    `bundle exec rubocop`.
 

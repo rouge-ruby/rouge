@@ -399,8 +399,9 @@ When developing a lexer, it is important to have ways to test it. Rouge provides
 support for three types of test files:
 
 1. a **spec** that will run as part of Rouge's test suite;
-2. a **demo** that will be tested as part of Rouge's test suite; and;
-3. a **visual sample** of the various language constructs.
+2. a **demo** that will be tested as part of Rouge's test suite;
+3. a **visual sample** of the various language constructs; and;
+4. a **snapshot** that records how the visual sample is tokenized.
 
 When you submit a lexer, you must also include these test files.
 
@@ -488,6 +489,15 @@ submission.
 
 Your visual sample must be saved to `spec/visual/sample/<name_of_your_lexer>`.
 As with the demo file, there is no file extension.
+
+### Snapshots
+
+A snapshot is a file that records how the visual sample is tokenized. The data
+is stored in `spec/__snapshots__/*.snap`, with each line representing one
+token. If you change a lexer's behavior or a visual sample, the corresponding
+snapshot files must be updated. You can update them by typing `bundle exec rake`
+with the `UPDATE_SNAPSHOTS` environment variable set to `true`. They will help
+prevent introducing regressions. The updated snapshot files must be committed.
 
 ### Running the Tests
 

@@ -1090,6 +1090,7 @@ $ echo "Sample feature output"
 [This is a link `with backticks`](example.com)
 [This is a link to a TOML section `[with brackets]` (and backticks)](example.com)
 [This is a link to a TOML section `[[with double brackets]]` (and backticks)](example.com)
+
 [This is not a link `with backticks`] (example.com)
 
 This link has text before it, [it's over two (lines),
@@ -1097,3 +1098,13 @@ has (parens too)](example.com), and text after it.
 
 [this is not a
 link]
+
+[This is not a link] (example.com)
+
+[This link is followed by text in](example.com) (parentheses)
+[This link is followed by text in](example.com) (paren theses)
+[This link is followed by text in](example.com "Title text") paren (theses)
+
+[This link is referenced][exampleref]
+
+[exampleref]: http://example.com

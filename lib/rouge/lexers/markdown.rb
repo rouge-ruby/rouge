@@ -94,15 +94,15 @@ module Rouge
           (\s*) # leading whitespace
           (\[) (#{edot}+?) (\]) # the reference
           (\s*) (:) # colon
+          (\s*) # trailing whitespace
         )x do
-          groups Text, Punctuation, Str::Symbol, Punctuation, Text, Punctuation
-
-          push :title
+          groups Text, Punctuation, Str::Symbol, Punctuation, Text, Punctuation, Text
+          push :ref
           push :url
         end
 
         # links and images
-        rule %r/(!?\[)(#{edot}*?|[^\]]*?)(\])(?=[\[(])/ do
+        rule %r/(!?\[)((?:\\.|[^\\\]]|`.*?`)*?)(\])(?=[\[(])/ do
           groups Punctuation, Name::Variable, Punctuation
           push :link
         end
@@ -130,52 +130,56 @@ module Rouge
         rule %r/\n/, Text
       end
 
+      state :ref do
+        rule %r/\s+(?=["'(])/ do
+          token Text
+          goto :title
+        end
+
+        rule(//) { pop! }
+      end
+
       state :link do
         rule %r/(\[)(#{edot}*?)(\])/ do
           groups Punctuation, Str::Symbol, Punctuation
           pop!
         end
 
-        rule %r/[(]/ do
-          token Punctuation
-          push :inline_title
-          push :inline_url
-        end
+        rule %r/[(]/, Punctuation, :url
+        rule %r/[)]/, Punctuation, :pop!
 
-        rule %r/[ \t]+/, Text
+        rule %r/[ \t]+/, Text, :title
 
         rule(//) { pop! }
       end
 
       state :url do
-        rule %r/[ \t]+/, Text
-
-        # the url
         rule %r/(<)(#{edot}*?)(>)/ do
           groups Name::Tag, Str::Other, Name::Tag
-          pop!
         end
 
-        rule %r/\S+/, Str::Other, :pop!
-      end
+        rule %r/[^\s()]+/, Str::Other
+        rule %r/[(]/, Str::Other, :url
 
-      state :title do
-        rule %r/"#{edot}*?"/, Name::Namespace
-        rule %r/'#{edot}*?'/, Name::Namespace
-        rule %r/[(]#{edot}*?[)]/, Name::Namespace
-        rule %r/\s*(?=["'()])/, Text
+        rule %r/[)]/ do |m|
+          pop!
+          if state?(:link)
+            token Punctuation
+            pop!
+          else
+            token Str::Other
+          end
+        end
+
         rule(//) { pop! }
       end
 
-      state :inline_title do
-        rule %r/[)]/, Punctuation, :pop!
-        mixin :title
-      end
-
-      state :inline_url do
-        rule %r/[^<\s)]+/, Str::Other, :pop!
-        rule %r/\s+/m, Text
-        mixin :url
+      state :title do
+        rule %r/"#{edot}*?"/, Name::Namespace, :pop!
+        rule %r/'#{edot}*?'/, Name::Namespace, :pop!
+        rule %r/[(]#{edot}*?[)]/, Name::Namespace, :pop!
+        # rule %r/\s*(?=["'()])/, Text
+        rule(//) { pop! }
       end
     end
   end

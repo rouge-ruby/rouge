@@ -23,7 +23,7 @@ module Rouge
       end
 
       def prompt_regex
-        /^.*?(irb|pry).*?[>"*]/
+        /^.*?(irb|pry|>).*?[>"*]/
       end
 
       def allow_comments?

@@ -42,7 +42,7 @@ module Rouge
         rule %r/%([rqswQWxiI])?([^\w\s])/ do |m|
           open = Regexp.escape(m[2])
           close = Regexp.escape(delimiter_map[m[2]] || m[2])
-          interp = /[rQWxI]/ === m[1]
+          interp = /[rQWxI]/ === m[1] || !m[1]
           toktype = Str::Other
 
           puts "    open: #{open.inspect}" if @debug

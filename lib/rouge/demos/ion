@@ -1,0 +1,20 @@
+/**
+ * Sample Ion document.
+ */
+{
+  key: "value",
+  'float': 1_234e-5,
+  "annotation": type:: null.string,
+  list: 'things':: ['symbol', nan, +inf, -inf, "other"],
+  sexp: (concat ('symbol' [list] "string", null)),
+  date: date:: 1970-01-01T00:00,
+  "long string": str:: (
+    '''
+    long strings are neat
+    '''
+  ),
+  struct: {
+    nested: { value: "int":: 12_345 },
+  },
+  blob: {{ SGVsbG8sIFdvcmxkIQ== }}, // Hello, World!
+}

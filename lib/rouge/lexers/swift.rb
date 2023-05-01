@@ -15,17 +15,15 @@ module Rouge
       id = /#{id_head}#{id_rest}*/
 
       keywords = Set.new %w(
-        await break case continue default do else fallthrough if in for return switch where while try catch throw guard defer repeat
+        await break case continue default do else fallthrough if in for return switch where while try catch throw guard defer repeat autoreleasepool
 
-        as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
+        as dynamicType is new super self Self Type
 
-        associativity async didSet get infix inout isolated mutating none nonmutating operator override postfix precedence prefix set unowned weak willSet throws rethrows precedencegroup
-
-        #available #colorLiteral #column #else #elseif #endif #error #file #fileLiteral #function #if #imageLiteral #line #selector #sourceLocation #warning
+        associativity async didSet get infix inout isolated mutating none nonmutating operator override postfix precedence prefix set unowned weak willSet throws rethrows precedencegroup left right
       )
 
       declarations = Set.new %w(
-        actor class deinit enum convenience extension final func import init internal lazy let nonisolated optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype open fileprivate some
+        actor class deinit enum convenience extension final func import init internal lazy let nonisolated optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype open fileprivate some any distributed
       )
 
       constants = Set.new %w(
@@ -69,6 +67,7 @@ module Rouge
         mixin :whitespace
         
         rule %r/\$(([1-9]\d*)?\d)/, Name::Variable
+        rule %r/\$#{id}/, Name
 
         rule %r{[()\[\]{}:;,?\\]}, Punctuation
         rule %r([-/=+*%<>!&|^.~]+), Operator
@@ -99,13 +98,13 @@ module Rouge
           end
         end
 
-        rule %r/#available\([^)]+\)/, Keyword::Declaration
+        rule %r/#(?:un)?available\([^)]+\)/, Keyword::Declaration
 
         rule %r/(#(?:selector|keyPath)\()([^)]+?(?:[(].*?[)])?)(\))/ do
           groups Keyword::Declaration, Name::Function, Keyword::Declaration
         end
 
-        rule %r/#(line|file|column|function|dsohandle)/, Keyword::Declaration
+        rule %r/#(line|file|fileID|filePath|column|function|dsohandle)/, Keyword::Declaration
 
         rule %r/(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable

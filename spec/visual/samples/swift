@@ -249,8 +249,9 @@ repeat {
 if #available(iOS 8.0, OSX 10.10, *) {
    // Use Handoff APIs when available.
    let activity = NSUserActivity(activityType:"com.example.ShoppingList.view")
-} else {
+} else if #unavailable(linux) {
     // Fall back when Handoff APIs not available.
+} else {
 }
 
 //MARK: Classes
@@ -452,12 +453,23 @@ func test(t: Types?) -> Bool {
 	}
 }
 
-actor AnActor {
+distributed actor AnActor {
   nonisolated func funcA() {}
   func funcB(otherActor: isolated AnActor) async {
     await otherActor.funcB()
     async let v = funcA()
   }
+}
+
+func existential(arg: any Proto1) -> some Proto2 {
+  autoreleasepool {
+  }
+}
+
+func pwrap() -> Bool {
+  @SmallNum var myNum: Int = 8
+  self.$myOwnNum = 8
+  return $myNum
 }
 
 foo() // end-of-file comment

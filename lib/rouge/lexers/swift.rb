@@ -30,11 +30,14 @@ module Rouge
         true false nil
       )
 
-      start { push :bol }
+      start do
+        push :bol
+        @re_delim = "" # multi-line regex delimiter
+      end
 
       # beginning of line
       state :bol do
-        rule %r/#.*/, Comment::Preproc
+        rule %r/#(?![#"\/]).*/, Comment::Preproc
 
         mixin :inline_whitespace
 
@@ -70,6 +73,7 @@ module Rouge
         rule %r/\$#{id}/, Name
 
         rule %r{[()\[\]{}:;,?\\]}, Punctuation
+        rule %r{(#*)/(?!\s).*(?<![\s\\])/\1}, Str::Regex
         rule %r([-/=+*%<>!&|^.~]+), Operator
         rule %r/@?"/, Str, :dq
         rule %r/'(\\.|.)'/, Str::Char
@@ -147,6 +151,12 @@ module Rouge
         rule %r/(`)(#{id})(`)/ do
           groups Punctuation, Name::Variable, Punctuation
         end
+
+        rule %r{(#+)/\n} do |m|
+          @re_delim = m[1]
+          token Str::Regex
+          push :re_multi
+        end
       end
 
       state :tuple do
@@ -179,6 +189,19 @@ module Rouge
         rule %r/[(]/, Punctuation, :push
         rule %r/[)]/, Punctuation, :pop!
         mixin :root
+      end
+
+      state :re_multi do
+        rule %r{^\s*/#+} do |m|
+          token Str::Regex
+          if m[0].end_with?("/#{@re_delim}")
+            @re_delim = ""
+            pop!
+          end
+        end
+
+        rule %r/#.*/, Comment::Single
+        rule %r/./m, Str::Regex
       end
     end
   end

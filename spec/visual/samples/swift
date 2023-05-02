@@ -472,4 +472,30 @@ func pwrap() -> Bool {
   return $myNum
 }
 
+let res = [
+  // comment not a regex
+  #//#, // empty regex
+  ##//##, // another
+  ##//#, // unbalanced #
+  #//##, // unbalanced #
+  / not a regex /,
+  /a regex/,
+  /not a single-line
+  regex/,
+  /re with \/ escaped/,
+  ##/usr/lib/#modules/vmlinuz/##, // unescaped / with ##
+  /(#*)/(?!\s)[^\n]*(?<![\s\\])/\1/,
+
+  #/
+  multiline regex
+  /#,
+
+  ##/
+  multiline # comment
+  /#
+  /###
+  still going
+  /##
+]
+
 foo() // end-of-file comment

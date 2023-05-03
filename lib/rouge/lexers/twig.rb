@@ -16,24 +16,24 @@ module Rouge
       mimetypes 'application/x-twig', 'text/html+twig'
 
       def self.keywords
-        @@keywords ||= %w(as do extends flush from import include use else starts
-                          ends with without autoescape endautoescape block
-                          endblock embed endembed filter endfilter for endfor
-                          if endif macro endmacro sandbox endsandbox set endset
-                          spaceless endspaceless)
+        @keywords ||= %w(as do extends flush from import include use else starts
+                         ends with without autoescape endautoescape block
+                         endblock embed endembed filter endfilter for endfor
+                         if endif macro endmacro sandbox endsandbox set endset
+                         spaceless endspaceless)
       end
 
       def self.tests
-        @@tests ||= %w(constant defined divisibleby empty even iterable null odd
-                       sameas)
+        @tests ||= %w(constant defined divisibleby empty even iterable null odd
+                      sameas)
       end
 
       def self.pseudo_keywords
-        @@pseudo_keywords ||= %w(true false none)
+        @pseudo_keywords ||= %w(true false none)
       end
 
       def self.word_operators
-        @@word_operators ||= %w(b-and b-or b-xor is in and or not)
+        @word_operators ||= %w(b-and b-or b-xor is in and or not)
       end
     end
   end

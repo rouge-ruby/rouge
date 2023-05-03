@@ -14,25 +14,25 @@ module Rouge
                 'text/html+django', 'text/html+jinja'
 
       def self.keywords
-        @@keywords ||= %w(as context do else extends from ignore missing
-                          import include reversed recursive scoped
-                          autoescape endautoescape block endblock call endcall
-                          filter endfilter for endfor if endif macro endmacro
-                          set endset trans endtrans with endwith without)
+        @keywords ||= %w(as context do else extends from ignore missing
+                         import include reversed recursive scoped
+                         autoescape endautoescape block endblock call endcall
+                         filter endfilter for endfor if endif macro endmacro
+                         set endset trans endtrans with endwith without)
       end
 
       def self.tests
-        @@tests ||= %w(callable defined divisibleby equalto escaped even iterable
-                       lower mapping none number odd sameas sequence string
-                       undefined upper)
+        @tests ||= %w(callable defined divisibleby equalto escaped even iterable
+                      lower mapping none number odd sameas sequence string
+                      undefined upper)
       end
 
       def self.pseudo_keywords
-        @@pseudo_keywords ||= %w(true false none True False None)
+        @pseudo_keywords ||= %w(true false none True False None)
       end
 
       def self.word_operators
-        @@word_operators ||= %w(is in and or not)
+        @word_operators ||= %w(is in and or not)
       end
 
       state :root do

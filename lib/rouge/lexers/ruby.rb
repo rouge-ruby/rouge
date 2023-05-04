@@ -106,8 +106,8 @@ module Rouge
       end
 
       keywords = %w(
-        BEGIN END alias begin break case defined\? do else elsif end
-        ensure for if in next redo rescue raise retry return super then
+        BEGIN END alias and begin break case defined\? do else elsif end
+        ensure for if in next not or redo rescue raise retry return super then
         undef unless until when while yield
       )
 

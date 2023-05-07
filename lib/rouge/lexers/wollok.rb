@@ -14,8 +14,6 @@ module Rouge
       entity_name = /[a-zA-Z][a-zA-Z0-9]*/
       variable_naming = /_?#{entity_name}/
 
-      entities = []
-
       state :whitespaces_and_comments do
         rule %r/\s+/m, Text::Whitespace
         rule %r(//.*$), Comment::Single
@@ -97,6 +95,12 @@ module Rouge
         rule %r/and\b|or\b|not\b/, Operator
         rule %r/\(|\)|=/, Text
         rule %r/,/, Punctuation
+      end
+
+      private
+
+      def entities
+        @entities ||= []
       end
     end
   end

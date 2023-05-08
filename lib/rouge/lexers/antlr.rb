@@ -72,12 +72,12 @@ module Rouge
       state :root do
         mixin :comment_and_whitespace
         rule %r/'/, Str, :string
-        rule %r/[|,.()]/, Punctuation
         rule %r/[@<>=~\-+?*]/, Operator
+        rule %r/[|,.()]/, Punctuation
         rule %r/{/, Punctuation, :action_block
         rule %r/\[/, Str, :arg_action_block
         rule %r/#/, Name::Label, :label
-        rule %r/0|[1-9][0-9]*/, Num::Integer
+        rule integer, Num::Integer
         rule %r/:/ do
           token Punctuation
           parse_rule_name = false

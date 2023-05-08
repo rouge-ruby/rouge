@@ -1,8 +1,8 @@
 grammar awk;
-options { caseInsensitive = true; }
+options { an option; }
 /* parser rules */
 program: item_list item? EOF;
-param_list: name (',' name)* @{ action code };
+param_list: name (',' name)* @{ {action code} };
 terminated_statement:
   IF '(' expr ')' newline_opt terminated_statement (
     ELSE newline_opt terminated_statement

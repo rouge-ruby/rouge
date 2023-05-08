@@ -32,7 +32,8 @@ module Rouge
         rule %r/\s+/, Text
       end
       state :block do
-        rule %r/}/, Punctuation, :pop!
+        rule %r/{/, Name::Builtin, :block
+        rule %r/}/, Name::Builtin, :pop!
         rule %r/\\./, Str::Escape
         rule %r/[^\\{}\s]+/, Name::Builtin
         rule %r/\s+/, Text
@@ -44,7 +45,7 @@ module Rouge
         rule %r/'/, Str, :string
         rule %r/\[/, Name::Variable, :charset
         rule %r/#/, Name::Label, :label
-        rule %r/{/, Punctuation, :block
+        rule %r/{/, Name::Builtin, :block
         rule %r/0|[1-9][0-9]*/, Num::Integer
         rule %r/[-?@*+<=>~$.]/, Operator
         rule %r/[;:()|]/, Punctuation

@@ -38,7 +38,7 @@ module Rouge
       end
 
       identifier =        /[[:alpha:]_][[:alnum:]_]*/
-      dotted_identifier = /[[:alpha:]_.][[:alnum:]_.]*/
+      _dotted_identifier = /[[:alpha:]_.][[:alnum:]_.]*/
 
       def current_string
         @current_string ||= StringRegister.new

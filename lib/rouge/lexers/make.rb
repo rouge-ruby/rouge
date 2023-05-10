@@ -73,7 +73,7 @@ module Rouge
       end
 
       state :export do
-        rule %r/[\w[\$]{1,2}{}()-]/, Name::Variable
+        rule %r/[\w\${}()-]/, Name::Variable
         rule %r/\n/, Text, :pop!
         rule %r/[\t ]+/, Text
       end

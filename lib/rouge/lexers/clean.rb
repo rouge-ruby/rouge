@@ -79,7 +79,7 @@ module Rouge
 
         rule %r/code(\s+inline)?\s*{/, Comment::Preproc, :abc
 
-        rule %r/_*[a-z][\w_`]*/ do |m|
+        rule %r/_*[a-z][\w`]*/ do |m|
           if self.class.keywords.include?(m[0])
             token Keyword
           else
@@ -87,7 +87,7 @@ module Rouge
           end
         end
 
-        rule %r/_*[A-Z][\w_`]*/ do |m|
+        rule %r/_*[A-Z][\w`]*/ do |m|
           if m[0]=='True' || m[0]=='False'
             token Keyword::Constant
           else
@@ -95,7 +95,7 @@ module Rouge
           end
         end
 
-        rule %r/[^\w_\s`]/, Punctuation
+        rule %r/[^\w\s`]/, Punctuation
         rule %r/_\b/, Punctuation
       end
 
@@ -136,7 +136,7 @@ module Rouge
 
         rule %r/}/, Comment::Preproc, :pop!
         rule %r/\.\w*/, Keyword, :abc_rest_of_line
-        rule %r/[\w_]+/, Name::Builtin, :abc_rest_of_line
+        rule %r/[\w]+/, Name::Builtin, :abc_rest_of_line
       end
 
       state :abc_rest_of_line do

@@ -17,11 +17,7 @@ module Rouge
         return true if text.shebang? 'cucumber'
       end
 
-      # self-modifying method that loads the keywords file
-      def self.keywords
-        Kernel::load File.join(Lexers::BASE_DIR, 'gherkin/keywords.rb')
-        keywords
-      end
+      require_relative "gherkin/keywords"
 
       def self.step_regex
         # in Gherkin's config, keywords that end in < don't

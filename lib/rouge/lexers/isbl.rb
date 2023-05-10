@@ -9,10 +9,7 @@ module Rouge
       tag 'isbl'
       filenames '*.isbl'
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'isbl/builtins.rb')
-        self.builtins
-      end
+      require_relative "isbl/builtins"
 
       def self.constants
         @constants ||= self.builtins["const"].merge(self.builtins["enum"]).collect!(&:downcase)

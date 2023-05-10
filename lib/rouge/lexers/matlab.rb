@@ -19,11 +19,7 @@ module Rouge
         )
       end
 
-      # self-modifying method that loads the builtins file
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'matlab/keywords.rb')
-        builtins
-      end
+      require_relative 'matlab/keywords'
 
       state :root do
         rule %r/\s+/m, Text # Whitespace

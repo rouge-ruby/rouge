@@ -34,11 +34,7 @@ module Rouge
         push :lasso if start_inline?
       end
 
-      # self-modifying method that loads the keywords file
-      def self.keywords
-        Kernel::load File.join(Lexers::BASE_DIR, 'lasso/keywords.rb')
-        keywords
-      end
+      require_relative "lasso/keywords"
 
       id = /[a-z_][\w.]*/i
 

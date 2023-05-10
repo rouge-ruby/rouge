@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'groovy.rb'
+    require_relative 'groovy'
 
     class Gradle < Groovy
       title "Gradle"

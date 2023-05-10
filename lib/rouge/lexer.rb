@@ -523,13 +523,8 @@ module Rouge
   end
 
   module Lexers
-    BASE_DIR = "#{__dir__}/lexers".freeze
-    @_loaded_lexers = {}
-
     def self.load_lexer(relpath)
-      return if @_loaded_lexers.key?(relpath.to_s)
-      @_loaded_lexers[relpath.to_s] = true
-      Kernel::load File.join(BASE_DIR, relpath)
+      require_relative "lexers/#{relpath}"
     end
   end
 end

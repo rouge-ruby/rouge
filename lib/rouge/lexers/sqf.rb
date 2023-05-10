@@ -54,10 +54,7 @@ module Rouge
         )
       end
 
-      def self.commands
-        Kernel::load File.join(Lexers::BASE_DIR, "sqf/keywords.rb")
-        commands
-      end
+      require_relative "sqf/keywords"
 
       state :root do
         # Whitespace

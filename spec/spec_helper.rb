@@ -5,7 +5,6 @@ require 'rubygems'
 require 'bundler'
 Bundler.require
 require 'rouge'
-require 'minitest/spec'
 require 'minitest/autorun'
 
 Token = Rouge::Token

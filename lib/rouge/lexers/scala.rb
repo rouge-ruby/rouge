@@ -13,7 +13,8 @@ module Rouge
       mimetypes 'text/x-scala', 'application/x-scala'
 
       # As documented in the ENBF section of the scala specification
-      # http://www.scala-lang.org/docu/files/ScalaReference.pdf
+      # https://scala-lang.org/files/archive/spec/2.13/13-syntax-summary.html
+      # https://en.wikipedia.org/wiki/Unicode_character_property#General_Category
       whitespace = /\p{Space}/
       letter = /[\p{L}$_]/
       upper = /[\p{Lu}$_]/
@@ -24,8 +25,10 @@ module Rouge
       # negative lookahead to filter out other classes
       op = %r(
         (?!#{whitespace}|#{letter}|#{digits}|#{parens}|#{delims})
-        [\u0020-\u007F\p{Sm}\p{So}]
+        [-!#%&*/:?@\\^\p{Sm}\p{So}]
       )x
+      # manually removed +<=>|~ from regexp because they're in property Sm
+      # pp CHRS:(0x00..0x7f).map(&:chr).grep(/\p{Sm}/)
 
       idrest = %r(#{letter}(?:#{letter}|#{digits})*(?:(?<=_)#{op}+)?)x
 

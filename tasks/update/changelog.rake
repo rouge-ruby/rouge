@@ -1,5 +1,5 @@
 namespace :update do
-  desc "Insert lines in CHANGELOG.md for commits between SHAs (inclusive)" 
+  desc "Insert lines in CHANGELOG.md for commits between SHAs (inclusive)"
   task :changelog, [:beg_sha, :end_sha] do |t, args|
     args.with_defaults(:end_sha => nil)
 
@@ -9,20 +9,20 @@ namespace :update do
     working_dir = Rake.application.original_dir
     repo = Rouge::Tasks::Git.new(working_dir, remote)
     gitlog = repo.log(args.beg_sha, args.end_sha)
-    
+
     text = ''
     not_inserted = true
 
     File.readlines(changelog).each do |l|
       if not_inserted && l.start_with?("##")
         text += Rouge::Tasks.version_line(Rouge.version)
-        text += Rouge::Tasks.comparison_line(remote, 
-                                             repo.prev_version, 
+        text += Rouge::Tasks.comparison_line(remote,
+                                             repo.prev_version,
                                              "v" + Rouge.version)
         text += gitlog.converted.join("") + "\n"
         not_inserted = false
       end
-      
+
       text += l
     end
 
@@ -44,7 +44,7 @@ module Rouge
         commits = @repo.log(100).between(beg_sha, end_sha)
         Log.new(@remote, commits)
       end
-      
+
       def prev_version
         @prev_version ||= @repo
           .tags
@@ -61,8 +61,8 @@ module Rouge
         return a[1] <=> b[1] if a[0] == b[0]
         return a[0] <=> b[0]
       end
-      
-      class Log 
+
+      class Log
         def initialize(remote, commits)
           @remote = remote
           @msgs = commits.map { |c| Message.new(c.message, c.author.name) }
@@ -85,7 +85,7 @@ module Rouge
         end
       end
     end
-    
+
     def self.comparison_line(remote, previous, current)
       "[Comparison with the previous version](https://#{remote}/compare/#{previous}...#{current})\n\n"
     end
@@ -97,7 +97,7 @@ module Rouge
     def self.message_line(message)
       "  - #{message}\n"
     end
-    
+
     def self.version_line(version)
       "## version #{version}: #{Time.now.strftime("%Y-%m-%d")}\n\n"
     end

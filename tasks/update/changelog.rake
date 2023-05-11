@@ -30,12 +30,11 @@ namespace :update do
   end
 end
 
-require 'git'
-
 module Rouge
   module Tasks
     class Git
       def initialize(dir, remote)
+        require 'git'
         @repo = ::Git.open(dir)
         @remote = remote
       end

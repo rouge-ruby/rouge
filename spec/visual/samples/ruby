@@ -329,6 +329,8 @@ X "foo" # This is a method call, heredoc ends at the prev line
 
 %q[haha! [nesting [rocks] ! ] ] # commeht here
 
+%(a #{interpolation_variable} b)
+%Q(a #{interpolation_variable} b)
 
 ##################################################################
 class                                                  NP

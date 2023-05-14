@@ -66,7 +66,7 @@ module Rouge
 
       id = /[\p{L}_][\p{L}\p{N}_]*/
       ns = /(?:#{id}\\)+/
-      id_with_ns = /(?:#{ns})?#{id}/
+      id_with_ns = /\\?(?:#{ns})?#{id}/
 
       start do
         case @start_inline
@@ -273,7 +273,7 @@ module Rouge
       state :in_catch do
         rule %r/\(/, Punctuation
         rule %r/\|/, Operator
-        rule id, Name::Class
+        rule id_with_ns, Name::Class
         mixin :escape
         mixin :whitespace
         mixin :return

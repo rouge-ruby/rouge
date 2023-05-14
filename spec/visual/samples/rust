@@ -2,14 +2,14 @@
 fn f() {
     let a = String::new("hello");
     let b: &str = a;
-    io::println(b);
+    println!("{}", b);
 }
 
 fn g() {
     let c = String::new("world");
     let d: &str;
     d = c;
-    io::println(d);
+    println!("{}", d);
 }
 
 fn h(a: i32) -> i32 {
@@ -39,53 +39,53 @@ println!(r#"
   "New line in a raw string"
 "#);
 
-trait iterable<A> {
-    fn iterate(blk: fn(x: &A) -> bool);
+trait Iterable<A> {
+    fn iterate(&self, blk: impl FnMut(&A) -> bool);
 }
 
-impl<A> &[A]: iterable<A> {
-    fn iterate(f: fn(x: &A) -> bool) {
-        for vec::each(self) |e| {
+impl<A> Iterable<A> for &[A] {
+    fn iterate(&self, mut f: impl FnMut(&A) -> bool) {
+        for e in self.iter() {
             if !f(e) { break; }
         }
     }
 }
 
-fn length<A, T>(x: T) -> uint
+fn length<A, T>(x: T) -> usize
 where
-    T: iterable<A>,
+    T: Iterable<A>,
 {
     let mut len = 0;
-    for x.iterate() |_y| { len += 1 }
+    x.iterate(|_| { len += 1; true });
     return len;
 }
 
 fn main() {
     let x = vec![0,1,2,3];
     // Call a method
-    for x.iterate() |y| { assert x[*y] == *y; }
+    for (i, y) in x.iter().enumerate() { assert!(x[i] == *y); }
     // Call a parameterized function
-    assert length(x) == vec::len(x);
+    assert!(length(&*x) == x.len());
     // Call a parameterized function, with type arguments that require
     // a borrow
-    assert length::<int, &[int]>(x) == vec::len(x);
+    assert!(length::<i32, &[i32]>(&*x) == x.len());
 
     // Now try it with a type that *needs* to be borrowed
     let z = [0,1,2,3];
     // Call a method
-    for z.iterate() |y| { assert z[*y] == *y; }
+    for (i, y) in z.iter().enumerate() { assert!(z[i] == *y); }
     // Call a parameterized function
-    assert length::<int, &[int]>(z) == vec::len(z);
+    assert!(length::<i32, &[i32]>(&z) == z.len());
 }
 
-fn<'a> pointer(&'a u32) {}
+fn pointer<'a>(n: &'a u32) {}
 
 fn range() {
     let a = 1..2;
     let b = 1..;
     let c = ..2;
     let d = ..;
-    let e = 5...6;
+    let e = 5..=6;
 }
 
 #[attr1 = "val"];
@@ -322,7 +322,7 @@ macro_rules! html (
     ( $($body:tt)* ) => (
         parse_node!( []; []; $($body)* )
     )
-)
+);
 
 macro_rules! parse_node (
     (
@@ -333,8 +333,8 @@ macro_rules! parse_node (
     ) => (
         parse_node!(
             [$(: $tags ($(:$tag_nodes),*))*];
-            [$(:$head_nodes,)* :tag(stringify!($head).to_owned(),
-                                    ~[$($nodes),*])];
+            [$(:$head_nodes,)* :Box::new(HTMLFragment::Tag(stringify!($head).to_owned(),
+                                    vec![$($nodes),*]))];
             $($rest)*
         )
     );
@@ -358,7 +358,7 @@ macro_rules! parse_node (
     ) => (
         parse_node!(
             [$(: $tags ($(:$tag_nodes),*))*];
-            [$(:$nodes,)* :text(~".")];
+            [$(:$nodes,)* :Box::new(HTMLFragment::Text(".".to_string()))];
             $($rest)*
         )
     );
@@ -370,13 +370,13 @@ macro_rules! parse_node (
     ) => (
         parse_node!(
             [$(: $tags ($(:$tag_nodes),*))*];
-            [$(:$nodes,)* :text(stringify!($word).to_owned())];
+            [$(:$nodes,)* :Box::new(HTMLFragment::Text(stringify!($word).to_owned()))];
             $($rest)*
         )
     );
 
     ( []; [:$e:expr]; ) => ( $e );
-)
+);
 
 fn main() {
     let page = html! (
@@ -390,8 +390,8 @@ fn main() {
 }
 
 enum HTMLFragment {
-    tag(~str, ~[HTMLFragment]),
-    text(~str),
+    Tag(String, Vec<Box<HTMLFragment>>),
+    Text(String),
 }
 
 fn int_literals_delimiter() {

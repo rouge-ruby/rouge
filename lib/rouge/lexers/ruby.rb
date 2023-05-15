@@ -188,6 +188,7 @@ module Rouge
 
         rule %r/(?:#{keywords.join('|')})(?=\W|$)/, Keyword, :expr_start
         rule %r/(?:#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo, :expr_start
+        rule %r/(not|and|or)\b/, Operator::Word, :expr_start
 
         rule %r(
           (module)

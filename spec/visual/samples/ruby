@@ -277,6 +277,11 @@ puts [[x%w].reverse]
 def x(s) puts x end
 x %w].]
 
+# wordy logical operators
+5.prime? or fail "something is terribly wrong"
+chip = Bag.find_potato and chip.eat!
+puts "odd" if not num % 2 == 0
+
 ##################################################################
 # HEREDOCS
 <<-CONTENT.strip_heredoc

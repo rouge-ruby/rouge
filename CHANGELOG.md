@@ -4,6 +4,37 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.1.1: 2023-05-15
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.0...v4.1.1)
+
+- General
+  - Fix Twig/Jinja: incorrect recognition of some special tokens like keywords ([#1949](https://github.com/rouge-ruby/rouge/pull/1949/) by nsfisis)
+  - Add reference to Code of Conduct ([#1942](https://github.com/rouge-ruby/rouge/pull/1942/) by Tan Le)
+- Dart Lexer
+  - Add basic support for Dart 3 features ([#1935](https://github.com/rouge-ruby/rouge/pull/1935/) by Parker Lougheed)
+- Dot Lexer
+  - Add alias `graphviz` for `dot` ([#1651](https://github.com/rouge-ruby/rouge/pull/1651/) by Alexander Sapozhnikov)
+- JavaScript Lexer
+  - javascript: Fix an issue where some keywords like "for" and "if" are mistakenly recognized as functions ([#1938](https://github.com/rouge-ruby/rouge/pull/1938/) by nsfisis)
+- Liquid Lexer
+  - Liquid: update for 5.0.0 ([#1681](https://github.com/rouge-ruby/rouge/pull/1681/) by Eric Knibbe)
+- Mosel Lexer
+  - Delete buggy detection for Mosel ([#1936](https://github.com/rouge-ruby/rouge/pull/1936/) by Cyril Brulebois)
+- Openedge Lexer
+  - fix: improve openedge abl langage ([#1843](https://github.com/rouge-ruby/rouge/pull/1843/) by clement-brodu)
+- PHP Lexer
+  - php: fix highlight of fully-qualified identifiers (fix #1718) ([#1924](https://github.com/rouge-ruby/rouge/pull/1924/) by nsfisis)
+- Python Lexer
+  - Support doctest highlight in Python lexer ([#1932](https://github.com/rouge-ruby/rouge/pull/1932/) by Tan Le)
+- Ruby Lexer
+  - Highlight Ruby's and/or/not logical operators ([#1950](https://github.com/rouge-ruby/rouge/pull/1950/) by Demian Ferreiro)
+  - Fix string interpolation in Ruby percent literal ([#1945](https://github.com/rouge-ruby/rouge/pull/1945/) by Tan Le)
+- Rust Lexer
+  - rust: Update builtins and sample file (fix #1922) ([#1923](https://github.com/rouge-ruby/rouge/pull/1923/) by nsfisis)
+- Shell Lexer
+  - Add detection for zsh completion files ([#1933](https://github.com/rouge-ruby/rouge/pull/1933/) by Germán Riaño)
+
 ## version 4.1.0: 2023-02-11
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.0.1...v4.1.0)

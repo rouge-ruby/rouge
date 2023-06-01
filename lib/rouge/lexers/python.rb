@@ -90,8 +90,6 @@ module Rouge
 
         rule %r/@#{dotted_identifier}/i, Name::Decorator
 
-        rule %r/(>>>|\.\.\.)\B/, Generic::Prompt
-
         rule %r/(in|is|and|or|not)\b/, Operator::Word
         rule %r/(<<|>>|\/\/|\*\*)=?/, Operator
         rule %r/[-~+\/*%=<>&^|@]=?|!=/, Operator
@@ -182,7 +180,7 @@ module Rouge
       end
 
       state :generic_string do
-        rule %r/>>>|\.\.\./, Generic::Prompt, :doctest
+        rule %r/^\s*(>>>|\.\.\.)\B/, Generic::Prompt, :doctest
         rule %r/[^'"\\{]+?/, Str
         rule %r/{{/, Str
 

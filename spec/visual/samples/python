@@ -207,3 +207,14 @@ def factorial(n):
     OverflowError: n too large
     """
     print("hello world")
+
+def do_nothing():
+    if False:
+        return
+        print("a...a")
+
+    with tracer.start_as_current_span('App Init'):
+        logger.info('OTEL Initialized...')
+
+    app = FastAPI()
+    FastAPIInstrumentor.instrument_app(app)

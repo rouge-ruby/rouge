@@ -4,6 +4,13 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.1.2: 2023-06-01
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.1...v4.1.2)
+
+  - Fix highlight of ellipsis in Python lexer ([#1964](https://github.com/rouge-ruby/rouge/pull/1964/) by Tan Le)
+  - Fix Wollok lexer: entity list is shared between lexer instances ([#1954](https://github.com/rouge-ruby/rouge/pull/1954/) by nsfisis)
+
 ## version 4.1.1: 2023-05-15
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.0...v4.1.1)

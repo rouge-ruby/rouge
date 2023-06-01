@@ -13,4 +13,21 @@ describe Rouge::Lexers::Wollok do
       assert_guess :filename => 'foo.wpgm'
     end
   end
+
+  describe 'lexing' do
+    it 'does not share entity list between instances' do
+      a = Rouge::Lexers::Wollok.new
+      b = Rouge::Lexers::Wollok.new
+
+      # If "foo" is defined as object, it is recognized as Name.Class.
+      result_a1 = a.lex('object foo {}').to_a
+      assert_equal result_a1[2].first, Token['Name.Class']
+      result_a2 = a.lex('foo.bar()').to_a
+      assert_equal result_a2[0].first, Token['Name.Class']
+
+      # If "foo" is undefined, it is recognized as Keyword.Variable.
+      result_b1 = b.lex('foo.bar()').to_a
+      assert_equal result_b1[0].first, Token['Keyword.Variable']
+    end
+  end
 end

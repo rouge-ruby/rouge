@@ -233,12 +233,13 @@ module Rouge
       end
       
       state :query do
-        rule %r/\|/, Text, :command
+        rule %r/\|/, Text, :command_start
         # By default, we assume it is an implict search command
         rule %r/(?=.)/ do |m|
           command_stack.push "search"
           token Text
-          push :search_command
+          push :command_start
+          push :command_args
         end
       end
       
@@ -257,11 +258,13 @@ module Rouge
           # By default we assume we were in an implicit search command
           command_stack.push "search"
           if self.class.command_arguments["search"].include? m[0].downcase
-          token Keyword::Reserved
+            token Keyword::Reserved
           else
-          token Text
+            token Text
           end
-          push :search_command
+          # Jumping straight into the command_args context, skipping command_start
+          push :command_start
+          push :command_args
         end
         # Sub-queries do not need a leading | when running a command
         # Trying to avoid to match an argument
@@ -269,7 +272,9 @@ module Rouge
           if m[0].downcase == "search"
             token Name::Builtin
             command_stack.push(m[0].downcase)
-            push :search_command
+            # Jumping straight into the command_args context, skipping command_start
+            push :command_start
+            push :command_args
           elsif self.class.command_arguments.key? m[0].downcase
             token Name::Builtin
             command_stack.push(m[0].downcase)
@@ -282,68 +287,27 @@ module Rouge
         rule %r/(?=.)/ do |m|
           command_stack.push "search"
           token Text
-          push :search_command
+          # Jumping straight into the command_args context, skipping command_start
+          push :command_start
+          push :command_args
         end
       end
       
       # Search commands have a specific status, being implicit in some situations
-      state :search_command do
-        rule %r/```/, Comment::Multiline, :multiline_comments
-        rule %r/`\s*comment\s*\(\s*"/, Comment::Preproc, :comment_macro
-        rule %r/(`)(\s*\w+)([^`]*)(`)/, Comment::Preproc
-        rule %r/0[xX][0-9a-fA-F]*/, Num::Hex
-        rule %r/[$][+-]*\d*(\.\d*)?/, Num
-        rule %r/((\d+(\.\d*)?)|(\.\d+))([eE][\-+]?\d+)?/, Num
-        rule %r/[!<>=,]+/, Punctuation
-        rule %r/[()]/, Punctuation
-        rule %r/\|/, Text, :command
-        rule %r/["]/, Str::Escape, :double_string
-        rule %r/[']/, Str::Escape, :single_string
-        rule %r/\s+/m, Text
-        rule %r/\[/, Punctuation, :subquery
-        rule %r/\w+(?=[ \t]*)(?=\=)/ do |m|
-          if self.class.command_arguments.key? command_stack.last
-            if self.class.command_arguments[command_stack.last].include? m[0].downcase
-            token Keyword::Reserved
-          else
-            token Text
-          end
-          else
-            token Text
-          end
-        end
-        # Some commands have specific operators available
-        rule %r/[^ \t"'\d!<>=,()\[\]]+/m do |m|
-          if self.class.command_operators.key? command_stack.last
-            if self.class.command_operators[command_stack.last].include? m[0].downcase
-            token Operator::Word
-          else
-            token Text
-          end
-          else
-            token Text
-          end
-        end
-        # If finding a closing bracket, popping twice to leave the current state AND the subquery state
-        rule %r/\]/ do |m|
-          token Punctuation
-          pop!
-          pop!
-        end
-      end
+      # Consequently, once we can infer we have a search command, we can jump straight to args
       
-      # Other commands not being implicit, we were only handle the initial part "| command_name" and then just into arguments if any
-      state :command do
+      # Other commands not being implicit, we will here only handle the initial part "| command_name" and then jump into arguments if any
+      state :command_start do
         rule %r/\s+/m, Text
         # Highlighting only known Splunk commands
         rule %r/\w+/m do |m|
-              if self.class.command_arguments.key? m[0].downcase
-                token Name::Builtin
-          command_stack.push(m[0].downcase)
-              else
-          command_stack.push "unknown"
-                token Text
-              end
+          if self.class.command_arguments.key? m[0].downcase
+            token Name::Builtin
+            command_stack.push(m[0].downcase)
+          else
+            command_stack.push "unknown"
+            token Text
+          end
           push :command_args
         end
         # When jumping to the next command, clearing last command
@@ -377,10 +341,10 @@ module Rouge
         rule %r/\w+(?=[ \t]*)(?=\=)/ do |m|
           if self.class.command_arguments.key? command_stack.last
             if self.class.command_arguments[command_stack.last].include? m[0].downcase
-            token Keyword::Reserved
-          else
-            token Text
-          end
+              token Keyword::Reserved
+            else
+              token Text
+            end
           else
             token Text
           end
@@ -404,12 +368,15 @@ module Rouge
           end
           token Punctuation
           pop!
+          pop!
+          push :command_start
         end
         # A subquery can occur anywhere
         rule %r/\[/, Text, :subquery
-        # If finding a closing bracket, popping twice to leave the current state AND the subquery state
+        # If finding a closing bracket, popping 3 times to leave the following states: :command_args :command :subquery
         rule %r/\]/ do |m|
           token Punctuation
+          pop!
           pop!
           pop!
         end
@@ -417,10 +384,10 @@ module Rouge
         rule %r/[^ \t"'\d!<>=,()\[\]]+/m do |m|
           if self.class.command_operators.key? command_stack.last
             if self.class.command_operators[command_stack.last].include? m[0].downcase
-            token Operator::Word
-          else
-            token Text
-          end
+              token Operator::Word
+            else
+              token Text
+            end
           else
             token Text
           end
@@ -432,6 +399,8 @@ module Rouge
         rule %r/./, Comment::Multiline
       end
       
+      # The comment macro is used the following way:
+      # `comment("Some comments")`
       state :comment_macro do
         rule %r/"\s*\)\s*`/, Comment::Preproc, :pop!
         rule %r/\\./, Comment::Single

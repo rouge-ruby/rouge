@@ -1,0 +1,14 @@
+index=_internal AND sourcetype=splunkd component="Metrics" NOT code=1 avg > 2.5 debug='on' flag=0x2F00
+	[index=authentications user IN ("admin","root") | stats count by user | fields user ]
+| eval user = coalesce(user,src_user) test=1 
+| rex field=_raw "Reason:(?<reason>[^\]]+)\]"
+| stats count AS metric_count dc(user) as dc_user dc(eval(if(status=404, clientip, NULL()))) BY host 
+| join host type=left 
+        [search index=_audit sourcetype=audittrail  
+        | stats count AS audit_count BY host] 
+``` Some comments
+on multiple lines```
+| table time host metric_count audit_count 
+| lookup assets-list host OUTPUT asset_type
+| `ctime(time)`
+`comment("END OF QUERY")`

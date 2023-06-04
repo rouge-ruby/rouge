@@ -6,7 +6,6 @@ module Rouge
     class NSS < RegexLexer
       tag 'nss'
       filenames '*.nss'
-      mimetypes 'text/x-csrc'
 
       title "NSS"
       desc "NWScript scripting language"

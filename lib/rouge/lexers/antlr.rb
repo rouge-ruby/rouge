@@ -15,11 +15,11 @@ module Rouge
           returns skip throws tokens type
         )
       end
+      get_label = true
       identifier = %r/[A-Za-z][a-zA-Z0-9_]*/
       integer = %r/0|[1-9][0-9]*/
-      parse_rule_name = false
-      rule_name = %r/[a-z][a-zA-Z0-9_]*/
-      token_name = %r/[A-Z][a-zA-Z0-9_]*/
+      lowercase_name = %r/[a-z][a-zA-Z0-9_]*/
+      uppercase_name = %r/[A-Z][a-zA-Z0-9_]*/
       state :whitespace do
         rule %r/\s+/, Text
       end
@@ -41,7 +41,7 @@ module Rouge
         rule %r/{/, Punctuation
         rule %r/}/, Punctuation, :pop!
         rule %r/=/, Operator, :option_value
-        rule identifier, Name::Variable
+        rule identifier, Name::Attribute
       end
       state :option_value do
         mixin :comment_and_whitespace
@@ -67,7 +67,7 @@ module Rouge
       end
       state :label do
         mixin :comment_and_whitespace
-        rule rule_name, Name::Label, :pop!
+        rule lowercase_name, Name::Label, :pop!
       end
       state :root do
         mixin :comment_and_whitespace
@@ -80,31 +80,29 @@ module Rouge
         rule integer, Num::Integer
         rule %r/:/ do
           token Punctuation
-          parse_rule_name = false
+          get_label = false
         end
         rule %r/;/ do
           token Punctuation
-          parse_rule_name = true
+          get_label = true
         end
-        rule token_name do
-          if parse_rule_name
+        rule uppercase_name do
+          if get_label
             token Name::Label
           else
             token Name::Class
           end
         end
-        rule rule_name do |m|
+        rule lowercase_name do |m|
           if self.class.keywords.include? m[0]
             token Keyword
             case m[0]
-            when 'grammar'
-              parse_rule_name = true
             when 'options'
               push :options_spec
             when 'throws'
-              parse_rule_name = false
+              get_label = false
             end
-          elsif parse_rule_name
+          elsif get_label
             token Name::Label
           else
             token Name::Variable

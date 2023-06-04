@@ -1,11 +1,9 @@
 grammar MyGrammar;
-// options
 options {
   language = Ruby;
   output = AST;
   backtrack = true;
 }
-// lexer commands
 @header {
   require 'strscan'
 }
@@ -14,32 +12,26 @@ options {
     # implementation here
   end
 }
-// lexer modes
 mode COMMAND_MODE;
-// lexer rules
 WORD: [a-zA-Z]+;
 NUMBER: [0-9]+;
-// parser rules
-parse: expr+;
+parse: expr+; // single line comment
 expr: WORD (PLUS | MINUS) expr | NUMBER;
-// rule actions
 expr
   returns[int value]
   @init {
   $value = 0
 }:
-  WORD { $value = lookup_word($WORD.text) }
+  WORD { $value = lookup_word($WORD.text) } /* multi-line
+comment */
   | NUMBER { $value = $NUMBER.text.to_i };
-// options and lexer commands in lexer rule
 WORD:
   [a-zA-Z]+ {
        # option example: sets the token type
        $type = $options.myToken
-
        # lexer command example: calls the method defined in @lexer::members
        scan_number
      };
-// lexer modes in lexer rule
 COMMAND: '/' -> pushMode(COMMAND_MODE);
 mode COMMAND_MODE;
 COMMAND_MODE_COMMAND: ~[\r\n]+ -> type(COMMAND);

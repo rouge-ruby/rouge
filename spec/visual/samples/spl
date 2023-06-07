@@ -1,4 +1,4 @@
-index=_internal AND sourcetype=splunkd component="Metrics" NOT code=1 avg > 2.5 debug='on' flag=0x2F00
+index=_internal AND sourcetype=splunkd component="Metrics" NOT code=1 avg > 2.5 debug='on' flag=0x2F00 TERM(test)
 	[index=authentications user IN ("admin","root") | stats count by user | fields user ]
 | eval user = coalesce(user,src_user) test=1 
 | rex field=_raw "Reason:(?<reason>[^\]]+)\]"

@@ -92,6 +92,8 @@ module Rouge
           "metadata" => ['index','splunk_server','splunk_server_group','datatype','type'],
           "metasearch" => ['savedsearch','savedsplunk','field','eventtypetag','hosttag'],
           "meventcollect" => ['index','split','spool','prefix_field','host','source','sourcetype'],
+          "mpreview" => ['filter','splunk_server','splunk_server_group','earliest','latest','chunk_size','target_per_timeseries'],
+          "msearch" => ['filter','splunk_server','splunk_server_group','earliest','latest','chunk_size','target_per_timeseries'],
           "mstats" => ['prestats','append','backfill','update_period','span','savedsearch','savedsplunk','field'],
           "multikv" => ['conf','copyattrs','forceheader','multitable','noheader','rmorig','fields','filter'],
           "multisearch" => [''],
@@ -104,7 +106,7 @@ module Rouge
           "outputtelemetry" => ['input','type','component','support','anonymous','license','optinrequired'],
           "outputtext" => ['usexml'],
           "overlap" => [''],
-          "pivot" => [''],
+          "pivot" => ['start','end','max','size'],
           "predict" => ['correlate','future_timespan','holdback','period','suppress','algorithm','upper','lower'],
           "rangemap" => ['default','field'],
           "rare" => ['showcount','showperc','limit','countfield','percentfield','useother','otherstr'],
@@ -114,6 +116,7 @@ module Rouge
           "reltime" => [''],
           "rename" => [''],
           "replace" => [''],
+          "require" => [''],
           "rest" => ['count','splunk_server','splunk_server_group','timeout'],
           "return" => [''],
           "reverse" => [''],
@@ -153,6 +156,7 @@ module Rouge
           "union" => ['extendtimerange','maxtime','maxout','timeout'],
           "uniq" => [''],
           "untable" => [''],
+          "walklex" => ['type','prefix','pattern','splunk_server','splunk_server_group','index'],
           "where" => [''],
           "x11" => ['mult','add'],
           "xmlkv" => ['maxinputs'],
@@ -173,20 +177,22 @@ module Rouge
           "eval" => ['and','or','xor','not','like'],
           "eventstats" => ['by','as'],
           "fieldformat"  => ['and','or','xor','not','like'],
-          "geostats" => ['as'],
+          "from" => ['datamodel','lookup','savedsearch'],
+          "geostats" => ['as','by'],
           "head" => ['and','or','xor','not','like'],
           "inputcsv" => ['where'],
           "inputlookup"  => ['where'],
           "join" => ['where'],
           "lookup" => ['outputnew','output','as'],
           "metasearch" => ['in'],
-          "mstats" => ['as'],
+          "mstats" => ['as','where','by','groupby'],
+          "pivot" => ['splitrow','splitcol','filter','limit','rowsummary','colsummary','showother','numcols','sort','range','period','truelabel','falselabel','as','by','top'],
           "predict" => ['as'],
           "rare" => ['by'],
           "redistribute" => ['by'],
           "replace" => ['with','in'],
           "rename" => ['as'],
-          "search" => ['by','where','over','and','or','xor','not','term','in','case'],
+          "search" => ['by','where','over','and','or','xor','not','in','term','case'],
           "set" => ['union','diff','intersect'],
           "sichart" => ['by','where','over','and','or','xor','not','as'],
           "sirare" => ['by'],
@@ -194,12 +200,12 @@ module Rouge
           "sitimechart" => ['like','not','and','or','xor','where','like','by','as'],
           "sitop" => ['by'],
           "sort" => ['auto','str','ip','num','desc','d'],
-          "stats" => ['by','as'],
-          "stremstats" => ['like','not','and','or','xor','where','like','by','as'],
+          "stats" => ['by','as','and','or','xor','not','in','like'],
+          "streamstats" => ['like','not','and','or','xor','where','like','by','as'],
           "timechart" => ['like','not','and','or','xor','where','by','as'],
           "top" => ['by'],
           "trendline" => ['as'],
-          "tstats" => ['like','not','and','or','xor','where','by','in','groupby','as'],
+          "tstats" => ['like','not','and','or','xor','where','by','in','groupby','as','from','prefix'],
           "where" => ['like','not','and','or','xor','like'],
           "x11" => ['as']
         };
@@ -222,7 +228,42 @@ module Rouge
       
       # Commands which support aggregation functions (and eval functions consequently through the "eval()" function)
       def self.aggr_commands
-        @aggr_commands = ['chart','eventstats','geostats','mstats','sichart','sistats','sitimechart','stats','streamstats','timechart','tstats']
+        @aggr_commands = ['chart','eventstats','geostats','mstats','sichart','sistats','sitimechart','stats','streamstats','timechart','tstats','pivot']
+      end
+
+      # Available convertion functions (for the convert command)
+      def self.convert_functions
+        @convert_functions = ['auto', 'dur2sec', 'mstime', 'memk', 'none', 'num', 'rmunit', 'rmcomma', 'ctime', 'mktime']
+      end
+
+      # Commands which support aggregation functions (and eval functions consequently through the "eval()" function)
+      def self.convert_commands
+        @convert_commands = ['convert']
+      end
+
+      # Available advanced filter functions
+      def self.filter_functions
+        @filter_functions = {
+            "pivot" => ['is', 'contains', 'in', 'isNot', 'doesNotContain', 'startsWith', 'endsWith', 'isNull', 'isNotNull'],
+            "search" => ['term','case'],
+            "tstats" => ['prefix']
+        };
+      end
+
+      # Some commands expect functions which name can vary in the shape "prefixXX", prefix being in a set of fixed values and XX a integer in a range of numbers
+      def self.dyn_functions
+        @dyn_functions = {
+            "predict" => {"upper" => [0,100], "lower" => [0,100]},
+            "trendline" => {"sma" => [2,10000], "ema" => [2,10000], "wma" => [2,10000]},
+            "x11" => {"add" => [5,1000], "mult" => [5,1000]}
+        };
+      end
+
+      # Some commands expect arguments which name can vary in the shape "prefixXX", prefix being in a set of fixed values and XX a integer in a range of numbers
+      def self.dyn_arguments
+        @dyn_arguments = {
+            "predict" => {"upper" => [0,100], "lower" => [0,100]}
+        };
       end
       
       # Stack of commands being ran (usually only 1 but it can be more if can of subsearches)
@@ -234,6 +275,9 @@ module Rouge
       
       state :query do
         rule %r/\|/, Text, :command_start
+        rule %r/```/, Comment::Multiline, :multiline_comments
+        rule %r/`\s*comment\s*\(\s*"/, Comment::Preproc, :comment_macro
+        rule %r/(`)(\s*\w+)([^`]*)(`)/, Comment::Preproc
         # By default, we assume it is an implict search command
         rule %r/(?=.)/ do |m|
           command_stack.push "search"
@@ -252,6 +296,7 @@ module Rouge
           token Punctuation
           pop!
         end
+        rule %r/\s+/m, Text
         rule %r/\|/, Text, :command
         rule %r/\w+(?=[ \t]*)(?=\=)/ do |m|
           # We can find filters or arguments already
@@ -299,6 +344,9 @@ module Rouge
       # Other commands not being implicit, we will here only handle the initial part "| command_name" and then jump into arguments if any
       state :command_start do
         rule %r/\s+/m, Text
+        rule %r/```/, Comment::Multiline, :multiline_comments
+        rule %r/`\s*comment\s*\(\s*"/, Comment::Preproc, :comment_macro
+        rule %r/(`)(\s*\w+)([^`]*)(`)/, Comment::Preproc
         # Highlighting only known Splunk commands
         rule %r/\w+/m do |m|
           if self.class.command_arguments.key? m[0].downcase
@@ -331,31 +379,73 @@ module Rouge
         rule %r/```/, Comment::Multiline, :multiline_comments
         rule %r/`\s*comment\s*\(\s*"/, Comment::Preproc, :comment_macro
         rule %r/(`)(\s*\w+)([^`]*)(`)/, Comment::Preproc
+        rule %r/\<\<(FIELD|MATCHSTR|MATCHSEG1|MATCHSEG2|MATCHSEG3|ITEM)\>\>/, Keyword::Pseudo
         rule %r/\s+/m, Text
         rule %r/0[xX][0-9a-fA-F]*/, Num::Hex
         rule %r/[$][+-]*\d*(\.\d*)?/, Num
+        # Time modifiers are neither numbers of usual words
+        rule %r/[+-]?\d+(secs|seconds|second|sec|s|minutes|minute|mins|min|m|hours|hour|hrs|hr|h|days|day|d|weeks|week|w|months|month|mon|quarters|quarter|qtrs|qtr|q|years|year|yrs|yr|y)(@(secs|seconds|second|sec|s|minutes|minute|mins|min|m|hours|hour|hrs|hr|h|days|day|d|weeks|week|w|months|month|mon|quarters|quarter|qtrs|qtr|q|years|year|yrs|yr|y))?/, Num::Other
         rule %r/((\d+(\.\d*)?)|(\.\d+))([eE][\-+]?\d+)?/, Num
-        rule %r/[!<>=,%\+\.\*\-\/]+/, Punctuation
+        rule %r/(true|false)/, Num
+        rule %r/[!<>=,%\+\.\*\-\/:]+/, Punctuation
         rule %r/[()]/, Punctuation
         # Command arguments, checking it is a known argument for the current command
-        rule %r/\w+(?=[ \t]*)(?=\=)/ do |m|
+        rule %r/[\w\-]+(?=[ \t]*)(?=\=)/ do |m|
+          isDyn=false
+          # Some arguments are named dynamically like "prefixXX=" where prefix is fixed and XX is an integer in a known range
+          if m[0].match(/^[^0-9]+[0-9]+$/)
+            m[0].match(/^([^0-9]+)([0-9]+)$/) do |r|
+              type = r[1].downcase
+              value = r[2].to_i
+              if ( self.class.dyn_arguments.key?(command_stack.last) && self.class.dyn_arguments[command_stack.last].key?(type) )
+                if (value >= self.class.dyn_arguments[command_stack.last][type][0] && value <= self.class.dyn_arguments[command_stack.last][type][1])
+                  token Name::Function
+                  isDyn=true
+                else
+                  token Text
+                end
+              end
+            end
+          end
+          # Standard arguments
           if self.class.command_arguments.key? command_stack.last
             if self.class.command_arguments[command_stack.last].include? m[0].downcase
               token Keyword::Reserved
-            else
+            elsif !isDyn
               token Text
             end
-          else
+          elsif !isDyn
             token Text
           end
         end
         rule %r/\w+(?=[ \t]*)(?=\()/ do |m|
+          isDyn=false
+          # Some functions are named dynamically like "prefixXX()" where prefix is fixed and XX is an integer in a known range
+          if m[0].match(/^[^0-9]+[0-9]+$/)
+            m[0].match(/^([^0-9]+)([0-9]+)$/) do |r|
+              type = r[1].downcase
+              value = r[2].to_i
+              if ( self.class.dyn_functions.key?(command_stack.last) && self.class.dyn_functions[command_stack.last].key?(type) )
+                if (value >= self.class.dyn_functions[command_stack.last][type][0] && value <= self.class.dyn_functions[command_stack.last][type][1])
+                  token Name::Function
+                  isDyn=true
+                else
+                  token Text
+                end
+              end
+            end
+          end
+          # Standard functions
           if ( self.class.eval_commands.include?(command_stack.last) && self.class.eval_functions.include?(m[0].downcase) )
             token Name::Function
           # Aggregation functions can use eval functions through the "eval()" function
           elsif ( self.class.aggr_commands.include?(command_stack.last) && ( self.class.aggr_functions.include?(m[0].downcase) || self.class.eval_functions.include?(m[0].downcase)) )
             token Name::Function
-          else
+          elsif ( self.class.convert_commands.include?(command_stack.last) && self.class.convert_functions.include?(m[0].downcase) )
+            token Name::Function
+          elsif ( self.class.filter_functions.key?(command_stack.last) && self.class.filter_functions[command_stack.last].include?(m[0].downcase) )
+            token Name::Function
+          elsif !isDyn
             token Text
           end
         end
@@ -381,7 +471,7 @@ module Rouge
           pop!
         end
         # Some commands have specific operators available
-        rule %r/[^ \t"'\d!<>=,()\[\]]+/m do |m|
+        rule %r/[^\s\t"'`!<>=,()\[\]\|\+\/\*\.\-:]+/m do |m|
           if self.class.command_operators.key? command_stack.last
             if self.class.command_operators[command_stack.last].include? m[0].downcase
               token Operator::Word
@@ -409,6 +499,8 @@ module Rouge
       
       # When found in a rex/regex command, a double string will be a regex
       state :double_string do
+        rule %r/\<\<(FIELD|MATCHSTR|MATCHSEG1|MATCHSEG2|MATCHSEG3|ITEM)\>\>/, Keyword::Pseudo
+        rule %r/\</, Str::Double
         rule %r/\\./ do |m|
           if ( (command_stack.last == "rex") || (command_stack.last == "regex") )
             token Str::Regex
@@ -417,7 +509,7 @@ module Rouge
           end
         end
         rule %r/["]/, Str::Escape, :pop!
-        rule %r/[^\\"]+/ do |m|
+        rule %r/[^\\"\<]+/ do |m|
           if ( (command_stack.last == "rex") || (command_stack.last == "regex") )
             token Str::Regex
           else
@@ -427,9 +519,11 @@ module Rouge
       end
       
       state :single_string do
+        rule %r/\<\<(FIELD|MATCHSTR|MATCHSEG1|MATCHSEG2|MATCHSEG3|ITEM)\>\>/, Keyword::Pseudo
         rule %r/\\./, Str::Single
+        rule %r/\</, Str::Single
         rule %r/[']/, Str::Escape, :pop!
-        rule %r/[^\\']+/, Str::Single
+        rule %r/[^\\'<]+/, Str::Single
       end
     end
   end

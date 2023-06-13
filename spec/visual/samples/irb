@@ -1,11 +1,11 @@
-irb(main):001:0> puts <<XYZ
+irb(main):001:0" puts <<XYZ
 irb(main):002:0" a
 irb(main):003:0" b
-irb(main):004:0" XYZ
+irb(main):004:0> XYZ
 a
 b
 => nil
-irb(main):005:0> 
+irb(main):005:0>
 
 
 
@@ -36,3 +36,16 @@ RuntimeError: hello
 from (pry):5:in `__pry__'
 [6] pry(main)> puts 'hello'
 hello
+=> nil
+
+>> puts "Oh, hai!"
+Oh, hai!
+=> nil
+
+"> puts <<XYZ
+"> a
+"> b
+>> XYZ
+a
+b
+=> nil

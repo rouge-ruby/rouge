@@ -486,7 +486,7 @@ module Rouge
       
       state :multiline_comments do
         rule %r(```), Comment::Multiline, :pop!
-        rule %r/./, Comment::Multiline
+        rule %r/./m, Comment::Multiline
       end
       
       # The comment macro is used the following way:

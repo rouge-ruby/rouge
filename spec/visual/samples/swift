@@ -400,7 +400,7 @@ typealias StringDictionary<T> = Dictionary<String, T>
 @available(*, unavailable, renamed: "MyRenamedProtocol")
 @discardableResult func f() -> T {}
 
-#sourceLocation(file: "foo", line: 42)
+_ = #sourceLocation(file: "foo", line: 42)
 
 @available(swift, obsoleted: 5.0.0, renamed: "foo2(file:line:)")
 func foo(_ file: StaticString = #file, line: UInt = #line) { }
@@ -497,5 +497,25 @@ let res = [
   still going
   /##
 ]
+
+package struct FileDescriptor: ~Copyable {
+  private var fd: Int32
+
+  consuming func close() throws {
+    discard self
+  }
+}
+
+func makePairs<each First, each Second>(
+  firsts first: repeat each First,
+  seconds second: repeat each Second
+) -> (repeat Pair<each First, each Second>) {
+  return (repeat Pair(each first, each second))
+}
+
+@freestanding(expression)
+public macro stringify<T>(_ value: T) -> (T, String) = #externalMacro(module: "m", type: "t")
+
+let p = #stringify(x + y)
 
 foo() // end-of-file comment

@@ -9,6 +9,7 @@ describe Rouge::Lexers::XQuery do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.xq'
+      assert_guess :filename => 'baz.xqm'
       assert_guess :filename => 'bar.xquery'
     end
 

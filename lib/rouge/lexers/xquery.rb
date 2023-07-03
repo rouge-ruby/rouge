@@ -8,7 +8,7 @@ module Rouge
       title 'XQuery'
       desc 'XQuery 3.1: An XML Query Language'
       tag 'xquery'
-      filenames '*.xquery', '*.xq'
+      filenames '*.xquery', '*.xq', '*.xqm'
       mimetypes 'application/xquery'
 
       def self.keywords

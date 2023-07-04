@@ -1,1 +1,86 @@
-# See Terraform lexer
+# Comment
+
+# Object with no key/value pairs
+data "aws_availability_zones" "available" {}
+
+# Object with single key/value
+provider "aws" {
+  most_recent = false
+}
+
+# Object with various comma-separated values
+provider "aws" {
+  most_recent = false, other_value = null
+}
+
+# Object with various newline-separated values
+resource "aws_vpc" "main" {
+  most_recent = true
+  cidr_block = "10.10.0.0/16"
+  region = "${var.aws_region}"
+  count = 0
+  another_num = 3.14
+}
+
+# Object with interpolated values
+resource "aws_subnet" "main" {
+  count             = "${var.az_count}"
+  cidr_block        = "${cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)}"
+  availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
+  vpc_id            = "${aws_vpc.main.id}"
+}
+
+# Object with nested object
+resource "aws_route_table" "r" {
+  vpc_id = "${aws_vpc.main.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.gw.id}"
+  }
+}
+
+# Object with list value
+resource "aws_autoscaling_group" "app" {
+  vpc_zone_identifier  = ["${aws_subnet.main.*.id}"]
+}
+
+# Object with nested interpolation
+data "template_file" "cloud_config" {
+  template = "${file("${path.module}/cloud-config.yml")}"
+}
+
+# Object with HEREDOC string
+resource "aws_iam_role" "ecs_service" {
+  name = "tf_example_ecs_role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2008-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ecs.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+## Object with first-class expressions
+resource "aws_subnet" "main" {
+  count             = var.az_count
+  cidr_block        = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  vpc_id            = aws_vpc.main.id
+  fqns              = aws_route53_record.cert_validation[*].fqdn
+}
+
+## Object with regular expression
+resource "aws_cloudfront_distribution" "s3_distribution" {
+  aliases = ["www.${replace(var.domain_name, "/\\.$/", "")}"]
+}

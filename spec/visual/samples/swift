@@ -249,8 +249,9 @@ repeat {
 if #available(iOS 8.0, OSX 10.10, *) {
    // Use Handoff APIs when available.
    let activity = NSUserActivity(activityType:"com.example.ShoppingList.view")
-} else {
+} else if #unavailable(linux) {
     // Fall back when Handoff APIs not available.
+} else {
 }
 
 //MARK: Classes
@@ -399,7 +400,7 @@ typealias StringDictionary<T> = Dictionary<String, T>
 @available(*, unavailable, renamed: "MyRenamedProtocol")
 @discardableResult func f() -> T {}
 
-#sourceLocation(file: "foo", line: 42)
+_ = #sourceLocation(file: "foo", line: 42)
 
 @available(swift, obsoleted: 5.0.0, renamed: "foo2(file:line:)")
 func foo(_ file: StaticString = #file, line: UInt = #line) { }
@@ -452,12 +453,69 @@ func test(t: Types?) -> Bool {
 	}
 }
 
-actor AnActor {
+distributed actor AnActor {
   nonisolated func funcA() {}
   func funcB(otherActor: isolated AnActor) async {
     await otherActor.funcB()
     async let v = funcA()
   }
 }
+
+func existential(arg: any Proto1) -> some Proto2 {
+  autoreleasepool {
+  }
+}
+
+func pwrap() -> Bool {
+  @SmallNum var myNum: Int = 8
+  self.$myOwnNum = 8
+  return $myNum
+}
+
+let res = [
+  // comment not a regex
+  #//#, // empty regex
+  ##//##, // another
+  ##//#, // unbalanced #
+  #//##, // unbalanced #
+  / not a regex /,
+  /a regex/,
+  /not a single-line
+  regex/,
+  /re with \/ escaped/,
+  ##/usr/lib/#modules/vmlinuz/##, // unescaped / with ##
+  /(#*)/(?!\s)[^\n]*(?<![\s\\])/\1/,
+
+  #/
+  multiline regex
+  /#,
+
+  ##/
+  multiline # comment
+  /#
+  /###
+  still going
+  /##
+]
+
+package struct FileDescriptor: ~Copyable {
+  private var fd: Int32
+
+  consuming func close() throws {
+    discard self
+  }
+}
+
+func makePairs<each First, each Second>(
+  firsts first: repeat each First,
+  seconds second: repeat each Second
+) -> (repeat Pair<each First, each Second>) {
+  return (repeat Pair(each first, each second))
+}
+
+@freestanding(expression)
+public macro stringify<T>(_ value: T) -> (T, String) = #externalMacro(module: "m", type: "t")
+
+let p = #stringify(x + y)
 
 foo() // end-of-file comment

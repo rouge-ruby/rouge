@@ -15,28 +15,29 @@ module Rouge
       id = /#{id_head}#{id_rest}*/
 
       keywords = Set.new %w(
-        await break case continue default do else fallthrough if in for return switch where while try catch throw guard defer repeat
+        autoreleasepool await break case catch consume continue default defer discard do each else fallthrough guard if in for repeat return switch throw try where while
 
-        as dynamicType is new super self Self Type __COLUMN__ __FILE__ __FUNCTION__ __LINE__
+        as dynamicType is new super self Self Type
 
-        associativity async didSet get infix inout isolated mutating none nonmutating operator override postfix precedence prefix set unowned weak willSet throws rethrows precedencegroup
-
-        #available #colorLiteral #column #else #elseif #endif #error #file #fileLiteral #function #if #imageLiteral #line #selector #sourceLocation #warning
+        associativity async didSet get infix inout isolated left mutating none nonmutating operator override postfix precedence precedencegroup prefix rethrows right set throws unowned weak willSet
       )
 
       declarations = Set.new %w(
-        actor class deinit enum convenience extension final func import init internal lazy let nonisolated optional private protocol public required static struct subscript typealias var dynamic indirect associatedtype open fileprivate some
+        actor any associatedtype borrowing class consuming deinit distributed dynamic enum convenience extension fileprivate final func import indirect init internal lazy let macro nonisolated open optional package private protocol public required some static struct subscript typealias var
       )
 
       constants = Set.new %w(
         true false nil
       )
 
-      start { push :bol }
+      start do
+        push :bol
+        @re_delim = "" # multi-line regex delimiter
+      end
 
       # beginning of line
       state :bol do
-        rule %r/#.*/, Comment::Preproc
+        rule %r/#(?![#"\/]).*/, Comment::Preproc
 
         mixin :inline_whitespace
 
@@ -69,8 +70,11 @@ module Rouge
         mixin :whitespace
         
         rule %r/\$(([1-9]\d*)?\d)/, Name::Variable
+        rule %r/\$#{id}/, Name
+        rule %r/~Copyable\b/, Keyword::Type
 
         rule %r{[()\[\]{}:;,?\\]}, Punctuation
+        rule %r{(#*)/(?!\s).*(?<![\s\\])/\1}, Str::Regex
         rule %r([-/=+*%<>!&|^.~]+), Operator
         rule %r/@?"/, Str, :dq
         rule %r/'(\\.|.)'/, Str::Char
@@ -82,6 +86,7 @@ module Rouge
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
         rule %r/@#{id}/, Keyword::Declaration
+        rule %r/##{id}/, Keyword
 
         rule %r/(private|internal)(\([ ]*)(\w+)([ ]*\))/ do |m|
           if m[3] == 'set'
@@ -98,14 +103,6 @@ module Rouge
             groups Keyword::Declaration, Error, Keyword::Declaration
           end
         end
-
-        rule %r/#available\([^)]+\)/, Keyword::Declaration
-
-        rule %r/(#(?:selector|keyPath)\()([^)]+?(?:[(].*?[)])?)(\))/ do
-          groups Keyword::Declaration, Name::Function, Keyword::Declaration
-        end
-
-        rule %r/#(line|file|column|function|dsohandle)/, Keyword::Declaration
 
         rule %r/(let|var)\b(\s*)(#{id})/ do
           groups Keyword, Text, Name::Variable
@@ -148,6 +145,12 @@ module Rouge
         rule %r/(`)(#{id})(`)/ do
           groups Punctuation, Name::Variable, Punctuation
         end
+
+        rule %r{(#+)/\n} do |m|
+          @re_delim = m[1]
+          token Str::Regex
+          push :re_multi
+        end
       end
 
       state :tuple do
@@ -180,6 +183,19 @@ module Rouge
         rule %r/[(]/, Punctuation, :push
         rule %r/[)]/, Punctuation, :pop!
         mixin :root
+      end
+
+      state :re_multi do
+        rule %r{^\s*/#+} do |m|
+          token Str::Regex
+          if m[0].end_with?("/#{@re_delim}")
+            @re_delim = ""
+            pop!
+          end
+        end
+
+        rule %r/#.*/, Comment::Single
+        rule %r/./m, Str::Regex
       end
     end
   end

@@ -445,9 +445,10 @@ module Rouge
         rule %r/%mend/, Keyword
 
         rule %r/%\w+/ do |m|
-          if self.class.sas_macro_statements.include? m[0].upcase
-            token Keyword
-          elsif self.class.sas_macro_functions.include? m[0].upcase
+          sym = m[0].upcase
+
+          if self.class.sas_macro_statements.include?(sym) ||
+             self.class.sas_macro_functions.include?(sym)
             token Keyword
           else
             token Name
@@ -497,9 +498,10 @@ module Rouge
         end
 
         rule %r/\w+/ do |m|
-          if self.class.data_step_statements.include? m[0].upcase
-            token Keyword
-          elsif self.class.sas_functions.include? m[0].upcase
+          sym = m[0].upcase
+
+          if self.class.data_step_statements.include?(sym) ||
+             self.class.sas_functions.include?(sym)
             token Keyword
           else
             token Name
@@ -544,11 +546,9 @@ module Rouge
         
         mixin :basics
         rule %r/\w+/ do |m|
-          if self.class.data_step_statements.include? m[0].upcase
-            token Keyword
-          elsif self.class.sas_functions.include? m[0].upcase
-            token Keyword
-          elsif self.class.proc_keywords.has_key?(@proc_name) and self.class.proc_keywords[@proc_name].include? m[0].upcase
+          if self.class.data_step_statements.include?(m[0].upcase) ||
+             self.class.sas_functions.include?(m[0].upcase) ||
+             (self.class.proc_keywords.has_key?(@proc_name) && self.class.proc_keywords[@proc_name].include?(m[0].upcase))
             token Keyword
           else
             token Name

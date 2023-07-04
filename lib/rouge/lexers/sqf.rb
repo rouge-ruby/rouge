@@ -83,19 +83,18 @@ module Rouge
         # Identifiers (variables and functions)
         rule %r"[a-zA-Z0-9_]+" do |m|
           name = m[0].downcase
-          if self.class.wordoperators.include? name
+          if self.class.wordoperators.include?(name)
             token Operator::Word
-          elsif self.class.initializers.include? name
+          elsif self.class.initializers.include?(name)
             token Keyword::Declaration
-          elsif self.class.controlflow.include? name
+          elsif self.class.controlflow.include?(name)
             token Keyword::Reserved
-          elsif self.class.constants.include? name
+          elsif self.class.constants.include?(name)
             token Keyword::Constant
-          elsif self.class.namespaces.include? name
+          elsif self.class.namespaces.include?(name)
             token Keyword::Namespace
-          elsif self.class.diag_commands.include? name
-            token Name::Function
-          elsif self.class.commands.include? name
+          elsif self.class.diag_commands.include?(name) ||
+                self.class.commands.include?(name)
             token Name::Function
           elsif %r"_.+" =~ name
             token Name::Variable

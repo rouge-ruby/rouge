@@ -516,9 +516,7 @@ module Rouge
       out = []
       argv.each do |arg|
         case arg
-        when /^(--\w+)=(.*)$/
-          out << $1 << $2
-        when /^(-\w)(.+)$/
+        when /^(--\w+)=(.*)$/, /^(-\w)(.+)$/
           out << $1 << $2
         else
           out << arg

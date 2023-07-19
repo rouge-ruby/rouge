@@ -1,0 +1,79 @@
+<!-- This file is made up from several examples on https://svelte.dev/examples and is not expected to function. -->
+<script>
+    let name = 'rick';
+    let cats = [
+        { name: 'Keyboard Cat' },
+        { name: 'Maru' },
+        { name: 'Henri The Existential Cat' }
+    ];
+
+    function doStuff() {
+      console.log('standard javascript is cool');
+      return false;
+    };
+</script>
+
+<script lang="ts">
+    import Nested from './Nested.svelte';
+
+    let src = '/tutorial/image.gif';
+    let count: number = 1;
+
+    // the `$:` is special in svelte
+    $: doubled = count * 2;
+
+    async function doMoreStuff(): boolean {
+      console.log('but typescript has more stuff!');
+      return false;
+    };
+</script>
+
+<h1 false tooltip="welcome" text=hi>Page Title</h1>
+
+<img alt="{name} dancing" {src} />
+<Nested user={name.toUpperCase(false, 42, {key: 'value'})} tooltip="I'm helping" false text=asdf on:message={handleMessage} />
+
+<input bind:value={name} placeholder="enter your name" />
+<h1>Hey {name}, check out our { cats.length } cats! Hello {name}!</h1>
+
+Hey { name}, check out our { cats.length } cats!
+
+{#if x > 10}
+    <p>{x} is greater than 10</p>
+{:else if 5 > x}
+    <p>{x} is less than 5</p>
+{:else}
+    <p>{x} is between 5 and 10</p>
+{/if}
+
+<ul>
+    {#each cats as { name }, i}
+        <li>{name}</li>
+    {/each}
+
+    <!-- Keyed Each Block -->
+    {#each cats as cat (cat.id)}
+        <li>{cat.name}</li>
+    {/each}
+</ul>
+
+{#await promise}
+    loading...
+{:then data}
+    {@html data}
+{:catch err}
+    {@debug err}
+{/await}
+
+{#await Fn('asdf', 42, {x: 'asdf'}) then data}
+    loading...
+{/await}
+
+<style>
+    p {
+        color: purple;
+        font-family: 'Comic Sans MS', cursive;
+        font-size: 2em;
+    }
+</style>
+

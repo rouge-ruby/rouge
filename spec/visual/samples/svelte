@@ -76,4 +76,3 @@ Hey { name}, check out our { cats.length } cats!
         font-size: 2em;
     }
 </style>
-

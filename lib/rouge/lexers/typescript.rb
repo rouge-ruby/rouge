@@ -10,7 +10,7 @@ module Rouge
       extend TypescriptCommon
 
       title "TypeScript"
-      desc "TypeScript, a superset of JavaScript"
+      desc "TypeScript, a superset of JavaScript (https://www.typescriptlang.org/)"
 
       tag 'typescript'
       aliases 'ts'

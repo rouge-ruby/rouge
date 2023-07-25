@@ -37,14 +37,6 @@ module Rouge
         @builtins ||= %w()
       end
 
-      prepend :hash do
-        rule %r/[.,()*]/, Punctuation
-      end
-
-      prepend :array do
-        rule %r/[.,()*]/, Punctuation
-      end
-
       state :strings do
         rule %r/\\./, Str::Escape
         rule %r/\$\{/ do

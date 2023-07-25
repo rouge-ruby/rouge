@@ -56,7 +56,7 @@ module Rouge
         @builtins ||= %w()
       end
 
-      id = /[$a-z_][a-z0-9_]*/io
+      id = /[$a-z_\-][a-z0-9_\-]*/io
 
       state :root do
         mixin :comments_and_whitespace
@@ -114,6 +114,7 @@ module Rouge
       state :hash do
         mixin :comments_and_whitespace
 
+        rule %r/[.,()\\\/*]/, Punctuation
         rule %r/\=/, Punctuation
         rule %r/\}/, Punctuation, :pop!
 
@@ -123,7 +124,7 @@ module Rouge
       state :array do
         mixin :comments_and_whitespace
 
-        rule %r/,/, Punctuation
+        rule %r/[.,()\\\/*]/, Punctuation
         rule %r/\]/, Punctuation, :pop!
 
         mixin :root

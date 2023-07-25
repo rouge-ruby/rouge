@@ -10,6 +10,8 @@ describe Rouge::Lexers::Typescript do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.ts'
       assert_guess :filename => 'foo.d.ts'
+      assert_guess :filename => 'foo.cts'
+      assert_guess :filename => 'foo.mts'
     end
 
     it 'guesses by mimetype' do

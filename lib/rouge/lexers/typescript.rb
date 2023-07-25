@@ -15,7 +15,7 @@ module Rouge
       tag 'typescript'
       aliases 'ts'
 
-      filenames '*.ts', '*.d.ts'
+      filenames '*.ts', '*.d.ts', '*.cts', '*.mts'
 
       mimetypes 'text/typescript'
     end

@@ -125,7 +125,6 @@ module Rouge
         mixin :comments_and_whitespace
 
         rule %r/[.,()\\\/*]/, Punctuation
-        rule %r/,/, Punctuation
         rule %r/\]/, Punctuation, :pop!
 
         mixin :root

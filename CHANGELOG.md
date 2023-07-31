@@ -4,6 +4,18 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.1.3: 2023-07-31
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.2...v4.1.3)
+
+  - Update HCL & Terraform Lexers ([#1975](https://github.com/rouge-ruby/rouge/pull/1975/) by Simon Heather)
+  - Add guessing specs for TypeScript extensions ([#1980](https://github.com/rouge-ruby/rouge/pull/1980/) by Tan Le)
+  - Add Typescript support for `.cts` and `.mts` ([#1978](https://github.com/rouge-ruby/rouge/pull/1978/) by George Petrou)
+  - Swift 5.8 and 5.9 updates ([#1948](https://github.com/rouge-ruby/rouge/pull/1948/) by John Fairhurst)
+  - XQuery: .xqm suffix added ([#1971](https://github.com/rouge-ruby/rouge/pull/1971/) by Christian Grün)
+  - Add multi-line examples for IRB lexer ([#1968](https://github.com/rouge-ruby/rouge/pull/1968/) by Tan Le)
+  - irb lexer: recognize the SIMPLE prompt ([#1943](https://github.com/rouge-ruby/rouge/pull/1943/) by Ronan Limon Duparcmeur)
+
 ## version 4.1.2: 2023-06-01
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.1...v4.1.2)

@@ -8,19 +8,26 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.2...v4.1.3)
 
+- HCL & Terrafom Lexer
   - Update HCL & Terraform Lexers ([#1975](https://github.com/rouge-ruby/rouge/pull/1975/) by Simon Heather)
-  - Add guessing specs for TypeScript extensions ([#1980](https://github.com/rouge-ruby/rouge/pull/1980/) by Tan Le)
-  - Add Typescript support for `.cts` and `.mts` ([#1978](https://github.com/rouge-ruby/rouge/pull/1978/) by George Petrou)
-  - Swift 5.8 and 5.9 updates ([#1948](https://github.com/rouge-ruby/rouge/pull/1948/) by John Fairhurst)
-  - XQuery: .xqm suffix added ([#1971](https://github.com/rouge-ruby/rouge/pull/1971/) by Christian Grün)
+- IRB Lexer
   - Add multi-line examples for IRB lexer ([#1968](https://github.com/rouge-ruby/rouge/pull/1968/) by Tan Le)
   - irb lexer: recognize the SIMPLE prompt ([#1943](https://github.com/rouge-ruby/rouge/pull/1943/) by Ronan Limon Duparcmeur)
+- Swift Lexer
+  - Swift 5.8 and 5.9 updates ([#1948](https://github.com/rouge-ruby/rouge/pull/1948/) by John Fairhurst)
+- TypeScript Lexer
+  - Add guessing specs for TypeScript extensions ([#1980](https://github.com/rouge-ruby/rouge/pull/1980/) by Tan Le)
+  - Add Typescript support for `.cts` and `.mts` ([#1978](https://github.com/rouge-ruby/rouge/pull/1978/) by George Petrou)
+- XQuery Lexer
+  - XQuery: .xqm suffix added ([#1971](https://github.com/rouge-ruby/rouge/pull/1971/) by Christian Grün)
 
 ## version 4.1.2: 2023-06-01
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.1...v4.1.2)
 
+- Python Lexer
   - Fix highlight of ellipsis in Python lexer ([#1964](https://github.com/rouge-ruby/rouge/pull/1964/) by Tan Le)
+- Wollok Lexer
   - Fix Wollok lexer: entity list is shared between lexer instances ([#1954](https://github.com/rouge-ruby/rouge/pull/1954/) by nsfisis)
 
 ## version 4.1.1: 2023-05-15

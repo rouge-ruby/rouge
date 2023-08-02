@@ -11,7 +11,7 @@ module Rouge
       filenames '*.php', '*.php[345t]','*.phtml',
                 # Support Drupal file extensions, see:
                 # https://github.com/gitlabhq/gitlabhq/issues/8900
-                '*.module', '*.inc', '*.profile', '*.install', '*.test'
+                '*.module', '*.inc', '*.profile', '*.install', '*.test', '*.theme'
       mimetypes 'text/x-php'
 
       option :start_inline, 'Whether to start with inline php or require <?php ... ?>. (default: best guess)'

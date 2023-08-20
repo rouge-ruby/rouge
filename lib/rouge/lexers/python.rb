@@ -111,7 +111,7 @@ module Rouge
         rule %r/\\\n/, Text
         rule %r/\\/, Text
 
-        rule /\./ do
+        rule %r/\./ do
           token Punctuation
           push :dot if not (in_state?(:generic_string) or in_state?(:dot))
         end

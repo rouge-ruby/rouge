@@ -71,6 +71,8 @@ module Rouge
       end
 
       identifier =        /[[:alpha:]_][[:alnum:]_]*/
+      lower_identifier =  /[[:lower:]_][[:alnum:]_]*/
+      upper_identifier =  /[[:upper:]_][[:alnum:]_]*/
       dotted_identifier = /[[:alpha:]_.][[:alnum:]_.]*/
       inline_ws = /(?:[ \t]|\\\n)*?/
       inline_content = /(?:[^\\\n]|\\[\n.])*?/
@@ -89,6 +91,24 @@ module Rouge
       state :inline_whitespace do
         rule %r/[ \t]+/, Text
         rule %r/\\\n/, Str::Escape
+      end
+
+      def id(match, type)
+        if self.class.keywords.include? match
+          token Keyword
+        elsif not in_state?(:dot) and self.class.exceptions.include? match
+          token Name::Builtin
+        elsif not in_state?(:dot) and self.class.builtins.include? match
+          token Name::Builtin
+        elsif not in_state?(:dot) and self.class.builtins_pseudo.include? match
+          token Name::Builtin::Pseudo
+        else
+          token type
+        end
+
+        if in_state?(:dot)
+          pop!
+        end
       end
 
       state :root do
@@ -115,6 +135,7 @@ module Rouge
 
         rule %r/class\b/, Keyword, :classname
 
+        # TODO: not in python 3
         rule %r/`.*?`/, Str::Backtick
         rule %r/([rtfbu]{0,2})('''|"""|['"])/i do |m|
           groups Str::Affix, Str::Heredoc
@@ -122,22 +143,18 @@ module Rouge
           push :generic_string
         end
 
-        # using negative lookbehind so we don't match property names
-        rule %r/(?<!\.)#{identifier}/ do |m|
-          if self.class.keywords.include?(m[0])
-            token Keyword
-          elsif self.class.exceptions.include?(m[0])
-            token Name::Exception
-          elsif self.class.builtins.include?(m[0])
-            token Name::Builtin
-          elsif self.class.builtins_pseudo.include?(m[0])
-            token Name::Builtin::Pseudo
-          else
-            token Name
-          end
+        # Handle identifiers that look like a call
+        rule %r/#{lower_identifier}(?=[[:blank:]]*\()/m do |m|
+          id m[0], Name::Function
         end
 
-        rule identifier, Name
+        rule %r/#{upper_identifier}(?=[[:blank:]]*\()/m do |m|
+          id m[0], Name::Class
+        end
+
+        rule identifier do |m|
+          id m[0], Name
+        end
 
         digits = /[0-9](_?[0-9])*/
         decimal = /((#{digits})?\.#{digits}|#{digits}\.)/

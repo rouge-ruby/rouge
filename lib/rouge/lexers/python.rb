@@ -93,19 +93,21 @@ module Rouge
         rule %r/\\\n/, Str::Escape
       end
 
-      def id(match, type)
-        if self.class.keywords.include? match
+      # Yield a token for an identifier. Handle keywords/builtins, attr accesses
+      def token_for_identifier(word, fallback)
+        if self.class.keywords.include? word
           token Keyword
-        elsif not in_state?(:dot) and self.class.exceptions.include? match
+        elsif not in_state?(:dot) and self.class.exceptions.include? word
           token Name::Builtin
-        elsif not in_state?(:dot) and self.class.builtins.include? match
+        elsif not in_state?(:dot) and self.class.builtins.include? word
           token Name::Builtin
-        elsif not in_state?(:dot) and self.class.builtins_pseudo.include? match
+        elsif not in_state?(:dot) and self.class.builtins_pseudo.include? word
           token Name::Builtin::Pseudo
         else
-          token type
+          token fallback
         end
 
+        # Reset attr access state
         if in_state?(:dot)
           pop!
         end
@@ -143,17 +145,18 @@ module Rouge
           push :generic_string
         end
 
-        # Handle identifiers that look like a call
+        # Identifiers used in a call expr
         rule %r/#{lower_identifier}(?=[[:blank:]]*\()/m do |m|
-          id m[0], Name::Function
+          token_for_identifier m[0], Name::Function
         end
 
         rule %r/#{upper_identifier}(?=[[:blank:]]*\()/m do |m|
-          id m[0], Name::Class
+          token_for_identifier m[0], Name::Class
         end
 
+        # All other identifiers
         rule identifier do |m|
-          id m[0], Name
+          token_for_identifier m[0], Name
         end
 
         digits = /[0-9](_?[0-9])*/

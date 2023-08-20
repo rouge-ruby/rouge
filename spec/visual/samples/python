@@ -242,3 +242,13 @@ match command.split():
 case = 1
 match = 1
 match if True else bar
+
+# Keyword shouldn't be read as function call
+def take_first(pairs):
+    for (first, _) in pairs:
+        yield first
+
+    self.for('nonsense')
+
+# Distinguish between builtins and method calls
+self.filter(filter(lambda x: x == 1, items))

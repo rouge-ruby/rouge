@@ -7,7 +7,6 @@ module Rouge
       desc 'Svelte single-file components (https://svelte.dev/)'
       tag 'svelte'
       filenames '*.svelte'
-
       mimetypes 'text/x-svelte', 'application/x-svelte'
 
       def initialize(*)

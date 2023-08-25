@@ -23,7 +23,7 @@ module Rouge
 
       def self.declarations
         @declarations ||= Set.new %w(
-          abstract const enum extends final implements native private
+          abstract const extends final implements native private
           protected public static strictfp super synchronized throws
           transient volatile
         )
@@ -31,7 +31,7 @@ module Rouge
 
       def self.types
         @types ||= Set.new %w(
-          def boolean byte char double float int long short void
+          def var boolean byte char double float int long short void
         )
       end
 
@@ -56,7 +56,7 @@ module Rouge
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
         rule %r/@\w[\w.]*/, Name::Decorator
-        rule %r/(class|interface|trait)\b/,  Keyword::Declaration, :class
+        rule %r/(class|interface|trait|enum|record)\b/,  Keyword::Declaration, :class
         rule %r/package\b/, Keyword::Namespace, :import
         rule %r/import\b/, Keyword::Namespace, :import
 

@@ -8,7 +8,6 @@ module Rouge
       tag 'svelte'
       filenames '*.svelte'
 
-      # are these accurate?
       mimetypes 'text/x-svelte', 'application/x-svelte'
 
       def initialize(*)

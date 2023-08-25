@@ -51,7 +51,6 @@ module Rouge
         end
       end
 
-
       state :template_start do
         # open template
         rule %r/\s*\{\s*/, Str::Interpol, :template

@@ -3,6 +3,8 @@
 
 module Rouge
   module Lexers
+    load_lexer 'html.rb'
+
     class Svelte < HTML
       desc 'Svelte single-file components (https://svelte.dev/)'
       tag 'svelte'

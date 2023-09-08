@@ -18,7 +18,7 @@ module Rouge
 
       declarations = %w(
         abstract base async dynamic const covariant external extends factory final get implements
-        inline interface late native on operator required sealed set static sync typedef var
+        interface late native on operator required sealed set static sync typedef var
       )
 
       types = %w(bool Comparable double Dynamic enum Function int List Map Never Null num Object Pattern Record Set String Symbol Type Uri void)

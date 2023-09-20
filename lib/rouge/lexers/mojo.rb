@@ -24,6 +24,8 @@ module Rouge
           groups Keyword, Text
           push :funcname
         end
+
+        rule %r/([a-z_]\w*)[ \t]*(?=(\[.*\]))/m, Name::Function
       end
     end
   end

@@ -190,6 +190,7 @@
 - Stan (`stan`)
 - Stata (`stata`)
 - SuperCollider (`supercollider`)
+- Svelte (`svelte`)
 - Swift (`swift`)
 - Systemd (`systemd`)
 - Syzlang (`syzlang`)

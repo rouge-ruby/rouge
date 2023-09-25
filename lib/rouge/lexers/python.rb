@@ -8,8 +8,8 @@ module Rouge
       desc "The Python programming language (python.org)"
       tag 'python'
       aliases 'py'
-      filenames '*.py', '*.pyw', '*.sc', 'SConstruct', 'SConscript', '*.tac',
-                '*.bzl', 'BUCK', 'BUILD', 'BUILD.bazel', 'WORKSPACE'
+      filenames '*.py', '*.pyi', '*.pyw', '*.sc', 'SConstruct', 'SConscript',
+                '*.tac', '*.bzl', 'BUCK', 'BUILD', 'BUILD.bazel', 'WORKSPACE'
       mimetypes 'text/x-python', 'application/x-python'
 
       def self.detect?(text)

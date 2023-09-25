@@ -9,6 +9,7 @@ describe Rouge::Lexers::Python do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.py'
+      assert_guess :filename => 'foo.pyi'
       assert_guess :filename => 'foo.pyw'
       assert_guess :filename => '*.sc', :source => '# A comment'
       assert_guess :filename => 'SConstruct'

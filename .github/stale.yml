@@ -1,3 +1,4 @@
+---
 # Number of days of inactivity before an issue becomes stale
 daysUntilStale: 365
 # Number of days of inactivity before a stale issue is closed

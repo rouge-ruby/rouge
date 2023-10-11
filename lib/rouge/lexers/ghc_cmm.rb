@@ -214,14 +214,10 @@ module Rouge
       state :types do
         # Memory access: `type[42]`
         # Note: Only a token for type is produced.
-        rule %r/(#{id})(?=\[[^\]])/ do |m|
-          token Keyword::Type, m[1]
-        end
+        rule %r/(#{id})(?=\[[^\]])/, Keyword::Type
 
         # Array type: `type[]`
-        rule %r/(#{id}\[\])/ do |m|
-          token Keyword::Type, m[1]
-        end
+        rule %r/(#{id}\[\])/, Keyword::Type
 
         # Capture macro substitutions before lexing typed declarations
         # I.e. there is no type in `PREPROCESSOR_MACRO_VARIABLE someFun()`
@@ -245,7 +241,7 @@ module Rouge
         #   `(type /* optional whitespace */ var_name /* optional whitespace */)`
         # Note: Only the token for type is produced here.
         rule %r{
-                (^#{id})
+                (#{id})
                 (#{ws}+)
                 (#{id})
               }mx do |m|

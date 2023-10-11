@@ -1,0 +1,6 @@
+rule rule_name {
+    strings:
+        $string = "abc\x20def" ascii wide
+    condition:
+        for any of them : ( $ at entrypoint )
+}

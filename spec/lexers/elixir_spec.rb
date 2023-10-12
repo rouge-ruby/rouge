@@ -16,5 +16,9 @@ describe Rouge::Lexers::Elixir do
       assert_guess :mimetype => 'text/x-elixir'
       assert_guess :mimetype => 'application/x-elixir'
     end
+
+    it 'guesses by source' do
+      assert_guess :source => '#!/usr/bin/env elixir'
+    end
   end
 end

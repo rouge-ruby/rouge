@@ -23,17 +23,6 @@ module Rouge
           groups Name::Namespace, Text, Operator, Text, Punctuation
           push :inline
         end
-
-        rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
-
-        rule %r/[+-]?\d+(?:_\d+)*\.\d+(?:_\d+)*(?:[eE][+-]?\d+(?:_\d+)*)?/, Num::Float
-        rule %r/[+-]?\d+(?:_\d+)*[eE][+-]?\d+(?:_\d+)*/, Num::Float
-        rule %r/[+-]?(?:nan|inf)/, Num::Float
-
-        rule %r/0x\h+(?:_\h+)*/, Num::Hex
-        rule %r/0o[0-7]+(?:_[0-7]+)*/, Num::Oct
-        rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
-        rule %r/[+-]?\d+(?:_\d+)*/, Num::Integer
       end
 
       state :root do
@@ -58,6 +47,17 @@ module Rouge
         rule %r/(#{identifier})(\s*)(=)/ do
           groups Name::Property, Text, Punctuation
         end
+
+        rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
+
+        rule %r/[+-]?\d+(?:_\d+)*\.\d+(?:_\d+)*(?:[eE][+-]?\d+(?:_\d+)*)?/, Num::Float
+        rule %r/[+-]?\d+(?:_\d+)*[eE][+-]?\d+(?:_\d+)*/, Num::Float
+        rule %r/[+-]?(?:nan|inf)/, Num::Float
+
+        rule %r/0x\h+(?:_\h+)*/, Num::Hex
+        rule %r/0o[0-7]+(?:_[0-7]+)*/, Num::Oct
+        rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
+        rule %r/[+-]?\d+(?:_\d+)*/, Num::Integer
 
         rule %r/"""/, Str, :mdq
         rule %r/"/, Str, :dq

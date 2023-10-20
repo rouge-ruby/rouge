@@ -71,6 +71,8 @@ LBB0_4:
   if r8 s< r9 goto Llabel0   // BPF_JSLT | BPF_X
   if r9 s<= r10 goto Llabel0 // BPF_JSLE | BPF_X
 
+  if r9 < r1 goto -0x5 <Llabel0> // BPF_JLT | BPF_X
+
   if r0 == 0 goto Llabel0           // BPF_JEQ  | BPF_K
   if r3 != -1 goto Llabel0          // BPF_JNE  | BPF_K
 
@@ -83,6 +85,8 @@ LBB0_4:
   if r7 <= 0xffff goto Llabel0      // BPF_JLE  | BPF_K
   if r8 s< 0 goto Llabel0           // BPF_JSLT | BPF_K
   if r9 s<= -1 goto Llabel0         // BPF_JSLE | BPF_K
+
+  goto +1 <LBB0_2>            // BPF_JMP | BPF_JA
 
 // ======== BPF_ALU64 Class ========
   r0 += r1    // BPF_ADD  | BPF_X

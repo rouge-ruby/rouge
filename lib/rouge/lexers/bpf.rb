@@ -37,16 +37,16 @@ module Rouge
         end
 
         # Unconditional jumps
-        rule %r/(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
-          groups Keyword, Text::Whitespace, Literal::Number::Integer, Text::Whitespace, Name::Label
+        rule %r/(goto)(\s*)([-+]0x\w+)?([-+]\d+)?(\s*)(<?\w+>?)/i do
+          groups Keyword, Text::Whitespace, Literal::Number::Hex, Literal::Number::Integer, Text::Whitespace, Name::Label
         end
 
         # Conditional jumps
-        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)(0x\h+|[-]?\d+)(\s*)(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
-          groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Literal::Number, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Integer, Text::Whitespace, Name::Label
+        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)(0x\h+|[-]?\d+)(\s*)(goto)(\s*)([-+]0x\w+)?([-+]\d+)?(\s*)(<?\w+>?)/i do
+          groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Literal::Number, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Hex, Literal::Number::Integer, Text::Whitespace, Name::Label
         end
-        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)([rw]\d+)(\s*)(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
-          groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Name, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Integer, Text::Whitespace, Name::Label
+        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)([rw]\d+)(\s*)(goto)(\s*)([-+]0x\w+)?([-+]\d+)?(\s*)(<?\w+>?)/i do
+          groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Name, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Hex, Literal::Number::Integer, Text::Whitespace, Name::Label
         end
 
         # Dereferences

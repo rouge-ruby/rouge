@@ -41,6 +41,7 @@ LBB0_4:
   r6 = *(u16 *)(r1 + 8)  // BPF_LDX | BPF_H
   r7 = *(u32 *)(r2 + 16) // BPF_LDX | BPF_W
   r8 = *(u64 *)(r3 - 30) // BPF_LDX | BPF_DW
+  r1 = *(s32 *)(r6 +0)   // BPF_SMEM | BPF_LDX | BPF_W
 
 // ======== BPF_STX Class ========
   *(u8 *)(r0 + 0) = r7    // BPF_STX | BPF_B

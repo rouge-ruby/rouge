@@ -9,7 +9,7 @@ module Rouge
       tag 'bpf'
 
       TYPE_KEYWORDS = %w(
-        u8 u16 u32 u64 ll
+        u8 u16 u32 u64 s8 s16 s32 s64 ll
       ).join('|')
 
       MISC_KEYWORDS = %w(

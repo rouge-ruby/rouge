@@ -87,6 +87,7 @@ LBB0_4:
   if r9 s<= -1 goto Llabel0         // BPF_JSLE | BPF_K
 
   goto +1 <LBB0_2>            // BPF_JMP | BPF_JA
+  gotol +0x7fffffff <LBB0_2>  // BPF_JMP32 | BPF_JA
 
 // ======== BPF_ALU64 Class ========
   r0 += r1    // BPF_ADD  | BPF_X

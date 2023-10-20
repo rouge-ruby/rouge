@@ -70,7 +70,7 @@ module Rouge
         rule %r/#{MISC_KEYWORDS}/i, Keyword
 
         # Literals and global objects (maps) refered by name
-        rule %r/(0x\h+|[-]?\d+)(\s*)(ll)?/i do
+        rule %r/([-]?0x\h+|[-]?\d+)(\s*)(ll)?/i do
           groups Literal::Number, Text::Whitespace, Keyword::Type
         end
         rule %r/(\w+)(\s*)(ll)/i do

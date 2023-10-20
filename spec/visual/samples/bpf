@@ -89,6 +89,7 @@ LBB0_4:
   r1 -= r2    // BPF_SUB  | BPF_X
   r2 *= r3    // BPF_MUL  | BPF_X
   r3 /= r4    // BPF_DIV  | BPF_X
+  r1 s/= -0x5 // BPF_SDIV | BPF_X
 
 Llabel0 :
   r2 = -r2    // BPF_NEG

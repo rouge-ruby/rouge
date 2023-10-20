@@ -55,6 +55,7 @@ LBB0_4:
 // ======== BPF_JMP Class ========
   goto Llabel0               // BPF_JA
   call 1                     // BPF_CALL
+  call bpf_skb_load_bytes    // BPF_CALL
   exit                       // BPF_EXIT
 
   if r0 == r1 goto Llabel0   // BPF_JEQ  | BPF_X

@@ -12,20 +12,20 @@ module Rouge
 
       keywords = %w(
           addhandler aggregates array asc assigns attributes begin break
-          byref byval call case catch class const continue char ctype declare
+          byref byval call case catch class const continue color ctype declare
           delegate dim do downto each else elseif end enum event exception
           exit extends false finally for function global goto if
           implements inherits interface lib loop mod module
           new next nil object of optional paramarray
           private property protected public raise raiseevent rect redim
           removehandler return select shared soft static step sub super
-          then to true try until using uend uhile
+          then to true try until using wend while
         )
 
       keywords_type = %w(
-          boolean cfstringref cgfloat cstring curency date double int8 int16
-          int32 int64 integer ostype pstring ptr short single
-          single string structure variant uinteger uint8 uint16 uint32 uint64
+          boolean byte cfstringref cgfloat cstring currency date datetime double int8 int16
+          int32 int64 integer ostype pair pstring ptr short single
+          string structure variant uinteger uint8 uint16 uint32 uint64
           ushort windowptr wstring
         )
 

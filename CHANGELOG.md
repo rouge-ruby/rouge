@@ -4,6 +4,31 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.2.0: 2023-10-25
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.3...v4.2.0)
+
+- General
+  - Bump actions/checkout to v4 ([#1998](https://github.com/rouge-ruby/rouge/pull/1998/) by Tan Le)
+  - Update change log ([#1983](https://github.com/rouge-ruby/rouge/pull/1983/) by Tan Le)
+- BPF Lexer
+  - Update BPF lexer ([#2004](https://github.com/rouge-ruby/rouge/pull/2004/) by Paul Chaignon)
+- Code Owners Lexer (**NEW**)
+  - Add Code owners lexer ([#1969](https://github.com/rouge-ruby/rouge/pull/1969/) by Tan Le)
+- Dart Lexer
+  - Remove `inline` from Dart declaration keywords ([#1990](https://github.com/rouge-ruby/rouge/pull/1990/) by Parker Lougheed)
+- Elixir Lexer
+  - Detect Elixir syntax by shebang ([#2001](https://github.com/rouge-ruby/rouge/pull/2001/) by arathunku)
+- Groovy Lexer
+  - Update groovy for record, enum, var ([#1984](https://github.com/rouge-ruby/rouge/pull/1984/) by Guillaume Laforge)
+- Python Lexer
+  - Guess .pyi files as Python ([#1996](https://github.com/rouge-ruby/rouge/pull/1996/) by ryderben)
+- Svelte Lexer (**NEW**)
+  - add svelte lexer ([#1979](https://github.com/rouge-ruby/rouge/pull/1979/) by Brodie Davis)
+- Xoji Lexer
+  - Updated Xojo Syntax ([#2005](https://github.com/rouge-ruby/rouge/pull/2005/) by XojoGermany)
+  - Updated Xojo Syntax ([#2000](https://github.com/rouge-ruby/rouge/pull/2000/) by XojoGermany)
+
 ## version 4.1.3: 2023-07-31
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.2...v4.1.3)

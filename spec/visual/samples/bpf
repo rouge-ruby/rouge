@@ -41,6 +41,7 @@ LBB0_4:
   r6 = *(u16 *)(r1 + 8)  // BPF_LDX | BPF_H
   r7 = *(u32 *)(r2 + 16) // BPF_LDX | BPF_W
   r8 = *(u64 *)(r3 - 30) // BPF_LDX | BPF_DW
+  r1 = *(s32 *)(r6 +0)   // BPF_SMEM | BPF_LDX | BPF_W
 
 // ======== BPF_STX Class ========
   *(u8 *)(r0 + 0) = r7    // BPF_STX | BPF_B
@@ -54,6 +55,7 @@ LBB0_4:
 // ======== BPF_JMP Class ========
   goto Llabel0               // BPF_JA
   call 1                     // BPF_CALL
+  call bpf_skb_load_bytes    // BPF_CALL
   exit                       // BPF_EXIT
 
   if r0 == r1 goto Llabel0   // BPF_JEQ  | BPF_X
@@ -69,6 +71,8 @@ LBB0_4:
   if r8 s< r9 goto Llabel0   // BPF_JSLT | BPF_X
   if r9 s<= r10 goto Llabel0 // BPF_JSLE | BPF_X
 
+  if r9 < r1 goto -0x5 <Llabel0> // BPF_JLT | BPF_X
+
   if r0 == 0 goto Llabel0           // BPF_JEQ  | BPF_K
   if r3 != -1 goto Llabel0          // BPF_JNE  | BPF_K
 
@@ -82,11 +86,15 @@ LBB0_4:
   if r8 s< 0 goto Llabel0           // BPF_JSLT | BPF_K
   if r9 s<= -1 goto Llabel0         // BPF_JSLE | BPF_K
 
+  goto +1 <LBB0_2>            // BPF_JMP | BPF_JA
+  gotol +0x7fffffff <LBB0_2>  // BPF_JMP32 | BPF_JA
+
 // ======== BPF_ALU64 Class ========
   r0 += r1    // BPF_ADD  | BPF_X
   r1 -= r2    // BPF_SUB  | BPF_X
   r2 *= r3    // BPF_MUL  | BPF_X
   r3 /= r4    // BPF_DIV  | BPF_X
+  r1 s/= -0x5 // BPF_SDIV | BPF_X
 
 Llabel0 :
   r2 = -r2    // BPF_NEG
@@ -98,9 +106,11 @@ Llabel0 :
   r9 = r10    // BPF_MOV  | BPF_X
   r10 s>>= r0 // BPF_ARSH | BPF_X
 
-  r1 = be16 r1  // BPF_END  | BPF_TO_BE
-  r2 = be32 r2  // BPF_END  | BPF_TO_BE
-  r3 = be64 r3  // BPF_END  | BPF_TO_BE
+  r1 = be16 r1    // BPF_END | BPF_TO_BE
+  r2 = be32 r2    // BPF_END | BPF_TO_BE
+  r3 = be64 r3    // BPF_END | BPF_TO_BE
+  r1 = le16 r1    // BPF_END | BPF_TO_LE
+  r1 = bswap32 r1 // BPF_ALU64 | BPF_END | BPF_TO_BE
 
   r0 += 1           // BPF_ADD  | BPF_K
   r1 -= 0x1         // BPF_SUB  | BPF_K

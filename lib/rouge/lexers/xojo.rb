@@ -19,7 +19,7 @@ module Rouge
           new next nil object of optional paramarray
           private property protected public raise raiseevent rect redim
           removehandler return select shared soft static step sub super
-          then to true try until using wend while
+          then to true try until using var wend while
         )
 
       keywords_type = %w(

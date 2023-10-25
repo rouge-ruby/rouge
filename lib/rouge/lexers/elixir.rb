@@ -14,6 +14,10 @@ module Rouge
 
       filenames '*.ex', '*.exs'
 
+      def self.detect?(text)
+        return true if text.shebang?('elixir')
+      end
+
       mimetypes 'text/x-elixir', 'application/x-elixir'
 
       state :root do

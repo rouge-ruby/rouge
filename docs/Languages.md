@@ -22,6 +22,7 @@
 - Brainfuck (`brainfuck`)
 - BrightScript (`brightscript`)
 - 1C (BSL) (`bsl`)
+- 1C:Executor (SBSL) (`sbsl`)
 - C (`c`)
 - C# (`csharp`)
 - C++ (`cpp`)

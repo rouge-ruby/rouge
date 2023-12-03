@@ -20,7 +20,7 @@ module Rouge
         rule %r/(true|false)/, Keyword::Constant
 
         rule %r/(#{identifier})(\s*)(=)(\s*)(\{)/ do
-          groups Name::Namespace, Text, Operator, Text, Punctuation
+          groups Name::Property, Text, Operator, Text, Punctuation
           push :inline
         end
 

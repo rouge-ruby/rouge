@@ -30,16 +30,21 @@ comment
 	extends(parent)).
 
 	:- info([
-		version is 1.44,
+		version is 1:49:0,
 		author is 'Paulo Moura',
-		date is 2019/02/12,
+		date is 2022-11-04,
 		comment is 'Sample prototype for testing syntax coloring.'
 	]).
 
 	:- built_in.
 	:- threaded.
 	:- dynamic.
+
 	:- initialization(some_goal(X, Y)).
+
+	:- uses([
+		foobar as fb
+	]).
 
 	:- alias(set, [member/2 as set_member/2]).
 	:- alias(words, [singular//0 as peculiar//0]).
@@ -176,7 +181,7 @@ comment
 		predicate_property(Predicate, Property).
 
 	database_methods :-
-		abolish(Functor/Arity),
+		abolish(Name/Arity),
 		asserta(Clause),
 		assertz(Clause),
 		clause(Head, Body),
@@ -187,6 +192,7 @@ comment
 		catch(Goal, Error, Catcher),
 		throw(Error),
 		instantiation_error,
+		uninstantiation_error(Culprit),
 		type_error(Type, Culprit),
 		domain_error(Domain, Culprit),
 		existence_error(Thing, Culprit),
@@ -248,8 +254,8 @@ comment
 		X1 is 13, X2 is -13, X3 is +13,
 		Y1 is 13.13, Y2 is -13.13, Y3 is +13.13,
 		Z1 is 13.13e-23, Z2 is -13.13e-23, Z3 is +13.13e-23,
-		C1 is 0'A, C2 is 0'', C3 is 0'", C4 is 0'%,
-		C5 is 0'\n, C6 is 0'\\, C7 is 0'\', C8 is 0'\", C9 is 0'\`,
+		C1 is 0'A, C2 is 0'a, C3 is 0'-, C4 is 0'*, C5 is 0'%,
+		C6 is 0'\n, C7 is 0'\\, C8 is 0'\', C9 is 0'\", C10 is 0'\`,
 		B1 is 0b1011101,
 		O1 is 0o1234560,
 		H1 is 0x1234567890abcDEF.
@@ -301,17 +307,17 @@ comment
 		Term1 @> Term2.
 
 	term_creation_and_decomposition :-
-		functor(Term, Functor, Arity),
+		functor(Term, Name, Arity),
 		arg(N, Term, Arg),
 		Term =.. [Functor| Args],
 		copy_term(Term, Copy),
 		numbervars(Term, Start, End),
 		term_variables(Term, Variables).
 
-	arithemtic_evaluation :-
+	arithmetic_evaluation :-
 		X is Expression.
 
-	arithemtic_comparison :-
+	arithmetic_comparison :-
 		Exp1 =:= Exp2,
 		Exp1 =\= Exp2,
 		Exp1 < Exp2,
@@ -397,10 +403,26 @@ comment
 
 	escape_sequences :-
 		write('Quoted atom with a quote ('') inside.'),
+		write('Quoted atom with a quote (\') inside using a control escape sequence.'),
 		write('Quoted atom with a backslash (\\) inside.'),
 		write('Quoted atom with control escape sequences: \a \b \r \f \t \n \v'),
 		write('Quoted atom with an octal escape sequence: \123\.'),
 		write('Quoted atom with an hexadecimal escape sequence: \x123f\.').
+
+	escape_sequences :-
+		write("Double-quoted term with a double-quote ("") inside."),
+		write("Double-quoted term with a double-quote (\") inside using a control escape sequence."),
+		write("Double-quoted term with a backslash (\\) inside."),
+		write("Double-quoted term with control escape sequences: \a \b \r \f \t \n \v"),
+		write("Double-quoted term with an octal escape sequence: \123\."),
+		write("Double-quoted term with an hexadecimal escape sequence: \x123f\.").
+
+	% nothing in the following predicate definition should be highlighted
+	sort :-
+		forall,
+		object,
+		write,
+		number.
 
 :- end_object.
 

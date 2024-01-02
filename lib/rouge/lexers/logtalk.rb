@@ -14,12 +14,12 @@ module Rouge
           return 1.0 if text.include? ':- object('
           return 1.0 if text.include? ':- protocol('
           return 1.0 if text.include? ':- category('
-          return 0.9 if text =~ /^:-\s[a-z]/
+          return 0.9 if text =~ %r/^:-\s[a-z]/
       end
 
-      state :basic do
+      state :root do
         # Directives
-        rule /^\s*:-\s/, Keyword, :directives
+        rule %r/^\s*:-\s/, Keyword, :directives
         # Whitespace
         mixin :whitespace
         # Comments
@@ -29,104 +29,104 @@ module Rouge
         # Variables
         mixin :variables
         # Event handlers
-        rule /(after|before)(?=[(])/, Keyword
+        rule %r/(after|before)(?=[(])/, Keyword
         # Message forwarding handler
-        rule /forward(?=[(])/, Keyword
+        rule %r/forward(?=[(])/, Keyword
         # Execution-context methods
-        rule /(context|parameter|this|self|sender)(?=[(])/, Keyword
+        rule %r/(context|parameter|this|self|sender)(?=[(])/, Keyword
         # Reflection
-        rule /(current_predicate|predicate_property)(?=[(])/, Keyword
+        rule %r/(current_predicate|predicate_property)(?=[(])/, Keyword
         # DCGs and term expansion
-        rule /(expand_goal|expand_term|goal_expansion|term_expansion|phrase)(?=[(])/, Keyword
+        rule %r/(expand_goal|expand_term|goal_expansion|term_expansion|phrase)(?=[(])/, Keyword
         # Entity
-        rule /(abolish_object|abolish_protocol|abolish_category)(?=[(])/, Keyword
-        rule /(create_object|create_protocol|create_category)(?=[(])/, Keyword
-        rule /(current_object|current_protocol|current_category)(?=[(])/, Keyword
-        rule /(object_property|protocol_property|category_property)(?=[(])/, Keyword
+        rule %r/(abolish_object|abolish_protocol|abolish_category)(?=[(])/, Keyword
+        rule %r/(create_object|create_protocol|create_category)(?=[(])/, Keyword
+        rule %r/(current_object|current_protocol|current_category)(?=[(])/, Keyword
+        rule %r/(object_property|protocol_property|category_property)(?=[(])/, Keyword
         # Entity relations
-        rule /(complements_object|conforms_to_protocol)(?=[(])/, Keyword
-        rule /(extends_object|extends_protocol|extends_category)(?=[(])/, Keyword
-        rule /(implements_protocol|imports_category)(?=[(])/, Keyword
-        rule /(instantiates_class|specializes_class)(?=[(])/, Keyword
+        rule %r/(complements_object|conforms_to_protocol)(?=[(])/, Keyword
+        rule %r/(extends_object|extends_protocol|extends_category)(?=[(])/, Keyword
+        rule %r/(implements_protocol|imports_category)(?=[(])/, Keyword
+        rule %r/(instantiates_class|specializes_class)(?=[(])/, Keyword
         # Events
-        rule /(current_event|abolish_events|define_events)(?=[(])/, Keyword
+        rule %r/(current_event|abolish_events|define_events)(?=[(])/, Keyword
         # Flags
-        rule /(create_logtalk_flag|current_logtalk_flag|set_logtalk_flag)(?=[(])/, Keyword
+        rule %r/(create_logtalk_flag|current_logtalk_flag|set_logtalk_flag)(?=[(])/, Keyword
         # Compiling, loading, and library paths
-        rule /(logtalk_compile|logtalk_load)(?=[(])/, Keyword
-        rule /(logtalk_library_path|logtalk_load_context|logtalk_make|logtalk_make_target_action)(?=[(])/, Keyword
-        rule /\blogtalk_make\b/, Keyword
+        rule %r/(logtalk_compile|logtalk_load)(?=[(])/, Keyword
+        rule %r/(logtalk_library_path|logtalk_load_context|logtalk_make|logtalk_make_target_action)(?=[(])/, Keyword
+        rule %r/\blogtalk_make\b/, Keyword
         # Database
-        rule /(clause|retract|retractall)(?=[(])/, Keyword
-        rule /(abolish|asserta|assertz)(?=[(])/, Keyword
+        rule %r/(clause|retract|retractall)(?=[(])/, Keyword
+        rule %r/(abolish|asserta|assertz)(?=[(])/, Keyword
         # Control constructs
-        rule /(call|catch|throw)(?=[(])/, Keyword
-        rule /(fail|false|true|instantiation_error|system_error)\b/, Keyword
-        rule /(type_error|domain_error|existence_error|permission_error|representation_error|evaluation_error|resource_error|syntax_error)(?=[(])/, Keyword
+        rule %r/(call|catch|throw)(?=[(])/, Keyword
+        rule %r/(fail|false|true|instantiation_error|system_error)\b/, Keyword
+        rule %r/(uninstantiation_error|type_error|domain_error|existence_error|permission_error|representation_error|evaluation_error|resource_error|syntax_error)(?=[(])/, Keyword
         # All solutions
-        rule /(bagof|setof|findall|forall)(?=[(])/, Keyword
+        rule %r/(bagof|setof|findall|forall)(?=[(])/, Keyword
         # Multi-threading meta-predicates
-        rule /threaded(?=[(])/, Keyword
-        rule /(threaded_call|threaded_cancel|threaded_once|threaded_ignore|threaded_exit|threaded_peek)(?=[(])/, Keyword
-        rule /(threaded_wait|threaded_notify)(?=[(])/, Keyword
+        rule %r/threaded(?=[(])/, Keyword
+        rule %r/(threaded_call|threaded_cancel|threaded_once|threaded_ignore|threaded_exit|threaded_peek)(?=[(])/, Keyword
+        rule %r/(threaded_wait|threaded_notify)(?=[(])/, Keyword
         # Threaded engines
-        rule /(threaded_engine|threaded_engine_create|threaded_engine_destroy|threaded_engine_self)(?=[(])/, Keyword
-        rule /(threaded_engine_next|threaded_engine_next_reified)(?=[(])/, Keyword
-        rule /(threaded_engine_yield|threaded_engine_post|threaded_engine_fetch)(?=[(])/, Keyword
+        rule %r/(threaded_engine|threaded_engine_create|threaded_engine_destroy|threaded_engine_self)(?=[(])/, Keyword
+        rule %r/(threaded_engine_next|threaded_engine_next_reified)(?=[(])/, Keyword
+        rule %r/(threaded_engine_yield|threaded_engine_post|threaded_engine_fetch)(?=[(])/, Keyword
         # Term unification
-        rule /(subsumes_term|unify_with_occurs_check)(?=[(])/, Keyword
+        rule %r/(subsumes_term|unify_with_occurs_check)(?=[(])/, Keyword
         # Term creation and decomposition
-        rule /(functor|arg|copy_term|numbervars|term_variables)(?=[(])/, Keyword
+        rule %r/(functor|arg|copy_term|numbervars|term_variables)(?=[(])/, Keyword
         # Evaluable functors
-        rule /(div|rem|max|min|mod|abs|sign)(?=[(])/, Keyword
-        rule /(float_integer_part|float_fractional_part)(?=[(])/, Keyword
-        rule /(floor|truncate|round|ceiling)(?=[(])/, Keyword
+        rule %r/(div|rem|max|min|mod|abs|sign)(?=[(])/, Keyword
+        rule %r/(float_integer_part|float_fractional_part)(?=[(])/, Keyword
+        rule %r/(floor|truncate|round|ceiling)(?=[(])/, Keyword
         # Other arithmetic functors
-        rule /(cos|acos|asin|atan|atan2|exp|log|sin|sqrt|tan|xor)(?=[(])/, Keyword
+        rule %r/(cos|acos|asin|atan|atan2|exp|log|sin|sqrt|tan|xor)(?=[(])/, Keyword
         # Term testing
-        rule /(var|atom|atomic|integer|float|callable|compound|nonvar|number|ground|acyclic_term)(?=[(])/, Keyword
+        rule %r/(var|atom|atomic|integer|float|callable|compound|nonvar|number|ground|acyclic_term)(?=[(])/, Keyword
         # Term comparison
-        rule /compare(?=[(])/, Keyword
+        rule %r/compare(?=[(])/, Keyword
         # Stream selection and control
-        rule /(current_input|current_output|set_input|set_output)(?=[(])/, Keyword
-        rule /(open|close)(?=[(])/, Keyword
-        rule /flush_output(?=[(])/, Keyword
-        rule /(at_end_of_stream|flush_output)\b/, Keyword
-        rule /(stream_property|at_end_of_stream|set_stream_position)(?=[(])/, Keyword
+        rule %r/(current_input|current_output|set_input|set_output)(?=[(])/, Keyword
+        rule %r/(open|close)(?=[(])/, Keyword
+        rule %r/flush_output(?=[(])/, Keyword
+        rule %r/(at_end_of_stream|flush_output)\b/, Keyword
+        rule %r/(stream_property|at_end_of_stream|set_stream_position)(?=[(])/, Keyword
         # Character and byte input/output
-        rule /nl(?=[(])/, Keyword
-        rule /(get_byte|get_char|get_code)(?=[(])/, Keyword
-        rule /(peek_byte|peek_char|peek_code)(?=[(])/, Keyword
-        rule /(put_byte|put_char|put_code)(?=[(])/, Keyword
-        rule /\bnl\b/, Keyword
+        rule %r/nl(?=[(])/, Keyword
+        rule %r/(get_byte|get_char|get_code)(?=[(])/, Keyword
+        rule %r/(peek_byte|peek_char|peek_code)(?=[(])/, Keyword
+        rule %r/(put_byte|put_char|put_code)(?=[(])/, Keyword
+        rule %r/\bnl\b/, Keyword
         # Term input/output
-        rule /(read|read_term)(?=[(])/, Keyword
-        rule /(write|writeq|write_canonical|write_term)(?=[(])/, Keyword
-        rule /(current_op|op)(?=[(])/, Keyword
-        rule /(char_conversion|current_char_conversion)(?=[(])/, Keyword
+        rule %r/(read|read_term)(?=[(])/, Keyword
+        rule %r/(write|writeq|write_canonical|write_term)(?=[(])/, Keyword
+        rule %r/(current_op|op)(?=[(])/, Keyword
+        rule %r/(char_conversion|current_char_conversion)(?=[(])/, Keyword
         # Atomic term processing
-        rule /(atom_length|atom_chars|atom_concat|atom_codes)(?=[(])/, Keyword
-        rule /(char_code|sub_atom)(?=[(])/, Keyword
-        rule /(number_chars|number_codes)(?=[(])/, Keyword
+        rule %r/(atom_length|atom_chars|atom_concat|atom_codes)(?=[(])/, Keyword
+        rule %r/(char_code|sub_atom)(?=[(])/, Keyword
+        rule %r/(number_chars|number_codes)(?=[(])/, Keyword
         # Implementation defined hooks functions
-        rule /(set_prolog_flag|current_prolog_flag)(?=[(])/, Keyword
-        rule /halt(?=[(])/, Keyword
-        rule /\bhalt\b/, Keyword
+        rule %r/(set_prolog_flag|current_prolog_flag)(?=[(])/, Keyword
+        rule %r/halt(?=[(])/, Keyword
+        rule %r/\bhalt\b/, Keyword
         # Message sending operators
-        rule /(::|:|\^\^)/, Operator
+        rule %r/(::|:|\^\^)/, Operator
         # External call
-        rule /[{}]/, Keyword
+        rule %r/[{}]/, Keyword
         # Logic and control
-        rule /(ignore|once)(?=[(])/, Keyword
-        rule /\brepeat\b/, Keyword
+        rule %r/(ignore|once)(?=[(])/, Keyword
+        rule %r/\brepeat\b/, Keyword
         # Sorting
-        rule /(keysort|sort)(?=[(])/, Keyword
+        rule %r/(keysort|sort)(?=[(])/, Keyword
         # Bitwise functors
         rule %r(>>|<<|/\\|\\\\|\\), Operator
         # Predicate aliases
-        rule /\bas\b/, Operator
+        rule %r/\bas\b/, Operator
         # Arithemtic evaluation
-        rule /\bis\b/, Keyword
+        rule %r/\bis\b/, Keyword
         # Arithemtic comparison
         rule %r(=:=|=\\=|<|=<|>=|>), Operator
         # Term creation and decomposition
@@ -137,19 +137,19 @@ module Rouge
         rule %r(==|\\==|@=<|@<|@>=|@>), Operator
         # Evaluable functors
         rule %r(//|[-+*/]), Operator
-        rule /\b(e|pi|div|mod|rem)\b/, Operator
+        rule %r/\b(e|pi|div|mod|rem)\b/, Operator
         # Other arithemtic functors
-        rule /\b\*\*\b/, Operator
+        rule %r/\b\*\*\b/, Operator
         # DCG rules
-        rule /-->/, Operator
+        rule %r/-->/, Operator
         # Control constructs
-        rule /([!;]|->)/, Operator
+        rule %r/([!;]|->)/, Operator
         # Logic and control
-        rule /\\+/, Operator
+        rule %r/\\+/, Operator
         # Mode operators
-        rule /[?@]/, Operator
+        rule %r/[?@]/, Operator
         # Existential quantifier
-        rule /\^/, Operator
+        rule %r/\^/, Operator
         # Strings
         mixin :strings
         # Punctuation
@@ -162,29 +162,29 @@ module Rouge
         # Whitespace
         mixin :whitespace
         # Conditional compilation directives
-        rule /(elif|if)(?=[(])/, Keyword, :pop!
-        rule /(else|endif)(?=[.])/, Keyword, :pop!
+        rule %r/(elif|if)(?=[(])/, Keyword, :pop!
+        rule %r/(else|endif)(?=[.])/, Keyword, :pop!
         # Entity directives
-        rule /(category|object|protocol)(?=[(])/, Keyword, :entity_relations
-        rule /(end_category|end_object|end_protocol)(?=[.])/, Keyword, :pop!
+        rule %r/(category|object|protocol)(?=[(])/, Keyword, :entity_relations
+        rule %r/(end_category|end_object|end_protocol)(?=[.])/, Keyword, :pop!
         # Predicate scope directives
-        rule /(public|protected|private)(?=[(])/, Keyword, :pop!
+        rule %r/(public|protected|private)(?=[(])/, Keyword, :pop!
         # Other directives
-        rule /(encoding|ensure_loaded|export)(?=[(])/, Keyword, :pop!
-        rule /(include|initialization|info)(?=[(])/, Keyword, :pop!
-        rule /(built_in|dynamic|synchronized|threaded)(?=[.])/, Keyword, :pop!
-        rule /(alias|dynamic|discontiguous|meta_non_terminal|meta_predicate|mode|multifile|synchronized)(?=[(])/, Keyword, :pop!
-        rule /(set_logtalk_flag|set_prolog_flag)(?=[(])/, Keyword, :pop!
-        rule /op(?=[(])/, Keyword, :pop!
-        rule /(calls|coinductive|module|reexport|uses|use_module)(?=[(])/, Keyword, :pop!
-        rule /[a-z][a-zA-Z0-9_]*(?=[(])/, Text, :pop!
-        rule /[a-z][a-zA-Z0-9_]*(?=[.])/, Text, :pop!
+        rule %r/(encoding|ensure_loaded|export)(?=[(])/, Keyword, :pop!
+        rule %r/(include|initialization|info)(?=[(])/, Keyword, :pop!
+        rule %r/(built_in|dynamic|synchronized|threaded)(?=[.])/, Keyword, :pop!
+        rule %r/(alias|dynamic|discontiguous|meta_non_terminal|meta_predicate|mode|multifile|synchronized)(?=[(])/, Keyword, :pop!
+        rule %r/(set_logtalk_flag|set_prolog_flag)(?=[(])/, Keyword, :pop!
+        rule %r/op(?=[(])/, Keyword, :pop!
+        rule %r/(calls|coinductive|module|reexport|uses|use_module)(?=[(])/, Keyword, :pop!
+        rule %r/[a-z][a-zA-Z0-9_]*(?=[(])/, Text, :pop!
+        rule %r/[a-z][a-zA-Z0-9_]*(?=[.])/, Text, :pop!
         # End of entity-opening directive
-        rule /[)][.]/, Punctuation, :pop!
+        rule %r/[)][.]/, Punctuation, :pop!
       end
 
       state :entity_relations do
-        rule /(complements|extends|instantiates|implements|imports|specializes)(?=[(])/, Keyword
+        rule %r/(complements|extends|instantiates|implements|imports|specializes)(?=[(])/, Keyword
         # Numbers
         mixin :numbers
         # Variables
@@ -194,9 +194,9 @@ module Rouge
         # Strings
         mixin :strings
         # End of entity-opening directive
-        rule /(?=[)][.])/, Punctuation, :pop!
+        rule %r/(?=[)][.])/, Punctuation, :pop!
         # Scope operator
-        rule /(::)/, Operator
+        rule %r/(::)/, Operator
         # Punctuation
         mixin :punctuation
         # Whitespace
@@ -210,44 +210,46 @@ module Rouge
       end
 
       state :atoms do
-        rule /[a-z][a-zA-Z0-9_]*/, Text
-        rule /[']/, Str, :quoted_atoms
+        rule %r/[a-z][a-zA-Z0-9_]*/, Text
+        rule %r/[']/, Str, :quoted_atoms
       end
 
       state :quoted_atoms do
-        rule /['][']/, Str
-        rule /[']/, Str, :pop!
-        rule %r(\\([\\abfnrtv"\']|(x[a-fA-F0-9]+|[0-7]+)\\)), Str::Escape
-        rule %r(\\), Str::Escape
-        rule /[^']*/, Str
+        rule %r/[']/, Str, :pop!
+        rule %r/\\([\\abfnrtv"']|(x[a-fA-F0-9]+|[0-7]+)\\)/, Str::Escape
+        rule %r/[^\\'\n]+/, Str
       end
 
       state :strings do
-        rule /"(\\\\|\\"|[^"])*"/, Str
-#       rule %r("[^\\'\n]+"), Str
+        rule %r/["]/, Str, :double_quoted_terms
+      end
+
+      state :double_quoted_terms do
+        rule %r/["]/, Str, :pop!
+        rule %r/\\([\\abfnrtv"']|(x[a-fA-F0-9]+|[0-7]+)\\)/, Str::Escape
+        rule %r/[^\\"\n]+/, Str
       end
 
       state :numbers do
-        rule /0'\\./, Num
-        rule /0'./, Num
-        rule /0b[01]+/, Num
-        rule /0o[0-7]+/, Num
-        rule /0x[0-9a-fA-F]+/, Num
-        rule /\d+\.?\d*((e|E)(\+|-)?\d+)?/, Num
+        rule %r/0'[\\]?./, Num
+        rule %r/0b[01]+/, Num
+        rule %r/0o[0-7]+/, Num
+        rule %r/0x[0-9a-fA-F]+/, Num
+        rule %r/\d+\.?\d*((e|E)(\+|-)?\d+)?/, Num
       end
 
       state :punctuation do
-        rule /[()\[\],.|]/, Punctuation
+        rule %r/[()\[\],.|]/, Punctuation
       end
 
       state :whitespace do
-        rule /\n/, Text
-        rule /\s+/, Text
+        rule %r/\n/, Text
+        rule %r/\s+/, Text
       end
 
       state :comments do
-        rule /%.*?\n/, Comment::Single
-        rule /\/\*/, Comment::Multiline, :nested_comment
+        rule %r/%.*\n/, Comment::Single
+        rule %r/\/\*/, Comment::Multiline, :nested_comment
       end
 
       state :nested_comment do
@@ -255,11 +257,6 @@ module Rouge
         rule %r(/\*), Comment::Multiline, :nested_comment
         rule %r(\*/), Comment::Multiline, :pop!
         rule %r([*/]), Comment::Multiline
-      end
-
-      state :root do
-        mixin :basic
-        mixin :directives
       end
 
     end

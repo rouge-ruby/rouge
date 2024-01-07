@@ -1,3 +1,7 @@
+[global Start]
+[BITS 16]
+[ORG 0x7C00]
+
 ; Simple test of the NASM parser
 
 ; Data section, initialized variables

@@ -495,6 +495,8 @@ The spec and the demo can be run using the `rake` command. You can run this by
 typing `bundle exec rake` at the command line. If everything works, you should
 see a series of dots. If you have an error, this will appear here, too.
 
+You can also run `bundle exec rake VERBOSE=1` to see all warnings.
+
 To see your visual sample, launch Rouge's visual test app by running
 `bundle exec rackup`. You can choose your sample from the complete list by going
 to <http://localhost:9292>.

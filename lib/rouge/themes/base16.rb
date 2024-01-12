@@ -11,7 +11,7 @@ module Rouge
       palette base00: "#151515"
       palette base01: "#202020"
       palette base02: "#303030"
-      palette base03: "#505050"
+      palette base03: "#858585"
       palette base04: "#b0b0b0"
       palette base05: "#d0d0d0"
       palette base06: "#e0e0e0"

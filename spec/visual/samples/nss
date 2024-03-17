@@ -1,0 +1,417 @@
+/* it shouldn't hang */	/* trying to lex this */
+/*{"ahg/awn/xan?",	HB_TAG('A','G','W',' ')},*/	/* Agaw */
+/*{"gsw?/gsw-FR?",	HB_TAG('A','L','S',' ')},*/	/* Alsatian */
+/*{"krc",	HB_TAG('B','A','L',' ')},*/	/* Balkar */
+/*{"??",	HB_TAG('B','C','R',' ')},*/	/* Bible Cree */
+/*{"sgw?",	HB_TAG('C','H','G',' ')},*/	/* Chaha Gurage */
+/*{"acf/gcf?",	HB_TAG('F','A','N',' ')},*/	/* French Antillean */
+/*{"vls/nl-be",	HB_TAG('F','L','E',' ')},*/	/* Flemish */
+/*{"enf?/yrk?",	HB_TAG('F','N','E',' ')},*/	/* Forest Nenets */
+/*{"fuf?",	HB_TAG('F','T','A',' ')},*/	/* Futa */
+/*{"ar-Syrc?",	HB_TAG('G','A','R',' ')},*/	/* Garshuni */
+/*{"cfm/rnl?",	HB_TAG('H','A','L',' ')},*/	/* Halam */
+/*{"ga-Latg?/Latg?",	HB_TAG('I','R','T',' ')},*/	/* Irish Traditional */
+/*{"krc",	HB_TAG('K','A','R',' ')},*/	/* Karachay */
+/*{"alw?/ktb?",	HB_TAG('K','E','B',' ')},*/	/* Kebena */
+/*{"Geok",	HB_TAG('K','G','E',' ')},*/	/* Khutsuri Georgian */
+/*{"kca",	HB_TAG('K','H','K',' ')},*/	/* Khanty-Kazim */
+/*{"kca",	HB_TAG('K','H','S',' ')},*/	/* Khanty-Shurishkar */
+
+//:://////////////////////////////////////////////
+//:: Comment Block
+//:://////////////////////////////////////////////
+
+void foo() ;
+
+void foo() {
+    /* nothing */
+}
+
+void foo2(int a, string s, object o)
+{
+    /* nothing */
+}
+
+/* Broken declarations should not break subsequent highlighting */
+// puts is missing ";" -- TODO: fix this to indicate an Error in the highlighting.
+
+void foo() {
+    if(x) {
+    } else if(y) {
+      puts("foo")
+    }
+  }
+
+#include "string.h" /* this is a comment */
+#include "string.h" // this is a comment
+
+
+
+#include "Python.h"
+
+#include "code.h"
+#include "frameobject.h"
+#include "eval.h"
+#include "opcode.h"
+#include "structmember.h"
+
+const int DEBUG = FALSE;
+
+const int DEBUG_LEVEL = 40;
+const float TIMER = -60.20002
+
+void HandBack(object oPC, object oContainer, object oItem, object oRecycler, string sReason)
+{
+    SendMessageToPC(oPC, GetName(oRecycler) + " hands the " + GetName(oItem)
+                       + " back to you.");
+
+    if (sReason != "")
+    {
+        AssignCommand(oRecycler, ActionSpeakString(sReason, TALKVOLUME_WHISPER));
+    }
+
+    CopyItem(oItem, oPC, TRUE);
+    DestroyObject(oItem, 0.1);
+}
+
+// spawn an item
+void SpawnItem(object oPC, string sResref, int iSize, int iQuality)
+{
+    object oNew;
+    string sItem, sSQL, sTag, sName, sDescription;
+    int iRandom = d100();
+    int iQty, iDice, iQuantity, iCount;
+
+    if (sResref == "ads_weap" || sResref == "ads_scrap")
+    {
+        sItem = "metal";
+    }
+    else if (sResref == "ads_mangled")
+    {
+        sItem = "thread";
+    }
+    else if (sResref == "ads_aberr"
+          || sResref == "ads_ooze"
+          || sResref == "ads_vermin")
+    {
+        sItem = "organic";
+    }
+
+    // Sanity check.
+    if (sItem == "")
+    {
+        SendMessageToPC(oPC, "SpawnItem Error: Unrecognized resref: "
+                           + sResref);
+        return;
+    }
+
+    // Get the quantity of items we're going to create. This will pull from the
+    // amount table. If nothing is found for some reason, it will fall back
+    // to 1d6
+    iQty = 1;
+    iDice = 6;
+
+    sSQL = "SELECT quantity, dice FROM amount "
+         + "WHERE type = ? AND size = ? AND quality = ?;";
+
+    if (NWNX_SQL_PrepareQuery(sSQL))
+    {
+        NWNX_SQL_PreparedString(0, sItem);
+        NWNX_SQL_PreparedInt(1, iSize);
+        NWNX_SQL_PreparedInt(2, iQuality);
+        NWNX_SQL_ExecutePreparedQuery();
+
+        if (NWNX_SQL_ReadyToReadNextRow())
+        {
+            NWNX_SQL_ReadNextRow();
+            iQty = StringToInt(NWNX_SQL_ReadDataInActiveRow(0));
+            iDice = StringToInt(NWNX_SQL_ReadDataInActiveRow(1));
+        }
+    }
+
+    switch (iDice)
+    {
+        case 2:  iQuantity =  d2(iQty); break;
+        case 3:  iQuantity =  d3(iQty); break;
+        case 4:  iQuantity =  d4(iQty); break;
+        case 6:  iQuantity =  d6(iQty); break;
+        case 8:  iQuantity =  d8(iQty); break;
+        default: iQuantity =  d6(1);    break;
+    }
+
+    // Get the item randomly from the database using iRandom and the range set.
+    // Make sure all number ranges are covered in the reprocessed table.
+    sSQL = "SELECT tag, name, description FROM reprocessed "
+         + "WHERE type = ? AND low <= ? AND high >= ? AND quality = ?;";
+
+    if (NWNX_SQL_PrepareQuery(sSQL))
+    {
+        NWNX_SQL_PreparedString(0, sItem);
+        NWNX_SQL_PreparedInt(1, iRandom);
+        NWNX_SQL_PreparedInt(2, iRandom);
+        NWNX_SQL_PreparedInt(3, iQuality);
+        NWNX_SQL_ExecutePreparedQuery();
+
+        if (NWNX_SQL_ReadyToReadNextRow())
+        {
+            NWNX_SQL_ReadNextRow();
+            sTag = NWNX_SQL_ReadDataInActiveRow(0);
+            sName = NWNX_SQL_ReadDataInActiveRow(1);
+            sDescription = NWNX_SQL_ReadDataInActiveRow(2);
+        }
+    }
+
+    // Sanity check.
+    if (sTag == "" || sName == "" || sDescription == "")
+    {
+        SendMessageToPC(oPC, "SpawnItem Error: Invalid item tag, name, or "
+                           + "description. Tag: '" + sTag
+                           + "', Name: '" + sName
+                           + "', Description: '" + sDescription + "'.");
+        return;
+    }
+
+    // Create the items.
+    for (iCount = 1; iCount <= iQuantity; iCount++)
+    {
+        oNew = CreateItemOnObject(sItem, oPC, 1, sTag);
+
+        if (oNew != OBJECT_INVALID)
+        {
+            SetLocalInt(oNew, "recycled", TRUE);
+            SetDescription(oNew, sDescription);
+            SetName(oNew, sName);
+        }
+    }
+}
+
+string ACP_ObjectTypeName(object oTarget)
+{
+    int iType = GetObjectType(oTarget);
+    string sReturn;
+    switch(iType)
+    {
+        case OBJECT_TYPE_CREATURE:
+        {
+            sReturn = "creature";
+        }
+        break;
+        case OBJECT_TYPE_PLACEABLE:
+        {
+            sReturn = "placeable";
+        }
+        break;
+        case OBJECT_TYPE_ITEM:
+        {
+            sReturn = "item";
+        }
+        break;
+    }
+    return sReturn;
+}
+
+// Does a bitwise test to determine whether or not iNumber has iValue bit set.
+// Returns TRUE (1) or FALSE (0).
+int BitwiseTest(int iNumber, int iValue)
+{
+    if ((iNumber & iValue) == iValue)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+// Takes the bits set in iValue and turns on those bits in iNumber.
+// Returns new iNumber.
+int BitwiseSet(int iNumber, int iValue)
+{
+    iNumber = iNumber | iValue;
+    return iNumber;
+}
+
+void main()
+{
+    int iEvent = GetUserDefinedItemEventNumber();
+
+    if (iEvent != X2_ITEM_EVENT_ACTIVATE)
+        return;
+
+    object oUser = GetItemActivator();
+    object oArea = GetArea(oUser);
+    object oOrigin = GetNearestObjectByTag("Spotlight_Origin", oUser);
+    object oLight;
+
+    // Only works in an area with a spotlight
+    if (!GetIsObjectValid(oOrigin))
+        return;
+
+    location lSpot = GetItemActivatedTargetLocation();
+    vector vPos = GetPositionFromLocation(lSpot);
+
+    int iLightColor = TILE_MAIN_LIGHT_COLOR_BRIGHT_WHITE;
+    int iBlackLight = TILE_MAIN_LIGHT_COLOR_BLACK;
+
+    // **MATH**
+    float fMag = VectorMagnitude(vPos);
+    float fAngle = VectorToAngle(vPos);
+
+    float fX = (fMag * cos(fAngle)) / 10;
+    float fY = (fMag * sin(fAngle)) / 10;
+
+    int iX = FloatToInt(fX);
+    int iY = FloatToInt(fY);
+
+    if (fX - iX < 0.0)
+        iX--;
+
+    if (fY - iY < 0.0)
+        iY--;
+
+    fX = IntToFloat(iX);
+    fY = IntToFloat(iY);
+
+    vector vVec = Vector(fX, fY, 0.0);
+    location lLoc = Location(oArea, vVec, 0.0);
+
+    // Determines if the spotlight is on
+    int iOn = GetLocalInt(oArea, "SpotlightOn");
+
+    // If the spotlight is on, turn it off.  Otherwise, turn it on.
+    if (iOn)
+    {
+        lLoc = GetLocalLocation(oArea, "SpotlightLoc");
+        oLight = GetLocalObject(oArea, "SpotlightObj");
+        SetTileMainLightColor(lLoc, iBlackLight, iBlackLight);
+        SetLocalInt(oArea, "SpotlightOn", FALSE);
+        DestroyObject(oLight);
+    }
+
+    else
+    {
+        SetTileMainLightColor(lLoc, iLightColor, iLightColor);
+        SetLocalInt(oArea, "SpotlightOn", TRUE);
+        SetLocalLocation(oArea, "SpotlightLoc", lLoc);
+        oLight = CreateObject(OBJECT_TYPE_PLACEABLE, "plc_solwhite", lSpot);
+        SetLocalObject(oArea, "SpotlightObj", oLight);
+    }
+
+    DelayCommand(2.5, RecomputeStaticLighting(oArea));
+}
+
+void main()
+{
+   location lHere = GetLocation(OBJECT_SELF);
+
+   CreateObject(OBJECT_TYPE_PLACEABLE, "plc_bloodstain", lHere, FALSE);
+   CreateObject(OBJECT_TYPE_PLACEABLE, "plc_garbage", lHere, FALSE);
+
+}
+
+void UnlockItem(object oPC, object oRecycler, string sNPC)
+{
+    string sIndex = "";
+    int iSelling, iLevelIdx, iBitIdx, iRandomBit;
+
+    // Random 0 - 3. Needs to be 0-based, so we can use modulo.
+    int iRandomLevel = d4() - 1;
+
+    // Try each of the 4 iRandomLevel indices at most once.
+    for (iLevelIdx = 0; iLevelIdx < 4; iLevelIdx++)
+    {
+        if (DEBUG)
+        {
+            SendMessageToPC(oPC, "UnlockItem() (top)"
+                               + " iLevelIdx=" + IntToString(iLevelIdx)
+                               + ", iRandomLevel=" + IntToString(iRandomLevel));
+        }
+
+        switch (iRandomLevel)
+        {
+            case 0: sIndex = "50";  break;
+            case 1: sIndex = "100"; break;
+            case 2: sIndex = "250"; break;
+            case 3: sIndex = "500"; break;
+        }
+
+        iSelling = GetPersistentInt(oPC, sNPC + "_" + sIndex);
+
+        if (!iSelling)
+        {
+            InitializeTokenIndicesForNPC(oPC, sNPC);
+
+            // Re-get iSelling, since it just got initialized.
+            iSelling = GetPersistentInt(oPC, sNPC + "_" + sIndex);
+
+            if (DEBUG)
+            {
+                SendMessageToPC(oPC, "UnlockItem() (init Token Indices)"
+                                   + " iSelling=" + IntToString(iSelling));
+            }
+        }
+
+        // If all bits are already set on this level (2^1 - 2^5) == 62, go to
+        // the next level.
+        if (iSelling == 62)
+        {
+            if (DEBUG)
+            {
+                SendMessageToPC(oPC, "UnlockItem() (all bits set on "
+                                   + "iSelling) iSelling="
+                                   + IntToString(iSelling));
+            }
+
+            iRandomLevel++;
+            iRandomLevel %= 4;
+            continue;
+        }
+
+        // Find an unset bit at this level, starting at a random index.
+        // Random 0 - 4. Needs to be 0-based, so we can use modulo.
+        iRandomBit = (d10() + 1) / 2 - 1;
+
+        // Try each of the 5 iSelling bits at most once for this level.
+        for (iBitIdx = 0; iBitIdx < 5; iBitIdx++)
+        {
+            if (DEBUG)
+            {
+                SendMessageToPC(oPC, "UnlockItem() (testing bit on "
+                                   + "iSelling) iBitIdx=" + IntToString(iBitIdx)
+                                   + ", iRandomBit=" + IntToString(iRandomBit)
+                                   + ", iSelling=" + IntToString(iSelling));
+            }
+
+            // 2^1 - 2^5.
+            if (!BitwiseTest(iSelling, 2 << iRandomBit))
+            {
+                // 2^1 - 2^5.
+                iSelling = BitwiseSet(iSelling, 2 << iRandomBit);
+                AssignCommand(oRecycler, ActionSpeakString("Thanks for your hard work. I've got some new stock in, take a look if you're interested."));
+                SetPersistentInt(oPC, sNPC + "_" + sIndex, iSelling);
+
+                if (DEBUG)
+                {
+                    SendMessageToPC(oPC, "UnlockItem() (successfully found "
+                                       + "unused bit in iSelling)"
+                                       + " setting " + sNPC + "_" + sIndex
+                                       + "=iSelling=" + IntToString(iSelling)
+                                       + ", iBitIdx=" + IntToString(iBitIdx)
+                                       + ", iRandomBit="
+                                       + IntToString(iRandomBit));
+                }
+
+                return;
+            }
+
+            // Tried this index. Increment by one and try the next. Use modulo
+            // to wrap around to the beginning, since we may start mid-way
+            // through.
+            iRandomBit++;
+            iRandomBit %= 5;
+        }
+    }
+
+    // If this hasn't returned by this point, the player has unlocked all 5
+    // items at each level.
+    AssignCommand(oRecycler, ActionSpeakString("I appreciate your hard work. Unfortunately, I do not have any more new stock to show you.", TALKVOLUME_WHISPER));
+}
+
+// Comment at EOF (#796)

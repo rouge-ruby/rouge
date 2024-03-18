@@ -24,7 +24,7 @@ module Rouge
     module Builtins
       class SQF
         def extract_keywords(input)
-          input.scrub.scan /(?<=\(").+?(?=")/
+          input.scrub.scan(/(?<=\(").+?(?=")/)
         end
 
         def render_output(keywords, &b)

@@ -12,8 +12,6 @@ module Rouge
       title 'OpenEdge ABL'
       desc 'The OpenEdge ABL programming language'
 
-      # optional comment or whitespace
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_&{}!][a-zA-Z0-9_\-&!}]*/
 
       def self.keywords

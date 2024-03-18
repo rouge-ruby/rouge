@@ -61,9 +61,9 @@ module Rouge
         rule %r/--.*/, Comment::Single
         rule %r/\d+/, Num::Integer
         rule %r/'/, Str::Single, :single_string
-        rule %r([->|+*/<>=~!@#%&|?^-]), Operator
+        rule %r([-|+*/<>=~!@#%&?^]), Operator
         rule %r/[;:()\[\],.]/, Punctuation
-        rule %r/\w[\w\d]*/ do |m|
+        rule %r/[a-zA-Z]\w*/ do |m|
           if self.class.operators.include? m[0]
             token Operator
           elsif self.class.keywords_type.include? m[0]

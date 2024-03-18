@@ -252,15 +252,16 @@ module Rouge
         rule %r/\d+/, Literal::Number::Integer
       end
 
+      NAME_RE = %r/[\p{L}\p{Nl}\p{S}_][\p{Word}\p{S}\p{Po}!]*/
 
       state :funcname do
-        rule %r/[\p{L}\p{Nl}\p{S}_][\p{Word}\p{S}\p{Po}!]*/, Name::Function, :pop!
+        rule NAME_RE, Name::Function, :pop!
         rule %r/\([^\s\w{]{1,2}\)/, Operator, :pop!
         rule %r/[^\s\w{]{1,2}/, Operator, :pop!
       end
 
       state :typename do
-        rule %r/[\p{L}\p{Nl}\p{S}_][\p{Word}\p{S}\p{Po}!]*/, Name::Class, :pop!
+        rule NAME_RE, Name::Class, :pop!
       end
 
       state :stringescape do

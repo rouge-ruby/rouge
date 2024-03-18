@@ -114,8 +114,8 @@ module Rouge
         mixin :single_quote
 
         rule %r(\b(?i:(and|not|or|in))\b), Operator::Word
-        rule %r([:=|>|<|<>|/|\\|\+|-|=]), Operator
-        rule %r([\[\]{}();,\&,\.,\%]), Punctuation
+        rule %r(:=|>|<|<>|/|\\|\+|-|=), Operator
+        rule %r([\[\]{}();,\&\.\%]), Punctuation
 
         rule %r(\b(?i:(beginc\+\+.*?endc\+\+)))m, Str::Single
         rule %r(\b(?i:(embed.*?endembed)))m, Str::Single

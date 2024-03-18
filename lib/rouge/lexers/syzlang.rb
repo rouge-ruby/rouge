@@ -27,7 +27,7 @@ module Rouge
 
       comment = /#.*$/
       inline_spaces = /[ \t]+/
-      eol_spaces = /[\n\r]+/
+      _eol_spaces = /[\n\r]+/
       spaces = /\s+/
 
       state :inline_break do

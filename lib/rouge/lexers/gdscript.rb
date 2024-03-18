@@ -28,7 +28,7 @@ module Rouge
       end
 
       def self.builtins
-        builtins = %w(
+        %w(
           Color8 ColorN abs acos asin assert atan atan2 bytes2var ceil char
           clamp convert cos cosh db2linear decimals dectime deg2rad dict2inst
           ease exp floor fmod fposmod funcref hash inst2dict instance_from_id

@@ -4,6 +4,27 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.2.1: 2024-03-18
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.2.0...v4.2.1)
+
+- General
+  - Fix private class unused variable warnings ([#2031](https://github.com/rouge-ruby/rouge/pull/2031/) by Ryan Davis)
+  - Fix duplicate range regexp warnings ([#2030](https://github.com/rouge-ruby/rouge/pull/2030/) by Ryan Davis)
+  - Turn on warnings via VERBOSE env ([#2019](https://github.com/rouge-ruby/rouge/pull/2019/) by Ryan Davis)
+  - Development related cleanup ([#2018](https://github.com/rouge-ruby/rouge/pull/2018/) by Ryan Davis)
+  - Move several gems in Gemfile into development group to avoid eager require ([#2015](https://github.com/rouge-ruby/rouge/pull/2015/) by Ryan Davis)
+  - Add Ruby 3.3.0 to CI check ([#2016](https://github.com/rouge-ruby/rouge/pull/2016/) by Tan Le)
+- CPP Lexer
+  - added support for c++20 module keywords 'module' and 'import' and sample. ([#2023](https://github.com/rouge-ruby/rouge/pull/2023/) by Rasmus20B)
+- NASM Lexer
+  - Support primitive directives in NASM lexer ([#1974](https://github.com/rouge-ruby/rouge/pull/1974/) by Tan Le)
+- NGINX Lexer
+  - Highlight float number in nginx lexer ([#2017](https://github.com/rouge-ruby/rouge/pull/2017/) by Tan Le)
+- TOML Lexer
+  - toml: only highlight inf and nan in value, highlight keys starting with digit ([#2003](https://github.com/rouge-ruby/rouge/pull/2003/) by Martin Tournoij)
+  - toml: don't highlight keys with inline tables as tables ([#2002](https://github.com/rouge-ruby/rouge/pull/2002/) by Martin Tournoij)
+
 ## version 4.2.0: 2023-10-25
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.3...v4.2.0)

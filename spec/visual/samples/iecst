@@ -1,0 +1,53 @@
+// single line comment
+(*
+    Block comment
+*)
+FUNCTION_BLOCK SAMPLE
+  TITLE='Sample function block'
+  VERSION : '1.0'
+  AUTHOR : 'Rouge'
+  FAMILY: 'sample'
+
+CONST
+    Thousand : INT := 1_000;
+    TwoFiftyFive : BYTE := BYTE#255;
+    InHex : BYTE := 16#FF;
+    WithType : BYTE := BYTE#16#FF;
+    InBinary : BYTE := 2#1111_1111;
+
+    PI : REAL := 3.141592;
+    OneBillion : REAL := 1_000_000_000;
+    WithExponent : REAL := REAL#1e+9;
+END_CONST
+
+VAR_INPUT
+    a : REAL;
+    b : REAL;
+    limit : REAL;
+END_VAR
+VAR_OUTPUT
+    valid : BOOL;
+END_VAR
+
+VAR
+    last: REAL := 0.0;
+END_VAR
+
+VAR_TEMP
+    value: REAL;
+END_VAR
+
+BEGIN
+    IF a > 0 AND b > 0 THEN
+        value := sum / 2;
+    ELSIF a > 0 THEN
+        value := a;
+    ELSIF b > 0 THEN
+        value := b;
+    ELSE
+        value := last;
+    END_IF
+    last := value;
+
+    valid := value < limit;
+END_FUNCTION_BLOCK

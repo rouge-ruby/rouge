@@ -140,11 +140,17 @@ module Rouge
 
         Puppet
       end
-      
+
       disambiguate '*.p' do
         next Prolog if contains?(':-')
         next Prolog if matches?(/\A\w+(\(\w+\,\s*\w+\))*\./)
         next OpenEdge
+      end
+
+      disambiguate '*.st' do
+          next IecST if  contains?('END_')
+          next IecST if  contains?('(*')
+          next Smalltalk
       end
     end
   end

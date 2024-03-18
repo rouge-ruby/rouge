@@ -46,7 +46,7 @@ module Rouge
           keywords
         end
 
-        def render_output (keywords, &b)
+        def render_output(keywords, &b)
           return enum_for(:render_output, keywords).to_a.join("\n") unless b
 
           yield   "# -*- coding: utf-8 -*- #"

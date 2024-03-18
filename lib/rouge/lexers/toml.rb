@@ -48,7 +48,8 @@ module Rouge
           groups Name::Property, Text, Punctuation
         end
 
-        rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
+        rule %r/\d{4}-\d{2}-\d{2}(?:[Tt ]\d{2}:\d{2}:\d{2}(?:[Zz]|[+-]\d{2}:\d{2})?)?/, Literal::Date
+        rule %r/\d{2}:\d{2}:\d{2}/, Literal::Date
 
         rule %r/[+-]?\d+(?:_\d+)*\.\d+(?:_\d+)*(?:[eE][+-]?\d+(?:_\d+)*)?/, Num::Float
         rule %r/[+-]?\d+(?:_\d+)*[eE][+-]?\d+(?:_\d+)*/, Num::Float

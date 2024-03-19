@@ -163,6 +163,23 @@ declare var foo: Foo;
 export = foo;
 export { foo as default }
 
+cy.get('input').as('text')
+
+cy
+  .get('input')
+  .as('text')
+
+import {something as thingy} from 'module'
+
+const applicant = {
+  myInfo: "John",
+  myOtherInfo: { id: 123, age: 22 },
+} satisfies Person;
+
+const properties = (value.features[0].properties as moreDetails)
+
+...spreadOperator as const;
+
 declare module "foo" {
     export interface IFoo {
         theObject: any;

@@ -100,7 +100,7 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          as async await break case catch continue debugger default delete
+          async await break case catch continue debugger default delete
           do else export finally from for if import in instanceof new of
           return super switch this throw try typeof void while yield
         )

@@ -1,0 +1,39 @@
+        .global main
+        .type main, @function
+        .extern printf
+
+        .text
+/* Reads an integer,
+   doubles it,
+   and prints it. */
+main:
+        pushq %rbp
+        movq %rsp, %rbp
+        subq $128, %rsp  # Reserve 128 bytes for stack
+
+        # Read an integer into -8(%rbp)
+        movq $scan_format, %rdi
+        leaq -8(%rbp), %rsi
+        call scanf
+        # If invalid, jump to end
+        cmpq $1, %rax
+        jne .Lend
+
+        movq -8(%rbp), %rsi
+        imulq $2, %rsi  # Double the input
+
+        # Call 'printf("%ld\n", %rsi)'
+        movq $print_format, %rdi
+        call printf
+
+.Lend:
+        # Return with status 0
+        movq $0, %rax
+        movq %rbp, %rsp
+        popq %rbp
+        ret
+
+scan_format:
+        .asciz "%ld"
+print_format:
+        .asciz "%ld\n"

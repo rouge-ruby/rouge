@@ -1,0 +1,216 @@
+# Code taken from the official Mojo website: https://docs.modular.com/mojo/notebooks/
+
+from math import rsqrt
+
+
+@register_passable("trivial")
+struct Vec3f:
+    var data: SIMD[DType.float32, 4]
+
+    @always_inline
+    fn __init__(x: Float32, y: Float32, z: Float32) -> Self:
+        return Vec3f {data: SIMD[DType.float32, 4](x, y, z, 0)}
+
+    @always_inline
+    fn __init__(data: SIMD[DType.float32, 4]) -> Self:
+        return Vec3f {data: data}
+
+    @always_inline
+    @staticmethod
+    fn zero() -> Vec3f:
+        return Vec3f(0, 0, 0)
+
+    @always_inline
+    fn __sub__(self, other: Vec3f) -> Vec3f:
+        return self.data - other.data
+
+    @always_inline
+    fn __add__(self, other: Vec3f) -> Vec3f:
+        return self.data + other.data
+
+    @always_inline
+    fn __matmul__(self, other: Vec3f) -> Float32:
+        return (self.data * other.data).reduce_add()
+
+    @always_inline
+    fn __mul__(self, k: Float32) -> Vec3f:
+        return self.data * k
+
+    @always_inline
+    fn __neg__(self) -> Vec3f:
+        return self.data * -1.0
+
+    @always_inline
+    fn __getitem__(self, idx: Int) -> SIMD[DType.float32, 1]:
+        return self.data[idx]
+
+    @always_inline
+    fn cross(self, other: Vec3f) -> Vec3f:
+        let self_zxy = self.data.shuffle[2, 0, 1, 3]()
+        let other_zxy = other.data.shuffle[2, 0, 1, 3]()
+        return (self_zxy * other.data - self.data * other_zxy).shuffle[
+            2, 0, 1, 3
+        ]()
+
+    @always_inline
+    fn normalize(self) -> Vec3f:
+        return self.data * rsqrt(self @ self)
+
+
+let image = Image(192, 256)
+
+for row in range(image.height):
+    for col in range(image.width):
+        image.set(
+            row,
+            col,
+            Vec3f(Float32(row) / image.height, Float32(col) / image.width, 0),
+        )
+
+render(image)
+
+
+fn measure_time(
+    func: memset_fn_type, size: Int, ITERS: Int, SAMPLES: Int
+) -> Int:
+    alias alloc_size = 1024 * 1024
+    let ptr = BufferPtrType.alloc(alloc_size)
+
+    var best = -1
+    for sample in range(SAMPLES):
+        let tic = now()
+        for iter in range(ITERS):
+            # Offset pointer to shake up cache a bit
+            let offset_ptr = ptr.offset((iter * 128) & 1024)
+
+            # Just in case compiler will try to outsmart us and avoid repeating
+            # memset, change the value we're filling with
+            let v = ValueType(iter&255)
+
+            # Actually call the memset function
+            func(offset_ptr, v.value, size)
+
+        let toc = now()
+        if best < 0 or toc - tic < best:
+            best = toc - tic
+
+    ptr.free()
+    return best
+
+alias MULT = 2_000
+
+fn visualize_result(size: Int, result: Int):
+    print_no_newline("Size: ")
+    if size < 10:
+        print_no_newline(" ")
+    print_no_newline(size, "  |")
+    for _ in range(result // MULT):
+        print_no_newline("*")
+    print()
+
+
+fn benchmark(func: memset_fn_type, title: StringRef):
+    print("\n=====================")
+    print(title)
+    print("---------------------\n")
+
+    alias benchmark_iterations = 30 * MULT
+    alias warmup_samples = 10
+    alias benchmark_samples = 1000
+
+    # Warmup
+    for size in range(35):
+        _ = measure_time(
+            func, size, benchmark_iterations, warmup_samples
+        )
+
+    # Actual run
+    for size in range(35):
+        let result = measure_time(
+            func, size, benchmark_iterations, benchmark_samples
+        )
+
+        visualize_result(size, result)
+
+fn matrix_getitem(self: object, i: object) raises -> object:
+    return self.value[i]
+
+
+fn matrix_setitem(self: object, i: object, value: object) raises -> object:
+    self.value[i] = value
+    return None
+
+
+fn matrix_append(self: object, value: object) raises -> object:
+    self.value.append(value)
+    return None
+
+
+fn matrix_init(rows: Int, cols: Int) raises -> object:
+    let value = object([])
+    return object(
+        Attr("value", value), Attr("__getitem__", matrix_getitem), Attr("__setitem__", matrix_setitem), 
+        Attr("rows", rows), Attr("cols", cols), Attr("append", matrix_append),
+    )
+
+def benchmark_matmul_untyped(M: Int, N: Int, K: Int, python_gflops: Float64):
+    C = matrix_init(M, N)
+    A = matrix_init(M, K)
+    B = matrix_init(K, N)
+    for i in range(M):
+        c_row = object([])
+        b_row = object([])
+        a_row = object([])
+        for j in range(N):
+            c_row.append(0.0)
+            b_row.append(random_float64(-5, 5))
+            a_row.append(random_float64(-5, 5))
+        C.append(c_row)
+        B.append(b_row)
+        A.append(a_row)
+
+    @parameter
+    fn test_fn():
+        try:
+            _ = matmul_untyped(C, A, B)
+        except:
+            pass
+
+    let secs = Float64(Benchmark().run[test_fn]()) / 1_000_000_000
+    _ = (A, B, C)
+    let gflops = ((2*M*N*K)/secs) / 1e9
+    let speedup : Float64 = gflops / python_gflops
+    print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
+
+
+alias OurTrue = OurBool(__mlir_attr.`true`)
+alias OurFalse: OurBool = __mlir_attr.`false`
+
+
+@register_passable("trivial")
+struct OurBool:
+    var value: __mlir_type.i1
+
+    fn __init__(value: __mlir_type.i1) -> Self:
+        return Self {value: value}
+
+    # ...
+
+    fn __mlir_i1__(self) -> __mlir_type.i1:
+        return self.value
+
+    fn __eq__(self, rhs: OurBool) -> Self:
+        let lhsIndex = __mlir_op.`index.casts`[_type : __mlir_type.index](
+            self.value
+        )
+        let rhsIndex = __mlir_op.`index.casts`[_type : __mlir_type.index](
+            rhs.value
+        )
+        return Self(
+            __mlir_op.`index.cmp`[
+                pred : __mlir_attr.`#index<cmp_predicate eq>`
+            ](lhsIndex, rhsIndex)
+        )
+
+    fn __invert__(self) -> Self:
+        return OurFalse if self == OurTrue else OurTrue

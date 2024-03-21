@@ -21,7 +21,7 @@ module Rouge
         rule %r(
           :  # initial :
           @{0,2} # optional ivar, for :@foo and :@@foo
-          [a-z_]\w*[!?]? # the symbol
+          [\p{Ll}_]\p{Word}*[!?]? # the symbol
         )xi, Str::Symbol
 
         # special symbols
@@ -35,7 +35,7 @@ module Rouge
         # %-sigiled strings
         # %(abc), %[abc], %<abc>, %.abc., %r.abc., etc
         delimiter_map = { '{' => '}', '[' => ']', '(' => ')', '<' => '>' }
-        rule %r/%([rqswQWxiI])?([^\w\s}])/ do |m|
+        rule %r/%([rqswQWxiI])?([^\p{Word}\s}])/ do |m|
           open = Regexp.escape(m[2])
           close = Regexp.escape(delimiter_map[m[2]] || m[2])
           interp = /[rQWxI]/ === m[1]
@@ -77,7 +77,7 @@ module Rouge
 
       state :strings do
         mixin :symbols
-        rule %r/\b[a-z_]\w*?[?!]?:\s+/, Str::Symbol, :expr_start
+        rule %r/\b[\p{Ll}_]\p{Word}*?[?!]?:\s+/, Str::Symbol, :expr_start
         rule %r/"/, Str::Double, :simple_string
         rule %r/(?<!\.)`/, Str::Backtick, :simple_backtick
         rule %r/(')(\\u[a-fA-F0-9]{4}|\\u\{[a-fA-F0-9]{1,6}\}|\\[abefnrtv])?(\\\\|\\'|[^'])*(')/ do
@@ -166,9 +166,9 @@ module Rouge
         rule %r/@\[([^\]]+)\]/, Name::Decorator
 
         # names
-        rule %r/@@[a-z_]\w*/i, Name::Variable::Class
-        rule %r/@[a-z_]\w*/i, Name::Variable::Instance
-        rule %r/\$\w+/, Name::Variable::Global
+        rule %r/@@[\p{Ll}_]\p{Word}*/i, Name::Variable::Class
+        rule %r/@[\p{Ll}_]\p{Word}*/i, Name::Variable::Instance
+        rule %r/\$\p{Word}+/, Name::Variable::Global
         rule %r(\$[!@&`'+~=/\\,;.<>_*\$?:"]), Name::Variable::Global
         rule %r/\$-[0adFiIlpvw]/, Name::Variable::Global
         rule %r/::/, Operator
@@ -181,7 +181,7 @@ module Rouge
         rule %r(
           (module)
           (\s+)
-          ([a-zA-Z_][a-zA-Z0-9_]*(::[a-zA-Z_][a-zA-Z0-9_]*)*)
+          ([\p{L}_][\p{L}0-9_]*(::[\p{L}_][\p{L}0-9_]*)*)
         )x do
           groups Keyword, Text, Name::Namespace
         end
@@ -207,14 +207,14 @@ module Rouge
         # Otherwise, they will be parsed as :method_call
         rule %r/\.{2,3}/, Operator, :expr_start
 
-        rule %r/[A-Z][a-zA-Z0-9_]*/, Name::Constant, :method_call
-        rule %r/(\.|::)(\s*)([a-z_]\w*[!?]?|[*%&^`~+-\/\[<>=])/ do
+        rule %r/[\p{Lu}][\p{L}0-9_]*/, Name::Constant, :method_call
+        rule %r/(\.|::)(\s*)([\p{Ll}_]\p{Word}*[!?]?|[*%&^`~+-\/\[<>=])/ do
           groups Punctuation, Text, Name::Function
           push :method_call
         end
 
-        rule %r/[a-zA-Z_]\w*[?!]/, Name, :expr_start
-        rule %r/[a-zA-Z_]\w*/, Name, :method_call
+        rule %r/[\p{L}_]\p{Word}*[?!]/, Name, :expr_start
+        rule %r/[\p{L}_]\p{Word}*/, Name, :method_call
         rule %r/\*\*|\/\/|>=|<=|<=>|<<?|>>?|=~|={3}|!~|&&?|\|\||\./,
           Operator, :expr_start
         rule %r/{%|%}/, Punctuation
@@ -225,7 +225,7 @@ module Rouge
       end
 
       state :has_heredocs do
-        rule %r/(?<!\w)(<<[-~]?)(["`']?)([a-zA-Z_]\w*)(\2)/ do |m|
+        rule %r/(?<!\p{Word})(<<[-~]?)(["`']?)([\p{L}_]\p{Word}*)(\2)/ do |m|
           token Operator, m[1]
           token Name::Constant, "#{m[2]}#{m[3]}#{m[4]}"
           @heredoc_queue << [['<<-', '<<~'].include?(m[1]), m[3]]
@@ -282,9 +282,9 @@ module Rouge
         rule %r/\s+/, Text
         rule %r/\(/, Punctuation, :defexpr
         rule %r(
-          (?:([a-zA-Z_]\w*)(\.))?
+          (?:([\p{L}_]\p{Word}*)(\.))?
           (
-            [a-zA-Z_]\w*[!?]? |
+            [\p{L}_]\p{Word}*[!?]? |
             \*\*? | [-+]@? | [/%&\|^`~] | \[\]=? |
             <<? | >>? | <=>? | >= | ===?
           )
@@ -311,7 +311,7 @@ module Rouge
           goto :expr_start
         end
 
-        rule %r/[A-Z_]\w*/, Name::Class, :pop!
+        rule %r/[\p{Lu}_]\p{Word}*/, Name::Class, :pop!
 
         rule(//) { pop! }
       end
@@ -343,7 +343,7 @@ module Rouge
 
       state :string_intp do
         rule %r/[#][{]/, Str::Interpol, :in_interp
-        rule %r/#(@@?|\$)[a-z_]\w*/i, Str::Interpol
+        rule %r/#(@@?|\$)[\p{Ll}_]\p{Word}*/i, Str::Interpol
       end
 
       state :string_intp_escaped do
@@ -399,7 +399,7 @@ module Rouge
         rule %r(
           [?](\\[MC]-)*     # modifiers
           (\\([\\abefnrstv\#"']|x[a-fA-F0-9]{1,2}|[0-7]{1,3})|\S)
-          (?!\w)
+          (?!\p{Word})
         )x, Str::Char, :pop!
 
         # special case for using a single space.  Ruby demands that

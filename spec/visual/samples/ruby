@@ -452,6 +452,17 @@ string = % foo     # strange. huh?
 print "Escape here: \n"
 print 'Dont escape here: \n'
 
+# Unicode support
+class ViệtNam
+  def chào(buổi)
+    câu_chào = {sáng: "Chào buổi sáng", chiều: "Chào buổi chiều"}
+    puts câu_chào[buổi]
+  end
+end
+
+việt_nam = ViệtNam.new
+việt_nam.chào(:sáng)
+
 __END__
 Informatik und Informationsgesellschaft I: Digitale Medien (32 214)
 Computer lassen ihre eigentliche Bestimmung durch Multimedia und Vernetzung erkennen: Es sind digitale Medien, die alle bisherigen Massen- und Kommunikationsmedien simulieren, kopieren oder ersetzen können. Die kurze Geschichte elektronischer Medien vom Telegramm bis zum Fernsehen wird so zur Vorgeschichte des Computers als Medium. Der Prozess der Mediatisierung der Rechnernetze soll in Technik, Theorie und Praxis untersucht werden. Das PR soll die Techniken der ortsverteilten und zeitversetzten Lehre an Hand praktischer Übungen vorführen und untersuchen.

@@ -685,3 +685,14 @@ tuple[2]                  # => 'x'     (Char)
 nil
 true  # A Bool that is true
 false # A Bool that is false
+
+# Unicode support
+class ViệtNam
+  def chào(buổi)
+    câu_chào = {sáng: "Chào buổi sáng", chiều: "Chào buổi chiều"}
+    puts câu_chào[buổi]
+  end
+end
+
+việt_nam = ViệtNam.new
+việt_nam.chào(:sáng)

@@ -9,6 +9,7 @@ module Rouge
       mimetypes 'text/x-brainfuck'
 
       title "Brainfuck"
+      aliases "bf"
       desc "The Brainfuck programming language"
 
       start { push :bol }

@@ -3,27 +3,28 @@
 
 module Rouge
   module Themes
-    # default base16 theme
-    # by Chris Kempson (http://chriskempson.com)
+    # author Chris Kempson
+    # base16 default dark
+    # https://github.com/chriskempson/base16-default-schemes
     class Base16 < CSSTheme
       name 'base16'
 
-      palette base00: "#151515"
-      palette base01: "#202020"
-      palette base02: "#303030"
-      palette base03: "#505050"
-      palette base04: "#b0b0b0"
-      palette base05: "#d0d0d0"
-      palette base06: "#e0e0e0"
-      palette base07: "#f5f5f5"
-      palette base08: "#ac4142"
-      palette base09: "#d28445"
-      palette base0A: "#f4bf75"
-      palette base0B: "#90a959"
-      palette base0C: "#75b5aa"
-      palette base0D: "#6a9fb5"
-      palette base0E: "#aa759f"
-      palette base0F: "#8f5536"
+      palette base00: "#181818"
+      palette base01: "#282828"
+      palette base02: "#383838"
+      palette base03: "#585858"
+      palette base04: "#b8b8b8"
+      palette base05: "#d8d8d8"
+      palette base06: "#e8e8e8"
+      palette base07: "#f8f8f8"
+      palette base08: "#ab4642"
+      palette base09: "#dc9656"
+      palette base0A: "#f7ca88"
+      palette base0B: "#a1b56c"
+      palette base0C: "#86c1b9"
+      palette base0D: "#7cafc2"
+      palette base0E: "#ba8baf"
+      palette base0F: "#a16946"
 
       extend HasModes
 

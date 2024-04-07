@@ -323,3 +323,16 @@ test parse-1.63 "unquoted dollar sign" {
 } {x$}
 
 testreport
+
+# The braced form of variable substitution handles more complex variable names:
+set greeting "Hello, ${first name}"
+
+# "set" can always be used instead of variable substitution, and can handle all
+# variable names:
+set greeting "Hello, [set {first name}]"
+
+
+# To unpack a list into the command, use the expansion operator, "{*}".  These
+# two commands are equivalent:
+set name Neo
+set {*}{name Neo}

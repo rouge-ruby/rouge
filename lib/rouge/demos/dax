@@ -1,0 +1,15 @@
+DEFINE MEASURE 'foo'[measure1] = 
+    VAR variable = 4.5
+    RETURN
+    SUMX( VALUES( 'bar'[col] ), 'bar'[col] + variable ) 
+
+EVALUATE
+    ADDCOLUMNS(
+        VALUES( 'Date'[Year Month] )
+        ,"@sumBar"
+        ,CALCULATE(
+            [measure1]
+            ,REMOVEFILTERS()
+            ,USERELATIONSHIP( 'Date'[Date], 'bar'[Order Date] )
+        )
+    )

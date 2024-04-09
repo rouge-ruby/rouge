@@ -8,18 +8,14 @@ Bundler.require(:default, :development)
 # stdlib
 require 'pathname'
 
+require 'rouge'
+
 class VisualTestApp < Sinatra::Application
   BASE = Pathname.new(__FILE__).dirname
   SAMPLES = BASE.join('samples')
   ROOT = BASE.parent.parent
 
-  ROUGE_LIB = ROOT.join('lib/rouge.rb')
-
   DEMOS = ROOT.join('lib/rouge/demos')
-
-  def reload_source!
-    Rouge.reload!
-  end
 
   def query_string
     env['rack.request.query_string']
@@ -66,8 +62,6 @@ class VisualTestApp < Sinatra::Application
   end
 
   before do
-    reload_source!
-
     Rouge::Lexer.enable_debug!
     Rouge::Formatter.enable_escape! if params[:escape]
 
@@ -91,7 +85,6 @@ class VisualTestApp < Sinatra::Application
     template = params[:juxtaposed] ? :lexer_juxtaposed : :lexer
     erb template
   end
-
 
   get '/' do
     @samples = DEMOS.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }

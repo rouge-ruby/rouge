@@ -146,6 +146,13 @@ module Rouge
         next Prolog if matches?(/\A\w+(\(\w+\,\s*\w+\))*\./)
         next OpenEdge
       end
+
+      disambiguate '*.s', '*.S' do
+        next GnuAsm if matches?(/\s*\.(global|extern|type|text)/)
+        next GnuAsm if matches?(/%(r|e)(ax|bx|cx|dx|si|di|bp|sp)/)
+
+        ArmAsm
+      end
     end
   end
 end

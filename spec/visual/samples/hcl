@@ -84,3 +84,17 @@ resource "aws_subnet" "main" {
 resource "aws_cloudfront_distribution" "s3_distribution" {
   aliases = ["www.${replace(var.domain_name, "/\\.$/", "")}"]
 }
+
+## operators
+locals {
+  op01 = var.var1 != var.var2 ? var.var1 : var.var2
+  op02 = var.var1 == var.var2 ? var.var1 : var.var2
+  op05 = var.var1 < var.var2 ? var.var1 : var.var2
+  op06 = var.var1 <= var.var2 ? var.var1 : var.var2
+  op07 = var.var1 > var.var2 ? var.var1 : var.var2
+  op08 = var.var1 >= var.var2 ? var.var1 : var.var2
+  op09 = var.var1 && var.var2 ? var.var1 : var.var2
+  op10 = var.var1 || var.var2 ? var.var1 : var.var2
+  op11 = !var.var1 ? var.var1 : var.var2
+  op12 = 1 + 2 * 3 / 4 % 5 - 6
+}

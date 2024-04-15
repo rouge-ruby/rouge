@@ -1,4 +1,9 @@
+-- Unicode operators
+1 ≥ -a -- Unicode minus
+∀ x: array ¦ ∃ y: array ¦ x = y
+⟳ x: array ¦ print (x.out) ⟲
 
+-- Real class example
 note
 	description: "[
 		Sequences of values, all of the same type or of a conforming one,

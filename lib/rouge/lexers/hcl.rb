@@ -26,6 +26,7 @@ module Rouge
       state :primitives do
         rule %r/[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?([kKmMgG]b?)?/, Num::Float
         rule %r/[0-9]+([kKmMgG]b?)?/, Num::Integer
+        rule %r/[-+*\/!%&<>|=:?]/, Operator
 
         rule %r/"/, Str::Double, :dq
         rule %r/'/, Str::Single, :sq

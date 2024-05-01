@@ -7,7 +7,7 @@ module Rouge
       title "Mathematica"
       desc "Wolfram Mathematica, the world's definitive system for modern technical computing."
       tag 'mathematica'
-      aliases 'wl'
+      aliases 'wl', 'wolfram'
       filenames '*.m', '*.wl'
       mimetypes 'application/vnd.wolfram.mathematica.package', 'application/vnd.wolfram.wl'
 

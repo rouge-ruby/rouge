@@ -11,7 +11,7 @@ module Rouge
       mimetypes 'text/x-p4'
 
       def self.keywords
-        @keywords ||= Set.new %w(
+        @keywords ||= %w(
           abstract action actions apply const default default_action else enum
           entries extern exit if in inout key list out package packet_in
           packet_out return size select switch this transition tuple type
@@ -20,21 +20,21 @@ module Rouge
       end
 
       def self.operators
-        @operators ||= Set.new %w(
+        @operators ||= %w(
           \|\+\| \|-\| \? \& \&\&\& < > << >> \* \| ~ \^ - \+ /
           \# \. = != <= >= \+\+
         )
       end
 
       def self.decls
-        @decls ||= Set.new %w(
+        @decls ||= %w(
           control header header_union parser state struct table
           value_set
         )
       end
 
       def self.builtins
-        @builtins ||= Set.new %w(
+        @builtins ||= %w(
           bit bool error extract int isValid setValid setInvalid match_kind
           string varbit verify void
         )

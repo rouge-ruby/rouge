@@ -61,6 +61,10 @@ module Rouge
       style Generic::Deleted, :fg => :base08
       style Generic::Heading, :fg => :base0D, :bg => :base00, :bold => true
 
+      style Generic::Emph, :italic => true
+      style Generic::EmphStrong, :italic => true, :bold => true
+      style Generic::Strong, :bold => true
+
       style Keyword, :fg => :base0E
       style Keyword::Constant,
             Keyword::Type, :fg => :base09

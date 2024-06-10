@@ -30,7 +30,9 @@ module Rouge
       style Literal::String::Regex,           :fg => :orange
       style Generic::Output,                  :fg => :dark_grey
       style Generic::Prompt,                  :fg => :emperor
-      style Generic::Strong,                  :bold => false
+      style Generic::Emph,                    :italic => true
+      style Generic::EmphStrong,              :italic => true, :bold => true
+      style Generic::Strong,                  :bold => true
       style Generic::Subheading,              :fg => :light_grey
       style Name::Builtin,                    :fg => :orange
       style Comment::Multiline,
@@ -42,8 +44,7 @@ module Rouge
             Generic::Error,
             Generic::Traceback,               :fg => :carmine
       style Generic::Deleted,
-            Generic::Inserted,
-            Generic::Emph,                    :fg => :dark
+            Generic::Inserted,                :fg => :dark
       style Keyword::Constant,
             Keyword::Declaration,
             Keyword::Reserved,

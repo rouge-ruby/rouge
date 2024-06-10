@@ -33,6 +33,7 @@ module Rouge
       style Generic::Heading,            :bold => true
       style Generic::Subheading,         :bold => true
       style Generic::Emph,               :italic => true
+      style Generic::EmphStrong,         :italic => true, :bold => true
       style Generic::Strong,             :bold => true
       style Generic::Prompt,             :bold => true
 

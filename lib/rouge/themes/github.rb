@@ -111,6 +111,7 @@ module Rouge
             Name::Tag,                  :fg => :tag
 
       style Generic::Inserted,          :fg => :fgInserted, :bg => :bgInserted
+      style Generic::EmphStrong, :italic => true, :bold => true
 
       style Keyword::Constant,
             Literal,

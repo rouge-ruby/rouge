@@ -828,6 +828,8 @@ HTML `<em>` tag; double `*`'s or `_`'s will be wrapped with an HTML
 
     **double asterisks**
 
+    ***triple asterisks***
+
     __double underscores__
 
 will produce:
@@ -1097,3 +1099,9 @@ has (parens too)](example.com), and text after it.
 
 [this is not a
 link]
+
+*single asterisks*
+_single underscores_
+**double asterisks**
+***triple asterisks***
+__double underscores__

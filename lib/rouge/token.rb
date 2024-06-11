@@ -172,15 +172,16 @@ module Rouge
       token :Generic,      'g' do
         token :Deleted,    'gd'
         token :Emph,       'ge'
+        token :EmphStrong, 'ges'
         token :Error,      'gr'
         token :Heading,    'gh'
         token :Inserted,   'gi'
+        token :Lineno,     'gl'
         token :Output,     'go'
         token :Prompt,     'gp'
         token :Strong,     'gs'
         token :Subheading, 'gu'
         token :Traceback,  'gt'
-        token :Lineno,     'gl'
       end
 
       # convenience

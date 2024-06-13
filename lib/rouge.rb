@@ -57,6 +57,7 @@ end
 
 Rouge.load_file 'version'
 Rouge.load_file 'util'
+Rouge.load_file 'string_scanner'
 Rouge.load_file 'text_analyzer'
 Rouge.load_file 'token'
 

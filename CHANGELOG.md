@@ -4,6 +4,36 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.3.0: 2024-06-14
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.2.1...v4.3.0)
+
+_ General
+  - Align the base-16 default dark colour palette ([#2040](https://github.com/rouge-ruby/rouge/pull/2040/) by Tan Le)
+- Brainfuck Lexer
+  - Add "bf" as an alias for brainfuck ([#2038](https://github.com/rouge-ruby/rouge/pull/2038/) by Boris Verkhovskiy)
+- Eiffel Lexer
+  - Add some unicode operators in Eiffel ([#2048](https://github.com/rouge-ruby/rouge/pull/2048/) by Ilgiz Mustafin)
+- HCL Lexer
+  - Add Operator support to the HCL Lexer ([#2047](https://github.com/rouge-ruby/rouge/pull/2047/) by Simon Heather)
+- IecST Lexer (**NEW**)
+  - Add lexer for IEC 61131-3 Structured Text ([#2027](https://github.com/rouge-ruby/rouge/pull/2027/) by Martin Waitz)
+- JavaScript & TypeScript Lexer
+  - Adding type operators satisfies and as ([#2014](https://github.com/rouge-ruby/rouge/pull/2014/) by Evan R)
+- Markdown Lexer
+  - Support bold and italics at the same time ([#2053](https://github.com/rouge-ruby/rouge/pull/2053/) by Tan Le)
+- Mathematica Lexer
+  - Add "wolfram" as an alias for Mathematica ([#2042](https://github.com/rouge-ruby/rouge/pull/2042/) by Boris Verkhovskiy)
+- Objective-C Lexer
+  - Add "objective-c" as an alias for Objective-C ([#2037](https://github.com/rouge-ruby/rouge/pull/2037/) by Boris Verkhovskiy)
+- Ruby & Crystal Lexer
+  - Add Ruby and Crystal unicode samples ([#2036](https://github.com/rouge-ruby/rouge/pull/2036/) by Tan Le)
+  - Fix non-ascii characters in names in Crystal and Ruby ([#1894](https://github.com/rouge-ruby/rouge/pull/1894/) by Kolesár András)
+- TCL Lexer
+  - Fix comment highlight in TCL lexer ([#2041](https://github.com/rouge-ruby/rouge/pull/2041/) by Tan Le)
+- TOML Lexer
+  - toml: support all date formats ([#2033](https://github.com/rouge-ruby/rouge/pull/2033/) by Martin Tournoij)
+
 ## version 4.2.1: 2024-03-18
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.2.0...v4.2.1)

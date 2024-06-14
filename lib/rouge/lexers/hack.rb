@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'php.rb'
+    require_relative 'php'
 
     class Hack < PHP
       title 'Hack'

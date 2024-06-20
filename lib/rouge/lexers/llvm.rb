@@ -54,11 +54,12 @@ module Rouge
         rule %r/i[1-9]\d*/, Keyword::Type
 
         rule %r/\w+/ do |m|
-          if self.class.types.include? m[0]
+          sym = m[0]
+
+          if self.class.types.include?(sym)
             token Keyword::Type
-          elsif self.class.instructions.include? m[0]
-            token Keyword
-          elsif self.class.keywords.include? m[0]
+          elsif self.class.instructions.include?(sym) ||
+                self.class.keywords.include?(sym)
             token Keyword
           else
             token Error

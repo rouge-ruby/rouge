@@ -49,13 +49,11 @@ module Rouge
           name = m[0]
           keywords = self.class.keywords
 
-          if keywords[:command].include? name
+          if keywords[:command].include?(name)
             token Keyword
-          elsif keywords[:function].include? name
-            token Name::Builtin
-          elsif keywords[:option].include? name
-            token Name::Builtin
-          elsif keywords[:auto].include? name
+          elsif keywords[:function].include?(name) ||
+                keywords[:option].include?(name) ||
+                keywords[:auto].include?(name)
             token Name::Builtin
           else
             token Text

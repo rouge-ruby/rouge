@@ -146,24 +146,21 @@ module Rouge
           name      = name_only + m[3]
           number    = (m[3] == "") ? nil : m[3].to_i
           if m[1] == "#"
-            if self.class.template.include? name
+            if self.class.template.include?(name)
               token Keyword::Type
             else
               token Error
             end
-          elsif self.class.typed.include?(name_only) && number != nil
-            token Keyword::Type
-          elsif self.class.type.include? name
-            token Keyword::Type
-          elsif self.class.keywords.include? name
+          elsif self.class.keywords.include?(name)
             token Keyword
-          elsif self.class.functions.include? name
+          elsif self.class.functions.include?(name)
             token Name::Function
-          elsif ["integer", "unsigned"].include?(name_only) && (1..8).cover?(number)
+          elsif (self.class.typed.include?(name_only) && number != nil) ||
+                self.class.type.include?(name) ||
+                (["integer", "unsigned"].include?(name_only) && (1..8).cover?(number)) ||
+                (name_only == "real" && [4, 8].include?(number))
             token Keyword::Type
-          elsif name_only == "real" && [4, 8].include?(number)
-            token Keyword::Type
-          elsif ["true", "false"].include? name
+          elsif ["true", "false"].include?(name)
             token Keyword::Constant
           else
             token Name::Other

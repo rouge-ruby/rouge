@@ -1,0 +1,7 @@
+A = [1 2 3; 4 5 6]
+
+// Display each row of A
+for i = 1:size(A, "r")
+    disp("Row " + string(i))
+    disp(A(i, :))
+end

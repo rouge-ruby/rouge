@@ -75,7 +75,7 @@ Pretty sweet. Let's unpack this:
 Just replace the `bundle` command with `rake`:
 
 ```bash
-docker run -t -v $PWD:/app -v /tmp/vendor:/vendor -w /app -e BUNDLE_PATH=/vendor ruby rake
+docker run -t -v $PWD:/app -v /tmp/vendor:/vendor -w /app -e BUNDLE_PATH=/vendor ruby bundle exec rake
 ```
 
 ### Running Rack

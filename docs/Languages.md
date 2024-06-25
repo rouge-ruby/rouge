@@ -144,6 +144,7 @@
 - OCL (`ocl`)
 - OpenEdge ABL (`openedge`)
 - OpenType Feature File (`opentype_feature_file`)
+- P4 (`p4`)
 - Pascal (`pascal`)
 - Perl (`perl`)
 - PHP (`php`)

@@ -35,14 +35,13 @@ module Rouge
       # PDF Delimiters (ISO 32000-2:2020, Table 1 and Table 2).
       # Ruby whitespace "\s" is /[ \t\r\n\f\v]/ which does not include NUL (ISO 32000-2:2020, Table 1).
       # PDF also support 2 character EOL sequences.
-      # NOT USED: delimiter = %r/\(\)<>\[\]\/%\s/
 
       state :root do
         # Start-of-file header comment is special (comment is up to EOL)
-        rule %r/^%(P|F)DF-\d\.\d.*$/, Comment::Special
+        rule %r/^%(P|F)DF-\d\.\d.*$/, Comment::Preproc
 
         # End-of-file marker comment is special (comment is up to EOL)
-        rule %r/^%%EOF.*$/, Comment::Special
+        rule %r/^%%EOF.*$/, Comment::Preproc
 
         # PDF only has single-line comments: from "%" to EOL
         rule %r/%.*$/, Comment::Single
@@ -62,7 +61,7 @@ module Rouge
 
         # PDF Name objects - can be empty (i.e., nothing after "/").
         # No special processing required for 2-digit hex codes that start with "#".
-        rule %r/\/[^\(\)<>\[\]\/%\s]*/, Name::Entity
+        rule %r/\/[^\(\)<>\[\]\/%\s]*/, Name::Other
 
         # PDF objects and stream (no checking of object ID)
         # Note that object number and generation numbers do not have sign.
@@ -70,7 +69,7 @@ module Rouge
         rule %r/(endstream|endobj|stream)/, Keyword::Declaration
 
         # PDF conventional file layout keywords
-        rule %r/(startxref|trailer|xref)/, Keyword::Constant
+        rule %r/(startxref|trailer|xref)/, Keyword::Declaration
 
         # PDF cross reference section entries (20 bytes including EOL).
         # Explicit single SPACE separators.
@@ -78,7 +77,7 @@ module Rouge
 
         # PDF Indirect reference (lax, allows zero as the object number).
         # Requires terminating delimiter lookahead to disambiguate from "RG" operator
-        rule %r/\d+\s\d+\sR(?=[\(\)<>\[\]\/%\s])/, Keyword::Variable
+        rule %r/\d+\s\d+\sR(?=[\(\)<>\[\]\/%\s])/, Name::Decorator
 
         # PDF Real object
         rule %r/(\-|\+)?([0-9]+\.?|[0-9]*\.[0-9]+|[0-9]+\.[0-9]*)/, Num::Float
@@ -97,8 +96,10 @@ module Rouge
 
       # PDF literal string. See ISO 32000-2:2020 clause 7.3.4.2 and Table 3
       state :stringliteral do
-        rule %r/\(/, Str, :stringliteral     # recursive for internal balanced(!) literal strings
+        rule %r/\(/, Str, :stringliteral             # recursive for internal bracketed strings
+        rule %r/\\\(/, Str::Escape, :stringliteral   # recursive for internal escaped bracketed strings
         rule %r/\)/, Str, :pop!
+        rule %r/\\\)/, Str::Escape, :pop!
         rule %r/\\([0-7]{3}|n|r|t|b|f|\\)/, Str::Escape
         rule %r/[^\(\)\\]+/, Str
       end

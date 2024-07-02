@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-#
 # PDF = Portable Document Format page description language
 # As defined by ISO 32000-2:2020 including resolved errata from https://pdf-issues.pdfa.org/
 #
@@ -20,7 +19,7 @@ module Rouge
     class Pdf < RegexLexer
       title "PDF"
       desc "PDF - Portable Document Format (ISO 32000)"
-      tag "pdf"
+      tag "Pdf"
       aliases "fdf", "cos"
       filenames "*.pdf", "*.fdf"
       mimetypes "application/pdf", "application/fdf" # IANA registered media types

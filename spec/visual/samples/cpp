@@ -265,3 +265,15 @@ switch (foo) {
     case Foo::kBar:
         break;
 }
+
+// modules
+module;
+import std;
+export module Shapes;
+
+export struct Shape {
+  Shape(int x, int y) : m_x(x), m_y(y) {};
+
+  int m_x;
+  int m_y;
+}

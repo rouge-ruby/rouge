@@ -4,6 +4,57 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.3.0: 2024-06-14
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.2.1...v4.3.0)
+
+_ General
+  - Align the base-16 default dark colour palette ([#2040](https://github.com/rouge-ruby/rouge/pull/2040/) by Tan Le)
+- Brainfuck Lexer
+  - Add "bf" as an alias for brainfuck ([#2038](https://github.com/rouge-ruby/rouge/pull/2038/) by Boris Verkhovskiy)
+- Eiffel Lexer
+  - Add some unicode operators in Eiffel ([#2048](https://github.com/rouge-ruby/rouge/pull/2048/) by Ilgiz Mustafin)
+- HCL Lexer
+  - Add Operator support to the HCL Lexer ([#2047](https://github.com/rouge-ruby/rouge/pull/2047/) by Simon Heather)
+- IecST Lexer (**NEW**)
+  - Add lexer for IEC 61131-3 Structured Text ([#2027](https://github.com/rouge-ruby/rouge/pull/2027/) by Martin Waitz)
+- JavaScript & TypeScript Lexer
+  - Adding type operators satisfies and as ([#2014](https://github.com/rouge-ruby/rouge/pull/2014/) by Evan R)
+- Markdown Lexer
+  - Support bold and italics at the same time ([#2053](https://github.com/rouge-ruby/rouge/pull/2053/) by Tan Le)
+- Mathematica Lexer
+  - Add "wolfram" as an alias for Mathematica ([#2042](https://github.com/rouge-ruby/rouge/pull/2042/) by Boris Verkhovskiy)
+- Objective-C Lexer
+  - Add "objective-c" as an alias for Objective-C ([#2037](https://github.com/rouge-ruby/rouge/pull/2037/) by Boris Verkhovskiy)
+- Ruby & Crystal Lexer
+  - Add Ruby and Crystal unicode samples ([#2036](https://github.com/rouge-ruby/rouge/pull/2036/) by Tan Le)
+  - Fix non-ascii characters in names in Crystal and Ruby ([#1894](https://github.com/rouge-ruby/rouge/pull/1894/) by Kolesár András)
+- TCL Lexer
+  - Fix comment highlight in TCL lexer ([#2041](https://github.com/rouge-ruby/rouge/pull/2041/) by Tan Le)
+- TOML Lexer
+  - toml: support all date formats ([#2033](https://github.com/rouge-ruby/rouge/pull/2033/) by Martin Tournoij)
+
+## version 4.2.1: 2024-03-18
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.2.0...v4.2.1)
+
+- General
+  - Fix private class unused variable warnings ([#2031](https://github.com/rouge-ruby/rouge/pull/2031/) by Ryan Davis)
+  - Fix duplicate range regexp warnings ([#2030](https://github.com/rouge-ruby/rouge/pull/2030/) by Ryan Davis)
+  - Turn on warnings via VERBOSE env ([#2019](https://github.com/rouge-ruby/rouge/pull/2019/) by Ryan Davis)
+  - Development related cleanup ([#2018](https://github.com/rouge-ruby/rouge/pull/2018/) by Ryan Davis)
+  - Move several gems in Gemfile into development group to avoid eager require ([#2015](https://github.com/rouge-ruby/rouge/pull/2015/) by Ryan Davis)
+  - Add Ruby 3.3.0 to CI check ([#2016](https://github.com/rouge-ruby/rouge/pull/2016/) by Tan Le)
+- CPP Lexer
+  - added support for c++20 module keywords 'module' and 'import' and sample. ([#2023](https://github.com/rouge-ruby/rouge/pull/2023/) by Rasmus20B)
+- NASM Lexer
+  - Support primitive directives in NASM lexer ([#1974](https://github.com/rouge-ruby/rouge/pull/1974/) by Tan Le)
+- NGINX Lexer
+  - Highlight float number in nginx lexer ([#2017](https://github.com/rouge-ruby/rouge/pull/2017/) by Tan Le)
+- TOML Lexer
+  - toml: only highlight inf and nan in value, highlight keys starting with digit ([#2003](https://github.com/rouge-ruby/rouge/pull/2003/) by Martin Tournoij)
+  - toml: don't highlight keys with inline tables as tables ([#2002](https://github.com/rouge-ruby/rouge/pull/2002/) by Martin Tournoij)
+
 ## version 4.2.0: 2023-10-25
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.1.3...v4.2.0)

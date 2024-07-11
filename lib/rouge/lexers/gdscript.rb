@@ -12,7 +12,7 @@ module Rouge
       mimetypes 'text/x-gdscript', 'application/x-gdscript'
 
       def self.keywords
-        @keywords = %w(
+        @keywords ||= %w(
           and in not or as breakpoint class class_name extends is func setget
           signal tool const enum export onready static var break continue
           if elif else for pass return match while remote master puppet
@@ -22,13 +22,13 @@ module Rouge
 
       # Reserved for future implementation
       def self.keywords_reserved
-        @keywords_reserved = %w(
+        @keywords_reserved ||= %w(
           do switch case
         ).join('|')
       end
 
       def self.builtins
-        builtins = %w(
+        @builtins ||= %w(
           Color8 ColorN abs acos asin assert atan atan2 bytes2var ceil char
           clamp convert cos cosh db2linear decimals dectime deg2rad dict2inst
           ease exp floor fmod fposmod funcref hash inst2dict instance_from_id
@@ -41,7 +41,7 @@ module Rouge
       end
 
       def self.builtins_type
-        @builtins_type = %w(
+        @builtins_type ||= %w(
           bool int float String Vector2 Rect2 Transform2D Vector3 AABB
           Plane Quat Basis Transform Color RID Object NodePath Dictionary
           Array PoolByteArray PoolIntArray PoolRealArray PoolStringArray

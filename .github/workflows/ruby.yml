@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ["2.7", "3.0", "3.1", "3.2"]
+        ruby-version: ["2.7", "3.0", "3.1", "3.2", "3.3"]
 
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +54,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2"
+          ruby-version: "3.3"
           bundler-cache: true
       - name: Profile Memory Allocation
         run: bundle exec rake check:memory

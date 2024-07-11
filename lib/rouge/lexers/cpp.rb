@@ -27,7 +27,7 @@ module Rouge
           delete dynamic_cast explicit export friend
           mutable namespace new operator private protected public
           reinterpret_cast requires restrict size_of static_cast this throw throws
-          typeid typename using virtual final override
+          typeid typename using virtual final override import module
 
           alignas alignof decltype noexcept static_assert
           thread_local try

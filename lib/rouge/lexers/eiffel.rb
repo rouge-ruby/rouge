@@ -44,7 +44,7 @@ module Rouge
         rule %r/(?:\d(?:_*\d)*)?\.(?:(?:\d(?:_*\d)*)?[eE][+-]?)?\d(?:_*\d)*|\d(?:_*\d)*\.?/, Num::Float
 
         rule %r/:=|<<|>>|\(\||\|\)|->|\.|[{}\[\];(),:?]/, Punctuation::Indicator
-        rule %r/\\\\|\|\.\.\||\.\.|\/[~\/]?|[><\/]=?|[-+*^=~]/, Operator
+        rule %r/\\\\|\|\.\.\||\.\.|\/[~\/]?|[><\/]=?|[-+*^=~≤≥−∀∃¦⟳⟲]/, Operator
 
         rule %r/[A-Z][\dA-Z_]*/, Name::Class
         rule %r/[A-Za-z][\dA-Za-z_]*/, Name

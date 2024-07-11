@@ -10,21 +10,21 @@ gem 'minitest', '>= 5.0'
 gem 'minitest-power_assert'
 gem 'power_assert', '~> 2.0'
 
-gem 'rubocop', '~> 1.0', '<= 1.11'
-gem 'rubocop-performance'
-
 # don't try to install redcarpet under jruby
 gem 'redcarpet', platforms: :ruby
 
 # Profiling
 gem 'memory_profiler', require: false
 
-# Needed for a Rake task
-gem 'git'
-gem 'yard'
-
 group :development do
   gem 'pry'
+
+  # Needed for a Rake task
+  gem 'git'
+  gem 'yard'
+
+  gem 'rubocop', '~> 1.0', '<= 1.11'
+  gem 'rubocop-performance'
 
   # docs
   gem 'github-markup'

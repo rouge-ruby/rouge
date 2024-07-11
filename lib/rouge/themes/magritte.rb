@@ -41,6 +41,7 @@ module Rouge
       style Generic::Deleted,             :fg => :cherry
       style Generic::Inserted,            :fg => :forest
       style Generic::Emph,                :italic => true
+      style Generic::EmphStrong,          :italic => true, :bold => true
       style Generic::Strong,              :bold => true
       style Generic::Traceback,           :fg => :black, :bg => :lavender
       style Keyword::Constant,            :fg => :forest, :bold => true

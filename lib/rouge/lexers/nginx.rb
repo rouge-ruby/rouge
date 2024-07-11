@@ -53,6 +53,7 @@ module Rouge
         # mimetype
         rule %r([a-z-]+/[a-z-]+)i, Name::Class
 
+        rule %r/\d+\.\d+/, Num::Float
         rule %r/[0-9]+[kmg]?\b/i, Num::Integer
         rule %r/(~)(\s*)([^\s{]+)/ do
           groups Punctuation, Text, Str::Regex

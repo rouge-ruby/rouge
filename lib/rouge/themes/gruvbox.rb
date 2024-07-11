@@ -140,6 +140,10 @@ module Rouge
       style Generic::Deleted, :fg => :red, :bg => :bg0
       style Generic::Heading, :fg => :green, :bold => true
 
+      style Generic::Emph, :italic => true
+      style Generic::EmphStrong, :italic => true, :bold => true
+      style Generic::Strong, :bold => true
+
       style Keyword, :fg => :red
       style Keyword::Constant, :fg => :purple
       style Keyword::Type, :fg => :yellow
@@ -164,7 +168,6 @@ module Rouge
       style Literal::Number, :fg => :purple
 
       style Literal::String::Symbol, :fg => :blue
-
     end
   end
 end

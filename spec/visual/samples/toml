@@ -6,7 +6,13 @@ title = "TOML Example"
 name = "Tom Preston-Werner"
 organization = "GitHub"
 bio = "GitHub Cofounder & CEO\nLikes tater tots and beer."
-dob = 1979-05-27T07:32:00Z # First class dates? Why not?
+# First class dates? Why not?
+dob = [
+	1979-05-27T07:32:00Z,
+	1979-05-27 07:32:00
+	1979-05-27,
+	07:32:00,
+]
 
 [database]
 server = "192.168.1.1"
@@ -166,3 +172,22 @@ emptyTableAreAllowed = true
 name = "Nail"
 sku = 284758393
 color = "gray"
+
+[special-floats]
+inflection = "don't highlight"
+influxdb = 1
+
+nan = nan
+
+inf-1 = inf
+inf-2 = [inf, +nan, -nan, +inf, -inf]
+inf-3 = {inf=inf, nan=nan}
+
+str-inf-1 = 'inf'
+str-inf-2 = "inf"
+str-inf-3 = """ inf nan
+	inf nan
+"""
+str-inf-4 = """ inf nan
+	inf nan
+"""

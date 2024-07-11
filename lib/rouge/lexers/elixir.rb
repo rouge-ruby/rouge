@@ -135,7 +135,7 @@ module Rouge
               rule %r/[\\#]/, toktype
             end
 
-            uniq_chars = "#{open}#{close}".squeeze
+            uniq_chars = [open, close].uniq.join
             rule %r/[^##{uniq_chars}\\]+/m, toktype
           end
         end

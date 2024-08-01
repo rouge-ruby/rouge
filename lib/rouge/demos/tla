@@ -1,0 +1,13 @@
+--- MODULE asdf ---
+
+EXTENDS TLC, Integers
+
+CONSTANTS N
+VARIABLES k
+
+Init == k = 0
+Next == IF k = N THEN k' = 0 ELSE k' = k + 1
+
+Spec == Init /\\ [][Next]_k
+
+===================

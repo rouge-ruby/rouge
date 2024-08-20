@@ -22,15 +22,15 @@ module Rouge
       end
 
       state :content do
-        rule %r(.*?$), Literal, :root
+        rule %r/.*$\r?\n?/, Literal, :root
       end
 
       state :comment do
-        rule %r(.*?$), Comment, :root
+        rule %r/.*$\r?\n?/, Comment, :root
       end
 
       state :type do
-        rule %r(.*?$), Name::Class, :root
+        rule %r/.*$\r?\n?/, Name::Class, :root
       end
 
       state :whitespace do

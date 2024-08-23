@@ -33,6 +33,7 @@ module Rouge
       style Generic::Deleted, :fg => :red
       style Generic::Inserted, :fg => :green
       style Generic::Emph, :italic => true
+      style Generic::EmphStrong, :italic => true, :bold => true
       style Generic::Strong, :bold => true
       style Generic::Traceback,
             Generic::Lineno, :fg => :white, :bg => :purple

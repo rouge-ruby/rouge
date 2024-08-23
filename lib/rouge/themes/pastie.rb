@@ -22,6 +22,7 @@ module Rouge
       style Generic::Inserted,         :fg => '#000000', :bg => '#ddffdd'
 
       style Generic::Emph,             :italic => true
+      style Generic::EmphStrong,       :italic => true, :bold => true
       style Generic::Strong,           :bold => true
 
       style Generic::Lineno,           :fg => '#888888'

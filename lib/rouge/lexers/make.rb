@@ -40,6 +40,10 @@ module Rouge
           groups Keyword, Text, Name::Variable
         end
 
+        rule %r/(else\b)([\t ]+)((?:ifn?def|ifn?eq)\b)([\t ]+)([^#\n]+)/ do
+          groups Keyword, Text, Keyword, Text, Name::Variable
+        end
+
         rule %r/(?:else|endif|endef|endfor)[\t ]*(?=[#\n])/, Keyword
 
         rule %r/(export)([\t ]+)(?=[\w\${}()\t -]+\n)/ do

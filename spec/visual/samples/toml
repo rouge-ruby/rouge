@@ -135,6 +135,7 @@ nested_arrays_of_ints = [ [ 1, 2 ], [3, 4, 5] ]
 nested_mixed_array = [ [ 1, 2 ], ["a", "b", "c"] ]
 string_array = [ "all", 'strings', """are the same""", '''type''' ]
 link-libraries = ["mylib::mylib"]
+points = [ { x = 1, y = 2 }, { x = 3, y = 4 } ]
 
 # Dotted keys
 physical.color = "orange"

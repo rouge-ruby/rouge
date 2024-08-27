@@ -1,0 +1,30 @@
+include "bar.yar"
+
+import "pe"
+import "cuckoo"
+
+// Single line comment
+
+/**
+ * Block comment
+ */
+
+private rule dummy_rule : tag {
+    meta:
+        string_meta = "string meta"
+        int_meta = 42
+        negative_int_meta = -42
+        hex_int_meta = 0x42
+        true_meta = true
+        false_meta = false
+    strings:
+        $plain_string = "This is plain\x20string \t\n\r" ascii wide fullword nocase xor
+        $hex_string = { 00 01 0? ?? [5-] ( AA | BB ) CC }
+        $regexp = /this is regexp/si ascii wide
+    condition:
+        filesize >= 1MB and
+        uint16(0x0) == 0x5A4D and
+        cuckoo.sync.mutex(/abc/) and
+        pe.sections[0].name contains "text" and
+        for any of them : ( $ in (entrypoint + 100 .. entrypoint + 200) )
+}

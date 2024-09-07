@@ -7,11 +7,10 @@ module Rouge
       title 'COBOL'
       desc 'COBOL (Common Business-Oriented Language) programming language'
       tag 'cobol'
-      filenames '*.cob', '*.cbl', '*.cobol', '*.cpy'
+      filenames '*.cob', '*.cbl'
       mimetypes 'text/x-cobol'
 
       # List of COBOL keywords
-      # TODO Change the order of the keywords below, so cases like END-PERFORM are matched before END is matched
       KEYWORDS = %w[
         ACCEPT ACCESS ACTIVE-CLASS ADD ADDRESS ADVANCING AFTER ALIGNED ALL ALLOCATE ALPHABET ALPHABETIC ALPHABETIC-LOWER
         ALPHABETIC-UPPER ALPHANUMERIC ALPHANUMERIC-EDITED ALSO ALTER ALTERNATE AND ANY ANYCASE APPLY ARE AREA AREAS
@@ -99,11 +98,14 @@ module Rouge
       end
 
       # TODO double check string escaping in COBOL
+      # TODO Fix that a string opened by " can't be closed by '
       state :string do
         rule %r/[^'"\\]+/, Str
         rule %r/\\./, Str::Escape
         rule %r/["']/, Str, :pop!
       end
+
+      # TODO match lines with the asterisk in position 7, preceded by spaces or the word Debug
     end
   end
 end

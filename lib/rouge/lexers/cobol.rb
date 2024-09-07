@@ -11,6 +11,8 @@ module Rouge
       mimetypes 'text/x-cobol'
 
       # List of COBOL keywords
+      # TODO expand with all keywords listed here: https://www.ibm.com/docs/en/cobol-zos/6.3?topic=appendixes-reserved-words
+      # TODO but move some that are more operator than keyword to the operators list lower in the file
       KEYWORDS = %w[
         ACCEPT ADD ALTER APPLY CALL CANCEL CLOSE COMPUTE CONTINUE
         DECLARE DELETE DISPLAY DIVIDE ELSE END-ADD END-CALL END-COMPUTE
@@ -24,11 +26,11 @@ module Rouge
 
       # COBOL divisions and sections
       DIVISIONS = %w[
-        IDENTIFICATION ENVIRONMENT DATA PROCEDURE
+        IDENTIFICATION ENVIRONMENT DATA PROCEDURE DIVISION
       ]
 
       SECTIONS = %w[
-        CONFIGURATION INPUT-OUTPUT FILE WORKING-STORAGE LOCAL-STORAGE LINKAGE
+        CONFIGURATION INPUT-OUTPUT FILE WORKING-STORAGE LOCAL-STORAGE LINKAGE SECTION
       ]
 
       # Define tokens for the lexer
@@ -62,6 +64,7 @@ module Rouge
         rule %r/[+-\/\*=&><]/, Operator
       end
 
+      # TODO double check string escaping in COBOL
       state :string do
         rule %r/[^'"\\]+/, Str
         rule %r/\\./, Str::Escape

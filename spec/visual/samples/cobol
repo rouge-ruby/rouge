@@ -4,185 +4,95 @@
       *-----------------------
        IDENTIFICATION DIVISION.
       *-----------------------
-       PROGRAM-ID.    CBLDB23
-       AUTHOR.        Otto B. Relational
-
+       PROGRAM-ID.    CBL0001
+       AUTHOR.        Otto B. Fun.
+      *--------------------
        ENVIRONMENT DIVISION.
       *--------------------
-       CONFIGURATION SECTION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT REPOUT
-                  ASSIGN TO UT-S-REPORT.
-           SELECT CARDIN
-                  ASSIGN TO DA-S-CARDIN.
-
+           SELECT PRINT-LINE ASSIGN TO PRTLINE.
+           SELECT ACCT-REC   ASSIGN TO ACCTREC.
+      *SELECT clause creates an internal file name
+      *ASSIGN clause creates a name for an external data source,
+      *which is associated with the JCL DDNAME used by the z/OS
+      *e.g. ACCTREC is linked in JCL file CBL0001J to &SYSUID..DATA
+      *where &SYSUID. stands for Your z/OS user id
+      *e.g. if Your user id is Z54321,
+      *the data set used for ACCTREC is Z54321.DATA
+      *-------------
        DATA DIVISION.
       *-------------
        FILE SECTION.
-       FD  REPOUT
-               RECORD CONTAINS 120 CHARACTERS
-               LABEL RECORDS ARE OMITTED
-               RECORDING MODE F
-               DATA RECORD IS REPREC.
-       01  REPREC.
+       FD  PRINT-LINE RECORDING MODE F.
+       01  PRINT-REC.
            05  ACCT-NO-O      PIC X(8).
-           05  ACCT-LASTN-O   PIC X(20).
-           05  ACCT-FIRSTN-O  PIC X(15).
-           05  ACCT-ADDR3-O   PIC X(15).
-       FD      CARDIN
-               RECORD CONTAINS 80 CHARACTERS
-               BLOCK CONTAINS 0 RECORDS
-               RECORDING MODE F
-               LABEL RECORDS ARE OMITTED.
-       01  CARDREC                    PIC X(80).
-
+           05  ACCT-LIMIT-O   PIC $$,$$$,$$9.99.
+           05  ACCT-BALANCE-O PIC $$,$$$,$$9.99.
+      * PIC $$,$$$,$$9.99 -- Alternative for PIC on chapter 7.2.3,
+      * using $ to allow values of different amounts of digits
+      * and .99 instead of v99 to allow period display on output
+           05  LAST-NAME-O    PIC X(20).
+           05  FIRST-NAME-O   PIC X(15).
+           05  COMMENTS-O     PIC X(50).
+      * since the level 05 is higher than level 01,
+      * all variables belong to PRINT-REC (see chapter 7.3.3)
+      *
+       FD  ACCT-REC RECORDING MODE F.
+       01  ACCT-FIELDS.
+           05  ACCT-NO            PIC X(8).
+           05  ACCT-LIMIT         PIC S9(7)V99 COMP-3.
+           05  ACCT-BALANCE       PIC S9(7)V99 COMP-3.
+      * PIC S9(7)v99 -- seven-digit plus a sign digit value
+      * COMP-3 -- packed BCD (binary coded decimal) representation
+           05  LAST-NAME          PIC X(20).
+           05  FIRST-NAME         PIC X(15).
+           05  CLIENT-ADDR.
+               10  STREET-ADDR    PIC X(25).
+               10  CITY-COUNTY    PIC X(20).
+               10  USA-STATE      PIC X(15).
+           05  RESERVED           PIC X(7).
+           05  COMMENTS           PIC X(50).
+      *
        WORKING-STORAGE SECTION.
-      *****************************************************
-      * STRUCTURE FOR INPUT                               *
-      *****************************************************
-       01  IOAREA.
-               02  STATE              PIC X(25).
-               02  FILLER             PIC X(55).
-       77  INPUT-SWITCH        PIC X          VALUE  'Y'.
-               88  NOMORE-INPUT               VALUE  'N'.
-      *****************************************************
-      * SQL INCLUDE FOR SQLCA                             *
-      *****************************************************
-                EXEC SQL INCLUDE SQLCA  END-EXEC.
-      *****************************************************
-      * DECLARATIONS FOR SQL ERROR HANDLING               *
-      *****************************************************
-       01 ERROR-MESSAGE.
-           02 ERROR-LEN      PIC S9(4)  COMP VALUE +1320.
-           02 ERROR-TEXT     PIC X(132) OCCURS 10 TIMES
-                                        INDEXED BY ERROR-INDEX.
-       77 ERROR-TEXT-LEN     PIC S9(9)  COMP VALUE +132.
-       77 ERROR-TEXT-HBOUND  PIC S9(9)  COMP VALUE +10.
-      * USER DEFINED ERROR MESSAGE
-       01 UD-ERROR-MESSAGE   PIC X(80)  VALUE SPACES.
-      *****************************************************
-      * SQL DECLARATION FOR VIEW ACCOUNTS                 *
-      *****************************************************
-                EXEC SQL DECLARE Z#####T TABLE
-                        (ACCTNO     CHAR(8)  NOT NULL,
-                         LIMIT      DECIMAL(9,2)     ,
-                         BALANCE    DECIMAL(9,2)     ,
-                         SURNAME    CHAR(20) NOT NULL,
-                         FIRSTN     CHAR(15) NOT NULL,
-                         ADDRESS1   CHAR(25) NOT NULL,
-                         ADDRESS2   CHAR(20) NOT NULL,
-                         ADDRESS3   CHAR(15) NOT NULL,
-                         RESERVED   CHAR(7)  NOT NULL,
-                         COMMENTS   CHAR(50) NOT NULL)
-                         END-EXEC.
-      *****************************************************
-      * SQL CURSORS                                       *
-      *****************************************************
-                EXEC SQL DECLARE CUR1  CURSOR FOR
-                         SELECT * FROM Z#####T
-                     END-EXEC.
-                EXEC SQL DECLARE CUR2  CURSOR FOR
-                         SELECT *
-                         FROM   Z#####T
-                         WHERE  ADDRESS3 = :STATE
-                      END-EXEC.
-      *****************************************************
-      * STRUCTURE FOR CUSTOMER RECORD                     *
-      *****************************************************
-       01 CUSTOMER-RECORD.
-          02 ACCT-NO            PIC X(8).
-          02 ACCT-LIMIT         PIC S9(7)V99 COMP-3.
-          02 ACCT-BALANCE       PIC S9(7)V99 COMP-3.
-          02 ACCT-LASTN         PIC X(20).
-          02 ACCT-FIRSTN        PIC X(15).
-          02 ACCT-ADDR1         PIC X(25).
-          02 ACCT-ADDR2         PIC X(20).
-          02 ACCT-ADDR3         PIC X(15).
-          02 ACCT-RSRVD         PIC X(7).
-          02 ACCT-COMMENT       PIC X(50).
-
+       01 FLAGS.
+         05 LASTREC           PIC X VALUE SPACE.
+      *------------------
        PROCEDURE DIVISION.
       *------------------
-       PROG-START.
-                OPEN INPUT  CARDIN.
-                OPEN OUTPUT REPOUT.
-                READ CARDIN RECORD INTO IOAREA
-                   AT END SET NOMORE-INPUT TO TRUE.
-                PERFORM PROCESS-INPUT
-                   UNTIL NOMORE-INPUT.
-       PROG-END.
-                CLOSE CARDIN
-                      REPOUT.
-                GOBACK.
-       PROCESS-INPUT.
-                IF STATE = '*'
-                   PERFORM GET-ALL
-                ELSE
-                   PERFORM GET-SPECIFIC.
-                READ CARDIN RECORD INTO IOAREA
-                   AT END SET NOMORE-INPUT TO TRUE.
-       GET-ALL.
-                EXEC SQL OPEN CUR1  END-EXEC.
-                IF SQLCODE NOT = 0 THEN
-                   MOVE 'OPEN CUR1' TO UD-ERROR-MESSAGE
-                   PERFORM SQL-ERROR-HANDLING
-                END-IF
-                EXEC SQL FETCH CUR1  INTO :CUSTOMER-RECORD END-EXEC.
-                PERFORM PRINT-ALL
-                     UNTIL SQLCODE IS NOT EQUAL TO ZERO.
-                IF SQLCODE NOT = 100 THEN
-                   MOVE 'FETCH CUR1' TO UD-ERROR-MESSAGE
-                   PERFORM SQL-ERROR-HANDLING
-                END-IF
-                EXEC SQL CLOSE CUR1  END-EXEC.
-                IF SQLCODE NOT = 0 THEN
-                   MOVE 'CLOSE CUR1' TO UD-ERROR-MESSAGE
-                   PERFORM SQL-ERROR-HANDLING
-                END-IF
-                .
-       PRINT-ALL.
-                PERFORM PRINT-A-LINE.
-                EXEC SQL FETCH CUR1  INTO :CUSTOMER-RECORD END-EXEC.
-       GET-SPECIFIC.
-                EXEC SQL OPEN  CUR2  END-EXEC.
-                IF SQLCODE NOT = 0 THEN
-                   MOVE 'OPEN CUR2' TO UD-ERROR-MESSAGE
-                   PERFORM SQL-ERROR-HANDLING
-                END-IF
-                EXEC SQL FETCH CUR2  INTO :CUSTOMER-RECORD END-EXEC.
-                PERFORM PRINT-SPECIFIC
-                     UNTIL SQLCODE IS NOT EQUAL TO ZERO.
-                IF SQLCODE NOT = 100 THEN
-                   MOVE 'FETCH CUR2' TO UD-ERROR-MESSAGE
-                   PERFORM SQL-ERROR-HANDLING
-                END-IF
-                EXEC SQL CLOSE CUR2  END-EXEC.
-                IF SQLCODE NOT = 0 THEN
-                   MOVE 'CLOSE CUR2' TO UD-ERROR-MESSAGE
-                   PERFORM SQL-ERROR-HANDLING
-                END-IF
-                .
-       PRINT-SPECIFIC.
-                PERFORM PRINT-A-LINE.
-                EXEC SQL FETCH CUR2  INTO :CUSTOMER-RECORD END-EXEC.
-       PRINT-A-LINE.
-                MOVE  ACCT-NO      TO  ACCT-NO-O.
-                MOVE  ACCT-LASTN   TO  ACCT-LASTN-O.
-                MOVE  ACCT-FIRSTN  TO  ACCT-FIRSTN-O.
-                MOVE  ACCT-ADDR3   TO  ACCT-ADDR3-O.
-                WRITE REPREC AFTER ADVANCING 2 LINES.
-
-       SQL-ERROR-HANDLING.
-           DISPLAY 'ERROR AT ' FUNCTION TRIM(UD-ERROR-MESSAGE, TRAILING)
-           CALL 'DSNTIAR' USING SQLCA ERROR-MESSAGE ERROR-TEXT-LEN.
-           PERFORM VARYING ERROR-INDEX FROM 1 BY 1
-                     UNTIL ERROR-INDEX > ERROR-TEXT-HBOUND
-                        OR ERROR-TEXT(ERROR-INDEX) = SPACES
-              DISPLAY FUNCTION TRIM(ERROR-TEXT(ERROR-INDEX), TRAILING)
+       OPEN-FILES.
+           OPEN INPUT  ACCT-REC.
+           OPEN OUTPUT PRINT-LINE.
+      *
+       READ-NEXT-RECORD.
+           PERFORM READ-RECORD
+      *     The previous statement is needed before entering the loop.
+      *     Both the loop condition LASTREC = 'Y'
+      *     and the call to WRITE-RECORD depend on READ-RECORD having
+      *     been executed before.
+      *     The loop starts at the next line with PERFORM UNTIL
+           PERFORM UNTIL LASTREC = 'Y'
+               PERFORM WRITE-RECORD
+               PERFORM READ-RECORD
            END-PERFORM
-           IF SQLCODE NOT = 0 AND SQLCODE NOT = 100
-              MOVE 1000 TO RETURN-CODE
-              STOP RUN
-           END-IF
            .
+      *
+       CLOSE-STOP.
+           CLOSE ACCT-REC.
+           CLOSE PRINT-LINE.
+           GOBACK.
+      *
+       READ-RECORD.
+           READ ACCT-REC
+               AT END MOVE 'Y' TO LASTREC
+           END-READ.
+      *
+       WRITE-RECORD.
+           MOVE ACCT-NO      TO  ACCT-NO-O.
+           MOVE ACCT-LIMIT   TO  ACCT-LIMIT-O.
+           MOVE ACCT-BALANCE TO  ACCT-BALANCE-O.
+           MOVE LAST-NAME    TO  LAST-NAME-O.
+           MOVE FIRST-NAME   TO  FIRST-NAME-O.
+           MOVE COMMENTS     TO  COMMENTS-O.
+           WRITE PRINT-REC.
+      *

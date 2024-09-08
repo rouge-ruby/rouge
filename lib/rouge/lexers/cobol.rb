@@ -94,6 +94,9 @@ module Rouge
 
         # Whitespace remaining
         rule %r/\s/, Text::Whitespace
+
+        # Anything else remaining
+        rule %r/.+/, Text
       end
 
       # TODO double check string escaping in COBOL

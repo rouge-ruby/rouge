@@ -32,12 +32,12 @@ module Rouge
         HEADING HIGH-VALUE HIGH-VALUES I-O-CONTROL I-O ID IF IN INDEX INDEXED INDICATE INHERITS INITIAL
         INITIALIZE INITIATE INPUT INSERT INSPECT INSTALLATION INTERFACE INTERFACE-ID INTO INVALID INVOKE
         IS JAVA JNIENVPTR JSON JSON-CODE JSON-STATUS JUST JUSTIFIED KANJI KEY LABEL LAST LEADING LEFT LENGTH LESS LIMIT
-        LIMITS LINAGE LINAGE-COUNTER LINE LINE-COUNTER LINES LOCALE LOCK LOW-VALUE LOW-VALUES
+        LIMITS LINAGE-COUNTER LINAGE LINE-COUNTER LINES LINE LOCALE LOCK LOW-VALUE LOW-VALUES
         MEMORY MERGE MESSAGE METHOD METHOD-ID MINUS MODE MODULES MORE-LABELS MOVE MULTIPLE MULTIPLY NATIONAL
         NATIONAL-EDITED NATIVE NEGATIVE NESTED NEXT NO NOT NULL NULLS NUMBER NUMERIC NUMERIC-EDITED OBJECT
         OBJECT-COMPUTER OBJECT-REFERENCE OCCURS OF OFF OMITTED ON OPEN OPTIONAL OPTIONS OR ORDER ORGANIZATION
         OTHER OUTPUT OVERFLOW OVERRIDE PACKED-DECIMAL PADDING PAGE PAGE-COUNTER PASSWORD PERFORM PF PH PIC PICTURE
-        PLUS POINTER POINTER- POINTER-31 POINTER-32 POINTER-64 POSITION POSITIVE PRESENT PRINTING
+        PLUS POINTER- POINTER-31 POINTER-32 POINTER-64 POINTER POSITION POSITIVE PRESENT PRINTING
         PROCEDURE-POINTER PROCEDURES PROCEED PROCESSING PROGRAM-ID PROGRAM-POINTER PROGRAM PROPERTY PROTOTYPE
         PURGE QUEUE QUOTE QUOTES RAISE RAISING RANDOM RD READ READY RECEIVE RECORD RECORDING RECORDS RECURSIVE REDEFINES
         REEL REFERENCE REFERENCES RELATIVE RELEASE RELOAD REMAINDER REMOVAL RENAMES REPLACE REPLACING REPORT REPORTING
@@ -63,17 +63,13 @@ module Rouge
         CONFIGURATION INPUT-OUTPUT FILE WORKING-STORAGE LOCAL-STORAGE LINKAGE SECTION
       ]
 
-      # Define tokens for the lexer
-      state :whitespace do
-        rule %r/\s+/m, Text::Whitespace
-      end
-
       state :root do
-        mixin :whitespace
+        # First detect the comments
+        rule %r/^(      \*).*|^(^Debug \*).*/, Comment::Special
 
         # Strings
-        rule %r/"/, Str::Double, :string
-        rule %r/'/, Str::Single, :string
+        rule %r/"/, Str::Double, :string_double
+        rule %r/'/, Str::Single, :string_single
 
         # Keywords and divisions
         rule %r/\b(#{DIVISIONS.join('|')})\b/i, Keyword::Declaration
@@ -95,17 +91,32 @@ module Rouge
 
         # Operators
         rule %r/[+\-*\/><=]/, Operator
+
+        # Whitespace remaining
+        rule %r/\s/, Text::Whitespace
       end
 
       # TODO double check string escaping in COBOL
       # TODO Fix that a string opened by " can't be closed by '
-      state :string do
-        rule %r/[^'"\\]+/, Str
+      # TODO Fix that strings can't be multi-line
+
+      # Handle strings where " opens a string and must be closed by "
+      state :string_double do
+        # Ensure strings can't span multiple lines
+        rule %r/[^"\\\n]+/, Str
         rule %r/\\./, Str::Escape
-        rule %r/["']/, Str, :pop!
+        rule %r/"/, Str::Double, :pop!
+        rule %r/\n/, Error   # Flag an error if a string goes to the next line
       end
 
-      # TODO match lines with the asterisk in position 7, preceded by spaces or the word Debug
+      # Handle strings where ' opens a string and must be closed by '
+      state :string_single do
+        # Ensure strings can't span multiple lines
+        rule %r/[^'\\\n]+/, Str
+        rule %r/\\./, Str::Escape
+        rule %r/'/, Str::Single, :pop!
+        rule %r/\n/, Error   # Flag an error if a string goes to the next line
+      end
     end
   end
 end

@@ -73,9 +73,9 @@ module Rouge
         rule %r/'/, Str::Single, :string_single
 
         # Keywords and divisions
-        rule %r/\b(#{DIVISIONS.join('|')})\b/i, Keyword::Declaration
-        rule %r/\b(#{SECTIONS.join('|')})\b/i, Keyword::Namespace
-        rule %r/\b(#{KEYWORDS.join('|')})\b/i, Keyword
+        rule %r/(?<![\w-])\b(#{DIVISIONS.join('|')})\b(?![\w-])/i, Keyword::Declaration
+        rule %r/(?<![\w-])\b(#{SECTIONS.join('|')})\b(?![\w-])/i, Keyword::Namespace
+        rule %r/(?<![\w-])\b(#{KEYWORDS.join('|')})\b(?![\w-])/i, Keyword
 
         # Numbers
         rule %r/[-+]?\b\d+(\.\d+)?\b/, Num
@@ -85,7 +85,6 @@ module Rouge
 
         # Punctuation
         rule %r/[.,;:()]/, Punctuation
-        # TODO Find out what's going wrong in the "+ (2 **" line
 
         # Comments
         rule %r/\*>.*/, Comment::Single

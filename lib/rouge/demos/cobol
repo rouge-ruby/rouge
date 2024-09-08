@@ -1,0 +1,6 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. hello-world.
+      *This program will be replaced by a more attractive demo
+       PROCEDURE DIVISION.
+           DISPLAY "Hello, world!"
+           .

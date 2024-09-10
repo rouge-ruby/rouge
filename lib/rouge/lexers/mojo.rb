@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-require('rouge/lexers/python')
-
 module Rouge
   module Lexers
+    load_lexer 'python.rb'
+    
     class Mojo < Python
       title "Mojo"
       desc "The Mojo programming language (modular.com)"

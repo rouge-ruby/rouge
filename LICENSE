@@ -143,6 +143,7 @@ Other contributors, listed alphabetically, are:
 * Jesper Noehr -- HTML formatter "anchorlinenos"
 * Mike Nolta -- Julia lexer
 * Jonas Obrist -- BBCode lexer
+* Antonio Ognio -- Gleam lexer
 * David Oliva -- Rebol lexer
 * Jon Parise -- Protocol buffers lexer
 * Ronny Pfannschmidt -- BBCode lexer

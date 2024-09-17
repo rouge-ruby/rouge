@@ -10,6 +10,7 @@ describe Rouge::Lexers::INI do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.ini'
       assert_guess :filename => '.gitconfig'
+      assert_guess :filename => 'setup.cfg', :source => "[metadata]\nname = my_package"
     end
 
     it 'guesses by mimetype' do

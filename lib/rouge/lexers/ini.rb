@@ -8,9 +8,8 @@ module Rouge
       desc 'the INI configuration format'
       tag 'ini'
 
-      # TODO add more here
-      filenames '*.ini', '*.INI', '*.gitconfig', '*.cfg'
-      mimetypes 'text/x-ini'
+      filenames '*.ini', '*.INI', '*.gitconfig', '*.cfg', '.editorconfig', '*.inf'
+      mimetypes 'text/x-ini', 'text/inf'
 
       identifier = /[\w\-.]+/
 

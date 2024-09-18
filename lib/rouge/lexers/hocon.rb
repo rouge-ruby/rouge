@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'json.rb'
+    require_relative 'json'
 
     class HOCON < JSON
       title 'HOCON'

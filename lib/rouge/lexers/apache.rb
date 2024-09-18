@@ -11,21 +11,7 @@ module Rouge
       mimetypes 'text/x-httpd-conf', 'text/x-apache-conf'
       filenames '.htaccess', 'httpd.conf'
 
-      # self-modifying method that loads the keywords file
-      def self.directives
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        directives
-      end
-
-      def self.sections
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        sections
-      end
-
-      def self.values
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        values
-      end
+      require_relative "apache/keywords"
 
       def name_for_token(token, tktype)
         if self.class.sections.include? token

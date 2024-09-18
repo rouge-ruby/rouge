@@ -48,10 +48,7 @@ module Rouge
         )
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'php/keywords.rb')
-        builtins
-      end
+      require_relative "php/keywords"
 
       def builtins
         return [] unless @funcnamehighlighting

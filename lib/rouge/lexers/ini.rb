@@ -9,7 +9,7 @@ module Rouge
       tag 'ini'
 
       # TODO add more here
-      filenames '*.ini', '*.INI', '*.gitconfig'
+      filenames '*.ini', '*.INI', '*.gitconfig', '*.cfg'
       mimetypes 'text/x-ini'
 
       identifier = /[\w\-.]+/

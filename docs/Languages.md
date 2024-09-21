@@ -128,6 +128,7 @@
 - MATLAB (`matlab`)
 - Meson (`meson`)
 - MiniZinc (`minizinc`)
+- Mojo (`mojo`)
 - MoonScript (`moonscript`)
 - Mosel (`mosel`)
 - MessageTrans (`msgtrans`)

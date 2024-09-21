@@ -4,11 +4,26 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.4.0: 2024-09-16
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.3.0...v4.4.0)
+
+- Docker Lexer
+  - Detect Containerfiles as Dockerfiles ([#2059](https://github.com/rouge-ruby/rouge/pull/2059/) by Andrew Hills)
+- Make Lexer
+  - Handle `else if` statement in makefile ([#2063](https://github.com/rouge-ruby/rouge/pull/2063/) by Tan Le)
+- Mojo Lexer (**NEW**)
+  - Add Mojo to list of supported language ([#2072](https://github.com/rouge-ruby/rouge/pull/2072/) by Tan Le)
+  - Fix NameError in the Mojo lexer in Ruby 2.7 ([#2068](https://github.com/rouge-ruby/rouge/pull/2068/) by Bart Broere)
+  - Mojo language highlighting support. ([#2050](https://github.com/rouge-ruby/rouge/pull/2050/) by ivellapillil)
+- P4 Lexer (**NEW**)
+  - Add lexer for P4 ([#2049](https://github.com/rouge-ruby/rouge/pull/2049/) by Ryan Goodfellow)
+
 ## version 4.3.0: 2024-06-14
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.2.1...v4.3.0)
 
-_ General
+- General
   - Align the base-16 default dark colour palette ([#2040](https://github.com/rouge-ruby/rouge/pull/2040/) by Tan Le)
 - Brainfuck Lexer
   - Add "bf" as an alias for brainfuck ([#2038](https://github.com/rouge-ruby/rouge/pull/2038/) by Boris Verkhovskiy)

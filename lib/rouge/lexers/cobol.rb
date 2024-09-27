@@ -14,21 +14,21 @@ module Rouge
 
         # COBOL divisions and sections
         def divisions
-          @divisions ||= %w[
+          @divisions ||= %w(
           IDENTIFICATION ENVIRONMENT DATA PROCEDURE DIVISION
-        ]
+        )
         end
 
         def sections
-          @sections ||= %w[
+          @sections ||= %w(
           CONFIGURATION INPUT-OUTPUT FILE WORKING-STORAGE LOCAL-STORAGE LINKAGE SECTION
-        ]
+        )
         end
 
         def keywords
           # List of COBOL keywords
           # sourced from https://www.ibm.com/docs/en/cobol-zos/6.4?topic=appendixes-reserved-words
-          @keywords ||= %w[
+          @keywords ||= Set.new(%w(
             ACCEPT ACCESS ACTIVE-CLASS ADD ADDRESS ADVANCING AFTER ALIGNED ALL ALLOCATE ALPHABET ALPHABETIC ALPHABETIC-LOWER
             ALPHABETIC-UPPER ALPHANUMERIC ALPHANUMERIC-EDITED ALSO ALTER ALTERNATE AND ANYCASE ANY APPLY ARE AREA AREAS
             ASCENDING ASSIGN AT AUTHOR B-AND B-NOT B-OR B-XOR BASED BASIS BEFORE BEGINNING BINARY BINARY-CHAR BINARY-DOUBLE
@@ -69,7 +69,7 @@ module Rouge
             VAL-STATUS VALID VALIDATE VALIDATE-STATUS VALUE VALUES VARYING VOLATILE WHEN WHEN-COMPILED WITH WORDS
             WRITE WRITE-ONLY XML-CODE XML-EVENT XML-INFORMATION XML-NAMESPACE XML-NAMESPACE-PREFIX
             XML-NNAMESPACE XML-NNAMESPACE-PREFIX XML-NTEXT XML-SCHEMA XML-TEXT XML ZERO ZEROES ZEROS
-          ]
+          ))
         end
 
         # First detect the comments

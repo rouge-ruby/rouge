@@ -56,13 +56,17 @@ module Rouge
       ]
 
       # COBOL divisions and sections
-      DIVISIONS = %w[
-        IDENTIFICATION ENVIRONMENT DATA PROCEDURE DIVISION
-      ]
+      def divisions
+        @divisions ||= %w(
+          IDENTIFICATION ENVIRONMENT DATA PROCEDURE DIVISION
+        )
+      end
 
-      SECTIONS = %w[
-        CONFIGURATION INPUT-OUTPUT FILE WORKING-STORAGE LOCAL-STORAGE LINKAGE SECTION
-      ]
+      def sections
+        @sections ||= %w(
+          CONFIGURATION INPUT-OUTPUT FILE WORKING-STORAGE LOCAL-STORAGE LINKAGE SECTION
+        )
+      end
 
       state :root do
         # First detect the comments

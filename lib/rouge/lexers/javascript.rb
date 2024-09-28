@@ -190,8 +190,8 @@ module Rouge
 
         rule %r/function(?=(\(.*\)))/, Keyword::Declaration # For anonymous functions
 
-        rule %r/(#{id})[ \t]*(?=(\(.*\)))/m do |m|
-          if self.class.keywords.include? m[1]
+        rule %r/(#?#{id})[ \t]*(?=(\(.*\)))/m do |m|
+          if self.class.keywords.include?(m[1])
             # "if" in "if (...)" or "switch" in "switch (...)" are recognized as keywords.
             token Keyword
           else
@@ -201,7 +201,7 @@ module Rouge
 
         rule %r/[{}]/, Punctuation, :statement
 
-        rule id do |m|
+        rule %r/#?#{id}/ do |m|
           if self.class.keywords.include? m[0]
             token Keyword
             push :expr_start

@@ -166,6 +166,19 @@ module Rouge
             puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
           end
+        when Array
+          proc do |stream|
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
+            @output_stream.call(tok, stream[0])
+            for i_next_state in next_state do
+              next @stack.pop if i_next_state == :pop!
+              next @stack.push(@stack.last) if i_next_state == :push
+
+              state = @states[i_next_state] || self.class.get_state(i_next_state)
+              puts "    pushing :#{state.name}" if @debug
+              @stack.push(state)
+            end
+          end
         else
           raise "invalid next state: #{next_state.inspect}"
         end

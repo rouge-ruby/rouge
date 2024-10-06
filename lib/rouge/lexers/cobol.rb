@@ -10,7 +10,7 @@ module Rouge
       filenames '*.cob', '*.cbl'
       mimetypes 'text/x-cobol'
 
-      identifier = /\p{Upper}[\p{Upper}\p{Digit}-]*/
+      identifier = /\p{Alpha}[\p{Alnum}-]*/
 
       def self.divisions
         @divisions ||= %w(
@@ -81,11 +81,11 @@ module Rouge
 
         # Keywords and divisions
         rule  %r/(?<![\w-])#{identifier}(?![\w-])/i do |m|
-          if self.class.divisions.include?(m[0])
+          if self.class.divisions.include?(m[0].upcase)
             token Keyword::Declaration
-          elsif self.class.sections.include?(m[0])
+          elsif self.class.sections.include?(m[0].upcase)
             token Keyword::Namespace
-          elsif self.class.keywords.include?(m[0])
+          elsif self.class.keywords.include?(m[0].upcase)
             token Keyword
           else
             token Name

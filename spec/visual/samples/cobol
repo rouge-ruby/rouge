@@ -101,3 +101,10 @@
            MOVE COMMENTS     TO  COMMENTS-O.
            WRITE PRINT-REC.
       *
+
+      *> GnuCOBOL Hello World example
+      id division.
+      program-id. hello.
+      procedure division.
+      display "Hello, world!" end-display
+      goback.

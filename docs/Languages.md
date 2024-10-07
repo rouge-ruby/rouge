@@ -177,6 +177,7 @@
 - Sass (`sass`)
 - Scala (`scala`)
 - Scheme (`scheme`)
+- Scilab (`scilab`)
 - SCSS (`scss`)
 - sed (`sed`)
 - shell (`shell`)

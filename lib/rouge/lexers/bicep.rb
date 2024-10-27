@@ -9,8 +9,8 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          resource module param var output targetScope dependsOn
-          existing for in if else true false null
+          as assert existing extends extension false for from func if import in metadata module 
+          none null output param provider resource targetScope test true type using var void with
         )
       end
 
@@ -20,18 +20,19 @@ module Rouge
 
       def self.functions
         @functions ||= Set.new %w(
-          any array concat contains empty first intersection items last length min max range skip 
-          take union dateTimeAdd utcNow deployment environment loadFileAsBase64 loadTextContent int 
-          json extensionResourceId getSecret list listKeys listKeyValue listAccountSas listSecrets 
-          pickZones reference resourceId subscriptionResourceId tenantResourceId managementGroup 
-          resourceGroup subscription tenant base64 base64ToJson base64ToString dataUri dataUriToString 
-          endsWith format guid indexOf lastIndexOf length newGuid padLeft replace split startsWith 
-          string substring toLower toUpper trim uniqueString uri uriComponent uriComponentToString
-          toObject
+          array base64 base64ToJson base64ToString bool cidrHost cidrSubnet concat contains dataUri
+          dataUriToString dateTimeAdd dateTimeFromEpoch dateTimeToEpoch deployer deployment empty endsWith
+          environment extensionResourceId fail filter first flatten format getSecret groupBy guid indexOf int
+          intersection items join json last lastIndexOf length list* listAccountSas listKeys listSecrets loadFileAsBase64
+          loadJsonContent loadTextContent loadYamlContent managementGroup managementGroupResourceId map mapValue max min
+          newGuid objectKeys padLeft parseCidr pickZones range readEnvironmentVariable reduce reference replace resourceGroup
+          resourceId shallowMerge skip sort split startsWith string subscription subscriptionResourceId substring take tenant
+          tenantResourceId toLogicalZone toLower toObject toPhysicalZone toUpper trim union uniqueString uri uriComponent
+          uriComponentToString utcNow
         )
       end
 
-      operators = %w(+ - * / % < <= > >= == != && || !)
+      operators = %w(+ - * / % < <= > >= == != =~ !~ && || ! ?? ... .?)
 
       punctuation = %w(( ) { } [ ] , : ; = .)
 

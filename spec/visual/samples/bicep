@@ -28,5 +28,5 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: 'rg-${suffix}'
   location: location
 
-  tags: toObject(someTags, tag => tag.key, tag => tag.value)
+  tags: toObject(someTags, tag => tag.key, tag => tag.?value)
 }

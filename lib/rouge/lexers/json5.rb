@@ -65,7 +65,7 @@ module Rouge
         rule %r/[+-]?\b(?:Infinity|NaN)\b/, Keyword::Constant
         rule %r/[+-]?0x\h+/i, Num::Hex
 
-        rule %r/[+-]?\d*\.\d*(?:e[+-]?\d+)?/i, Num::Float
+        rule %r/[+-.]?[0-9]+[.]?[0-9]?([eE][-]?[0-9]+)?/i, Num::Float
         rule %r/[+-]?\d+e[+-]?\d+/, Num::Integer
         rule %r/[+-]?(?:0|[1-9]\d*)(?:e[+-]?\d+)?/i, Num::Integer
       end

@@ -4,6 +4,13 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.5.1: 2024-11-12
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.0...v4.5.1)
+
+- JSON5 Lexer
+  - Fix prerequisite dependency in JSON5 ([#2084](https://github.com/rouge-ruby/rouge/pull/2084/) by Tan Le)
+
 ## version 4.5.0: 2024-11-11
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.4.0...v4.5.0)

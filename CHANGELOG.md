@@ -4,6 +4,28 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.5.0: 2024-11-11
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.4.0...v4.5.0)
+
+- General
+  - Support multiple states when parsing rules ([#2078](https://github.com/rouge-ruby/rouge/pull/2078/) by Tan Le)
+- COBOL Lexer (**NEW**)
+  - Add a lexer, tests and examples for COBOL ([#2067](https://github.com/rouge-ruby/rouge/pull/2067/) by Bart Broere)
+- Groovy Lexer
+  - Recognize Nextflow files as Groovy files ([#2081](https://github.com/rouge-ruby/rouge/pull/2081/) by Bond-009)
+- INI Lexer
+  - Add more extensions and mimetypes for INI lexer ([#2075](https://github.com/rouge-ruby/rouge/pull/2075/) by Tan Le)
+  - Default .cfg highlight to INI lexer ([#2074](https://github.com/rouge-ruby/rouge/pull/2074/) by Tan Le)
+- Javascript Lexer
+  - Support private property identifier in JS lexer ([#2076](https://github.com/rouge-ruby/rouge/pull/2076/) by Tan Le)
+- JSON5 Lexer (**NEW**)
+  - implement a json5 lexer ([#1561](https://github.com/rouge-ruby/rouge/pull/1561/) by Jeanine Adkisson)
+- Ruby Lexer
+  - Recognize Thor files as Ruby files ([#2080](https://github.com/rouge-ruby/rouge/pull/2080/) by Vitaly Slobodin)
+- Terraform Lexer
+  - Support special escape sequences in Terraform ([#2073](https://github.com/rouge-ruby/rouge/pull/2073/) by Tan Le)
+
 ## version 4.4.0: 2024-09-16
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.3.0...v4.4.0)

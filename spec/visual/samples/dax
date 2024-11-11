@@ -1,0 +1,81 @@
+// Measure
+Measure1 =
+VAR currentState = SELECTEDVALUE( States [State])
+VAR currentDate = SELECTEDVALUE( 'Date'[Date] ) + 1
+VAR dataInScope =
+    CALCULATETABLE(
+        DISTINCT( data )
+        ,data[DateTime] < currentDate
+        ,REMOVEFILTERS( 'Date'[Date] )
+        ,REMOVEFILTERS( 'States'[State] )
+    )
+RETURN
+COUNTROWS(
+    CALCULATETABLE(
+        FILTER(
+            INDEX( 1, dataInScope, ORDERBY( data[DateTime], DESC), , PARTITIONBY( data[TestID] ))
+            ,[State] = currentState
+        )
+        ,REMOVEFILTERS( 'Calendar'[Date] )
+    )
+)
+
+// Query
+EVALUATE
+var OuterDateFilter = FILTER( 'Date', 'Date'[Fiscal Month] in {"FY20-May", "FY20-Jul", "FY21-Jul"} || 'Date'[Fiscal Year] in {"FY18", "FY19"} || 'Date'[Fiscal Week] in {"FY17-W01", "FY17-W02", "FY17-W03"} ) 
+var Dates = 
+    ADDCOLUMNS(
+        SUMMARIZE(
+            OuterDateFilter
+            ,'Date'[Fiscal Year]
+            ,'Date'[Fiscal Quarter]
+            ,'Date'[Fiscal Month]
+            ,'Date'[Fiscal Week]
+            ,'Date'[Date]
+        )
+        ,"@Islands" // Calcualtes the difference between the date and the row number of the table, if there is a date gap then we start a new island
+        ,DATEDIFF( 
+            RANKX ( OuterDateFilter, 'Date'[Date], , 1 )
+            ,'Date'[Date]
+            , DAY 
+        )
+    )
+var Islands =	
+	SUMMARIZE(
+		Dates
+		, [@Islands]
+		, "IslandString"
+			, var MinDate =             MIN ( 'Date'[Date] )
+			  var MaxDate =             MAX ( 'Date'[Date] )
+			  var MinFiscalYear =       CALCULATE( MIN( 'Date'[Date] ), ALLEXCEPT( 'Date', 'Date'[Fiscal Year] ))
+			  var MaxFiscalYear =       CALCULATE( MAX( 'Date'[Date] ), ALLEXCEPT( 'Date', 'Date'[Fiscal Year] ))
+			  var MinFiscalQuarter =    CALCULATE( MIN( 'Date'[Date] ), ALLEXCEPT( 'Date', 'Date'[Fiscal Quarter] ))
+			  var MaxFiscalQuarter =    CALCULATE( MAX( 'Date'[Date] ), ALLEXCEPT( 'Date', 'Date'[Fiscal Quarter] ))
+			  var MinFiscalMonth =      CALCULATE( MIN( 'Date'[Date] ), ALLEXCEPT( 'Date', 'Date'[Fiscal Month] ))
+			  var MaxFiscalMonth =      CALCULATE( MAX( 'Date'[Date] ), ALLEXCEPT( 'Date', 'Date'[Fiscal Month] ))
+			  var MinFiscalWeek =       CALCULATE( MIN( 'Date'[Date] ), ALLEXCEPT( 'Date', 'Date'[Fiscal Week] ))
+			  var MaxFiscalWeek =       CALCULATE( MAX( 'Date'[Date] ), ALLEXCEPT( 'Date', 'Date'[Fiscal Week] ))
+			  var GranularityCheck = 
+				SWITCH(
+					true
+					, MinDate = MinFiscalYear && MaxDate = MaxFiscalYear
+						, CALCULATE( MAX( 'Date'[Fiscal Year] ), 'Date'[Date] = MinDate ) & "--" & CALCULATE( MAX( 'Date'[Fiscal Year] ), 'Date'[Date] = MaxDate )
+					, MinDate = MinFiscalQuarter && MaxDate = MaxFiscalQuarter
+						, CALCULATE( MAX( 'Date'[Fiscal Quarter] ), 'Date'[Date] = MinDate ) & "--" & CALCULATE( MAX( 'Date'[Fiscal Quarter] ), 'Date'[Date] = MaxDate )
+					, MinDate = MinFiscalMonth && MaxDate = MaxFiscalMonth
+						, CALCULATE( MAX( 'Date'[Fiscal Month] ), 'Date'[Date] = MinDate ) & "--" & CALCULATE( MAX( 'Date'[Fiscal Month] ), 'Date'[Date] = MaxDate )
+					, MinDate = MinFiscalWeek && MaxDate = MaxFiscalWeek
+						, CALCULATE( MAX( 'Date'[Fiscal Week] ), 'Date'[Date] = MinDate ) & "--" & CALCULATE( MAX( 'Date'[Fiscal Week] ), 'Date'[Date] = MaxDate )
+					,MinDate & "--" & MaxDate
+				)
+			  return
+			  GranularityCheck
+	)
+var ReturnString =
+	CONCATENATEX (
+		Islands
+		, [IslandString]
+		, UNICHAR ( 10 )
+		)
+return 
+	{ReturnString}

@@ -103,6 +103,7 @@
 - Jinja (`jinja`)
 - JSL (`jsl`)
 - JSON (`json`)
+- JSON5 (`json5`)
 - Json-doc (`json-doc`)
 - Jsonnet (`jsonnet`)
 - Jsp (`jsp`)

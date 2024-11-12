@@ -23,7 +23,7 @@ gem 'rouge'
 
 or
 
-```sh
+```bash
 gem install rouge
 ```
 
@@ -67,7 +67,7 @@ use and whether to enable line numbers or not. More information is available in
 Rouge ships with a `rougify` command which allows you to easily highlight files
 in your terminal:
 
-```sh
+```bash
 rougify foo.rb
 rougify style monokai.sublime > syntax.css
 ```
@@ -278,7 +278,7 @@ test file by setting the `TEST` environment variable to the path of the desired
 test. For example, to test just the _`ruby` lexer_ (located at path
 `spec/lexers/ruby_spec.rb`) simply run the following:
 
-```sh
+```bash
 TEST=spec/lexers/ruby_spec.rb rake
 ```
 

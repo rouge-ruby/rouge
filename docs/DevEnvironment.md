@@ -70,7 +70,7 @@ fork. Select your account and—boom!—you've just forked Rouge.
 The next thing to do is to get your fork onto your computer. Git makes this
 easy. In the directory you want to hold your repository, type:
 
-```shell
+```bash
 git clone git@github.com:<your_github_account_name>/rouge.git
 ```
 
@@ -87,7 +87,7 @@ of time developing Rouge, this is something you'll want to do.
 Fortunately, it's easy to add additional remote repositories. To add the
 official Rouge repository (with the name `upstream`), type the following:
 
-```shell
+```bash
 git remote add upstream https://github.com/rouge-ruby/rouge.git
 ```
 
@@ -116,7 +116,7 @@ If you already develop with Ruby, you no doubt have Bundler installed. You can
 check if you do by typing `bundle -v` at the command line. If you don't see the
 version number then you need to install Bundler. To do this, type:
 
-```shell
+```bash
 gem install bundler
 ```
 
@@ -128,7 +128,7 @@ that's complete, you're ready to rock.
 Rouge comes with a list of gems it depends upon called a _Gemfile_. Make sure
 you're at the top level of your clone of your repository and type:
 
-```shell
+```bash
 bundle config set path 'vendor'
 bundle install
 ```
@@ -149,7 +149,7 @@ type `bundle exec rake` rather than just `rake`.
 
 It's best to develop in a _branch_. You can create a branch by typing:
 
-```shell
+```bash
 git checkout -b <name_of_your_branch>
 ```
 

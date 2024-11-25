@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'c.rb'
+    require_relative 'c'
 
     class Slice < C
       tag 'slice'

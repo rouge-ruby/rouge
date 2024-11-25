@@ -2,7 +2,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'sql.rb'
+    require_relative 'sql'
 
     class HQL < SQL
       title "HQL"

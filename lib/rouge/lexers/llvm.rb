@@ -14,20 +14,7 @@ module Rouge
       string = /"[^"]*?"/
       identifier = /([-a-zA-Z$._][-a-zA-Z$._0-9]*|#{string})/
 
-      def self.keywords
-        Kernel::load File.join(Lexers::BASE_DIR, "llvm/keywords.rb")
-        keywords
-      end
-
-      def self.instructions
-        Kernel::load File.join(Lexers::BASE_DIR, "llvm/keywords.rb")
-        instructions
-      end
-
-      def self.types
-        Kernel::load File.join(Lexers::BASE_DIR, "llvm/keywords.rb")
-        types
-      end
+      require_relative "llvm/keywords"
 
       state :basic do
         rule %r/;.*?$/, Comment::Single

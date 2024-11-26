@@ -67,6 +67,7 @@ module Rouge
         mixin :esc_str
         rule %r/\,/, Punctuation
         rule %r/\[/, Punctuation, :array
+        rule %r/\{/, Punctuation, :inline
       end
 
       state :dq do

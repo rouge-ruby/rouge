@@ -42,6 +42,12 @@ module Rouge
       end
 
       state :root do
+        # groovy allows a file to start with a shebang
+        rule %r/\A#!(.*?)$/, Comment::Preproc
+        rule %r//, Text, :base
+      end
+
+      state :base do
         rule %r(^
           (\s*(?:\w[\w.\[\]]*\s+)+?) # return arguments
           (\w\w*) # method name

@@ -61,7 +61,7 @@ module Rouge
         rule %r/\n/, Text, :pop!
         rule %r/^\s*#.*\n/, Comment
         rule %r/\s*\\./m, Str::Escape
-        rule %r/(\s*(?:\S+|"[^"]+"))(=)/ do
+        rule %r/(\s*(?:\S+|"[^"]+"|'[^']+'))(=)/ do
           groups Name::Property, Punctuation
           push :value
         end

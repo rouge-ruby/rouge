@@ -85,6 +85,11 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   aliases = ["www.${replace(var.domain_name, "/\\.$/", "")}"]
 }
 
+## Object with single-quoted regular expression
+resource "aws_cloudfront_distribution" "s3_distribution_single_quote" {
+  aliases = ["www.${replace(var.domain_name, '/\\.$/', "")}"]
+}
+
 # Directives in string templates
 locals {
   policy = <<EOT

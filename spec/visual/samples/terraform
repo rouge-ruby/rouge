@@ -98,4 +98,7 @@ EOT
 locals {
   demo_dollars_1 = "$${local.demo}"
   demo_dollars_2 = "%%{for i in items}"
+
+  interpolation_with_slashes = "interpolated-${replace("string", "?", "-")}"
+  interpolation_with_slashes = "interpolated-${replace("string", "/", "-")}"
 }

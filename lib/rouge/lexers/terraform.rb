@@ -44,6 +44,7 @@ module Rouge
           token Punctuation
           push :interpolation
         end
+        rule %r/\$/, Str
       end
 
       state :dq do
@@ -74,24 +75,9 @@ module Rouge
         mixin :expression
       end
 
-      state :regexps do
-        rule %r/"\// do
-          token Str::Delimiter
-          goto :regexp_inner
-        end
-      end
-
-      state :regexp_inner do
-        rule %r/[^"\/\\]+/, Str::Regex
-        rule %r/\\./, Str::Regex
-        rule %r/\/"/, Str::Delimiter, :pop!
-        rule %r/["\/]/, Str::Regex
-      end
-
       id = /[$a-z_\-][a-z0-9_\-]*/io
 
       state :expression do
-        mixin :regexps
         mixin :primitives
         rule %r/\s+/, Text
 

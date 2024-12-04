@@ -12,7 +12,7 @@ module Rouge
       mimetypes 'text/x-dockerfile-config'
 
       KEYWORDS = %w(
-        FROM MAINTAINER CMD EXPOSE ENV ADD COPY ENTRYPOINT VOLUME USER WORKDIR ARG STOPSIGNAL HEALTHCHECK SHELL
+        FROM MAINTAINER CMD EXPOSE ADD COPY ENTRYPOINT VOLUME USER WORKDIR ARG STOPSIGNAL HEALTHCHECK SHELL
       ).join('|')
 
       start { @shell = Shell.new(@options) }
@@ -40,9 +40,9 @@ module Rouge
           @shell.reset!
         end
 
-        rule %r/^LABEL(\s+)/i do
+        rule %r/^(LABEL|ENV)(\s+)/i do
           token Keyword
-          push :label
+          push :identifier
         end
 
         rule %r/\w+/, Text
@@ -57,11 +57,11 @@ module Rouge
         rule(/(\\.|[^\n\\])+/) { delegate @shell }
       end
 
-      state :label do
+      state :identifier do
         rule %r/\n/, Text, :pop!
         rule %r/^\s*#.*\n/, Comment
         rule %r/\s*\\./m, Str::Escape
-        rule %r/(\s*(?:\S+|"[^"]+"|'[^']+'))(=)/ do
+        rule %r/(\s*(?:[^\s=]+|"[^"]+"|'[^']+'))(=)/ do
           groups Name::Property, Punctuation
           push :value
         end
@@ -69,7 +69,7 @@ module Rouge
 
       state :value do
         rule %r/\n/, Text, :pop!
-        rule %r/(".*?")|('.*?')/m, Str, :pop!
+        rule %r/(".*?")|('.*?')|((?:[^\\\s]|\\\s)+)/m, Str, :pop!
       end
     end
   end

@@ -62,7 +62,7 @@ module Rouge
         rule %r/}/, Str::Interpol, :pop!
 
         # Allow JS lexer to handle matched curly braces within template
-        rule(/(?<=^|[^\\])\{.*?(?<=^|[^\\])\}/) do
+        rule(/(?<=^|[^\\])\{+.*?(?<=^|[^\\])\}+/) do
           delegate @js
         end
 

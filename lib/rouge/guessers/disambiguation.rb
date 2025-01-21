@@ -90,19 +90,24 @@ module Rouge
       disambiguate '*.m' do
         next ObjectiveC if matches?(/@(end|implementation|protocol|property)\b/)
         next ObjectiveC if contains?('@"')
-        # Opening brace at end of line
-        next ObjectiveC if matches?(/\s*{\s*$/)
-  
-        # Objective-C may use dereferenced pointers in statements: `if (*foo == 0)`.
-        # This is similar to Mathmatica's comment syntax: `(* comment *)`.
-        # Disambiguate by checking for any amount of whitespace (or no whitespace) followed by (*
+        
+        # Objective-C dereferenced pointers and Mathematica comments are similar.
+        # Disambiguate for Mathematica by looking for any amount of whitespace (or no whitespace)
+        # followed by "(*" (e.g. `(* comment *)`).
         next Mathematica if matches?(/^\s*\(\*/)
+
+        # Disambiguate for objc by looking for a deref'd pointer in a statement (e.g. `if (*foo == 0)`).
+        # This pattern is less specific than the Mathematica pattern, so its positioned after it.
+        next ObjectiveC if matches?(/^\s*(if|while|for|switch|do)\s*\([^)]*\*[^)]*\)/)
+
         next Mathematica if contains?(':=')
 
         next Mason if matches?(/<%(def|method|text|doc|args|flags|attr|init|once|shared|perl|cleanup|filter)([^>]*)(>)/)
 
         next Matlab if matches?(/^\s*?%/)
-
+        # Matlab cell array creation: data = {
+        next Matlab if matches?(/^\s*[a-zA-Z]\w*\s*=\s*\{/)
+        
         next Mason if matches? %r!(</?%|<&)!
       end
 

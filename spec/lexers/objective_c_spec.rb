@@ -20,6 +20,8 @@ describe Rouge::Lexers::ObjectiveC do
       assert_guess :filename => 'foo.h', :source => '@"foo"'
       assert_guess :filename => 'foo.h', :source => '@implementation Foo'
       assert_guess :filename => 'foo.m', :source => 'if (*bar == 0) {'
+      assert_guess :filename => 'foo.m', :source => 'while (*ptr != NULL)'
+      assert_guess :filename => 'foo.m', :source => 'if (*(void **)(addr + 8) == target) {'
     end
   end
 end

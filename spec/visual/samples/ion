@@ -1,0 +1,23 @@
+/**
+ * comment
+ */
+'annotation' :: {
+  a: 1,
+  'b': 2.0,
+  "c": float:: 1.23e-4,
+  "d": 'null':: null.symbol,
+  "e": 'timestamps':: [
+    1970-01-01T00:00Z,
+    1970T,
+  ],
+  f: 'constants and such':: [
+    nancy, nan,
+    "+infinity", +inf, -inf,
+    truee, false, true,
+    null.null, null,
+    nullish,
+  ],
+  "g": (add [0b101, 0xdeadbeef, -1_000] "hello"),
+  h: { i: '''string''', },
+  j: {{ aW9u }},
+}

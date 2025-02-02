@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'console.rb'
+    require_relative 'console'
 
     class IRBLexer < ConsoleLexer
       tag 'irb'
@@ -37,7 +37,7 @@ module Rouge
       end
     end
 
-    load_lexer 'ruby.rb'
+    require_relative 'ruby'
     class IRBOutputLexer < Ruby
       tag 'irb_output'
 

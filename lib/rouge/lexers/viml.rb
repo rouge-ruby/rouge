@@ -13,10 +13,7 @@ module Rouge
 
       mimetypes 'text/x-vim'
 
-      def self.keywords
-        Kernel::load File.join(Lexers::BASE_DIR, 'viml/keywords.rb')
-        self.keywords
-      end
+      require_relative "viml/keywords"
 
       state :root do
         rule %r/^(\s*)(".*?)$/ do

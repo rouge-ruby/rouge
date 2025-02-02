@@ -299,19 +299,16 @@ module Rouge
         rule symbol do |m|
           sym = m[0]
 
-          if BUILTIN_FUNCTIONS.include? sym
+          if BUILTIN_FUNCTIONS.include?(sym) ||
+             MACROS.include?(sym)
             token Name::Builtin
-          elsif SPECIAL_FORMS.include? sym
+          elsif SPECIAL_FORMS.include?(sym) ||
+                LAMBDA_LIST_KEYWORDS.include?(sym) ||
+                DECLARATIONS.include?(sym)
             token Keyword
-          elsif MACROS.include? sym
-            token Name::Builtin
-          elsif LAMBDA_LIST_KEYWORDS.include? sym
-            token Keyword
-          elsif DECLARATIONS.include? sym
-            token Keyword
-          elsif BUILTIN_TYPES.include? sym
+          elsif BUILTIN_TYPES.include?(sym)
             token Keyword::Type
-          elsif BUILTIN_CLASSES.include? sym
+          elsif BUILTIN_CLASSES.include?(sym)
             token Name::Class
           else
             token Name::Variable

@@ -12,7 +12,7 @@ module Rouge
       desc 'The Ada 2012 programming language'
 
       # Ada identifiers are Unicode with underscores only allowed as separators.
-      ID = /\b[[:alpha:]](?:\p{Pc}?[[:alnum:]])*\b/
+      ID = /[[:alpha:]](?:\p{Pc}?[[:alnum:]])*\b/
 
       # Numerals can also contain underscores.
       NUM = /\d(_?\d)*/

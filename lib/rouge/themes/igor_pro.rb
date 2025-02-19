@@ -10,6 +10,9 @@ module Rouge
       style Comment::Preproc,                 :fg => '#CC00A3'
       style Comment::Special,                 :fg => '#CC00A3'
       style Comment,                          :fg => '#FF0000'
+      style Generic::Emph,                    :italic => true
+      style Generic::EmphStrong,              :italic => true, :bold => true
+      style Generic::Strong,                  :bold => true
       style Keyword::Constant,                :fg => '#C34E00'
       style Keyword::Declaration,             :fg => '#0000FF'
       style Keyword::Reserved,                :fg => '#007575'

@@ -58,6 +58,7 @@ module Rouge
       style Generic::Inserted,           :fg => "#00A000"
       style Generic::Error,              :fg => "#FF0000"
       style Generic::Emph,               :italic => true
+      style Generic::EmphStrong,         :italic => true, :bold => true
       style Generic::Strong,             :bold => true
       style Generic::Prompt,             :fg => "#c65d09", :bold => true
       style Generic::Output,             :fg => "#888"

@@ -35,7 +35,8 @@ module Rouge
       style Error,                            :fg => :carmine, :bg => :very_dark
       style Generic::Inserted,                :fg => :white, :bg => :dimgreen
       style Generic::Deleted,                 :fg => :white, :bg => :dimred
-      style Generic::Emph,                    :fg => :black, :italic => true
+      style Generic::Emph,                    :italic => true
+      style Generic::EmphStrong,              :italic => true, :bold => true
       style Generic::Error,
             Generic::Traceback,               :fg => :dark_red
       style Generic::Heading,                 :fg => :grey

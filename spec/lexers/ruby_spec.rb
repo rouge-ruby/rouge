@@ -113,6 +113,8 @@ describe Rouge::Lexers::Ruby do
       assert_guess :filename => 'Deliverfile'
       assert_guess :filename => 'Fastfile'
       assert_guess :filename => 'Appfile'
+      assert_guess :filename => 'Thorfile'
+      assert_guess :filename => 'foo.thor'
     end
 
     it 'guesses by mimetype' do

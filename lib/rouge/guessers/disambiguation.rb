@@ -66,6 +66,12 @@ module Rouge
         end
       end
 
+      disambiguate '*.cfg' do
+        next CiscoIos if matches?(/\A\s*(version|banner|interface)\b/)
+
+        INI
+      end
+
       disambiguate '*.pl' do
         next Perl if contains?('my $')
         next Prolog if contains?(':-')

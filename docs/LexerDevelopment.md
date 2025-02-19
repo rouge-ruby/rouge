@@ -473,7 +473,7 @@ that there is no file extension.
 
 ### Visual Samples
 
-A visual sample is a file that includes a representive sample of the syntax of
+A visual sample is a file that includes a representative sample of the syntax of
 your language. The sample should be long enough to reasonably demonstrate the
 correct lexing of the language but does not need to offer complete coverage.
 While it can be tempting to copy and paste code found online, please refrain

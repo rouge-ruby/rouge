@@ -7,11 +7,13 @@ module Rouge
       title "Groovy"
       desc 'The Groovy programming language (http://www.groovy-lang.org/)'
       tag 'groovy'
-      filenames '*.groovy', 'Jenkinsfile', '*.Jenkinsfile'
+      aliases 'nextflow', 'nf'
+      filenames '*.groovy', 'Jenkinsfile', '*.Jenkinsfile', '*.nf'
       mimetypes 'text/x-groovy'
 
       def self.detect?(text)
         return true if text.shebang?(/groovy/)
+        return true if text.shebang?(/nextflow/)
       end
 
       def self.keywords

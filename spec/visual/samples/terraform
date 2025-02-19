@@ -84,3 +84,18 @@ resource "aws_subnet" "main" {
 resource "aws_cloudfront_distribution" "s3_distribution" {
   aliases = ["www.${replace(var.domain_name, "/\\.$/", "")}"]
 }
+
+# Directives in string templates
+locals {
+  policy = <<EOT
+%{ for ip in aws_instance.example[*].private_ip }
+server ${ip}
+%{ endfor }
+EOT
+}
+
+# Special escape sequences that do not use backslashes
+locals {
+  demo_dollars_1 = "$${local.demo}"
+  demo_dollars_2 = "%%{for i in items}"
+}

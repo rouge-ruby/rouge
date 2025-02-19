@@ -11,10 +11,16 @@ describe Rouge::Lexers::Groovy do
       assert_guess :filename => 'foo.groovy'
       assert_guess :filename => 'Jenkinsfile'
       assert_guess :filename => 'foo.Jenkinsfile'
+      assert_guess :filename => 'foo.nf'
     end
 
     it 'guesses by mimetype' do
       assert_guess :mimetype => 'text/x-groovy'
+    end
+
+    it "guesses by source" do
+      assert_guess :source => "#!/usr/bin/env groovy"
+      assert_guess :source => "#!/usr/bin/env nextflow"
     end
   end
 end

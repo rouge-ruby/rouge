@@ -17,8 +17,8 @@ module Rouge
 
       def self.keywords
         @keywords ||= super + %w(
-          fn self alias inout borrowed owned ref var
-          struct trait raises with in match case
+          fn self alias owned ref var read out mut
+          struct trait raises with in match case 
         )
       end
 

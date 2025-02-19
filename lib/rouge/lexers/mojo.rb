@@ -3,6 +3,8 @@
 
 module Rouge
   module Lexers
+    load_lexer 'python.rb'
+    
     class Mojo < Python
       title "Mojo"
       desc "The Mojo programming language (modular.com)"
@@ -17,8 +19,8 @@ module Rouge
 
       def self.keywords
         @keywords ||= super + %w(
-          fn self alias owned ref var read out mut
-          struct trait raises with in match case 
+          fn self alias out read mut owned ref var
+          struct trait raises with in match case
         )
       end
 

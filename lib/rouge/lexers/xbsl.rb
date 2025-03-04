@@ -7,7 +7,7 @@ module Rouge
       title "XBSL"
       desc "The 1C:Enterprise Element programming language"
       tag 'xbsl'
-      filenames '*.xbsl'
+      filenames '*.xbsl', '*.sbsl'
 
       KEYWORDS = /(?<=[^\wа-яё]|^)(?:
                       вконце      | finally   | возврат       | return

@@ -33,5 +33,10 @@ describe Rouge::Lexers::Matlab do
       end
       eos
     end
+
+    it 'guesses by source' do
+      assert_guess :filename => 'foo.m', :source => '% MATLAB comment'
+      assert_guess :filename => 'foo.m', :source => 'mycell = {'
+    end
   end
 end

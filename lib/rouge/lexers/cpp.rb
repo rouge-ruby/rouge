@@ -64,7 +64,8 @@ module Rouge
         rule %r/#{dq}(\.#{dq})?(?:y|d|h|(?:min)|s|(?:ms)|(?:us)|(?:ns)|i|(?:if)|(?:il))\b/, Num::Other
         rule %r((#{dq}[.]#{dq}?|[.]#{dq})([ep][+-]?#{dq})?[luf]*)i, Num::Float
         rule %r(#{dq}[ep][+-]?#{dq}[luf]*)i, Num::Float
-        rule %r/0x\h('?\h)*[lu]*/i, Num::Hex
+        rule %r/0x\h('?\h)*([ep][+-]?#{dq})?[lu]*/i, Num::Hex
+        rule %r/0x\h('?\h)*[.]\h+([ep][+-]?#{dq})[luf]*/i, Num::Hex
         rule %r/0b[01]+('[01]+)*/, Num::Bin
         rule %r/0[0-7]('?[0-7])*[lu]*/i, Num::Oct
         rule %r/#{dq}[lu]*/i, Num::Integer

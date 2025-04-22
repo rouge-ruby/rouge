@@ -277,3 +277,10 @@ export struct Shape {
   int m_x;
   int m_y;
 }
+
+float test(8.874L);
+float test(8.874l);
+float test(8.874F);
+float test(8.874f);
+float test(8.874U);
+float test(8.874u);

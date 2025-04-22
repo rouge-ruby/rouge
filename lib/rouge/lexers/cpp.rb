@@ -62,8 +62,8 @@ module Rouge
         rule %r/(class|struct)\b/, Keyword, :classname
         rule %r/template\b/, Keyword, :template
         rule %r/#{dq}(\.#{dq})?(?:y|d|h|(?:min)|s|(?:ms)|(?:us)|(?:ns)|i|(?:if)|(?:il))\b/, Num::Other
-        rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[lu]*)?)i, Num::Float
-        rule %r(#{dq}e[+-]?#{dq}[lu]*)i, Num::Float
+        rule %r((#{dq}[.]#{dq}?|[.]#{dq})(e[+-]?#{dq}[luf]*)?)i, Num::Float
+        rule %r(#{dq}e[+-]?#{dq}[luf]*)i, Num::Float
         rule %r/0x\h('?\h)*[lu]*/i, Num::Hex
         rule %r/0b[01]+('[01]+)*/, Num::Bin
         rule %r/0[0-7]('?[0-7])*[lu]*/i, Num::Oct

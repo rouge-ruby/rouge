@@ -125,8 +125,6 @@ module Rouge
           elsif %w(public protected private).include? name
             push :in_visibility
             token Keyword
-          elsif name == "stdClass"
-            token Name::Class
           elsif self.class.keywords.include? name
             token Keyword
           elsif m[0] =~ /^__.*?__$/
@@ -135,7 +133,7 @@ module Rouge
             token Keyword::Constant
           elsif m[0] =~ /(\\|^)[[:upper:]][[[:upper:]][[:digit:]]_]+$/
             token Name::Constant
-          elsif m[0] =~ /(\\|^)[[:upper:]][[:alnum:]]*?$/
+          elsif (name == "stdClass") || (m[0] =~ /(\\|^)[[:upper:]][[:alnum:]]*?$/)
             token Name::Class
           else
             token Name

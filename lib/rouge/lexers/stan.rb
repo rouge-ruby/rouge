@@ -422,11 +422,10 @@ module Rouge
           recurse m[1]
 
           name = m[2]
-          if self.class.builtin_functions.include? name
+          if self.class.builtin_functions.include?(name) ||
+             self.class.distributions.include?(name)
             token Name::Builtin, name
-          elsif self.class.distributions.include? name
-            token Name::Builtin, name
-          elsif self.class.constants.include? name
+          elsif self.class.constants.include?(name)
             token Keyword::Constant
           else
             token Name::Function, name

@@ -129,9 +129,7 @@ module Rouge
         # numeric literals (integer / float)
         rule numeric do |m|
             case m[0]
-            when /^#{decimal}$/
-              token Num::Integer
-            when /^0x#{hex}$/
+            when /^#{decimal}$/, /^0x#{hex}$/
               token Num::Integer
             else
               token Num::Float

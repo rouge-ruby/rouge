@@ -57,15 +57,14 @@ module Rouge
       end
 
       def self.classify(x)
-        if self.coq.include? x
+        if self.coq.include?(x)
           return Keyword
-        elsif self.gallina.include? x
+        elsif self.gallina.include?(x)
           return Keyword::Reserved
-        elsif self.ltac.include? x
-          return Keyword::Pseudo
-        elsif self.terminators.include? x
+        elsif self.terminators.include?(x)
           return Name::Exception
-        elsif self.tacticals.include? x
+        elsif self.ltac.include?(x) ||
+              self.tacticals.include?(x)
           return Keyword::Pseudo
         else
           return Name::Constant

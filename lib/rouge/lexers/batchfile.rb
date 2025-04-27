@@ -87,19 +87,20 @@ module Rouge
         rule %r/:[a-z]+/i, Name::Label
 
         rule %r/([a-z]\w*)(\.exe|com|bat|cmd|msi)?/i do |m|
-          if self.class.devices.include? m[1]
+          sym = m[1]
+
+          if self.class.devices.include?(sym)
             groups Keyword::Reserved, Error
-          elsif self.class.keywords.include? m[1]
+          elsif self.class.keywords.include?(sym)
             groups Keyword, Error
-          elsif self.class.operator_words.include? m[1]
+          elsif self.class.operator_words.include?(sym)
             groups Operator::Word, Error
-          elsif self.class.builtin_commands.include? m[1]
+          elsif self.class.builtin_commands.include?(sym) ||
+                self.class.other_commands.include?(sym)
             token Name::Builtin
-          elsif self.class.other_commands.include? m[1]
-            token Name::Builtin
-          elsif self.class.attributes.include? m[1]
+          elsif self.class.attributes.include?(sym)
             groups Name::Attribute, Error
-          elsif "set".casecmp m[1]
+          elsif "set".casecmp(sym)
             groups Keyword::Declaration, Error
           else
             token Text

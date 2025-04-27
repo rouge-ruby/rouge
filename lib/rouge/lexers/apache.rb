@@ -28,11 +28,9 @@ module Rouge
       end
 
       def name_for_token(token, tktype)
-        if self.class.sections.include? token
-          tktype
-        elsif self.class.directives.include? token
-          tktype
-        elsif self.class.values.include? token
+        if self.class.sections.include?(token) ||
+           self.class.directives.include?(token) ||
+           self.class.values.include?(token)
           tktype
         else
           Text

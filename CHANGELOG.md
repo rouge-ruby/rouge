@@ -4,6 +4,27 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.5.2: 2025-04-27
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.1...v4.5.2)
+
+- General
+  - Update various doc ([#2086](https://github.com/rouge-ruby/rouge/pull/2086/) by Tan Le)
+- CPP Lexer
+  - c++: expand support for c++ float literals ([#2123](https://github.com/rouge-ruby/rouge/pull/2123/) by Jeanine Adkisson)
+- CSS Lexer
+  - Update CSS lexer ([#2118](https://github.com/rouge-ruby/rouge/pull/2118/) by Gerard)
+- Java Lexer
+  - Add record keyword declaration for Java 14+ ([#2121](https://github.com/rouge-ruby/rouge/pull/2121/) by 0xh3xa)
+- HTML Lexer
+  - Add *.razor file glob to HTML  [EASY MERGE] ([#2115](https://github.com/rouge-ruby/rouge/pull/2115/) by Téo Orthlieb)
+- Mojo Lexer
+  - Added Mojo 25.1 keyword changes ([#2112](https://github.com/rouge-ruby/rouge/pull/2112/) by Indukumar Vellapillil Hari)
+- SASS Lexer
+  - Fix missing method error in SASS lexer ([#2125](https://github.com/rouge-ruby/rouge/pull/2125/) by Tan Le)
+- Svelte Lexer
+  - Support mustache template in Svelte ([#2096](https://github.com/rouge-ruby/rouge/pull/2096/) by Tan Le)
+
 ## version 4.5.1: 2024-11-12
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.0...v4.5.1)

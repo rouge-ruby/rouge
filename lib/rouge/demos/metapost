@@ -1,0 +1,15 @@
+beginfig(223)
+    numeric n;
+    n:=10;
+    path p;
+    p := for i=0 upto n-1:
+        ((1cm + 3mm*normaldeviate,0) rotated (i*360/n)) ..
+      endfor cycle;
+    for i=0 step 2mm until 3cm:
+      draw fullcircle scaled i;
+    endfor;
+    clip currentpicture to p;
+    draw p;
+endfig;
+
+end.

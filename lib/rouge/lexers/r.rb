@@ -66,7 +66,7 @@ module Rouge
         # function call, i.e. followed by an opening parenthesis.
         # `Name::Builtin` would be more logical, but is usually not
         # highlighted specifically; thus use `Name::Function`.
-        rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
+        rule %r/(?<![.])(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
 
         rule %r/(?:(?:[[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*)|[.]/ do |m|
           if KEYWORDS.include? m[0]

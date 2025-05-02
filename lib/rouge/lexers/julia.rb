@@ -17,7 +17,8 @@ module Rouge
         return true if text.shebang? 'julia'
       end
 
-      BUILTINS            = /\b(?:
+      # [jneen] note no \b at the beginning, to support things like `1im`
+      BUILTINS            = /(?:
                               true      | false    | missing | nothing
                             | Inf       | Inf16    | Inf32   | Inf64
                             | NaN       | NaN16    | NaN32   | NaN64

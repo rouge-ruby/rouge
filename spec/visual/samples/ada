@@ -127,3 +127,6 @@ Package MACHINE_CODE Is
       D    at 0 Range 20 .. 31;
    End Record;
 End MACHINE_CODE;
+
+This_Is_Okay
+This_Should_Be_An_Error_

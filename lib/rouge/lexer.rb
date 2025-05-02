@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 # stdlib
-require 'strscan'
 require 'cgi'
 require 'set'
 

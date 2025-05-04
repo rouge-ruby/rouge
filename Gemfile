@@ -35,4 +35,7 @@ group :development do
   # Ruby 3 no longer ships with a web server
   gem 'puma' if RUBY_VERSION >= '3'
   gem 'shotgun'
+
+  gem "mutex_m" if RUBY_VERSION >= '3.4'
+  gem "base64" if RUBY_VERSION >= '3.4'
 end

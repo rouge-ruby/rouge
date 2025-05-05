@@ -1,11 +1,11 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.7
   DisplayCopNames: true
   Exclude:
     - "tasks/**/*"
     - "vendor/**/*"
+  NewCops: enable
 
 Style:
   Enabled: false

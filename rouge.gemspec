@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'lib/**/*.yml', 'bin/rougify', 'lib/rouge/demos/*']
   s.executables = %w(rougify)
   s.licenses = ['MIT', 'BSD-2-Clause']
-  s.required_ruby_version = '>= 2.7'
+  s.required_ruby_version = '>= 3.2'
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/rouge-ruby/rouge/issues",
     "changelog_uri"     => "https://github.com/rouge-ruby/rouge/blob/master/CHANGELOG.md",

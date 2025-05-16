@@ -1,7 +1,7 @@
 package whatever.mine
 
 import foo.bar.{Foo, Bar => Baz}
-
+import baz.bar.{ Baz as Bar }
 /* This file /* which is totally legal scala */ should be highlighted
    correcty by rouge */
 
@@ -67,5 +67,180 @@ class why_would_you_name_a_class_this_way_oh_well_we_need_to_highlight_it(a: Int
 StorageState.table(StorageState.NewUsers()).format(
   keyParams('app_id).asInstanceOf[String]
 )
+
+// Scala 3 Features
+
+// Enums
+enum Color(val rgb: Int):
+  case Red   extends Color(0xFF0000)
+  case Green extends Color(0x00FF00)
+  case Blue  extends Color(0x0000FF)
+  case Yellow // simple case
+
+// Given/Using clauses
+trait Ord[T]:
+  def compare(x: T, y: T): Int
+  extension (x: T)
+    def < (y: T) = compare(x, y) < 0
+    def > (y: T) = compare(x, y) > 0
+
+given intOrd: Ord[Int] with
+  def compare(x: Int, y: Int) =
+    if x < y then -1 else if x > y then 1 else 0
+
+given listOrd[T](using ord: Ord[T]): Ord[List[T]] with
+  def compare(xs: List[T], ys: List[T]): Int =
+    (xs, ys) match
+      case (Nil, Nil) => 0
+      case (Nil, _) => -1
+      case (_, Nil) => 1
+      case (x :: xt, y :: yt) =>
+        val fst = ord.compare(x,y)
+        if fst != 0 then fst else compare(xt, yt)
+
+def sort[A](xs: List[A])(using Ord[A]): List[A] = 
+  xs.sorted // uses listOrd and intOrd implicitly for List[Int]
+
+val sortedInts = sort(List(3_000, 1, -20_000_000))
+
+// Extension Methods
+extension (s: String)
+  def capitalized: String = s.toUpperCase
+  def twice: String = s + " " + s
+
+val greeting = "hello".capitalized.twice
+
+// New Control Syntax (if/then/else, optional braces)
+def checkSign(x: Int): String =
+  if x > 0 then
+    "positive"
+  else if x < 0 then
+    "negative"
+  else
+    "zero"
+
+var count = 3
+while count > 0 do
+  println(s"Count is: $count") // String interpolation
+  count -= 1
+
+// Binary Literals
+val binary1 = 0b101010
+val binary2 = 0B0011_0011
+val binaryLong = 0b1111_0000_1111_0000L
+
+// Multiline String Interpolation
+val name = "Scala 3"
+val version = 3.3
+val multilineInterpolated = s"""This is
+   a multiline string
+   for $name, version $version.
+   A raw one: raw"""\u0041\n""" // raw interpolator
+"""
+
+// Export Clauses
+class Service:
+  def operation(x: Int): String = s"Result: ${x * 2}"
+
+class Client(s: Service):
+  export s.operation
+
+val service = new Service
+val client = new Client(service)
+val clientResult = client.operation(101_010) // uses exported method
+
+// Opaque Type Aliases
+opaque type Logarithm = Double
+
+object Logarithm:
+  def apply(d: Double): Logarithm = math.log(d)
+  def toDouble(l: Logarithm): Double = math.exp(l)
+
+extension (l: Logarithm)
+  def + (other: Logarithm): Logarithm = Logarithm(toDouble(l) * toDouble(other))
+
+val log2 = Logarithm(2.0)
+val log3 = Logarithm(3.0)
+val combinedLog = log2 + log3
+
+// End markers
+def processList(items: List[String]): Unit =
+  if items.nonEmpty then
+    for item <- items do
+      println(item)
+    end for
+    println("Done with items")
+  end if
+  println("List processing finished")
+end processList
+
+val anIdentifier_with_op_! = 42
+
+// Comment at EOF
+
+// Match expressions with end marker
+def describe(x: Any): String = 
+  match x
+    case i: Int if i > 0 => "positive number"
+    case 0 => "zero"
+    case s: String => s"string: $s"
+    case _ => "something else"
+  end match
+
+type Resettable = { def reset(): Unit }
+type Growable[T] = { def add(t: T): Unit }
+
+def combine[T](x: Resettable & Growable[T]): Unit = ???
+
+def help(id: String | Int) = 
+  id match
+    case s: String => println(s"String ID: $s")
+    case i: Int => println(s"Int ID: $i")
+
+trait Animal:
+  def speak: String
+  def eat(food: String): Unit
+
+class Dog extends Animal:
+  def speak = "Woof!"
+  def eat(food: String) = 
+    println(s"Dog eating $food")
+  end eat
+end Dog
+
+import scala.compiletime.{error, requireConst}
+transparent inline def validate(inline str: String): Unit =
+  requireConst(str)
+  if str.isEmpty then
+    error("Empty string not allowed")
+
+type Executable[T] = ExecutionContext ?=> T
+def executeAsync(x: Int)(using ctx: ExecutionContext): Unit = ???
+
+def generic[A, B](x: A, y: B) = (x, y)
+val result = generic[A = String, B = Int]("hello", 42)
+
+// End markers for different constructs
+object ComplexExample:
+  class Inner:
+    def process(items: List[Int]): Int =
+      if items.isEmpty then
+        println("Empty list")
+        0
+      else
+        var sum = 0
+        for
+          x <- items
+          if x > 0
+          y = x * 2
+        do
+          sum += y
+          println(s"Processing $x")
+        end for
+        sum
+      end if
+    end process
+  end Inner
+end ComplexExample
 
 // Comment at EOF

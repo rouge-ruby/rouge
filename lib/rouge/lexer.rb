@@ -3,8 +3,8 @@
 
 # stdlib
 require 'strscan'
-require 'cgi'
 require 'set'
+require 'uri'
 
 module Rouge
   # @abstract
@@ -52,17 +52,19 @@ module Rouge
         name, opts = str ? str.split('?', 2) : [nil, '']
 
         # parse the options hash from a cgi-style string
-        opts = CGI.parse(opts || '').map do |k, vals|
-          val = case vals.size
+        cgi_opts = Hash.new { |hash, key| hash[key] = [] }
+        URI.decode_www_form(opts || '').each do |k, val|
+          cgi_opts[k] << val
+        end
+        cgi_opts.transform_values! do |vals|
+          case vals.size
           when 0 then true
           when 1 then vals[0]
           else vals
           end
-
-          [ k.to_s, val ]
         end
 
-        opts = default_options.merge(Hash[opts])
+        opts = default_options.merge(cgi_opts)
 
         lexer_class = case name
         when 'guess', nil

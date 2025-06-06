@@ -218,3 +218,12 @@ def do_nothing():
 
     app = FastAPI()
     FastAPIInstrumentor.instrument_app(app)
+
+
+match 1:
+    case 1:
+        print("1 is 1")
+    case 2:
+        print("1 is 2")
+    case _:
+        print("1 is something")

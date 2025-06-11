@@ -1,0 +1,32 @@
+MODULE main
+  VAR c: integer;
+  VAR r: real;
+  VAR g: 0..3;
+  
+  INIT
+    c in {0};
+    r = f'1/2;
+  TRANS next(c) in
+    case
+      c < 9 : {c + 1, c + 2};
+      TRUE : {c};
+    esac;
+  
+  TRANS next(r) =
+    case
+      c > 0 & c < 9 : abs(c / 2.0);
+      TRUE : r;
+    esac;
+
+
+-- Named properties
+LTLSPEC NAME g0 := G (c >= 0);
+LTLSPEC NAME e1 := G F c = 9;   -- Inline comment: Trace ends with c = 9
+LTLSPEC NAME e2 := G F c = 10;  -- Inline comment: Trace ends with c = 10
+LTLSPEC NAME e3 := G F c = 11;  -- Inline comment: Trace ends with c = 11 (unreachable)
+
+-- Anonymous properties
+LTLSPEC G F c = 9;   -- Trace ends with c = 9
+INVARSPEC c >= 0;    -- Invariant that c is always non-negative
+CTLSPEC A F c = 9;   -- CTL specification that eventually c = 9
+

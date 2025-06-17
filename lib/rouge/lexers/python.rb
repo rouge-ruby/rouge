@@ -91,6 +91,7 @@ module Rouge
         rule %r/@#{dotted_identifier}/i, Name::Decorator
 
         rule %r/(in|is|and|or|not)\b/, Operator::Word
+        rule %r/\b(match|case)\b/, Keyword
         rule %r/(<<|>>|\/\/|\*\*)=?/, Operator
         rule %r/[-~+\/*%=<>&^|@]=?|!=/, Operator
 

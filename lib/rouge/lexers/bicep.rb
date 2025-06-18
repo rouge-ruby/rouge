@@ -34,7 +34,7 @@ module Rouge
 
       operators = %w(+ - * / % < <= > >= == != =~ !~ && || ! ?? ... .?)
 
-      punctuation = %w(( ) { } [ ] , : ; = .)
+      punctuations = %w(( ) { } [ ] , : ; = .)
 
       state :root do
           mixin :comments
@@ -65,7 +65,7 @@ module Rouge
           rule %r/{/, Punctuation::Indicator, :block
 
           # Match punctuation
-          rule %r/#{punctuation.map { |p| Regexp.escape(p) }.join('|')}/, Punctuation
+          rule %r/#{punctuations.map { |p| Regexp.escape(p) }.join('|')}/, Punctuation
 
           # Match identifiers
           rule %r/[a-zA-Z_]\w*/, Name

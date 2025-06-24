@@ -37,44 +37,44 @@ module Rouge
       punctuations = %w(( ) { } [ ] , : ; = .)
 
       state :root do
-          mixin :comments
+        mixin :comments
 
-          # Match strings
-          rule %r/'/, Str::Single, :string
+        # Match strings
+        rule %r/'/, Str::Single, :string
 
-          # Match numbers
-          rule %r/\b\d+\b/, Num
+        # Match numbers
+        rule %r/\b\d+\b/, Num
 
-          # Rules for sets of reserved keywords 
-          rule %r/\b\w+\b/ do |m|
-            if self.class.keywords.include? m[0]
-              token Keyword
-            elsif self.class.datatypes.include? m[0]
-              token Keyword::Type
-            elsif self.class.functions.include? m[0]
-              token Name::Function
-            else
-              token Name
-            end
+        # Rules for sets of reserved keywords
+        rule %r/\b\w+\b/ do |m|
+          if self.class.keywords.include? m[0]
+            token Keyword
+          elsif self.class.datatypes.include? m[0]
+            token Keyword::Type
+          elsif self.class.functions.include? m[0]
+            token Name::Function
+          else
+            token Name
           end
+        end
 
-          # Match operators
-          rule %r/#{operators.map { |o| Regexp.escape(o) }.join('|')}/, Operator
+        # Match operators
+        rule %r/#{operators.map { |o| Regexp.escape(o) }.join('|')}/, Operator
 
-          # Enter a state when encountering an opening curly bracket
-          rule %r/{/, Punctuation::Indicator, :block
+        # Enter a state when encountering an opening curly bracket
+        rule %r/{/, Punctuation::Indicator, :block
 
-          # Match punctuation
-          rule %r/#{punctuations.map { |p| Regexp.escape(p) }.join('|')}/, Punctuation
+        # Match punctuation
+        rule %r/#{punctuations.map { |p| Regexp.escape(p) }.join('|')}/, Punctuation
 
-          # Match identifiers
-          rule %r/[a-zA-Z_]\w*/, Name
+        # Match identifiers
+        rule %r/[a-zA-Z_]\w*/, Name
 
-          # Match decorators
-          rule %r/@[a-zA-Z_]\w*/, Name::Decorator
+        # Match decorators
+        rule %r/@[a-zA-Z_]\w*/, Name::Decorator
 
-          # Ignore whitespace
-          rule %r/\s+/, Text
+        # Ignore whitespace
+        rule %r/\s+/, Text
       end
       
       state :comments do
@@ -89,7 +89,7 @@ module Rouge
         rule %r/\'/, Str::Single, :pop!
         rule %r/\$+/, Str::Single
       end
-    
+
       state :interp do
         rule %r/\}/, Str::Interpol, :pop!
         mixin :root

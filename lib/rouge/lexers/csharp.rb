@@ -12,8 +12,7 @@ module Rouge
       title "C#"
       desc 'a multi-paradigm language targeting .NET'
 
-      # TODO: support more of unicode
-      id = /@?[_a-z]\w*/i
+      id = /@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*/
 
       #Reserved Identifiers
       #Contextual Keywords

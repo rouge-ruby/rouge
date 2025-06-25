@@ -14,32 +14,38 @@ module Rouge
 
       id = /@?[_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}][\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Nl}\p{Nd}\p{Pc}\p{Cf}\p{Mn}\p{Mc}]*/
 
-      #Reserved Identifiers
-      #Contextual Keywords
-      #LINQ Query Expressions
-      keywords = %w(
-        abstract as base break case catch checked const continue
-        default delegate do else enum event explicit extern false
-        finally fixed for foreach goto if implicit in interface
-        internal is lock new null operator out override params private
-        protected public readonly ref return sealed sizeof stackalloc
-        static switch this throw true try typeof unchecked unsafe
-        virtual void volatile while
-        add alias async await get global partial remove set value where
-        yield nameof notnull
-        ascending by descending equals from group in init into join let
-        on orderby select unmanaged when and not or with
-      )
+      # Reserved Identifiers
+      # Contextual Keywords
+      # LINQ Query Expressions
+      def self.keywords
+        @keywords ||= %w(
+          abstract add alias and as ascending async await base
+          break by case catch checked const continue default delegate
+          descending do else enum equals event explicit extern false
+          finally fixed for foreach from get global goto group
+          if implicit in init interface internal into is join
+          let lock nameof new notnull null on operator orderby
+          out override params partial private protected public readonly
+          ref remove return sealed set sizeof stackalloc static
+          switch this throw true try typeof unchecked unsafe
+          unmanaged value virtual void volatile when where while
+          with yield
+        )
+      end
 
-      keywords_type = %w(
-        bool byte char decimal double dynamic float int long nint nuint
-        object sbyte short string uint ulong ushort var
-      )
+      def self.keywords_type
+        @keywords_type ||= %w(
+          bool byte char decimal double dynamic float int long nint nuint
+          object sbyte short string uint ulong ushort var
+        )
+      end
 
-      cpp_keywords = %w(
-        if endif else elif define undef line error warning region
-        endregion pragma nullable
-      )
+      def self.cpp_keywords
+        @cpp_keywords ||= %w(
+          if endif else elif define undef line error warning region
+          endregion pragma nullable
+        )
+      end
 
       state :whitespace do
         rule %r/\s+/m, Text
@@ -90,10 +96,9 @@ module Rouge
         )ix, Num
         rule %r/\b(?:class|record|struct|interface)\b/, Keyword, :class
         rule %r/\b(?:namespace|using)\b/, Keyword, :namespace
-        rule %r/^#[ \t]*(#{cpp_keywords.join('|')})\b.*?\n/,
-          Comment::Preproc
-        rule %r/\b(#{keywords.join('|')})\b/, Keyword
-        rule %r/\b(#{keywords_type.join('|')})\b/, Keyword::Type
+        rule %r/^#[ \t]*(#{CSharp.cpp_keywords.join('|')})\b.*?\n/, Comment::Preproc
+        rule %r/\b(#{CSharp.keywords.join('|')})\b/, Keyword
+        rule %r/\b(#{CSharp.keywords_type.join('|')})\b/, Keyword::Type
         rule %r/#{id}(?=\s*[(])/, Name::Function
         rule id, Name
       end
@@ -108,7 +113,6 @@ module Rouge
         rule %r/(?=[(])/, Text, :pop!
         rule %r/(#{id}|[.])+/, Name::Namespace, :pop!
       end
-
     end
   end
 end

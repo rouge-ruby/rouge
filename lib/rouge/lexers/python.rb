@@ -127,6 +127,8 @@ module Rouge
           push :generic_string
         end
 
+        mixin :soft_keywords
+
         # using negative lookbehind so we don't match property names
         rule %r/(?<!\.)#{identifier}/ do |m|
           if self.class.keywords.include? m[0]
@@ -164,6 +166,28 @@ module Rouge
 
       state :classname do
         rule identifier, Name::Class, :pop!
+      end
+
+      state :soft_keywords do
+        rule %r/
+          (^[ \t]*)
+          (match|case)\b
+          (?![ \t]*
+            (?:[:,;=^&|@~)\]}] |
+              (?:#{Python.keywords.join('|')})\b))
+        /x do |m|
+          token Text::Whitespace, m[1]
+          token Keyword, m[2]
+          push :soft_keywords_inner
+        end
+      end
+
+      state :soft_keywords_inner do
+        rule %r((\s+)([^\n_]*)(_\b)) do |m|
+          groups Text::Whitespace, Text, Keyword
+        end
+
+        rule(//) { pop! }
       end
 
       state :raise do

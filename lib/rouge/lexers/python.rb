@@ -18,8 +18,8 @@ module Rouge
 
       def self.keywords
         @keywords ||= %w(
-          assert break continue del elif else except
-          finally for global if lambda pass raise
+          assert break continue del elif else except exec
+          finally for global if lambda pass print raise
           return try while yield as with from import
           async await nonlocal
         )
@@ -27,14 +27,14 @@ module Rouge
 
       def self.builtins
         @builtins ||= %w(
-          __import__ abs aiter all anext any ascii bin bool
-          breakpoint bytearray bytes callable chr classmethod compile
-          complex delattr dict dir divmod enumerate eval exec
+          __import__ abs aiter all anext any apply ascii basestring bin bool
+          buffer breakpoint bytearray bytes callable chr classmethod cmp coerce compile
+          complex delattr dict dir divmod enumerate eval exec execfile exit file
           filter float format frozenset getattr globals hasattr hash help hex id
-          input int isinstance issubclass iter len list locals
+          input int intern isinstance issubclass iter len list locals long
           map max memoryview min next object oct open ord pow print property
-          range repr reversed round set setattr slice
-          sorted staticmethod str sum super tuple type vars zip
+          range raw_input reduce reload repr reversed round set setattr slice
+          sorted staticmethod str sum super tuple type unichr unicode vars xrange zip
         )
       end
 
@@ -48,18 +48,18 @@ module Rouge
           BaseExceptionGroup BlockingIOError BrokenPipeError BufferError
           BytesWarning ChildProcessError ConnectionAbortedError ConnectionError
           ConnectionRefusedError ConnectionResetError DeprecationWarning
-          EOFError EncodingWarning Exception ExceptionGroup FileExistsError
-          FileNotFoundError FloatingPointError FutureWarning GeneratorExit
+          EOFError EnvironmentError EncodingWarning Exception ExceptionGroup FileExistsError
+          FileNotFoundError FloatingPointError FutureWarning GeneratorExit IOError
           ImportError ImportWarning IndentationError IndexError InterruptedError
           IsADirectoryError KeyError KeyboardInterrupt LookupError MemoryError
-          ModuleNotFoundError NameError NotADirectoryError NotImplementedError
-          OSError OverflowError PendingDeprecationWarning PermissionError
+          ModuleNotFoundError NameError NotADirectoryError NotImplemented NotImplementedError
+          OSError OverflowError OverflowWarning PendingDeprecationWarning PermissionError
           ProcessLookupError PythonFinalizationError RecursionError
-          ReferenceError ResourceWarning RuntimeError RuntimeWarning
+          ReferenceError ResourceWarning RuntimeError RuntimeWarning StandardError
           StopAsyncIteration StopIteration SyntaxError SyntaxWarning SystemError
           SystemExit TabError TimeoutError TypeError UnboundLocalError
           UnicodeDecodeError UnicodeEncodeError UnicodeError
-          UnicodeTranslateError UnicodeWarning UserWarning ValueError Warning
+          UnicodeTranslateError UnicodeWarning UserWarning ValueError VMSError Warning WindowsError
           ZeroDivisionError
         )
       end

@@ -4,6 +4,32 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.6.0: 2025-07-16
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.2...v4.6.0)
+
+- General
+  - Add Ruby 3.4 to CI build ([#2127](https://github.com/rouge-ruby/rouge/pull/2127/) by Tan Le)
+  - Improve Objective-C vs Mathematica lexer disambiguation ([#2103](https://github.com/rouge-ruby/rouge/pull/2103/) by objc)
+- Ada Lexer
+  - Add `parallel` keyword, square brackets and `@` for Ada 2022 ([#2117](https://github.com/rouge-ruby/rouge/pull/2117/) by Maxim Reznik)
+- Bicep Lexer (**NEW**)
+  - Add a Lexer for Bicep language ([#1937](https://github.com/rouge-ruby/rouge/pull/1937/) by Xavier Mignot)
+  - Add bicep to the list of supported languages ([#2137](https://github.com/rouge-ruby/rouge/pull/2137/) by Tan Le)
+  - Fix code indentation on Bicep lexer ([#2138](https://github.com/rouge-ruby/rouge/pull/2138/) by Tan Le)
+- C# Lexer
+  - Support Unicode characters in C# lexer ([#2136](https://github.com/rouge-ruby/rouge/pull/2136/) by Tan Le)
+  - Move keywords to class methods in CSharp lexer ([#2139](https://github.com/rouge-ruby/rouge/pull/2139/) by Tan Le)
+- Docker Lexer
+  - Update Docker file name patterns ([#2133](https://github.com/rouge-ruby/rouge/pull/2133/) by Oscar Alberto Tovar)
+- Python Lexer
+  - Support match and case keywords in Python ([#2140](https://github.com/rouge-ruby/rouge/pull/2140/) by Tan Le)
+  - Update Python builtin keywords, functions, and exceptions to Python version 3 ([#2109](https://github.com/rouge-ruby/rouge/pull/2109/) by Joris Clement)
+- Terraform Lexer
+  - Autodetect *.tfvars files as Terraform ([#2146](https://github.com/rouge-ruby/rouge/pull/2146/) by Oscar Alberto Tovar)
+- TOML Lexer
+  - toml: support inline tables in arrays ([#2065](https://github.com/rouge-ruby/rouge/pull/2065/) by ash)
+
 ## version 4.5.2: 2025-04-27
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.1...v4.5.2)

@@ -11,7 +11,7 @@ module Rouge
 
       tag 'terraform'
       aliases 'tf'
-      filenames '*.tf'
+      filenames '*.tf', '*.tfvars'
 
       def self.keywords
         @keywords ||= Set.new %w(

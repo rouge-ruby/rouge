@@ -3,7 +3,7 @@
 
 module Rouge
   module Lexers
-    load_lexer 'python.rb'
+    require_relative 'python'
 
     class Cython < Python
       title "Cython"

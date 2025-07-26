@@ -215,6 +215,7 @@
 - VCL: Varnish Configuration Language (`vcl`)
 - Velocity (`velocity`)
 - Verilog and System Verilog (`verilog`)
+- Veryl (`veryl`)
 - VHDL 2008 (`vhdl`)
 - VimL (`viml`)
 - Visual Basic (`vb`)

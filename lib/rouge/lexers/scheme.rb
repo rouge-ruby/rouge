@@ -59,9 +59,14 @@ module Rouge
 
       id = /[a-z0-9!$\%&*+,\/:<=>?@^_~|-]+/i
 
+      state :comment do
+        rule /[^\n]+/, Comment::Single
+        rule /\n/, Text, :pop!
+      end
+
       state :root do
         # comments
-        rule %r/;.*$/, Comment::Single
+        rule %r/;/, Comment::Single, :comment
         rule %r/\s+/m, Text
         rule %r/-?\d+\.\d+/, Num::Float
         rule %r/-?\d+/, Num::Integer

@@ -147,7 +147,16 @@ module Rouge
           end
         end
 
-        rule identifier, Name
+        # dotted identifiers can still be builtins!
+        rule identifier do |m|
+          if self.class.builtins.include? m[0]
+            token Name::Builtin
+          elsif self.class.builtins_pseudo.include? m[0]
+            token Name::Builtin::Pseudo
+          else
+            token Name
+          end
+        end
 
         digits = /[0-9](_?[0-9])*/
         decimal = /((#{digits})?\.#{digits}|#{digits}\.)/

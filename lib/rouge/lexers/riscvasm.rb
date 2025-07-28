@@ -14,16 +14,16 @@ module Rouge
       filenames '*.s', '*.S'
 
       # C preprocessor directives. These are only processed for .S files - not .s - however
-      # the parsing is the same in both cases.
+      # the parsing is mostly the same in both cases.
       def self.preproc_directive
-        @preproc_directive ||= %w(
+        @preproc_directive = Set.new %w(
           define elif else endif error if ifdef ifndef include line pragma undef warning
         )
       end
 
       # Standard register name, including ABI names.
       def self.register
-        @register ||= %w(
+        @register = Set.new %w(
           x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29 x30 x31
           f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 f13 f14 f15 f16 f17 f18 f19 f20 f21 f22 f23 f24 f25 f26 f27 f28 f29 f30 f31
           v0 v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31
@@ -34,14 +34,14 @@ module Rouge
 
       # These keywords are used for some vector instructions (vsetvli etc.).
       def self.other_keyword
-        @other_keyword ||= %w(
+        @other_keyword = Set.new %w(
           e8 e16 e32 e64 mf8 mf4 mf2 m1 m2 m4 m8 ta tu ma mu v0.t
         )
       end
 
       # For %pcrel_hi(...) relocations etc.
       def self.relocation_function
-        @relocation_function ||= %w(
+        @relocation_function = Set.new %w(
           hi lo
           pcrel_hi pcrel_lo
           tprel_hi tprel_lo
@@ -57,6 +57,11 @@ module Rouge
         rule %r/[ \t]+/, Text::Whitespace
         rule %r((//|#).*), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
+      end
+
+      # This is only needed to deal with preprocessor directives.
+      state :in_single_line_comment do
+        rule %r/.*/, Comment::Single, :pop!
       end
 
       state :literals do
@@ -82,6 +87,36 @@ module Rouge
         rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
       end
 
+      state :relocations do
+        rule %r/%(\w+)\b/ do |m|
+          if self.class.relocation_function.include?(m[1])
+            token Name::Builtin
+          else
+            token Text
+          end
+        end
+      end
+
+      # Registers, keywords, variables and operators.
+      state :words_and_operators do
+        # Register names, keywords
+        rule %r/([\w.]+)\b/ do |m|
+          if self.class.register.include?(m[1])
+            token Name::Constant
+          elsif self.class.other_keyword.include?(m[1])
+            token Name::Constant
+          else
+            token Name::Variable
+          end
+        end
+
+        # Variables.
+        rule %r/\\?[\$\w]+/, Name::Variable
+
+        # Operators
+        rule %r/[-~*\/%<>|&\^!+(),]/, Operator
+      end
+
       state :root do
         # Preprocessor directive. Awkwardly these are the same as single line comments.
         # It seems like GCC will silently ignore unknown directives so that comments
@@ -91,7 +126,17 @@ module Rouge
         #
         # Then it will silently ignore it!
         #
-        rule %r/^[ \t]*#[ \t]*(:?#{RiscvAsm.preproc_directive.join('|')})\b/, Comment::Preproc, :preprocessor_directive
+        # [ \t] is used here to avoid matching `#\nfoo`.
+        rule %r/^\s*#[ \t]*(\w+)\b/ do |m|
+          if self.class.preproc_directive.include?(m[1])
+            token Comment::Preproc
+            push :preprocessor_directive
+          else
+            token Comment::Single
+            # Match the rest of the line as a comment too.
+            push :in_single_line_comment
+          end
+        end
 
         mixin :comments_and_whitespace
 
@@ -110,7 +155,6 @@ module Rouge
 
       state :preprocessor_directive do
         mixin :comments_and_whitespace
-        mixin :literals
 
         # Escaped newline. This is one case where you can't parse
         # .S and .s the same - if you try to escape a newline in a
@@ -118,36 +162,38 @@ module Rouge
         # will be ignored. Here we assume .S.
         rule %r/\\\n/, Text
 
-        rule %r/./, Text
         rule %r/\n/, Text, :pop!
+
+        mixin :literals
+        mixin :relocations
+        mixin :words_and_operators
+
+        rule %r/./, Text
       end
 
       state :directive do
         mixin :comments_and_whitespace
+
+        rule %r/\n/, Text, :pop!
+
         mixin :literals
+        mixin :relocations
+        mixin :words_and_operators
 
         rule %r/./, Text
-        rule %r/\n/, Text, :pop!
       end
 
       state :args do
         mixin :comments_and_whitespace
-        mixin :literals
 
         # End of instruction.
         rule %r/[;\n]/, Text::Whitespace, :pop!
 
-        # Register names.
-        rule %r/(?:#{RiscvAsm.register.join('|')})\b/, Name::Constant
-        # Other keywords.
-        rule %r/(?:#{RiscvAsm.other_keyword.join('|')})\b/, Name::Constant
-        # Relocations
-        rule %r/%(?:#{RiscvAsm.relocation_function.join('|')})\b/, Name::Builtin
+        mixin :literals
+        mixin :relocations
+        mixin :words_and_operators
 
-        # Operators
-        rule %r/[-~*\/%<>|&\^!+(),]/, Operator
-        # Variables.
-        rule %r/\\?[\$\w]+/, Name::Variable
+        rule %r/./, Text
       end
     end
   end

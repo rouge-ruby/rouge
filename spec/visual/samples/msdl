@@ -1,0 +1,8 @@
+modifier car.speed_and_lane:
+    s: speed
+    l: lane_type
+    p: path
+    car1: car
+    keep(speed > 10kph)
+    speed(speed: s)
+    lane(lane: 1)

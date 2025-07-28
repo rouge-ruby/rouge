@@ -1,0 +1,7 @@
+coforall loc in Locales	{
+  on loc {
+    const nTasks = here.numPUs();
+    forall i in 0..<nTasks do
+      writeln("Hello from task ", i, " of ", nTasks, " on locale ", loc.name);
+  }
+}

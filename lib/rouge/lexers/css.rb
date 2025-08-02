@@ -290,6 +290,16 @@ module Rouge
       state :stanza do
         mixin :basics
         rule %r/}/, Punctuation, :pop!
+
+        # Handle nested rules by checking for selectors followed by opening brace
+        rule %r/(&?(?:[.#:]?#{identifier}|[*&]|:[:]?#{identifier}|\[[^\]]*\]|::?#{identifier})[^{:;]*){/m do |m|
+          # Split the match to handle selector and brace separately
+          selector = m[0][0...-1]  # Everything except the last character (the brace)
+          token Name::Tag, selector
+          token Punctuation, "{"
+          push :stanza
+        end
+
         rule %r/(#{identifier})(\s*)(:)/m do |m|
           name_tok = if self.class.properties.include? m[1]
             Name::Label

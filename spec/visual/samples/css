@@ -80,16 +80,13 @@ a[target="_blank"] {
 
 /* CSS Nesting examples */
 .container {
-  width: 100%;
   padding: 20px;
   
   .header {
-    font-size: 2em;
     color: blue;
     
     .title {
       font-weight: bold;
-      margin: 0;
     }
   }
   

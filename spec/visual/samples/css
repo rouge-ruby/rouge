@@ -81,40 +81,33 @@ a[target="_blank"] {
 /* CSS Nesting examples */
 .container {
   padding: 20px;
-  
+
   .header {
     color: blue;
-    
+
     .title {
       font-weight: bold;
     }
   }
-  
+
   &:hover {
     background-color: #f0f0f0;
   }
-  
+
   &.active {
     border: 2px solid red;
-    
+
     .content {
       display: block;
     }
   }
-  
+
   .sidebar {
     width: 200px;
-    
+
     ul {
-      list-style: none;
-      
       li {
-        padding: 5px;
-        
         a {
-          text-decoration: none;
-          color: #333;
-          
           &:hover {
             color: #666;
           }
@@ -128,7 +121,7 @@ a[target="_blank"] {
 @media (max-width: 768px) {
   .container {
     padding: 10px;
-    
+
     .header {
       font-size: 1.5em;
     }

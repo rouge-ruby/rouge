@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class Ada < RegexLexer
       tag 'ada'
-      filenames '*.ada', '*.ads', '*.adb', '*.gpr'
+      filenames '*.ada', '*.ads', '*.adb', '*.adc', '*.gpr'
       mimetypes 'text/x-ada'
 
       title 'Ada'
@@ -26,7 +26,7 @@ module Rouge
             abort abstract accept access aliased all array at begin body
             case constant declare delay delta digits do else elsif end
             exception exit for generic goto if in interface is limited
-            loop new null of others out overriding pragma private
+            loop new null of others out overriding parallel pragma private
             protected raise range record renames requeue return reverse
             select separate some synchronized tagged task terminate then
             until use when while with
@@ -143,8 +143,8 @@ module Rouge
         end
 
         # Operators and punctuation characters.
-        rule %r{[+*/&<=>|]|-|=>|\.\.|\*\*|[:></]=|<<|>>|<>}, Operator
-        rule %r{[.,:;()]}, Punctuation
+        rule %r{[+*/&<=>|]|-|=>|\.\.|\*\*|[:></]=|<<|>>|<>|@}, Operator
+        rule %r{[.,:;()\[\]]}, Punctuation
 
         rule ID do |m|
           t = self.class.idents[m[0].downcase]

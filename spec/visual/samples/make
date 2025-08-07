@@ -92,6 +92,14 @@ else
 THING2 = default
 endif
 
+ifeq ($(OS), Linux)
+MES = "Hi, Linux"
+else ifeq ($(OS), Darwin)
+MES = "Hi, Mac"
+else
+MES = "Unknown"
+endif
+
 ifeq ($(TARGET),special) # syntax variant: parentheses and separating comma
 TARGET = something_else
 else

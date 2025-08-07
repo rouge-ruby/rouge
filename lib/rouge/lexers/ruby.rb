@@ -11,7 +11,7 @@ module Rouge
       filenames '*.rb', '*.ruby', '*.rbw', '*.rake', '*.gemspec', '*.podspec',
                 'Rakefile', 'Guardfile', 'Gemfile', 'Capfile', 'Podfile',
                 'Vagrantfile', '*.ru', '*.prawn', 'Berksfile', '*.arb',
-                'Dangerfile', 'Fastfile', 'Deliverfile', 'Appfile'
+                'Dangerfile', 'Fastfile', 'Deliverfile', 'Appfile', '*.thor', 'Thorfile'
 
       mimetypes 'text/x-ruby', 'application/x-ruby'
 
@@ -297,7 +297,7 @@ module Rouge
           (
             [\p{L}_]\p{Word}*[!?]? |
             \*\*? | [-+]@? | [/%&\|^`~] | \[\]=? |
-            <<? | >>? | <=>? | >= | ===?
+            <=>? | <<? | >>? | >= | ===?
           )
         )x do |m|
           puts "matches: #{[m[0], m[1], m[2], m[3]].inspect}" if @debug

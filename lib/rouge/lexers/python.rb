@@ -20,22 +20,24 @@ module Rouge
         @keywords ||= %w(
           assert break continue del elif else except exec
           finally for global if lambda pass print raise
-          return try while yield as with from import yield
+          return try while yield as with from import
           async await nonlocal
         )
       end
 
       def self.builtins
         @builtins ||= %w(
-          __import__ abs all any apply ascii basestring bin bool buffer
-          bytearray bytes callable chr classmethod cmp coerce compile
-          complex delattr dict dir divmod enumerate eval execfile exit
-          file filter float format frozenset getattr globals hasattr hash hex id
-          input int intern isinstance issubclass iter len list locals
-          long map max memoryview min next object oct open ord pow property range
-          raw_input reduce reload repr reversed round set setattr slice
-          sorted staticmethod str sum super tuple type unichr unicode
-          vars xrange zip
+          __import__ abs aiter all anext any apply ascii
+          basestring bin bool buffer breakpoint bytearray bytes
+          callable chr classmethod cmp coerce compile complex
+          delattr dict dir divmod enumerate eval exec execfile exit
+          file filter float format frozenset getattr globals
+          hasattr hash help hex
+          id input int intern isinstance issubclass iter len list locals long
+          map max memoryview min next object oct open ord pow print property
+          range raw_input reduce reload repr reversed round set setattr slice
+          sorted staticmethod str sum super tuple type unichr unicode vars
+          xrange zip
         )
       end
 
@@ -45,25 +47,26 @@ module Rouge
 
       def self.exceptions
         @exceptions ||= %w(
-          ArithmeticError AssertionError AttributeError
-          BaseException BlockingIOError BrokenPipeError BufferError
-          BytesWarning ChildProcessError ConnectionAbortedError
-          ConnectionError ConnectionRefusedError ConnectionResetError
-          DeprecationWarning EOFError EnvironmentError
-          Exception FileExistsError FileNotFoundError
-          FloatingPointError FutureWarning GeneratorExit IOError
-          ImportError ImportWarning IndentationError IndexError
-          InterruptedError IsADirectoryError KeyError KeyboardInterrupt
-          LookupError MemoryError ModuleNotFoundError NameError
-          NotADirectoryError NotImplemented NotImplementedError OSError
-          OverflowError OverflowWarning PendingDeprecationWarning
-          ProcessLookupError RecursionError ReferenceError ResourceWarning
-          RuntimeError RuntimeWarning StandardError StopAsyncIteration
-          StopIteration SyntaxError SyntaxWarning SystemError SystemExit
-          TabError TimeoutError TypeError UnboundLocalError UnicodeDecodeError
-          UnicodeEncodeError UnicodeError UnicodeTranslateError
-          UnicodeWarning UserWarning ValueError VMSError Warning
-          WindowsError ZeroDivisionError
+          ArithmeticError AssertionError AttributeError BaseException
+          BaseExceptionGroup BlockingIOError BrokenPipeError BufferError
+          BytesWarning ChildProcessError ConnectionAbortedError ConnectionError
+          ConnectionRefusedError ConnectionResetError DeprecationWarning
+          EOFError EnvironmentError EncodingWarning Exception ExceptionGroup
+          FileExistsError FileNotFoundError FloatingPointError FutureWarning
+          GeneratorExit IOError ImportError ImportWarning IndentationError
+          IndexError InterruptedError IsADirectoryError
+          KeyError KeyboardInterrupt LookupError
+          MemoryError ModuleNotFoundError
+          NameError NotADirectoryError NotImplemented NotImplementedError
+          OSError OverflowError OverflowWarning PendingDeprecationWarning
+          PermissionError ProcessLookupError PythonFinalizationError
+          RecursionError ReferenceError ResourceWarning RuntimeError RuntimeWarning
+          StandardError StopAsyncIteration StopIteration SyntaxError SyntaxWarning
+          SystemError SystemExit TabError TimeoutError TypeError
+          UnboundLocalError UnicodeDecodeError UnicodeEncodeError UnicodeError
+          UnicodeTranslateError UnicodeWarning UserWarning ValueError VMSError
+          Warning WindowsError
+          ZeroDivisionError
         )
       end
 
@@ -127,6 +130,8 @@ module Rouge
           push :generic_string
         end
 
+        mixin :soft_keywords
+
         # using negative lookbehind so we don't match property names
         rule %r/(?<!\.)#{identifier}/ do |m|
           if self.class.keywords.include? m[0]
@@ -164,6 +169,28 @@ module Rouge
 
       state :classname do
         rule identifier, Name::Class, :pop!
+      end
+
+      state :soft_keywords do
+        rule %r/
+          (^[ \t]*)
+          (match|case)\b
+          (?![ \t]*
+            (?:[:,;=^&|@~)\]}] |
+              (?:#{Python.keywords.join('|')})\b))
+        /x do |m|
+          token Text::Whitespace, m[1]
+          token Keyword, m[2]
+          push :soft_keywords_inner
+        end
+      end
+
+      state :soft_keywords_inner do
+        rule %r((\s+)([^\n_]*)(_\b)) do |m|
+          groups Text::Whitespace, Text, Keyword
+        end
+
+        rule(//) { pop! }
       end
 
       state :raise do

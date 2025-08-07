@@ -89,6 +89,20 @@ describe Rouge::Lexers::Ruby do
           ['Literal.Number.Float', '20.4e+8']
       end
     end
+
+    describe 'method definition' do
+      it 'identifies comparable method' do
+        assert_tokens_equal "def <=>(o); end",
+          ["Keyword", "def"],
+          ["Text", " "],
+          ["Name.Function", "<=>"],
+          ["Punctuation", "("],
+          ["Name", "o"],
+          ["Punctuation", ");"],
+          ["Text", " "],
+          ["Keyword", "end"]
+      end
+    end
   end
 
   describe 'guessing' do
@@ -113,6 +127,8 @@ describe Rouge::Lexers::Ruby do
       assert_guess :filename => 'Deliverfile'
       assert_guess :filename => 'Fastfile'
       assert_guess :filename => 'Appfile'
+      assert_guess :filename => 'Thorfile'
+      assert_guess :filename => 'foo.thor'
     end
 
     it 'guesses by mimetype' do

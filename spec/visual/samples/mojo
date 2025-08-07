@@ -1,15 +1,13 @@
-def lex(code, lexer):
+fn lex(code: String, lexer: Lexer) raises:
     """
     Lex ``code`` with ``lexer`` and return an iterable of tokens.
     """
     try:
         return lexer.get_tokens(code)
-    except TypeError, err:
-        if isinstance(err.args[0], str) and \
-           'unbound method get_tokens' in err.args[0]:
-            raise TypeError('lex() argument must be a lexer instance, '
-                            'not a class')
+    except e:
         raise
+
+alias lst = List[Int]
 
 # quotes in strings
 def foo():
@@ -40,7 +38,7 @@ def zap():
     """docstring"""
 
 # escaped characters in string literals
-def baz():
+fn baz():
     '\a\b\f\n\r\t\v\"\''
     '\N{DEGREE SIGN}'
     '\uaF09'
@@ -86,6 +84,17 @@ class \
     pass
 
 class Spam: pass
+
+trait Spam: pass
+
+@register_passable
+struct Spam:
+    var x: Int
+    fn __init__(inout self):
+        self.x = 0
+        @parameter
+        for i in (range(10)):
+            pass
 
 class Spam(object):
     pass
@@ -218,27 +227,3 @@ def do_nothing():
 
     app = FastAPI()
     FastAPIInstrumentor.instrument_app(app)
-
-match command.split():
-    case ['to', direction] if direction in destination.route:
-        return 1
-    case 'foo' | 'bar':
-        return 2
-    case 'raz' as name:
-        return 3
-    case ['to', _]:
-        return 4
-    case else_bar:
-        return 5
-    case _:
-        return 6
-
-match command.split():
-    case _Direction():
-        return 1
-    case _ as default:
-        return 2
-
-case = 1
-match = 1
-match if True else bar

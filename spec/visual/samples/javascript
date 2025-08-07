@@ -297,3 +297,21 @@ ret += "\n";
 
 let baz;
 baz ??= 'default';
+
+class ClassWithPrivate {
+  #privateField;
+  #privateFieldWithInitializer = 42;
+
+  #privateMethod(obj) {
+    if (#privateField in obj) return obj.#privateField;
+
+    return "invalid obj"
+  }
+
+  static #privateStaticField;
+  static #privateStaticFieldWithInitializer = 42;
+
+  static #privateStaticMethod() {
+    // …
+  }
+}

@@ -4,11 +4,102 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.6.0: 2025-07-16
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.2...v4.6.0)
+
+- General
+  - Add Ruby 3.4 to CI build ([#2127](https://github.com/rouge-ruby/rouge/pull/2127/) by Tan Le)
+  - Improve Objective-C vs Mathematica lexer disambiguation ([#2103](https://github.com/rouge-ruby/rouge/pull/2103/) by objc)
+- Ada Lexer
+  - Add `parallel` keyword, square brackets and `@` for Ada 2022 ([#2117](https://github.com/rouge-ruby/rouge/pull/2117/) by Maxim Reznik)
+- Bicep Lexer (**NEW**)
+  - Add a Lexer for Bicep language ([#1937](https://github.com/rouge-ruby/rouge/pull/1937/) by Xavier Mignot)
+  - Add bicep to the list of supported languages ([#2137](https://github.com/rouge-ruby/rouge/pull/2137/) by Tan Le)
+  - Fix code indentation on Bicep lexer ([#2138](https://github.com/rouge-ruby/rouge/pull/2138/) by Tan Le)
+- C# Lexer
+  - Support Unicode characters in C# lexer ([#2136](https://github.com/rouge-ruby/rouge/pull/2136/) by Tan Le)
+  - Move keywords to class methods in CSharp lexer ([#2139](https://github.com/rouge-ruby/rouge/pull/2139/) by Tan Le)
+- Docker Lexer
+  - Update Docker file name patterns ([#2133](https://github.com/rouge-ruby/rouge/pull/2133/) by Oscar Alberto Tovar)
+- Python Lexer
+  - Support match and case keywords in Python ([#2140](https://github.com/rouge-ruby/rouge/pull/2140/) by Tan Le)
+  - Update Python builtin keywords, functions, and exceptions to Python version 3 ([#2109](https://github.com/rouge-ruby/rouge/pull/2109/) by Joris Clement)
+- Terraform Lexer
+  - Autodetect *.tfvars files as Terraform ([#2146](https://github.com/rouge-ruby/rouge/pull/2146/) by Oscar Alberto Tovar)
+- TOML Lexer
+  - toml: support inline tables in arrays ([#2065](https://github.com/rouge-ruby/rouge/pull/2065/) by ash)
+
+## version 4.5.2: 2025-04-27
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.1...v4.5.2)
+
+- General
+  - Update various doc ([#2086](https://github.com/rouge-ruby/rouge/pull/2086/) by Tan Le)
+- CPP Lexer
+  - c++: expand support for c++ float literals ([#2123](https://github.com/rouge-ruby/rouge/pull/2123/) by Jeanine Adkisson)
+- CSS Lexer
+  - Update CSS lexer ([#2118](https://github.com/rouge-ruby/rouge/pull/2118/) by Gerard)
+- Java Lexer
+  - Add record keyword declaration for Java 14+ ([#2121](https://github.com/rouge-ruby/rouge/pull/2121/) by 0xh3xa)
+- HTML Lexer
+  - Add *.razor file glob to HTML  [EASY MERGE] ([#2115](https://github.com/rouge-ruby/rouge/pull/2115/) by Téo Orthlieb)
+- Mojo Lexer
+  - Added Mojo 25.1 keyword changes ([#2112](https://github.com/rouge-ruby/rouge/pull/2112/) by Indukumar Vellapillil Hari)
+- SASS Lexer
+  - Fix missing method error in SASS lexer ([#2125](https://github.com/rouge-ruby/rouge/pull/2125/) by Tan Le)
+- Svelte Lexer
+  - Support mustache template in Svelte ([#2096](https://github.com/rouge-ruby/rouge/pull/2096/) by Tan Le)
+
+## version 4.5.1: 2024-11-12
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.0...v4.5.1)
+
+- JSON5 Lexer
+  - Fix prerequisite dependency in JSON5 ([#2084](https://github.com/rouge-ruby/rouge/pull/2084/) by Tan Le)
+
+## version 4.5.0: 2024-11-11
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.4.0...v4.5.0)
+
+- General
+  - Support multiple states when parsing rules ([#2078](https://github.com/rouge-ruby/rouge/pull/2078/) by Tan Le)
+- COBOL Lexer (**NEW**)
+  - Add a lexer, tests and examples for COBOL ([#2067](https://github.com/rouge-ruby/rouge/pull/2067/) by Bart Broere)
+- Groovy Lexer
+  - Recognize Nextflow files as Groovy files ([#2081](https://github.com/rouge-ruby/rouge/pull/2081/) by Bond-009)
+- INI Lexer
+  - Add more extensions and mimetypes for INI lexer ([#2075](https://github.com/rouge-ruby/rouge/pull/2075/) by Tan Le)
+  - Default .cfg highlight to INI lexer ([#2074](https://github.com/rouge-ruby/rouge/pull/2074/) by Tan Le)
+- Javascript Lexer
+  - Support private property identifier in JS lexer ([#2076](https://github.com/rouge-ruby/rouge/pull/2076/) by Tan Le)
+- JSON5 Lexer (**NEW**)
+  - implement a json5 lexer ([#1561](https://github.com/rouge-ruby/rouge/pull/1561/) by Jeanine Adkisson)
+- Ruby Lexer
+  - Recognize Thor files as Ruby files ([#2080](https://github.com/rouge-ruby/rouge/pull/2080/) by Vitaly Slobodin)
+- Terraform Lexer
+  - Support special escape sequences in Terraform ([#2073](https://github.com/rouge-ruby/rouge/pull/2073/) by Tan Le)
+
+## version 4.4.0: 2024-09-16
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.3.0...v4.4.0)
+
+- Docker Lexer
+  - Detect Containerfiles as Dockerfiles ([#2059](https://github.com/rouge-ruby/rouge/pull/2059/) by Andrew Hills)
+- Make Lexer
+  - Handle `else if` statement in makefile ([#2063](https://github.com/rouge-ruby/rouge/pull/2063/) by Tan Le)
+- Mojo Lexer (**NEW**)
+  - Add Mojo to list of supported language ([#2072](https://github.com/rouge-ruby/rouge/pull/2072/) by Tan Le)
+  - Fix NameError in the Mojo lexer in Ruby 2.7 ([#2068](https://github.com/rouge-ruby/rouge/pull/2068/) by Bart Broere)
+  - Mojo language highlighting support. ([#2050](https://github.com/rouge-ruby/rouge/pull/2050/) by ivellapillil)
+- P4 Lexer (**NEW**)
+  - Add lexer for P4 ([#2049](https://github.com/rouge-ruby/rouge/pull/2049/) by Ryan Goodfellow)
+
 ## version 4.3.0: 2024-06-14
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.2.1...v4.3.0)
 
-_ General
+- General
   - Align the base-16 default dark colour palette ([#2040](https://github.com/rouge-ruby/rouge/pull/2040/) by Tan Le)
 - Brainfuck Lexer
   - Add "bf" as an alias for brainfuck ([#2038](https://github.com/rouge-ruby/rouge/pull/2038/) by Boris Verkhovskiy)

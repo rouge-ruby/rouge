@@ -11,7 +11,7 @@ module Rouge
 
       tag 'terraform'
       aliases 'tf'
-      filenames '*.tf'
+      filenames '*.tf', '*.tfvars'
 
       def self.keywords
         @keywords ||= Set.new %w(
@@ -39,8 +39,9 @@ module Rouge
 
       state :strings do
         rule %r/\\./, Str::Escape
+        rule %r/(\$[\$]+|%[%]+)(\{)/, Str
         rule %r/\$\{/ do
-          token Keyword
+          token Punctuation
           push :interpolation
         end
       end
@@ -66,7 +67,7 @@ module Rouge
 
       state :interpolation do
         rule %r/\}/ do
-          token Keyword
+          token Punctuation
           pop!
         end
 

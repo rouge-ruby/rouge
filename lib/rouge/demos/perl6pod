@@ -1,0 +1,28 @@
+#! /usr/bin/env perl6
+
+=begin pod
+
+=NAME    Test Program for Pod::To::Parser
+=AUTHOR  Patrick Spek
+=VERSION 0.0.1
+
+=begin LICENSE
+GNU Affero GPLN<Version 3>
+=end LICENSE
+
+=head1 A test program for App::POD::Manual
+
+Now we're reaching the real POD document that I care about. Let's add in some
+test cases as well here.
+
+=head2 Text styles
+
+=item1 This text is B<bold>
+=item1 This text is I<italic>
+=item1 This text is U<underlined>
+=item1 This text is C<code>
+=item1 This text is L<a link|https://www.tyil.work> to my blog
+=item1 This text is normal Z<or is it?>
+=item1 I'm running ouf of ideas N<Search the Internet for more!>
+
+=end pod

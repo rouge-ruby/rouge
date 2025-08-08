@@ -179,7 +179,7 @@ module Rouge
       end
 
       def stream_tokens(input, &output)
-        input = StringScanner.new(input)
+        input = Rouge.string_scanner(input)
         lang_lexer.reset!
         output_lexer.reset!
 

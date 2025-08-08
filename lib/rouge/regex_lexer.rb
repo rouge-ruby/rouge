@@ -44,11 +44,16 @@ module Rouge
     class Rule
       attr_reader :callback
       attr_reader :re
-      attr_reader :beginning_of_line
+      attr_reader :line_start_hack
       def initialize(re, callback)
         @re = re
         @callback = callback
-        @beginning_of_line = re.source[0] == ?^
+
+        if FIXED_ANCHOR
+          @line_start_hack = false
+        else
+          @line_start_hack = re.source[0] == ?^
+        end
       end
 
       def inspect
@@ -322,7 +327,7 @@ module Rouge
     #
     # @see #step #step (where (2.) is implemented)
     def stream_tokens(str, &b)
-      stream = StringScanner.new(str)
+      stream = Rouge.string_scanner(str)
 
       @current_stream = stream
       @output_stream  = b
@@ -367,9 +372,14 @@ module Rouge
           # XXX HACK XXX
           # StringScanner's implementation of ^ is b0rken.
           # see http://bugs.ruby-lang.org/issues/7092
-          # TODO: this doesn't cover cases like /(a|^b)/, but it's
-          # the most common, for now...
-          next if rule.beginning_of_line && !stream.beginning_of_line?
+          #
+          # This was fixed using an optional fixed_anchor flag in Ruby 2.7.
+          # If available, this hack is not necessary, since anchors will
+          # have the correct behavior by default.
+          #
+          # @see string_scanner.rb
+          next if !FIXED_ANCHOR && \
+            rule.line_start_hack && !stream.beginning_of_line?
 
           if (size = stream.skip(rule.re))
             puts "    got: #{stream[0].inspect}" if @debug

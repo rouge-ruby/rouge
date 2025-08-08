@@ -527,6 +527,7 @@ module Rouge
     @_loaded_lexers = {}
 
     def self.load_lexer(relpath)
+      relpath = relpath.to_s # allow Pathnames
       return if @_loaded_lexers.key?(relpath)
       @_loaded_lexers[relpath] = true
       Kernel::load File.join(BASE_DIR, relpath)

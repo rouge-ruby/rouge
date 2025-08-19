@@ -106,6 +106,7 @@ module Rouge
         rule %r/[(,]/, Punctuation
         rule %r/\s+/, Text
         rule %r/"/, Str::Regex, :regex
+        rule %r/'/, Str::Single, :escape_sqs
       end
 
       state :regex do

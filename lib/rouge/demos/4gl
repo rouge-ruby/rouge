@@ -1,0 +1,42 @@
+DATABASE rouge_test
+
+GLOBALS
+# used by init_msgs(), message_window(), and prompt_window() to allow
+# user to display text in a message or prompt window.
+  DEFINE ga_dsplymsg ARRAY[5] OF CHAR(48)
+END GLOBALS
+
+########################################
+MAIN
+########################################
+  DEFINE    i SMALLINT,
+            dbstat INTEGER
+  LET dbstat = -3720
+  INITIALIZE ga_dsplymsg TO NULL
+  LET ga_dsplymsg[1] = "The record has not been inserted into the"
+  LET ga_dsplymsg[2] = " database due to an error: ",
+        dbstat USING "-<<<<<<<<<<<"
+  CALL message_window(3,4)
+END MAIN
+
+FUNCTION message_box()
+  DEFINE    caution_msg CHAR(50),
+            confirm_msg CHAR(50),
+            dummy SMALLINT
+  LET confirm_msg = "Press any key to continue."
+  CALL yesno_box(caution_msg, confirm_msg) RETURNING dummy
+END FUNCTION -- message_box --
+
+FUNCTION yesno_box(caution_msg, confirm_msg)
+  DEFINE    caution_msg CHAR(50),
+            confirm_msg CHAR(50),
+            yes_no CHAR(1)
+  OPEN WINDOW w_yesno AT 10, 10
+         WITH 4 ROWS, 56 COLUMNS
+         ATTRIBUTE (BORDER, MESSAGE LINE FIRST+1,
+         PROMPT LINE FIRST+2)
+  MESSAGE caution_msg
+  PROMPT confirm_msg CLIPPED FOR CHAR yes_no
+  CLOSE WINDOW w_yesno
+  RETURN (DOWNSHIFT(yes_no) = "y")
+END FUNCTION -- yesno_box --

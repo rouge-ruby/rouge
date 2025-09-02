@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Rouge
     module Lexers
         class HLL < RegexLexer
@@ -9,7 +7,7 @@ module Rouge
             filenames '*.hll'
             mimetypes 'text/x-hll'
 
-            state :comments do
+            state :comment do
                 rule %r(///.*?$), Comment::Doc
                 rule %r(//[^/]*?$), Comment::Single
                 rule %r(/\*[^\*].*?\*/)m, Comment::Multiline
@@ -17,31 +15,31 @@ module Rouge
             end
 
             state :root do
-                rule /\s+/, Text::Whitespace
-                mixin :comments
-                rule /Namespaces: \w/, Name::Namespace
+                rule %r(\s+), Text::Whitespace
+                mixin :comment
+                rule %r(Namespaces: \w), Name::Namespace
                 mixin :section
-                rule /[(){}\[\];:,|!^]+/, Punctuation
-                rule /:=/, Punctuation
-                rule /\d+/, Num::Integer
-                rule /\w+/ do |m|
+                rule %r([(){}\[\];:,|!^]+), Punctuation
+                rule %r(:=), Punctuation
+                rule %r(\d+), Num::Integer
+                rule %r(\w+) do |m|
                     if self.class.keywords.include?(m[0])
                         token Keyword
-                    elsif
+                    else
                         token Name
                     end
                 end
-                rule /[~&#+\-><*=]/, Operator
+                rule %r([~&#+\-><*=]), Operator
             end
 
             state :section do
-                rule /(D|d)eclarations/, Name::Builtin
-                rule /(D|d)efinitions/, Name::Builtin
-                rule /(I|i)nputs/, Name::Builtin
-                rule /(O|o)utputs/, Name::Builtin
-                rule /(P|p)roof obligations/, Name::Builtin
-                rule /(C|c)onstants/, Name::Builtin
-                rule /(C|c)onstraints/, Name::Builtin
+                rule %r((D|d)eclarations), Name::Builtin
+                rule %r((D|d)efinitions), Name::Builtin
+                rule %r((I|i)nputs), Name::Builtin
+                rule %r((O|o)utputs), Name::Builtin
+                rule %r((P|p)roof (O|o)bligations), Name::Builtin
+                rule %r((C|c)onstants), Name::Builtin
+                rule %r((C|c)onstraints), Name::Builtin
             end
 
             def self.keywords

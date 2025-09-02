@@ -1,0 +1,19 @@
+/* The pigeon holes principles
+   Taken from the specification */
+constants:
+  int NOF_PIGEONS := 10;
+  int NOF_HOLES := NOF_PIGEONS - 1;
+
+inputs:
+  bool P[NOF_PIGEONS, NOF_HOLES];
+
+definitions:
+  // For each hole there is at most one pigeon
+  a := ALL i:[0, NOF_HOLES-1], j:[0, NOF_PIGEONS-1] ALL k:[j+1, NOF_PIGEONS-1]
+         (P[j, i] -> ~P[k, i]);
+
+  // For each pigeon there is at least one hole
+  b := ALL i:[0, NOF_PIGEONS-1] SOME j:[0, NOF_HOLES-1] (P[i,j]);
+
+proof obligations:
+  ~(a & b);

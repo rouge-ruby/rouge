@@ -16,9 +16,8 @@ module Rouge
 
             state :root do
                 rule %r(\s+), Text::Whitespace
+                rule %r/\w::/, Name::Namespace
                 mixin :comment
-                rule %r(Namespaces: \w), Name::Namespace
-                mixin :section
                 rule %r([(){}\[\];:,|!^]+), Punctuation
                 rule %r(:=), Punctuation
                 rule %r(\d+), Num::Integer
@@ -32,20 +31,23 @@ module Rouge
                 rule %r([~&#+\-><*=]), Operator
             end
 
-            state :section do
-                rule %r((D|d)eclarations), Name::Builtin
-                rule %r((D|d)efinitions), Name::Builtin
-                rule %r((I|i)nputs), Name::Builtin
-                rule %r((O|o)utputs), Name::Builtin
-                rule %r((P|p)roof (O|o)bligations), Name::Builtin
-                rule %r((C|c)onstants), Name::Builtin
-                rule %r((C|c)onstraints), Name::Builtin
-            end
-
             def self.keywords
                 @keywords ||= Set.new %w(
-                  if then else elif lambda false true int bool X I pre
-                  ALL SOME SELECT SUM PROD sort)
+                  if then else elif lambda
+                  false true True TRUE False FALSE
+                  int bool enum tuple struct signed unsigned
+                  X I pre PRE
+                  cast
+                  bin2s
+                  bin2u
+                  blocks
+                  Blocks
+                  ALL SOME SELECT SUM PROD CONJ DISJ sort
+                  Namespaces namespaces
+                  declarations Declarations definitions Definitions
+                  inputs Inputs proof Proof obligations Obligations
+                  Constants constants Constraints Constraints
+                  type Types u2bin with)
             end
         end
     end

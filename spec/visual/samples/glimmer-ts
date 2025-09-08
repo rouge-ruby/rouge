@@ -1,0 +1,81 @@
+// vim: ft=glimmer-ts
+
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { on } from '@ember/modifier';
+import type { TOC } from '@ember/component/template-only';
+
+// Interface definitions
+interface UserData {
+  name: string;
+  age: number;
+  email?: string;
+}
+
+interface MyComponentSignature {
+  Element: HTMLDivElement;
+  Args: {
+    user: UserData;
+    onUpdate?: (user: UserData) => void;
+  };
+  Blocks: {
+    default: [user: UserData];
+  };
+}
+
+// Class-based component with TypeScript
+export default class MyComponent extends Component<MyComponentSignature> {
+  @tracked isEditing: boolean = false;
+
+  get displayName(): string {
+    return `${this.args.user.name} (${this.args.user.age})`;
+  }
+
+  handleToggle = (): void => {
+    this.isEditing = !this.isEditing;
+  };
+
+  updateUser = (field: keyof UserData, value: string | number): void => {
+    const updatedUser = { ...this.args.user, [field]: value };
+    this.args.onUpdate?.(updatedUser);
+  };
+
+  <template>
+    <div class="user-card" ...attributes>
+      <h2>{{this.displayName}}</h2>
+      {{#if this.isEditing}}
+        <form>
+          <Input @value={{@user.name}} />
+          <Input @type="number" @value={{@user.age}} />
+        </form>
+      {{else}}
+        <p>Email: {{@user.email}}</p>
+        {{yield @user}}
+      {{/if}}
+      <button {{on "click" this.handleToggle}}>
+        {{if this.isEditing "Save" "Edit"}}
+      </button>
+    </div>
+  </template>
+}
+
+// Template-only component with signature
+interface GreetingSignature {
+  Element: HTMLDivElement;
+  Args: {
+    name: string;
+    formal?: boolean;
+  };
+}
+
+const Greeting: TOC<GreetingSignature> = <template>
+  <div class="greeting">
+    {{#if @formal}}
+      <p>Good day, {{@name}}.</p>
+    {{else}}
+      <p>Hey {{@name}}!</p>
+    {{/if}}
+  </div>
+</template>;
+
+export { Greeting };

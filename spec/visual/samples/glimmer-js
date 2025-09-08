@@ -1,0 +1,51 @@
+// vim: ft=glimmer-js
+
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { on } from '@ember/modifier';
+
+// Class-based component
+export default class MyComponent extends Component {
+  @tracked count = 0;
+
+  get greeting() {
+    return `Hello, ${this.args.name}!`;
+  }
+
+  handleClick = () => {
+    this.count++;
+  };
+
+  <template>
+    <div class="greeting">
+      {{this.greeting}}
+      <p>Count: {{this.count}}</p>
+      <button {{on "click" this.handleClick}}>
+        Click me
+      </button>
+      {{#if @showExtra}}
+        <span>Extra content for {{@name}}</span>
+      {{/if}}
+    </div>
+  </template>
+}
+
+// Template-only component
+const SimpleGreeting = <template>
+  <div class="simple">
+    <h1>Hello {{@name}}!</h1>
+    {{#each @items as |item|}}
+      <p>{{item.title}}: {{item.description}}</p>
+    {{/each}}
+    {{yield}}
+  </div>
+</template>;
+
+// Arrow function component
+const ArrowComponent = (signature) => <template>
+  <button {{on "click" @onClick}}>
+    {{@label}}
+  </button>
+</template>;
+
+export { SimpleGreeting, ArrowComponent };

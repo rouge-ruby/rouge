@@ -16,16 +16,19 @@ module Rouge
       def initialize(*)
         super
         @html = HTML.new(options)
+        @handlebars = Handlebars.new(parent: @html)
       end
 
       def start
         super
         @html.reset!
+        @handlebars.reset!
       end
 
       def reset!
         super
         @html.reset!
+        @handlebars.reset!
       end
 
       def self.included(base)
@@ -50,41 +53,13 @@ module Rouge
             pop!
           end
 
-          # Handle Handlebars-style interpolation
-          rule %r/{{/ do
-            token base::Str::Interpol
-            push :handlebars_expr
+          rule %r/.+?(?=<\/template>)/m do
+            delegate @handlebars
           end
 
-          # Delegate HTML content to HTML lexer
-          rule %r/[^{<]+/ do
-            delegate @html
+          rule %r/.+/m do
+            delegate @handlebars
           end
-
-          rule %r/[<{]/ do
-            delegate @html
-          end
-        end
-
-        base.state :handlebars_expr do
-          rule %r/}}/ do
-            token base::Str::Interpol
-            pop!
-          end
-
-          # Handle nested braces
-          rule %r/{/ do
-            token base::Punctuation
-            push
-          end
-
-          rule %r/}/ do
-            token base::Punctuation
-            pop!
-          end
-
-          # Handlebars content
-          rule %r/[^{}]+/, base::Str::Interpol
         end
       end
     end

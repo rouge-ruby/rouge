@@ -53,7 +53,7 @@ describe Rouge::Lexers::GlimmerTs do
       GTS
       
       assert_has_token 'Name.Tag', code
-      assert_has_token 'Literal.String.Interpol', code
+      assert_has_token 'Keyword', code  # Handlebars uses Keyword for {{ and }}
     end
   end
 end

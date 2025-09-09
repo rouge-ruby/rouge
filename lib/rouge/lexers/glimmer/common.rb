@@ -3,6 +3,13 @@
 
 module Rouge
   module Lexers
+    # Custom HTML lexer that supports Glimmer splattributes
+    class GlimmerHTML < HTML
+      prepend :tag do
+        rule %r/\.\.\./, Operator  # Splattributes operator
+      end
+    end
+
     module GlimmerCommon
       def self.extended(base)
         base.prepend :root do
@@ -15,7 +22,7 @@ module Rouge
 
       def initialize(*)
         super
-        @html = HTML.new(options)
+        @html = GlimmerHTML.new(options)
         @handlebars = Handlebars.new(parent: @html)
       end
 
@@ -41,6 +48,7 @@ module Rouge
 
           # Handle attributes on template tag
           rule %r/\s+/, base::Text
+          rule %r/\.\.\./, base::Operator  # Splattributes operator
           rule %r/[a-zA-Z_][\w-]*/, base::Name::Attribute
           rule %r/=/, base::Operator
           rule %r/"[^"]*"/, base::Str::Double

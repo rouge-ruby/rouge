@@ -69,7 +69,7 @@ interface GreetingSignature {
 }
 
 const Greeting: TOC<GreetingSignature> = <template>
-  <div class="greeting">
+  <div class="greeting" ...attributes>
     {{#if @formal}}
       <p>Good day, {{@name}}.</p>
     {{else}}

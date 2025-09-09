@@ -17,7 +17,7 @@ export default class MyComponent extends Component {
   };
 
   <template>
-    <div class="greeting">
+    <div class="greeting" ...attributes>
       {{this.greeting}}
       <p>Count: {{this.count}}</p>
       <button {{on "click" this.handleClick}}>
@@ -30,9 +30,9 @@ export default class MyComponent extends Component {
   </template>
 }
 
-// Template-only component
+// Template-only component with splattributes
 const SimpleGreeting = <template>
-  <div class="simple">
+  <div class="simple" ...attributes>
     <h1>Hello {{@name}}!</h1>
     {{#each @items as |item|}}
       <p>{{item.title}}: {{item.description}}</p>
@@ -43,7 +43,7 @@ const SimpleGreeting = <template>
 
 // Arrow function component
 const ArrowComponent = (signature) => <template>
-  <button {{on "click" @onClick}}>
+  <button ...attributes {{on "click" @onClick}}>
     {{@label}}
   </button>
 </template>;

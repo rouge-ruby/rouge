@@ -359,3 +359,14 @@ foo/bar: We are great
 foo.bar: Are we really?
 foo+bar: Maybe not
 foo:bar: ...or maybe we are?
+
+# YAML key edge cases (quotes, whitespace before colon, etc)
+---
+"$schema1": "some-schema"
+"normally disallowed chracters: []{}:": "value"
+"with some trailing spaces"   : true
+foo     : 3
+object1:
+  "$schema1": "some-schema"
+  "with some trailing spaces"   : true
+  foo     : 3

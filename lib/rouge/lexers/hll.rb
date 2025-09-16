@@ -9,7 +9,7 @@ module Rouge
 
             state :comment do
                 rule %r(///.*?$), Comment::Doc
-                rule %r(//[^/]*?$), Comment::Single
+                rule %r(//[^/].*?$), Comment::Single
                 rule %r(/\*[^\*].*?\*/)m, Comment::Multiline
                 rule %r(/\*\*.*?\*/)m, Comment::Doc
             end

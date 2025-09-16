@@ -17,6 +17,8 @@ module Rouge
             state :root do
                 rule %r(\s+), Text::Whitespace
                 rule %r/\w::/, Name::Namespace
+                rule %r/"[^"]*"/, Literal::String
+                rule %r/'[^']*'/, Literal::String
                 mixin :comment
                 rule %r([(){}\[\];:,|!^]+), Punctuation
                 rule %r(:=), Punctuation

@@ -22,10 +22,12 @@ module Rouge
                 mixin :comment
                 rule %r([(){}\[\];:,|!^]+), Punctuation
                 rule %r(:=), Punctuation
-                rule %r(\d+), Num::Integer
+                rule %r(\d+), Literal::Number
                 rule %r(\w+) do |m|
                     if self.class.keywords.include?(m[0])
                         token Keyword
+                    elsif self.class.type_keywords.include?(m[0])
+                        token Keyword::Type
                     else
                         token Name
                     end
@@ -33,11 +35,14 @@ module Rouge
                 rule %r([~&#+\-><*=]), Operator
             end
 
+            def self.type_keywords
+                @type_keywords ||= Set.new %w(bool int)
+            end
             def self.keywords
                 @keywords ||= Set.new %w(
                   if then else elif lambda
                   false true True TRUE False FALSE
-                  int bool enum tuple struct signed unsigned
+                  enum tuple struct signed unsigned
                   X I pre PRE
                   cast
                   bin2s

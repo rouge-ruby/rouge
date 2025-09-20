@@ -154,7 +154,7 @@ module Rouge
           s-resize sans-serif saturation scale-down screen scroll
           se-resize semi-condensed semi-expanded separate serif show
           sides silent size slow slower small-caps small-caption smaller
-          smooth soft soft-light solid space-aroun space-between
+          smooth soft soft-light solid space-around space-between
           space-evenly span spell-out square start static status-bar sticky
           stretch sub subtract super sw-resize swap symbolic table
           table-caption table-cell table-column table-column-group
@@ -259,6 +259,7 @@ module Rouge
       end
 
       state :at_rule do
+        rule %r/(?:<=|>=|~=|\|=|\^=|\$=|\*=|<|>|=)/, Operator
         rule %r/{(?=\s*#{identifier}\s*:)/m, Punctuation, :at_stanza
         rule %r/{/, Punctuation, :at_body
         rule %r/;/, Punctuation, :pop!

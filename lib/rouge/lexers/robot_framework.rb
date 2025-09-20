@@ -10,7 +10,7 @@ module Rouge
       title "Robot Framework"
       desc 'Robot Framework is a generic open source automation testing framework (robotframework.org)'
 
-      filenames '*.robot'
+      filenames '*.robot', '*.resource'
       mimetypes 'text/x-robot'
 
       def initialize(opts = {})

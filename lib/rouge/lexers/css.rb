@@ -259,6 +259,7 @@ module Rouge
       end
 
       state :at_rule do
+        rule %r/(?:<=|>=|~=|\|=|\^=|\$=|\*=|<|>|=)/, Operator
         rule %r/{(?=\s*#{identifier}\s*:)/m, Punctuation, :at_stanza
         rule %r/{/, Punctuation, :at_body
         rule %r/;/, Punctuation, :pop!

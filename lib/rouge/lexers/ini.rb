@@ -14,8 +14,8 @@ module Rouge
       identifier = /[\w\-.]+/
 
       state :basic do
+        rule %r/\s+/, Text::Whitespace
         rule %r/[;#].*?\n/, Comment
-        rule %r/\s+/, Text
         rule %r/\\\n/, Str::Escape
       end
 
@@ -23,11 +23,14 @@ module Rouge
         mixin :basic
 
         rule %r/(#{identifier})(\s*)(=)/ do
-          groups Name::Property, Text, Punctuation
+          groups Name::Property, Text::Whitespace, Punctuation
           push :value
         end
 
         rule %r/\[.*?\]/, Name::Namespace
+
+        # standalone option, supported by some INI parsers
+        rule %r/(.+?)/, Name::Attribute
       end
 
       state :value do

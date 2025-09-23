@@ -124,7 +124,7 @@ module Rouge
 
         # TODO: not in python 3
         rule %r/`.*?`/, Str::Backtick
-        rule %r/([rfbu]{0,2})('''|"""|['"])/i do |m|
+        rule %r/([rtfbu]{0,2})('''|"""|['"])/i do |m|
           groups Str::Affix, Str::Heredoc
           current_string.register type: m[1].downcase, delim: m[2]
           push :generic_string

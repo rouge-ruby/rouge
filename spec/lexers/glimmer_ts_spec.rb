@@ -24,7 +24,8 @@ describe Rouge::Lexers::GlimmerTs do
 
     it 'lexes TypeScript code outside template blocks' do
       assert_has_token 'Keyword', 'import Component from "@glimmer/component";'
-      assert_has_token 'Name.Class', 'export default class MyComponent extends Component {'
+      assert_has_token 'Name.Class', 
+        'export default class MyComponent extends Component {'
       assert_has_token 'Name.Decorator', '@tracked count: number = 0;'
     end
 
@@ -38,7 +39,7 @@ describe Rouge::Lexers::GlimmerTs do
           };
         }
       GTS
-      
+
       assert_has_token 'Keyword.Reserved', code  # interface
       assert_has_token 'Name.Other', code  # ComponentSignature
       assert_has_token 'Keyword.Reserved', code  # string, number
@@ -52,7 +53,7 @@ describe Rouge::Lexers::GlimmerTs do
     it 'lexes handlebars expressions in templates' do
       code = '<template><div>{{@name}}</div></template>'
       assert_has_token 'Keyword', code  # {{ and }}
-      assert_has_token 'Name.Attribute', code  # @name (tokenized as attribute by handlebars)
+      assert_has_token 'Name.Attribute', code
       assert_has_token 'Name.Tag', code  # template and div tags
     end
 
@@ -64,7 +65,9 @@ describe Rouge::Lexers::GlimmerTs do
     end
 
     it 'lexes handlebars with modifiers' do
-      code = '<template><button {{on "click" this.handleClick}}>Click</button></template>'
+      code = '<template>' \
+             '<button {{on "click" this.handleClick}}>Click</button>' \
+             '</template>'
       assert_has_token 'Keyword', code  # {{ and }}
       assert_has_token 'Name.Variable', code  # on
       assert_has_token 'Literal.String.Double', code  # "click"
@@ -76,7 +79,8 @@ describe Rouge::Lexers::GlimmerTs do
           Args: { name: string };
         }
 
-        export default class MyComponent extends Component<MyComponentSignature> {
+        export default class MyComponent extends 
+          Component<MyComponentSignature> {
           @tracked count: number = 0;
 
           get greeting(): string {
@@ -90,7 +94,7 @@ describe Rouge::Lexers::GlimmerTs do
           </template>
         }
       GTS
-      
+
       assert_has_token 'Keyword.Reserved', code  # interface
       assert_has_token 'Keyword', code  # export, default, class, extends, get
       assert_has_token 'Name.Class', code  # MyComponent, Component
@@ -116,7 +120,7 @@ describe Rouge::Lexers::GlimmerTs do
           {{/if}}
         </template>;
       GTS
-      
+
       assert_has_token 'Keyword', code  # import, type, const
       assert_has_token 'Keyword.Reserved', code  # interface
       assert_has_token 'Keyword.Reserved', code  # string, boolean
@@ -138,7 +142,7 @@ describe Rouge::Lexers::GlimmerTs do
           </template>
         }
       GTS
-      
+
       assert_has_token 'Keyword.Reserved', code  # interface
       assert_has_token 'Name.Class', code  # List, Component
       assert_has_token 'Punctuation', code  # <, >, [, ]
@@ -147,14 +151,18 @@ describe Rouge::Lexers::GlimmerTs do
     end
 
     it 'lexes nested handlebars expressions' do
-      code = '<template>{{#each @items as |item|}}{{item.name}}{{/each}}</template>'
+      code = '<template>' \
+             '{{#each @items as |item|}}{{item.name}}{{/each}}' \
+             '</template>'
       assert_has_token 'Keyword', code  # {{#each, {{/each
       assert_has_token 'Name.Attribute', code  # @items, item.name
       assert_has_token 'Name.Tag', code  # template
     end
 
     it 'lexes handlebars with yield and blocks' do
-      code = '<template><div>{{yield (hash name=@name age=@age)}}</div></template>'
+      code = '<template>' \
+             '<div>{{yield (hash name=@name age=@age)}}</div>' \
+             '</template>'
       assert_has_token 'Keyword', code  # {{ and }}
       assert_has_token 'Name.Variable', code  # yield, hash
       assert_has_token 'Name.Attribute', code  # @name, @age
@@ -179,7 +187,7 @@ describe Rouge::Lexers::GlimmerTs do
           </template>
         }
       GTS
-      
+
       assert_has_token 'Keyword.Declaration', code  # type
       assert_has_token 'Name.Decorator', code  # @tracked
       assert_has_token 'Name.Other', code  # Status (type annotation)
@@ -195,7 +203,7 @@ describe Rouge::Lexers::GlimmerTs do
           </template>
         }
       GTS
-      
+
       # Test that we properly enter and exit template mode
       assert_has_token 'Keyword', code  # class, extends
       assert_has_token 'Name.Tag', code  # <template>, <div>
@@ -215,7 +223,9 @@ describe Rouge::Lexers::GlimmerTs do
     end
 
     it 'lexes splattributes syntax' do
-      code = '<template><div class="some-class" ...attributes>{{@someValue}}</div></template>'
+      code = '<template>' \
+             '<div class="some-class" ...attributes>{{@someValue}}</div>' \
+             '</template>'
       assert_has_token 'Operator', code  # ... operator
       assert_has_token 'Name.Attribute', code  # attributes and class
       assert_has_token 'Name.Tag', code  # div tags
@@ -223,7 +233,11 @@ describe Rouge::Lexers::GlimmerTs do
     end
 
     it 'lexes splattributes with other attributes' do
-      code = '<template><button type="button" ...attributes {{on "click" @onClick}}>Click</button></template>'
+      code = '<template>' \
+             '<button type="button" ...attributes {{on "click" @onClick}}>' \
+             'Click' \
+             '</button>' \
+             '</template>'
       assert_has_token 'Operator', code  # ... operator
       assert_has_token 'Name.Attribute', code  # type, attributes, on
       assert_has_token 'Literal.String', code  # "button", "click"
@@ -231,7 +245,9 @@ describe Rouge::Lexers::GlimmerTs do
     end
 
     it 'lexes splattributes in different positions' do
-      code = '<template><input ...attributes type="text" placeholder="Enter text"></template>'
+      code = '<template>' \
+             '<input ...attributes type="text" placeholder="Enter text">' \
+             '</template>'
       assert_has_token 'Operator', code  # ... operator
       assert_has_token 'Name.Attribute', code  # attributes, type, placeholder
       assert_has_token 'Literal.String', code  # "text", "Enter text"
@@ -240,14 +256,15 @@ describe Rouge::Lexers::GlimmerTs do
     it 'lexes mixed TypeScript and template content' do
       code = <<~GTS
         import { helper } from '@ember/component/helper';
-        
-        const formatName = helper(([first, last]: [string, string]) => `${first} ${last}`);
-        
+
+        const formatName = helper(([first, last]: [string, string]) => 
+          `${first} ${last}`);
+
         <template>
           <p>{{formatName @firstName @lastName}}</p>
         </template>
       GTS
-      
+
       assert_has_token 'Keyword', code  # import, const
       assert_has_token 'Name.Function', code  # helper
       assert_has_token 'Keyword.Reserved', code  # string

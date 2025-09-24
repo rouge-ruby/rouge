@@ -15,6 +15,20 @@ module Rouge
       def initialize(*)
         super
       end
+
+      prepend :root do
+        rule %r/(<\s*)(template)(\s*>)/ do
+          groups Name::Tag, Keyword, Name::Tag
+          push :template
+        end
+      end
+
+      state :template do
+        rule %r((<\s*/\s*)(template)(\s*>)) do
+          groups Name::Tag, Keyword, Name::Tag
+          pop!
+        end
+      end
     end
   end
 end

@@ -20,3 +20,5 @@ rouge-memory.tmp
 # RVM/rbenv configuration files
 .ruby-version
 .ruby-gemset
+
+.DS_Store

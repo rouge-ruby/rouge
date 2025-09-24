@@ -1,7 +1,70 @@
-<div class="entry">
-  <h1>{{title}}</h1>
-  {{#with story}}
-    <div class="intro">{{{intro}}}</div>
-    <div class="body">{{{body}}}</div>
-  {{/with}}
-</div>
+{{#let (unique-id) as |formId|}}
+  <form
+    aria-describedby={{if
+      @instructions
+      (concat formId "-instructions")
+    }}
+    aria-labelledby={{if @title (concat formId "-title")}}
+    class={{this.styles.form}}
+    data-test-form={{if @title @title ""}}
+    {{autofocus}}
+    {{on "submit" this.submitForm}}
+  >
+    <Ui::Form::Information
+      @formId={{formId}}
+      @instructions={{@instructions}}
+      @title={{@title}}
+    />
+
+    <ContainerQuery
+      @features={{hash wide=(width min=480)}}
+      as |CQ|
+    >
+      {{yield
+        (hash
+          Checkbox=(component
+            "ui/form/checkbox"
+            data=this.data
+            isInline=true
+            isWide=CQ.features.wide
+            onUpdate=this.updateData
+          )
+          Input=(component
+            "ui/form/input"
+            data=this.data
+            isWide=CQ.features.wide
+            onUpdate=this.updateData
+          )
+          Number=(component
+            "ui/form/number"
+            data=this.data
+            isWide=CQ.features.wide
+            onUpdate=this.updatedata
+          )
+          Select=(component
+            "ui/form/select"
+            data=this.data
+            isWide=CQ.features.wide
+            onUpdate=this.updatedata
+          )
+          Textarea=(component
+            "ui/form/textarea"
+            data=this.data
+            isWide=CQ.features.wide
+            onUpdate=this.updatedata
+          )
+        )
+      }}
+    </ContainerQuery>
+
+    <div class={{this.styles.actions}}>
+      <button
+        class={{this.styles.submit-button}}
+        data-test-button="Submit"
+        type="submit"
+      >
+        {{t "components.ui.form.submit"}}
+      </button>
+    </div>
+  </form>
+{{/let}}

@@ -1,17 +1,16 @@
 <style type="text/css">
+  code {
+    font-size: 14px;
+  }
   main {
-    padding: 15px;
-    column-count: 2;
-    -webkit-column-count: 2;
-    -moz-column-count: 2;
+    display: flex;
+    flex-direction: row;
   }
   .preview {
-    display: inline-block;
-    margin-bottom: 15px;
-    padding: 15px;
+    padding: 16px;
     width: 100%;
     color: <%= @comment_color %>;
-    border: 1px dotted;
+    border: 0.5px dotted;
     break-inside: avoid-column;
     -webkit-column-break-inside: avoid;
   }

@@ -14,6 +14,7 @@ module Rouge
 
       def initialize(*)
         super
+        @handlebars = Handlebars.new(options)
       end
 
       prepend :root do
@@ -27,6 +28,10 @@ module Rouge
         rule %r((<\s*/\s*)(template)(\s*>)) do
           groups Name::Tag, Keyword, Name::Tag
           pop!
+        end
+
+        rule %r/.+/ do
+          delegate @handlebars
         end
       end
     end

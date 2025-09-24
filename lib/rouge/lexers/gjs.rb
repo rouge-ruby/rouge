@@ -30,7 +30,7 @@ module Rouge
           pop!
         end
 
-        rule %r/.+/ do
+        rule %r/.+?(?=<\s*\/\s*template\s*>)/m do
           delegate @handlebars
         end
       end

@@ -22,7 +22,6 @@ const NavigationMenu = <template>
       {{#each @menuItems as |menuItem|}}
         <li>
           <LinkTo
-            @route={{menuItem.route}}
             class={{local styles "link"}}
             data-test-link={{menuItem.label}}
           >

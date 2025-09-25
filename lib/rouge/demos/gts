@@ -1,133 +1,179 @@
-import { concat, hash, uniqueId } from '@ember/helper';
-import { on } from '@ember/modifier';
-import { action } from '@ember/object';
-import Component from '@glimmer/component';
-import type { WithBoundArgs } from '@glint/template';
-import { ContainerQuery, width } from 'ember-container-query';
-import { t } from 'ember-intl';
-import { TrackedObject } from 'tracked-built-ins';
+import {
+  click,
+  fillIn,
+  find,
+  render,
+  type TestContext as BaseTestContext,
+} from '@ember/test-helpers';
+import { a11yAudit } from 'ember-a11y-testing/test-support';
+import { setupIntl } from 'ember-intl/test-support';
+import { UiForm } from 'my-addon';
+import { setupRenderingTest } from 'my-app/tests/helpers';
+import { module, test } from 'qunit';
+import { type SinonSpy, spy } from 'sinon';
 
-import autofocus from '../../modifiers/autofocus.ts';
-import styles from './form.css';
-import UiFormCheckbox from './form/checkbox.gts';
-import UiFormInformation from './form/information.gts';
-import UiFormInput from './form/input.gts';
-import UiFormNumber from './form/number.gts';
-import UiFormSelect from './form/select.gts';
-import UiFormTextarea from './form/textarea.gts';
-
-interface UiFormSignature {
-  Args: {
-    data?: Record<string, unknown>;
-    instructions?: string;
-    onSubmit: (data: Record<string, unknown>) => Promise<void>;
-    title?: string;
-  };
-  Blocks: {
-    default: [
-      {
-        Checkbox: WithBoundArgs<
-          typeof UiFormCheckbox,
-          'data' | 'isInline' | 'isWide' | 'onUpdate'
-        >;
-        Input: WithBoundArgs<
-          typeof UiFormInput,
-          'data' | 'isWide' | 'onUpdate'
-        >;
-        Number: WithBoundArgs<
-          typeof UiFormNumber,
-          'data' | 'isWide' | 'onUpdate'
-        >;
-        Select: WithBoundArgs<
-          typeof UiFormSelect,
-          'data' | 'isWide' | 'onUpdate'
-        >;
-        Textarea: WithBoundArgs<
-          typeof UiFormTextarea,
-          'data' | 'isWide' | 'onUpdate'
-        >;
-      },
-    ];
-  };
+interface TestContext extends BaseTestContext {
+  data: Record<string, unknown>;
+  submitForm: SinonSpy;
 }
 
-export default class UiForm extends Component<UiFormSignature> {
-  data = new TrackedObject<Record<string, unknown>>(this.args.data ?? {});
+module('Integration | Component | ui/form', function (hooks) {
+  setupRenderingTest(hooks);
+  setupIntl(hooks, 'en-us');
 
-  @action async submitForm(event: SubmitEvent): Promise<void> {
-    event.preventDefault();
+  hooks.beforeEach(function (this: TestContext) {
+    this.data = {
+      donation: undefined,
+      email: undefined,
+      message: 'I 🧡 container queries!',
+      name: undefined,
+      subscribe: true,
+    };
 
-    await this.args.onSubmit(this.data);
-  }
+    this.submitForm = spy();
+  });
 
-  @action updateData({ key, value }: { key: string; value: unknown }): void {
-    this.data[key] = value;
-  }
+  test('it renders', async function (this: TestContext, assert) {
+    const { data, submitForm } = this;
 
-  <template>
-    {{#let (uniqueId) as |formId|}}
-      <form
-        aria-describedby={{if @instructions (concat formId "-instructions")}}
-        aria-labelledby={{if @title (concat formId "-title")}}
-        class={{styles.form}}
-        data-test-form={{if @title @title ""}}
-        {{autofocus}}
-        {{on "submit" this.submitForm}}
-      >
-        <UiFormInformation
-          @formId={{formId}}
-          @instructions={{@instructions}}
-          @title={{@title}}
-        />
+    await render(
+      <template>
+        <UiForm
+          @data={{data}}
+          @instructions="Still have questions about ember-container-query? Try sending me a message."
+          @onSubmit={{submitForm}}
+          @title="Contact me"
+          as |F|
+        >
+          <div>
+            <F.Input
+              @isRequired={{true}}
+              @key="name"
+              @label="Name"
+              @placeholder="Zoey"
+            />
+          </div>
 
-        <ContainerQuery @features={{hash wide=(width min=480)}} as |CQ|>
-          {{yield
-            (hash
-              Checkbox=(component
-                UiFormCheckbox
-                data=this.data
-                isInline=true
-                isWide=CQ.features.wide
-                onUpdate=this.updateData
-              )
-              Input=(component
-                UiFormInput
-                data=this.data
-                isWide=CQ.features.wide
-                onUpdate=this.updateData
-              )
-              Number=(component
-                UiFormNumber
-                data=this.data
-                isWide=CQ.features.wide
-                onUpdate=this.updateData
-              )
-              Select=(component
-                UiFormSelect
-                data=this.data
-                isWide=CQ.features.wide
-                onUpdate=this.updateData
-              )
-              Textarea=(component
-                UiFormTextarea
-                data=this.data
-                isWide=CQ.features.wide
-                onUpdate=this.updateData
-              )
-            )
-          }}
-        </ContainerQuery>
+          <div>
+            <F.Input
+              @isRequired={{true}}
+              @key="email"
+              @label="Email"
+              @placeholder="zoey@emberjs.com"
+              @type="email"
+            />
 
-        <div class={{styles.actions}}>
-          <button
-            class={{styles.submit-button}}
-            data-test-button="Submit"
-            type="submit"
-          >
-            {{t "components.ui.form.submit"}}
-          </button>
-        </div>
-      </form>
-    {{/let}}
-  </template>
-}
+            <div>
+              <F.Textarea @key="message" @label="Message" />
+            </div>
+
+            <div>
+              <F.Checkbox
+                @key="subscribe"
+                @label="Subscribe to The Ember Times?"
+              />
+            </div>
+
+            <div>
+              <F.Number
+                @key="donation"
+                @label="Donation amount ($)"
+                @minValue={{0}}
+                @placeholder="100"
+                @step={{10}}
+              />
+            </div>
+          </div>
+        </UiForm>
+      </template>,
+    );
+
+    const titleId = find('[data-test-title]')!.getAttribute('id')!;
+    const instructionsId = find('[data-test-instructions]')!.getAttribute(
+      'id',
+    )!;
+
+    assert
+      .dom('[data-test-form="Contact me"]')
+      .hasAria('describedby', instructionsId)
+      .hasAria('labelledby', titleId);
+
+    assert.dom('[data-test-field]').exists({ count: 5 });
+
+    assert
+      .dom('[data-test-button="Submit"]')
+      .hasAttribute('type', 'submit')
+      .hasTagName('button')
+      .hasText('Submit');
+
+    await a11yAudit();
+  });
+
+  test('We can submit the form', async function (this: TestContext, assert) {
+    const { data, submitForm } = this;
+
+    await render(
+      <template>
+        <UiForm @data={{data}} @onSubmit={{submitForm}} as |F|>
+          <div>
+            <F.Input
+              @isRequired={{true}}
+              @key="name"
+              @label="Name"
+              @placeholder="Zoey"
+            />
+          </div>
+
+          <div>
+            <F.Input
+              @isRequired={{true}}
+              @key="email"
+              @label="Email"
+              @placeholder="zoey@emberjs.com"
+              @type="email"
+            />
+          </div>
+
+          <div>
+            <F.Textarea @key="message" @label="Message" />
+          </div>
+
+          <div>
+            <F.Checkbox
+              @key="subscribe"
+              @label="Subscribe to The Ember Times?"
+            />
+          </div>
+
+          <div>
+            <F.Number
+              @key="donation"
+              @label="Donation amount ($)"
+              @minValue={{0}}
+              @placeholder="100"
+              @step={{10}}
+            />
+          </div>
+        </UiForm>
+      </template>,
+    );
+
+    await fillIn('[data-test-field="Name"]', 'Zoey');
+    await fillIn('[data-test-field="Email"]', 'zoey@emberjs.com');
+    await fillIn('[data-test-field="Message"]', 'Gude!');
+    await click('[data-test-field="Subscribe to The Ember Times?"]');
+    await fillIn('[data-test-field="Donation amount ($)"]', '10000');
+
+    await click('[data-test-button="Submit"]');
+
+    assert.true(
+      this.submitForm.calledOnceWith({
+        donation: 10000,
+        email: 'zoey@emberjs.com',
+        message: 'Gude!',
+        name: 'Zoey',
+        subscribe: false,
+      }),
+    );
+  });
+});

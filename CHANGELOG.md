@@ -4,6 +4,26 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.6.1: 2025-09-25
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.6.0...v4.6.1)
+
+- General
+  - Add ruby head version to CI ([#2154](https://github.com/rouge-ruby/rouge/pull/2154/) by Tan Le)
+  - Replace usage of `cgi` for ruby 3.5 compatibility ([#2131](https://github.com/rouge-ruby/rouge/pull/2131/) by Earlopain)
+- CSS Lexer
+  - CSS lexer: support range context in media queries ([#2160](https://github.com/rouge-ruby/rouge/pull/2160/) by Gerard)
+- INI Lexer
+  - Support standalone option in INI parser ([#2161](https://github.com/rouge-ruby/rouge/pull/2161/) by Tan Le)
+- Lua Lexer
+  - Bugfix: Lua escaped quotes now parsing ([#2155](https://github.com/rouge-ruby/rouge/pull/2155/) by Nicholas Reaves)
+- Robot Framework Lexer
+  - Recognize `.resource` files as Robot Framework files ([#2158](https://github.com/rouge-ruby/rouge/pull/2158/) by Vasiliy)
+- Ruby Lexer
+  - Fix highlighting comparable method definition ([#2149](https://github.com/rouge-ruby/rouge/pull/2149/) by Hartley McGuire)
+- TOML Lexer
+  - Realign TOML lexers with the Pygments counterpart ([#2152](https://github.com/rouge-ruby/rouge/pull/2152/) by Tan Le)
+
 ## version 4.6.0: 2025-07-16
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.2...v4.6.0)

@@ -18,19 +18,19 @@ module Rouge
       end
 
       prepend :root do
-        rule %r/(<\s*)(template)(\s*>)/ do
+        rule %r/(<)(template)(>)/ do
           groups Name::Tag, Keyword, Name::Tag
           push :template
         end
       end
 
       state :template do
-        rule %r((<\s*/\s*)(template)(\s*>)) do
+        rule %r((</)(template)(>)) do
           groups Name::Tag, Keyword, Name::Tag
           pop!
         end
 
-        rule %r/.+?(?=<\s*\/\s*template\s*>)/m do
+        rule %r/.+?(?=<\/template>)/m do
           delegate @handlebars
         end
       end

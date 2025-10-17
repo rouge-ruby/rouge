@@ -16,4 +16,32 @@ describe Rouge::Lexers::Go do
       assert_guess :mimetype => 'application/x-go'
     end
   end
+
+  describe 'numeric literals with underscores' do
+    include Support::Lexing
+
+    it 'lexes decimal integers with underscores' do
+      assert_tokens_equal '100_000', ['Literal.Number', '100_000']
+      assert_tokens_equal '1_2_3_4_5', ['Literal.Number', '1_2_3_4_5']
+    end
+
+    it 'lexes hexadecimal integers with underscores' do
+      assert_tokens_equal '0x_1234_ABCD', ['Literal.Number', '0x_1234_ABCD']
+      assert_tokens_equal '0xDEAD_BEEF', ['Literal.Number', '0xDEAD_BEEF']
+    end
+
+    it 'lexes octal integers with underscores' do
+      assert_tokens_equal '0o755_777', ['Literal.Number', '0o755_777']
+      assert_tokens_equal '0O_777', ['Literal.Number', '0O_777']
+    end
+
+    it 'lexes floating-point numbers with underscores' do
+      assert_tokens_equal '1_000.5', ['Literal.Number', '1_000.5']
+      assert_tokens_equal '3.14_15_92', ['Literal.Number', '3.14_15_92']
+    end
+
+    it 'lexes imaginary numbers with underscores' do
+      assert_tokens_equal '1_000i', ['Literal.Number', '1_000i']
+    end
+  end
 end

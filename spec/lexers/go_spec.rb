@@ -30,6 +30,11 @@ describe Rouge::Lexers::Go do
       assert_tokens_equal '0xDEAD_BEEF', ['Literal.Number', '0xDEAD_BEEF']
     end
 
+    it 'lexes binary integers with underscores' do
+      assert_tokens_equal '0b1010_0110', ['Literal.Number', '0b1010_0110']
+      assert_tokens_equal '0B_1111_0000', ['Literal.Number', '0B_1111_0000']
+    end
+
     it 'lexes octal integers with underscores' do
       assert_tokens_equal '0o755_777', ['Literal.Number', '0o755_777']
       assert_tokens_equal '0O_777', ['Literal.Number', '0O_777']

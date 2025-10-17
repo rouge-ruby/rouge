@@ -25,6 +25,7 @@ module Rouge
 
       LETTER                 = /#{UNICODE_LETTER}|_/
       DECIMAL_DIGIT          = /[0-9]/
+      BINARY_DIGIT           = /[01]/
       OCTAL_DIGIT            = /[0-7]/
       HEX_DIGIT              = /[0-9A-Fa-f]/
 
@@ -72,9 +73,10 @@ module Rouge
       # Integer literals
 
       DECIMAL_LIT            = /#{DECIMAL_DIGIT}(?:_?#{DECIMAL_DIGIT})*/
+      BINARY_LIT             = /0[bB]_*#{BINARY_DIGIT}(?:_?#{BINARY_DIGIT})*/
       OCTAL_LIT              = /0[oO]?_*#{OCTAL_DIGIT}(?:_?#{OCTAL_DIGIT})*/
       HEX_LIT                = /0[xX]_*#{HEX_DIGIT}(?:_?#{HEX_DIGIT})*/
-      INT_LIT                = /#{HEX_LIT}|#{DECIMAL_LIT}|#{OCTAL_LIT}/
+      INT_LIT                = /#{BINARY_LIT}|#{HEX_LIT}|#{OCTAL_LIT}|#{DECIMAL_LIT}/
 
       # Floating-point literals
 

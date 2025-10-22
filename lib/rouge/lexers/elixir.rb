@@ -103,7 +103,7 @@ module Rouge
         # Cribbed and adjusted from Ruby lexer
         delimiter_map = { '{' => '}', '[' => ']', '(' => ')', '<' => '>' }
         # Match a-z for custom sigils too
-        sigil_opens = Regexp.union(delimiter_map.keys + %w(| / ' "))
+        sigil_opens = Regexp.union(delimiter_map.keys + [%r/"{3}/] + %w(| / ' "))
         rule %r/~([A-Za-z])?(#{sigil_opens})/ do |m|
           open = Regexp.escape(m[2])
           close = Regexp.escape(delimiter_map[m[2]] || m[2])
@@ -123,12 +123,18 @@ module Rouge
             push :list_flags
           end
 
+          if open == '"""'
+            toktype = Str::Doc
+          end
+
           token toktype
 
           push do
             rule %r/#{close}/, toktype, :pop!
 
-            if interp
+            if toktype == Str::Doc
+              rule %r/(?:.|\n)*?"""/, toktype, :pop!
+            elsif interp
               mixin :interpoling
               rule %r/#/, toktype
             else

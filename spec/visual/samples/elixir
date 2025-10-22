@@ -51,6 +51,10 @@
 ~r||
 ~r//variable
 
+# regex escapes
+# https://github.com/rouge-ruby/rouge/issues/528#issuecomment-3431517402
+reg = ~r/^folder_[^\/]+\/subfolder_[^\/]+$/
+
 # avoids greedy errors
 string |> String.split(~r/[ -]/) |> Enum.map(&abbreviate_word/1) |> Enum.join()
 

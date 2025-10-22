@@ -126,6 +126,7 @@ module Rouge
           token toktype
 
           push do
+            rule %r/\\./, Str::Escape
             rule %r/#{close}/, toktype, :pop!
 
             if interp

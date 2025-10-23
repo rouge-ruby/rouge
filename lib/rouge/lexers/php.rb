@@ -179,7 +179,7 @@ module Rouge
 
         # numbers
         rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float
-        rule %r/0[0-7][0-7_]*/, Num::Oct
+        rule %r/0o?[0-7][0-7_]*/i, Num::Oct
         rule %r/0b[01][01_]*/i, Num::Bin
         rule %r/0x[a-f0-9][a-f0-9_]*/i, Num::Hex
         rule %r/\d[_\d]*/, Num::Integer

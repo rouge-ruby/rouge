@@ -53,7 +53,8 @@ module Rouge
                   Namespaces namespaces
                   declarations Declarations definitions Definitions
                   inputs Inputs proof Proof obligations Obligations
-                  Constants constants Constraints Constraints
+                  Constants constants Constraints constraints
+                  Outputs outputs
                   type Types u2bin with)
             end
         end

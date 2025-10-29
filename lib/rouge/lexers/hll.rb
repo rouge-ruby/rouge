@@ -38,24 +38,69 @@ module Rouge
             def self.type_keywords
                 @type_keywords ||= Set.new %w(bool int)
             end
+            # Keywords as indicated in
+            # https://hal.science/hal-03356342v1/
+            # but without types (which are in the type_keywords value)
             def self.keywords
                 @keywords ||= Set.new %w(
-                  if then else elif lambda
-                  false true True TRUE False FALSE
-                  enum tuple struct signed unsigned
-                  X I pre PRE
-                  cast
+                  ALL
                   bin2s
                   bin2u
-                  blocks
                   Blocks
-                  ALL SOME SELECT SUM PROD CONJ DISJ sort
-                  Namespaces namespaces
-                  declarations Declarations definitions Definitions
-                  inputs Inputs proof Proof obligations Obligations
-                  Constants constants Constraints constraints
-                  Outputs outputs
-                  type Types u2bin with)
+                  blocks
+                  cast
+                  CONJ
+                  constants
+                  Constants
+                  constraints
+                  Constraints
+                  declarations
+                  Declarations
+                  definitions
+                  Definitions
+                  DISJ
+                  elif
+                  else
+                  false
+                  FALSE
+                  False
+                  I
+                  if
+                  inputs
+                  Inputs
+                  lambda
+                  namespaces
+                  Namespaces
+                  obligations
+                  Obligations
+                  outputs
+                  Outputs
+                  population_count_eq
+                  population_count_gt
+                  population_count_lt
+                  pre
+                  PRE
+                  PROD
+                  proof
+                  Proof
+                  s2bin
+                  SELECT
+                  signed
+                  SOME
+                  sort
+                  struct
+                  SUM
+                  then
+                  true
+                  True
+                  TRUE
+                  tuple
+                  types
+                  Types
+                  u2bin
+                  unsigned
+                  with
+                  X)
             end
         end
     end

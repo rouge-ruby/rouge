@@ -280,6 +280,9 @@ module Rouge
       end
 
       state :in_const do
+        rule %r/(\??#{id})(\s+)(#{id})/i do
+          groups Keyword::Type, Text, Name::Constant
+        end
         rule id, Name::Constant
         rule %r/=/, Operator, :in_assign
         mixin :escape

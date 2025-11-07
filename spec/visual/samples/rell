@@ -1,0 +1,246 @@
+/*
+ * Rell Language Visual Sample
+ * Comprehensive demonstration of Rell syntax
+ */
+
+// Module declaration with annotation
+@mount("my_module")
+module;
+
+// Namespace declaration
+namespace models {
+
+    // Entity definition with keys and indices
+    entity user {
+        key username: text;
+        mutable email: text;
+        mutable balance: integer = 0;
+        index email;
+    }
+
+    // Object definition
+    object configuration {
+        settings: json = json("[]");
+        version: integer = 1;
+    }
+
+    // Struct definition
+    struct user_profile {
+        full_name: text;
+        age: integer;
+        verified: boolean;
+    }
+
+    // Enum definition
+    enum status {
+        ACTIVE,
+        INACTIVE,
+        SUSPENDED
+    }
+}
+
+// Function with various parameter types
+function calculate_total(
+    amount: integer,
+    rate: decimal,
+    enabled: boolean = true
+): decimal {
+    if (enabled) {
+        return amount * rate;
+    } else {
+        return amount.to_decimal();
+    }
+}
+
+// Function with nullable return type
+function find_by_id(id: rowid): models.user? {
+    return models.user @? { .rowid == id };
+}
+
+// Query definition with at-expressions
+query get_active_users(min_balance: integer = 0) {
+    // At-expression with filtering
+    return models.user @* { .balance >= min_balance } (
+        $.username,
+        .balance
+    );
+}
+
+// Query with limit and offset
+query get_users_paginated(page: integer, page_size: integer) {
+    return models.user @* {} limit page_size offset (page * page_size);
+}
+
+// Operation with create statement
+@singular()
+operation register_user(
+    username: text,
+    email: text,
+    initial_balance: integer = 100
+) {
+    require(username.size() > 0, "Username cannot be empty");
+
+    // Create new entity
+    create models.user(
+        username,
+        email,
+        balance = initial_balance
+    );
+}
+
+// Operation with update statement
+operation update_email(username: text, new_email: text) {
+    // Update with at-expression
+    update models.user @? { .username == username } (
+        email = new_email
+    );
+}
+
+// Operation with delete statement
+operation delete_user(username: text) {
+    delete models.user @ { .username == username };
+}
+
+// Operation demonstrating control flow
+operation process_transaction(
+    username: text,
+    amount: integer,
+    transaction_type: text
+) {
+    val user = models.user @ { .username == username };
+
+    // When expression
+    when (transaction_type) {
+        "deposit" -> {
+            user.balance += amount;
+        }
+        "withdraw" -> {
+            require(user.balance >= amount, "Insufficient balance");
+            user.balance -= amount;
+        }
+        else -> {
+            require(false, "Invalid transaction type");
+        }
+    }
+}
+
+// Function with guard clause
+operation validate_amount(amount: integer) {
+    guard {
+        require(amount > 0);
+    }
+}
+
+// Demonstrating various operators and literals
+function operator_examples() {
+    // Boolean literals
+    val is_active = true;
+    val is_deleted = false;
+
+    // Null literal
+    val optional_value: text? = null;
+
+    // Integer literals
+    val count = 42;
+    val hex_value = 0xDEADBEEF;
+    val big_int = 123456789L;
+
+    // Decimal literals
+    val price = 19.99;
+    val scientific = 1.5e10;
+    val negative_exp = 2.0e-5;
+
+    // String literal with escapes
+    val message = "Hello, \"World\"!\nNew line\tTab";
+
+    // Byte array literal
+    val data = x"DEADBEEF";
+
+    // Comparison operators
+    if (count == 42 and price != 0.0) {
+        val result = count > 10 or price < 100.0;
+    }
+
+    // Reference equality
+    if (optional_value == null or optional_value != null) {
+        // Do something
+    }
+
+    // Arithmetic operators
+    var total = count + 10;
+    total -= 5;
+    total *= 2;
+    total /= 3;
+    total %= 7;
+    total++;
+    total--;
+
+    // Null safety operators
+    val safe_call = optional_value?.size();
+    val elvis_op = optional_value ?: "default";
+    val not_null = optional_value!!;
+    val null_check = optional_value??;
+}
+
+// For loop
+function iterate_users() {
+    val users = models.user @* {};
+    for (u in users) {
+        // Process user
+        if (u.balance < 0) {
+            continue;
+        }
+        if (u.balance > 10000) {
+            break;
+        }
+    }
+}
+
+// While loop
+function count_down(start: integer) {
+    var counter = start;
+    while (counter > 0) {
+        counter--;
+    }
+}
+
+entity base_entity {
+    key id: integer;
+}
+
+entity derived_entity {
+    mutable extra_field: text;
+}
+
+struct foo { x: virtual<list<integer>>; }
+
+// Complex query with multiple at-expressions
+query get_user_summary(username: text) {
+    val u = models.user @ { .username == username };
+    val recent_count = models.user @* { .balance > 100 } ( .username );
+
+    return (
+        username = u.username,
+        balance = u.balance,
+        total_active = recent_count.size()
+    );
+}
+
+// Demonstrating tuple and list operations
+function collection_examples() {
+    // Tuple
+    val tuple_val = (name = "Alice", age = 30);
+
+    // List
+    val numbers = [1, 2, 3, 4, 5];
+    val first = numbers[0];
+
+    // Map
+    val mapping = ["key1": 100, "key2": 200];
+    val value = mapping["key1"];
+
+    // Set
+    val unique_items = set([1, 2, 2, 3, 3, 3]);
+
+    return numbers.size() + unique_items.size();
+}

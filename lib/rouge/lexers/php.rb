@@ -100,7 +100,7 @@ module Rouge
       end
 
       state :names do
-        rule /(?:public|protected|private)\(set\)/i do
+        rule %r/(?:public|protected|private)\(set\)/i do
           push :in_visibility
           token Keyword
         end

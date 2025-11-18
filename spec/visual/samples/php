@@ -369,3 +369,21 @@ function f(\Ns1\Ns2\Ns3\Class $x) {
 }
 
 ?>
+
+/* Asymmetric Visibility */
+
+<?php
+
+class C {
+    public private(set) int $a1;
+    protected(set) protected string $a2;
+    public private(set) readonly int $a3;
+
+    public function __construct(
+        public public(set) string $a4,
+        private(set) protected mixed $a5,
+        public protected(set) readonly float $a6,
+    ) {}
+}
+
+?>

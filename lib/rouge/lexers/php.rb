@@ -243,6 +243,13 @@ module Rouge
           groups Keyword::Declaration, Text, Name::Class
         end
 
+        rule %r/(enum)
+                (\s+)
+                (#{id_with_ns})/ix do |m|
+          groups Keyword::Declaration, Text, Name::Class
+          push :in_enum
+        end
+
         mixin :names
 
         rule %r/[;,\(\)\{\}\[\]]/, Punctuation
@@ -375,6 +382,29 @@ module Rouge
         mixin :escape
         mixin :whitespace
         mixin :return
+      end
+
+      state :in_enum do
+        rule %r/:/, Punctuation, :in_enum_base_type
+        rule %r/\{/, Punctuation, :in_enum_body
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_enum_base_type do
+        rule id, Keyword::Type, :pop!
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_enum_body do
+        rule %r/\}/, Punctuation, :pop!
+        rule %r/(case)(\s+)(#{id})/i do
+          groups Keyword, Text, Name::Constant
+        end
+        mixin :php
       end
     end
   end

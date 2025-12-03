@@ -1,0 +1,13 @@
+module main.
+
+import util.
+
+% Calculate factorial using recursion
+fact(0) = 1.
+fact(N) = N * fact(N-1) => N > 0.
+
+main =>
+    X = 5,
+    writef("Factorial of %d is %d\n", X, fact(X)),
+    Sum = sum([1,2,3]),
+    writef("Sum = %d\n", Sum).

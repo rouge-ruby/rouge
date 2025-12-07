@@ -15,3 +15,52 @@ Feature: Addition
     | 20      | 30      | add    | 50     |
     | 2       | 5       | add    | 7      |
     | 0       | 40      | add    | 40     |
+
+  Scenario: Code samples
+    Given I have some code examples
+    """ruby
+    class Calculator
+      def multiply(x, y)
+        x * y
+      end
+    end
+    """
+    And I have some code examples
+    """rust
+    fn safe_divide(x: f64, y: f64) -> Result<f64, &'static str> {
+        match y {
+            0.0 => Err("Division by zero"),
+            _ => Ok(x / y),
+        }
+    }
+    """
+    And I have some code examples
+    """ocaml
+    let rec factorial = function
+      | 0 -> 1
+      | n -> n * factorial (n - 1)
+    
+    let () = Printf.printf "%d\n" (factorial 5)
+    """
+    And I have some code examples
+    """json
+    {
+      "calculator": {
+        "operations": ["add", "subtract", "multiply", "divide"],
+        "precision": 2,
+        "enabled": true
+      }
+    }
+    """
+    And I have some code examples
+    """nonexistent-lang
+    proc divide(x, y) {
+      return x / y;
+    }
+    """
+    And I have some code examples
+    """
+    def add(a, b)
+      a + b
+    end
+    """

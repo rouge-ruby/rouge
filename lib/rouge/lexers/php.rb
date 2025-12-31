@@ -100,6 +100,11 @@ module Rouge
       end
 
       state :names do
+        rule %r/(?:public|protected|private)\(set\)/i do
+          push :in_visibility
+          token Keyword
+        end
+
         rule %r/#{id_with_ns}(?=\s*\()/ do |m|
           name = m[0].downcase
           if self.class.keywords.include? name
@@ -307,7 +312,8 @@ module Rouge
         rule %r/,/, Punctuation
         rule %r/[.]{3}/, Punctuation
         rule %r/=/, Operator, :in_assign
-        rule %r/\b(?:public|protected|private|readonly)\b/i, Keyword
+        rule %r/\b(?:public|protected|private|readonly)(?:\(set\)|\b)/i, Keyword
+        rule %r/\breadonly\b/i, Keyword
         rule %r/\??#{id}/, Keyword::Type, :in_assign
         mixin :escape
         mixin :whitespace
@@ -369,6 +375,7 @@ module Rouge
       end
 
       state :in_visibility do
+        rule %r/\b(?:public|protected|private)(?:\(set\)|\b)/i, Keyword
         rule %r/\b(?:readonly|static)\b/i, Keyword
         rule %r/(?=(abstract|const|function)\b)/i, Keyword, :pop!
         rule %r/\??#{id}/, Keyword::Type, :pop!

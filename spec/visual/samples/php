@@ -233,6 +233,22 @@ interface SomeInterface {
 }
 
 
+/* Enums */
+
+enum Suit {
+  case Hearts;
+  case Diamonds;
+  case Clubs;
+  case Spades;
+}
+enum Status: string {
+  case Pending    = 'pending';
+  case Processing = 'processing';
+  case Completed  = 'completed';
+  case Failed     = 'failed';
+}
+
+
 /* Imports */
 
 use some\namespace\ClassA;

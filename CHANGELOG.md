@@ -4,6 +4,29 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.7.0: 2025-12-31
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.6.1...v4.7.0)
+
+- General
+  - Bump actions/checkout to v5 ([#2166](https://github.com/rouge-ruby/rouge/pull/2166/) by Tan Le)
+- COBOL Lexer
+  - feat: add support for highlight .cpy and .cpb files as COBOL ([#2186](https://github.com/rouge-ruby/rouge/pull/2186/) by simon)
+- Gjs and Gts Lexer (**NEW**)
+  - Created lexers for gjs and gts (used by Ember projects) ([#2165](https://github.com/rouge-ruby/rouge/pull/2165/) by Isaac Lee)
+- Go Lexer
+  - support underscore in numbers in go ([#2167](https://github.com/rouge-ruby/rouge/pull/2167/) by Joris Clement)
+- PHP Lexer
+  - php: Support enum definition ([#2171](https://github.com/rouge-ruby/rouge/pull/2171/) by nsfisis)
+  - php: Support typed class constants ([#2174](https://github.com/rouge-ruby/rouge/pull/2174/) by nsfisis)
+  - php: Support asymmetric visibility ([#2173](https://github.com/rouge-ruby/rouge/pull/2173/) by nsfisis)
+  - php: Support alternative notation of octal number literal (0o prefix) ([#2170](https://github.com/rouge-ruby/rouge/pull/2170/) by nsfisis)
+  - php: Update built-in functions (rake builtins:php) ([#2175](https://github.com/rouge-ruby/rouge/pull/2175/) by nsfisis)
+- Python Lexer
+  - Add Python 3.14+ template strings ([#2162](https://github.com/rouge-ruby/rouge/pull/2162/) by Bart Broere)
+- Terraform Lexer
+  - Support .tofu for Terraform lexing ([#2180](https://github.com/rouge-ruby/rouge/pull/2180/) by Asherah Connor)
+
 ## version 4.6.1: 2025-09-25
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.6.0...v4.6.1)

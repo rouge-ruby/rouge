@@ -191,6 +191,12 @@ class C {
     public static ?string $a = "";
     public static int $b = 0;
 
+    const bool CONST_1 = true;
+    public const int CONST_2 = 1;
+    protected const float CONST_3 = 1.0;
+    private const string CONST_4 = "foo";
+    const ?array CONST_5 = [];
+
     public function __construct(
         public $foo,
         protected readonly $bar,

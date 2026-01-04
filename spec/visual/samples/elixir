@@ -63,13 +63,13 @@ string |> String.split(~r/[ -]/) |> Enum.map(&abbreviate_word/1) |> Enum.join()
 ~c||
 ~c//
 
-~S(inter #{pol <> "ati#{o}"} n)
-~S[inter #{pol <> "ati#{o}"} n]
-~S<inter #{pol <> "ati#{o}"} n>
-~S'inter #{pol <> "ati#{o}"} n'
-~S"inter #{pol <> "ati#{o}"} n"
-~S|inter #{pol <> "ati#{o}"} n|
-~S/inter #{pol <> "ati#{o}"} n/
+~s(inter #{pol <> "ati#{o}"} n)
+~s[inter #{pol <> "ati#{o}"} n]
+~s<inter #{pol <> "ati#{o}"} n>
+~s'inter #{pol <> "ati#{o}"} n'
+~s"inter #{pol <> "ati#{o}"} n"
+~s|inter #{pol <> "ati#{o}"} n|
+~s/inter #{pol <> "ati#{o}"} n/
 
 # first is Operator, second is &1 variable
 &(&1)

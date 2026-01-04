@@ -107,7 +107,7 @@ module Rouge
         rule %r/~([A-Za-z])?(#{sigil_opens})/ do |m|
           open = Regexp.escape(m[2])
           close = Regexp.escape(delimiter_map[m[2]] || m[2])
-          interp = /[SRCW]/ === m[1]
+          interp = /[srcw]/ === m[1]
           toktype = Str::Other
 
           puts "    open: #{open.inspect}" if @debug

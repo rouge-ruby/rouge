@@ -19,8 +19,12 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          attribute const uniform varying
+          attribute const uniform varying buffer
           layout
+          coherent volatile restrict readonly writeonly
+          early_fragment_tests
+          row_major column_major
+          shared packed std140 std43 binding offset align location
           centroid flat smooth noperspective
           patch sample
           break continue do for while switch case default
@@ -80,7 +84,6 @@ module Rouge
           imageBuffer iimageBuffer uimageBuffer
           sizeof cast
           namespace using
-          row_major
         )
       end
 

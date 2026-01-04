@@ -71,6 +71,11 @@ string |> String.split(~r/[ -]/) |> Enum.map(&abbreviate_word/1) |> Enum.join()
 ~s|inter #{pol <> "ati#{o}"} n|
 ~s/inter #{pol <> "ati#{o}"} n/
 
+# custom sigils
+~i(13)
+~CUSTOM(custom uppercase)
+~ABC123(with digits)
+
 # first is Operator, second is &1 variable
 &(&1)
 

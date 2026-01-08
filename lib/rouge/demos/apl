@@ -1,0 +1,25 @@
+⍝ simple tradfn
+∇ output←f input
+  int←'a'(≠⊆⊢)input
+  output←1∘⎕C¨int
+∇
+
+⍝ 2048 game
+C ← ⎕UCS
+'you ', {
+    2048 ∊ ⍵: 'win'
+    n ← ⍵
+    z ← 0 = ∊n
+    (z / ∊n)[? +/z] ← 2
+    ⎕ ← 4 ↑¨ ⍕¨n
+    1 ∊ (⍉ 2 =⌿ n) , (2 =/ n) , 0 = n: ∇ {
+        R←↓⍉∘⌽⍣⎕
+        r ← R⍣¯1 ⎕UCS {
+            t ← 2 /¨ ⍺⍺ 2 * ⍳16
+            4 ↑ ⍺⍺ t ⎕R (1 ⌽ ∪¨t) ⍺⍺ ⍵ ~ 0
+        }¨ R ⍵
+        ⍵ ≡ r: ∇ ⍵
+        r
+    } n
+    'lose'
+} 4 4⍴0

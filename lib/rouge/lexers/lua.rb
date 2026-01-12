@@ -24,10 +24,7 @@ module Rouge
         return true if text.shebang? 'lua'
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'lua/keywords.rb')
-        builtins
-      end
+      require_relative "lua/keywords"
 
       def builtins
         return [] unless @function_highlighting

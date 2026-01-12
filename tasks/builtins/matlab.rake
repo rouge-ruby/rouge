@@ -41,11 +41,14 @@ module Rouge
           yield   ""
           yield   "module Rouge"
           yield   "  module Lexers"
-          yield   "    def Matlab.builtins"
-          yield   "      @builtins ||= Set.new #{keywords.inspect}"
+          yield   "    class Matlab"
+          yield   "      def self.builtins"
+          yield   "        @builtins ||= Set.new #{keywords.inspect}"
+          yield   "      end"
           yield   "    end"
           yield   "  end"
           yield   "end"
+          yield   ""
         end
       end
     end

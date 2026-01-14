@@ -46,9 +46,24 @@ module Rouge
         rule %r/[ \r\t]+/, Text
       end
 
+      state :annotated_string do
+        rule %r(("""(\S+)\n)(.*?)("""))m do |m|
+        first_line, lang, content, last_line = m.captures
+          token Str, first_line
+          sublexer = Rouge::Lexer.find(lang.strip)
+          if sublexer
+            delegate sublexer, content
+          else
+            token Str, content
+          end
+          token Str, last_line
+        end
+      end
+
       state :root do
         mixin :basic
         rule %r(\n), Text
+        mixin :annotated_string
         rule %r(""".*?""")m, Str
         rule %r(@[^\s@]+), Name::Tag
         mixin :has_table

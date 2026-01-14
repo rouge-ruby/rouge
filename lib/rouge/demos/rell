@@ -1,0 +1,20 @@
+// Define an entity with a key and mutable attribute
+entity user {
+    key name: text;
+    mutable balance: integer = 0;
+}
+
+// Query to find a user by name
+query get_user(name: text) {
+    return user @? { .name == name };
+}
+
+// Operation to create a new user
+operation create_user(name: text, initial_balance: integer) {
+    create user(name, balance = initial_balance);
+}
+
+// Operation to update user balance
+operation update_balance(name: text, amount: integer) {
+    update user @? { .name == name } ( balance += amount );
+}

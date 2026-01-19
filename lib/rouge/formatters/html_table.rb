@@ -26,7 +26,7 @@ module Rouge
         formatted = @inner.format(tokens)
         unless last_val && last_val.end_with?(?\n)
           num_lines += 1
-          formatted << ?\n
+          formatted << ?\n unless formatted.end_with?(?\n)
         end
 
         # generate a string of newline-separated line numbers for the gutter>

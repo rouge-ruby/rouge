@@ -60,7 +60,7 @@ module Rouge
       def self.keywords
         @keywords ||= Set.new %w(
           embed enum function include interface modport module package proto pub struct union unsafe
-          alias always_comb always_ff assign as bind connect const final import initial inst let param return break type var
+          alias always_comb always_ff assign as bind block connect const final import initial inst let param return break type var
           converse inout input output same
           case default else if_reset if inside outside switch
           for in repeat rev step

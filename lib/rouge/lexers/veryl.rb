@@ -69,7 +69,7 @@ module Rouge
 
       def self.keywords_type
         @keywords_type ||= Set.new %w(
-          bit bool clock clock_posedge clock_negedge f32 f64 i8 i16 i32 i64 logic reset reset_async_high reset_async_low reset_sync_high reset_sync_low signed string tri u8 u16 u32 u64
+          bit bbool lbool clock clock_posedge clock_negedge f32 f64 i8 i16 i32 i64 logic reset reset_async_high reset_async_low reset_sync_high reset_sync_low signed string tri u8 u16 u32 u64
         )
       end
 

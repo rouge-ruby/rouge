@@ -4,6 +4,9 @@
 require 'rubygems'
 require 'bundler'
 Bundler.require
+
+$VERBOSE = true
+
 require 'rouge'
 require 'minitest/autorun'
 

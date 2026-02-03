@@ -13,10 +13,7 @@ module Rouge
 
       mimetypes 'text/x-vim'
 
-      def self.keywords
-        Kernel::load File.join(Lexers::BASE_DIR, 'viml/keywords.rb')
-        self.keywords
-      end
+      lazy_load :KEYWORDS, 'viml/keywords.rb'
 
       state :root do
         rule %r/^(\s*)(".*?)$/ do
@@ -47,15 +44,14 @@ module Rouge
         rule %r/[absg]:\w+\b/, Name::Variable
         rule %r/\b\w+\b/ do |m|
           name = m[0]
-          keywords = self.class.keywords
 
-          if keywords[:command].include? name
+          if KEYWORDS[:command].include? name
             token Keyword
-          elsif keywords[:function].include? name
+          elsif KEYWORDS[:function].include? name
             token Name::Builtin
-          elsif keywords[:option].include? name
+          elsif KEYWORDS[:option].include? name
             token Name::Builtin
-          elsif keywords[:auto].include? name
+          elsif KEYWORDS[:auto].include? name
             token Name::Builtin
           else
             token Text

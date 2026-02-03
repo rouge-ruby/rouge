@@ -17,17 +17,13 @@ module Rouge
         return true if text.shebang? 'cucumber'
       end
 
-      # self-modifying method that loads the keywords file
-      def self.keywords
-        Kernel::load File.join(Lexers::BASE_DIR, 'gherkin/keywords.rb')
-        keywords
-      end
+      lazy_load :KEYWORDS, 'gherkin/keywords.rb'
 
       def self.step_regex
         # in Gherkin's config, keywords that end in < don't
         # need word boundaries at the ends - all others do.
         @step_regex ||= Regexp.new(
-          keywords[:step].map do |w|
+          KEYWORDS[:step].map do |w|
             if w.end_with? '<'
               Regexp.escape(w.chop)
             elsif w.end_with?(' ')
@@ -60,11 +56,11 @@ module Rouge
           reset_stack
 
           keyword = m[1]
-          keyword_tok = if self.class.keywords[:element].include? keyword
+          keyword_tok = if KEYWORDS[:element].include? keyword
             push :description; Keyword::Namespace
-          elsif self.class.keywords[:feature].include? keyword
+          elsif KEYWORDS[:feature].include? keyword
             push :feature_description; Keyword::Declaration
-          elsif self.class.keywords[:examples].include? keyword
+          elsif KEYWORDS[:examples].include? keyword
             push :example_description; Name::Namespace
           else
             Error

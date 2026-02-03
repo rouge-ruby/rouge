@@ -14,20 +14,9 @@ module Rouge
       string = /"[^"]*?"/
       identifier = /([-a-zA-Z$._][-a-zA-Z$._0-9]*|#{string})/
 
-      def self.keywords
-        Kernel::load File.join(Lexers::BASE_DIR, "llvm/keywords.rb")
-        keywords
-      end
-
-      def self.instructions
-        Kernel::load File.join(Lexers::BASE_DIR, "llvm/keywords.rb")
-        instructions
-      end
-
-      def self.types
-        Kernel::load File.join(Lexers::BASE_DIR, "llvm/keywords.rb")
-        types
-      end
+      lazy_load :KEYWORDS, 'llvm/keywords.rb'
+      lazy_load :INSTRUCTIONS, 'llvm/keywords.rb'
+      lazy_load :TYPES, 'llvm/keywords.rb'
 
       state :basic do
         rule %r/;.*?$/, Comment::Single
@@ -54,11 +43,11 @@ module Rouge
         rule %r/i[1-9]\d*/, Keyword::Type
 
         rule %r/\w+/ do |m|
-          if self.class.types.include? m[0]
+          if TYPES.include? m[0]
             token Keyword::Type
-          elsif self.class.instructions.include? m[0]
+          elsif INSTRUCTIONS.include? m[0]
             token Keyword
-          elsif self.class.keywords.include? m[0]
+          elsif KEYWORDS.include? m[0]
             token Keyword
           else
             token Error

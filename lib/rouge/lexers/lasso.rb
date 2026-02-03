@@ -15,6 +15,8 @@ module Rouge
 
       option :start_inline, 'Whether to start inline instead of requiring <?lasso or ['
 
+      lazy_load :KEYWORDS, 'lasso/keywords.rb'
+
       def self.detect?(text)
         return true if text.shebang?('lasso9')
         return true if text =~ /\A.*?<\?(lasso(script)?|=)/
@@ -32,12 +34,6 @@ module Rouge
 
       start do
         push :lasso if start_inline?
-      end
-
-      # self-modifying method that loads the keywords file
-      def self.keywords
-        Kernel::load File.join(Lexers::BASE_DIR, 'lasso/keywords.rb')
-        keywords
       end
 
       id = /[a-z_][\w.]*/i
@@ -167,15 +163,15 @@ module Rouge
 
           if name == 'namespace_using'
             token Keyword::Namespace, m[2]
-          elsif self.class.keywords[:exceptions].include? name
+          elsif KEYWORDS[:exceptions].include? name
             token Name::Exception, m[2]
-          elsif self.class.keywords[:types].include? name
+          elsif KEYWORDS[:types].include? name
             token Keyword::Type, m[2]
-          elsif self.class.keywords[:traits].include? name
+          elsif KEYWORDS[:traits].include? name
             token Name::Decorator, m[2]
-          elsif self.class.keywords[:keywords].include? name
+          elsif KEYWORDS[:keywords].include? name
             token Keyword, m[2]
-          elsif self.class.keywords[:builtins].include? name
+          elsif KEYWORDS[:builtins].include? name
             token Name::Builtin, m[2]
           else
             token Name::Other, m[2]

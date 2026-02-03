@@ -24,16 +24,13 @@ module Rouge
         return true if text.shebang? 'lua'
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'lua/keywords.rb')
-        builtins
-      end
+      lazy_load :BUILTINS, 'lua/keywords.rb'
 
       def builtins
         return [] unless @function_highlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          self.class.builtins.each do |mod, fns|
+          BUILTINS.each do |mod, fns|
             next if @disabled_modules.include? mod
             builtins.merge(fns)
           end

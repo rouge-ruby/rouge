@@ -11,6 +11,9 @@ module Rouge
       filenames '*.m', '*.wl'
       mimetypes 'application/vnd.wolfram.mathematica.package', 'application/vnd.wolfram.wl'
 
+      # The list of built-in symbols comes from a wolfram server and is created automatically by rake
+      lazy_load :BUILTINS, 'mathematica/keywords.rb'
+
       # Mathematica has various input forms for numbers. We need to handle numbers in bases, precision, accuracy,
       # and *^ scientific notation. All this works for integers and real numbers. Some examples
       # 1  1234567  1.1  .3  0.2  1*^10  2*^+10  3*^-10
@@ -54,12 +57,6 @@ module Rouge
         )
       end
 
-      # The list of built-in symbols comes from a wolfram server and is created automatically by rake
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'mathematica/keywords.rb')
-        builtins
-      end
-
       state :root do
         rule %r/\s+/, Text::Whitespace
         rule %r/\(\*/, Comment, :comment
@@ -71,7 +68,7 @@ module Rouge
           match = m[0]
           if self.class.keywords.include? match
             token Name::Builtin::Pseudo
-          elsif self.class.builtins.include? match
+          elsif BUILTINS.include? match
             token Name::Builtin
           else
             token Name::Variable

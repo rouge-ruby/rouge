@@ -48,16 +48,13 @@ module Rouge
         )
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'php/keywords.rb')
-        builtins
-      end
+      lazy_load :BUILTINS, 'php/keywords.rb'
 
       def builtins
         return [] unless @funcnamehighlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          self.class.builtins.each do |mod, fns|
+          BUILTINS.each do |mod, fns|
             next if @disabledmodules.include? mod
             builtins.merge(fns)
           end
@@ -109,7 +106,7 @@ module Rouge
           name = m[0].downcase
           if self.class.keywords.include? name
             token Keyword
-          elsif self.builtins.include? name
+          elsif builtins.include? name
             token Name::Builtin
           else
             token Name::Function

@@ -233,7 +233,32 @@ module Rouge
         registry[name.to_s] = lexer
       end
 
+      def lazy_files
+        @lazy_files ||= {}
+      end
+
     public
+      def eager_load!
+        return if @_lazy_loaded
+        @_lazy_loaded = true
+
+        superclass.eager_load! unless superclass == Lexer
+
+        lazy_files.each do |fname, consts|
+          Kernel::load File.join(Lexers::BASE_DIR, fname)
+
+          consts.each do |const|
+            unless const_defined?(const)
+              raise "BUG: expected #{fname} to define #{const}"
+            end
+          end
+        end
+      end
+
+      def lazy_load(name, relative_fname)
+        (lazy_files[relative_fname] ||= []) << name.to_sym
+      end
+
       # Used to specify or get the canonical name of this lexer class.
       #
       # @example
@@ -325,6 +350,7 @@ module Rouge
     def initialize(opts={})
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
+      self.class.eager_load!
 
       @debug = Lexer.debug_enabled? && bool_option('debug')
     end

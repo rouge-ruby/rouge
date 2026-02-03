@@ -1,0 +1,179 @@
+/* Picat Language Sample
+   Demonstrating syntax highlighting features */
+
+module example.
+
+import
+    util,
+    cp.
+
+% Different number formats
+Nums = [
+  1_000_000,        % Underscore separator
+  0xFFF,            % Hexadecimal
+  0o777,            % Octal
+  0b1010,           % Binary
+  1.23e-4,          % Scientific notation
+  3.14159           % Float
+].
+
+% String escape sequences
+Strings = [
+  "Double \"quoted\" string",
+  "Line 1\nLine 2",
+  "Tab\tafter",
+  "Unicode \u0041",
+  'Single \'quoted\' atom'
+].
+
+% Special characters in atoms
+atom_1,
+'atom-with-dashes',
+'atom with spaces',
+'atom@with@special@chars'.
+
+% Special operators
+X #=> Y,      % Constraint implication
+X #<=> Y,     % Constraint equivalence
+X #/\ Y,      % Constraint AND
+X #\/ Y,      % Constraint OR
+X #^ Y,       % Constraint XOR
+#~ X,         % Constraint NOT
+
+% Special comparison operators
+X @< Y,       % Term comparison less than
+X @=< Y,      % Term comparison less than or equal
+X @> Y,       % Term comparison greater than
+X @>= Y,      % Term comparison greater than or equal
+
+% Range notation
+List1 = 1..10,        % Range with step 1
+List2 = 1..2..10,     % Range with step 2
+
+% Special built-in predicates
+once(Goal),
+repeat,
+true,
+fail,
+
+% Assignment vs unification
+X = Y,        % Unification
+X := Y,       % Assignment
+X == Y,       % Term equality
+X !== Y,      % Term inequality
+X =:= Y,      % Arithmetic equality
+
+% Special list/array access
+List = [1,2,3,4,5],
+First = List[1],
+Slice = List[2..4],
+Array = {1,2,3,4,5},
+AFirst = Array[1],
+ASlice = Array[2..4].
+
+% DCG notation (since version 3.0)
+sentence --> noun_phrase, verb_phrase.
+
+% Variables and lists
+process_list(List) =>
+    [Head|Tail] = List,
+    foreach(X in Tail)
+        if X > Head then
+            println(X)
+        elseif X < Head then
+            println("Less")
+        else
+            println("Equal")
+        end
+    end.
+
+% Using built-in functions
+math_ops =>
+    A = abs(-42),
+    B = sqrt(2),
+    C = sin(3.14159),
+    D = new_array(3),
+    Map = new_map(),
+    Set = new_set([1,2,3]).
+
+% Pattern matching and operators
+compare(X, Y) ?=>
+    X >= Y,
+    X =< 100,
+    X != Y,
+    X :: 1..10.
+compare(_, _) => fail.
+
+% Solving example
+solve_puzzle =>
+    Vars = [X,Y,Z],
+    Vars :: 1..9,
+    sum(Vars) #= 15,
+    solve(Vars).
+
+% Functions with returns
+factorial(0) = 1.
+factorial(N) = F => F = N * factorial(N - 1).
+
+% List comprehensions
+S = [X*X : X in 1..20, X mod 2 = 0].
+
+% Index on either first or second argument
+index (+,-) (-,+)
+edge(a,b).
+edge(a,c).
+edge(b,c).
+edge(c,b).
+
+% Private tabled function
+private
+table
+fibonacci(0) = 1.
+fibonacci(1) = 1.
+fibonacci(N) = F => F = fibonacci(N-1) + fibonacci(N-2).
+
+% Structures
+print_books =>
+    B1 = $book("Dune", "Frank Herbert"),
+    println(B1[1]), % Access first element
+    B2 = new_map([title = "Dune", author = "Frank Herbert"]),
+    println(B2.get(title)).
+
+% Action rules for event-driven programming
+echo(X,Flag), var(Flag), {event(X,T)} =>
+    writeln(T).
+echo(_X,_Flag) =>
+    writeln(done).
+
+% Exception handling
+divide(A, B) =>
+    catch(
+      (C = A / B),
+      error(zero_divisor, _),
+      println("Division by zero")
+    ).
+
+% Pattern matching with as-patterns (@)
+process(L@[H|T]) =>
+    println(L),    % whole list
+    println(H),    % head
+    println(T).    % tail
+
+% Pattern matching with disjunction
+match_guard(X) ?=>
+    X = 1;
+    X = 2;
+    X = 3.
+
+% Using the planner module
+import planner.
+final([n,n,n,n]) => true.  % Example goal state
+action(S,NextS,Action,Cost) => ...  % Define possible actions
+
+% Basic I/O
+write_data =>
+    FD = open("data.txt", write),
+    foreach(I in 1..10)
+        printf(FD, "%d\n", I)
+    end,
+    close(FD).

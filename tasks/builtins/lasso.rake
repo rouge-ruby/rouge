@@ -58,8 +58,8 @@ module Rouge
           yield   ""
           yield   "module Rouge"
           yield   "  module Lexers"
-          yield   "    def Lasso.keywords"
-          yield   "      @keywords ||= {}.tap do |h|"
+          yield   "    class Lasso"
+          yield   "      KEYWORDS = {}.tap do |h|"
           keywords.each do |key, value|
             yield "        h[#{key.inspect}] = Set.new #{value.inspect}"
           end

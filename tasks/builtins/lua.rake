@@ -60,12 +60,10 @@ module Rouge
           yield   "module Rouge"
           yield   "  module Lexers"
           yield   "    class Lua"
-          yield   "      def self.builtins"
-          yield   "        @builtins ||= {}.tap do |b|"
+          yield   "      BUILTINS = {}.tap do |b|"
           keywords.each do |n, fs|
-            yield "          b[#{n.inspect}] = Set.new #{fs.inspect}"
+            yield "        b[#{n.inspect}] = Set.new #{fs.inspect}"
           end
-          yield   "        end"
           yield   "      end"
           yield   "    end"
           yield   "  end"

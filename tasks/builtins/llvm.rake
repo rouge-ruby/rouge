@@ -67,15 +67,11 @@ module Rouge
           yield "  module Lexers"
           yield "    class LLVM"
           keywords.each do |k,v|
-            yield "      def self.#{k}"
-            yield "        @#{k} ||= Set.new #{v.inspect}"
-            yield "      end"
-            yield ""
+            yield "      #{k.upcase} = Set.new #{v.inspect}"
           end
           yield "    end"
           yield "  end"
           yield "end"
-          yield ""
         end
       end
     end

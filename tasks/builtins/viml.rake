@@ -69,12 +69,10 @@ module Rouge
           yield   "module Rouge"
           yield   "  module Lexers"
           yield   "    class VimL"
-          yield   "      def self.keywords"
-          yield   "        @keywords ||= {}.tap do |kw|"
+          yield   "      KEYWORDS = {}.tap do |kw|"
           keywords.each do |k,v|
             yield "          kw[#{k.inspect}] = Set.new #{v.to_a.inspect}"
           end
-          yield   "        end"
           yield   "      end"
           yield   "    end"
           yield   "  end"

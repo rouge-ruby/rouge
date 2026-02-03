@@ -57,8 +57,8 @@ module Rouge
           yield   ""
           yield   "module Rouge"
           yield   "  module Lexers"
-          yield   "    def Gherkin.keywords"
-          yield   "      @keywords ||= {}.tap do |k|"
+          yield   "    class Gherkin"
+          yield   "      KEYWORDS = {}.tap do |k|"
           keywords.each do |t, kws|
             yield "        k[#{t.inspect}] = Set.new #{kws.to_a.sort.inspect}"
           end

@@ -5,7 +5,7 @@ describe Rouge::Lexers do
   spec_dir = Pathname.new(__FILE__).dirname
   samples_dir = spec_dir.join('visual/samples')
 
-  Rouge::Lexer.all.each do |lexer_class|
+  Rouge::Lexer.all.shuffle.each do |lexer_class|
     describe lexer_class do
       include Support::Lexing
 

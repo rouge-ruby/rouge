@@ -259,6 +259,16 @@ module Rouge
         (lazy_files[relative_fname] ||= []) << name.to_sym
       end
 
+      def skip_auto_load!
+        @skip_auto_load = true
+      end
+
+      def skip_auto_load?
+        return true if @skip_auto_load
+        return superclass.skip_auto_load? unless superclass == Lexer
+        false
+      end
+
       # Used to specify or get the canonical name of this lexer class.
       #
       # @example
@@ -350,7 +360,7 @@ module Rouge
     def initialize(opts={})
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
-      self.class.eager_load!
+      self.class.eager_load! unless self.class.skip_auto_load?
 
       @debug = Lexer.debug_enabled? && bool_option('debug')
     end

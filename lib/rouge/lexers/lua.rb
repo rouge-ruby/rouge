@@ -14,17 +14,20 @@ module Rouge
       option :function_highlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabled_modules, 'builtin modules to disable'
 
+      lazy_load :BUILTINS, 'lua/keywords.rb'
+      skip_auto_load!
+
       def initialize(opts={})
         @function_highlighting = opts.delete(:function_highlighting) { true }
         @disabled_modules = opts.delete(:disabled_modules) { [] }
         super(opts)
+
+        self.class.eager_load! if @function_highlighting
       end
 
       def self.detect?(text)
         return true if text.shebang? 'lua'
       end
-
-      lazy_load :BUILTINS, 'lua/keywords.rb'
 
       def builtins
         return [] unless @function_highlighting

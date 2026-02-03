@@ -11,11 +11,11 @@ describe Rouge::Lexers do
 
       subject { lexer_class.new }
 
-      it 'lexes the demo with no errors' do
+      it "#{lexer_class} lexes the demo with no errors" do
         assert_no_errors(lexer_class.demo)
       end
 
-      it 'lexes the sample without throwing' do
+      it "#{lexer_class} lexes the sample without throwing" do
         sample = File.read(samples_dir.join(lexer_class.tag), encoding: 'utf-8')
 
         out_buf = String.new("")

@@ -52,6 +52,10 @@ module Rouge
         Lexers.load_lexer(f.relative_path_from(lexer_dir))
       end
     end
+
+    def eager_load!
+      Rouge::Lexer.all.each(&:eager_load!)
+    end
   end
 end
 

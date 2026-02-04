@@ -23,8 +23,10 @@ group :development do
   gem 'git'
   gem 'yard'
 
-  gem 'rubocop', '~> 1.0', '<= 1.11'
-  gem 'rubocop-performance'
+  gem 'rubocop'
+  gem 'rubocop-performance', '~> 1.26'
+  gem 'rubocop-minitest', '~> 0.38'
+  gem 'rubocop-rake', '~> 0.7'
 
   # docs
   gem 'github-markup'

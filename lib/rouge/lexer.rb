@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# stdlib
-require 'strscan'
-require 'set'
-require 'uri'
-
 module Rouge
   # @abstract
   # A lexer transforms text into a stream of `[token, chunk]` pairs.

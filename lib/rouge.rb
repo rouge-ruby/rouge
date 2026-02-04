@@ -3,6 +3,9 @@
 
 # stdlib
 require 'pathname'
+require 'set'
+require 'strscan'
+require 'uri'
 
 # The containing module for Rouge
 module Rouge

@@ -15,7 +15,9 @@ module Rouge
 
       option :start_inline, 'Whether to start inline instead of requiring <?lasso or ['
 
-      lazy_load :KEYWORDS, 'lasso/keywords.rb'
+      lazy do
+        require_relative 'lasso/keywords'
+      end
 
       def self.detect?(text)
         return true if text.shebang?('lasso9')

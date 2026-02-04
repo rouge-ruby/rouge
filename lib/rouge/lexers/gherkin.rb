@@ -17,7 +17,9 @@ module Rouge
         return true if text.shebang? 'cucumber'
       end
 
-      lazy_load :KEYWORDS, 'gherkin/keywords.rb'
+      lazy do
+        require_relative 'gherkin/keywords'
+      end
 
       def self.step_regex
         # in Gherkin's config, keywords that end in < don't

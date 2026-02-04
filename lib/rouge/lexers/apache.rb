@@ -12,9 +12,9 @@ module Rouge
       filenames '.htaccess', 'httpd.conf'
 
       # self-modifying method that loads the keywords file
-      lazy_load :DIRECTIVES, 'apache/keywords.rb'
-      lazy_load :SECTIONS, 'apache/keywords.rb'
-      lazy_load :VALUES, 'apache/keywords.rb'
+      lazy do
+        require_relative 'apache/keywords'
+      end
 
       def name_for_token(token, tktype)
         if SECTIONS.include? token

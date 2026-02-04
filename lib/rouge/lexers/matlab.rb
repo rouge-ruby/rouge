@@ -19,7 +19,9 @@ module Rouge
         )
       end
 
-      lazy_load :BUILTINS, 'matlab/keywords.rb'
+      lazy do
+        require_relative 'matlab/keywords'
+      end
 
       state :root do
         rule %r/\s+/m, Text # Whitespace

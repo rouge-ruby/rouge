@@ -9,7 +9,9 @@ module Rouge
       tag 'isbl'
       filenames '*.isbl'
 
-      lazy_load :BUILTINS, 'isbl/builtins.rb'
+      lazy do
+        require_relative 'isbl/builtins'
+      end
 
       def self.constants
         @constants ||= BUILTINS["const"].merge(BUILTINS["enum"]).collect!(&:downcase)

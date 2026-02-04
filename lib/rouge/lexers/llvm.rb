@@ -14,9 +14,9 @@ module Rouge
       string = /"[^"]*?"/
       identifier = /([-a-zA-Z$._][-a-zA-Z$._0-9]*|#{string})/
 
-      lazy_load :KEYWORDS, 'llvm/keywords.rb'
-      lazy_load :INSTRUCTIONS, 'llvm/keywords.rb'
-      lazy_load :TYPES, 'llvm/keywords.rb'
+      lazy do
+        require_relative 'llvm/keywords'
+      end
 
       state :basic do
         rule %r/;.*?$/, Comment::Single

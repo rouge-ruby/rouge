@@ -12,7 +12,9 @@ module Rouge
       mimetypes 'application/vnd.wolfram.mathematica.package', 'application/vnd.wolfram.wl'
 
       # The list of built-in symbols comes from a wolfram server and is created automatically by rake
-      lazy_load :BUILTINS, 'mathematica/keywords.rb'
+      lazy do
+        require_relative 'mathematica/keywords'
+      end
 
       # Mathematica has various input forms for numbers. We need to handle numbers in bases, precision, accuracy,
       # and *^ scientific notation. All this works for integers and real numbers. Some examples

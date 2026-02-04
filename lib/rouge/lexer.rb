@@ -233,34 +233,25 @@ module Rouge
         registry[name.to_s] = lexer
       end
 
-      def lazy_files
-        @lazy_files ||= {}
+      def lazy_procs
+        @lazy_procs ||= []
       end
 
     public
       def eager_load!
-        return if @_lazy_loaded
-        @_lazy_loaded = true
+        return if @_loaded
+        @_loaded = true
+
+        lazy_procs.each { |b| instance_eval(&b) }
 
         superclass.eager_load! unless superclass == Lexer
 
-        lazy_files.each do |fname, consts|
-          Kernel::load File.join(Lexers::BASE_DIR, fname)
-
-          consts.each do |const|
-            unless const_defined?(const)
-              raise "BUG: expected #{fname} to define #{const}"
-            end
-          end
-        end
+        self
       end
 
-      def lazy_load(name, relative_fname)
-        (lazy_files[relative_fname] ||= []) << name.to_sym
-      end
-
-      def skip_auto_load!
-        @skip_auto_load = true
+      def lazy(auto: true, &block)
+        @skip_auto_load = true unless auto
+        lazy_procs << block
       end
 
       def skip_auto_load?
@@ -360,9 +351,13 @@ module Rouge
     def initialize(opts={})
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
-      self.class.eager_load! unless self.class.skip_auto_load?
+      eager_load! unless self.class.skip_auto_load?
 
       @debug = Lexer.debug_enabled? && bool_option('debug')
+    end
+
+    def eager_load!
+      self.class.eager_load!
     end
 
     # Returns a new lexer with the given options set. Useful for e.g. setting

@@ -13,7 +13,9 @@ module Rouge
 
       mimetypes 'text/x-vim'
 
-      lazy_load :KEYWORDS, 'viml/keywords.rb'
+      lazy do
+        require_relative 'viml/keywords'
+      end
 
       state :root do
         rule %r/^(\s*)(".*?)$/ do

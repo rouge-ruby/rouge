@@ -18,8 +18,9 @@ module Rouge
       option :funcnamehighlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabledmodules, 'Disable certain modules from being highlighted as builtins (default: empty)'
 
-      lazy_load :BUILTINS, 'php/keywords.rb'
-      skip_auto_load!
+      lazy auto: false do
+        require_relative "php/keywords"
+      end
 
       def initialize(*)
         super
@@ -30,7 +31,7 @@ module Rouge
         @funcnamehighlighting = bool_option(:funcnamehighlighting) { true }
         @disabledmodules = list_option(:disabledmodules)
 
-        self.class.eager_load! if @funcnamehighlighting
+        eager_load! if @funcnamehighlighting
       end
 
       def self.detect?(text)

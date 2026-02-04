@@ -14,8 +14,9 @@ module Rouge
       option :function_highlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabled_modules, 'builtin modules to disable'
 
-      lazy_load :BUILTINS, 'lua/keywords.rb'
-      skip_auto_load!
+      lazy auto: false do
+        require_relative 'lua/keywords'
+      end
 
       def initialize(opts={})
         @function_highlighting = opts.delete(:function_highlighting) { true }

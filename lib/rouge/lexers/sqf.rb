@@ -54,7 +54,9 @@ module Rouge
         )
       end
 
-      lazy_load :COMMANDS, 'sqf/keywords.rb'
+      lazy do
+        require_relative 'sqf/keywords.rb'
+      end
 
       state :root do
         # Whitespace

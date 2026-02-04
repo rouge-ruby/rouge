@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'lua'
+
 module Rouge
   module Lexers
-    load_lexer 'lua.rb'
-
     class Moonscript < RegexLexer
       title "MoonScript"
       desc "Moonscript (http://www.moonscript.org)"

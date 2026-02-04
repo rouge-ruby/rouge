@@ -212,7 +212,7 @@ Rouge's documentation is available at [rouge-ruby.github.io/docs/][docs].
 
 ### Ruby
 
-Rouge is compatible with all versions of Ruby from 2.0.0 onwards. It has no
+Rouge is compatible with all versions of Ruby from 3.0 onwards. It has no
 external dependencies.
 
 ### Encodings

@@ -11,7 +11,12 @@ module Rouge
   LIB_DIR = __dir__.freeze
 
   class << self
+    # @deprecated This method of reloading is incompatible with modern Ruby's
+    # expectations around global caching of `require`. It is deprecated with no
+    # replacement - consider reloading the entire process instead with something
+    # like Guard. This method will be removed in rouge 5.0.
     def reload!
+      Kernel::warn "Rouge.reload! is deprecated, with no replacement, and will be removed in 5.0. Use a reloading system like Guard instead."
       Object::send :remove_const, :Rouge
       Kernel::load __FILE__
     end

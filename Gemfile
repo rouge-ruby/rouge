@@ -38,4 +38,7 @@ group :development do
 
   gem "mutex_m" if RUBY_VERSION >= '3.4'
   gem "base64" if RUBY_VERSION >= '3.4'
+
+  gem 'ostruct'
+  gem 'reline'
 end

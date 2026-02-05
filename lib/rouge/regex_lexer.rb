@@ -44,11 +44,9 @@ module Rouge
     class Rule
       attr_reader :callback
       attr_reader :re
-      attr_reader :beginning_of_line
       def initialize(re, callback)
         @re = re
         @callback = callback
-        @beginning_of_line = re.source[0] == ?^
       end
 
       def inspect
@@ -322,7 +320,7 @@ module Rouge
     #
     # @see #step #step (where (2.) is implemented)
     def stream_tokens(str, &b)
-      stream = StringScanner.new(str)
+      stream = StringScanner.new(str, fixed_anchor: true)
 
       @current_stream = stream
       @output_stream  = b
@@ -363,13 +361,6 @@ module Rouge
           puts "  exiting: mixin :#{rule.name}" if @debug
         else
           puts "  trying: #{rule.inspect}" if @debug
-
-          # XXX HACK XXX
-          # StringScanner's implementation of ^ is b0rken.
-          # see http://bugs.ruby-lang.org/issues/7092
-          # TODO: this doesn't cover cases like /(a|^b)/, but it's
-          # the most common, for now...
-          next if rule.beginning_of_line && !stream.beginning_of_line?
 
           if (size = stream.skip(rule.re))
             puts "    got: #{stream[0].inspect}" if @debug

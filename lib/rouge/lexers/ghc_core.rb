@@ -88,7 +88,7 @@ module Rouge
         rule %r/[A-Z][^\s.,(){}]*/, Keyword::Type
 
         # packages, e.g. 'ghc-prim-0.5.3:'
-        rule %r/(^[a-z].*?\d+\.\d+\.\d+)(:)(?=\S)/ do |m|
+        rule %r/([a-z].*?\d+\.\d+\.\d+)(:)(?=\S)/ do |m|
           token Name::Namespace, m[1]
           token Punctuation, m[2]
         end

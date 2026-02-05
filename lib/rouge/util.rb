@@ -24,7 +24,7 @@ module Rouge
 
     def each(&b)
       keys.each do |k|
-        b.call(k, self[k])
+        yield(k, self[k])
       end
     end
 

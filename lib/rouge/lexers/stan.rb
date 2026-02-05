@@ -75,15 +75,14 @@ module Rouge
           "bitor", "bool", "break", "case", "catch", "char", "char16_t",
           "char32_t", "class", "compl", "const", "constexpr", "const_cast",
           "continue", "decltype", "default", "delete", "do", "double",
-          "dynamic_cast", "else", "enum", "explicit", "export", "extern",
-          "false", "float", "for", "friend", "goto", "if", "inline", "int",
+          "dynamic_cast", "enum", "explicit", "export", "extern", "float", "friend", "goto", "inline", "int",
           "long", "mutable", "namespace", "new", "noexcept", "not", "not_eq",
           "nullptr", "operator", "or", "or_eq", "private", "protected",
           "public", "register", "reinterpret_cast", "return", "short", "signed",
           "sizeof", "static", "static_assert", "static_cast", "struct",
-          "switch", "template", "this", "thread_local", "throw", "true", "try",
+          "switch", "template", "this", "thread_local", "throw", "try",
           "typedef", "typeid", "typename", "union", "unsigned", "using",
-          "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
+          "virtual", "void", "volatile", "wchar_t", "xor", "xor_eq"
         ]
       end
 
@@ -158,7 +157,7 @@ module Rouge
           # Array Operations
 
           ## Reductions
-          "sum", "prod", "log_sum_exp", "mean", "variance", "sd", "distance",
+          "sum", "prod", "mean", "variance", "sd", "distance",
           "squared_distance", "quantile",
 
           ## Array size and dimension function
@@ -175,12 +174,7 @@ module Rouge
           "rank",
 
           ## Reversing functions
-          "reverse",
-
-          # Matrix Operations
-
-          ## Integer-valued matrix size functions
-          "num_elements", "rows", "cols",
+          "reverse", "rows", "cols",
 
           ## Dot products and specialized products
           "dot_product", "columns_dot_product", "rows_dot_product", "dot_self",

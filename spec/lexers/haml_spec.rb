@@ -8,10 +8,10 @@ describe Rouge::Lexers::Haml do
   it 'lexes custom filters' do
     lexer = Rouge::Lexers::Haml.new(:filters => { :tex => 'tex' })
 
-    assert_has_token 'Comment', <<-tex, lexer
+    assert_has_token 'Comment', <<-TEX, lexer
       :tex
         % this is a tex comment!
-    tex
+TEX
   end
 
   describe 'guessing' do

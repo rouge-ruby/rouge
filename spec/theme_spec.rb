@@ -26,11 +26,11 @@ describe Rouge::Theme do
 
   it 'renders a style' do
     output = Rouge::Theme::Style[:bold => true].render('.foo')
-    expected = <<-css
+    expected = <<-CSS
       .foo {
         font-weight: bold;
       }
-    css
+CSS
 
     assert { squish(output) == squish(expected) }
   end

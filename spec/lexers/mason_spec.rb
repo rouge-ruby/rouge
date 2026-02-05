@@ -22,20 +22,20 @@ describe Rouge::Lexers::Mason do
     end
 
     it 'guesses by source' do
-      assert_guess :filename => 'foo.m', :source => <<-eos
+      assert_guess :filename => 'foo.m', :source => <<-EOS
       <%doc>
       This is a mason component.
   </%doc>
   
-  eos
+EOS
   
     end
     
     it 'guesses by source when using component calls' do
-      assert_guess :filename => 'foo.m', :source => <<-eos
+      assert_guess :filename => 'foo.m', :source => <<-EOS
       <& 'SELF:component' &>
   
-  eos
+EOS
   
     end
 

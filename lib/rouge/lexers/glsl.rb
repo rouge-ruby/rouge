@@ -131,7 +131,7 @@ module Rouge
           gl_TessCoord gl_FragCoord gl_FrontFacing gl_PointCoord gl_SampleID gl_SamplePosition
           gl_FragColor gl_FragData gl_MaxDrawBuffers gl_FragDepth gl_SampleMask
           gl_ClipVertex gl_FrontColor gl_BackColor gl_FrontSecondaryColor gl_BackSecondaryColor
-          gl_TexCoord gl_FogFragCoord gl_Color gl_SecondaryColor gl_Normal gl_VertexID
+          gl_TexCoord gl_FogFragCoord gl_Color gl_SecondaryColor gl_Normal
           gl_MultiTexCord0 gl_MultiTexCord1 gl_MultiTexCord2 gl_MultiTexCord3
           gl_MultiTexCord4 gl_MultiTexCord5 gl_MultiTexCord6 gl_MultiTexCord7
           gl_FogCoord gl_MaxVertexAttribs gl_MaxVertexUniformComponents

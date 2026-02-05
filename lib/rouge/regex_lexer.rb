@@ -339,7 +339,7 @@ module Rouge
 
         if !success
           puts "    no match, yielding Error" if @debug
-          b.call(Token::Tokens::Error, stream.getch)
+          yield(Token::Tokens::Error, stream.getch)
         end
       end
     end

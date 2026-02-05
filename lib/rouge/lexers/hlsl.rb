@@ -74,7 +74,7 @@ module Rouge
       def self.builtins
         @builtins ||= Set.new %w(
           abort abs acos all AllMemoryBarrier AllMemoryBarrierWithGroupSync any
-          AppendStructuredBuffer asdouble asfloat asin asint asuint asuint atan
+          AppendStructuredBuffer asdouble asfloat asin asint asuint atan
           atan2 ceil CheckAccessFullyMapped clamp clip CompileShader
           ConsumeStructuredBuffer cos cosh countbits cross D3DCOLORtoUBYTE4 ddx
           ddx_coarse ddx_fine ddy ddy_coarse ddy_fine degrees determinant
@@ -95,9 +95,9 @@ module Rouge
           ProcessTriTessFactorsAvg ProcessTriTessFactorsMax
           ProcessTriTessFactorsMin QuadReadLaneAt QuadSwapX QuadSwapY radians
           rcp reflect refract reversebits round rsqrt saturate sign sin sincos
-          sinh smoothstep sqrt step tan tanh tex1D tex1D tex1Dbias tex1Dgrad
-          tex1Dlod tex1Dproj tex2D tex2D tex2Dbias tex2Dgrad tex2Dlod tex2Dproj
-          tex3D tex3D tex3Dbias tex3Dgrad tex3Dlod tex3Dproj texCUBE texCUBE
+          sinh smoothstep sqrt step tan tanh tex1D tex1Dbias tex1Dgrad
+          tex1Dlod tex1Dproj tex2D tex2Dbias tex2Dgrad tex2Dlod tex2Dproj
+          tex3D tex3Dbias tex3Dgrad tex3Dlod tex3Dproj texCUBE
           texCUBEbias texCUBEgrad texCUBElod texCUBEproj transpose trunc
           WaveAllBitAnd WaveAllMax WaveAllMin WaveAllBitOr WaveAllBitXor
           WaveAllEqual WaveAllProduct WaveAllSum WaveAllTrue WaveAnyTrue

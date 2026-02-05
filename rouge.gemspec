@@ -8,10 +8,10 @@ Gem::Specification.new do |s|
   s.authors = ["Jeanine Adkisson"]
   s.email = ["jneen@jneen.net"]
   s.summary = "A pure-ruby colorizer based on pygments"
-  s.description = <<-desc.strip.gsub(/\s+/, ' ')
+  s.description = <<-DESC.strip.gsub(/\s+/, ' ')
     Rouge aims to a be a simple, easy-to-extend drop-in replacement
     for pygments.
-  desc
+  DESC
   s.homepage = "http://rouge.jneen.net/"
   s.files = Dir['Gemfile', 'LICENSE', 'rouge.gemspec', 'lib/**/*.rb', 'lib/**/*.yml', 'bin/rougify', 'lib/rouge/demos/*']
   s.executables = %w(rougify)

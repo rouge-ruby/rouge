@@ -42,9 +42,9 @@ module Rouge
           row rowdiff sample set sin sinh sizeof soapcall sort sorted sqrt
           stepped stored sum table tan tanh thisnode topn tounicode toxml
           transfer transform trim truncate typeof ungroup unicodeorder variance
-          which workunit xmldecode xmlencode xmltext xmlunicode apply assert
-          build buildindex evaluate fail keydiff keypatch loadxml nothor notify
-          output parallel sequential soapcall wait
+          which workunit xmldecode xmlencode xmltext xmlunicode assert
+          build buildindex fail keydiff keypatch loadxml nothor notify
+          output parallel sequential wait
         )
       end
 

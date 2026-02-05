@@ -24,7 +24,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "2.7"
+          ruby-version: "4.0"
           bundler-cache: true
       - name: Run RuboCop
         run: bundle exec rake check:style
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ["2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "head"]
+        ruby-version: ["2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "4.0", "head"]
     steps:
       - uses: actions/checkout@v6
       - name: Set up Ruby
@@ -53,7 +53,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4"
+          ruby-version: "4.0"
           bundler-cache: true
       - name: Profile Memory Allocation
         run: bundle exec rake check:memory

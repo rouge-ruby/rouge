@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'vue'
+require_relative 'html'
 
 module Rouge
   module Lexers

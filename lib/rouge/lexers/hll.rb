@@ -32,7 +32,7 @@ module Rouge
                         token Name
                     end
                 end
-                rule %r([~&#+\-><*=]), Operator
+                rule %r([~&#+\-><*=\.]), Operator
             end
 
             def self.type_keywords

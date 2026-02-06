@@ -27,4 +27,4 @@ CALL FUNCTION 'DO_NOTHING'
     table_to_change = lt_some_table
   EXCEPTIONS
     ERROR = 1
-    OTHERS = 2.    
+    OTHERS = 2.

@@ -1,6 +1,30 @@
-lo_obj ?= lo_obj->do_nothing( 'Char' && ` String` ).
+DATA(lo_obj) = new zcl_obj_factory(
+  EXPORTING
+    input = |some nice string|
+)
+DATA(lo_subobj) ?= lo_obj->do_nothing( 'Char' && ` String` ).
 
-SELECT SINGLE * FROM mara INTO ls_mara WHERE matkl EQ '1324'.
-LOOP AT lt_mara ASSIGNING <mara>.
-  CHECK <mara>-mtart EQ '0001'.
+SELECT SINGLE matnr, matkl, mtart, maktx
+  FROM mara 
+  INNER JOIN makt 
+    ON makt~matnr EQ mara~matnr
+  INTO @data(ls_mara) 
+  WHERE matkl EQ '1324'
+    AND spras EQ @sy-langu.
+
+LOOP AT lt_mara ASSIGNING FIELD-SYMBOL(<mara>).
+  CHECK <mara>-mtart = '0001'.
 ENDLOOP.
+
+CALL FUNCTION 'DO_NOTHING'
+  EXPORTING
+    input = 'input'
+  IMPORTING
+    output = 'output'
+  CHANGING
+    to_change = lv_some_variable  
+  TABLES
+    table_to_change = lt_some_table
+  EXCEPTIONS
+    ERROR = 1
+    OTHERS = 2.    

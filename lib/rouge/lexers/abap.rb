@@ -196,6 +196,33 @@ module Rouge
         rule %r/\|/, Str::Interpol, :string_template
         
         rule %r/('|`)/, Str::Single, :single_string
+
+        # CDS annotations: @KEYWORD.field
+        rule %r/(@)([A-Z][A-Za-z0-9_]*)(\.)([A-Za-z][A-Za-z0-9_]*)/ do |m|
+          token Operator, m[1]
+          if self.class.keywords.include? m[2].upcase
+            token Keyword, m[2]
+          else
+            token Name, m[2]
+          end
+          token Punctuation, m[3]
+          token Name, m[4]
+        end
+
+        # structure field access with dot (table.field should not highlight field as keyword)
+        # This must come before the general punctuation rule
+        # In dot-access patterns, treat both parts as names (even if they match keywords)
+        rule %r/([A-Za-z][A-Za-z0-9_]*)(\.)([A-Za-z][A-Za-z0-9_]*)/ do |m|
+          token Name, m[1]
+          token Punctuation, m[2]
+          token Name, m[3]
+        end
+        # Parameter names in function/method interfaces (word before =)
+        # Matches word followed by optional whitespace and =
+        # This handles EXPORTING/IMPORTING/CHANGING/TABLES/USING parameter names
+        rule %r/([A-Za-z][A-Za-z0-9_]*)(?=\s*=)/ do |m|
+          token Name, m[1]
+        end        
         rule %r/[\[\]\(\)\{\}\.,:]/, Punctuation
 
         # builtins / new ABAP 7.40 keywords (@DATA(), ...)
@@ -226,6 +253,9 @@ module Rouge
         # structure component access (variable-component should not be highlighted as keyword)
         # this rule matches: word-word where the second part is lowercase or starts lowercase
         rule %r/[A-Za-z][A-Za-z0-9_]*-[a-z][A-Za-z0-9_]*/, Name
+        
+        # variable names starting with $ (like $session)
+        rule %r/\$[A-Za-z][A-Za-z0-9_]*/, Name
         
         # keywords, types and normal text
         rule %r/\w\w*/ do |m|

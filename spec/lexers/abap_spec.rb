@@ -233,5 +233,45 @@ describe Rouge::Lexers::ABAP do
                           ['Text', ' '],
                           ['Keyword', 'ONE']
     end
+
+    it 'recognizes $ as valid character in variable names' do
+      assert_tokens_equal '$session.system_language',
+                          ['Name', '$session'],
+                          ['Punctuation', '.'],
+                          ['Name', 'system_language']
+    end
+
+    it 'recognizes structure field access without highlighting field as keyword' do
+      # 'decimals' is a keyword, but in dd04l.decimals it should be a field name
+      assert_tokens_equal 'dd04l.decimals',
+                          ['Name', 'dd04l'],
+                          ['Punctuation', '.'],
+                          ['Name', 'decimals']
+      
+      # Another example with a keyword as field name
+      assert_tokens_equal 'table.data',
+                          ['Name', 'table'],
+                          ['Punctuation', '.'],
+                          ['Name', 'data']
+    end
+
+    it 'recognizes parameter names in CALL FUNCTION statements' do
+      # Parameter names after EXPORTING/IMPORTING should be Name, not Keyword
+      # Testing that 'input' and 'output' are recognized as parameter names (Name tokens)
+      # not as keywords when they appear in these contexts
+      assert_tokens_equal "input = 'test'",
+                          ['Name', 'input'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Literal.String.Single', "'test'"]
+
+      assert_tokens_equal "output = 'result'",
+                          ['Name', 'output'],
+                          ['Text', ' '],
+                          ['Operator', '='],
+                          ['Text', ' '],
+                          ['Literal.String.Single', "'result'"]
+    end
   end
 end

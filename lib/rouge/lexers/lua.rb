@@ -14,26 +14,27 @@ module Rouge
       option :function_highlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabled_modules, 'builtin modules to disable'
 
+      lazy auto: false do
+        require_relative 'lua/keywords'
+      end
+
       def initialize(opts={})
         @function_highlighting = opts.delete(:function_highlighting) { true }
         @disabled_modules = opts.delete(:disabled_modules) { [] }
         super(opts)
+
+        self.class.eager_load! if @function_highlighting
       end
 
       def self.detect?(text)
         return true if text.shebang? 'lua'
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'lua/keywords.rb')
-        builtins
-      end
-
       def builtins
         return [] unless @function_highlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          self.class.builtins.each do |mod, fns|
+          BUILTINS.each do |mod, fns|
             next if @disabled_modules.include? mod
             builtins.merge(fns)
           end

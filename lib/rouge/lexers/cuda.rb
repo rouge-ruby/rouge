@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*- #
 
+require_relative 'cpp'
+
 module Rouge
   module Lexers
-    load_lexer 'cpp.rb'
-
     class CUDA < Cpp
       title "CUDA"
       desc "Compute Unified Device Architecture, used for programming with NVIDIA GPU"

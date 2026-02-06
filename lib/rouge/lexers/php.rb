@@ -18,6 +18,10 @@ module Rouge
       option :funcnamehighlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabledmodules, 'Disable certain modules from being highlighted as builtins (default: empty)'
 
+      lazy auto: false do
+        require_relative "php/keywords"
+      end
+
       def initialize(*)
         super
 
@@ -26,6 +30,8 @@ module Rouge
         @start_inline = bool_option(:start_inline) { :guess }
         @funcnamehighlighting = bool_option(:funcnamehighlighting) { true }
         @disabledmodules = list_option(:disabledmodules)
+
+        eager_load! if @funcnamehighlighting
       end
 
       def self.detect?(text)
@@ -48,16 +54,11 @@ module Rouge
         )
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'php/keywords.rb')
-        builtins
-      end
-
       def builtins
         return [] unless @funcnamehighlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          self.class.builtins.each do |mod, fns|
+          BUILTINS.each do |mod, fns|
             next if @disabledmodules.include? mod
             builtins.merge(fns)
           end
@@ -109,7 +110,7 @@ module Rouge
           name = m[0].downcase
           if self.class.keywords.include? name
             token Keyword
-          elsif self.builtins.include? name
+          elsif builtins.include? name
             token Name::Builtin
           else
             token Name::Function

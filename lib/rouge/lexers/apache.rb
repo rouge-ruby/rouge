@@ -12,27 +12,16 @@ module Rouge
       filenames '.htaccess', 'httpd.conf'
 
       # self-modifying method that loads the keywords file
-      def self.directives
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        directives
-      end
-
-      def self.sections
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        sections
-      end
-
-      def self.values
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        values
+      lazy do
+        require_relative 'apache/keywords'
       end
 
       def name_for_token(token, tktype)
-        if self.class.sections.include? token
+        if SECTIONS.include? token
           tktype
-        elsif self.class.directives.include? token
+        elsif DIRECTIVES.include? token
           tktype
-        elsif self.class.values.include? token
+        elsif VALUES.include? token
           tktype
         else
           Text

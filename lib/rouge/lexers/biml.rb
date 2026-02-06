@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'xml'
+
 module Rouge
   module Lexers
-    load_lexer 'xml.rb'
-
     class BIML < XML
       title "BIML"
       desc "BIML, Business Intelligence Markup Language"

@@ -1,19 +1,49 @@
-/* The pigeon holes principles
-   Taken from the specification */
-constants:
-  int NOF_PIGEONS := 10;
-  int NOF_HOLES := NOF_PIGEONS - 1;
+// Some comment
 
-inputs:
-  bool P[NOF_PIGEONS, NOF_HOLES];
+/* A multiline
+   comment */
+
+namespaces: N {
+  constants:
+    int foo := 5;
+    
+    int 'foo' := 5;
+    int "foo" := 5;
+}
+
+types:
+  enum {red, blue} colour;
+  sort {flower, grass} < herbs;
+  sort {larch, oak} < trees;
+  sort herbs, trees < plants;
+  int[0,5] five;
+  int signed 5 int5;
+  int unsigned 5 uint5;
+  tuple {bool, bool} bool2;
+  struct {x: int5, y: int5} point5;
+  bool ^ (N::foo, N::"foo", N::'foo') foo_matrix;
+  (int5 * int5 -> int5) fct5;
+
+declarations:
+  bool it;
+  int5 noise;
+  bool cohabit(herbs, trees);
+  (plants -> bool) edible;
+  plants winlose[int5,int5];
+  int5 projx(point5);
+  int5 projy(point5);
+  bool g(bool, bool);
 
 definitions:
-  // For each hole there is at most one pigeon
-  a := ALL i:[0, NOF_HOLES-1], j:[0, NOF_PIGEONS-1] ALL k:[j+1, NOF_PIGEONS-1]
-         (P[j, i] -> ~P[k, i]);
+  projx(p) := p.x;
+  projy(p) := p.y;
 
-  // For each pigeon there is at least one hole
-  b := ALL i:[0, NOF_PIGEONS-1] SOME j:[0, NOF_HOLES-1] (P[i,j]);
-
-proof obligations:
-  ~(a & b);
+constraints:
+  ALL x:point5 (projx(x) + noise <> X(noise));
+  SOME x:int5 (projx(point5) == noise);
+  SOME h: herbs ALL p: plants (cohabit(h,p));
+  if it & pre(it, false) then edible(flower) else edible(grass);
+  winlose[3,2] == oak;
+  winlose[2,3] <> X(winlose[2,3]);
+  I(g(false, False));
+  SOME p:point5 (projx(p) = 3 # projy(p) = 3);

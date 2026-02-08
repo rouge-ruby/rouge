@@ -18,8 +18,6 @@ gem 'memory_profiler', require: false
 
 group :development do
   gem 'pry'
-  gem 'guard'
-  gem 'guard-puma'
 
   # Needed for a Rake task
   gem 'git'

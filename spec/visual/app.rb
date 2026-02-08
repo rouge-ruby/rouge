@@ -3,13 +3,20 @@
 
 $VERBOSE = true
 
+require 'sinatra'
+require 'pry'
+
 # stdlib
 require 'pathname'
+
+require_relative 'rouge_reloader'
 
 class VisualTestApp < Sinatra::Application
   BASE = Pathname.new(__dir__)
   SAMPLES = BASE.join('samples')
   ROOT = BASE.parent.parent
+
+  RELOADER = FeatureReloader.new(:Rouge, ROOT.join('lib').to_s, 'rouge.rb')
 
   DEMOS = ROOT.join('lib/rouge/demos')
 
@@ -58,6 +65,7 @@ class VisualTestApp < Sinatra::Application
   end
 
   before do
+    RELOADER.reload!
     Rouge::Lexer.enable_debug!
     Rouge::Formatter.enable_escape! if params[:escape]
 

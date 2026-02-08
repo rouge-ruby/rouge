@@ -21,7 +21,8 @@ Gem::Specification.new do |s|
     "bug_tracker_uri"   => "https://github.com/rouge-ruby/rouge/issues",
     "changelog_uri"     => "https://github.com/rouge-ruby/rouge/blob/master/CHANGELOG.md",
     "documentation_uri" => "https://rouge-ruby.github.io/docs/",
-    "source_code_uri"   => "https://github.com/rouge-ruby/rouge"
+    "source_code_uri"   => "https://github.com/rouge-ruby/rouge",
+    "rubygems_mfa_required" => "true"
   }
 
   s.add_dependency 'strscan', '~> 3.1'

@@ -27,6 +27,7 @@ group :development do
 
   gem 'rubocop', '~> 1.0', '<= 1.11'
   gem 'rubocop-performance'
+  gem 'ostruct'
 
   # docs
   gem 'github-markup'

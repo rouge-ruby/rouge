@@ -20,8 +20,10 @@ module Rouge
                 rule %r/"[^"]*"/, Literal::String
                 rule %r/'[^']*'/, Literal::String
                 mixin :comment
-                rule %r([(){}\[\];:,|!^]+), Punctuation
+                rule %r([(){}\[\];:,|]+), Punctuation
                 rule %r(:=), Punctuation
+                rule %r(0(b|B)[0-1](_?[0-1])*), Literal::Number
+                rule %r(0(x|X)[0-9A-Fa-f](_?[0-9A-Fa-f])*), Literal::Number
                 rule %r(\d+), Literal::Number
                 rule %r(\w+) do |m|
                     if self.class.keywords.include?(m[0])
@@ -32,12 +34,14 @@ module Rouge
                         token Name
                     end
                 end
-                rule %r([~&#+\-><*=\.]), Operator
+                rule %r([!~&#+\-><*=./%\^]), Operator
+                rule %r(\$\w+), Keyword # Built in functions
             end
 
             def self.type_keywords
                 @type_keywords ||= Set.new %w(bool int)
             end
+
             # Keywords as indicated in
             # https://hal.science/hal-03356342v1/
             # but without types (which are in the type_keywords value)

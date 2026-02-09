@@ -1,28 +1,49 @@
-// Some comment
-
-/* A multiline
-   comment */
+/* This file contains as many HLL syntactic constructions as possible
+   in order to test syntactic analysis tools. */
 
 namespaces: N {
+  inputs:
+    bool a;
+  namespaces: M {
+    inputs:
+      bool a;
   constants:
-    int foo := 5;
-    
-    int 'foo' := 5;
-    int "foo" := 5;
+    int b := 3;
+  }
 }
 
+constants:
+  int "foo" := 5;
+  int 'foo' := 5;
+
 types:
+  // Enumeration
   enum {red, blue} colour;
+  // Sorts
   sort {flower, grass} < herbs;
   sort {larch, oak} < trees;
   sort herbs, trees < plants;
-  int[0,5] five;
+  // integers
+  int [0,5] five;
   int signed 5 int5;
   int unsigned 5 uint5;
-  tuple {bool, bool} bool2;
-  struct {x: int5, y: int5} point5;
-  bool ^ (N::foo, N::"foo", N::'foo') foo_matrix;
+  tuple {bool, bool} bool2; // Tuple
+  struct {x: int5, y: int5} point5; // Structure
+  // Functions and arrays
+  bool ^ (foo, "foo", N::M::b) foo_matrix;
   (int5 * int5 -> int5) fct5;
+  bool comp(int, int);
+  bool m0[3][4];
+
+inputs:
+  // Here we test declarators
+  bool^(3)^(4) ar0;
+  bool ar1[3][4];
+  bool f0(int, int);
+  bool f1(int)(int);
+  (int * int -> bool) f2;
+  (int -> (int -> bool)) f3;
+  int i0(int, int);
 
 declarations:
   bool it;
@@ -30,20 +51,80 @@ declarations:
   bool cohabit(herbs, trees);
   (plants -> bool) edible;
   plants winlose[int5,int5];
-  int5 projx(point5);
-  int5 projy(point5);
+  bool projx(point5, int5);
+  bool projy(point5, int5);
   bool g(bool, bool);
 
 definitions:
-  projx(p) := p.x;
-  projy(p) := p.y;
+  projx(p, x) := p.x = x;
+  projy(p, y) := p.y = y;
+
+// Lambda
+declarations:
+  bool l0[3];
+  int fib(int);
+
+definitions:
+  l0 := lambda[3]: [i] := i = 1;
+  fib := lambda(int): (i) := if i <= 2 then 1 else fib(i - 1) + fib(i - 2);
 
 constraints:
-  ALL x:point5 (projx(x) + noise <> X(noise));
-  SOME x:int5 (projx(point5) == noise);
-  SOME h: herbs ALL p: plants (cohabit(h,p));
+  // Quantifiers
+  ALL i: int, j: int (f0(i)(j));
+  SOME i: int ALL j: int (f0(i)(j));
+  DISJ i: int, j: int (i <> j & f0(i)(j));
+  CONJ i: int (f0(i)(i));
+  SELECT i: int (f0(i)(i + 1));
+  PROD k: int (i0(k, k * 2) < 5);
+  SUM k: int (i0(k,k) = 2);
+  $min k: int (i0(k, k) = 0);
+  $max k: int (i0(k, k + 1) = "foo");
+  // Conditionals
   if it & pre(it, false) then edible(flower) else edible(grass);
-  winlose[3,2] == oak;
-  winlose[2,3] <> X(winlose[2,3]);
-  I(g(false, False));
-  SOME p:point5 (projx(p) = 3 # projy(p) = 3);
+  if true then false elif true then false else false;
+  // Binop expressions
+  true # true & true #! true -> true <-> false;
+  true = true;
+  true == true;
+  true != false;
+  true <> false;
+  fib(5) * fib(3) + fib(1) / 2 /> fib(2) /< fib(3) % "foo" - 3;
+  fib(5) << 3 <= 12;
+  fib(5) >> 3 >= 12;
+  true = ~false;
+  // Integer litterals
+  10 = 9 + 1;
+  0b011 > 0B001;
+  0xdead <> 0XDE0A;
+  // Temporal expressions
+  X(l0[3]) <> l0[3];
+  pre(g(true, false)) = g(true, false);
+  PRE(g(false, false), false) = g(true, true);
+  // Function style expressions
+  $min(3, 4) = $max(2, 3);
+  cast<int5> (3) = 3; // cast
+  (l0 with [0] := true); // With expression
+
+namespaces: Cases {
+  declarations:
+    bool nice(colour, colour);
+  definitions:
+    diff(c1, c2) := (c1, c2
+                    | red, blue => true
+                    | blue, red => true
+                    | red, red => false
+                    | blue, blue => false);
+}
+
+namespaces: TemporalDefinitions {
+  declarations:
+    bool u;
+    bool u1;
+    bool u2;
+  definitions:
+    X(u) := ~u;
+    I(u) := false;
+    u2 := u & ~u, true;
+  constraints:
+    I(u # u1);
+}

@@ -19,42 +19,89 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          attribute const uniform varying
+          const uniform buffer shared attribute varying
+          coherent volatile restrict readonly writeonly
+          atomic_uint
           layout
           centroid flat smooth noperspective
           patch sample
+          invariant precise
           break continue do for while switch case default
           if else
           subroutine
           in out inout
-          invariant
-          discard return struct precision
+          true false
+          discard return
+          lowp mediump highp precision
+          struct
+
+          row_major column_major
+          shared packed std140 std43 binding offset align location
+          early_fragment_tests
         )
       end
 
       def self.keywords_type
         @keywords_type ||= Set.new %w(
-          float double int void bool true false
-          lowp mediump highp
+          int void bool float double
+          
+          vec2 vec3 vec4 ivec2 ivec3 ivec4 bvec2 bvec3 bvec4
+          uint uvec2 uvec3 uvec4
+          dvec2 dvec3 dvec4
+          mat2 mat3 mat4
+          mat2x2 mat2x3 mat2x4
+          mat3x2 mat3x3 mat3x4
+          mat4x2 mat4x3 mat4x4
+          dmat2 dmat3 dmat4
+          dmat2x2 dmat2x3 dmat2x4
+          dmat3x2 dmat3x3 dmat3x4
+          dmat4x2 dmat4x3 dmat4x4
+          
           mat2 mat3 mat4 dmat2 dmat3 dmat4
           mat2x2 mat2x3 mat2x4 dmat2x2 dmat2x3 dmat2x4
           mat3x2 mat3x3 mat3x4 dmat3x2 dmat3x3 dmat3x4
           mat4x2 mat4x3 mat4x4 dmat4x2 dmat4x3 dmat4x4
           vec2 vec3 vec4 ivec2 ivec3 ivec4 bvec2 bvec3 bvec4 dvec2 dvec3 dvec4
           uint uvec2 uvec3 uvec4
-          sampler1D sampler2D sampler3D samplerCube
-          sampler1DShadow sampler2DShadow samplerCubeShadow
-          sampler1DArray sampler2DArray
-          sampler1DArrayShadow sampler2DArrayShadow
-          isampler1D isampler2D isampler3D isamplerCube
-          isampler1DArray isampler2DArray
-          usampler1D usampler2D usampler3D usamplerCube
-          usampler1DArray usampler2DArray
+          sampler1D sampler1DShadow sampler1DArray sampler1DArrayShadow
+          isampler1D isampler1DArray usampler1D usampler1DArray
+          sampler2D sampler2DShadow sampler2DArray sampler2DArrayShadow
+          isampler2D isampler2DArray usampler2D usampler2DArray
           sampler2DRect sampler2DRectShadow isampler2DRect usampler2DRect
-          samplerBuffer isamplerBuffer usamplerBuffer
           sampler2DMS isampler2DMS usampler2DMS
           sampler2DMSArray isampler2DMSArray usampler2DMSArray
-          samplerCubeArray samplerCubeArrayShadow isamplerCubeArray usamplerCubeArray
+          sampler3D isampler3D usampler3D
+          samplerCube samplerCubeShadow isamplerCube usamplerCube
+          samplerCubeArray samplerCubeArrayShadow
+          isamplerCubeArray usamplerCubeArray
+          samplerBuffer isamplerBuffer usamplerBuffer
+          image1D iimage1D uimage1D
+          image1DArray iimage1DArray uimage1DArray
+          image2D iimage2D uimage2D
+          image2DArray iimage2DArray uimage2DArray
+          image2DRect iimage2DRect uimage2DRect
+          image2DMS iimage2DMS uimage2DMS
+          image2DMSArray iimage2DMSArray uimage2DMSArray
+          image3D iimage3D uimage3D
+          imageCube iimageCube uimageCube
+          imageCubeArray iimageCubeArray uimageCubeArray
+          imageBuffer iimageBuffer uimageBuffer
+          atomic_uint
+
+          texture1D texture1DArray
+          itexture1D itexture1DArray utexture1D utexture1DArray
+          texture2D texture2DArray
+          itexture2D itexture2DArray utexture2D utexture2DArray
+          texture2DRect itexture2DRect utexture2DRect
+          texture2DMS itexture2DMS utexture2DMS
+          texture2DMSArray itexture2DMSArray utexture2DMSArray
+          texture3D itexture3D utexture3D
+          textureCube itextureCube utextureCube
+          textureCubeArray itextureCubeArray utextureCubeArray
+          textureBuffer itextureBuffer utextureBuffer
+          sampler samplerShadow
+          subpassInput isubpassInput usubpassInput
+          subpassInputMS isubpassInputMS usubpassInputMS
         )
       end
 
@@ -62,31 +109,23 @@ module Rouge
         @reserved ||= Set.new %w(
           common partition active
           asm
-          class union enum typedef template this packed
+          class union enum typedef template this
+          resource
           goto
-          inline noinline volatile public static extern external interface
+          inline noinline public static extern external interface
           long short half fixed unsigned superp
           input output
           hvec2 hvec3 hvec4 fvec2 fvec3 fvec4
-          sampler3DRect
           filter
-          image1D image2D image3D imageCube
-          iimage1D iimage2D iimage3D iimageCube
-          uimage1D uimage2D uimage3D uimageCube
-          image1DArray image2DArray
-          iimage1DArray iimage2DArray uimage1DArray uimage2DArray
-          image1DShadow image2DShadow
-          image1DArrayShadow image2DArrayShadow
-          imageBuffer iimageBuffer uimageBuffer
           sizeof cast
           namespace using
-          row_major
+          sampler3DRect
         )
       end
 
       def self.builtins
         @builtins ||= Set.new %w(
-          gl_VertexID gl_InstanceID gl_PerVertex gl_Position gl_PointSize gl_ClipDistance
+          gl_VertexID gl_VertexIndex gl_InstanceID gl_InstanceIndex gl_PerVertex gl_Position gl_PointSize gl_ClipDistance gl_CullDistance
           gl_PrimitiveIDIn gl_InvocationID gl_PrimitiveID gl_Layer gl_ViewportIndex
           gl_MaxPatchVertices gl_PatchVerticesIn gl_TessLevelOuter gl_TessLevelInner
           gl_TessCoord gl_FragCoord gl_FrontFacing gl_PointCoord gl_SampleID gl_SamplePosition
@@ -125,6 +164,9 @@ module Rouge
           gl_BackLightProduct gl_TextureEnvColor gl_EyePlaneS gl_EyePlaneT gl_EyePlaneR
           gl_EyePlaneQ gl_ObjectPlaneS gl_ObjectPlaneT gl_ObjectPlaneR gl_ObjectPlaneQ
           gl_FogParameters gl_Fog
+          gl_DrawID gl_BaseVertex gl_BaseInstance
+          gl_NumWorkGroups gl_WorkGroupID gl_LocalInvocationID gl_GlobalInvocationID gl_LocalInvocationIndex
+          gl_WorkGroupSize gl_HelperInvocation
         )
       end
     end

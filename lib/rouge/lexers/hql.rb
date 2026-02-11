@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*- #
 
+require_relative 'sql'
+
 module Rouge
   module Lexers
-    load_lexer 'sql.rb'
-
     class HQL < SQL
       title "HQL"
       desc "Hive Query Language SQL dialect"

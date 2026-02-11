@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'lua'
+
 module Rouge
   module Lexers
-    load_lexer 'lua.rb'
-
     class Moonscript < RegexLexer
       title "MoonScript"
       desc "Moonscript (http://www.moonscript.org)"
@@ -15,6 +15,12 @@ module Rouge
 
       option :function_highlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabled_modules, 'builtin modules to disable'
+
+      # depends on lua builtins
+      def self.eager_load!
+        super
+        Lua.eager_load!
+      end
 
       def initialize(*)
         super
@@ -31,7 +37,7 @@ module Rouge
         return [] unless @function_highlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          Rouge::Lexers::Lua.builtins.each do |mod, fns|
+          Lua::BUILTINS.each do |mod, fns|
             next if @disabled_modules.include? mod
             builtins.merge(fns)
           end

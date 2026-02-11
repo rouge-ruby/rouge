@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'ocaml/common'
+
 module Rouge
   module Lexers
-    load_lexer 'ocaml/common.rb'
-
     class OCaml < OCamlCommon
       title "OCaml"
       desc 'Objective Caml (ocaml.org)'

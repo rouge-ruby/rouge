@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# stdlib
-require 'strscan'
-require 'set'
-require 'uri'
-
 module Rouge
   # @abstract
   # A lexer transforms text into a stream of `[token, chunk]` pairs.
@@ -233,7 +228,33 @@ module Rouge
         registry[name.to_s] = lexer
       end
 
+      def lazy_procs
+        @lazy_procs ||= []
+      end
+
     public
+      def eager_load!
+        return if @_loaded
+        @_loaded = true
+
+        lazy_procs.each { |b| instance_eval(&b) }
+
+        superclass.eager_load! unless superclass == Lexer
+
+        self
+      end
+
+      def lazy(auto: true, &block)
+        @skip_auto_load = true unless auto
+        lazy_procs << block
+      end
+
+      def skip_auto_load?
+        return true if @skip_auto_load
+        return superclass.skip_auto_load? unless superclass == Lexer
+        false
+      end
+
       # Used to specify or get the canonical name of this lexer class.
       #
       # @example
@@ -325,8 +346,13 @@ module Rouge
     def initialize(opts={})
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
+      eager_load! unless self.class.skip_auto_load?
 
       @debug = Lexer.debug_enabled? && bool_option('debug')
+    end
+
+    def eager_load!
+      self.class.eager_load!
     end
 
     # Returns a new lexer with the given options set. Useful for e.g. setting
@@ -524,14 +550,7 @@ module Rouge
     end
   end
 
+  # container module for built-in lexers
   module Lexers
-    BASE_DIR = "#{__dir__}/lexers".freeze
-    @_loaded_lexers = {}
-
-    def self.load_lexer(relpath)
-      return if @_loaded_lexers.key?(relpath)
-      @_loaded_lexers[relpath] = true
-      Kernel::load File.join(BASE_DIR, relpath)
-    end
   end
 end

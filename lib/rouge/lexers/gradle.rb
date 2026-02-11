@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'groovy'
+
 module Rouge
   module Lexers
-    load_lexer 'groovy.rb'
-
     class Gradle < Groovy
       title "Gradle"
       desc "A powerful build system for the JVM"

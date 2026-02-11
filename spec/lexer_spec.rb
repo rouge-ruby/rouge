@@ -251,4 +251,31 @@ describe Rouge::Lexer do
 
     assert { lexer.demo == 'my cool demo' }
   end
+
+  it 'falls through' do
+    new_lexer = Class.new(Rouge::RegexLexer) do
+      state :root do
+        rule %r/\w+\b/ do |m|
+          fallthrough! unless %w(testy1 testy2).include?(m[0])
+
+          token 'builtin'
+        end
+
+        rule %r/\w+\b/ do |m|
+          token 'function'
+        end
+
+        rule %r/\s+/, 'text'
+      end
+    end
+
+    result = new_lexer.lex('testy1 foobar testy2').to_a
+
+    assert { result.size == 5 }
+    assert { result[0] == ['builtin', 'testy1'] }
+    assert { result[1] == ['text', ' '] }
+    assert { result[2] == ['function', 'foobar'] }
+    assert { result[3] == ['text', ' '] }
+    assert { result[4] == ['builtin', 'testy2'] }
+  end
 end

@@ -5,7 +5,6 @@
 # to use this module, require 'rouge/cli'.
 
 require 'rbconfig'
-require 'uri'
 
 module Rouge
   class FileReader

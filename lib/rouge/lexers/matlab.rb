@@ -19,10 +19,8 @@ module Rouge
         )
       end
 
-      # self-modifying method that loads the builtins file
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'matlab/keywords.rb')
-        builtins
+      lazy do
+        require_relative 'matlab/keywords'
       end
 
       state :root do
@@ -43,7 +41,7 @@ module Rouge
           match = m[0]
           if self.class.keywords.include? match
             token Keyword
-          elsif self.class.builtins.include? match
+          elsif BUILTINS.include? match
             token Name::Builtin
           else
             token Name

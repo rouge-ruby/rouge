@@ -9,21 +9,20 @@ module Rouge
       tag 'isbl'
       filenames '*.isbl'
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'isbl/builtins.rb')
-        self.builtins
+      lazy do
+        require_relative 'isbl/builtins'
       end
 
       def self.constants
-        @constants ||= self.builtins["const"].merge(self.builtins["enum"]).collect!(&:downcase)
+        @constants ||= BUILTINS["const"].merge(BUILTINS["enum"]).collect!(&:downcase)
       end
 
       def self.interfaces
-        @interfaces ||= self.builtins["interface"].collect!(&:downcase)
+        @interfaces ||= BUILTINS["interface"].collect!(&:downcase)
       end
 
       def self.globals
-        @globals ||= self.builtins["global"].collect!(&:downcase)
+        @globals ||= BUILTINS["global"].collect!(&:downcase)
       end
 
       def self.keywords

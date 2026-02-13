@@ -35,7 +35,7 @@ module Rouge
       best_score = opts[:threshold]
 
       lexers.each do |lexer|
-        score = scorer.call(lexer)
+        score = yield(lexer)
 
         next if score.nil?
 

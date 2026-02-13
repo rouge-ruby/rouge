@@ -1,11 +1,19 @@
 inherit_from: .rubocop_todo.yml
 
+plugins:
+  - rubocop-performance
+  - rubocop-minitest
+  - rubocop-rake
+
 AllCops:
   TargetRubyVersion: 3.0
   DisplayCopNames: true
   Exclude:
     - "tasks/**/*"
     - "vendor/**/*"
+    - "lib/rouge/lexers/**/keywords.rb"
+    - "lib/rouge/lexers/**/builtins.rb"
+  NewCops: enable
 
 Style:
   Enabled: false
@@ -38,4 +46,16 @@ Lint/RedundantSplatExpansion:
   Enabled: false
 
 Lint/IneffectiveAccessModifier:
+  Enabled: false
+
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+
+Naming/BlockForwarding:
+  Enabled: false
+
+Performance/RegexpMatch:
+  Enabled: false
+
+Performance/ConstantRegexp:
   Enabled: false

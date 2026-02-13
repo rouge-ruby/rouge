@@ -371,13 +371,6 @@ module Rouge
           if (size = stream.skip(rule.re))
             puts "    got: #{stream[0].inspect}" if @debug
 
-            begin
-              instance_exec(stream, &rule.callback)
-            rescue Fallthrough
-              stream.unscan
-              next
-            end
-
             if size.zero?
               @null_steps += 1
               if @null_steps > MAX_NULL_SCANS
@@ -386,6 +379,13 @@ module Rouge
               end
             else
               @null_steps = 0
+            end
+
+            begin
+              instance_exec(stream, &rule.callback)
+            rescue Fallthrough
+              stream.unscan
+              next
             end
 
             return true

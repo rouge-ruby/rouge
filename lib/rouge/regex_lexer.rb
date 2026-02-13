@@ -37,6 +37,12 @@ module Rouge
       end
     end
 
+    # exception class for fallthrough - using an exception is slightly faster
+    # than catch { ... }, but it is not semantically an error that should be
+    # rescued from.
+    class Fallthrough < Exception # rubocop:disable Lint/InheritException
+    end
+
     # A rule is a tuple of a regular expression to test, and a callback
     # to perform if the test succeeds.
     #
@@ -365,8 +371,6 @@ module Rouge
           if (size = stream.skip(rule.re))
             puts "    got: #{stream[0].inspect}" if @debug
 
-            instance_exec(stream, &rule.callback)
-
             if size.zero?
               @null_steps += 1
               if @null_steps > MAX_NULL_SCANS
@@ -375,6 +379,13 @@ module Rouge
               end
             else
               @null_steps = 0
+            end
+
+            begin
+              instance_exec(stream, &rule.callback)
+            rescue Fallthrough
+              stream.unscan
+              next
             end
 
             return true
@@ -433,6 +444,10 @@ module Rouge
 
     def recurse(text=nil)
       delegate(self.class, text)
+    end
+
+    def fallthrough!
+      raise Fallthrough
     end
 
     # Push a state onto the stack.  If no state name is given and you've

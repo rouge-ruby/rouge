@@ -409,3 +409,46 @@ class C {
 }
 
 ?>
+
+/* Property Hooks */
+
+<?php
+
+class A {
+    public string $x1 {
+        get {
+            return $this->x1;
+        }
+        set (string $value) {
+            $this->x1 = trim($value);
+        }
+    }
+
+    public string $x2 {
+        get => strtolower($this->x2);
+        set => trim($value);
+    }
+
+    public array $x3 {
+        &get => $this->data;
+    }
+
+    public string $x4 {
+        final get => $this->x6;
+        set => strtolower($value);
+    }
+
+    public function __construct(
+        public string $x5 { get => strtoupper($this->x5); },
+        protected int $x6 {
+            set {
+                if ($value < 0) {
+                    throw new \ValueError('Must be non-negative');
+                }
+                $this->x6 = $value;
+            }
+        },
+    ) {}
+}
+
+?>

@@ -325,7 +325,7 @@ module Rouge
         rule %r/=/, Operator, :in_assign
         rule %r/\b(?:public|protected|private|readonly)(?:\(set\)|\b)/i, Keyword
         rule %r/\breadonly\b/i, Keyword
-        rule %r/\??#{id}/, Keyword::Type, :in_assign
+        rule %r/\??#{id}/, Keyword::Type, :in_property
         mixin :escape
         mixin :whitespace
         mixin :variables
@@ -389,7 +389,10 @@ module Rouge
         rule %r/\b(?:public|protected|private)(?:\(set\)|\b)/i, Keyword
         rule %r/\b(?:readonly|static)\b/i, Keyword
         rule %r/(?=(abstract|const|function)\b)/i, Keyword, :pop!
-        rule %r/\??#{id}/, Keyword::Type, :pop!
+        rule %r/\??#{id}/ do
+          token Keyword::Type
+          goto :in_property
+        end
         mixin :escape
         mixin :whitespace
         mixin :return
@@ -416,6 +419,51 @@ module Rouge
           groups Keyword, Text, Name::Constant
         end
         mixin :php
+      end
+
+      state :in_property do
+        rule %r/\$+#{id}/, Name::Variable
+        rule %r/\{/ do
+          token Punctuation
+          goto :in_property_hooks
+        end
+        rule %r/[;,]/, Punctuation, :pop!
+        rule %r/(?==)/ do
+          pop!
+        end
+        rule %r/[|&]/, Operator
+        rule %r/\??#{id}/, Keyword::Type
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_property_hooks do
+        rule %r/\}/, Punctuation, :pop!
+        rule %r/\bfinal\b/i, Keyword
+        rule %r/&(?=get\b)/, Operator
+        rule %r/(\bset\b)(\s*)(\()/ do
+          groups Keyword, Text, Punctuation
+          push :in_property_hook_params
+        end
+        rule %r/\b(?:get|set)\b/, Keyword
+        rule %r/\{/, Punctuation, :in_function_body
+        rule %r/[;,\(\)\[\]]/, Punctuation
+        mixin :escape
+        mixin :whitespace
+        mixin :variables
+        mixin :values
+        mixin :names
+        mixin :operators
+        rule %r/[=?]/, Operator
+      end
+
+      state :in_property_hook_params do
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/\??#{id}/, Keyword::Type
+        mixin :escape
+        mixin :whitespace
+        mixin :variables
       end
     end
   end

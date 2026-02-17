@@ -192,6 +192,7 @@ module Rouge
           seagreen seashell sienna silver skyblue slateblue slategray snow
           springgreen steelblue tan teal thistle tomato
           turquoise violet wheat white whitesmoke yellow yellowgreen
+          rebeccapurple
         )
       end
 
@@ -245,6 +246,10 @@ module Rouge
         rule %r/(true|false)/i, Name::Constant
         rule %r/\-\-#{identifier}/, Literal
         rule %r([*+/-]), Operator
+        rule %r/(url(?:-prefix)?)([(])(.*?)([)])/ do
+          groups Name::Function, Punctuation, Str::Other, Punctuation
+        end
+
         rule(identifier) do |m|
           if self.class.colors.include? m[0].downcase
             token Name::Other
@@ -304,6 +309,8 @@ module Rouge
 
           push :stanza_value
         end
+
+        mixin :root
       end
 
       state :stanza_value do

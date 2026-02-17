@@ -442,6 +442,8 @@ module Rouge
       end
     end
 
+    # Re-lexes the given text (or the most recently matched string if
+    # none is given) with the current lexer.
     def recurse(text=nil)
       delegate(self.class, text)
     end

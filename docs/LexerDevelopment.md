@@ -243,6 +243,9 @@ Inside a complex rule's block, it's possible to call {Rouge::RegexLexer#push},
 {Rouge::RegexLexer#pop!}, {Rouge::RegexLexer#token} and
 {Rouge::RegexLexer#delegate}.
 
+They may also use {Rouge::RegexLexer#fallthrough!} to fall through to later
+rules, as if the regular expression had not matched.
+
 You can see an example of these more complex rules in [the Ruby lexer][ruby-lexer].
 
 ### Additional Features

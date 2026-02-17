@@ -446,6 +446,9 @@ module Rouge
       delegate(self.class, text)
     end
 
+    # Breaks out of the current rule block and continues to match later
+    # rules, as if the current regex had not matched. Does not affect
+    # the stack.
     def fallthrough!
       raise Fallthrough
     end

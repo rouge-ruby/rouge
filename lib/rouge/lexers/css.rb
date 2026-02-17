@@ -13,7 +13,19 @@ module Rouge
 
       # Documentation: https://www.w3.org/TR/CSS21/syndata.html#characters
 
-      identifier = /[\p{L}_-][\p{Word}\p{Cf}-]*/
+      # [jneen] workaround for:
+      # https://bugs.ruby-lang.org/issues/21870#change-116371
+      #
+      # As of ruby 4+, \p{Word} matches ZWJ and ZWNJ, so the additional
+      # \p{Cf} is not needed.
+      #
+      # That being said... this still warns, but at least it's only once?
+      identifier = if RUBY_VERSION < '4'
+        /[\p{L}_-][\p{Word}\p{Cf}-]*/
+      else
+        /[\p{L}_-][\p{Word}-]*/
+      end
+
       number = /-?(?:[0-9]+(\.[0-9]+)?|\.[0-9]+)/
 
       def self.properties

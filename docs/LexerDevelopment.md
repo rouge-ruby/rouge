@@ -255,6 +255,9 @@ end
 
 Make sure you don't forget to include *all* of the matched text in the output!
 
+They may also use {Rouge::RegexLexer#fallthrough!} to fall through to later
+rules, as if the regular expression had not matched.
+
 You can see an example of these more complex rules in [the Ruby lexer][ruby-lexer].
 
 ### Additional Features

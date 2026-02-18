@@ -260,7 +260,7 @@ for a year are automatically closed by GitHub's [Probot][].
 These submission will be rejected and we don't want you to waste your time.
 
 We want to make it as easy as we can for anyone to contribute a lexer to Rouge.
-To help get you started, we have [a shiny new guide][lexer-dev-doc] on lexer
+To help get you started, we have [a guide][lexer-dev-doc] on lexer
 development in the documentation. The best place is to start there.
 
 [lexer-dev-doc]: https://rouge-ruby.github.io/docs/file.LexerDevelopment.html "Rouge's lexer development guide"
@@ -288,12 +288,6 @@ you should have a web server running and ready to go. Visit
 
 Once you've selected a particular lexer, you can add `?debug=1` to your URL
 string to see a lot of helpful debugging info printed on stdout.
-
-## Versioning
-
-Rouge uses [Semantic Versioning 2.0.0][sv2].
-
-[sv2]: http://semver.org/
 
 ## Maintainers
 

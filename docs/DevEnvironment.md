@@ -170,7 +170,7 @@ your cloned repository:
 1. **Run the Visual Test App**: Rouge includes a little web app you can run to
    display highlighted code. You can run this by typing `bundle exec puma`. By
    default, this will start a web server on port 9292. You can access it by
-   going to <http://localhost:9292> with Rack running. If everything is working,
+   going to <http://localhost:9292> with Puma running. If everything is working,
    you'll see little snippets of code for each lexer in the repository. You can
    look at the full visual sample for a lexer by clicking on the name of the
    lexer.

@@ -18,7 +18,7 @@ describe Rouge::Lexers::Diff do
     end
 
     it 'guesses by source' do
-      assert_guess :source => <<-source
+      assert_guess :source => <<-SOURCE
 diff --git a/lib/rouge.rb b/lib/rouge.rb
 index d228e4b..560b687 100644
 --- a/lib/rouge.rb
@@ -31,9 +31,9 @@ index d228e4b..560b687 100644
  load load_dir.join('rouge/token.rb')
  load load_dir.join('rouge/lexer.rb')
  load load_dir.join('rouge/lexers/text.rb')
-      source
+SOURCE
 
-      assert_guess :source => <<-source
+      assert_guess :source => <<-SOURCE
 --- a/lib/rouge.rb
 +++ b/lib/rouge.rb
 @@ -13,6 +13,7 @@ module Rouge
@@ -44,19 +44,19 @@ index d228e4b..560b687 100644
  load load_dir.join('rouge/token.rb')
  load load_dir.join('rouge/lexer.rb')
  load load_dir.join('rouge/lexers/text.rb')
-      source
+SOURCE
     end
 
     it 'does not detect invalid diff-like sources' do
-      deny_guess :source => <<-source
+      deny_guess :source => <<-SOURCE
 ---4
 ---2
-      source
+SOURCE
 
-      deny_guess :source => <<-source
+      deny_guess :source => <<-SOURCE
 +++4
 +++2
-      source
+SOURCE
     end
   end
 end

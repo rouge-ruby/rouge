@@ -126,7 +126,7 @@ module Rouge
           above absolute accumulate add additive all alpha alphabetic
           alternate alternate-reverse always armenian aural auto auto-fill
           auto-fit avoid backwards balance baseline behind below bidi-override
-          blink block bold bolder border-box both bottom bottom break-spaces
+          blink block bold bolder border-box both bottom break-spaces
           capitalize center center-left center-right circle cjk-ideographic
           close-quote closest-corner closest-side collapse
           color color-burn color-dodge column column-reverse

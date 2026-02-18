@@ -304,17 +304,16 @@ module Rouge
           viStatusDesc viTerminate viUnlock viUnmapAddress
           viUnmapTrigger viUsbControlIn viUsbControlOut
           viVxiCommandQuery viWaitOnEvent viWrite wnoise x2pnt
-          xcsr zcsr zeromq_client_connect zeromq_client_connect
-          zeromq_client_recv zeromq_client_recv
-          zeromq_client_send zeromq_client_send
-          zeromq_handler_start zeromq_handler_start
-          zeromq_handler_stop zeromq_handler_stop
-          zeromq_server_bind zeromq_server_bind
-          zeromq_server_recv zeromq_server_recv
-          zeromq_server_send zeromq_server_send zeromq_set
-          zeromq_set zeromq_stop zeromq_stop
-          zeromq_test_callfunction zeromq_test_callfunction
-          zeromq_test_serializeWave zeromq_test_serializeWave
+          xcsr zcsr zeromq_client_connect
+          zeromq_client_recv
+          zeromq_client_send
+          zeromq_handler_start
+          zeromq_handler_stop
+          zeromq_server_bind
+          zeromq_server_recv
+          zeromq_server_send zeromq_set zeromq_stop
+          zeromq_test_callfunction
+          zeromq_test_serializeWave
           zeta
         )
       end

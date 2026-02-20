@@ -243,4 +243,12 @@ describe Rouge::Lexer do
     assert { php.instance_variable_get(:@start_inline) == :guess }
     assert { inline_php.instance_variable_get(:@start_inline) == true }
   end
+
+  it 'supports custom demos' do
+    lexer = Class.new(Rouge::Lexer) do
+      demo 'my cool demo'
+    end
+
+    assert { lexer.demo == 'my cool demo' }
+  end
 end

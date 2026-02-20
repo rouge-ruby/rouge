@@ -124,14 +124,14 @@ module Rouge
       def demo_file(arg=:absent)
         return @demo_file = Pathname.new(arg) unless arg == :absent
 
-        @demo_file = Pathname.new(File.join(__dir__, 'demos', tag))
+        @demo_file ||= Pathname.new(File.join(__dir__, 'demos', tag))
       end
 
       # Specify or get a small demo string for this lexer
       def demo(arg=:absent)
         return @demo = arg unless arg == :absent
 
-        @demo = File.read(demo_file, mode: 'rt:bom|utf-8')
+        @demo ||= File.read(demo_file, mode: 'rt:bom|utf-8')
       end
 
       # @return a list of all lexers.

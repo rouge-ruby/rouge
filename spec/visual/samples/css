@@ -127,3 +127,11 @@ a[target="_blank"] {
     }
   }
 }
+
+.container {
+  padding: 10px;
+
+  @media (width > 768px) {
+    padding: 20px;
+  }
+}

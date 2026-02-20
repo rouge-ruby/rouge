@@ -13,7 +13,19 @@ module Rouge
 
       # Documentation: https://www.w3.org/TR/CSS21/syndata.html#characters
 
-      identifier = /[\p{L}_-][\p{Word}\p{Cf}-]*/
+      # [jneen] workaround for:
+      # https://bugs.ruby-lang.org/issues/21870#change-116371
+      #
+      # As of ruby 4+, \p{Word} matches ZWJ and ZWNJ, so the additional
+      # \p{Cf} is not needed.
+      #
+      # That being said... this still warns, but at least it's only once?
+      identifier = if RUBY_VERSION < '4'
+        /[\p{L}_-][\p{Word}\p{Cf}-]*/
+      else
+        /[\p{L}_-][\p{Word}-]*/
+      end
+
       number = /-?(?:[0-9]+(\.[0-9]+)?|\.[0-9]+)/
 
       def self.properties
@@ -192,6 +204,7 @@ module Rouge
           seagreen seashell sienna silver skyblue slateblue slategray snow
           springgreen steelblue tan teal thistle tomato
           turquoise violet wheat white whitesmoke yellow yellowgreen
+          rebeccapurple
         )
       end
 
@@ -245,6 +258,10 @@ module Rouge
         rule %r/(true|false)/i, Name::Constant
         rule %r/\-\-#{identifier}/, Literal
         rule %r([*+/-]), Operator
+        rule %r/(url(?:-prefix)?)([(])(.*?)([)])/ do
+          groups Name::Function, Punctuation, Str::Other, Punctuation
+        end
+
         rule(identifier) do |m|
           if self.class.colors.include? m[0].downcase
             token Name::Other
@@ -304,6 +321,8 @@ module Rouge
 
           push :stanza_value
         end
+
+        mixin :root
       end
 
       state :stanza_value do

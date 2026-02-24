@@ -213,11 +213,11 @@ end
 
 ### Lexer Options
 
-- `debug: false` will print a trace of the lex on stdout.
+- `debug: true` will print a trace of the lex on stdout. For safety, this only works if `Rouge::Lexer.enable_debug!` has been called.
 
 - `parent: ''` allows you to specify which language the template is inside.
 
-### CSS Options
+### Theme Options
 
 - `scope: '.highlight'` sets the CSS selector to which styles are applied,
   e.g.:

@@ -139,12 +139,35 @@ The built-in formatters are:
   highlighted text for use in the terminal. `theme` must be an instance of
   `Rouge::Theme`, or a `Hash` structure with `:theme` entry.
 
+- `Rouge::Formatters::TerminalTruecolor.new(theme)` is similar to the previous,
+  except it outputs ANSI truecolor codes, instead of approximating with a 256-color
+  scheme.
+
+- `Rouge::Formatters::Tex.new` is a formatter for TeX systems which wraps each
+  token with an `\RG{toktype}{text}` tag. You can then use
+  `rougify style mystyle --tex`
+  to generate definitions for these tags and the surrounding environment.
+
 #### Writing your own HTML formatter
 
-If the above formatters are not sufficient, and you wish to customize the layout
-of the HTML document, we suggest writing your own HTML formatter. This can be
-accomplished by subclassing `Rouge::Formatters::HTML` and overriding specific
-methods:
+For the majority of applications, there are custom requirements for presenting
+highlighted text, as HTML or otherwise. In these cases, rather than patching or
+post-processing the output of Rouge, it is usually better to **write your own
+formatter**.
+
+This may sound intimidating, but it is actually quite easy! All you have to do
+is subclass `Rouge::Formatter`, define a `tag`, and implement a method
+`#stream(tokens, &block)`, which receives an Enumerable of token/value pairs,
+and yields out chunks of strings which will be concatenated.
+
+The `Formatter` base class contains the helper method `#token_lines(stream, &block)`,
+which separates tokens into distinct lines, and `Rouge::Formatters::HTML`
+contains the helper `#span(token, value)` to escape and render
+standard `<span>` tags for HTML.
+
+Alternatively, if you want to override how individual spans are rendered,
+you can override `#safe_span(token, safe_value)`, which will be passed the
+token type and pre-escaped content for the token.
 
 ```ruby
 class MyFormatter < Rouge::Formatters::HTML

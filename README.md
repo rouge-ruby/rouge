@@ -67,9 +67,10 @@ use and whether to enable line numbers or not. More information is available in
 Rouge ships with a `rougify` command which allows you to easily highlight files
 in your terminal:
 
-```bash
-rougify foo.rb
-rougify style monokai.sublime > syntax.css
+```console
+$ rougify foo.rb
+$ rougify foo.rb -t monokai.sublime
+$ rougify style monokai.sublime > syntax.css
 ```
 
 ## Configuration

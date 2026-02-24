@@ -40,7 +40,7 @@ module Rouge
 
           tas trap trapcc TODO trapv tst
 
-          unlk unpk eori
+          unlk unpk
         )
       end
 
@@ -55,10 +55,10 @@ module Rouge
           include incdir incbin end endf endfunc endmain endproc fpu func machine main mmu opword proc set opt section
           rept endr
           ifeq ifne ifgt ifge iflt ifle iif ifd ifnd ifc ifnc elseif else endc
-          even cnop fail machine
+          even cnop fail
           output radix __G2 __LK
           list nolist plen llen ttl subttl spc page listchar format
-          equ equenv equr set reg
+          equ equenv equr reg
           rsreset rsset offset
           cargs
           fequ.s fequ.d fequ.x fequ.p fequ.w fequ.l fopt

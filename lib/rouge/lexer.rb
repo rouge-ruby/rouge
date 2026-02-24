@@ -183,7 +183,7 @@ module Rouge
         return lexers[0] if lexers.size == 1
 
         if fallback
-          fallback.call(lexers)
+          yield(lexers)
         else
           raise Guesser::Ambiguous.new(lexers)
         end
@@ -420,7 +420,7 @@ module Rouge
       if @options.key?(name_str)
         as_bool(@options[name_str])
       else
-        default ? default.call : false
+        default ? yield : false
       end
     end
 
@@ -446,13 +446,13 @@ module Rouge
 
       base = @options.delete(name.to_s)
       base = {} unless base.is_a?(Hash)
-      base.each { |k, v| out[k.to_s] = val_cast ? val_cast.call(v) : v }
+      base.each { |k, v| out[k.to_s] = val_cast ? yield(v) : v }
 
       @options.keys.each do |key|
         next unless key =~ /(\w+)\[(\w+)\]/ and $1 == name
         value = @options.delete(key)
 
-        out[$2] = val_cast ? val_cast.call(value) : value
+        out[$2] = val_cast ? yield(value) : value
       end
 
       out
@@ -513,12 +513,12 @@ module Rouge
           next
         end
 
-        b.call(last_token, last_val) if last_token
+        yield(last_token, last_val) if last_token
         last_token = tok
         last_val = val
       end
 
-      b.call(last_token, last_val) if last_token
+      yield(last_token, last_val) if last_token
     end
 
     # delegated to {Lexer.tag}

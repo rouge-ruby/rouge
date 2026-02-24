@@ -294,6 +294,12 @@ make it clear in your submission that the lexer isn't finished yet. We'll do our
 best to answer any questions you have and sometimes the best way to do that is
 with actual code.
 
+If your language is internal or obscure, or it is taking far too long to merge
+into baseline Rouge, you can very easily write a plugin for language support.
+Check out our [plugin example repository][plugin-example] for a good starting point.
+
+[plugin-example]: https://github.com/rouge-ruby/rouge-plugin-example "Rouge Plugin Example"
+
 ### Testing Rouge
 
 Once you've cloned the repository from GitHub, you can test the core of Rouge

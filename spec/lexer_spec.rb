@@ -128,6 +128,33 @@ describe Rouge::Lexer do
     assert { types == %w(digit lt gt) }
   end
 
+  it 'supports multiple states' do
+    lexer = Class.new(Rouge::RegexLexer) do
+      state :root do
+        rule %r/\w+/, 'text'
+        rule %r/(=)(\s*)/ do
+          groups 'operator', 'whitespace'
+          push :value
+        end
+      end
+
+      state :value do
+        rule %r/\d+/, 'digit', :pop!
+        rule %r/\[/, 'punctuation', [:pop!, :array]
+      end
+
+      state :array do
+        rule %r/\]/, 'punctuation', :pop!
+        rule %r//, 'token', :value
+      end
+    end
+
+    result = lexer.lex('numbers=[1]')
+
+    types = result.map { |(t,_)| t }
+    assert { types == %w(text operator punctuation digit punctuation) }
+  end
+
   it 'delegates' do
     class MasterLexer < Rouge::RegexLexer
       state :root do
@@ -215,5 +242,13 @@ describe Rouge::Lexer do
     assert { inline_php != php }
     assert { php.instance_variable_get(:@start_inline) == :guess }
     assert { inline_php.instance_variable_get(:@start_inline) == true }
+  end
+
+  it 'supports custom demos' do
+    lexer = Class.new(Rouge::Lexer) do
+      demo 'my cool demo'
+    end
+
+    assert { lexer.demo == 'my cool demo' }
   end
 end

@@ -7,9 +7,14 @@ module Rouge
       title "Mathematica"
       desc "Wolfram Mathematica, the world's definitive system for modern technical computing."
       tag 'mathematica'
-      aliases 'wl'
+      aliases 'wl', 'wolfram'
       filenames '*.m', '*.wl'
       mimetypes 'application/vnd.wolfram.mathematica.package', 'application/vnd.wolfram.wl'
+
+      # The list of built-in symbols comes from a wolfram server and is created automatically by rake
+      lazy do
+        require_relative 'mathematica/keywords'
+      end
 
       # Mathematica has various input forms for numbers. We need to handle numbers in bases, precision, accuracy,
       # and *^ scientific notation. All this works for integers and real numbers. Some examples
@@ -54,12 +59,6 @@ module Rouge
         )
       end
 
-      # The list of built-in symbols comes from a wolfram server and is created automatically by rake
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'mathematica/keywords.rb')
-        builtins
-      end
-
       state :root do
         rule %r/\s+/, Text::Whitespace
         rule %r/\(\*/, Comment, :comment
@@ -71,7 +70,7 @@ module Rouge
           match = m[0]
           if self.class.keywords.include? match
             token Name::Builtin::Pseudo
-          elsif self.class.builtins.include? match
+          elsif BUILTINS.include? match
             token Name::Builtin
           else
             token Name::Variable

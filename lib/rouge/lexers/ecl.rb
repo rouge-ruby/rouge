@@ -42,9 +42,9 @@ module Rouge
           row rowdiff sample set sin sinh sizeof soapcall sort sorted sqrt
           stepped stored sum table tan tanh thisnode topn tounicode toxml
           transfer transform trim truncate typeof ungroup unicodeorder variance
-          which workunit xmldecode xmlencode xmltext xmlunicode apply assert
-          build buildindex evaluate fail keydiff keypatch loadxml nothor notify
-          output parallel sequential soapcall wait
+          which workunit xmldecode xmlencode xmltext xmlunicode assert
+          build buildindex fail keydiff keypatch loadxml nothor notify
+          output parallel sequential wait
         )
       end
 
@@ -114,8 +114,8 @@ module Rouge
         mixin :single_quote
 
         rule %r(\b(?i:(and|not|or|in))\b), Operator::Word
-        rule %r([:=|>|<|<>|/|\\|\+|-|=]), Operator
-        rule %r([\[\]{}();,\&,\.,\%]), Punctuation
+        rule %r(:=|>|<|<>|/|\\|\+|-|=), Operator
+        rule %r([\[\]{}();,\&\.\%]), Punctuation
 
         rule %r(\b(?i:(beginc\+\+.*?endc\+\+)))m, Str::Single
         rule %r(\b(?i:(embed.*?endembed)))m, Str::Single

@@ -46,8 +46,6 @@ module Rouge
         )
       end
 
-      # optional comment or whitespace
-      ws = %r((?:\s|//.*?\n|/[*].*?[*]/)+)
       id = /[a-zA-Z_]\w*/
       digit = /\d_+\d|\d/
       bin_digit = /[01]_+[01]|[01]/

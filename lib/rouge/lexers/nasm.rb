@@ -14,11 +14,12 @@ module Rouge
       mimetypes 'text/x-nasm'
 
       state :root do
-			  rule %r/^\s*%/, Comment::Preproc, :preproc
+        rule %r/^\s*%/, Comment::Preproc, :preproc
 
-			  mixin :whitespace
+        mixin :whitespace
+        mixin :punctuation
 
-			  rule %r/[a-z$._?][\w$.?#@~]*:/i, Name::Label
+        rule %r/[a-z$._?][\w$.?#@~]*:/i, Name::Label
 
         rule %r/([a-z$._?][\w$.?#@~]*)(\s+)(equ)/i do
           groups Name::Constant, Keyword::Declaration, Keyword::Declaration
@@ -32,7 +33,7 @@ module Rouge
       end
 
       state :instruction_args do
-			  rule %r/"(\\\\"|[^"\\n])*"|'(\\\\'|[^'\\n])*'|`(\\\\`|[^`\\n])*`/, Str
+        rule %r/"(\\\\"|[^"\\n])*"|'(\\\\'|[^'\\n])*'|`(\\\\`|[^`\\n])*`/, Str
         rule %r/(?:0x[\da-f]+|$0[\da-f]*|\d+[\da-f]*h)/i, Num::Hex
         rule %r/[0-7]+q/i, Num::Oct
         rule %r/[01]+b/i, Num::Bin

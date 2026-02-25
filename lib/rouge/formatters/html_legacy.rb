@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# stdlib
-require 'cgi'
-
 module Rouge
   module Formatters
     # Transforms a token stream into HTML output.

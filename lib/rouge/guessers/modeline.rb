@@ -31,7 +31,7 @@ module Rouge
 
         source_text = get_source(@source)
 
-        lines = source_text.split(/\n/)
+        lines = source_text.split("\n")
 
         search_space = (lines.first(@lines) + lines.last(@lines)).join("\n")
 

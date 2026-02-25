@@ -80,10 +80,10 @@ docker run -t -v $PWD:/app -v /tmp/vendor:/vendor -w /app -e BUNDLE_PATH=/vendor
 
 ### Running Rack
 
-Similarly, we can run Rack by replacing `bundle` with `rackup`:
+Similarly, we can run Rack by replacing `bundle` with `puma`:
 
 ```bash
-docker run -t -v $PWD:/app -v /tmp/vendor:/vendor -w /app -e BUNDLE_PATH=/vendor -p 9292:9292 ruby bundle exec rackup --host 0.0.0.0
+docker run -t -v $PWD:/app -v /tmp/vendor:/vendor -w /app -e BUNDLE_PATH=/vendor -p 9292:9292 ruby bundle exec puma --bind http://0.0.0.0
 ```
 
 The additional command line flags are:
@@ -91,7 +91,7 @@ The additional command line flags are:
 - `-p 9292:9292`: Exposes port 9292 of the container to the same port on the
   host.
 
-- `bundle exec rackup --host 0.0.0.0`: Runs Rack and asks it to listen on all
+- `bundle exec puma --bind http://0.0.0.0`: Runs Rack and asks it to listen on all
   addresses. Without this it will only listen on the `localhost` of the
   container and we won't be able to access the server from the host machine.
 

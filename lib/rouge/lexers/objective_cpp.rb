@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'cpp'
+require_relative 'objective_c/common'
+
 module Rouge
   module Lexers
-    load_lexer 'cpp.rb'
-    load_lexer 'objective_c/common.rb'
 
     class ObjectiveCpp < Cpp
       extend ObjectiveCCommon

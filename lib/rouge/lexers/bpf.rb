@@ -9,11 +9,11 @@ module Rouge
       tag 'bpf'
 
       TYPE_KEYWORDS = %w(
-        u8 u16 u32 u64 ll
+        u8 u16 u32 u64 s8 s16 s32 s64 ll
       ).join('|')
 
       MISC_KEYWORDS = %w(
-        be16 be32 be64 exit lock map
+        be16 be32 be64 le16 le32 le64 bswap16 bswap32 bswap64 exit lock map
       ).join('|')
 
       state :root do
@@ -32,21 +32,21 @@ module Rouge
         rule %r/(call)(\s+)(\d+)/i do
           groups Keyword, Text::Whitespace, Literal::Number::Integer
         end
-        rule %r/(call)(\s+)(\w+)(#)(\d+)/i do
+        rule %r/(call)(\s+)(\w+)(?:(#)(\d+))?/i do
           groups Keyword, Text::Whitespace, Name::Builtin, Punctuation, Literal::Number::Integer
         end
 
         # Unconditional jumps
-        rule %r/(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
-          groups Keyword, Text::Whitespace, Literal::Number::Integer, Text::Whitespace, Name::Label
+        rule %r/(gotol?)(\s*)([-+]0x\w+)?([-+]\d+)?(\s*)(<?\w+>?)/i do
+          groups Keyword, Text::Whitespace, Literal::Number::Hex, Literal::Number::Integer, Text::Whitespace, Name::Label
         end
 
         # Conditional jumps
-        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)(0x\h+|[-]?\d+)(\s*)(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
-          groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Literal::Number, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Integer, Text::Whitespace, Name::Label
+        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)(0x\h+|[-]?\d+)(\s*)(gotol?)(\s*)([-+]0x\w+)?([-+]\d+)?(\s*)(<?\w+>?)/i do
+          groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Literal::Number, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Hex, Literal::Number::Integer, Text::Whitespace, Name::Label
         end
-        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)([rw]\d+)(\s*)(goto)(\s*)(\+\d+)?(\s*)(<?\w+>?)/i do
-          groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Name, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Integer, Text::Whitespace, Name::Label
+        rule %r/(if)(\s+)([rw]\d+)(\s*)([s!=<>]+)(\s*)([rw]\d+)(\s*)(gotol?)(\s*)([-+]0x\w+)?([-+]\d+)?(\s*)(<?\w+>?)/i do
+          groups Keyword, Text::Whitespace, Name, Text::Whitespace, Operator, Text::Whitespace, Name, Text::Whitespace, Keyword, Text::Whitespace, Literal::Number::Hex, Literal::Number::Integer, Text::Whitespace, Name::Label
         end
 
         # Dereferences
@@ -70,7 +70,7 @@ module Rouge
         rule %r/#{MISC_KEYWORDS}/i, Keyword
 
         # Literals and global objects (maps) refered by name
-        rule %r/(0x\h+|[-]?\d+)(\s*)(ll)?/i do
+        rule %r/([-]?0x\h+|[-]?\d+)(\s*)(ll)?/i do
           groups Literal::Number, Text::Whitespace, Keyword::Type
         end
         rule %r/(\w+)(\s*)(ll)/i do

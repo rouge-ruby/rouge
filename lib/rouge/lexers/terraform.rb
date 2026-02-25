@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'hcl'
+
 module Rouge
   module Lexers
-    load_lexer 'hcl.rb'
-
     class Terraform < Hcl
       title "Terraform"
       desc "Terraform HCL Interpolations"
 
       tag 'terraform'
       aliases 'tf'
-      filenames '*.tf'
+      filenames '*.tf', '*.tfvars', '*.tofu'
 
       def self.keywords
         @keywords ||= Set.new %w(
@@ -39,8 +39,9 @@ module Rouge
 
       state :strings do
         rule %r/\\./, Str::Escape
+        rule %r/(\$[\$]+|%[%]+)(\{)/, Str
         rule %r/\$\{/ do
-          token Keyword
+          token Punctuation
           push :interpolation
         end
       end
@@ -66,7 +67,7 @@ module Rouge
 
       state :interpolation do
         rule %r/\}/ do
-          token Keyword
+          token Punctuation
           pop!
         end
 

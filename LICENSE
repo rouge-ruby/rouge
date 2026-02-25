@@ -21,8 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 # SPECIAL NOTE:
+
 Many of the lexers in this project are adaptations of those in Pygments
-(pygments.org).  The license for Pygments is as follows:
+(pygments.org). The license for Pygments is as follows:
 
 # BEGIN pygments/LICENSE #
 

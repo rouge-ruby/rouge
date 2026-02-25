@@ -144,7 +144,7 @@ module Rouge
           yield Text::Whitespace, $& unless $&.empty?
 
           lang_lexer.continue_lex($', &output)
-        elsif comment_regex =~ input[0].strip
+        elsif allow_comments? && comment_regex =~ input[0].strip
           puts "console: matched comment #{input[0].inspect}" if @debug
           output_lexer.reset!
           lang_lexer.reset!
@@ -179,7 +179,7 @@ module Rouge
       end
 
       def stream_tokens(input, &output)
-        input = StringScanner.new(input)
+        input = StringScanner.new(input, fixed_anchor: true)
         lang_lexer.reset!
         output_lexer.reset!
 

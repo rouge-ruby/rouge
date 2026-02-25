@@ -8,6 +8,7 @@ describe Rouge::Lexers::RobotFramework do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.robot'
+      assert_guess :filename => 'foo.resource'
     end
 
     it 'guesses by mimetype' do

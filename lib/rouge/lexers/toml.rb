@@ -11,61 +11,56 @@ module Rouge
       filenames '*.toml', 'Pipfile', 'poetry.lock'
       mimetypes 'text/x-toml'
 
-      # bare keys and quoted keys
-      identifier = %r/(?:\S+|"[^"]+"|'[^']+')/
-
-      state :basic do
-        rule %r/\s+/, Text
-        rule %r/#.*?$/, Comment
-        rule %r/(true|false)/, Keyword::Constant
-
-        rule %r/(#{identifier})(\s*)(=)(\s*)(\{)/ do
-          groups Name::Namespace, Text, Operator, Text, Punctuation
-          push :inline
-        end
-
-        rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date
-
-        rule %r/[+-]?\d+(?:_\d+)*\.\d+(?:_\d+)*(?:[eE][+-]?\d+(?:_\d+)*)?/, Num::Float
-        rule %r/[+-]?\d+(?:_\d+)*[eE][+-]?\d+(?:_\d+)*/, Num::Float
-        rule %r/[+-]?(?:nan|inf)/, Num::Float
-
-        rule %r/0x\h+(?:_\h+)*/, Num::Hex
-        rule %r/0o[0-7]+(?:_[0-7]+)*/, Num::Oct
-        rule %r/0b[01]+(?:_[01]+)*/, Num::Bin
-        rule %r/[+-]?\d+(?:_\d+)*/, Num::Integer
-      end
-
       state :root do
-        mixin :basic
+        mixin :whitespace
 
-        rule %r/(?<!=)\s*\[.*?\]+/, Name::Namespace
+        mixin :key
 
-        rule %r/(#{identifier})(\s*)(=)/ do
-          groups Name::Property, Text, Punctuation
+        rule %r/(=)(\s*)/ do
+          groups Operator, Text::Whitespace
           push :value
         end
+
+        rule %r/\[\[?/, Keyword, :table_key
+      end
+
+      state :key do
+        rule %r/[A-Za-z0-9_-]+/, Name
+
+        rule %r/"/, Str, :dq
+        rule %r/'/, Str, :sq
+        rule %r/\./, Punctuation
+      end
+
+      state :table_key do
+        rule %r/[A-Za-z0-9_-]+/, Name
+
+        rule %r/"/, Str, :dq
+        rule %r/'/, Str, :sq
+        rule %r/\./, Keyword
+        rule %r/\]\]?/, Keyword, :pop!
+        rule %r/[ \t]+/, Text::Whitespace
       end
 
       state :value do
-        rule %r/\n/, Text, :pop!
-        mixin :content
-      end
+        rule %r/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/, Literal::Date, :pop!
+        rule %r/\d\d:\d\d:\d\d(\.\d+)?/, Literal::Date, :pop!
+        rule %r/[+-]?\d+(?:_\d+)*\.\d+(?:_\d+)*(?:[eE][+-]?\d+(?:_\d+)*)?/, Num::Float, :pop!
+        rule %r/[+-]?\d+(?:_\d+)*[eE][+-]?\d+(?:_\d+)*/, Num::Float, :pop!
+        rule %r/[+-]?(?:nan|inf)/, Num::Float, :pop!
+        rule %r/0x\h+(?:_\h+)*/, Num::Hex, :pop!
+        rule %r/0o[0-7]+(?:_[0-7]+)*/, Num::Oct, :pop!
+        rule %r/0b[01]+(?:_[01]+)*/, Num::Bin, :pop!
+        rule %r/[+-]?\d+(?:_\d+)*/, Num::Integer, :pop!
 
-      state :content do
-        mixin :basic
+        rule %r/"""/, Str, [:pop!, :mdq]
+        rule %r/"/, Str, [:pop!, :dq]
+        rule %r/'''/, Str, [:pop!, :msq]
+        rule %r/'/, Str, [:pop!, :sq]
 
-        rule %r/(#{identifier})(\s*)(=)/ do
-          groups Name::Property, Text, Punctuation
-        end
-
-        rule %r/"""/, Str, :mdq
-        rule %r/"/, Str, :dq
-        rule %r/'''/, Str, :msq
-        rule %r/'/, Str, :sq
-        mixin :esc_str
-        rule %r/\,/, Punctuation
-        rule %r/\[/, Punctuation, :array
+        rule %r/(true|false)/, Keyword::Constant, :pop!
+        rule %r/\[/, Punctuation, [:pop!, :array]
+        rule %r/\{/, Punctuation, [:pop!, :inline]
       end
 
       state :dq do
@@ -99,14 +94,30 @@ module Rouge
       end
 
       state :array do
-        mixin :content
+        mixin :whitespace
+        rule %r/,/, Punctuation
+
         rule %r/\]/, Punctuation, :pop!
+
+        rule %r//, Token, :value
       end
 
       state :inline do
-        mixin :content
+        rule %r/[ \t]+/, Text::Whitespace
 
+        mixin :key
+        rule %r/(=)(\s*)/ do
+          groups Punctuation, Text::Whitespace
+          push :value
+        end
+
+        rule %r/,/, Punctuation
         rule %r/\}/, Punctuation, :pop!
+      end
+
+      state :whitespace do
+        rule %r/\s+/, Text
+        rule %r/#.*?$/, Comment
       end
     end
   end

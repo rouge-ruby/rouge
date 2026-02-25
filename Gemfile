@@ -10,21 +10,23 @@ gem 'minitest', '>= 5.0'
 gem 'minitest-power_assert'
 gem 'power_assert', '~> 2.0'
 
-gem 'rubocop', '~> 1.0', '<= 1.11'
-gem 'rubocop-performance'
-
 # don't try to install redcarpet under jruby
 gem 'redcarpet', platforms: :ruby
 
 # Profiling
 gem 'memory_profiler', require: false
 
-# Needed for a Rake task
-gem 'git'
-gem 'yard'
-
 group :development do
   gem 'pry'
+
+  # Needed for a Rake task
+  gem 'git'
+  gem 'yard'
+
+  gem 'rubocop'
+  gem 'rubocop-performance', '~> 1.26'
+  gem 'rubocop-minitest', '~> 0.38'
+  gem 'rubocop-rake', '~> 0.7'
 
   # docs
   gem 'github-markup'
@@ -32,7 +34,12 @@ group :development do
   # for visual tests
   gem 'sinatra'
 
-  # Ruby 3 no longer ships with a web server
-  gem 'puma' if RUBY_VERSION >= '3'
+  gem 'puma'
   gem 'shotgun'
+
+  gem "mutex_m" if RUBY_VERSION >= '3.4'
+  gem "base64" if RUBY_VERSION >= '3.4'
+
+  gem 'ostruct'
+  gem 'reline'
 end

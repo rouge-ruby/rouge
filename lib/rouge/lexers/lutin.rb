@@ -2,10 +2,11 @@
 # frozen_string_literal: true
 #
 # adapted from lustre.rf (adapted from ocaml.rb), hence some ocaml-ism migth remains
+
+require_relative 'lustre'
+
 module Rouge
   module Lexers
-    load_lexer 'lustre.rb'
-
     class Lutin < Lustre
       title "Lutin"
       desc 'The Lutin programming language (Verimag)'

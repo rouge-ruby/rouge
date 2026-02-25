@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'php'
+
 module Rouge
   module Lexers
-    load_lexer 'php.rb'
-
     class Hack < PHP
       title 'Hack'
       desc 'The Hack programming language (hacklang.org)'

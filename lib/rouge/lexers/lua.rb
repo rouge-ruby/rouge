@@ -14,26 +14,27 @@ module Rouge
       option :function_highlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabled_modules, 'builtin modules to disable'
 
+      lazy auto: false do
+        require_relative 'lua/keywords'
+      end
+
       def initialize(opts={})
         @function_highlighting = opts.delete(:function_highlighting) { true }
         @disabled_modules = opts.delete(:disabled_modules) { [] }
         super(opts)
+
+        self.class.eager_load! if @function_highlighting
       end
 
       def self.detect?(text)
         return true if text.shebang? 'lua'
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'lua/keywords.rb')
-        builtins
-      end
-
       def builtins
         return [] unless @function_highlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          self.class.builtins.each do |mod, fns|
+          BUILTINS.each do |mod, fns|
             next if @disabled_modules.include? mod
             builtins.merge(fns)
           end
@@ -105,7 +106,26 @@ module Rouge
         rule %r/\)/, Punctuation, :pop!
         rule %r/[(,]/, Punctuation
         rule %r/\s+/, Text
-        rule %r/"/, Str::Regex, :regex
+        rule %r/'/, Str::Regex, :regex_sq
+        rule %r/"/, Str::Regex, :regex_dq
+      end
+
+      state :regex_sq do
+        rule %r(') do
+          token Str::Regex
+          goto :regex_end
+        end
+
+        mixin :regex
+      end
+
+      state :regex_dq do
+        rule %r(") do
+          token Str::Regex
+          goto :regex_end
+        end
+
+        mixin :regex
       end
 
       state :regex do
@@ -151,13 +171,15 @@ module Rouge
       end
 
       state :sqs do
+        rule %r(\\'), Str::Escape
         rule %r('), Str::Single, :pop!
-        rule %r([^']+), Str::Single
+        rule %r([^'\\]+), Str::Single
       end
 
       state :dqs do
+        rule %r(\\"), Str::Escape
         rule %r("), Str::Double, :pop!
-        rule %r([^"]+), Str::Double
+        rule %r([^"\\]+), Str::Double
       end
     end
   end

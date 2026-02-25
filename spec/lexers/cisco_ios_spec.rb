@@ -8,7 +8,9 @@ describe Rouge::Lexers::CiscoIos do
     include Support::Guessing
 
     it 'guesses by filename' do
-      assert_guess :filename => 'foo.cfg'
+      # Disambiguate with INI
+      assert_guess :filename => 'foo.cfg', :source => "version 13.4"
+      assert_guess :filename => 'foo.cfg', :source => "interface FastEthernet0.20"
     end
 
     it 'guesses by mimetype' do

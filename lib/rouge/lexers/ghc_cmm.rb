@@ -22,11 +22,11 @@ module Rouge
       ws = %r(\s|//.*?\n|/[*](?:[^*]|(?:[*][^/]))*[*]+/)mx
 
       # Make sure that this is not a preprocessor macro, e.g. `#if` or `#define`.
-      id = %r((?!\#[a-zA-Z])[\w#\$%_']+)
+      id = %r((?!\#[a-zA-Z])[\w#\$%']+)
 
       complex_id = %r(
-        (?:[\w#$%_']|\(\)|\(,\)|\[\]|[0-9])*
-        (?:[\w#$%_']+)
+        (?:[\w#$%']|\(\)|\(,\)|\[\]|[0-9])*
+        (?:[\w#$%']+)
       )mx
 
       state :root do
@@ -245,7 +245,7 @@ module Rouge
         #   `(type /* optional whitespace */ var_name /* optional whitespace */)`
         # Note: Only the token for type is produced here.
         rule %r{
-                (^#{id})
+                (#{id})
                 (#{ws}+)
                 (#{id})
               }mx do |m|

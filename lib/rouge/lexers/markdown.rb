@@ -107,7 +107,8 @@ module Rouge
           push :link
         end
 
-        rule %r/[*][*]#{edot}*?[*][*]/, Generic::Strong
+        rule %r/[*]{2}[^* \n][^*\n]*[*]{2}/, Generic::Strong
+        rule %r/[*]{3}[^* \n][^*\n]*[*]{3}/, Generic::EmphStrong
         rule %r/__#{edot}*?__/, Generic::Strong
 
         rule %r/[*]#{edot}*?[*]/, Generic::Emph

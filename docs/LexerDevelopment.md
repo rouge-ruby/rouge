@@ -243,6 +243,18 @@ Inside a complex rule's block, it's possible to call {Rouge::RegexLexer#push},
 {Rouge::RegexLexer#pop!}, {Rouge::RegexLexer#token} and
 {Rouge::RegexLexer#delegate}.
 
+One common use case of the block syntax is to use {Rouge::RegexLexer#groups}
+to easily assign token types to various capture groups of the regex. For
+example, in Java, we might detect attribute accessors with:
+
+```rb
+rule /([.])(\w+)/ do
+  groups Operator, Name::Attribute
+end
+```
+
+Make sure you don't forget to include *all* of the matched text in the output!
+
 You can see an example of these more complex rules in [the Ruby lexer][ruby-lexer].
 
 ### Additional Features
@@ -283,10 +295,10 @@ Filename Globs][conflict-globs] below.
 
 #### Special Words
 
-Every programming language reserves certain words for use as identifiers that
+Most programming languages reserve certain words for use as identifiers that
 have a special meaning in the language. To make regular expressions that search
-for these words easier, many lexers will put the applicable keywords in an
-array and make them available in a particular way (be it as a local variable,
+for these words easier, many lexers will put the applicable keywords in a
+set and make them available in a particular way (be it as a local variable,
 an instance variable or what have you).
 
 For performance and safety, we strongly recommend lexers use a class method:
@@ -295,13 +307,14 @@ For performance and safety, we strongly recommend lexers use a class method:
 module Rouge
   module Lexers
     class YetAnotherLanguage < RegexLexer
-    ...
+      ...
 
-    def self.keywords
-      @keywords ||= Set.new %w(key words used in this language)
+      def self.keywords
+        @keywords ||= Set.new %w(key words used in this language)
+      end
+
+      ...
     end
-
-    ...
   end
 end
 ```
@@ -473,7 +486,7 @@ that there is no file extension.
 
 ### Visual Samples
 
-A visual sample is a file that includes a representive sample of the syntax of
+A visual sample is a file that includes a representative sample of the syntax of
 your language. The sample should be long enough to reasonably demonstrate the
 correct lexing of the language but does not need to offer complete coverage.
 While it can be tempting to copy and paste code found online, please refrain
@@ -496,7 +509,7 @@ typing `bundle exec rake` at the command line. If everything works, you should
 see a series of dots. If you have an error, this will appear here, too.
 
 To see your visual sample, launch Rouge's visual test app by running
-`bundle exec rackup`. You can choose your sample from the complete list by going
+`bundle exec puma`. You can choose your sample from the complete list by going
 to <http://localhost:9292>.
 
 ## How to Submit

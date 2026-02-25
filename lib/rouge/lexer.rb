@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# stdlib
-require 'strscan'
-require 'cgi'
-require 'set'
-
 module Rouge
   # @abstract
   # A lexer transforms text into a stream of `[token, chunk]` pairs.
@@ -52,17 +47,19 @@ module Rouge
         name, opts = str ? str.split('?', 2) : [nil, '']
 
         # parse the options hash from a cgi-style string
-        opts = CGI.parse(opts || '').map do |k, vals|
-          val = case vals.size
+        cgi_opts = Hash.new { |hash, key| hash[key] = [] }
+        URI.decode_www_form(opts || '').each do |k, val|
+          cgi_opts[k] << val
+        end
+        cgi_opts.transform_values! do |vals|
+          case vals.size
           when 0 then true
           when 1 then vals[0]
           else vals
           end
-
-          [ k.to_s, val ]
         end
 
-        opts = default_options.merge(Hash[opts])
+        opts = default_options.merge(cgi_opts)
 
         lexer_class = case name
         when 'guess', nil
@@ -127,14 +124,14 @@ module Rouge
       def demo_file(arg=:absent)
         return @demo_file = Pathname.new(arg) unless arg == :absent
 
-        @demo_file = Pathname.new(File.join(__dir__, 'demos', tag))
+        @demo_file ||= Pathname.new(File.join(__dir__, 'demos', tag))
       end
 
       # Specify or get a small demo string for this lexer
       def demo(arg=:absent)
         return @demo = arg unless arg == :absent
 
-        @demo = File.read(demo_file, mode: 'rt:bom|utf-8')
+        @demo ||= File.read(demo_file, mode: 'rt:bom|utf-8')
       end
 
       # @return a list of all lexers.
@@ -186,7 +183,7 @@ module Rouge
         return lexers[0] if lexers.size == 1
 
         if fallback
-          fallback.call(lexers)
+          yield(lexers)
         else
           raise Guesser::Ambiguous.new(lexers)
         end
@@ -231,7 +228,33 @@ module Rouge
         registry[name.to_s] = lexer
       end
 
+      def lazy_procs
+        @lazy_procs ||= []
+      end
+
     public
+      def eager_load!
+        return if @_loaded
+        @_loaded = true
+
+        lazy_procs.each { |b| instance_eval(&b) }
+
+        superclass.eager_load! unless superclass == Lexer
+
+        self
+      end
+
+      def lazy(auto: true, &block)
+        @skip_auto_load = true unless auto
+        lazy_procs << block
+      end
+
+      def skip_auto_load?
+        return true if @skip_auto_load
+        return superclass.skip_auto_load? unless superclass == Lexer
+        false
+      end
+
       # Used to specify or get the canonical name of this lexer class.
       #
       # @example
@@ -323,8 +346,13 @@ module Rouge
     def initialize(opts={})
       @options = {}
       opts.each { |k, v| @options[k.to_s] = v }
+      eager_load! unless self.class.skip_auto_load?
 
       @debug = Lexer.debug_enabled? && bool_option('debug')
+    end
+
+    def eager_load!
+      self.class.eager_load!
     end
 
     # Returns a new lexer with the given options set. Useful for e.g. setting
@@ -392,7 +420,7 @@ module Rouge
       if @options.key?(name_str)
         as_bool(@options[name_str])
       else
-        default ? default.call : false
+        default ? yield : false
       end
     end
 
@@ -418,13 +446,13 @@ module Rouge
 
       base = @options.delete(name.to_s)
       base = {} unless base.is_a?(Hash)
-      base.each { |k, v| out[k.to_s] = val_cast ? val_cast.call(v) : v }
+      base.each { |k, v| out[k.to_s] = val_cast ? yield(v) : v }
 
       @options.keys.each do |key|
         next unless key =~ /(\w+)\[(\w+)\]/ and $1 == name
         value = @options.delete(key)
 
-        out[$2] = val_cast ? val_cast.call(value) : value
+        out[$2] = val_cast ? yield(value) : value
       end
 
       out
@@ -485,12 +513,12 @@ module Rouge
           next
         end
 
-        b.call(last_token, last_val) if last_token
+        yield(last_token, last_val) if last_token
         last_token = tok
         last_val = val
       end
 
-      b.call(last_token, last_val) if last_token
+      yield(last_token, last_val) if last_token
     end
 
     # delegated to {Lexer.tag}
@@ -522,14 +550,7 @@ module Rouge
     end
   end
 
+  # container module for built-in lexers
   module Lexers
-    BASE_DIR = "#{__dir__}/lexers".freeze
-    @_loaded_lexers = {}
-
-    def self.load_lexer(relpath)
-      return if @_loaded_lexers.key?(relpath)
-      @_loaded_lexers[relpath] = true
-      Kernel::load File.join(BASE_DIR, relpath)
-    end
   end
 end

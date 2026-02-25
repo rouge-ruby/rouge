@@ -57,9 +57,9 @@ module Rouge
 
       def self.gen_command_state(name='')
         state(:"command#{name}") do
-          mixin :word
+          rule %r/#/, Comment, :comment
 
-          rule %r/##{NOT_CHARS[END_LINE]}+/, Comment::Single
+          mixin :word
 
           rule %r/(?=#{CHARS[END_WORD]})/ do
             push :"params#{name}"
@@ -161,6 +161,11 @@ module Rouge
         rule %r/\\x[0-9a-f]{2}/i, Str::Escape
         rule %r/\\u[0-9a-f]{4}/i, Str::Escape
         rule %r/\\./m, Str::Escape
+      end
+
+      state :comment do
+        rule %r/.*[^\\]\n/, Comment, :pop!
+        rule %r/.*\\\n/, Comment
       end
 
       state :string do

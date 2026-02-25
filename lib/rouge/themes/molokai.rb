@@ -25,7 +25,8 @@ module Rouge
       style Error,                            :fg => :white, :bg => :grey
       style Generic::Inserted,                :fg => :green
       style Generic::Deleted,                 :fg => :red
-      style Generic::Emph,                    :fg => :black, :italic => true
+      style Generic::Emph,                    :italic => true
+      style Generic::EmphStrong,              :italic => true, :bold => true
       style Generic::Error,
             Generic::Traceback,               :fg => :red
       style Generic::Heading,                 :fg => :grey

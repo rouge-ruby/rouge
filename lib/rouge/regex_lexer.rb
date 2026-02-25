@@ -44,11 +44,9 @@ module Rouge
     class Rule
       attr_reader :callback
       attr_reader :re
-      attr_reader :beginning_of_line
       def initialize(re, callback)
         @re = re
         @callback = callback
-        @beginning_of_line = re.source[0] == ?^
       end
 
       def inspect
@@ -165,6 +163,19 @@ module Rouge
           proc do |stream|
             puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
             @output_stream.call(tok, stream[0])
+          end
+        when Array
+          proc do |stream|
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
+            @output_stream.call(tok, stream[0])
+            for i_next_state in next_state do
+              next @stack.pop if i_next_state == :pop!
+              next @stack.push(@stack.last) if i_next_state == :push
+
+              state = @states[i_next_state] || self.class.get_state(i_next_state)
+              puts "    pushing :#{state.name}" if @debug
+              @stack.push(state)
+            end
           end
         else
           raise "invalid next state: #{next_state.inspect}"
@@ -309,7 +320,7 @@ module Rouge
     #
     # @see #step #step (where (2.) is implemented)
     def stream_tokens(str, &b)
-      stream = StringScanner.new(str)
+      stream = StringScanner.new(str, fixed_anchor: true)
 
       @current_stream = stream
       @output_stream  = b
@@ -328,7 +339,7 @@ module Rouge
 
         if !success
           puts "    no match, yielding Error" if @debug
-          b.call(Token::Tokens::Error, stream.getch)
+          yield(Token::Tokens::Error, stream.getch)
         end
       end
     end
@@ -350,13 +361,6 @@ module Rouge
           puts "  exiting: mixin :#{rule.name}" if @debug
         else
           puts "  trying: #{rule.inspect}" if @debug
-
-          # XXX HACK XXX
-          # StringScanner's implementation of ^ is b0rken.
-          # see http://bugs.ruby-lang.org/issues/7092
-          # TODO: this doesn't cover cases like /(a|^b)/, but it's
-          # the most common, for now...
-          next if rule.beginning_of_line && !stream.beginning_of_line?
 
           if (size = stream.skip(rule.re))
             puts "    got: #{stream[0].inspect}" if @debug

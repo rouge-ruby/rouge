@@ -414,7 +414,7 @@ module Rouge
         PREDICTION PREDICTION_BOUNDS PREDICTION_COST PREDICTION_DETAILS PREDICTION_PROBABILITY
         PREDICTION_SET PRESENTNNV PRESENTV PREVIOUS RANK RATIO_TO_REPORT RAWTOHEX
         RAWTONHEX REFTOHEX REGEXP_COUNT REGEXP_INSTR REGEXP_REPLACE REGEXP_SUBSTR
-        REMAINDER REPLACE ROUND ROUND ROWIDTOCHAR ROWIDTONCHAR ROW_NUMBER RPAD RTRIM
+        REMAINDER REPLACE ROUND ROWIDTOCHAR ROWIDTONCHAR ROW_NUMBER RPAD RTRIM
         SCN_TO_TIMESTAMP SESSIONTIMEZONE SET SIGN SIN SINH SOUNDEX SQRT STANDARD_HASH
         STATS_BINOMIAL_TEST STATS_CROSSTAB STATS_F_TEST STATS_KS_TEST STATS_MODE STATS_MW_TEST
         STATS_ONE_WAY_ANOVA STATS_WSR_TEST STDDEV STDDEV_POP STDDEV_SAMP SUBSTR SUM
@@ -439,9 +439,8 @@ module Rouge
         DATE TIMESTAMP INTERVAL LOCAL TIME ZONE TO MONTH SECOND YEAR DAY
         BLOB CLOB NCLOB BFILE
         UROWID
-        CHARACTER VARYING VARCHAR NATIONAL CHARACTER
-        NUMERIC DECIMAL DEC INTEGER INT SMALLINT
-        FLOAT DOUBLE PRECISION REAL
+        CHARACTER VARYING VARCHAR NATIONAL
+        NUMERIC DECIMAL DEC INTEGER INT SMALLINT DOUBLE PRECISION REAL
         SDO_GEOMETRY SDO_TOPO_GEOMETRY SDO_GEORASTER
         REF ANYTYPE ANYDATA ANYDATASET XMLTYPE HTTPURITYPE XDBURITYPE DUBRITYPE
         BOOLEAN PLS_INTEGER BINARY_INTEGER SIMPLE_FLOAT SIMPLE_INTEGER SIMPLE_DOUBLE SYS_REFCURSOR
@@ -472,7 +471,7 @@ module Rouge
         # A double-quoted string refers to a database object in our default SQL
         rule %r/"/, Operator, :double_string
         # preprocessor directive treated as special comment
-        rule %r/(\$(?:IF|THEN|ELSE|ELSIF|ERROR|END|(?:\$\$?\w[\w\d]*)))(\s+)/im do
+        rule %r/(\$(?:IF|THEN|ELSE|ELSIF|ERROR|END|(?:\$\$?[a-z]\w*)))(\s+)/im do
           groups Comment::Preproc, Text
         end
 
@@ -503,7 +502,7 @@ module Rouge
         # Special processing for keywords with multiple contexts
         #
         # this madness is to keep the word "replace" from being treated as a builtin function in this context
-        rule %r/(create)(\s+)(?:(or)(\s+)(replace)(\s+))?(package|function|procedure|type)(?:(\s+)(body))?(\s+)(\w[\w\d\$]*)/im do
+        rule %r/(create)(\s+)(?:(or)(\s+)(replace)(\s+))?(package|function|procedure|type)(?:(\s+)(body))?(\s+)([a-z][\w$]*)/im do
           groups Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Keyword::Reserved, Text, Name
         end
         # similar for MERGE keywords
@@ -515,7 +514,7 @@ module Rouge
         # General keyword classification with sepcial attention to names
         # in a chained "dot" notation.
         #
-        rule %r/(\w[\w\d\$]*)(\.(?=\w))?/ do |m|
+        rule %r/([a-zA-Z][\w$]*)(\.(?=\w))?/ do |m|
           if self.class.keywords_type.include? m[1].upcase
             tok = Keyword::Type 
           elsif self.class.keywords_func.include? m[1].upcase
@@ -556,11 +555,11 @@ module Rouge
 
       state :dotnames do
         # if we are followed by a dot and another name, we are an ordinary name
-        rule %r/(\w[\w\d\$]*)(\.(?=\w))/ do
+        rule %r/([a-zA-Z][\w\$]*)(\.(?=\w))/ do
           groups Name, Punctuation
         end
         # this rule WILL be true if something pushed into our state. That is our state contract
-        rule %r/\w[\w\d\$]*/ do |m|
+        rule %r/[a-zA-Z][\w\$]*/ do |m|
           if self.class.keywords_func.include? m[0].upcase
             # The Function lookup allows collection methods like COUNT, FIRST, LAST, etc.. to be 
             # classified correctly. Occasionally misidentifies ordinary names as builtin functions,

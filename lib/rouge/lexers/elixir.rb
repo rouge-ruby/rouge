@@ -14,6 +14,10 @@ module Rouge
 
       filenames '*.ex', '*.exs'
 
+      def self.detect?(text)
+        return true if text.shebang?('elixir')
+      end
+
       mimetypes 'text/x-elixir', 'application/x-elixir'
 
       state :root do
@@ -95,27 +99,27 @@ module Rouge
 
       state :sigil_strings do
         # ~-sigiled strings
-        # ~(abc), ~[abc], ~<abc>, ~|abc|, ~r/abc/, etc
+        # ~r(abc), ~r[abc], ~r<abc>, ~r|abc|, ~r/abc/, etc
         # Cribbed and adjusted from Ruby lexer
         delimiter_map = { '{' => '}', '[' => ']', '(' => ')', '<' => '>' }
-        # Match a-z for custom sigils too
         sigil_opens = Regexp.union(delimiter_map.keys + %w(| / ' "))
-        rule %r/~([A-Za-z])?(#{sigil_opens})/ do |m|
+        # Match [a-z] or [A-Z][A-Z0-9]* for custom sigils too
+        rule %r/~([a-z]|[A-Z][A-Z0-9]*)(#{sigil_opens})/ do |m|
           open = Regexp.escape(m[2])
           close = Regexp.escape(delimiter_map[m[2]] || m[2])
-          interp = /[SRCW]/ === m[1]
+          interp = /^[srcw]$/ === m[1]
           toktype = Str::Other
 
           puts "    open: #{open.inspect}" if @debug
           puts "    close: #{close.inspect}" if @debug
 
           # regexes
-          if 'Rr'.include? m[1]
+          if m[1] == 'r' || m[1] == 'R'
             toktype = Str::Regex
             push :regex_flags
           end
 
-          if 'Ww'.include? m[1]
+          if m[1] == 'w' || m[1] == 'W'
             push :list_flags
           end
 
@@ -131,7 +135,7 @@ module Rouge
               rule %r/[\\#]/, toktype
             end
 
-            uniq_chars = "#{open}#{close}".squeeze
+            uniq_chars = [open, close].uniq.join
             rule %r/[^##{uniq_chars}\\]+/m, toktype
           end
         end

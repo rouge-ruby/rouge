@@ -70,7 +70,7 @@ module Rouge
         mixin :addr_range
       end
 
-      edot = /\\.|./m
+      edot = /\\.|[^\\]/m
 
       state :command do
         mixin :whitespace

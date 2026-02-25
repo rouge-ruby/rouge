@@ -77,3 +77,61 @@ a[target="_blank"] {
 œuvre 书名[语言="français"] {
   color: blue;
 }
+
+/* CSS Nesting examples */
+.container {
+  padding: 20px;
+
+  .header {
+    color: blue;
+
+    .title {
+      font-weight: bold;
+    }
+  }
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &.active {
+    border: 2px solid red;
+
+    .content {
+      display: block;
+    }
+  }
+
+  .sidebar {
+    width: 200px;
+
+    ul {
+      li {
+        a {
+          &:hover {
+            color: #666;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Nested CSS with media queries */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+
+    .header {
+      font-size: 1.5em;
+    }
+  }
+}
+
+.container {
+  padding: 10px;
+
+  @media (width > 768px) {
+    padding: 20px;
+  }
+}

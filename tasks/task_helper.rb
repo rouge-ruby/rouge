@@ -18,6 +18,7 @@ class BuiltinsGenerator
   end
 
   def write(fname)
+    FileUtils.mkdir_p(File.dirname(fname))
     File.open(fname, 'w') do |file|
       generate do |line|
         file.puts line

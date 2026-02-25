@@ -76,6 +76,21 @@ string |> String.split(~r/[ -]/) |> Enum.map(&abbreviate_word/1) |> Enum.join()
 ~CUSTOM(custom uppercase)
 ~ABC123(with digits)
 
+# multiline sigil
+~S"""
+Converts double-quotes to single-quotes.
+
+## Examples
+
+    iex> convert("\"foo\"")
+    "'foo'"
+"""
+
+~H"""
+Current temperature: <%= @temperature %>°F
+<button phx-click="inc_temperature">+</button>
+"""
+
 # first is Operator, second is &1 variable
 &(&1)
 

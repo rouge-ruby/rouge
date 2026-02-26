@@ -37,7 +37,7 @@ class GherkinBuiltins < BuiltinsGenerator
       end
     end
 
-    keywords
+    keywords.transform_values { |v| v.map(&:strip) }
   end
 
   def generate

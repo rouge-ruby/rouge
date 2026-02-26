@@ -1,0 +1,86 @@
+# Integer
+local a = 123;
+local b = 0x0012;
+local c = 075;
+local d = 'w';
+
+# Floating points
+local a = 1.0;
+local b = 0.234;
+local c = 1.52;
+local d = 1.e2;
+local e = 1.e-2;
+local f = 1.0e-2;
+
+# strings
+local a = "I'm a wonderful string\n";
+local x = @"I'm a verbatim string\n";
+local m = @"
+this is a multiline string
+it will ""embed"" all the new line
+characters
+";
+
+#
+# recursive function example
+#
+
+function fib(n) {
+	if (n < 2) {
+		return 1;
+	}
+	return (fib(n-2) + fib(n-1));
+}
+
+print(fib(5) + "\n");
+
+
+#
+# simple class example
+#
+
+class Account {
+	constructor(balance) {
+		this.balance = balance;
+	}
+
+	function withdraw(amount) {
+		this.balance = this.balance - amount;
+	}
+}
+
+local acc = Account(1000);
+acc.withdraw(100);
+
+#
+# simple class example
+#
+
+class Account {
+	constructor(balance) {
+		this.balance = balance;
+	}
+
+	function withdraw(amount) {
+		this.balance = this.balance - amount;
+	}
+}
+
+local acc = Account(1000);
+acc.withdraw(100);
+
+#
+# simple class example
+#
+
+class Account {
+	constructor(balance) {
+		this.balance = balance;
+	}
+
+	balance = 0;
+}
+
+function Account::withdraw(amount) {
+	this.balance = this.balance - amount;
+}

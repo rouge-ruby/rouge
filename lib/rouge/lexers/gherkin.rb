@@ -21,22 +21,6 @@ module Rouge
         require_relative 'gherkin/keywords'
       end
 
-      def self.step_regex
-        # in Gherkin's config, keywords that end in < don't
-        # need word boundaries at the ends - all others do.
-        @step_regex ||= Regexp.new(
-          KEYWORDS[:step].map do |w|
-            if w.end_with? '<'
-              Regexp.escape(w.chop)
-            elsif w.end_with?(' ')
-              Regexp.escape(w)
-            else
-              "#{Regexp.escape(w)}\\b"
-            end
-          end.join('|')
-        )
-      end
-
       rest_of_line = /.*?(?=[#\n])/
 
       state :basic do
@@ -74,9 +58,10 @@ module Rouge
 
       state :has_examples do
         mixin :has_scenarios
-        rule Gherkin.step_regex, Name::Function do
+        rule Gherkin::STEP_REGEX do
           token Name::Function
-          reset_stack; push :step
+          reset_stack
+          push :step
         end
       end
 

@@ -1,0 +1,22 @@
+#!/usr/bin/env perl6
+
+grammar Parser {
+    rule  TOP  { I <love> <lang> }
+    token love { '♥' | love }
+    token lang { < Perl Rust Go Python Ruby > }
+}
+
+say Parser.parse: 'I ♥ Perl';
+say Parser.parse: 'I love Rust';
+
+start { sleep 1.5; print "hi" }
+await Supply.from-list(<A B C D E F>).throttle: 2, {
+    sleep 0.5;
+    .print
+}
+
+my @primes = ^∞ .grep: *.is-prime;
+say "1001ˢᵗ prime is @primes[1000]";
+
+.say for '50TB.file.txt'.IO.words;
+

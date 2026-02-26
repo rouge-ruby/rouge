@@ -1,0 +1,19 @@
+grammar GrammarName;
+options { anOption = optionValue; }
+program: item_list item? EOF;
+param_list /* multi-line
+comment */ : name (',' name)* ;
+terminated_statement:
+  IF '(' expr ')' newline_opt terminated_statement (
+    ELSE newline_opt terminated_statement
+  )? # if_stmt
+  | WHILE '(' expr ')' newline_opt terminated_statement #while_stmt
+  | FOR '(' simple_statement_opt ';' expr_opt ';' simple_statement_opt ')' newline_opt
+    terminated_statement # for_stmt;
+COMMENT: '#' .*? NEWLINE -> channel(HIDDEN);
+ESC_NEWLINE: '\\' NEWLINE -> skip;
+STRING: '"' (~["\\\r\n] | ESCAPE_SEQUENCE)* '"';
+mode WORD_MODE;
+WORD: [A-Za-z_] [A-Za-z_0-9]*; // single line comment
+fragment EXPONENT_PART: [eE] [+\-]? DIGIT_SEQUENCE;
+fragment HEX_CONSTANT: '0' [xX] [0-9A-Fa-f]+;

@@ -1,0 +1,37 @@
+grammar MyGrammar;
+options {
+  language = Ruby;
+  output = AST;
+  backtrack = true;
+}
+@header {
+  require 'strscan'
+}
+@lexer::members {
+  def scan_number
+    # implementation here
+  end
+}
+mode COMMAND_MODE;
+WORD: [a-zA-Z]+;
+NUMBER: [0-9]+;
+parse: expr+; // single line comment
+expr: WORD (PLUS | MINUS) expr | NUMBER;
+expr
+  returns[int value]
+  @init {
+  $value = 0
+}:
+  WORD { $value = lookup_word($WORD.text) } /* multi-line
+comment */
+  | NUMBER { $value = $NUMBER.text.to_i };
+WORD:
+  [a-zA-Z]+ {
+       # option example: sets the token type
+       $type = $options.myToken
+       # lexer command example: calls the method defined in @lexer::members
+       scan_number
+     };
+COMMAND: '/' -> pushMode(COMMAND_MODE);
+mode COMMAND_MODE;
+COMMAND_MODE_COMMAND: ~[\r\n]+ -> type(COMMAND);

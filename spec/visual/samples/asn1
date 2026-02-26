@@ -1,0 +1,139 @@
+RFC1157-SNMP DEFINITIONS ::= BEGIN
+
+ IMPORTS
+     ObjectName, ObjectSyntax, NetworkAddress, IpAddress, TimeTicks
+         FROM RFC1155-SMI;
+
+
+     -- top-level message
+
+     Message ::=
+             SEQUENCE {
+                 version          -- version-1 for this RFC
+                     INTEGER {
+                         version-1(0)
+                     },
+
+                 community        -- community name
+                     OCTET STRING,
+
+                 data             -- e.g., PDUs if trivial
+                     ANY          -- authentication is being used
+             }
+
+
+     -- protocol data units
+
+     PDUs ::=
+             CHOICE {
+                         get-request
+                             GetRequest-PDU,
+
+                         get-next-request
+                             GetNextRequest-PDU,
+
+                         get-response
+                             GetResponse-PDU,
+
+                         set-request
+                             SetRequest-PDU,
+
+                         trap
+                             Trap-PDU
+                     }
+
+
+     -- PDUs
+
+     GetRequest-PDU ::=
+         [0]
+             IMPLICIT PDU
+
+     GetNextRequest-PDU ::=
+         [1]
+             IMPLICIT PDU
+
+     GetResponse-PDU ::=
+         [2]
+             IMPLICIT PDU
+
+     SetRequest-PDU ::=
+         [3]
+             IMPLICIT PDU
+
+     PDU ::=
+             SEQUENCE {
+                request-id
+                     INTEGER,
+
+                 error-status      -- sometimes ignored
+                     INTEGER {
+                         noError(0),
+                         tooBig(1),
+                         noSuchName(2),
+                         badValue(3),
+                         readOnly(4),
+                         genErr(5)
+                     },
+
+                 error-index       -- sometimes ignored
+                    INTEGER,
+
+                 variable-bindings -- values are sometimes ignored
+                     VarBindList
+             }
+
+     Trap-PDU ::=
+         [4]
+            IMPLICIT SEQUENCE {
+                 enterprise        -- type of object generating
+                                   -- trap, see sysObjectID in [5]
+
+
+                     OBJECT IDENTIFIER,
+
+                 agent-addr        -- address of object generating
+                     NetworkAddress, -- trap
+
+                 generic-trap      -- generic trap type
+                     INTEGER {
+                         coldStart(0),
+                         warmStart(1),
+                         linkDown(2),
+                         linkUp(3),
+                         authenticationFailure(4),
+                         egpNeighborLoss(5),
+                         enterpriseSpecific(6)
+                     },
+
+                 specific-trap  -- specific code, present even
+                     INTEGER,   -- if generic-trap is not
+                                -- enterpriseSpecific
+
+                 time-stamp     -- time elapsed between the last
+                     TimeTicks, -- (re)initialization of the
+                                   network
+                                -- entity and the generation of the
+                                   trap
+
+                  variable-bindings -- "interesting" information
+                     VarBindList
+             }
+
+
+     -- variable bindings
+
+     VarBind ::=
+             SEQUENCE {
+                 name
+                     ObjectName,
+
+                 value
+                     ObjectSyntax
+             }
+
+    VarBindList ::=
+             SEQUENCE OF
+                VarBind
+
+    END

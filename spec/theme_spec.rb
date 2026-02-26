@@ -9,6 +9,8 @@ describe Rouge::Theme do
   class MyTheme < Rouge::CSSTheme
     style Literal::String, :fg => '#003366', :bold => true
     style Literal::String::Backtick, :fg => '#555555', :italic => true
+    style Generic::Lineno, :fg => '#003366', :unselectable => false
+    style Generic::Prompt, :fg => '#003366', :bold => true
   end
 
   let(:theme) { MyTheme.new }
@@ -49,4 +51,15 @@ CSS
     style = theme.style_for(Rouge::Token['Literal.String.Char'])
     assert { style == { :fg => '#003366', :bold => true } }
   end
+  
+  it 'provides default user selection behavior for prompts and line numbers' do
+    style = theme.style_for(Rouge::Token['Generic.Prompt'])
+    assert { style == { :fg => '#003366', :bold => true, :unselectable => true } }
+  end
+  
+  it 'overrides user selection behavior when specified explicitly' do
+    style = theme.style_for(Rouge::Token['Generic.Lineno'])
+    assert { style == { :fg => '#003366', :unselectable => false } }
+  end
+  
 end

@@ -1,0 +1,21 @@
+namespace http://example.com/mmt-demo ❚
+
+import lfx http://gl.mathhub.info/MMT/LFX/TypedHierarchy ❚
+import finite http://gl.mathhub.info/MMT/LFX/Finite ❚
+import rules scala://structuralfeatures.lf.mmt.kwarc.info❚
+
+theory InductivelyDefinedTypes : ?LFXI =
+	theory list_decls > a : type ❘ =
+		list: type ❙
+		nil: list ❙
+		cons: a ⟶ list ⟶ list ❙
+	❚
+
+	reflect list1(a: type) : ☞?InductivelyDefinedTypes/list_decls(a:type) ❙
+
+	inductive_definition concat(a:type) : list1(a: type) ❘ =
+		list : type ❘ = list1/list a⟶ list1/list a ❙
+		nil : list ❘ = [l] l ❙
+		cons : {x: a, f: list, l: list1/list a} list1/list a ❘ = [x, f, l] (list1/cons a x (f l)) ❙
+	❚
+❚

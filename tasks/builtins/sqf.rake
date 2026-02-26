@@ -19,7 +19,7 @@ class SQFBuiltins < BuiltinsGenerator
   end
 
   def parse
-    @input.scrub.scan(/(?<=\(").+?(?=")/)
+    @input.scrub.scan(/(?<=\(").+?(?=")/).sort.uniq
   end
 
   def generate

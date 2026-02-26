@@ -38,7 +38,7 @@ class LassoGenerator < BuiltinsGenerator
       keywords[groups[m[0]]].concat values
     end
 
-    keywords
+    keywords.transform_values { |v| v.sort.uniq }
   end
 
   def generate

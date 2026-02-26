@@ -48,7 +48,7 @@ class VimLBuiltins < BuiltinsGenerator
       end
     end
 
-    keywords
+    keywords.transform_values { |v| v.sort.uniq }
   end
 
   def generate

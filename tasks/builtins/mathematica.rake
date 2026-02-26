@@ -25,7 +25,7 @@ class MathematicaBuiltins < BuiltinsGenerator
       keywords << m[0]
     end
 
-    keywords
+    keywords.sort.uniq
   end
 
   def generate

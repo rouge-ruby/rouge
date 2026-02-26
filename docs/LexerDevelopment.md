@@ -63,7 +63,7 @@ For the remainder of this guide, we'll use [the JSON lexer][json-lexer] as an
 example. The lexer is relatively simple and is for a language with which many
 people will at least have some level of familiarity.
 
-[json-lexer]: https://github.com/rouge-ruby/rouge/blob/master/lib/rouge/lexers/json.rb
+[json-lexer]: https://github.com/rouge-ruby/rouge/blob/main/lib/rouge/lexers/json.rb
 
 ### Lexer Properties
 
@@ -112,7 +112,7 @@ of a code block, such as in the following example:
 
 The `ruby` tag is defined in [the Ruby lexer][ruby-lexer].
 
-[ruby-lexer]: https://github.com/rouge-ruby/rouge/blob/master/lib/rouge/lexers/ruby.rb
+[ruby-lexer]: https://github.com/rouge-ruby/rouge/blob/main/lib/rouge/lexers/ruby.rb
 
 #### Aliases
 
@@ -374,8 +374,8 @@ If a lexer is for a language that is very similar to a language with an
 existing lexer, it's possible to subclass the existing lexer. See [the C++
 lexer][cpp-lexer] and [the JSX lexer][jsx-lexer] for examples.
 
-[cpp-lexer]: https://github.com/rouge-ruby/rouge/blob/master/lib/rouge/lexers/cpp.rb
-[jsx-lexer]: https://github.com/rouge-ruby/rouge/blob/master/lib/rouge/lexers/jsx.rb
+[cpp-lexer]: https://github.com/rouge-ruby/rouge/blob/main/lib/rouge/lexers/cpp.rb
+[jsx-lexer]: https://github.com/rouge-ruby/rouge/blob/main/lib/rouge/lexers/jsx.rb
 
 ### Gotchas
 

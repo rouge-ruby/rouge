@@ -1,5 +1,8 @@
 inherit_from: .rubocop_todo.yml
 
+require:
+  - ./lib/rubocop/cop/rouge/no_building_alternation_pattern_in_regexp.rb
+
 plugins:
   - rubocop-performance
   - rubocop-minitest

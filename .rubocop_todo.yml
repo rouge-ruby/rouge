@@ -229,7 +229,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
     - 'lib/rouge/lexers/postscript.rb'
     - 'lib/rouge/lexers/python.rb'
     - 'lib/rouge/lexers/r.rb'
-    - 'lib/rouge/lexers/ruby.rb'
     - 'lib/rouge/lexers/rust.rb'
     - 'lib/rouge/lexers/scala.rb'
     - 'lib/rouge/lexers/sml.rb'

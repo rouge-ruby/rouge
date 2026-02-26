@@ -70,7 +70,7 @@ class GherkinBuiltins < BuiltinsGenerator
     yield   "      KEYWORDS = {}.tap do |k|"
     @keywords.each do |t, kws|
       next if t == :step
-      yield "        k[#{t.inspect}] = Set.new #{kws.to_a.sort.inspect}"
+      yield "        k[#{t.inspect}] = Set.new #{kws.to_a.sort.uniq.inspect}"
     end
     yield   "      end"
     yield   "    end"

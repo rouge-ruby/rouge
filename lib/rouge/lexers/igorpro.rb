@@ -1588,7 +1588,7 @@ module Rouge
         rule %r(//), Comment, :comments
 
         rule %r/#{object}/ do |m|
-          if m[0].downcase =~ /function/
+          if m[0].downcase.include?('function')
             token Keyword::Declaration
             push :parse_function
           elsif self.class.igorDeclarations.include? m[0].downcase

@@ -78,7 +78,7 @@ module Rouge
             push :gsub
           elsif self.builtins.include?(name)
             token Name::Builtin
-          elsif name =~ /\./
+          elsif name.include?('.')
             a, b = name.split('.', 2)
             token Name, a
             token Punctuation, '.'

@@ -85,7 +85,7 @@ module Rouge
 
       def error_regex
         @error_regex ||= if @error.any?
-          /^(?:#{@error.map(&Regexp.method(:escape)).join('|')})/
+          /^(?:#{@error.map { |e| Regexp.escape(e) }.join('|')})/
         end
       end
 
@@ -174,7 +174,7 @@ module Rouge
 
       def prompt_regex
         @prompt_regex ||= begin
-          /^#{prompt_prefix_regex}(?:#{end_chars.map(&Regexp.method(:escape)).join('|')})/
+          /^#{prompt_prefix_regex}(?:#{end_chars.map { |c| Regexp.escape(c) }.join('|')})/
         end
       end
 

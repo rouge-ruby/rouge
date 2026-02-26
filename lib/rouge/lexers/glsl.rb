@@ -35,8 +35,7 @@ module Rouge
           lowp mediump highp precision
           struct
 
-          row_major column_major
-          shared packed std140 std43 binding offset align location
+          row_major column_major packed std140 std43 binding offset align location
           early_fragment_tests
         )
       end
@@ -56,13 +55,6 @@ module Rouge
           dmat2x2 dmat2x3 dmat2x4
           dmat3x2 dmat3x3 dmat3x4
           dmat4x2 dmat4x3 dmat4x4
-          
-          mat2 mat3 mat4 dmat2 dmat3 dmat4
-          mat2x2 mat2x3 mat2x4 dmat2x2 dmat2x3 dmat2x4
-          mat3x2 mat3x3 mat3x4 dmat3x2 dmat3x3 dmat3x4
-          mat4x2 mat4x3 mat4x4 dmat4x2 dmat4x3 dmat4x4
-          vec2 vec3 vec4 ivec2 ivec3 ivec4 bvec2 bvec3 bvec4 dvec2 dvec3 dvec4
-          uint uvec2 uvec3 uvec4
           sampler1D sampler1DShadow sampler1DArray sampler1DArrayShadow
           isampler1D isampler1DArray usampler1D usampler1DArray
           sampler2D sampler2DShadow sampler2DArray sampler2DArrayShadow

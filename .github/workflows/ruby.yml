@@ -4,9 +4,9 @@ name: CI
 on:
   push:
     # The `github-workflow-test` can be used to test changes without making a PR
-    branches: [master, github-workflow-test]
+    branches: [main, github-workflow-test]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   linelint:

@@ -25,10 +25,10 @@ describe Rouge::Lexers::Gherkin do
       tokens = subject.lex("When this\nAnd that").to_a
 
       assert { tokens.size == 4 }
-      assert { tokens[0][0] == Token['Name.Function'] }
-      assert { tokens[1][0] == Token['Text'] }
-      assert { tokens[2][0] == Token['Name.Function'] }
-      assert { tokens[3][0] == Token['Text'] }
+      assert { tokens[0] == [Token['Name.Function'], 'When'] }
+      assert { tokens[1] == [Token['Text'], " this\n"] }
+      assert { tokens[2] == [Token['Name.Function'], 'And'] }
+      assert { tokens[3] == [Token['Text'], ' that'] }
     end
 
     it 'highlights placeholders correctly' do

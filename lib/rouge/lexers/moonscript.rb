@@ -47,17 +47,15 @@ module Rouge
       end
 
       state :base do
-        ident = '(?:\w\w*)'
-
         rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
         rule %r((?i)\d+e[+-]?\d+), Num::Float
         rule %r((?i)0x[0-9a-f]*), Num::Hex
         rule %r(\d+), Num::Integer
-        rule %r(@#{ident}*), Name::Variable::Instance
+        rule %r(@\w+), Name::Variable::Instance
         rule %r([A-Z]\w*), Name::Class
         rule %r("?[^"]+":), Literal::String::Symbol
-        rule %r(#{ident}:), Literal::String::Symbol
-        rule %r(:#{ident}), Literal::String::Symbol
+        rule %r(\w+:), Literal::String::Symbol
+        rule %r(:\w+), Literal::String::Symbol
 
         rule %r(\s+), Text::Whitespace
         rule %r((==|~=|!=|<=|>=|\.\.\.|\.\.|->|=>|[=+\-*/%^<>#!\\])), Operator

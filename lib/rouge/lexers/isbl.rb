@@ -44,8 +44,8 @@ module Rouge
         rule %r/[.]/, Punctuation, :dotted
         rule %r/[\[\]();]/, Punctuation
         rule %r([&*+=<>/-]), Operator
-        rule %r/[\p{Alnum}_!]\p{Word}*(?=[(])/i, Name::Function
-        rule %r/[\p{Alnum}_!]\p{Word}*/i do |m|
+        rule %r/[\p{Alpha}_!]\p{Word}*(?=[(])/i, Name::Function
+        rule %r/[\p{Alpha}_!]\p{Word}*/i do |m|
           if self.class.keywords.include?(m[0].downcase)
             token Keyword
           else

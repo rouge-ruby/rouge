@@ -17,10 +17,7 @@ module Rouge
       option :disabled_modules, 'builtin modules to disable'
 
       # depends on lua builtins
-      def self.eager_load!
-        super
-        Lua.eager_load!
-      end
+      lazy { Lua.eager_load! }
 
       def initialize(*)
         super

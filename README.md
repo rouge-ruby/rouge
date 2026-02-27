@@ -312,7 +312,7 @@ test. For example, to test just the _`ruby` lexer_ (located at path
 TEST=spec/lexers/ruby_spec.rb rake
 ```
 
-To test a lexer visually, run `rackup` from the top-level working directory and
+To test a lexer visually, run `puma` from the top-level working directory and
 you should have a web server running and ready to go. Visit
 <http://localhost:9292> to see the full list of Rouge's lexers.
 

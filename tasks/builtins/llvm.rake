@@ -48,7 +48,7 @@ class LLVMBuiltins < BuiltinsGenerator
     # Does not use TYPEKEYWORD() due to special handling.
     keywords["types"].push "ptr"
 
-    keywords.transform_values! { |v| v.sort }
+    keywords.transform_values! { |v| v.sort.uniq }
   end
 
   def generate

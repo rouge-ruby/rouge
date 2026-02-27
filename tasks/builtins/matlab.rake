@@ -21,7 +21,7 @@ class MatlabBuiltins < BuiltinsGenerator
   end
 
   def parse
-    ::YAML.load(@input)
+    ::YAML.load(@input).sort.uniq
   end
 
   def generate

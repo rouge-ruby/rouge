@@ -37,6 +37,8 @@ module Rouge
         end
 
 
+        # TODO [jneen]: there are elements of BUILTINS with
+        # a . in them - this won't match any of those.
         rule %r/[a-zA-Z][_a-zA-Z0-9]*/m do |m|
           match = m[0]
           if self.class.keywords.include? match

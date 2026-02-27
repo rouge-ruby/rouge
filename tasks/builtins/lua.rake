@@ -38,7 +38,7 @@ class LuaBuiltins < BuiltinsGenerator
       keywords[key].push name
     end
 
-    keywords
+    keywords.transform_values { |v| v.sort.uniq }
   end
 
   def generate

@@ -12,12 +12,10 @@ module Rouge
       filenames '*.idr'
       mimetypes 'text/x-idris'
 
-      def self.ascii
-        @ascii ||= %w(
-          NUL SOH [SE]TX EOT ENQ ACK BEL BS HT LF VT FF CR S[OI] DLE
-          DC[1-4] NAK SYN ETB CAN EM SUB ESC [FGRU]S SP DEL
-        )
-      end
+      ASCII_CODES = %r(
+        NUL|SOH|[SE]TX|EOT|ENQ|ACK|BEL|BS|HT|LF|VT|FF|CR|S[OI]|DLE
+        |DC[1-4]|NAK|SYN|ETB|CAN|EM|SUB|ESC|[FGRU]S|SP|DEL
+      )x
 
       def self.prelude_functions
         @prelude_functions ||= Set.new %w(
@@ -216,7 +214,7 @@ module Rouge
       state :escape do
         rule %r/[abfnrtv"'&\\]/, Str::Escape, :pop!
         rule %r/\^[\]\[A-Z@\^_]/, Str::Escape, :pop!
-        rule %r/#{Idris.ascii.join('|')}/, Str::Escape, :pop!
+        rule ASCII_CODES, Str::Escape, :pop!
         rule %r/o[0-7]+/i, Str::Escape, :pop!
         rule %r/x[\da-fA-F]+/i, Str::Escape, :pop!
         rule %r/\d+/, Str::Escape, :pop!

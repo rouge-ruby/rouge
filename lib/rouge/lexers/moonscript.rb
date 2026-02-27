@@ -47,9 +47,9 @@ module Rouge
       end
 
       state :base do
-        rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
-        rule %r((?i)\d+e[+-]?\d+), Num::Float
-        rule %r((?i)0x[0-9a-f]*), Num::Hex
+        rule %r((\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?')i, Num::Float
+        rule %r(\d+e[+-]?\d+)i, Num::Float
+        rule %r(0x\h*), Num::Hex
         rule %r(\d+), Num::Integer
         rule %r(@\w+), Name::Variable::Instance
         rule %r([A-Z]\w*), Name::Class
@@ -69,7 +69,7 @@ module Rouge
         rule %r((local|export)\b), Keyword::Declaration
         rule %r((true|false|nil)\b), Keyword::Constant
 
-        rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?) do |m|
+        rule %r([a-z_]\w*(\.[a-z_]\w*)?)i do |m|
           name = m[0]
           if keywords.include?(name)
             token Keyword

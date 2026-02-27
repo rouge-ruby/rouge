@@ -33,6 +33,7 @@ group :development do
 
   # for visual tests
   gem 'sinatra'
+  gem 'rackup'
 
   gem 'puma'
   gem 'shotgun'

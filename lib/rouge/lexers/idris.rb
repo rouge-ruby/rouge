@@ -12,14 +12,6 @@ module Rouge
       filenames '*.idr'
       mimetypes 'text/x-idris'
 
-      def self.reserved_keywords
-        @reserved_keywords ||= %w(
-          _ data class instance namespace
-          infix[lr]? let where of with type
-          do if then else case in
-        )
-      end
-
       def self.ascii
         @ascii ||= %w(
           NUL SOH [SE]TX EOT ENQ ACK BEL BS HT LF VT FF CR S[OI] DLE
@@ -28,7 +20,7 @@ module Rouge
       end
 
       def self.prelude_functions
-        @prelude_functions ||= %w(
+        @prelude_functions ||= Set.new %w(
           abs acos all and any asin atan atan2 break ceiling compare concat
           concatMap const cos cosh curry cycle div drop dropWhile elem
           encodeFloat enumFrom enumFromThen enumFromThenTo enumFromTo exp
@@ -75,7 +67,11 @@ module Rouge
       state :prelude do
         rule %r/\b(Type|Exists|World|IO|IntTy|FTy|File|Mode|Dec|Bool|Ordering|Either|IsJust|List|Maybe|Nat|Stream|StrM|Not|Lazy|Inf)\s/, Keyword::Type
         rule %r/\b(Eq|Ord|Num|MinBound|MaxBound|Integral|Applicative|Alternative|Cast|Foldable|Functor|Monad|Traversable|Uninhabited|Semigroup|Monoid)\s/, Name::Class
-        rule %r/\b(?:#{Idris.prelude_functions.join('|')})[ ]+(?![=:-])/, Name::Builtin
+
+        rule %r/\w+(?!\s*[=:-])/ do |m|
+          fallthrough! unless Idris.prelude_functions.include?(m[0])
+          token Name::Builtin
+        end
       end
 
       state :root do
@@ -84,7 +80,26 @@ module Rouge
 
         rule %r/\bimport\b/, Keyword::Reserved, :import
         rule %r/\bmodule\b/, Keyword::Reserved, :module
-        rule %r/\b(?:#{Idris.reserved_keywords.join('|')})\b/, Keyword::Reserved
+        rule %r(
+          (?: _
+            | data
+            | class
+            | instance
+            | namespace
+            | infix[lr]?
+            | let
+            | where
+            | of
+            | with
+            | type
+            | do
+            | if
+            | then
+            | else
+            | case
+            | in
+          )\b
+        )x, Keyword::Reserved
         rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword::Constant
         # function signature
         rule %r/^[\w']+\s*:/, Name::Function

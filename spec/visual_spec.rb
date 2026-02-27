@@ -4,7 +4,7 @@
 puts <<-MSG
 
 ============
-Run `rackup` and visit localhost:9292/:lexer_name to visually test a lexer.
+Run `puma` and visit localhost:9292/:lexer_name to visually test a lexer.
 ============
 
 MSG

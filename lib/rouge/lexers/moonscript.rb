@@ -67,19 +67,20 @@ module Rouge
         rule %r([\[\]\{\}\(\)\.,:;]), Punctuation
         rule %r((and|or|not)\b), Operator::Word
 
-        keywords = %w{
+        keywords = Set.new %w{
           break class continue do else elseif end extends for if import in
           repeat return switch super then unless until using when with while
         }
-        rule %r((#{keywords.join('|')})\b), Keyword
         rule %r((local|export)\b), Keyword::Declaration
         rule %r((true|false|nil)\b), Keyword::Constant
 
         rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?) do |m|
           name = m[0]
-          if self.builtins.include?(name)
+          if keywords.include?(name)
+            token Keyword
+          elsif self.builtins.include?(name)
             token Name::Builtin
-          elsif name =~ /\./
+          elsif name.include?('.')
             a, b = name.split('.', 2)
             token Name, a
             token Punctuation, '.'

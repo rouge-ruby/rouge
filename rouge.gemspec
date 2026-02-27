@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 3.0'
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/rouge-ruby/rouge/issues",
-    "changelog_uri"     => "https://github.com/rouge-ruby/rouge/blob/master/CHANGELOG.md",
+    "changelog_uri"     => "https://github.com/rouge-ruby/rouge/blob/main/CHANGELOG.md",
     "documentation_uri" => "https://rouge-ruby.github.io/docs/",
     "source_code_uri"   => "https://github.com/rouge-ruby/rouge",
     "rubygems_mfa_required" => "true"

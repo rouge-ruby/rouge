@@ -337,7 +337,7 @@ module Rouge
         if @debug
           puts
           puts "lexer: #{self.class.tag}"
-          puts "stack: #{stack.map(&:name).map(&:to_sym).inspect}"
+          puts "stack: #{stack.map { |s| s.name.to_sym }.inspect}"
           puts "stream: #{stream.peek(20).inspect}"
         end
 

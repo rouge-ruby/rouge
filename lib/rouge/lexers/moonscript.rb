@@ -65,7 +65,7 @@ module Rouge
         rule %r((and|or|not)\b), Operator::Word
 
         keywords = Set.new %w{
-          break class continue do else elseif end extends for if import in
+          break class continue do else elseif end extends for if import in from
           repeat return switch super then unless until using when with while
         }
         rule %r((local|export)\b), Keyword::Declaration

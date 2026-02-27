@@ -1,0 +1,17 @@
+import base.*
+import io
+import re.re
+
+fun has_alphanum(str)
+{
+    return re("[0-9a-zA-Z]+").find(str)
+}
+
+# For each file on the command line
+for const filename in args[1:] {
+
+    # Sort and print lines which contain any alphanumeric characters
+    io.read_lines(filename) -> filter(has_alphanum)
+                            -> sort()
+                            -> each(print)
+}

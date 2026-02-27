@@ -17,10 +17,7 @@ module Rouge
       option :disabled_modules, 'builtin modules to disable'
 
       # depends on lua builtins
-      def self.eager_load!
-        super
-        Lua.eager_load!
-      end
+      lazy { Lua.eager_load! }
 
       def initialize(*)
         super
@@ -50,17 +47,15 @@ module Rouge
       end
 
       state :base do
-        ident = '(?:\w\w*)'
-
-        rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
-        rule %r((?i)\d+e[+-]?\d+), Num::Float
-        rule %r((?i)0x[0-9a-f]*), Num::Hex
+        rule %r((\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?')i, Num::Float
+        rule %r(\d+e[+-]?\d+)i, Num::Float
+        rule %r(0x\h*), Num::Hex
         rule %r(\d+), Num::Integer
-        rule %r(@#{ident}*), Name::Variable::Instance
+        rule %r(@\w+), Name::Variable::Instance
         rule %r([A-Z]\w*), Name::Class
         rule %r("?[^"]+":), Literal::String::Symbol
-        rule %r(#{ident}:), Literal::String::Symbol
-        rule %r(:#{ident}), Literal::String::Symbol
+        rule %r(\w+:), Literal::String::Symbol
+        rule %r(:\w+), Literal::String::Symbol
 
         rule %r(\s+), Text::Whitespace
         rule %r((==|~=|!=|<=|>=|\.\.\.|\.\.|->|=>|[=+\-*/%^<>#!\\])), Operator
@@ -68,13 +63,13 @@ module Rouge
         rule %r((and|or|not)\b), Operator::Word
 
         keywords = Set.new %w{
-          break class continue do else elseif end extends for if import in
+          break class continue do else elseif end extends for if import in from
           repeat return switch super then unless until using when with while
         }
         rule %r((local|export)\b), Keyword::Declaration
         rule %r((true|false|nil)\b), Keyword::Constant
 
-        rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?) do |m|
+        rule %r([a-z_]\w*(\.[a-z_]\w*)?)i do |m|
           name = m[0]
           if keywords.include?(name)
             token Keyword

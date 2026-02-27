@@ -90,7 +90,7 @@ module Rouge
       disambiguate '*.m' do
         next ObjectiveC if matches?(/@(end|implementation|protocol|property)\b/)
         next ObjectiveC if contains?('@"')
-        
+
         # Objective-C dereferenced pointers and Mathematica comments are similar.
         # Disambiguate for Mathematica by looking for any amount of whitespace (or no whitespace)
         # followed by "(*" (e.g. `(* comment *)`).
@@ -107,7 +107,7 @@ module Rouge
         next Matlab if matches?(/^\s*?%/)
         # Matlab cell array creation: data = {
         next Matlab if matches?(/^\s*[a-zA-Z]\w*\s*=\s*\{/)
-        
+
         next Mason if matches? %r!(</?%|<&)!
       end
 

@@ -57,8 +57,14 @@ Lint/AmbiguousOperatorPrecedence:
 Naming/BlockForwarding:
   Enabled: false
 
+Naming/PredicateMethod:
+  Enabled: false
+
 Performance/RegexpMatch:
   Enabled: false
 
 Performance/ConstantRegexp:
+  Enabled: false
+
+Performance/UnfreezeString:
   Enabled: false

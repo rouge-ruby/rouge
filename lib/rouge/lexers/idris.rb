@@ -62,11 +62,13 @@ module Rouge
         rule %r/\%(access)\s+(public|abstract|private|export)/, Keyword  # export
         rule %r/\%(language)\s+(.*)/, Keyword  # language
         rule %r/\%(provide)\s+.*\s+(with)\s+/, Keyword  # type
+        rule %r/(?:public|export|partial)\b/, Keyword
       end
 
       state :prelude do
         rule %r/\b(Type|Exists|World|IO|IntTy|FTy|File|Mode|Dec|Bool|Ordering|Either|IsJust|List|Maybe|Nat|Stream|StrM|Not|Lazy|Inf)\s/, Keyword::Type
         rule %r/\b(Eq|Ord|Num|MinBound|MaxBound|Integral|Applicative|Alternative|Cast|Foldable|Functor|Monad|Traversable|Uninhabited|Semigroup|Monoid)\s/, Name::Class
+        rule %r/prim__\w+/, Keyword::Constant
 
         rule %r/\w+(?!\s*[=:-])/ do |m|
           fallthrough! unless Idris.prelude_functions.include?(m[0])

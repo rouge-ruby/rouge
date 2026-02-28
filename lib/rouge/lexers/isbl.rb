@@ -9,22 +9,6 @@ module Rouge
       tag 'isbl'
       filenames '*.isbl'
 
-      lazy do
-        require_relative 'isbl/builtins'
-      end
-
-      def self.constants
-        @constants ||= BUILTINS["const"].merge(BUILTINS["enum"]).collect!(&:downcase)
-      end
-
-      def self.interfaces
-        @interfaces ||= BUILTINS["interface"].collect!(&:downcase)
-      end
-
-      def self.globals
-        @globals ||= BUILTINS["global"].collect!(&:downcase)
-      end
-
       def self.keywords
         @keywords = Set.new %w(
           and и else иначе endexcept endfinally endforeach конецвсе endif конецесли endwhile
@@ -40,30 +24,16 @@ module Rouge
 
       state :dotted do
         mixin :whitespace
-        rule %r/[a-zа-яё_0-9]+/i do |m|
-          name = m[0]
-          if self.class.constants.include? name.downcase
-            token Name::Builtin
-          elsif in_state? :type
-            token Keyword::Type
-          else
-            token Name
-          end
+        rule %r/\p{Alnum}+/i do |m|
+          token(in_state?(:type) ? Keyword::Type : Name)
+
           pop!
         end
       end
 
       state :type do
         mixin :whitespace
-        rule %r/[a-zа-яё_0-9]+/i do |m|
-          name = m[0]
-          if self.class.interfaces.include? name.downcase
-            token Keyword::Type
-          else
-            token Name
-          end
-          pop!
-        end
+        rule %r/\p{Word}+/, Name, :pop!
         rule %r/[.]/, Punctuation, :dotted
         rule(//) { pop! }
       end
@@ -74,15 +44,10 @@ module Rouge
         rule %r/[.]/, Punctuation, :dotted
         rule %r/[\[\]();]/, Punctuation
         rule %r([&*+=<>/-]), Operator
-        rule %r/\b[a-zа-яё_][a-zа-яё_0-9]*(?=[(])/i, Name::Function
-        rule %r/[a-zа-яё_!][a-zа-яё_0-9]*/i do |m|
-          name = m[0]
-          if self.class.keywords.include? name.downcase
+        rule %r/[\p{Alpha}_!]\p{Word}*(?=[(])/i, Name::Function
+        rule %r/[\p{Alpha}_!]\p{Word}*/i do |m|
+          if self.class.keywords.include?(m[0].downcase)
             token Keyword
-          elsif self.class.constants.include? name.downcase
-            token Name::Builtin
-          elsif self.class.globals.include? name.downcase
-            token Name::Variable::Global
           else
             token Name::Variable
           end

@@ -13,7 +13,19 @@ module Rouge
 
       # Documentation: https://www.w3.org/TR/CSS21/syndata.html#characters
 
-      identifier = /[\p{L}_-][\p{Word}\p{Cf}-]*/
+      # [jneen] workaround for:
+      # https://bugs.ruby-lang.org/issues/21870#change-116371
+      #
+      # As of ruby 4+, \p{Word} matches ZWJ and ZWNJ, so the additional
+      # \p{Cf} is not needed.
+      #
+      # That being said... this still warns, but at least it's only once?
+      identifier = if RUBY_VERSION < '4'
+        /[\p{L}_-][\p{Word}\p{Cf}-]*/
+      else
+        /[\p{L}_-][\p{Word}-]*/
+      end
+
       number = /-?(?:[0-9]+(\.[0-9]+)?|\.[0-9]+)/
 
       def self.properties
@@ -126,7 +138,7 @@ module Rouge
           above absolute accumulate add additive all alpha alphabetic
           alternate alternate-reverse always armenian aural auto auto-fill
           auto-fit avoid backwards balance baseline behind below bidi-override
-          blink block bold bolder border-box both bottom bottom break-spaces
+          blink block bold bolder border-box both bottom break-spaces
           capitalize center center-left center-right circle cjk-ideographic
           close-quote closest-corner closest-side collapse
           color color-burn color-dodge column column-reverse
@@ -154,7 +166,7 @@ module Rouge
           s-resize sans-serif saturation scale-down screen scroll
           se-resize semi-condensed semi-expanded separate serif show
           sides silent size slow slower small-caps small-caption smaller
-          smooth soft soft-light solid space-aroun space-between
+          smooth soft soft-light solid space-around space-between
           space-evenly span spell-out square start static status-bar sticky
           stretch sub subtract super sw-resize swap symbolic table
           table-caption table-cell table-column table-column-group
@@ -192,6 +204,7 @@ module Rouge
           seagreen seashell sienna silver skyblue slateblue slategray snow
           springgreen steelblue tan teal thistle tomato
           turquoise violet wheat white whitesmoke yellow yellowgreen
+          rebeccapurple
         )
       end
 
@@ -245,6 +258,10 @@ module Rouge
         rule %r/(true|false)/i, Name::Constant
         rule %r/\-\-#{identifier}/, Literal
         rule %r([*+/-]), Operator
+        rule %r/(url(?:-prefix)?)([(])(.*?)([)])/ do
+          groups Name::Function, Punctuation, Str::Other, Punctuation
+        end
+
         rule(identifier) do |m|
           if self.class.colors.include? m[0].downcase
             token Name::Other
@@ -259,6 +276,7 @@ module Rouge
       end
 
       state :at_rule do
+        rule %r/(?:<=|>=|~=|\|=|\^=|\$=|\*=|<|>|=)/, Operator
         rule %r/{(?=\s*#{identifier}\s*:)/m, Punctuation, :at_stanza
         rule %r/{/, Punctuation, :at_body
         rule %r/;/, Punctuation, :pop!
@@ -303,6 +321,8 @@ module Rouge
 
           push :stanza_value
         end
+
+        mixin :root
       end
 
       state :stanza_value do

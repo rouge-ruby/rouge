@@ -67,9 +67,10 @@ use and whether to enable line numbers or not. More information is available in
 Rouge ships with a `rougify` command which allows you to easily highlight files
 in your terminal:
 
-```bash
-rougify foo.rb
-rougify style monokai.sublime > syntax.css
+```console
+$ rougify foo.rb
+$ rougify foo.rb -t monokai.sublime
+$ rougify style monokai.sublime > syntax.css
 ```
 
 ## Configuration
@@ -138,12 +139,35 @@ The built-in formatters are:
   highlighted text for use in the terminal. `theme` must be an instance of
   `Rouge::Theme`, or a `Hash` structure with `:theme` entry.
 
+- `Rouge::Formatters::TerminalTruecolor.new(theme)` is similar to the previous,
+  except it outputs ANSI truecolor codes, instead of approximating with a 256-color
+  scheme.
+
+- `Rouge::Formatters::Tex.new` is a formatter for TeX systems which wraps each
+  token with an `\RG{toktype}{text}` tag. You can then use
+  `rougify style mystyle --tex`
+  to generate definitions for these tags and the surrounding environment.
+
 #### Writing your own HTML formatter
 
-If the above formatters are not sufficient, and you wish to customize the layout
-of the HTML document, we suggest writing your own HTML formatter. This can be
-accomplished by subclassing `Rouge::Formatters::HTML` and overriding specific
-methods:
+For the majority of applications, there are custom requirements for presenting
+highlighted text, as HTML or otherwise. In these cases, rather than patching or
+post-processing the output of Rouge, it is usually better to **write your own
+formatter**.
+
+This may sound intimidating, but it is actually quite easy! All you have to do
+is subclass `Rouge::Formatter`, define a `tag`, and implement a method
+`#stream(tokens, &block)`, which receives an Enumerable of token/value pairs,
+and yields out chunks of strings which will be concatenated.
+
+The `Formatter` base class contains the helper method `#token_lines(stream, &block)`,
+which separates tokens into distinct lines, and `Rouge::Formatters::HTML`
+contains the helper `#span(token, value)` to escape and render
+standard `<span>` tags for HTML.
+
+Alternatively, if you want to override how individual spans are rendered,
+you can override `#safe_span(token, safe_value)`, which will be passed the
+token type and pre-escaped content for the token.
 
 ```ruby
 class MyFormatter < Rouge::Formatters::HTML
@@ -189,11 +213,11 @@ end
 
 ### Lexer Options
 
-- `debug: false` will print a trace of the lex on stdout.
+- `debug: true` will print a trace of the lex on stdout. For safety, this only works if `Rouge::Lexer.enable_debug!` has been called.
 
 - `parent: ''` allows you to specify which language the template is inside.
 
-### CSS Options
+### Theme Options
 
 - `scope: '.highlight'` sets the CSS selector to which styles are applied,
   e.g.:
@@ -212,7 +236,7 @@ Rouge's documentation is available at [rouge-ruby.github.io/docs/][docs].
 
 ### Ruby
 
-Rouge is compatible with all versions of Ruby from 2.0.0 onwards. It has no
+Rouge is compatible with all versions of Ruby from 3.0 onwards. It has no
 external dependencies.
 
 ### Encodings
@@ -260,7 +284,7 @@ for a year are automatically closed by GitHub's [Probot][].
 These submission will be rejected and we don't want you to waste your time.
 
 We want to make it as easy as we can for anyone to contribute a lexer to Rouge.
-To help get you started, we have [a shiny new guide][lexer-dev-doc] on lexer
+To help get you started, we have [a guide][lexer-dev-doc] on lexer
 development in the documentation. The best place is to start there.
 
 [lexer-dev-doc]: https://rouge-ruby.github.io/docs/file.LexerDevelopment.html "Rouge's lexer development guide"
@@ -269,6 +293,12 @@ If you get stuck and need help, submit a pull request with what you have and
 make it clear in your submission that the lexer isn't finished yet. We'll do our
 best to answer any questions you have and sometimes the best way to do that is
 with actual code.
+
+If your language is internal or obscure, or it is taking far too long to merge
+into baseline Rouge, you can very easily write a plugin for language support.
+Check out our [plugin example repository][plugin-example] for a good starting point.
+
+[plugin-example]: https://github.com/rouge-ruby/rouge-plugin-example "Rouge Plugin Example"
 
 ### Testing Rouge
 
@@ -282,18 +312,12 @@ test. For example, to test just the _`ruby` lexer_ (located at path
 TEST=spec/lexers/ruby_spec.rb rake
 ```
 
-To test a lexer visually, run `rackup` from the top-level working directory and
+To test a lexer visually, run `puma` from the top-level working directory and
 you should have a web server running and ready to go. Visit
 <http://localhost:9292> to see the full list of Rouge's lexers.
 
 Once you've selected a particular lexer, you can add `?debug=1` to your URL
 string to see a lot of helpful debugging info printed on stdout.
-
-## Versioning
-
-Rouge uses [Semantic Versioning 2.0.0][sv2].
-
-[sv2]: http://semver.org/
 
 ## Maintainers
 

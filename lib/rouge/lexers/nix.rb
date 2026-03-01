@@ -10,6 +10,8 @@ module Rouge
       aliases 'nixos'
       filenames '*.nix'
 
+      id_boundary = /(?![a-zA-Z0-9_'-])/
+
       state :whitespaces do
         rule %r/^\s*\n\s*$/m, Text
         rule %r/\s+/, Text
@@ -30,15 +32,15 @@ module Rouge
       end
 
       state :null do
-        rule %r/(null)/, Keyword::Constant
+        rule %r/null#{id_boundary}/, Keyword::Constant
       end
 
       state :boolean do
-        rule %r/(true|false)/, Keyword::Constant
+        rule %r/(?:true|false)#{id_boundary}/, Keyword::Constant
       end
 
       state :binding do
-        rule %r/[a-zA-Z_][a-zA-Z0-9-]*/, Name::Variable
+        rule %r/[a-zA-Z_][a-zA-Z0-9_'-]*/, Name::Variable
       end
 
       state :path do
@@ -161,22 +163,22 @@ module Rouge
 
       state :keywords_namespace do
         keywords = %w(with in inherit)
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword::Namespace
+        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword::Namespace
       end
 
       state :keywords_declaration do
         keywords = %w(let)
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword::Declaration
+        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword::Declaration
       end
 
       state :keywords_conditional do
         keywords = %w(if then else)
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword
+        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword
       end
 
       state :keywords_reserved do
         keywords = %w(rec assert map)
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword::Reserved
+        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword::Reserved
       end
 
       state :keywords_builtin do
@@ -192,7 +194,7 @@ module Rouge
           throw
           toString
         )
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword::Reserved
+        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword::Reserved
       end
 
       state :ignore do

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'lua'
+
 module Rouge
   module Lexers
-    load_lexer 'lua.rb'
-
     class Moonscript < RegexLexer
       title "MoonScript"
       desc "Moonscript (http://www.moonscript.org)"
@@ -15,6 +15,9 @@ module Rouge
 
       option :function_highlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabled_modules, 'builtin modules to disable'
+
+      # depends on lua builtins
+      lazy { Lua.eager_load! }
 
       def initialize(*)
         super
@@ -31,7 +34,7 @@ module Rouge
         return [] unless @function_highlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          Rouge::Lexers::Lua.builtins.each do |mod, fns|
+          Lua::BUILTINS.each do |mod, fns|
             next if @disabled_modules.include? mod
             builtins.merge(fns)
           end
@@ -44,36 +47,35 @@ module Rouge
       end
 
       state :base do
-        ident = '(?:\w\w*)'
-
-        rule %r((?i)(\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?'), Num::Float
-        rule %r((?i)\d+e[+-]?\d+), Num::Float
-        rule %r((?i)0x[0-9a-f]*), Num::Hex
+        rule %r((\d*\.\d+|\d+\.\d*)(e[+-]?\d+)?')i, Num::Float
+        rule %r(\d+e[+-]?\d+)i, Num::Float
+        rule %r(0x\h*), Num::Hex
         rule %r(\d+), Num::Integer
-        rule %r(@#{ident}*), Name::Variable::Instance
+        rule %r(@\w+), Name::Variable::Instance
         rule %r([A-Z]\w*), Name::Class
         rule %r("?[^"]+":), Literal::String::Symbol
-        rule %r(#{ident}:), Literal::String::Symbol
-        rule %r(:#{ident}), Literal::String::Symbol
+        rule %r(\w+:), Literal::String::Symbol
+        rule %r(:\w+), Literal::String::Symbol
 
         rule %r(\s+), Text::Whitespace
         rule %r((==|~=|!=|<=|>=|\.\.\.|\.\.|->|=>|[=+\-*/%^<>#!\\])), Operator
         rule %r([\[\]\{\}\(\)\.,:;]), Punctuation
         rule %r((and|or|not)\b), Operator::Word
 
-        keywords = %w{
-          break class continue do else elseif end extends for if import in
+        keywords = Set.new %w{
+          break class continue do else elseif end extends for if import in from
           repeat return switch super then unless until using when with while
         }
-        rule %r((#{keywords.join('|')})\b), Keyword
         rule %r((local|export)\b), Keyword::Declaration
         rule %r((true|false|nil)\b), Keyword::Constant
 
-        rule %r([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?) do |m|
+        rule %r([a-z_]\w*(\.[a-z_]\w*)?)i do |m|
           name = m[0]
-          if self.builtins.include?(name)
+          if keywords.include?(name)
+            token Keyword
+          elsif self.builtins.include?(name)
             token Name::Builtin
-          elsif name =~ /\./
+          elsif name.include?('.')
             a, b = name.split('.', 2)
             token Name, a
             token Punctuation, '.'

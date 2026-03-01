@@ -258,6 +258,8 @@ end
 acc = Account.create(1000)
 acc:withdraw(100)
 
+-- gsub examples
 if
    url = url:gsub("^['\"]", ""):gsub("['\"]$", "")
+   local pattern = attr_name .. '=[\'"]' .. attr_value:gsub('([%.%+%-%*%?%[%]%^%$%(%)%%])', '%%%1') .. '[\'"]'
 end

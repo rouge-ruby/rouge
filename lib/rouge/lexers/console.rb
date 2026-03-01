@@ -85,7 +85,7 @@ module Rouge
 
       def error_regex
         @error_regex ||= if @error.any?
-          /^(?:#{@error.map(&Regexp.method(:escape)).join('|')})/
+          /^(?:#{@error.map { |e| Regexp.escape(e) }.join('|')})/
         end
       end
 
@@ -144,7 +144,7 @@ module Rouge
           yield Text::Whitespace, $& unless $&.empty?
 
           lang_lexer.continue_lex($', &output)
-        elsif comment_regex =~ input[0].strip
+        elsif allow_comments? && comment_regex =~ input[0].strip
           puts "console: matched comment #{input[0].inspect}" if @debug
           output_lexer.reset!
           lang_lexer.reset!
@@ -174,12 +174,12 @@ module Rouge
 
       def prompt_regex
         @prompt_regex ||= begin
-          /^#{prompt_prefix_regex}(?:#{end_chars.map(&Regexp.method(:escape)).join('|')})/
+          /^#{prompt_prefix_regex}(?:#{end_chars.map { |c| Regexp.escape(c) }.join('|')})/
         end
       end
 
       def stream_tokens(input, &output)
-        input = StringScanner.new(input)
+        input = StringScanner.new(input, fixed_anchor: true)
         lang_lexer.reset!
         output_lexer.reset!
 

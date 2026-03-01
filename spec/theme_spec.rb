@@ -17,20 +17,20 @@ describe Rouge::Theme do
     rendered = theme.render
 
     # should also style, for example, String.Char
-    assert { rendered =~ /\.sc/ }
+    assert { rendered.include?('.sc') }
 
     # and it should only style String.Backtick once
-    assert { rendered =~ /\.sb/ }
-    assert { $~.size == 1 }
+    assert { rendered.include?('.sb') }
+    assert { rendered.scan('.sb').count == 1 }
   end
 
   it 'renders a style' do
     output = Rouge::Theme::Style[:bold => true].render('.foo')
-    expected = <<-css
+    expected = <<-CSS
       .foo {
         font-weight: bold;
       }
-    css
+CSS
 
     assert { squish(output) == squish(expected) }
   end

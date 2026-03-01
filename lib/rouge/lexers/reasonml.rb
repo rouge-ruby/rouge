@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'ocaml/common'
+
 module Rouge
   module Lexers
-    load_lexer 'ocaml/common.rb'
-
     class ReasonML < OCamlCommon
       title "ReasonML"
       desc 'New syntax on top of OCaml ecosystem (reasonml.github.io)'

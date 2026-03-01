@@ -1,11 +1,22 @@
 inherit_from: .rubocop_todo.yml
 
+require:
+  - ./lib/rubocop/cop/rouge/no_building_alternation_pattern_in_regexp.rb
+
+plugins:
+  - rubocop-performance
+  - rubocop-minitest
+  - rubocop-rake
+
 AllCops:
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.0
   DisplayCopNames: true
   Exclude:
     - "tasks/**/*"
     - "vendor/**/*"
+    - "lib/rouge/lexers/**/keywords.rb"
+    - "lib/rouge/lexers/**/builtins.rb"
+  NewCops: enable
 
 Style:
   Enabled: false
@@ -38,4 +49,22 @@ Lint/RedundantSplatExpansion:
   Enabled: false
 
 Lint/IneffectiveAccessModifier:
+  Enabled: false
+
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+
+Naming/BlockForwarding:
+  Enabled: false
+
+Naming/PredicateMethod:
+  Enabled: false
+
+Performance/RegexpMatch:
+  Enabled: false
+
+Performance/ConstantRegexp:
+  Enabled: false
+
+Performance/UnfreezeString:
   Enabled: false

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'jinja'
+
 module Rouge
   module Lexers
-    load_lexer 'jinja.rb'
-
     class Twig < Jinja
       title "Twig"
       desc "Twig template engine (twig.sensiolabs.org)"

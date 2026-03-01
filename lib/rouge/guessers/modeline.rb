@@ -31,11 +31,11 @@ module Rouge
 
         source_text = get_source(@source)
 
-        lines = source_text.split(/\n/)
+        lines = source_text.split("\n")
 
         search_space = (lines.first(@lines) + lines.last(@lines)).join("\n")
 
-        matches = MODELINES.map { |re| re.match(search_space) }.compact
+        matches = MODELINES.filter_map { |re| re.match(search_space) }
         return lexers unless matches.any?
 
         match_set = Set.new(matches.map { |m| m[1] })

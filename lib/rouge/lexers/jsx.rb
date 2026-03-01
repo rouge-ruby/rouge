@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'javascript'
+
 module Rouge
   module Lexers
-    load_lexer 'javascript.rb'
-
     class JSX < Javascript
       title 'JSX'
       desc 'An XML-like syntax extension to JavaScript (facebook.github.io/jsx/)'

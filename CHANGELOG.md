@@ -4,6 +4,49 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 4.7.0: 2025-12-31
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.6.1...v4.7.0)
+
+- General
+  - Bump actions/checkout to v5 ([#2166](https://github.com/rouge-ruby/rouge/pull/2166/) by Tan Le)
+- COBOL Lexer
+  - feat: add support for highlight .cpy and .cpb files as COBOL ([#2186](https://github.com/rouge-ruby/rouge/pull/2186/) by simon)
+- Gjs and Gts Lexer (**NEW**)
+  - Created lexers for gjs and gts (used by Ember projects) ([#2165](https://github.com/rouge-ruby/rouge/pull/2165/) by Isaac Lee)
+- Go Lexer
+  - support underscore in numbers in go ([#2167](https://github.com/rouge-ruby/rouge/pull/2167/) by Joris Clement)
+- PHP Lexer
+  - php: Support enum definition ([#2171](https://github.com/rouge-ruby/rouge/pull/2171/) by nsfisis)
+  - php: Support typed class constants ([#2174](https://github.com/rouge-ruby/rouge/pull/2174/) by nsfisis)
+  - php: Support asymmetric visibility ([#2173](https://github.com/rouge-ruby/rouge/pull/2173/) by nsfisis)
+  - php: Support alternative notation of octal number literal (0o prefix) ([#2170](https://github.com/rouge-ruby/rouge/pull/2170/) by nsfisis)
+  - php: Update built-in functions (rake builtins:php) ([#2175](https://github.com/rouge-ruby/rouge/pull/2175/) by nsfisis)
+- Python Lexer
+  - Add Python 3.14+ template strings ([#2162](https://github.com/rouge-ruby/rouge/pull/2162/) by Bart Broere)
+- Terraform Lexer
+  - Support .tofu for Terraform lexing ([#2180](https://github.com/rouge-ruby/rouge/pull/2180/) by Asherah Connor)
+
+## version 4.6.1: 2025-09-25
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.6.0...v4.6.1)
+
+- General
+  - Add ruby head version to CI ([#2154](https://github.com/rouge-ruby/rouge/pull/2154/) by Tan Le)
+  - Replace usage of `cgi` for ruby 3.5 compatibility ([#2131](https://github.com/rouge-ruby/rouge/pull/2131/) by Earlopain)
+- CSS Lexer
+  - CSS lexer: support range context in media queries ([#2160](https://github.com/rouge-ruby/rouge/pull/2160/) by Gerard)
+- INI Lexer
+  - Support standalone option in INI parser ([#2161](https://github.com/rouge-ruby/rouge/pull/2161/) by Tan Le)
+- Lua Lexer
+  - Bugfix: Lua escaped quotes now parsing ([#2155](https://github.com/rouge-ruby/rouge/pull/2155/) by Nicholas Reaves)
+- Robot Framework Lexer
+  - Recognize `.resource` files as Robot Framework files ([#2158](https://github.com/rouge-ruby/rouge/pull/2158/) by Vasiliy)
+- Ruby Lexer
+  - Fix highlighting comparable method definition ([#2149](https://github.com/rouge-ruby/rouge/pull/2149/) by Hartley McGuire)
+- TOML Lexer
+  - Realign TOML lexers with the Pygments counterpart ([#2152](https://github.com/rouge-ruby/rouge/pull/2152/) by Tan Le)
+
 ## version 4.6.0: 2025-07-16
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.5.2...v4.6.0)

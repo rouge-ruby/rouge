@@ -8,6 +8,8 @@ APACHE_KEYWORDS_FILE = "./lib/rouge/lexers/apache/keywords.rb"
 
 namespace :builtins do
   task :apache do
+    STDERR.puts "SKIP: rewrite the apache fetcher as the source appears to have been removed."
+    next
     generator = Rouge::Tasks::Builtins::Apache.new
 
     input = URI.open(APACHE_DOCS_URI) { |f| f.read }

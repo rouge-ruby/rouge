@@ -8,7 +8,7 @@ module Rouge
       title 'powershell'
       desc 'powershell'
       tag 'powershell'
-      aliases 'posh', 'microsoftshell', 'msshell'
+      aliases 'posh', 'microsoftshell', 'msshell', 'pwsh'
       filenames '*.ps1', '*.psm1', '*.psd1', '*.psrc', '*.pssc'
       mimetypes 'text/x-powershell'
 

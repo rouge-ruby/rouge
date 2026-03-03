@@ -28,6 +28,11 @@ Layout/TrailingWhitespace:
   Enabled: true
   AllowInHeredoc: true
 
+Layout/IndentationStyle:
+  Enabled: true
+  IndentationWidth: 2
+  EnforcedStyle: spaces
+
 Metrics:
   Enabled: false
 

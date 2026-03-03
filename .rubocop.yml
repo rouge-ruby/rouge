@@ -43,6 +43,9 @@ Layout/EndAlignment:
 Layout/EndOfLine:
   Enabled: true
 
+Layout/TrailingEmptyLines:
+  Enabled: true
+
 Metrics:
   Enabled: false
 

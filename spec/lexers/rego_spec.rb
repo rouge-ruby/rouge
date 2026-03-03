@@ -12,4 +12,3 @@ describe Rouge::Lexers::Rego do
     end
   end
 end
-

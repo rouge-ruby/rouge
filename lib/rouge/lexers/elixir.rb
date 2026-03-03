@@ -23,6 +23,7 @@ module Rouge
       state :root do
         rule %r/\s+/m, Text
         rule %r/#.*$/, Comment::Single
+        rule %r{^(iex|\.{3})>\ }, Generic::Prompt
         rule %r{\b(case|cond|end|bc|lc|if|unless|try|loop|receive|fn|defmodule|
              defp?|defprotocol|defimpl|defrecord|defmacrop?|defdelegate|
              defexception|defguardp?|defstruct|exit|raise|throw|after|rescue|catch|else)\b(?![?!])|

@@ -129,10 +129,10 @@ module Rouge
         rule %r/([A-Z]+(?: [A-Z]+)?)(:?)/i do |m|
           match = m[1].downcase
           @next = if self.class.settings_with_keywords.include? match
-                    :keyword
-                  elsif self.class.settings_with_args.include? match
-                    :args
-                  end
+            :keyword
+          elsif self.class.settings_with_args.include? match
+            :args
+          end
           groups Name::Builtin::Pseudo, Punctuation
         end
       end

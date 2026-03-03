@@ -33,6 +33,13 @@ Layout/IndentationStyle:
   IndentationWidth: 2
   EnforcedStyle: spaces
 
+Layout/IndentationWidth:
+  Enabled: true
+
+Layout/EndAlignment:
+  Enabled: true
+  EnforcedStyleAlignWith: variable
+
 Metrics:
   Enabled: false
 

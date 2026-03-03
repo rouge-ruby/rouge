@@ -13,11 +13,11 @@ describe Rouge::Formatters::Tex do
     let(:options) { { :wrap => false } }
 
     let(:expected) do
-<<-'OUT'
-\begin{RG*}%
-\RG{n}{foo}%
-\end{RG*}%
-    OUT
+      <<~'OUT'
+      \begin{RG*}%
+      \RG{n}{foo}%
+      \end{RG*}%
+      OUT
     end
 
     it 'renders' do

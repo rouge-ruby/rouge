@@ -40,6 +40,9 @@ Layout/EndAlignment:
   Enabled: true
   EnforcedStyleAlignWith: variable
 
+Layout/EndOfLine:
+  Enabled: true
+
 Metrics:
   Enabled: false
 

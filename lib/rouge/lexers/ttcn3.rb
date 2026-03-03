@@ -62,7 +62,7 @@ module Rouge
 
         rule %r/"/, Str, :string
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
-        
+
         rule %r/#{digit}+\.#{digit}+([eE]#{digit}+)?[fd]?/i, Num::Float
         rule %r/'#{bin_digit}+'B/i, Num::Bin
         rule %r/'#{hex_digit}+'H/i, Num::Hex

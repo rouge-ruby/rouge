@@ -134,9 +134,9 @@ module Rouge
         # Note: Have to do this with a block to push multiple states first,
         #       since we can't pass array of states like w/ Pygments.
         rule(/[0-9][0-9_]*(?=([eE.]|'?[fF](32|64)))/) do
-         push :floatsuffix
-         push :floatnumber
-         token Num::Float
+          push :floatsuffix
+          push :floatnumber
+          token Num::Float
         end
 
         rule(/0[xX][a-fA-F0-9][a-fA-F0-9_]*/, Num::Hex,     :intsuffix)

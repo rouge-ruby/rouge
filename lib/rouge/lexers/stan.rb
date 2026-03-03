@@ -352,8 +352,8 @@ module Rouge
 
       state :include do
         rule %r((\s+)(\S+)(\s*)) do |m|
-          token Text, m[1]                          
-          token Comment::PreprocFile, m[2]           
+          token Text, m[1]
+          token Comment::PreprocFile, m[2]
           token Text, m[3]
           pop!
         end
@@ -377,12 +377,12 @@ module Rouge
         rule %r("), Str, :string
         rule %r(
           (
-            ((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+|\d+) 
+            ((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+|\d+)
             (#{WS})[+-](#{WS})
             ((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+|\d+)i
           )
           |((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+|\d+)i
-          |((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+) 
+          |((\d+[.]\d*|[.]?\d+)e[+-]?\d+|\d*[.]\d+)
         )mx, Num::Float
         rule %r/\d+/, Num::Integer
         rule %r(\*/), Error

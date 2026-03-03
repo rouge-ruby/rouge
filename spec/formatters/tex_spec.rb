@@ -32,7 +32,7 @@ describe Rouge::Formatters::Tex do
     #   ~100%
     # }
     #
-    # we must escape the braces, the percent sign, the tilde, 
+    # we must escape the braces, the percent sign, the tilde,
     # and the initial space on the second line.
     let(:tokens) do
       [[Token['Keyword'], 'foo'],

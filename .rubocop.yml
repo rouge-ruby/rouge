@@ -24,6 +24,10 @@ Style:
 Layout:
   Enabled: false
 
+Layout/TrailingWhitespace:
+  Enabled: true
+  AllowInHeredoc: true
+
 Metrics:
   Enabled: false
 

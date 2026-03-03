@@ -22,7 +22,7 @@ module Rouge
         OCIDURATION OCIINTERVAL OCILOBLOCATOR OCINUMBER OCIRAW OCIREF OCIREFCURSOR
         OCIROWID OCISTRING OCITYPE OF ON OPTION OR ORACLE ORADATA ORDER ORLANY ORLVARY
         OUT OVERRIDING PARALLEL_ENABLE PARAMETER PASCAL PCTFREE PIPE PIPELINED POLYMORPHIC
-        PRAGMA PRIOR PUBLIC RAISE RECORD RELIES_ON REM RENAME RESOURCE RESULT REVOKE ROWID 
+        PRAGMA PRIOR PUBLIC RAISE RECORD RELIES_ON REM RENAME RESOURCE RESULT REVOKE ROWID
         SB1 SB2 SELECT SEPARATE SET SHARE SHORT SIZE SIZE_T SPARSE SQLCODE SQLDATA
         SQLNAME SQLSTATE STANDARD START STORED STRUCT STYLE SYNONYM TABLE TDO THEN
         TRANSACTIONAL TRIGGER UB1 UB4 UNION UNIQUE UNSIGNED UNTRUSTED UPDATE VALIST
@@ -478,7 +478,7 @@ module Rouge
         # Numbers
         rule %r/[+-]?(?:(?:\.\d+(?:[eE][+-]?\d+)?)|\d+\.(?:\d+(?:[eE][+-]?\d+)?)?)[fFdD]?/, Num::Float
         rule %r/[+-]?\d+/, Num::Integer
-        
+
         # Operators
         # Special semi-operator, but this seems an appropriate classification
         rule %r/%(?:TYPE|ROWTYPE|FOUND|ISOPEN|NOTFOUND|ROWCOUNT)\b/i, Name::Attribute
@@ -516,7 +516,7 @@ module Rouge
         #
         rule %r/([a-zA-Z][\w$]*)(\.(?=\w))?/ do |m|
           if self.class.keywords_type.include? m[1].upcase
-            tok = Keyword::Type 
+            tok = Keyword::Type
           elsif self.class.keywords_func.include? m[1].upcase
             tok = Name::Function
           elsif self.class.keywords_reserved.include? m[1].upcase
@@ -561,12 +561,12 @@ module Rouge
         # this rule WILL be true if something pushed into our state. That is our state contract
         rule %r/[a-zA-Z][\w\$]*/ do |m|
           if self.class.keywords_func.include? m[0].upcase
-            # The Function lookup allows collection methods like COUNT, FIRST, LAST, etc.. to be 
+            # The Function lookup allows collection methods like COUNT, FIRST, LAST, etc.. to be
             # classified correctly. Occasionally misidentifies ordinary names as builtin functions,
             # but seems to be as correct as we can get without becoming a full blown parser
             token Name::Function
           else
-            token Name 
+            token Name
           end
           pop!
         end

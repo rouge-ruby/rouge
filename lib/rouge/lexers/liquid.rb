@@ -235,7 +235,7 @@ module Rouge
 
       state :filter do
         rule %r/[a-zA-Z_](?:\w|-(?![%}]))*/, Name::Function, :pop!
-        
+
         mixin :whitespace
       end
 

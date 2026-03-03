@@ -27,7 +27,7 @@ module Rouge
           "test setup", "test teardown", "test template", "variables"
         ]
       end
-      
+
       def self.settings_with_args
         @settings_with_args ||= Set.new [
           "arguments", "default tags", "documentation", "force tags",
@@ -93,7 +93,7 @@ module Rouge
           @col = @col + 1
           push :args
         end
-        
+
         rule %r/ ?\|/, Text::Whitespace
       end
 
@@ -139,7 +139,7 @@ module Rouge
 
       state :section_tests do
         mixin :section_include
-        
+
         rule %r/[$@&%{}]+/, Name::Label
         rule %r/( )(?![ |])/, Name::Label
 
@@ -155,15 +155,15 @@ module Rouge
 
       state :section_keywords do
         mixin :section_include
-  
+
         rule %r/[$@&%]\{/ do
           token Name::Variable
           push :var
         end
-        
+
         rule %r/[$@&%{}]+/, Name::Label
         rule %r/( )(?![ |])/, Name::Label
-        
+
         rule id, Name::Label
       end
 
@@ -185,7 +185,7 @@ module Rouge
       state :keyword do
         rule %r/(\[)([A-Z]+(?: [A-Z]+)?)(\])/i do |m|
           groups Punctuation, Name::Builtin::Pseudo, Punctuation
-          
+
           match = m[2].downcase
           @is_template = true if match == "template"
           if self.class.settings_with_keywords.include? match
@@ -229,7 +229,7 @@ module Rouge
         rule %r/[$@&%]+/, Str
         rule %r/( )(?![ |])/, Str
         rule id, Str
-        
+
         mixin :return
       end
 

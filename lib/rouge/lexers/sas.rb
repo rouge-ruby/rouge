@@ -13,13 +13,13 @@ module Rouge
         # from Data step statements - SAS 9.4 Statements reference
         # http://support.sas.com/documentation/cdl/en/lestmtsref/68024/PDF/default/lestmtsref.pdf
         @data_step_statements ||= Set.new %w(
-          ABORT ARRAY ATTRIB BY CALL CARDS CARDS4 CATNAME CHECKPOINT 
+          ABORT ARRAY ATTRIB BY CALL CARDS CARDS4 CATNAME CHECKPOINT
           EXECUTE_ALWAYS CONTINUE DATA DATALINES DATALINES4 DELETE DESCRIBE
           DISPLAY DM DO UNTIL WHILE DROP END ENDSAS ERROR EXECUTE FILE FILENAME
           FOOTNOTE FORMAT GO TO IF THEN ELSE INFILE INFORMAT INPUT
           KEEP LABEL LEAVE LENGTH LIBNAME LINK LIST LOCK LOSTCARD MERGE
           MISSING MODIFY OPTIONS OUTPUT PAGE PUT PUTLOG REDIRECT REMOVE RENAME
-          REPLACE RESETLINE RETAIN RETURN RUN SASFILE SELECT SET SKIP STOP         
+          REPLACE RESETLINE RETAIN RETURN RUN SASFILE SELECT SET SKIP STOP
           SYSECHO TITLE UPDATE WHERE WINDOW X
          )
       # label:
@@ -137,7 +137,7 @@ module Rouge
         )
       end
 
-      def self.proc_keywords 
+      def self.proc_keywords
         # Create a hash with keywords for common PROCs, keyed by PROC name
         @proc_keywords ||= {}
 
@@ -152,7 +152,7 @@ module Rouge
 	@proc_keywords["MEANS"] ||= Set.new %w(
             BY CLASS FREQ ID OUTPUT OUT TYPES VAR WAYS WEIGHT
             ATTRIB FORMAT LABEL WHERE
-            DESCENDING NOTSORTED 
+            DESCENDING NOTSORTED
             NOTHREADS NOTRAP PCTLDEF SUMSIZE THREADS CLASSDATA COMPLETETYPES
             EXCLUSIVE MISSING FW MAXDEC NONOBS NOPRINT ORDER FORMATTED
             UNFORMATTED PRINT PRINTALLTYPES PRINTIDVARS STACKODSOUTPUT
@@ -177,8 +177,8 @@ module Rouge
         # from BASE SAS 9.4 Procedures Guide, Fifth Edition
 
 	@proc_keywords["SORT"] ||= Set.new %w(
-            BY DESCENDING KEY ASCENDING ASC DESC DATECOPY FORCE OVERWRITE 
-            PRESORTED SORTSIZE TAGSORT DUPOUT OUT UNIQUEOUT NODUPKEY NOUNIQUEKEY 
+            BY DESCENDING KEY ASCENDING ASC DESC DATECOPY FORCE OVERWRITE
+            PRESORTED SORTSIZE TAGSORT DUPOUT OUT UNIQUEOUT NODUPKEY NOUNIQUEKEY
             NOTHREADS THREADS EQUALS NOEQUALS
             ATTRIB FORMAT LABEL WHERE
           )
@@ -208,7 +208,7 @@ module Rouge
 
 	@proc_keywords["FREQ"] ||= Set.new %w(
             BY EXACT OUTPUT TABLES TEST WEIGHT
-            COMPRESS DATA FORMCHAR NLEVELS NOPRINT ORDER PAGE FORMATTED FREQ 
+            COMPRESS DATA FORMCHAR NLEVELS NOPRINT ORDER PAGE FORMATTED FREQ
             INTERNAL
             AGREE BARNARD BINOMIAL BIN CHISQ COMOR EQOR ZELEN FISHER JT KAPPA
             KENTB TAUB LRCHI MCNEM MEASURES MHCHI OR ODDSRATIO PCHI PCORR RELRISK
@@ -238,7 +238,7 @@ module Rouge
             BREAK BY DESCENDING NOTSORTED COLUMN COMPUTE STYLE LINE ENDCOMP
             CALL DEFINE _ROW_ FREQ RBREAK WEIGHT
             ATTRIB FORMAT LABEL WHERE
-            DATA NOALIAS NOCENTER NOCOMPLETECOLS NOCOMPLETEROWS NOTHREADS 
+            DATA NOALIAS NOCENTER NOCOMPLETECOLS NOCOMPLETEROWS NOTHREADS
             NOWINDOWS OUT PCTLDEF THREADS WINDOWS COMPLETECOLS
             COMPLETEROWS CONTENTS SPANROWS COMMAND HELP PROMPT
             BOX BYPAGENO CENTER COLWIDTH FORMCHAR LS MISSING PANELS PS
@@ -288,7 +288,7 @@ module Rouge
             MATCHCOLOR OTHERCOLOR OTHERLABEL ARROW PLABEL PPERCENT SLICE
             VALUE
             ANGLE CLOCKWISE JSTYLE
-            NOCONNECT STARMAX STARMIN 
+            NOCONNECT STARMAX STARMIN
           )
         # from SAS GRAPH 9.4 Reference, Fourth Edition
 
@@ -431,7 +431,7 @@ module Rouge
         # The OF operator should also be highlighted (Language Reference p49)
         rule %r/\b(of)\b/i, Operator::Word
         rule %r/\b(like)\b/i, Operator::Word # Language Ref p181
-      
+
         rule %r/\d+/, Num::Integer
 
         rule %r/\$/, Keyword::Type
@@ -465,7 +465,7 @@ module Rouge
 
         rule %r/@/, Str::Symbol # line hold specifiers
         rule %r/\?/, Str::Symbol # used for format modifiers
-        
+
         rule %r/[^\s]+/, Text # Fallback for anything we haven't matched so far
       end
 
@@ -481,7 +481,7 @@ module Rouge
           else
             groups Keyword, Text, Name
           end
-        
+
           push :proc
         end
 
@@ -539,7 +539,7 @@ module Rouge
       # PROCS
       state :proc do
         rule %r/(quit|run)/i, Keyword, :pop!
-        
+
         mixin :basics
         rule %r/\w+/ do |m|
           if self.class.data_step_statements.include? m[0].upcase

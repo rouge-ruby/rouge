@@ -6,7 +6,7 @@ describe Rouge::Lexers::ConsoleLexer do
   let(:klass) { Rouge::Lexers::ConsoleLexer }
 
   include Support::Lexing
-  
+
   it 'parses a basic prompt' do
     assert_tokens_equal '$ foo',
       ['Generic.Prompt', '$'],

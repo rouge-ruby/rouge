@@ -43,7 +43,7 @@ module Rouge
       def self.keywords_type
         @keywords_type ||= Set.new %w(
           int void bool float double
-          
+
           vec2 vec3 vec4 ivec2 ivec3 ivec4 bvec2 bvec3 bvec4
           uint uvec2 uvec3 uvec4
           dvec2 dvec3 dvec4

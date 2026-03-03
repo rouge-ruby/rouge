@@ -68,7 +68,7 @@ module Rouge
 
       state :root do
         mixin :whitespace
-        
+
         rule %r/\$(([1-9]\d*)?\d)/, Name::Variable
         rule %r/\$#{id}/, Name
         rule %r/~Copyable\b/, Keyword::Type

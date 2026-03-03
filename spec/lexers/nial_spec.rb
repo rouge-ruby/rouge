@@ -115,11 +115,11 @@ describe Rouge::Lexers::Nial do
           "leaf",  "no_tr", "outer",
           "partition", "rank", "recur",
           "reduce", "reducecols", "reducerows",
-          "sort", "team", "timeit", "twig"].each do |transformer| 
+          "sort", "team", "timeit", "twig"].each do |transformer|
             assert_tokens_equal transformer, ['Name.Builtin', transformer]
         end
       end
-      
+
       it 'covers all predefined constants' do
         %w(false null pi true).each do |constant|
           assert_tokens_equal constant, ['Keyword.Constant', constant]
@@ -139,7 +139,7 @@ describe Rouge::Lexers::Nial do
         assert_tokens_equal "'foo bar 12345á!#$@?'",
         ['Literal.String.Single', "'foo bar 12345á!#$@?'"]
       end
-    
+
       it 'recognizes escape sequences' do
         assert_tokens_equal "'foo''bar'''",
         ['Literal.String.Single', "'foo"],
@@ -152,7 +152,7 @@ describe Rouge::Lexers::Nial do
       it 'recognizes character literals' do
         assert_tokens_equal "`a", ["Literal.String.Char", "`a"]
         assert_tokens_equal "``", ["Literal.String.Char", "``"]
-      end   
+      end
     end
 
     describe 'symbols' do
@@ -169,7 +169,7 @@ describe Rouge::Lexers::Nial do
       end
     end
 
-    describe 'numbers' do 
+    describe 'numbers' do
       it 'recognizes integers' do
         assert_tokens_equal '123', ["Literal.Number.Integer", '123']
         assert_tokens_equal '123 456', ["Literal.Number.Integer", '123'], ["Text", " "], ["Literal.Number.Integer", '456']

@@ -28,15 +28,15 @@ describe Rouge::Lexers::Mason do
   </%doc>
   
 EOS
-  
+
     end
-    
+
     it 'guesses by source when using component calls' do
       assert_guess :filename => 'foo.m', :source => <<-EOS
       <& 'SELF:component' &>
   
 EOS
-  
+
     end
 
   end

@@ -9,7 +9,7 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          as assert existing extends extension false for from func if import in metadata module 
+          as assert existing extends extension false for from func if import in metadata module
           none null output param provider resource targetScope test true type using var void with
         )
       end
@@ -76,7 +76,7 @@ module Rouge
         # Ignore whitespace
         rule %r/\s+/, Text
       end
-      
+
       state :comments do
         rule %r(//[^\n\r]+), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline

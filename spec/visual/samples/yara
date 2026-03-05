@@ -1,0 +1,376 @@
+/*
+    YARA Visual Sample
+    Covers a wide range of YARA syntax elements.
+*/
+
+// Import statements
+import "pe"
+import "elf"
+import "hash"
+import "math"
+import "dotnet"
+import "time"
+import "console"
+import "string"
+
+// Include statement
+include "other_rules.yar"
+include "./includes/more_rules.yar"
+
+// Simple rule with no strings
+rule AlwaysFalse
+{
+    condition:
+        false
+}
+
+// Basic rule with tags and metadata
+rule BasicExample : Tag1 Tag2 ExampleTag
+{
+    meta:
+        description = "A basic YARA rule example"
+        author = "Rouge Lexer Test"
+        date = "2024-01-15"
+        version = 1
+        is_test = true
+        score = 75
+
+    strings:
+        $text1 = "This is a test string"
+        $text2 = "Another string with escapes: \t\n\r\\\""
+        $text3 = "Hex escape: \x4D\x5A"
+
+    condition:
+        any of them
+}
+
+// String modifiers
+rule StringModifiers
+{
+    strings:
+        $wide_str = "Borland" wide
+        $ascii_str = "text" ascii
+        $wide_ascii = "mixed" wide ascii
+        $nocase_str = "foobar" nocase
+        $fullword_str = "domain" fullword
+        $xor_str = "This program cannot" xor
+        $xor_range = "encrypted" xor(0x01-0xff)
+        $base64_str = "This program cannot" base64
+        $base64wide_str = "secret" base64wide
+        $base64_custom = "data" base64("!@#$%^&*(){}[].,|ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstu")
+        $combined = "malware" wide ascii nocase fullword
+        $private_str = "hidden" private
+
+    condition:
+        any of them
+}
+
+// Hexadecimal strings with various features
+rule HexStrings
+{
+    strings:
+        // Basic hex string
+        $hex1 = { E2 34 A1 C8 23 FB }
+
+        // Wild-cards
+        $hex2 = { E2 34 ?? C8 A? FB }
+
+        // Not operator
+        $hex3 = { F4 23 ~00 62 B4 }
+        $hex4 = { F4 23 ~?0 62 B4 }
+
+        // Jumps
+        $hex5 = { F4 23 [4-6] 62 B4 }
+        $hex6 = { FE 39 45 [6] 89 00 }
+        $hex7 = { FE 39 45 [10-] 89 00 }
+        $hex8 = { FE 39 45 [-] 89 00 }
+
+        // Alternatives
+        $hex9 = { F4 23 ( 62 B4 | 56 ) 45 }
+        $hex10 = { F4 23 ( 62 B4 | 56 | 45 ?? 67 ) 45 }
+
+    condition:
+        any of ($hex*)
+}
+
+// Regular expressions
+rule RegexPatterns
+{
+    strings:
+        $re1 = /md5: [0-9a-fA-F]{32}/
+        $re2 = /state: (on|off)/
+        $re3 = /foo/i
+        $re4 = /bar./s
+        $re5 = /baz./is
+        $re6 = /https?:\/\/[^\s]+/
+        $re7 = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/
+
+    condition:
+        any of them
+}
+
+// Global rule
+global rule SizeLimit
+{
+    condition:
+        filesize < 2MB
+}
+
+// Private rule
+private rule IsExecutable
+{
+    condition:
+        uint16(0) == 0x5A4D
+}
+
+// Global private rule
+global private rule NotTooLarge
+{
+    condition:
+        filesize < 10MB
+}
+
+// Counting strings and offsets
+rule CountingAndOffsets
+{
+    strings:
+        $a = "dummy1"
+        $b = "dummy2"
+
+    condition:
+        #a == 6 and #b > 10 and
+        $a at 100 and
+        $b in (100..filesize) and
+        @a[1] < 1000 and
+        !a[1] > 5
+}
+
+// Data access functions
+rule DataAccess
+{
+    condition:
+        // MZ signature and PE signature
+        uint16(0) == 0x5A4D and
+        uint32(uint32(0x3C)) == 0x00004550 and
+        int8(0) == 0x4D and
+        int16(0) == 0x5A4D and
+        int32(0) != 0 and
+        uint8(0) == 0x4D and
+        int8be(0) == 0x4D and
+        int16be(0) == 0x4D5A and
+        int32be(0) != 0 and
+        uint8be(0) == 0x4D and
+        uint16be(0) == 0x4D5A and
+        uint32be(0) != 0
+}
+
+// Sets of strings and quantifiers
+rule StringSets
+{
+    strings:
+        $foo1 = "foo1"
+        $foo2 = "foo2"
+        $foo3 = "foo3"
+        $bar1 = "bar1"
+        $bar2 = "bar2"
+
+    condition:
+        2 of ($foo*) and
+        all of them and
+        any of ($bar*) and
+        none of ($foo*) or
+        1 of ($*)
+}
+
+// Anonymous strings
+rule AnonymousStrings
+{
+    strings:
+        $ = "dummy1"
+        $ = "dummy2"
+
+    condition:
+        1 of them
+}
+
+// For loops and iterators
+rule ForLoops
+{
+    strings:
+        $a = "dummy1"
+        $b = "dummy2"
+
+    condition:
+        for all i in (1,2,3) : ( @a[i] + 10 == @b[i] ) and
+        for all i in (1..#a) : ( @a[i] < 100 ) and
+        for any of ($a,$b) : ( $ at 0 ) and
+        for 2 i in (1..#a) : ( @a[i] < 100 )
+}
+
+// Using PE module
+rule PEModuleExample
+{
+    condition:
+        pe.entry_point == 0x1000 and
+        pe.number_of_sections > 3 and
+        pe.characteristics & pe.DLL != 0
+}
+
+// String operators in conditions
+rule StringOperators
+{
+    condition:
+        pe.sections[0].name contains ".text" and
+        pe.sections[0].name icontains ".TEXT" and
+        pe.sections[0].name startswith "." and
+        pe.sections[0].name istartswith "." and
+        pe.sections[0].name endswith "ext" and
+        pe.sections[0].name iendswith "EXT" and
+        pe.sections[0].name iequals ".TEXT" and
+        pe.sections[0].name matches /\.[a-z]+/
+}
+
+// Iterating over module data
+rule ModuleIteration
+{
+    condition:
+        for any section in pe.sections : (
+            section.name == ".text" and
+            section.characteristics & 0x20000000 != 0
+        )
+}
+
+// Using defined operator
+rule DefinedExample
+{
+    condition:
+        defined pe.entry_point and
+        pe.entry_point == 0x1000
+}
+
+// Arithmetic and bitwise operators
+rule Operators
+{
+    strings:
+        $a = "test"
+
+    condition:
+        #a > 5 + 3 and
+        #a < 100 - 50 and
+        #a != 10 * 2 and
+        filesize \ 1024 < 100 and
+        filesize % 512 == 0 and
+        uint8(0) & 0xFF == 0x4D and
+        uint8(0) | 0x00 == 0x4D and
+        uint8(0) ^ 0x00 == 0x4D and
+        ~uint8(0) != 0 and
+        uint8(0) << 8 == 0x4D00 and
+        uint16(0) >> 8 == 0x4D
+}
+
+// Rule references
+rule Rule1
+{
+    strings:
+        $a = "dummy1"
+
+    condition:
+        $a
+}
+
+rule Rule2
+{
+    strings:
+        $a = "dummy2"
+
+    condition:
+        $a and Rule1
+}
+
+rule MainRule
+{
+    condition:
+        any of (Rule*)
+}
+
+// Ranges in string sets
+rule RangesInSets
+{
+    strings:
+        $a1 = "test1"
+        $a2 = "test2"
+        $b1 = "other"
+
+    condition:
+        all of ($a*) in (filesize-500..filesize) and
+        any of ($a*, $b*) in (1000..2000) and
+        any of ($a*) at 0 and
+        #a1 in (filesize-500..filesize) == 2
+}
+
+// Hash module usage
+rule HashExample
+{
+    condition:
+        hash.md5(0, filesize) == "d41d8cd98f00b204e9800998ecf8427e" and
+        hash.sha256(0, filesize) != ""
+}
+
+// Math module usage
+rule MathExample
+{
+    condition:
+        math.entropy(0, filesize) > 7.0
+}
+
+// For loop with text strings (YARA 4.3+)
+rule ForWithStrings
+{
+    condition:
+        for any s in ("71b36345516e076a0663e0bea97759e4",
+                       "1e7f7edeb06de02f2c2a9319de99e033") : (
+            hash.md5(0, filesize) == s
+        )
+}
+
+// Time module
+rule TimeExample
+{
+    condition:
+        time.now() > 1704067200
+}
+
+// Complex real-world-like rule
+rule SuspiciousPEFile : malware suspicious
+{
+    meta:
+        description = "Detects suspicious PE files"
+        author = "Security Analyst"
+        severity = "high"
+        score = 85
+        in_the_wild = true
+
+    strings:
+        $mz = { 4D 5A }
+        $pe = { 50 45 00 00 }
+        $str1 = "CreateRemoteThread" ascii wide
+        $str2 = "VirtualAllocEx" fullword
+        $str3 = "WriteProcessMemory" nocase
+        $url = /https?:\/\/[a-z0-9\.\-]+\.[a-z]{2,}/i
+        $suspicious_hex = { 68 ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 85 C0 74 [2-6] }
+
+    condition:
+        $mz at 0 and
+        $pe in (0..1024) and
+        filesize < 5MB and
+        2 of ($str*) and
+        not $url and
+        (
+            pe.entry_point < 0x1000 or
+            pe.number_of_sections > 7 or
+            for any section in pe.sections : (
+                section.name == ".packed" or
+                math.entropy(section.raw_data_offset, section.raw_data_size) > 7.5
+            )
+        )
+}

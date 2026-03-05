@@ -1,0 +1,12 @@
+``` This is a block comment in SPL ```
+index=main sourcetype=access_combined earliest=-24h@h latest=now
+| search status>=400 NOT status=200
+| eval error_type=case(status>=500, "Server Error", status>=400, "Client Error", true(), "Other")
+| stats count AS error_count, values(uri_path) AS paths BY error_type, host
+| where error_count > 10
+| eval message=if(error_count>100, "CRITICAL", "WARNING")
+| eval hash=md5(host)
+| rename error_count AS "Total Errors"
+| sort -error_count
+| table error_type, host, "Total Errors", paths, message
+| head 20

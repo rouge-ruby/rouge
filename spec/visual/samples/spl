@@ -1,0 +1,248 @@
+```
+This is a block comment in SPL.
+It can span multiple lines.
+Use triple backticks to start and end.
+```
+
+``` Short block comment ```
+
+index=main sourcetype=syslog host=webserver01
+
+index=firewall sourcetype=cisco:asa action=blocked src_ip=10.0.0.*
+
+sourcetype=access_combined status>=400
+
+error OR fail OR critical
+
+status=200 AND method=GET
+
+source="/var/log/messages" NOT debug
+
+index=main sourcetype=access_combined earliest=-24h@h latest=now
+| search status>=400
+| stats count BY status, host
+
+index=main earliest=-7d@d latest=now
+| timechart span=1h count BY sourcetype
+
+index=main earliest=-30m latest=now
+| eval duration=round(response_time, 2)
+
+| eval severity=case(
+    status>=500, "critical",
+    status>=400, "error",
+    status>=300, "redirect",
+    status>=200, "success",
+    true(), "unknown"
+  )
+
+| eval is_local=if(cidrmatch("10.0.0.0/8", src_ip), "yes", "no")
+
+| eval combined=mvjoin(mvappend(field1, field2), ",")
+
+| eval extracted=replace(uri_path, "^/api/v\d+/", "")
+
+| eval request_time=strftime(_time, "%Y-%m-%d %H:%M:%S")
+| eval epoch=strptime("2024-01-15 08:30:00", "%Y-%m-%d %H:%M:%S")
+
+| eval checksum=md5(raw_data)
+| eval hash=sha256(username)
+
+| eval avg_val=avg(field1, field2, field3)
+| eval max_val=max(bytes_in, bytes_out)
+| eval min_val=min(response_time)
+
+| eval item_count=mvcount(values)
+| eval unique_vals=mvdedup(myfield)
+| eval filtered=mvfilter(match(mvfield, "error"))
+| eval first_three=mvindex(myfield, 0, 2)
+| eval combined=mvzip(names, scores, ":")
+
+| eval field_len=len(message)
+| eval lower_host=lower(host)
+| eval upper_method=upper(method)
+| eval trimmed=trim(raw, " \t")
+| eval part=substr(uri_path, 1, 10)
+
+| eval x=abs(-42)
+| eval area=pi() * pow(radius, 2)
+| eval log_val=log(bytes, 10)
+| eval root=sqrt(variance)
+
+| eval angle_rad=acos(0.5)
+| eval sine=sin(3.14159)
+| eval tangent=atan2(y, x)
+
+| eval is_number=isnum(field1)
+| eval not_empty=isnotnull(field2)
+| eval field_type=typeof(myfield)
+
+| eval obj=json_object("name", host, "status", status)
+| eval val=json_extract(payload, "user.name")
+| eval keys=json_keys(my_json)
+| eval is_valid=json_valid(raw_json)
+
+| eval int_val=tonumber("42")
+| eval str_val=tostring(status)
+| eval bool_val=tobool("true")
+
+| eval t=time()
+| eval search_start=now()
+| eval adjusted=relative_time(now(), "-1d@d")
+
+| eval safe_val=coalesce(field1, field2, "default")
+| eval result=nullif(field1, field2)
+| eval val=null()
+
+| eval rand_num=random()
+
+index=main sourcetype=access_combined
+| stats count AS total_requests,
+    avg(response_time) AS avg_response,
+    max(response_time) AS max_response,
+    min(response_time) AS min_response,
+    dc(clientip) AS unique_clients,
+    sum(bytes) AS total_bytes,
+    stdev(response_time) AS std_dev,
+    median(response_time) AS median_response,
+    range(response_time) AS response_range,
+    mode(status) AS common_status,
+    var(response_time) AS variance,
+    first(clientip) AS first_client,
+    last(clientip) AS last_client,
+    list(uri_path) AS all_paths,
+    values(method) AS methods,
+    earliest(_time) AS first_seen,
+    latest(_time) AS last_seen,
+    perc95(response_time) AS p95
+  BY host, sourcetype
+
+index=main
+| timechart span=1h count BY status
+| timechart per_hour(bytes) BY host
+
+index=main
+| chart count OVER status BY host
+
+index=main sourcetype=access_combined
+| eventstats avg(response_time) AS global_avg BY host
+
+index=main sourcetype=access_combined
+| streamstats window=10 avg(response_time) AS rolling_avg
+
+| rex field=_raw "user=(?<username>\w+)"
+| rex field=uri_path "^/api/(?<api_version>v\d+)/(?<endpoint>\w+)"
+| regex _raw="error|fail|exception"
+
+index=main
+| append [search index=summary sourcetype=report]
+| join type=outer host [search index=assets | fields host, location, owner]
+
+index=main
+| eval category=case(status>=500, "error", status>=200, "ok")
+| stats count BY category
+| append [
+    search index=summary report_type=baseline
+    | stats avg(count) AS baseline BY category
+  ]
+
+`my_saved_macro`
+`generate_report(host, "2024-01-01", "2024-12-31")`
+
+| search index=main `my_index_macro`
+
+index=main sourcetype=access_combined
+| fields host, source, sourcetype, _time, _raw, status
+| table host source sourcetype status
+
+| rename old_field AS new_field
+| rename "Long Field Name" AS short_name, count AS total
+
+| sort -count, +host
+| sort 0 -num(bytes)
+
+| dedup host, sourcetype
+
+| head 100
+| tail 50
+| reverse
+
+| fillnull value=0 count response_time
+| filldown hostname
+
+| where isnotnull(error_message)
+| where like(uri_path, "/api/%")
+| where status IN (200, 301, 404, 500)
+
+| convert timeformat="%Y-%m-%d" ctime(_time) AS event_date
+| convert rmunit(percent_cpu)
+
+status!=200 AND (method="POST" OR method="PUT") NOT url="*/health*"
+
+| eval rate=round(bytes/1024/1024, 2)
+| eval ratio=if(total>0, success/total*100, 0)
+| eval flag=if(count>threshold AND severity="high", 1, 0)
+
+| eval msg="Hello \"world\""
+
+sourcetype="access_*" index=web_logs
+host='prod-web-*'
+
+| eval x=10 + 20 - 5 * 3 / 2 % 4
+
+true false TRUE FALSE null NULL
+
+_time _raw host source sourcetype index
+
+| transaction host maxspan=5m maxpause=30s
+| iplocation clientip
+| geostats latfield=lat longfield=lon count BY status
+
+| predict response_time AS predicted_response future_timespan=24
+| trendline sma5(response_time) AS trend
+| anomalydetection field=response_time
+
+| makeresults count=10
+| eval random_val=random() % 100
+| outputlookup my_lookup.csv
+
+| inputlookup my_reference.csv
+| lookup geo_lookup ip AS src_ip OUTPUT city, country
+
+index=main
+| stats count BY host
+| where count > [search index=summary | stats avg(count) AS threshold | return $threshold]
+
+| map search="search index=main host=$host$ | stats count"
+
+| multikv forceheader=1
+| makemv delim="," values
+| mvexpand values
+
+| foreach * [eval <<FIELD>>=if(isnull(<<FIELD>>), 0, <<FIELD>>)]
+| eval result=printf("%s has %d errors (%.2f%%)", host, count, pct)
+| strcat source ":" sourcetype full_source
+
+| spath input=json_data path=results{}
+
+earliest=-24h@h latest=now
+earliest=-7d@d latest=@d
+earliest=-30d@d latest=now
+earliest=1704067200 latest=1706745600
+
+42 3.14159 -100 1e6 0xFF 0b1010 1.5e-3
+
+| eval x=2+3
+| eval y=10-4
+| eval z=6*7
+| eval w=100/3
+| eval r=17%5
+| eval s="hello" . " " . "world"
+status>200 count<=1000 field!=value
+flag=true OR flag=false
+data AND NOT empty
+host XOR backup
+field IN ("a", "b", "c")
+name LIKE "web%"
+| stats count BY host AS hostname OVER status
+| stats count OUTPUT totalcount OUTPUTNEW newcount

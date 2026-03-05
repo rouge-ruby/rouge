@@ -1,0 +1,22 @@
+rule SuspiciousLogin {
+  meta:
+    author = "security-team"
+    description = "Detects failed logins from unusual IPs"
+    severity = "HIGH"
+
+  events:
+    $e.metadata.event_type = "USER_LOGIN"
+    $e.security_result.action = "FAIL"
+    net.ip_in_range_cidr($e.principal.ip, "10.0.0.0/8")
+    $user = $e.target.user.userid
+
+  match:
+    $user over 5m
+
+  outcome:
+    $fail_count = count($e.metadata.id)
+    $first_ip = array_distinct($e.principal.ip)
+
+  condition:
+    $fail_count > 3
+}

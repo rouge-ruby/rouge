@@ -1,0 +1,685 @@
+// =====================================================
+// YARA-L 2.0 Visual Sample
+// Comprehensive syntax coverage for Rouge lexer testing
+// =====================================================
+
+/*
+ * Multi-line comment block
+ * This file exercises every YARA-L 2.0 syntax element
+ * across detection rules, search queries, and dashboards.
+ */
+
+// =====================================================
+// DETECTION RULE: All section types
+// =====================================================
+rule ComprehensiveSections {
+  meta:
+    author = "security-team"
+    description = "Demonstrates all rule sections"
+    severity = "HIGH"
+    priority = "P1"
+
+  events:
+    $e.metadata.event_type = "USER_LOGIN"
+    $e.security_result.action = "FAIL"
+    $e.principal.user.userid != ""
+    $user = $e.principal.user.userid
+    $host = $e.principal.hostname
+
+  match:
+    $user over 10m
+
+  outcome:
+    $login_count = count($e.metadata.id)
+    $unique_hosts = count_distinct($e.principal.hostname)
+    $max_ts = max($e.metadata.event_timestamp.seconds)
+
+  condition:
+    $login_count > 5 and $unique_hosts > 1
+
+  options:
+    allow_zero_values = true
+}
+
+// =====================================================
+// DETECTION RULE: Boolean and logical operators
+// =====================================================
+rule BooleanOperators {
+  meta:
+    author = "analyst"
+    description = "Tests all boolean/logical keywords and operators"
+
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    (
+      $e.principal.ip != "127.0.0.1"
+      and $e.target.port = 443
+    ) or (
+      $e.principal.ip != "::1"
+      and $e.target.port = 80
+    )
+    not $e.principal.hostname = "localhost"
+
+  match:
+    $e.principal.ip over 1h
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: Comparison and string-matching operators
+// =====================================================
+rule ComparisonOperators {
+  meta:
+    description = "Tests comparison and matching operators"
+
+  events:
+    $e.metadata.event_type = "USER_LOGIN"
+    $e.principal.user.userid != ""
+    $e.network.sent_bytes > 0
+    $e.network.sent_bytes >= 100
+    $e.network.received_bytes < 50000
+    $e.network.received_bytes <= 99999
+    $e.principal.hostname = "workstation-01" nocase
+    $e.target.hostname = /^prod-.*/ nocase
+    $e.security_result.description = /error|fail/
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: Temporal keywords
+// =====================================================
+rule TemporalEvents {
+  meta:
+    description = "Uses before and after temporal keywords"
+
+  events:
+    $login.metadata.event_type = "USER_LOGIN"
+    $logout.metadata.event_type = "USER_LOGOUT"
+    $login.metadata.event_timestamp.seconds <
+      $logout.metadata.event_timestamp.seconds
+    $user = $login.target.user.userid
+    $user = $logout.target.user.userid
+    $login.metadata.event_timestamp.seconds before
+      $logout.metadata.event_timestamp.seconds
+
+  match:
+    $user over 24h
+
+  condition:
+    $login and $logout
+}
+
+// =====================================================
+// DETECTION RULE: All variable types
+// =====================================================
+rule VariableTypes {
+  meta:
+    description = "Tests $event, $placeholder, %reference_list, #count"
+
+  events:
+    $e1.metadata.event_type = "USER_LOGIN"
+    $e2.metadata.event_type = "PROCESS_LAUNCH"
+    $user = $e1.principal.user.userid
+    $user = $e2.principal.user.userid
+    $e1.principal.ip in %suspicious_ips
+    $e2.target.file.sha256 in %known_malware_hashes
+    not $e1.principal.hostname in %whitelisted_hosts
+
+  match:
+    $user over 5m
+
+  condition:
+    #e1 > 0 and #e2 > 0
+}
+
+// =====================================================
+// DETECTION RULE: Aggregation functions
+// =====================================================
+rule AggregationFunctions {
+  meta:
+    description = "Tests every aggregation function"
+
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $host = $e.principal.hostname
+
+  match:
+    $host over 1h
+
+  outcome:
+    $event_count = count($e.metadata.id)
+    $distinct_ips = count_distinct($e.target.ip)
+    $total_bytes = sum($e.network.sent_bytes)
+    $avg_bytes = avg($e.network.sent_bytes)
+    $min_bytes = min($e.network.sent_bytes)
+    $max_bytes = max($e.network.sent_bytes)
+    $deviation = stddev($e.network.sent_bytes)
+    $all_ips = array_distinct($e.target.ip)
+    $ip_list = array($e.target.ip)
+
+  condition:
+    $event_count > 10
+}
+
+// =====================================================
+// DETECTION RULE: strings namespace functions
+// =====================================================
+rule StringFunctions {
+  meta:
+    description = "Tests strings.* functions"
+
+  events:
+    $e.metadata.event_type = "EMAIL_TRANSACTION"
+    $lower_from = strings.to_lower($e.network.email.from)
+    $upper_to = strings.to_upper($e.network.email.to)
+    $combined = strings.concat($e.principal.hostname, ":", $e.principal.port)
+    $domain = strings.extract_domain($e.network.email.from)
+    $hostname = strings.extract_hostname($e.principal.url)
+    strings.contains($e.network.email.subject, "urgent")
+    strings.ends_with($e.network.email.from, ".ru")
+    $trimmed = strings.trim($e.principal.hostname, " ")
+    $ltrimmed = strings.ltrim($e.principal.hostname, "www.")
+    $rtrimmed = strings.rtrim($e.principal.hostname, ".com")
+    $decoded = strings.base64_decode($e.network.http.user_agent)
+    $from_b64 = strings.from_base64("dGVzdA==")
+    $url_dec = strings.url_decode($e.target.url)
+    $reversed = strings.reverse($e.principal.hostname)
+    $coalesced = strings.coalesce($e.principal.ip, $e.src.ip, "0.0.0.0")
+    $parts = strings.split($e.principal.hostname, ".")
+    $from_hex = strings.from_hex("48656c6c6f")
+    $sub_count = strings.count_substrings($e.target.url, "/")
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: re namespace functions
+// =====================================================
+rule RegexFunctions {
+  meta:
+    description = "Tests re.* functions"
+
+  events:
+    $e.metadata.event_type = "NETWORK_HTTP"
+    re.regex($e.principal.hostname, `.*\.evil\.com$`)
+    $captured = re.capture($e.network.email.from, "@(.*)")
+    $replaced = re.replace($e.target.url, "http://", "https://")
+    $all_ips = re.capture_all($e.network.http.user_agent, `\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}`)
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: network functions
+// =====================================================
+rule NetworkFunctions {
+  meta:
+    description = "Tests net.* functions"
+
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    net.ip_in_range_cidr($e.principal.ip, "192.168.0.0/16")
+    net.ip_in_range_cidr($e.target.ip, "2001:db8::/32")
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: timestamp functions
+// =====================================================
+rule TimestampFunctions {
+  meta:
+    description = "Tests timestamp.* functions"
+
+  events:
+    $e.metadata.event_type = "USER_LOGIN"
+    $ts = $e.metadata.event_timestamp.seconds
+    $date = timestamp.get_date($ts)
+    $hour = timestamp.get_hour($ts, "America/Los_Angeles")
+    $minute = timestamp.get_minute($ts)
+    $dow = timestamp.get_day_of_week($ts)
+    $week = timestamp.get_week($ts, "UTC")
+    $formatted = timestamp.get_timestamp($ts, "%F %T", "GMT")
+    $now = timestamp.now()
+    $current = timestamp.current_seconds()
+    $unix = timestamp.as_unix_seconds("2024-01-01 00:00:00")
+    86400 < math.abs($ts - timestamp.now())
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: math functions
+// =====================================================
+rule MathFunctions {
+  meta:
+    description = "Tests math.* functions"
+
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    math.log($e.network.sent_bytes) > 20
+    $abs_val = math.abs($e.network.sent_bytes - 1000)
+    $ceil_val = math.ceil(2.5)
+    $floor_val = math.floor(2.9)
+    $sqrt_val = math.sqrt(144)
+    $pow_val = math.pow(2, 10)
+    $random = math.random()
+    $distance = math.geo_distance(-122.0, 37.4, -122.02, 37.4)
+    math.is_increasing(1, 2, 3)
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: arrays functions
+// =====================================================
+rule ArrayFunctions {
+  meta:
+    description = "Tests arrays.* functions"
+
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    arrays.length($e.principal.ip) > 1
+    $elem_str = arrays.index_to_str($e.principal.ip, 0)
+    $elem_int = arrays.index_to_int($e.principal.ip, 0)
+    $elem_float = arrays.index_to_float($e.principal.ip, 0)
+    $joined = arrays.join_string($e.principal.ip, ",")
+    $arr_max = arrays.max($e.network.sent_bytes)
+    $arr_min = arrays.min($e.network.sent_bytes)
+    $arr_size = arrays.size($e.principal.ip)
+    $merged = arrays.concat($e.principal.ip, $e.target.ip)
+    arrays.contains($e.principal.ip, "10.0.0.1")
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: hash, cast, bytes functions
+// =====================================================
+rule HashCastBytesFunctions {
+  meta:
+    description = "Tests hash.*, cast.*, bytes.* functions"
+
+  events:
+    $e.metadata.event_type = "PROCESS_LAUNCH"
+    $sha = hash.sha256($e.target.file.full_path)
+    $fp = hash.fingerprint2011($e.principal.user.userid)
+    $is_true = cast.as_bool("true")
+    $as_float = cast.as_float("3.14")
+    $as_str = cast.as_string(42)
+    $b64 = bytes.to_base64($e.target.file.md5)
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: window functions
+// =====================================================
+rule WindowFunctions {
+  meta:
+    description = "Tests window.* functions"
+
+  events:
+    $e.metadata.event_type = "FILE_COPY"
+    $user = $e.principal.user.userid
+
+  match:
+    $user over 5m
+
+  outcome:
+    $w_avg = window.avg($e.target.file.size)
+    $w_median = window.median($e.target.file.size)
+    $w_mode = window.mode($e.target.file.size)
+    $w_stddev = window.stddev($e.target.file.size)
+    $w_variance = window.variance($e.target.file.size)
+    $w_range = window.range($e.target.file.size)
+    $w_first = window.first($e.metadata.event_timestamp.seconds, $e.metadata.vendor_name)
+    $w_last = window.last($e.metadata.event_timestamp.seconds, $e.metadata.vendor_name)
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: Regex patterns and backtick strings
+// =====================================================
+rule RegexPatterns {
+  meta:
+    description = "Tests regex literals and backtick strings"
+
+  events:
+    $e.metadata.event_type = "NETWORK_HTTP"
+    $e.principal.hostname = /^prod-\d{3}$/
+    $e.target.url = /https?:\/\/.+/
+    $e.network.http.user_agent = /(?i)mozilla/
+    re.regex($e.principal.hostname, `^web-server-\d+$`)
+    re.regex($e.target.url, `.*altostrat\.com`)
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: UDM field paths at depth
+// =====================================================
+rule DeepFieldPaths {
+  meta:
+    description = "Tests deep UDM field paths"
+
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.asset.asset_id != ""
+    $e.target.application = "chrome"
+    $e.intermediary.ip != ""
+    $e.network.http.response_code = 200
+    $e.security_result.action = "ALLOW"
+    $e.security_result.severity = "HIGH"
+    $e.additional.fields["pod_name"] = "scheduler"
+    $e.metadata.ingestion_labels["source"] = "syslog"
+    $e.network.tls.certificate.not_after > 0
+    $e.target.file.sha256 != ""
+    $e.principal.process.command_line != ""
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: Multi-event composite detection
+// =====================================================
+rule MultiEventComposite {
+  meta:
+    author = "soc-analyst"
+    description = "Composite multi-event detection"
+
+  events:
+    $login.metadata.event_type = "USER_LOGIN"
+    $login.security_result.action = "ALLOW"
+    $process.metadata.event_type = "PROCESS_LAUNCH"
+    $process.target.process.command_line = /.*powershell.*/
+    $user = $login.principal.user.userid
+    $user = $process.principal.user.userid
+    $login.metadata.event_timestamp.seconds <
+      $process.metadata.event_timestamp.seconds
+
+  match:
+    $user over 15m
+
+  outcome:
+    $login_count = count($login.metadata.id)
+    $process_count = count($process.metadata.id)
+
+  condition:
+    $login and $process and $process_count >= 1
+}
+
+// =====================================================
+// DETECTION RULE: optimization.sample_rate
+// =====================================================
+rule SampledRule {
+  meta:
+    description = "Uses optimization.sample_rate"
+
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $asset_id = $e.principal.asset.asset_id
+    optimization.sample_rate($e.metadata.id, 1, 5)
+
+  match:
+    $asset_id over 1h
+
+  outcome:
+    $event_count = count_distinct($e.metadata.id)
+    $usage = sum(5.0 * $e.network.sent_bytes)
+
+  condition:
+    $e and $usage > 1000000000 and $event_count >= 100
+}
+
+// =====================================================
+// DETECTION RULE: for/any/all/of quantifiers
+// =====================================================
+rule QuantifierExample {
+  meta:
+    description = "Tests any and all quantifiers"
+
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    any $e.security_result.action = "BLOCK"
+    all $e.target.ip != "0.0.0.0"
+
+  condition:
+    $e
+}
+
+// =====================================================
+// DETECTION RULE: graph entity context
+// =====================================================
+rule EntityContext {
+  meta:
+    description = "Uses graph for entity context"
+
+  events:
+    $e.metadata.event_type = "USER_LOGIN"
+    $g.graph.entity.user.userid = $e.target.user.userid
+    $g.graph.entity.user.attribute.labels["department"] = "finance"
+
+  match:
+    $e.target.user.userid over 1h
+
+  condition:
+    $e and $g
+}
+
+// =====================================================
+// DETECTION RULE: Unbounded / non-existence condition
+// =====================================================
+rule NonExistence {
+  meta:
+    description = "Detects threat without a mitigation event"
+
+  events:
+    $threat.metadata.event_type = "PROCESS_LAUNCH"
+    $threat.security_result.severity = "CRITICAL"
+    $mitigate.metadata.event_type = "STATUS_UPDATE"
+    $user = $threat.principal.user.userid
+    $user = $mitigate.principal.user.userid
+
+  match:
+    $user over 10m
+
+  condition:
+    $threat and !$mitigate
+}
+
+// =====================================================
+// SEARCH QUERY: Statistical aggregation
+// =====================================================
+// select, group, order, limit, asc/desc
+metadata.event_type = "USER_LOGIN"
+security_result.action = "FAIL"
+$user = principal.user.userid
+$ip = principal.ip
+
+match:
+  $user, $ip
+
+outcome:
+  $fail_count = count(metadata.id)
+  $unique_hosts = count_distinct(principal.hostname)
+
+order:
+  $fail_count desc
+
+limit:
+  100
+
+// =====================================================
+// SEARCH QUERY: unselect and dedup
+// =====================================================
+metadata.event_type = "NETWORK_CONNECTION"
+target.port = 443
+
+dedup:
+  target.ip
+
+unselect:
+  metadata.collected_timestamp
+
+// =====================================================
+// SEARCH QUERY: group() function
+// =====================================================
+$ip = group(principal.ip, about.ip, target.ip)
+$ip != ""
+
+match:
+  $ip
+
+outcome:
+  $count = count_distinct(metadata.id)
+
+order:
+  $count desc
+
+// =====================================================
+// SEARCH QUERY: over every for time-based grouping
+// =====================================================
+metadata.event_type = "USER_LOGIN"
+$user = principal.user.userid
+
+match:
+  $user over every 1h
+
+outcome:
+  $hourly_logins = count(metadata.id)
+
+// =====================================================
+// SEARCH QUERY: select specific fields
+// =====================================================
+metadata.event_type = "PROCESS_LAUNCH"
+principal.hostname != ""
+
+select:
+  principal.hostname, principal.process.command_line, metadata.event_timestamp
+
+// =====================================================
+// SEARCH QUERY: tumbling window with by
+// =====================================================
+metadata.event_type = "USER_LOGIN"
+$user = principal.user.userid
+
+match:
+  $user by day
+
+outcome:
+  $daily_count = count(metadata.id)
+
+// =====================================================
+// DASHBOARD QUERY: dashboard-specific functions
+// =====================================================
+detection.detection.severity != "UNKNOWN_SEVERITY"
+$severity = detection.detection.severity
+
+match:
+  $severity by hour
+
+outcome:
+  $detection_count = count_distinct(detection.id)
+  $avg_score = avg(detection.detection.risk_score)
+  $std_dev = stddev(detection.detection.risk_score)
+  $log_count = math.log($detection_count)
+  $rounded = math.round($avg_score, 2)
+
+// =====================================================
+// DASHBOARD QUERY: match section with time window
+// =====================================================
+events:
+  metadata.event_type = "USER_LOGIN"
+
+match:
+  target.user.userid
+
+outcome:
+  $login_count = count(metadata.id)
+
+// =====================================================
+// ALL LITERAL TYPES
+// =====================================================
+// Double-quoted string
+// "hello world"
+// "escape sequences: \t \n \\ \""
+
+// Backtick string (raw, no escaping)
+// `raw\nstring`
+// `no escape here`
+
+// Integer literals
+// 0 1 42 1000000 86400
+
+// Float literals
+// 0.0 3.14 1.0123456 2.5
+
+// Boolean literals
+// true false
+
+// Duration literals
+// 5m 1h 24h 1d 10s
+
+// Regex literal
+// /^pattern$/ /[a-z]+/ /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
+
+// =====================================================
+// ALL OPERATORS
+// =====================================================
+// Comparison: = != < <= > >=
+// Boolean: and or not
+// Modifier: nocase
+// Membership: in
+// Temporal: over by before after
+
+// =====================================================
+// Enumerated types
+// =====================================================
+rule EnumTypes {
+  meta:
+    description = "Tests enumerated type comparisons"
+
+  events:
+    $e.metadata.event_type >= "USER_UNCATEGORIZED"
+    $e.metadata.event_type <= "USER_RESOURCE_DELETION"
+
+  condition:
+    $e
+}
+
+// =====================================================
+// Nested conditionals
+// =====================================================
+rule NestedConditions {
+  meta:
+    description = "Tests if/else in outcomes"
+
+  events:
+    $e.metadata.event_type = "USER_LOGIN"
+    $user = $e.target.user.userid
+
+  match:
+    $user over 1h
+
+  outcome:
+    $risk = if($user = "admin", "HIGH", if(count($e.metadata.id) > 10, "MEDIUM", "LOW"))
+
+  condition:
+    $e
+}

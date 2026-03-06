@@ -1,4 +1,5 @@
 // Vehicle Architecture in SysML v2
+@SysML
 package 'Vehicle Model' {
     import ScalarValues::*;
     import SequenceFunctions::*;
@@ -6,7 +7,7 @@ package 'Vehicle Model' {
     doc
     /*
      * This is a multi-line comment.
-     * It describes the vehicle model.
+     * /* It can be nested! */
      */
 
     part def Vehicle {
@@ -18,6 +19,7 @@ package 'Vehicle Model' {
         
         part engine: Engine[1];
         part wheels: Wheel[4];
+        part spareWheels: Wheel[0..*];
 
         connection power_connection connect engine.out to wheels.in;
     }
@@ -27,6 +29,12 @@ package 'Vehicle Model' {
         perform action generatePower {
             in fuel: Real;
             out power: Real;
+            
+            if (fuel > 0.0 and not self.isBroken) {
+                power = fuel * 0.8;
+            } else {
+                power = 0.0;
+            }
         }
     }
 
@@ -38,5 +46,9 @@ package 'Vehicle Model' {
         doc /* The vehicle shall be capable of a top speed of 120 mph. */
         attribute expectedSpeed = 120.0;
         subject vehicle: Vehicle;
+        
+        require constraint {
+            vehicle.mass > 0 implies expectedSpeed > 0
+        }
     }
 }

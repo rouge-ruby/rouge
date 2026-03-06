@@ -48,22 +48,38 @@ module Rouge
         redefines subsets to
       ).join('|')
 
+      CONTROL_FLOW = %w(
+        if else then while loop do
+      ).join('|')
+
+      LOGICAL_OPERATORS = %w(
+        and or not xor implies
+      ).join('|')
+
+      BUILTIN_PSEUDO = %w(
+        this self super
+      ).join('|')
+
       TYPES = %w(
-        Boolean Integer Real String
+        Anything Boolean Complex Integer Natural None Number Real String
       ).join('|')
 
       state :root do
         rule %r/\s+/m, Text::Whitespace
         rule %r(//.*?$), Comment::Single
-        rule %r(/\*.*?\*/)m, Comment::Multiline
+        rule %r(/\*), Comment::Multiline, :comment
+
+        rule %r/@[a-zA-Z_]\w*/, Name::Decorator
 
         rule %r/"/, Str::Double, :string
         rule %r/'(?:\\'|[^'])*'/, Name::Label # quoted identifiers
 
         rule %r/\b(?:#{DECLARATIONS})\b/, Keyword::Declaration
         rule %r/\b(?:#{MODIFIERS})\b/, Keyword::Pseudo
-        rule %r/\b(?:#{RELATIONS})\b/, Keyword
+        rule %r/\b(?:#{RELATIONS}|#{CONTROL_FLOW})\b/, Keyword
+        rule %r/\b(?:#{LOGICAL_OPERATORS})\b/, Operator::Word
         rule %r/\b(?:#{TYPES})\b/, Keyword::Type
+        rule %r/\b(?:#{BUILTIN_PSEUDO})\b/, Name::Builtin::Pseudo
 
         rule %r/\b(?:true|false|null)\b/, Keyword::Constant
 
@@ -73,9 +89,17 @@ module Rouge
 
         rule %r/[a-zA-Z_]\w*/, Name
 
+        rule %r/\.\./, Operator # Multiplicity bounds
         rule %r/[()\[\]{};:,.]/, Punctuation
         rule %r/::/, Punctuation
         rule %r/[-+\/*=<>!]+/, Operator
+      end
+
+      state :comment do
+        rule %r([^/*]+), Comment::Multiline
+        rule %r(/\*), Comment::Multiline, :push
+        rule %r(\*/), Comment::Multiline, :pop!
+        rule %r([/*]), Comment::Multiline
       end
 
       state :string do

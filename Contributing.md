@@ -2,9 +2,7 @@
 
 [plugin-example]: https://github.com/rouge-ruby/rouge-plugin-example "Rouge Plugin Example Repository"
 
-1. **Absolutely no LLM code**. Rouge is very difficult to maintain as it is, and if you are not interested in learning enough about the system to maintain your contribution, I am not interested in merging it into Rouge core. Rouge lexers are not particularly difficult to understand with a little bit of time investment, and I am more than willing to answer questions in the Discussion or Issues sections here.
-
-On the other hand, you are free to use whatever tooling you like to [write your own plugin][plugin-example].
+1. **Absolutely no LLM code**. Rouge is very difficult to maintain as it is, and if you are not interested in learning enough about the system to maintain your contribution, I am not interested in merging it into Rouge core. Rouge lexers are not particularly difficult to understand with a little bit of time investment, and I am more than willing to answer questions in the Discussion or Issues sections here. On the other hand, you are free to use whatever tooling you like to [write your own plugin][plugin-example].
 
 2. If you are contributing a lexer with large (>100) lists of keywords or builtins, **please ensure that these are generated from publicly available documentation, and lazy-load them with a `lazy { ... }` block.** Large lists of builtins are a massive maintenance overhead, and also use a lot of memory. Please also do not create massive regular expressions, for example large lists of keywords joined with `|`. If there really is no alternative, please let us know.
 

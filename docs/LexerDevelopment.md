@@ -17,9 +17,16 @@ support.
 The remainder of this document explains how to develop a lexer for Rouge.
 
 > Please don't submit lexers that are largely copy-pasted from other files.
-> These submissions will be rejected.
+> These submissions will be rejected. For similar reasons, please do not
+> submit lexers generated in whole or in part by LLMs.
 
 ## Getting Started
+
+[contributing-guidelines]: https://github.com/rouge-ruby/rouge/blob/main/Contributing.md "Contributing Guidelines"
+
+### First, read the [contributing guidelines][contributing-guidelines] thoroughly.
+
+This will help ensure that your lexer can be merged without too much trouble.
 
 ### Development Environment
 

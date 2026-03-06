@@ -19,6 +19,8 @@ gem 'memory_profiler', require: false
 group :development do
   gem 'pry'
 
+  gem 'nokogiri', '~> 1.19'
+
   # Needed for a Rake task
   gem 'git'
   gem 'yard'

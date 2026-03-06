@@ -51,4 +51,12 @@ package 'Vehicle Model' {
             vehicle.mass > 0 implies expectedSpeed > 0
         }
     }
+
+    verify requirement def 'My Verification' specializes 'Top Speed Requirement' {
+        doc /* This traces to the system snapshot occurrence. */
+        subject s: Vehicle[1..*];
+        require constraint {
+            s.mass > 0 implies this.passed
+        }
+    }
 }

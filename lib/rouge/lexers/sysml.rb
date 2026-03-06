@@ -16,54 +16,68 @@ module Rouge
       end
 
       # SysML V2 Keywords
-      DECLARATIONS = %w(
-        action actor alias allocate analysis
-        architecture as assert attribute
-        binding calc case concern connection
-        constraint decide def dependency
-        doc entry enum enumeration epilogue
-        event exhibit exit feature first
-        flow for fork frame group
-        import include individual
-        interface item join language library
-        merge message metadata model namespace
-        objective occurrence package part
-        perform portion port prologue
-        rationale ref requirement
-        return satisfy send snapshot
-        state step struct
-        subject succession timeslice transition
-        usecase variant view
-        viewpoint
-      ).join('|')
+      def self.declarations
+        @declarations ||= Set.new %w(
+          action actor alias allocate analysis
+          architecture as assert attribute
+          binding calc case concern connection
+          constraint decide def dependency
+          doc entry enum enumeration epilogue
+          event exhibit exit feature first
+          flow for fork frame group
+          import include individual
+          interface item join language library
+          merge message metadata model namespace
+          objective occurrence package part
+          perform portion port prologue
+          rationale ref requirement
+          return satisfy send snapshot
+          state step struct
+          subject succession timeslice transition
+          usecase variant view
+          viewpoint
+        )
+      end
 
-      MODIFIERS = %w(
-        abstract derived private protected
-        public readonly
-      ).join('|')
+      def self.modifiers
+        @modifiers ||= Set.new %w(
+          abstract derived private protected
+          public readonly
+        )
+      end
 
-      RELATIONS = %w(
-        bind bound connect derive
-        from in inout out
-        redefines refine specializes subsets to trace
-        validate verify
-      ).join('|')
+      def self.relations
+        @relations ||= Set.new %w(
+          bind bound connect derive
+          from in inout out
+          redefines refine specializes subsets to trace
+          validate verify
+        )
+      end
 
-      CONTROL_FLOW = %w(
-        if else then while loop do
-      ).join('|')
+      def self.control_flow
+        @control_flow ||= Set.new %w(
+          if else then while loop do
+        )
+      end
 
-      LOGICAL_OPERATORS = %w(
-        and or not xor implies
-      ).join('|')
+      def self.logical_operators
+        @logical_operators ||= Set.new %w(
+          and or not xor implies
+        )
+      end
 
-      BUILTIN_PSEUDO = %w(
-        this self super
-      ).join('|')
+      def self.builtin_pseudo
+        @builtin_pseudo ||= Set.new %w(
+          this self super
+        )
+      end
 
-      TYPES = %w(
-        Anything Boolean Complex Integer Natural None Number Real String
-      ).join('|')
+      def self.types
+        @types ||= Set.new %w(
+          Anything Boolean Complex Integer Natural None Number Real String
+        )
+      end
 
       state :root do
         rule %r/\s+/m, Text::Whitespace
@@ -75,20 +89,31 @@ module Rouge
         rule %r/"/, Str::Double, :string
         rule %r/'(?:\\'|[^'])*'/, Name::Label # quoted identifiers
 
-        rule %r/\b(?:#{DECLARATIONS})\b/, Keyword::Declaration
-        rule %r/\b(?:#{MODIFIERS})\b/, Keyword::Pseudo
-        rule %r/\b(?:#{RELATIONS}|#{CONTROL_FLOW})\b/, Keyword
-        rule %r/\b(?:#{LOGICAL_OPERATORS})\b/, Operator::Word
-        rule %r/\b(?:#{TYPES})\b/, Keyword::Type
-        rule %r/\b(?:#{BUILTIN_PSEUDO})\b/, Name::Builtin::Pseudo
-
         rule %r/\b(?:true|false|null)\b/, Keyword::Constant
+
+        rule %r/[a-zA-Z_]\w*/ do |m|
+          name = m[0]
+
+          if self.class.declarations.include?(name)
+            token Keyword::Declaration
+          elsif self.class.modifiers.include?(name)
+            token Keyword::Pseudo
+          elsif self.class.relations.include?(name) || self.class.control_flow.include?(name)
+            token Keyword
+          elsif self.class.logical_operators.include?(name)
+            token Operator::Word
+          elsif self.class.types.include?(name)
+            token Keyword::Type
+          elsif self.class.builtin_pseudo.include?(name)
+            token Name::Builtin::Pseudo
+          else
+            token Name
+          end
+        end
 
         # Numbers
         rule %r/(?:0|[1-9]\d*)\.\d+(?:[eE][+-]?\d+)?/, Num::Float
         rule %r/(?:0|[1-9]\d*)(?:[eE][+-]?\d+)?/, Num::Integer
-
-        rule %r/[a-zA-Z_]\w*/, Name
 
         rule %r/\.\./, Operator # Multiplicity bounds
         rule %r/[()\[\]{};:,.]/, Punctuation

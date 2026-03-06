@@ -1,0 +1,42 @@
+// Vehicle Architecture in SysML v2
+package 'Vehicle Model' {
+    import ScalarValues::*;
+    import SequenceFunctions::*;
+
+    doc
+    /*
+     * This is a multi-line comment.
+     * It describes the vehicle model.
+     */
+
+    part def Vehicle {
+        attribute mass: Real;
+        attribute isElectric: Boolean = true;
+
+        port powerIn;
+        port powerOut;
+        
+        part engine: Engine[1];
+        part wheels: Wheel[4];
+
+        connection power_connection connect engine.out to wheels.in;
+    }
+
+    part def Engine {
+        out port 'out';
+        perform action generatePower {
+            in fuel: Real;
+            out power: Real;
+        }
+    }
+
+    part def Wheel {
+        in port 'in';
+    }
+
+    requirement def 'Top Speed Requirement' {
+        doc /* The vehicle shall be capable of a top speed of 120 mph. */
+        attribute expectedSpeed = 120.0;
+        subject vehicle: Vehicle;
+    }
+}

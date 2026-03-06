@@ -10,6 +10,8 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
 - General
   - Bump actions/checkout to v5 ([#2166](https://github.com/rouge-ruby/rouge/pull/2166/) by Tan Le)
+- SysML Lexer (**NEW**)
+  - Created lexer for Systems Modeling Language v2 (SysML v2)
 - COBOL Lexer
   - feat: add support for highlight .cpy and .cpb files as COBOL ([#2186](https://github.com/rouge-ruby/rouge/pull/2186/) by simon)
 - Gjs and Gts Lexer (**NEW**)

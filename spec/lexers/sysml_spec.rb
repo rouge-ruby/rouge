@@ -15,9 +15,5 @@ describe Rouge::Lexers::SysML do
       assert_guess :mimetype => 'text/x-sysml'
       assert_guess :mimetype => 'application/x-sysml'
     end
-
-    it 'guesses by source' do
-      assert_guess :source => 'package "My Package" { part def MyPart; requirement MyReq; }'
-    end
   end
 end

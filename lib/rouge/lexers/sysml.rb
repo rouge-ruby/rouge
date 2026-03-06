@@ -10,11 +10,6 @@ module Rouge
       filenames '*.sysml', '*.kerml'
       mimetypes 'text/x-sysml', 'application/x-sysml'
 
-      def self.detect?(text)
-        return true if text.scan(%r/\b(?:package|part def|requirement|connection|doc|import)\b/).size > 2
-        false
-      end
-
       # SysML V2 Keywords
       def self.declarations
         @declarations ||= Set.new %w(

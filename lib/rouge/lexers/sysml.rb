@@ -21,18 +21,18 @@ module Rouge
         architecture as assert attribute
         binding calc case concern connection
         constraint decide def dependency
-        doc enum enumeration epilogue
-        event exhibit feature flow
-        for frame group
+        doc entry enum enumeration epilogue
+        event exhibit exit feature first
+        flow for fork frame group
         import include individual
-        interface item language library
-        metadata model namespace
-        objective package part
-        perform port prologue
+        interface item join language library
+        merge message metadata model namespace
+        objective occurrence package part
+        perform portion port prologue
         rationale ref requirement
-        return satisfy send
+        return satisfy send snapshot
         state step struct
-        subject succession transition
+        subject succession timeslice transition
         usecase variant view
         viewpoint
       ).join('|')
@@ -43,9 +43,10 @@ module Rouge
       ).join('|')
 
       RELATIONS = %w(
-        bind bound connect
+        bind bound connect derive
         from in inout out
-        redefines subsets to
+        redefines refine specializes subsets to trace
+        validate verify
       ).join('|')
 
       CONTROL_FLOW = %w(

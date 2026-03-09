@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class Dylan < RegexLexer
       title 'Dylan'
-      desc 'Dylan Language'
+      desc 'Dylan Language (https://opendylan.org)'
       tag 'dylan'
       filenames '*.dylan'
 

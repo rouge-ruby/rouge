@@ -24,7 +24,7 @@ module Rouge
       operators = Set.new %w(+ - * / ^ = == ~ ~= ~== < <= > >= & | :=)
 
       state :root do
-        rule %r/^[\w-]+:/, Comment::Preproc, :header
+        rule %r/^[\w.-]+:/, Comment::Preproc, :header
         rule %r/\s+/, Text::Whitespace
         rule(%r//) { goto :main }
       end
@@ -71,7 +71,6 @@ module Rouge
         rule %r/#x[0-9a-f]+/i, Literal::Number::Hex
 
         # Names
-        rule %r/[-\w\d\.]+:/, Name::Tag
         rule %r/[-]/, Operator
 
         # Operators and punctuation

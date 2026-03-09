@@ -71,7 +71,7 @@ module Rouge
         rule %r/#x[0-9a-f]+/i, Literal::Number::Hex
 
         # Names
-        rule %r/[-]/, Operator
+        rule %r/[+-]/, Operator
 
         # Operators and punctuation
         rule %r/::|=>|#[(\[#]|[.][.][.]|[(),.;\[\]{}=?]/, Punctuation

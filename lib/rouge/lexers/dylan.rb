@@ -8,61 +8,100 @@ module Rouge
       desc 'Dylan Language'
       tag 'dylan'
       filenames '*.dylan'
+
       # Definitions from the Dylan Reference Manual
-      core_word=%w(define end handler let local macro otherwise)
-      begin_word=%w(begin block case for if method)
-      function_word=[]
-      define_body_word=%w(class library method module)
-      define_list_word=%w(constant variable domain)
-      reserved_word=core_word+begin_word+function_word+define_body_word+define_list_word
-      punctuation=%w'( ) , . ; [ ] { } :: - = == => #( #[ ## ? ?? ?= ... '
-      hash_word=%w(#t #f #next #rest #key #all-keys #include)
-      graphic_character=%w(! & * < > | ^ $ % @ _)
-      special_character=%w(- + ~ ? / =)
-      binary_operator=%w(+ - * / ^ = == ~= ~== < <= > >= & | :=)
-      unary_operator=%w(- ~)
-      binary_integer=%r(#b[01]+)
-      octal_integer=%r(#o[0-7]+)
-      decimal_integer=%r([+-]?[0-9]+)
-      hex_integer=%r(#x[0-9a-f]+)i
-      ratio=%r([+-]?[0-9]+/[0-9]+)
-      floating_point=%r([+-]?([0-9]*\.[0-9]+(E[+-]?[0-9]+)?|[0-9]+\.[0-9]*(E[+-]?[0-9]+)?|[0-9]+E[+-]?[0-9]+))i
-      word_character=/[a-z0-9#{Regexp.escape((graphic_character+special_character).join(''))}]/i
-      initial_word_character=/[\\a-z0-9#{Regexp.escape(graphic_character.join(''))}]/i
-      word=%r(#{initial_word_character}#{word_character}*)i
-      punc = Regexp.new(punctuation.map {|s| Regexp.escape(s)}.join("|"))
-      oper = Regexp.new((binary_operator+unary_operator).map {|s| Regexp.escape(s)}.join("|"))
-      # Words in < > brackets are class names but only by convention
-      def angle?(matched)
-        /^<.+>$/ =~ matched[0]
-      end
+      # see:
+      # https://opendylan.org/books/drm/Modules
+      # https://opendylan.org/books/drm/Conditional_Execution
+      # https://opendylan.org/books/drm/Statement_Macros
+      reserved_words = Set.new %w(
+        begin block case class constant create define domain else
+        end exception for function generic handler if let library local
+        macro method module otherwise select unless until variable while
+      )
+
+      hash_word = Set.new %w(#t #f #next #rest #key #all-keys #include)
+      operators = Set.new %w(+ - * / ^ = == ~ ~= ~== < <= > >= & | :=)
+
       state :root do
+        rule %r/^[\w-]+:/, Comment::Preproc, :header
+        rule %r/\s+/, Text::Whitespace
+        rule(%r//) { goto :main }
+      end
+
+      # see https://opendylan.org/books/drm/Dylan_Interchange_Format
+      state :header do
+        rule(/.*?$/) { token Comment; goto :header_value }
+      end
+
+      state :header_value do
+        # line continuations are defined as any line that starts with whitespace
+        rule %r/^[ \t]+.*?$/, Comment
+        rule %r/\n+/, Comment
+        rule(//) { pop! }
+      end
+
+      state :main do
         # Comments
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
+        rule %r/\s+/, Text::Whitespace
+
         # Keywords
-        rule %r/(#{reserved_word.join('|')})\b/, Keyword
-        rule %r/(#{hash_word.join('|')})\b/, Keyword::Constant
-        # Numbers
-        rule ratio, Literal::Number::Other
-        rule floating_point, Literal::Number::Float
-        rule binary_integer, Literal::Number::Bin
-        rule octal_integer, Literal::Number::Oct
-        rule decimal_integer, Literal::Number::Integer
-        rule hex_integer, Literal::Number::Hex
-        # Names
-        rule  %r/[-\w\d\.]+:/, Name::Tag
-        rule word do |w|
-          token angle?(w) ? Name::Class : Name
+        rule %r/\w+/ do |m|
+          if reserved_words.include?(m[0])
+            token Keyword
+          elsif hash_word.include?(m[0])
+            token Keyword::Constant
+          else
+            fallthrough!
+          end
         end
+
+        rule %r/#(t|f|next|rest|key|all-keys|include)\b/, Keyword::Constant
+
+        # Numbers
+        rule %r([+-]?\d+/\d+), Literal::Number::Other
+        rule %r/[+-]?\d*[.]\d+(?:e[+-]?\d+)?/i, Literal::Number::Float
+        rule %r/[+-]?\d+[.]\d*(?:e[+-]?\d+)?/i, Literal::Number::Float
+        rule %r/[+-]\d+(?:e[+-]?\d+)?/i, Literal::Number::Float
+        rule %r/#b[01]+/, Literal::Number::Bin
+        rule %r/#o[0-7]+/, Literal::Number::Oct
+        rule %r/[+-]?[0-9]+/, Literal::Number::Integer
+        rule %r/#x[0-9a-f]+/i, Literal::Number::Hex
+
+        # Names
+        rule %r/[-\w\d\.]+:/, Name::Tag
+        rule %r/[-]/, Operator
+
         # Operators and punctuation
-        rule punc, Operator
-        rule oper, Operator
+        rule %r/::|=>|#[(\[#]|[.][.][.]|[(),.;\[\]{}=?]/, Punctuation
+
+        rule %r([\w!&*<>|^\$%@][\w!&*<>|^\$%@=/?~+-]*) do |m|
+          word = m[0]
+          if operators.include?(m[0])
+            token Operator
+          elsif word.start_with?('<') && word.end_with?('>')
+            token Name::Class
+          elsif word.start_with?('*') && word.end_with?('*')
+            token Name::Variable::Instance
+          elsif word.start_with?('$')
+            token Name::Constant
+          else
+            token Name
+          end
+        end
+
         rule %r/:/, Operator # For 'constrained names'
         # Strings, characters and whitespace
-        rule %r/"(\\\\|\\"|[^"])*"/, Str
+        rule %r/"/, Str::Double, :dq
         rule %r/'([^\\']|(\\[\\'abefnrt0])|(\\[0-9a-f]+))'/, Str::Char
-        rule %r/\s+/, Text::Whitespace
+      end
+
+      state :dq do
+        rule %r/\\[\\'"abefnrt0]/, Str::Escape
+        rule %r/[^\\"]+/, Str::Double
+        rule %r/"/, Str::Double, :pop!
       end
     end
   end

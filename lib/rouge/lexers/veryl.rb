@@ -28,7 +28,7 @@ module Rouge
       BASED       = /(?:[0-9]+(?:_[0-9]+)*)?'s?[bodh][0-9a-fA-FxzXZ]+(?:_[0-9a-fA-FxzXZ]+)*/
       ALL_BIT     = /(?:[0-9]+(?:_[0-9]+)*)?'[01xzXZ]/
       BASE_LESS   = /[0-9]+(?:_[0-9]+)*/
- 
+
       # Operators and delimiters
 
       OPERATOR  = / -:     | ->     | \+:    | \+=    | -=

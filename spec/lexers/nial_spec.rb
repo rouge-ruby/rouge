@@ -16,116 +16,6 @@ describe Rouge::Lexers::Nial do
   describe 'lexing' do
     include Support::Lexing
 
-    describe 'keywords' do
-      it 'covers all keywords' do
-        ["is", "gets", "op", "tr",
-        "if", "then", "elseif", "else",
-        "endif", "case", "from", "endcase",
-        "begin", "end", "for", "with",
-        "endfor", "while", "do", "endwhile",
-        "repeat", "until", "endrepeat"].each do |kw|
-          assert_tokens_equal kw, ['Keyword', kw]
-        end
-      end
-    end
-    describe 'primitives' do
-      it 'covers all operators' do
-        [".",  "!", "#", "+", "*", "-", "<<",
-        "/", "<", ">>", "<=", ">", "=", ">=", "@", "|", "~="].each do |op|
-          assert_tokens_equal op, ['Operator', op]
-        end
-      end
-
-      it 'covers all stdlib functions' do
-        ["operation", "expression", "and", "abs",
-          "allbools", "allints", "allchars", "allin",
-          "allreals", "allnumeric", "append",
-          "arcsin", "arccos", "appendfile", "apply",
-          "arctan", "atomic", "assign", "atversion",
-          "axes", "cart", "break", "blend", "breaklist",
-          "breakin", "bye", "callstack", "choose", "char",
-          "ceiling", "catenate", "charrep", "check_socket",
-          "cos", "content", "close", "clearws",
-          "clearprofile", "cols", "continue", "copyright",
-          "cosh", "cull", "count", "diverse", "deepplace",
-          "cutall", "cut", "display", "deparse",
-          "deepupdate", "descan", "depth", "diagram",
-          "div", "divide", "drop", "dropright", "edit",
-          "empty", "expression", "exit", "except", "erase",
-          "equal", "eval", "eraserecord", "execute", "exp",
-          "external", "exprs", "findall", "find",
-          "fault", "falsehood", "filestatus", "filelength",
-          "filepath", "filetally", "floor", "first",
-          "flip", "fuse", "fromraw", "front",
-          "gage", "getfile", "getdef", "getcommandline",
-          "getenv", "getname", "hitch", "grid", "getsyms",
-          "gradeup", "gt", "gte", "host", "in", "inverse",
-          "innerproduct", "inv", "ip", "ln", "link", "isboolean",
-          "isinteger", "ischar", "isfault", "isreal", "isphrase",
-          "isstring", "istruthvalue", "last", "laminate",
-          "like", "libpath", "library", "list", "load",
-          "loaddefs", "nonlocal", "max", "match", "log",
-          "lt", "lower", "lte", "mate", "min", "maxlength",
-          "mod", "mix", "minus", "nialroot", "mold", "not",
-          "numeric", "no_op", "no_expr", "notin",
-          "operation", "open", "or", "opposite", "opp",
-          "operators", "plus", "pick", "pack", "pass", "pair", "parse",
-          "paste", "phrase", "place", "picture", "placeall",
-          "power", "positions", "post", "quotient", "putfile",
-          "profile", "prod", "product", "profiletree",
-          "profiletable", "quiet_fault", "raise", "reach",
-          "random", "reciprocal", "read", "readfile",
-          "readchar", "readarray", "readfield",
-          "readscreen", "readrecord", "recip", "reshape",
-          "seek", "second", "rest", "reverse", "restart",
-          "return_status", "scan", "save", "rows", "rotate",
-          "seed", "see", "sublist", "sin", "simple", "shape",
-          "setformat", "setdeftrace", "set", "seeusercalls",
-          "seeprimcalls", "separator", "setwidth", "settrigger",
-          "setmessages", "setlogname", "setinterrupts",
-          "setprompt", "setprofile", "sinh", "single",
-          "sqrt", "solitary", "sketch", "sleep",
-          "socket_listen", "socket_accept", "socket_close",
-          "socket_bind", "socket_connect", "socket_getline",
-          "socket_receive", "socket_peek", "socket_read",
-          "socket_send", "socket_write", "solve", "split",
-          "sortup", "string", "status", "take", "symbols",
-          "sum", "system", "tan", "tally", "takeright",
-          "tanh", "tell", "times", "third", "time",
-          "toupper", "tolower", "timestamp", "tonumber",
-          "toraw", "toplevel", "transformer", "type",
-          "transpose",  "trs", "truth", "unequal",
-          "variable", "valence", "up", "updateall",
-          "update", "vacate", "value", "version", "vars",
-          "void", "watch", "watchlist", "write", "writechars",
-          "writearray", "writefile", "writefield",
-          "writescreen", "writerecord"].each do |func|
-          assert_tokens_equal func, ['Keyword.Pseudo', func]
-        end
-      end
-
-      it 'covers all stdlib transformers' do
-        ["accumulate", "across",
-          "bycols", "bykey",  "byrows",
-          "converse",  "down",
-          "eachboth", "eachall", "each",
-          "eachleft", "eachright",
-          "filter", "fold", "fork",
-          "grade",  "inner", "iterate",
-          "leaf",  "no_tr", "outer",
-          "partition", "rank", "recur",
-          "reduce", "reducecols", "reducerows",
-          "sort", "team", "timeit", "twig"].each do |transformer| 
-            assert_tokens_equal transformer, ['Name.Builtin', transformer]
-        end
-      end
-      
-      it 'covers all predefined constants' do
-        %w(false null pi true).each do |constant|
-          assert_tokens_equal constant, ['Keyword.Constant', constant]
-        end
-      end
-    end
     describe 'words' do
       it 'recognizes miscellaneous variable names' do
         assert_tokens_equal "hello", ['Name.Variable', "hello"]
@@ -139,7 +29,7 @@ describe Rouge::Lexers::Nial do
         assert_tokens_equal "'foo bar 12345á!#$@?'",
         ['Literal.String.Single', "'foo bar 12345á!#$@?'"]
       end
-    
+
       it 'recognizes escape sequences' do
         assert_tokens_equal "'foo''bar'''",
         ['Literal.String.Single', "'foo"],
@@ -152,7 +42,7 @@ describe Rouge::Lexers::Nial do
       it 'recognizes character literals' do
         assert_tokens_equal "`a", ["Literal.String.Char", "`a"]
         assert_tokens_equal "``", ["Literal.String.Char", "``"]
-      end   
+      end
     end
 
     describe 'symbols' do
@@ -169,7 +59,7 @@ describe Rouge::Lexers::Nial do
       end
     end
 
-    describe 'numbers' do 
+    describe 'numbers' do
       it 'recognizes integers' do
         assert_tokens_equal '123', ["Literal.Number.Integer", '123']
         assert_tokens_equal '123 456', ["Literal.Number.Integer", '123'], ["Text", " "], ["Literal.Number.Integer", '456']

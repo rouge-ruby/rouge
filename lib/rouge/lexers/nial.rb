@@ -8,7 +8,7 @@ module Rouge
       desc 'The Nial programming language (nial-array-language.org)'
       tag 'nial'
       filenames '*.ndf', '*.nlg'
-      
+
       def self.keywords
         @keywords ||= Set.new ["is", "gets", "op", "tr", ";",
                      "if", "then", "elseif", "else",
@@ -40,7 +40,7 @@ module Rouge
         "reduce", "reducecols", "reducerows",
         "sort", "team", "timeit", "twig"]
       end
-      
+
       def self.funcs
         @funcs ||= Set.new ["operation", "expression", "and", "abs",
                   "allbools", "allints", "allchars", "allin",
@@ -58,7 +58,7 @@ module Rouge
                   "div", "divide", "drop", "dropright", "edit",
                   "empty", "exit", "except", "erase",
                   "equal", "eval", "eraserecord", "execute", "exp",
-                  "external", "exprs", "findall", "find", 
+                  "external", "exprs", "findall", "find",
                   "fault", "falsehood", "filestatus", "filelength",
                   "filepath", "filetally", "floor", "first",
                   "flip", "fuse", "fromraw", "front",
@@ -136,7 +136,7 @@ module Rouge
             token Text
           end
         end
-        
+
         rule %r/\b[_A-Za-z]\w*\b/ do |m|
           lower = m[0].downcase
           if self.class.keywords.include?(lower)
@@ -154,7 +154,7 @@ module Rouge
 
         rule %r/\s+/, Text
       end
-      
+
       state :str do
         rule %r/''/, Str::Escape
         rule %r/[^']+/, Str::Single

@@ -15,7 +15,7 @@ describe Rouge::Lexers::Dart do
       assert_guess :mimetype => 'text/x-dart'
     end
   end
-  
+
   describe 'lexer' do
     include Support::Lexing
 

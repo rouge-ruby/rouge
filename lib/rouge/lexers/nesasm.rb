@@ -21,7 +21,7 @@ module Rouge
 
       def self.keywords_type
         @keywords_type ||= %w(
-          DB DW BYTE WORD 
+          DB DW BYTE WORD
         )
       end
 
@@ -32,12 +32,12 @@ module Rouge
           ENDIF FAIL INESPRG INESCHR INESMAP INESMIR FUNC
         )
       end
-      
+
       state :root do
         rule %r/\s+/m, Text
         rule %r(;.*), Comment::Single
 
-        rule %r/[\(\)\,\.\[\]]/, Punctuation 
+        rule %r/[\(\)\,\.\[\]]/, Punctuation
         rule %r/\#?\%[0-1]+/, Num::Bin # #%00110011 %00110011
         rule %r/\#?\$\h+/, Num::Hex  # $1f #$1f
         rule %r/\#?\d+/, Num # 10 #10
@@ -45,7 +45,7 @@ module Rouge
 
         rule %r/\#?\w+:?/i do |m|
           name = m[0].upcase
-          
+
           if self.class.keywords.include? name
             token Keyword
           elsif self.class.keywords_type.include? name
@@ -58,13 +58,13 @@ module Rouge
         end
 
         rule %r/\#?(?:LOW|HIGH)\(.*\)/i, Keyword::Reserved # LOW() #HIGH()
-        
+
         rule %r/\#\(/, Punctuation # #()
 
         rule %r/"/, Str, :string
 
         rule %r/'\w'/, Str::Char # 'A' for example
-        
+
         rule %r/\\\??[\d@#]/, Name::Builtin # builtin parameters for use inside macros and functions:   \1-\9 , \?1-\?9 , \# , \@
       end
 

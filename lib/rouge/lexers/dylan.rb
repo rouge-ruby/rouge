@@ -73,7 +73,7 @@ module Rouge
         # Operators and punctuation
         rule %r/::|=>|#[(\[#]|[.][.][.]|[(),.;\[\]{}=?]/, Punctuation
 
-        word_re = %r([\w!&*<>|^\$%@][\w!&*<>|^\$%@=/?~+-]*|[+-])
+        word_re = %r([\w!&*<>|^\$%@][\w!&*<>|^\$%@=/?~+-]*|[+-~])
 
         rule %r/\\#{word_re}/, Str::Symbol
 

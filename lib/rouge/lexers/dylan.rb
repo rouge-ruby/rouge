@@ -79,7 +79,7 @@ module Rouge
 
         rule word_re do |m|
           word = m[0]
-          if operators.include?(m[0])
+          if operators.include?(word)
             token Operator
           elsif word.start_with?('<') && word.end_with?('>')
             token Name::Class

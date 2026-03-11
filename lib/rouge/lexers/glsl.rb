@@ -43,7 +43,13 @@ module Rouge
           end
         end
 
-        rule %r/\w+(?=\s*[(])/, Name::Function
+        rule %r/\w+(?=\s*[(])/ do |m|
+          if BUILTINS.include?(m[0])
+            token Name::Builtin
+          else
+            token Name::Function
+          end
+        end
 
         rule %r/\w+/ do |m|
           if GL_VARS.include?(m[0])

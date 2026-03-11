@@ -20,7 +20,6 @@ module Rouge
         rule %r(/[*].*?[*]/)m, Comment::Multiline
         rule %r(//.*$), Comment
 
-        rule %r([-.+/*%<>\[\](){}^|&~=!:;,?]), Punctuation
         rule %r/^#(?:[^\n]|\\\r?\n)*/, Comment::Preproc
         rule %r/defined\b/, Comment::Preproc
         rule %r/__(?:LINE|FILE|VERSION)__\b/, Keyword::Constant
@@ -32,6 +31,7 @@ module Rouge
         rule %r/[1-9]\d*u?/i, Num::Integer
         rule %r/0[0-7]+/, Num::Oct
         rule %r/0/, Num::Integer
+        rule %r([-.+/*%<>\[\](){}^|&~=!:;,?]), Punctuation
 
         rule %r/\w+/ do |m|
           if KEYWORDS.include?(m[0])

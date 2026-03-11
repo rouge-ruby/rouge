@@ -70,13 +70,14 @@ module Rouge
         rule %r/[+-]?[0-9]+/, Literal::Number::Integer
         rule %r/#x[0-9a-f]+/i, Literal::Number::Hex
 
-        # Names
-        rule %r/[+-]/, Operator
-
         # Operators and punctuation
         rule %r/::|=>|#[(\[#]|[.][.][.]|[(),.;\[\]{}=?]/, Punctuation
 
-        rule %r([\w!&*<>|^\$%@][\w!&*<>|^\$%@=/?~+-]*) do |m|
+        word_re = %r([\w!&*<>|^\$%@][\w!&*<>|^\$%@=/?~+-]*|[+-])
+
+        rule %r/\\#{word_re}/, Str::Symbol
+
+        rule word_re do |m|
           word = m[0]
           if operators.include?(m[0])
             token Operator
@@ -99,6 +100,7 @@ module Rouge
 
       state :dq do
         rule %r/\\[\\'"abefnrt0]/, Str::Escape
+        rule %r/\\<\h+>/, Str::Escape
         rule %r/[^\\"]+/, Str::Double
         rule %r/"/, Str::Double, :pop!
       end

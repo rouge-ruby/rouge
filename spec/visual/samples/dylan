@@ -49,3 +49,30 @@ define function factorial-top-level () => ()
 end function factorial-top-level;
 
 factorial-top-level();
+
+
+// https://github.com/dylan-lang/opendylan/blob/85fc782bf2b1390929bdb9fc98f88e5e55d7a742/sources/collections/collectors.dylan#L160-L180
+define inline method collector-protocol
+   (class :: subclass(<number>), #key from = 0, by = \+)
+  => (new-collector      :: <box>,
+      add-first          :: <function>,
+      add-last           :: <function>,
+      add-sequence-first :: <function>,
+      add-sequence-last  :: <function>,
+      collection         :: <function>)
+   values(box(from),
+         method (collector, value)
+           collector.object := by(value, collector.object);
+         end,
+         method (collector, value)
+           collector.object := by(collector.object, value);
+         end,
+         sequence-collection-not-yet-implemented,
+         sequence-collection-not-yet-implemented,
+         method (collector)
+           collector.object
+         end)
+end method;
+
+// hex escapes
+"a string with \<01eF> a hex escape"

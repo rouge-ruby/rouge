@@ -6,6 +6,11 @@ Copyright:    Original Code is Copyright (c) 1995-2004 Functional Objects, Inc.
 License:      See License.txt in this distribution for details.
 Warranty:     Distributed WITHOUT WARRANTY OF ANY KIND
 
+ this string is a continuation of Warranty because the line starts with a space.
+ it should be highlighted as a Comment.
+
+"this string is not a comment because it doesn't start with a space";
+
 ///
 /// The canonical recursive function.
 ///

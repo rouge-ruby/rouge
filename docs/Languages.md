@@ -14,6 +14,7 @@
 - API Blueprint (`apiblueprint`)
 - AppleScript (`applescript`)
 - ArmAsm (`armasm`)
+- Asn.1 (`asn1`)
 - Augeas (`augeas`)
 - Awk (`awk`)
 - Batchfile (`batchfile`)

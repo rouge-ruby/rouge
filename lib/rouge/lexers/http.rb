@@ -32,8 +32,8 @@ module Rouge
         # request
         rule %r(
           (#{HTTP.http_methods.join('|')})([ ]+) # method
-          ([^ ]+)([ ]+)                          # path
-          (HTTPS?)(/)(\d(?:\.\d)?)(\r?\n|$)      # http version
+          ([^ ]+)(?:([ ]+)                       # path
+          (HTTPS?)(/)(\d(?:\.\d)?))?(\r?\n|$)    # http version
         )ox do
           groups(
             Name::Function, Text,
@@ -57,6 +57,7 @@ module Rouge
           )
           push :headers
         end
+        mixin :headers
       end
 
       state :headers do

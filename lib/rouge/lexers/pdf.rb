@@ -66,7 +66,7 @@ module Rouge
         # PDF objects and stream (no checking of object ID)
         # Note that object number and generation numbers do not have sign.
         rule %r/\d+\s\d+\sobj/, Keyword::Declaration
-        rule %r/(endstream|endobj|stream)/, Keyword::Declaration
+        rule %r/endstream|endobj|stream/, Keyword::Declaration
 
         # PDF conventional file layout keywords
         rule %r/(startxref|trailer|xref)/, Keyword::Declaration

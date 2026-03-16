@@ -29,7 +29,7 @@ module Rouge
       # PDF and FDF files must start with "%PDF-x.y" or "%FDF-x.y"
       # where x is the single digit major version and y is the single digit minor version.
       def self.detect?(text)
-        return true if /^%(P|F)DF-\d.\d/ =~ text
+        return true if /\A%(P|F)DF-\d.\d/.match?(text)
       end
 
       # PDF Delimiters (ISO 32000-2:2020, Table 1 and Table 2).

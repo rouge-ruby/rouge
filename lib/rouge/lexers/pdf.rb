@@ -9,7 +9,7 @@
 # per ISO 32000-2:2020 clause 12.7.8. 
 #
 # This is a token-based parser ONLY! It is intended to syntax highlight full or partial fragments 
-# of nicely written hand-writteen PDF syntax in documentation such as ISO specifications. It is NOT
+# of nicely written hand-written PDF syntax in documentation such as ISO specifications. It is NOT
 # intended to cope with real-world PDFs that will contain arbitrary binary data (that form invalid
 # UTF-8 sequences and generate "ArgumentError: invalid byte sequence in UTF-8" Ruby errors) and 
 # other types of malformations or syntax errors. 
@@ -28,8 +28,9 @@ module Rouge
 
       # PDF and FDF files must start with "%PDF-x.y" or "%FDF-x.y"
       # where x is the single digit major version and y is the single digit minor version.
+      # For simplicity as a syntax highlighter, assumes occurs at start of a line.
       def self.detect?(text)
-        return true if /\A%(P|F)DF-\d.\d/.match?(text)
+        return true if /\A%(P|F)DF-\d\.\d/.match?(text)
       end
 
       # PDF Delimiters (ISO 32000-2:2020, Table 1 and Table 2).

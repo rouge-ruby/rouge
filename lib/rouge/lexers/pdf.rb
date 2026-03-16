@@ -69,7 +69,7 @@ module Rouge
         rule %r/endstream|endobj|stream/, Keyword::Declaration
 
         # PDF conventional file layout keywords
-        rule %r/(startxref|trailer|xref)/, Keyword::Declaration
+        rule %r/startxref|trailer|xref/, Keyword::Declaration
 
         # PDF cross reference section entries (20 bytes including EOL).
         # Explicit single SPACE separators.

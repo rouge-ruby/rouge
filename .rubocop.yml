@@ -24,6 +24,28 @@ Style:
 Layout:
   Enabled: false
 
+Layout/TrailingWhitespace:
+  Enabled: true
+  AllowInHeredoc: true
+
+Layout/IndentationStyle:
+  Enabled: true
+  IndentationWidth: 2
+  EnforcedStyle: spaces
+
+Layout/IndentationWidth:
+  Enabled: true
+
+Layout/EndAlignment:
+  Enabled: true
+  EnforcedStyleAlignWith: variable
+
+Layout/EndOfLine:
+  Enabled: true
+
+Layout/TrailingEmptyLines:
+  Enabled: true
+
 Metrics:
   Enabled: false
 

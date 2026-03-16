@@ -347,7 +347,7 @@ module Rouge
         formatter.format(lexer.lex(input)) { |piece| print piece }
       end
 
-    private_class_method def self.parse_cgi(str)
+      private_class_method def self.parse_cgi(str)
         pairs = URI.decode_www_form(str).map { |k, v| [k.to_sym, v] }
         Hash[pairs]
       end
@@ -510,7 +510,7 @@ module Rouge
     end
 
 
-  private_class_method def self.normalize_syntax(argv)
+    private_class_method def self.normalize_syntax(argv)
       out = []
       argv.each do |arg|
         case arg

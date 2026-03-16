@@ -124,7 +124,7 @@ module Rouge
         rule %r/#{id}(?=\s*[(])/, Name::Function
         rule id do |m|
           name = m[0].upcase
-          
+
           if self.class.sql_keywords.include? name
             token Keyword
           else

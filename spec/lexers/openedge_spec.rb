@@ -34,7 +34,7 @@ describe Rouge::Lexers::OpenEdge do
       assert_tokens_equal '&ANALYZE-SUSPEND _VERSION-NUMBER UIB_v8r12 // hello', ["Comment.Preproc", "&ANALYZE-SUSPEND _VERSION-NUMBER UIB_v8r12 "], ["Comment.Single", "// hello"]
     end
 
-    it 'recognizes preprocess' do 
+    it 'recognizes preprocess' do
       assert_tokens_equal "{ test.i\r\n&abc = ABC\r\n&def    = 'D E  F'\r\n&hij=\"H   I   J\" }",
         ["Comment.Preproc", "{ test.i\r\n&abc = ABC\r\n&def    = 'D E  F'\r\n&hij=\"H   I   J\" }"]
       assert_tokens_equal "{ test.i \"{&Test}\" }",  ["Comment.Preproc", "{ test.i \"{&Test}\" }"]

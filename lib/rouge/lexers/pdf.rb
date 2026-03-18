@@ -6,13 +6,13 @@
 # As defined by ISO 32000-2:2020 including resolved errata from https://pdf-issues.pdfa.org/
 #
 # The PDF syntax is also known as "COS" and can be used with FDF (Forms Data Field) files as
-# per ISO 32000-2:2020 clause 12.7.8. 
+# per ISO 32000-2:2020 clause 12.7.8.
 #
-# This is a token-based parser ONLY! It is intended to syntax highlight full or partial fragments 
+# This is a token-based parser ONLY! It is intended to syntax highlight full or partial fragments
 # of nicely written hand-written PDF syntax in documentation such as ISO specifications. It is NOT
 # intended to cope with real-world PDFs that will contain arbitrary binary data (that form invalid
-# UTF-8 sequences and generate "ArgumentError: invalid byte sequence in UTF-8" Ruby errors) and 
-# other types of malformations or syntax errors. 
+# UTF-8 sequences and generate "ArgumentError: invalid byte sequence in UTF-8" Ruby errors) and
+# other types of malformations or syntax errors.
 #
 # Author: Peter Wyatt, CTO, PDF Association. 2024
 #
@@ -86,7 +86,7 @@ module Rouge
         # PDF Integer object
         rule %r/(\-|\+)?[0-9]+/, Num::Integer
 
-        # A run of non-delimiters is most likely a PDF content stream 
+        # A run of non-delimiters is most likely a PDF content stream
         # operator (ISO 32000-2:2020, Annex A).
         rule %r/[^\(\)<>\[\]\/%\s]+/, Operator::Word
 

@@ -29,16 +29,21 @@ module Rouge
       end
 
       state :annotated_string do
-        rule %r(("""(\S+)\n)(.*?)("""))m do |m|
-        first_line, lang, content, last_line = m.captures
-          token Str, first_line
+        rule %r((""")(\S*)(.*?)("""))m do |m|
+          open, lang, content, close = m.captures
+
+          token Str, open
+          token Str::Escape, lang
+
           sublexer = Rouge::Lexer.find(lang.strip)
+
           if sublexer
             delegate sublexer, content
           else
             token Str, content
           end
-          token Str, last_line
+
+          token Str, close
         end
       end
 
@@ -46,7 +51,6 @@ module Rouge
         mixin :basic
         rule %r(\n), Text
         mixin :annotated_string
-        rule %r(""".*?""")m, Str
         rule %r(@[^\s@]+), Name::Tag
         mixin :has_table
         mixin :has_examples

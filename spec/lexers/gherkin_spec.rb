@@ -53,16 +53,16 @@ describe Rouge::Lexers::Gherkin do
         end
         """
       GHERKIN
-      
+
       find_calls = []
       original_find = Rouge::Lexer.method(:find)
       Rouge::Lexer.define_singleton_method(:find) do |lang|
         find_calls << lang
         original_find.call(lang)
       end
-      
+
       tokens = subject.lex(source).to_a
-        
+
       assert { tokens.size == 11 }
       assert { tokens[0][0] == Token['Name.Function'] }
       assert { tokens[2][0] == Token['Literal.String'] }

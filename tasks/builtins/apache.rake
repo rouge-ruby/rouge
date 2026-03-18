@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# backcompat for ancient net/dav lib
+def File.exists?(p)
+  File.exist?(p)
+end
+
 require 'open-uri'
 require_relative '../task_helper'
-require 'json'
 require 'nokogiri'
-require 'pry'
+require 'svn/downloader'
 
 APACHE_DOCS_URI = "https://downloads.apache.org/httpd/docs/"
 APACHE_KEYWORDS_FILE = "./lib/rouge/lexers/apache/keywords.rb"
@@ -17,18 +21,12 @@ namespace :builtins do
 end
 
 class ApacheBuiltins < BuiltinsGenerator
-  APACHE_DOCS_INDEX = 'https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/manual/mod/'
+  APACHE_MOD_DOCS = 'https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/manual/mod/'
 
   BASE_PATH = File.expand_path("#{__dir__}/../../tmp/apache-mods")
 
-  # TODO: fetch from SVN once apache SVN is back up. This only works if it's
-  # been fetched already.
-  def get_doc(name)
-    File.read(base + name)
-  end
-
   def fetch
-    # TODO: use subversion
+    SVN::Downloader.download(APACHE_MOD_DOCS, BASE_PATH)
 
     files = {}
 

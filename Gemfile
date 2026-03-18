@@ -42,4 +42,5 @@ group :development do
 
   gem 'ostruct'
   gem 'reline'
+  gem 'nokogiri'
 end

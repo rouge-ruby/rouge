@@ -17,6 +17,8 @@ module Rouge
       end
 
       def name_for_token(token, tktype)
+        token = token.downcase
+
         return tktype if SECTIONS.include?(token)
         return tktype if DIRECTIVES.include?(token)
         return tktype if VALUES.include?(token)
@@ -33,12 +35,12 @@ module Rouge
         mixin :whitespace
 
         rule %r/(<\/?)(\w+)/ do |m|
-          groups Punctuation, name_for_token(m[2].downcase, Name::Label)
+          groups Punctuation, name_for_token(m[2], Name::Label)
           push :section
         end
 
         rule %r/\w+/ do |m|
-          token name_for_token(m[0].downcase, Name::Class)
+          token name_for_token(m[0], Name::Class)
           push :directive
         end
       end
@@ -60,8 +62,22 @@ module Rouge
         mixin :whitespace
 
         rule %r/\S+/ do |m|
-          token name_for_token(m[0].downcase, Literal::String::Symbol)
+          if VALUES.include?(m[0].downcase)
+            token Literal::String::Symbol
+          else
+            fallthrough!
+          end
         end
+
+        rule(%r/(?=\S)/) { push :value }
+      end
+
+      state :value do
+        rule %r/[ \t]+/, Text, :pop!
+        rule %r/[^\s%]+/, Text
+        rule %r/%{.*?}/, Name::Variable
+        rule %r/[%]/, Text
+        rule(/(?=\n)/) { pop! }
       end
     end
   end

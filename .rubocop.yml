@@ -2,6 +2,7 @@ inherit_from: .rubocop_todo.yml
 
 require:
   - ./lib/rubocop/cop/rouge/no_building_alternation_pattern_in_regexp.rb
+  - ./lib/rubocop/cop/rouge/no_huge_collections.rb
 
 plugins:
   - rubocop-performance
@@ -17,6 +18,9 @@ AllCops:
     - "lib/rouge/lexers/**/keywords.rb"
     - "lib/rouge/lexers/**/builtins.rb"
   NewCops: enable
+
+Rouge:
+  Enabled: true
 
 Style:
   Enabled: false
@@ -76,10 +80,39 @@ Lint/IneffectiveAccessModifier:
 Lint/AmbiguousOperatorPrecedence:
   Enabled: false
 
+# this just is plain broken, disabling
+Lint/OutOfRangeRegexpRef:
+  Enabled: false
+
+# there are actual reasons to do this
+Lint/MissingSuper:
+  Enabled: false
+
+# sometimes the arguments are deprecated you guys
+Lint/ToEnumArguments:
+  Enabled: false
+
+# sometimes we deal with very gnarly strings, this is not useful
+Lint/NestedPercentLiteral:
+  Enabled: false
+
+# usually not actionable
+Lint/DuplicateBranch:
+  Enabled: false
+
 Naming/BlockForwarding:
   Enabled: false
 
 Naming/PredicateMethod:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+Naming/VariableNumber:
   Enabled: false
 
 Performance/RegexpMatch:

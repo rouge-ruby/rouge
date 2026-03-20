@@ -17,15 +17,11 @@ module Rouge
       end
 
       def name_for_token(token, tktype)
-        if SECTIONS.include? token
-          tktype
-        elsif DIRECTIVES.include? token
-          tktype
-        elsif VALUES.include? token
-          tktype
-        else
-          Text
-        end
+        return tktype if SECTIONS.include?(token)
+        return tktype if DIRECTIVES.include?(token)
+        return tktype if VALUES.include?(token)
+
+        Text
       end
 
       state :whitespace do

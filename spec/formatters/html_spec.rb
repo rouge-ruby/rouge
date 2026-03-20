@@ -17,7 +17,7 @@ describe Rouge::Formatters::HTML do
 
   describe '#inline_theme' do
     inline_theme = Class.new(Rouge::CSSTheme) do
-      style Name, :bold => true
+      style self::Name, :bold => true
     end
 
     let(:options) { { :inline_theme => inline_theme.new, :wrap => false } }

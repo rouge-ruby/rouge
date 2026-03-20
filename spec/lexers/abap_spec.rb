@@ -247,7 +247,7 @@ describe Rouge::Lexers::ABAP do
                           ['Name', 'dd04l'],
                           ['Punctuation', '.'],
                           ['Name', 'decimals']
-      
+
       # Another example with a keyword as field name
       assert_tokens_equal 'table.data',
                           ['Name', 'table'],

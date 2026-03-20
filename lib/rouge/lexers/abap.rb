@@ -191,10 +191,10 @@ module Rouge
         rule %r/".*/, Comment::Single
         rule %r(^\*.*), Comment::Multiline
         rule %r/\d+/, Num::Integer
-        
+
         # String templates |...|
         rule %r/\|/, Str::Interpol, :string_template
-        
+
         rule %r/('|`)/, Str::Single, :single_string
 
         # CDS annotations: @KEYWORD.field
@@ -222,7 +222,7 @@ module Rouge
         # This handles EXPORTING/IMPORTING/CHANGING/TABLES/USING parameter names
         rule %r/([A-Za-z][A-Za-z0-9_]*)(?=\s*=)/ do |m|
           token Name, m[1]
-        end        
+        end
         rule %r/[\[\]\(\)\{\}\.,:]/, Punctuation
 
         # builtins / new ABAP 7.40 keywords (@DATA(), ...)
@@ -249,14 +249,14 @@ module Rouge
             token Name
           end
         end
-        
+
         # structure component access (variable-component should not be highlighted as keyword)
         # this rule matches: word-word where the second part is lowercase or starts lowercase
         rule %r/[A-Za-z][A-Za-z0-9_]*-[a-z][A-Za-z0-9_]*/, Name
-        
+
         # variable names starting with $ (like $session)
         rule %r/\$[A-Za-z][A-Za-z0-9_]*/, Name
-        
+
         # keywords, types and normal text
         rule %r/\w\w*/ do |m|
           if self.class.keywords.include? m[0].upcase

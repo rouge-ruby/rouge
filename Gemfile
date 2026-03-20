@@ -42,4 +42,7 @@ group :development do
 
   gem 'ostruct'
   gem 'reline'
+  gem 'nokogiri'
+
+  gem 'svn-downloader'
 end

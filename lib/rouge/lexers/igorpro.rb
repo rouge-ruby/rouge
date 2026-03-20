@@ -39,11 +39,7 @@ module Rouge
 
       lazy { require_relative 'igorpro/builtins' }
 
-      def self.object_name
-        /\b[a-z][a-z0-9_\.]*?\b/i
-      end
-
-      object = self.object_name
+      object = /[a-z][a-z0-9_\.]*/i
       noLineBreak = /(?:[ \t]|(?:\\\s*[\r\n]))+/
       operator = %r([\#$~!%^&*+=\|?:<>/-])
       punctuation = /[{}()\[\],.;]/
@@ -54,7 +50,7 @@ module Rouge
       state :root do
         rule %r(//), Comment, :comments
 
-        rule %r/#{object}/ do |m|
+        rule object do |m|
           obj = m[0].downcase
 
           if obj.include?('function')
@@ -102,8 +98,8 @@ module Rouge
         mixin :whitespace
         rule %r/\"/, Literal::String::Double, :string1 #punctuation for string
         mixin :string2
-        rule %r/#{number_float}/, Literal::Number::Float, :pop!
-        rule %r/#{number_int}/, Literal::Number::Integer, :pop!
+        rule number_float, Literal::Number::Float, :pop!
+        rule number_int, Literal::Number::Integer, :pop!
         rule %r/[\(\[\{][^\)\]\}]+[\)\]\}]/, Generic, :pop!
         rule %r/[^\s\/\(]+/, Generic, :pop!
         rule(//) { pop! }
@@ -129,7 +125,7 @@ module Rouge
       end
 
       state :operationFlags do
-        rule %r/#{noLineBreak}/, Text
+        rule noLineBreak, Text
         rule %r/[=]/, Punctuation, :assignment
         rule %r([/][a-z]+)i, Keyword::Pseudo, :operationFlags
         rule %r/(as)(\s*)(#{object})/i do
@@ -155,20 +151,20 @@ module Rouge
 
       state :characters do
         rule %r/\s/, Text
-        rule %r/#{operator}/, Operator
-        rule %r/#{punctuation}/, Punctuation
+        rule operator, Operator
+        rule punctuation, Punctuation
         rule %r/\"/, Literal::String::Double, :string1 #punctuation for string
         mixin :string2
       end
 
       state :numbers do
-        rule %r/#{number_float}/, Literal::Number::Float
-        rule %r/#{number_hex}/, Literal::Number::Hex
-        rule %r/#{number_int}/, Literal::Number::Integer
+        rule number_float, Literal::Number::Float
+        rule number_hex, Literal::Number::Hex
+        rule number_int, Literal::Number::Integer
       end
 
       state :whitespace do
-        rule %r/#{noLineBreak}/, Text
+        rule noLineBreak, Text
       end
 
       state :string1 do

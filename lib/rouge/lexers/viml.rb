@@ -49,11 +49,11 @@ module Rouge
 
           if KEYWORDS[:command].include? name
             token Keyword
-          elsif KEYWORDS[:function].include? name
-            token Name::Builtin
-          elsif KEYWORDS[:option].include? name
-            token Name::Builtin
-          elsif KEYWORDS[:auto].include? name
+          elsif (
+            KEYWORDS[:function].include?(name) ||
+            KEYWORDS[:option].include?(name) ||
+            KEYWORDS[:auto].include?(name)
+          )
             token Name::Builtin
           else
             token Text

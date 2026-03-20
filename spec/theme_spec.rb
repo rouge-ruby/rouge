@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+class TestTheme < Rouge::CSSTheme
+  style Literal::String, :fg => '#003366', :bold => true
+  style Literal::String::Backtick, :fg => '#555555', :italic => true
+end
+
 describe Rouge::Theme do
   def squish(str)
     str.strip.gsub(/\s+/, ' ')
   end
 
-  class MyTheme < Rouge::CSSTheme
-    style Literal::String, :fg => '#003366', :bold => true
-    style Literal::String::Backtick, :fg => '#555555', :italic => true
-  end
-
-  let(:theme) { MyTheme.new }
+  let(:theme) { TestTheme.new }
 
   it 'auto-fills css classes' do
     rendered = theme.render

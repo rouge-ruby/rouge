@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative '../task_helper'
+
 # backcompat for ancient net/dav lib
 def File.exists?(p)
   File.exist?(p)
 end
 
-require 'open-uri'
-require_relative '../task_helper'
+# And it still warns a lot.
+silence_warnings { require 'net/dav' }
+
 require 'nokogiri'
 require 'svn/downloader'
 

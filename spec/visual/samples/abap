@@ -125,3 +125,52 @@ define view ZBC_DTEL_SEARCH as select from dd04l
     dd04t.scrtext_m,
     dd04t.scrtext_l
 }
+
+* NEW operator
+DATA(obj) = NEW class( )
+
+* VALUE operator
+itab = VALUE #( )
+
+* CORRESPONDING operator
+struct2 = CORRESPONDING #( struct1 )
+
+* DEFINE VIEW ENTITY: all keywords
+DEFINE VIEW ENTITY ZTest
+
+* keyword keyword name
+ASSOCIATION TO ZEntity
+
+* keyword keyword name
+COMPOSITION OF ZChild
+
+*** builtins ***
+lv_result = conv( lv_value )
+div( arg1 arg2 )
+currency_conversion( )
+reduce( )
+filter( )
+corresponding( )
+
+*** cond and switch ***
+lv_result = COND #( WHEN lv_var = 1 THEN a )
+lv_result = SWITCH #( lv_var )
+
+*** let ***
+LET lv_var = 1 IN y
+LOOP AT itab STEP 2
+
+*** annotation should be a keyword***
+@ANNOTATION.label
+MANY TO ONE
+
+*** name ***
+$session.system_language
+
+* not a keyword *
+dd04l.decimals
+table.data
+
+*** not keywords ***
+input = 'test'
+output = 'result'

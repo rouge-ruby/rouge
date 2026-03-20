@@ -28,10 +28,29 @@ module Rouge
         rule %r/[ \r\t]+/, Text
       end
 
+      state :annotated_string do
+        rule %r((""")(\S*)(.*?)("""))m do |m|
+          open, lang, content, close = m.captures
+
+          token Str, open
+          token Str::Escape, lang
+
+          sublexer = Rouge::Lexer.find(lang.strip)
+
+          if sublexer
+            delegate sublexer, content
+          else
+            token Str, content
+          end
+
+          token Str, close
+        end
+      end
+
       state :root do
         mixin :basic
         rule %r(\n), Text
-        rule %r(""".*?""")m, Str
+        mixin :annotated_string
         rule %r(@[^\s@]+), Name::Tag
         mixin :has_table
         mixin :has_examples

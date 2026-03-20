@@ -103,7 +103,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 # Offense count: 20
 Rouge/NoHugeCollections:
   Exclude:
-    - 'lib/rouge/lexers/abap.rb'
     - 'lib/rouge/lexers/apple_script.rb'
     - 'lib/rouge/lexers/cobol.rb'
     - 'lib/rouge/lexers/common_lisp.rb'

@@ -1,4 +1,4 @@
--- ABAP Lexer
+* Function module
 
 FUNCTION z_do_nothing.
 *"----------------------------------------------------------------------
@@ -24,20 +24,29 @@ FUNCTION z_do_nothing.
 
   FIELD-SYMBOLS: <mara> TYPE mara.
 
-* some basic functions
+* a full line comment
+  DATA(lv_int) = 1000.  " just an initializer
+
+  " create an object and call a method
   CREATE OBJECT lo_obj
     EXPORTING
       iv_int = lv_int.
 
-  lo_obj->do_nothing( ).
+  DATA(lv_result) = lo_obj->do_nothing( ).
+  DATA(lo_obj2) = new cl_any_class( lv_int ).
 
-  SELECT SINGLE * FROM mara INTO ls_mara WHERE matkl EQ '1324'.
-
-* some new functions from ABAP 7.40
-  DATA(lv_int) = 1000.  " just an initializer
+  " Get some material data 
+  SELECT SINGLE matnr, matkl, mtart, maktx
+    FROM mara 
+    INNER JOIN makt 
+      ON makt~matnr EQ mara~matnr
+    INTO @ls_mara 
+    WHERE matkl EQ '1324'
+      AND spras EQ @sy-langu.
 
   SELECT * FROM mara INTO TABLE @DATA(lt_mara).
 
+  " some ABAP 7.40 syntax
   LOOP AT lt_mara ASSIGNING FIELD-SYMBOL(<wa>)
     GROUP BY ( carrid = <wa>-matkl count = GROUP SIZE )
     ASCENDING
@@ -71,4 +80,48 @@ FUNCTION z_do_nothing.
     " found
   ENDIF.
 
+  PERFORM do_something USING 'test' 
+                       CHANGING et_export.
+
 ENDFUNCTION.
+
+* Form routine 
+
+FORM do_something USING iv_input TYPE string
+                  CHANGING ct_result TYPE icl_string_t.
+
+  " some more code here ... 
+  ct_result = VALUE #( 
+    ( iv_input ) 
+  ).
+
+  APPEND iv_input 
+    TO ct_result.
+
+ENDFORM.
+
+* CDS View
+
+@AbapCatalog.sqlViewName: 'ZBC_DTEL_SEARCHV'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Dataelement Search'
+
+define view ZBC_DTEL_SEARCH as select from dd04l 
+  left outer join dd04t
+    on dd04t.rollname = dd04l.rollname 
+    and dd04t.ddlanguage = $session.system_language  
+{
+    key dd04l.rollname,
+    dd04l.domname,   
+    dd04l.datatype,
+    dd04l.leng,
+    dd04l.decimals,
+    dd04l.lowercase,
+    dd04t.ddtext,
+    dd04t.reptext,
+    dd04t.scrtext_s,
+    dd04t.scrtext_m,
+    dd04t.scrtext_l
+}

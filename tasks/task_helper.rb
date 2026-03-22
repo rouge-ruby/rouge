@@ -1,5 +1,12 @@
 require 'open-uri'
 
+def silence_warnings
+  old_verbose, $VERBOSE = $VERBOSE, false
+  yield
+ensure
+  $VERBOSE = old_verbose
+end
+
 class BuiltinsGenerator
   def self.process(fname, *a)
     new(*a).process(fname)

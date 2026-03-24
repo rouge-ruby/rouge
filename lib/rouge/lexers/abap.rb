@@ -22,8 +22,8 @@ module Rouge
       state :root do
         rule %r/\s+/m, Text
 
-        rule %r/".*/, Comment::Single
-        rule %r(^\*.*), Comment::Multiline
+        rule %r/"[^\r\n]*/, Comment::Single
+        rule %r/^\*[^\r\n]*/, Comment::Single
         rule %r/\d+/, Num::Integer
 
         # String templates |...|

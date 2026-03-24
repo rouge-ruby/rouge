@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'python'
+
 module Rouge
   module Lexers
-    load_lexer 'python.rb'
-
     class Cython < Python
       title "Cython"
       desc "Cython and Pyrex source code (cython.org)"

@@ -1,0 +1,97 @@
+Module:    Factorial
+Synopsis:  Factorial "application."
+Author:    Steve Rowley
+Copyright:    Original Code is Copyright (c) 1995-2004 Functional Objects, Inc.
+              All rights reserved.
+License:      See License.txt in this distribution for details.
+Warranty:     Distributed WITHOUT WARRANTY OF ANY KIND
+
+ this string is a continuation of Warranty because the line starts with a space.
+ it should be highlighted as a Comment.
+
+"this string is not a comment because it doesn't start with a space";
+
+///
+/// The canonical recursive function.
+///
+
+define function factorial (n :: <integer>) => (n! :: <integer>)
+  case
+    n < 0     => error("Can't take factorial of negative integer: %d\n", n);
+    n = 0     => 1;
+    otherwise => n * factorial(n - 1);
+  end
+end;
+
+define function factorial-top-level () => ()
+  let arguments = application-arguments();
+  if (arguments.size == 0)
+    format-out("Usage: %s number ...\n", application-name());
+  else
+    format-out("$maximum-integer = %d\n", $maximum-integer);
+    format-out("$minimum-integer = %d\n", $minimum-integer);
+    for (i from 0 below size(arguments))
+      let arg = arguments[i];
+      block (loop-continue)
+        let n = block ()
+                  string-to-integer(arg);
+                exception (<error>)
+                  format-out("Skipping invalid argument %=.\n", arg);
+                  loop-continue();
+                end block;
+        let n! = 0;
+	profiling (cpu-time-seconds, cpu-time-microseconds)
+	  n! := factorial(n)
+	results
+          format-out("factorial(%d) = %d (in %d.%s seconds)\n", n, n!,
+		     cpu-time-seconds, integer-to-string(cpu-time-microseconds, size: 6));
+        end profiling;
+      exception (e :: <error>)
+        format-out("factorial(%s) - Error: %s\n", arg, e);
+      end block;
+    end for;
+  end if;
+end function factorial-top-level;
+
+factorial-top-level();
+
+
+// https://github.com/dylan-lang/opendylan/blob/85fc782bf2b1390929bdb9fc98f88e5e55d7a742/sources/collections/collectors.dylan#L160-L180
+define inline method collector-protocol
+   (class :: subclass(<number>), #key from = 0, by = \+)
+  => (new-collector      :: <box>,
+      add-first          :: <function>,
+      add-last           :: <function>,
+      add-sequence-first :: <function>,
+      add-sequence-last  :: <function>,
+      collection         :: <function>)
+   values(box(from),
+         method (collector, value)
+           collector.object := by(value, collector.object);
+         end,
+         method (collector, value)
+           collector.object := by(collector.object, value);
+         end,
+         sequence-collection-not-yet-implemented,
+         sequence-collection-not-yet-implemented,
+         method (collector)
+           collector.object
+         end)
+end method;
+
+// hex escapes
+"a string with \<01eF> a hex escape"
+
+// https://github.com/dylan-lang/opendylan/blob/85fc782bf2b1390929bdb9fc98f88e5e55d7a742/sources/io/format-condition.dylan#L9-L20
+define sideways method print-object (c :: <condition>, s :: <stream>) => ()
+  let message = condition-to-string(c);
+  if (*print-escape?* | ~message)
+    printing-object (c, s)
+      if (message)
+        format(s, ": %s", message)
+      end
+    end
+  else
+    write(s, message)
+  end
+end method print-object;

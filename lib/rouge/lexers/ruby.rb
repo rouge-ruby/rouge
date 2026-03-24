@@ -106,7 +106,7 @@ module Rouge
       end
 
       keywords = %w(
-        BEGIN END alias begin break case defined\? do else elsif end
+        BEGIN END alias begin break case defined? do else elsif end
         ensure for if in next redo rescue raise retry return super then
         undef unless until when while yield
       )
@@ -186,8 +186,18 @@ module Rouge
 
         mixin :strings
 
-        rule %r/(?:#{keywords.join('|')})(?=\W|$)/, Keyword, :expr_start
-        rule %r/(?:#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo, :expr_start
+        rule %r/\w+[?]?/ do |m|
+          if keywords.include?(m[0])
+            token Keyword
+          elsif keywords_pseudo.include?(m[0])
+            token Keyword::Pseudo
+          else
+            fallthrough!
+          end
+
+          push :expr_start
+        end
+
         rule %r/(not|and|or)\b/, Operator::Word, :expr_start
 
         rule %r(
@@ -208,10 +218,26 @@ module Rouge
           push :classname
         end
 
-        rule %r/(?:#{builtins_q.join('|')})[?]/, Name::Builtin, :expr_start
-        rule %r/(?:#{builtins_b.join('|')})!/,  Name::Builtin, :expr_start
-        rule %r/(?<!\.)(?:#{builtins_g.join('|')})\b/,
-          Name::Builtin, :method_call
+        rule %r/(\w+)([?!])?/ do |m|
+          if m[2] == "?" && builtins_q.include?(m[1])
+            token Name::Builtin
+          elsif m[2] == "!" && builtins_b.include?(m[1])
+            token Name::Builtin
+          else
+            fallthrough!
+          end
+
+          push :expr_start
+        end
+
+        rule %r/(?<![.])\w+/ do |m|
+          if builtins_g.include?(m[0])
+            token Name::Builtin
+            push :method_call
+          else
+            fallthrough!
+          end
+        end
 
         mixin :has_heredocs
 

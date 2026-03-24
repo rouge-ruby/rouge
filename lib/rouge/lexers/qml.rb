@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'javascript'
+
 module Rouge
   module Lexers
-    load_lexer 'javascript.rb'
-
     class Qml < Javascript
       title "QML"
       desc 'QML, a UI markup language'

@@ -13,74 +13,56 @@ module Rouge
       id = /[\w-]+(?=[^\w\-\:])\b/
 
       #Keywords from RFC7950 ; oriented at BNF style
-      def self.top_stmts_keywords
-        @top_stms_keywords ||= Set.new %w(
-          module submodule
-        )
-      end
+      top_keywords = Set.new %w(module submodule)
 
-      def self.module_header_stmts_keywords
-        @module_header_stmts_keywords ||= Set.new %w(
-          belongs-to namespace prefix yang-version
-        )
-      end
+      module_header_keywords = Set.new %w(belongs-to namespace prefix yang-version)
 
-      def self.meta_stmts_keywords
-        @meta_stmts_keywords ||= Set.new %w(
-          contact description organization reference revision
-        )
-      end
+      meta_keywords = Set.new %w(contact description organization reference revision)
 
-      def self.linkage_stmts_keywords
-        @linkage_stmts_keywords ||= Set.new %w(
-          import include revision-date
-        )
-      end
+      linkage_keywords = Set.new %w(import include revision-date)
 
-      def self.body_stmts_keywords
-        @body_stms_keywords ||= Set.new %w(
-          action argument augment deviation extension feature grouping identity
-          if-feature input notification output rpc typedef
-        )
-      end
+      body_keywords = Set.new %w(
+        action argument augment deviation extension feature grouping identity
+        if-feature input notification output rpc typedef
+      )
 
-      def self.data_def_stmts_keywords
-        @data_def_stms_keywords ||= Set.new %w(
-          anydata anyxml case choice config container deviate leaf leaf-list
-          list must presence refine uses when
-        )
-      end
+      data_def_keywords = Set.new %w(
+        anydata anyxml case choice config container deviate leaf leaf-list
+        list must presence refine uses when
+      )
 
-      def self.type_stmts_keywords
-        @type_stmts_keywords ||= Set.new %w(
-          base bit default enum error-app-tag error-message fraction-digits
-          length max-elements min-elements modifier ordered-by path pattern
-          position range require-instance status type units value yin-element
-        )
-      end
+      type_keywords = Set.new %w(
+        base bit default enum error-app-tag error-message fraction-digits
+        length max-elements min-elements modifier ordered-by path pattern
+        position range require-instance status type units value yin-element
+      )
 
-      def self.list_stmts_keywords
-        @list_stmts_keywords ||= Set.new %w(
-          key mandatory unique
-        )
-      end
+      list_keywords = Set.new %w(
+        key mandatory unique
+      )
 
       #RFC7950 other keywords
-      def self.constants_keywords
-        @constants_keywords ||= Set.new %w(
-          add current delete deprecated false invert-match max min
-          not-supported obsolete replace true unbounded user
-        )
-      end
+      CONSTANTS = Set.new %w(
+        add current delete deprecated false invert-match max min
+        not-supported obsolete replace true unbounded user
+      )
 
       #RFC7950 Built-In Types
-      def self.types
-        @types ||= Set.new %w(
-          binary bits boolean decimal64 empty enumeration identityref
-          instance-identifier int16 int32 int64 int8 leafref string uint16
-          uint32 uint64 uint8 union
-        )
-      end
+      TYPES = Set.new %w(
+        binary bits boolean decimal64 empty enumeration identityref
+        instance-identifier int16 int32 int64 int8 leafref string uint16
+        uint32 uint64 uint8 union
+      )
+
+      DECLARATIONS =
+        top_keywords +
+        module_header_keywords +
+        meta_keywords +
+        linkage_keywords +
+        body_keywords +
+        data_def_keywords +
+        type_keywords +
+        list_keywords
 
       state :comment do
         rule %r/[^*\/]/, Comment
@@ -115,25 +97,11 @@ module Rouge
         rule id do |m|
           name = m[0].downcase
 
-          if self.class.top_stmts_keywords.include? name
+          if DECLARATIONS.include?(name)
             token Keyword::Declaration
-          elsif self.class.module_header_stmts_keywords.include? name
-            token Keyword::Declaration
-          elsif self.class.meta_stmts_keywords.include? name
-            token Keyword::Declaration
-          elsif self.class.linkage_stmts_keywords.include? name
-            token Keyword::Declaration
-          elsif self.class.body_stmts_keywords.include? name
-            token Keyword::Declaration
-          elsif self.class.data_def_stmts_keywords.include? name
-            token Keyword::Declaration
-          elsif self.class.type_stmts_keywords.include? name
-            token Keyword::Declaration
-          elsif self.class.list_stmts_keywords.include? name
-            token Keyword::Declaration
-          elsif self.class.types.include? name
+          elsif TYPES.include? name
             token Keyword::Type
-          elsif self.class.constants_keywords.include? name
+          elsif CONSTANTS.include? name
             token Name::Constant
           else
             token Name

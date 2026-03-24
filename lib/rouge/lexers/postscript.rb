@@ -16,7 +16,7 @@ module Rouge
         return true if /^%!/ =~ text
       end
 
-      delimiter = %s"()<>\[\]{}/%\s"
+      delimiter = :"()<>\\[\\]{}/%\\s"
       delimiter_end = Regexp.new("(?=[#{delimiter}])")
       valid_name_chars = Regexp.new("[^#{delimiter}]")
       valid_name = /#{valid_name_chars}+#{delimiter_end}/

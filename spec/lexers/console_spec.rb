@@ -6,7 +6,7 @@ describe Rouge::Lexers::ConsoleLexer do
   let(:klass) { Rouge::Lexers::ConsoleLexer }
 
   include Support::Lexing
-  
+
   it 'parses a basic prompt' do
     assert_tokens_equal '$ foo',
       ['Generic.Prompt', '$'],
@@ -54,6 +54,12 @@ describe Rouge::Lexers::ConsoleLexer do
       ['Generic.Prompt', '#'],
       ['Text.Whitespace', ' '],
       ['Text', 'this is not a comment']
+  end
+
+  it 'does not lex comments when comments=false with a custom prompt' do
+    subject_with_options = klass.new({ prompt: '>', comments: false })
+    assert_tokens_equal '##MS_PolicyEventProcessingLogin##', subject_with_options,
+      ['Generic.Output', '##MS_PolicyEventProcessingLogin##']
   end
 
   describe 'guessing' do

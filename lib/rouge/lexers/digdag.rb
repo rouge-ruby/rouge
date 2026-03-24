@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-require 'set'
+require_relative 'yaml'
+
 module Rouge
   module Lexers
-    load_lexer 'yaml.rb'
-
     class Digdag < YAML
       title 'digdag'
       desc 'A simple, open source, multi-cloud workflow engine (https://www.digdag.io/)'

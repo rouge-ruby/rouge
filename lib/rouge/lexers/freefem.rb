@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'cpp'
+
 module Rouge
   module Lexers
-    load_lexer 'cpp.rb'
-
     class FreeFEM < Cpp
       title "FreeFEM"
       desc "The FreeFEM programming language (freefem.org)"

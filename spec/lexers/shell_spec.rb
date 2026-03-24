@@ -12,19 +12,19 @@ describe Rouge::Lexers::Shell do
   end
 
   it 'parses case statements correctly' do
-    assert_no_errors <<-sh
+    assert_no_errors <<-SH
       case $foo in
         a) echo "LOL" ;;
       esac
-    sh
+SH
   end
 
   it 'parses case statement with globs correctly' do
-    assert_no_errors <<-sh
+    assert_no_errors <<-SH
       case $foo in
         a[b]) echo "LOL" ;;
       esac
-    sh
+SH
   end
 
   it 'parses comments correctly' do

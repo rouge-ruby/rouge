@@ -3,6 +3,9 @@
 
 # stdlib
 require 'pathname'
+require 'set'
+require 'strscan'
+require 'uri'
 
 # The containing module for Rouge
 module Rouge
@@ -11,7 +14,12 @@ module Rouge
   LIB_DIR = __dir__.freeze
 
   class << self
+    # @deprecated This method of reloading is incompatible with modern Ruby's
+    # expectations around global caching of `require`. It is deprecated with no
+    # replacement - consider reloading the entire process instead with something
+    # like Guard. This method will be removed in rouge 5.0.
     def reload!
+      Kernel::warn "Rouge.reload! is deprecated, with no replacement, and will be removed in 5.0. Use a reloading system like Guard instead."
       Object::send :remove_const, :Rouge
       Kernel::load __FILE__
     end
@@ -36,71 +44,60 @@ module Rouge
       formatter.format(lexer.lex(text), &b)
     end
 
-    # Load a file relative to the `lib/rouge` path.
-    #
-    # @api private
-    def load_file(path)
-      Kernel::load File.join(LIB_DIR, "rouge/#{path}.rb")
-    end
-
-    # Load the lexers in the `lib/rouge/lexers` directory.
-    #
-    # @api private
-    def load_lexers
-      lexer_dir = Pathname.new(LIB_DIR) / "rouge/lexers"
-      Pathname.glob(lexer_dir / '*.rb').each do |f|
-        Lexers.load_lexer(f.relative_path_from(lexer_dir))
-      end
+    def eager_load!
+      Rouge::Lexer.all.each(&:eager_load!)
     end
   end
 end
 
-Rouge.load_file 'version'
-Rouge.load_file 'util'
-Rouge.load_file 'text_analyzer'
-Rouge.load_file 'token'
+require_relative 'rouge/version'
+require_relative 'rouge/util'
+require_relative 'rouge/text_analyzer'
+require_relative 'rouge/token'
 
-Rouge.load_file 'lexer'
-Rouge.load_file 'regex_lexer'
-Rouge.load_file 'template_lexer'
+require_relative 'rouge/lexer'
+require_relative 'rouge/regex_lexer'
+require_relative 'rouge/template_lexer'
 
-Rouge.load_lexers
+Dir.glob('rouge/lexers/*.rb', base: __dir__).each do |file|
+  require_relative file
+end
 
-Rouge.load_file 'guesser'
-Rouge.load_file 'guessers/util'
-Rouge.load_file 'guessers/glob_mapping'
-Rouge.load_file 'guessers/modeline'
-Rouge.load_file 'guessers/filename'
-Rouge.load_file 'guessers/mimetype'
-Rouge.load_file 'guessers/source'
-Rouge.load_file 'guessers/disambiguation'
+require_relative 'rouge/guesser'
+require_relative 'rouge/guessers/util'
+require_relative 'rouge/guessers/glob_mapping'
+require_relative 'rouge/guessers/modeline'
+require_relative 'rouge/guessers/filename'
+require_relative 'rouge/guessers/mimetype'
+require_relative 'rouge/guessers/source'
+require_relative 'rouge/guessers/disambiguation'
 
-Rouge.load_file 'formatter'
-Rouge.load_file 'formatters/html'
-Rouge.load_file 'formatters/html_table'
-Rouge.load_file 'formatters/html_pygments'
-Rouge.load_file 'formatters/html_legacy'
-Rouge.load_file 'formatters/html_linewise'
-Rouge.load_file 'formatters/html_line_highlighter'
-Rouge.load_file 'formatters/html_line_table'
-Rouge.load_file 'formatters/html_inline'
-Rouge.load_file 'formatters/terminal256'
-Rouge.load_file 'formatters/terminal_truecolor'
-Rouge.load_file 'formatters/tex'
-Rouge.load_file 'formatters/null'
+require_relative 'rouge/formatter'
+require_relative 'rouge/formatters/html'
+require_relative 'rouge/formatters/html_table'
+require_relative 'rouge/formatters/html_pygments'
+require_relative 'rouge/formatters/html_legacy'
+require_relative 'rouge/formatters/html_linewise'
+require_relative 'rouge/formatters/html_line_highlighter'
+require_relative 'rouge/formatters/html_line_table'
+require_relative 'rouge/formatters/html_inline'
+require_relative 'rouge/formatters/terminal256'
+require_relative 'rouge/formatters/terminal_truecolor'
+require_relative 'rouge/formatters/tex'
+require_relative 'rouge/formatters/null'
 
-Rouge.load_file 'theme'
-Rouge.load_file 'tex_theme_renderer'
-Rouge.load_file 'themes/thankful_eyes'
-Rouge.load_file 'themes/colorful'
-Rouge.load_file 'themes/base16'
-Rouge.load_file 'themes/github'
-Rouge.load_file 'themes/igor_pro'
-Rouge.load_file 'themes/monokai'
-Rouge.load_file 'themes/molokai'
-Rouge.load_file 'themes/monokai_sublime'
-Rouge.load_file 'themes/gruvbox'
-Rouge.load_file 'themes/tulip'
-Rouge.load_file 'themes/pastie'
-Rouge.load_file 'themes/bw'
-Rouge.load_file 'themes/magritte'
+require_relative 'rouge/theme'
+require_relative 'rouge/tex_theme_renderer'
+require_relative 'rouge/themes/thankful_eyes'
+require_relative 'rouge/themes/colorful'
+require_relative 'rouge/themes/base16'
+require_relative 'rouge/themes/github'
+require_relative 'rouge/themes/igor_pro'
+require_relative 'rouge/themes/monokai'
+require_relative 'rouge/themes/molokai'
+require_relative 'rouge/themes/monokai_sublime'
+require_relative 'rouge/themes/gruvbox'
+require_relative 'rouge/themes/tulip'
+require_relative 'rouge/themes/pastie'
+require_relative 'rouge/themes/bw'
+require_relative 'rouge/themes/magritte'

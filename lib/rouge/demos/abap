@@ -1,9 +1,11 @@
+* Create a new object
 DATA(lo_obj) = new zcl_obj_factory(
   EXPORTING
     input = |some nice string|
 )
 DATA(lo_subobj) ?= lo_obj->do_nothing( 'Char' && ` String` ).
 
+" fetch material data
 SELECT SINGLE matnr, matkl, mtart, maktx
   FROM mara 
   INNER JOIN makt 

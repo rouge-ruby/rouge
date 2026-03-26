@@ -281,6 +281,12 @@ module Rouge
       end
     end
 
+    def self.dangerous_alternation_regexp(list)
+      # rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
+      /#{Regexp.union(list)}\b/
+      # rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
+    end
+
     def inspect_details
       yield ' stack:['
       first = true

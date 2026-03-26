@@ -59,7 +59,6 @@ Performance/StringInclude:
 # Offense count: 113
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
-    - 'lib/rouge/lexers/apple_script.rb'
     - 'lib/rouge/lexers/armasm.rb'
     - 'lib/rouge/lexers/bbcbasic.rb'
     - 'lib/rouge/lexers/bicep.rb'
@@ -103,8 +102,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 # Offense count: 20
 Rouge/NoHugeCollections:
   Exclude:
-    - 'lib/rouge/lexers/abap.rb'
-    - 'lib/rouge/lexers/apple_script.rb'
     - 'lib/rouge/lexers/cobol.rb'
     - 'lib/rouge/lexers/common_lisp.rb'
     - 'lib/rouge/lexers/css.rb'

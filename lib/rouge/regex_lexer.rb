@@ -281,6 +281,12 @@ module Rouge
       end
     end
 
+    def self.dangerous_alternation_regexp(list)
+      # rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
+      /#{Regexp.union(list)}\b/
+      # rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
+    end
+
     # @private
     def get_state(state_name)
       self.class.get_state(state_name)

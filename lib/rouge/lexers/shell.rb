@@ -52,13 +52,13 @@ module Rouge
       state :basic do
         rule %r/#.*$/, Comment
 
-        rule %r/\b(#{KEYWORDS})\s*\b/, Keyword
-        rule %r/\bcase\b/, Keyword, :case
+        rule %r/(#{KEYWORDS})\s*\b/, Keyword
+        rule %r/case\b/, Keyword, :case
 
-        rule %r/\b(#{BUILTINS})\s*\b(?!(\.|-))/, Name::Builtin
+        rule %r/(#{BUILTINS})\s*\b(?!(\.|-))/, Name::Builtin
         rule %r/[.](?=\s)/, Name::Builtin
 
-        rule %r/(\b\w+)(=)/ do
+        rule %r/(\w+)(=)/ do
           groups Name::Variable, Operator
         end
 
@@ -169,7 +169,7 @@ module Rouge
       end
 
       state :case do
-        rule %r/\besac\b/, Keyword, :pop!
+        rule %r/esac\b/, Keyword, :pop!
         rule %r/\|/, Punctuation
         rule %r/\)/, Punctuation, :case_stanza
         mixin :root

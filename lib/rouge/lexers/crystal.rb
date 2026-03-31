@@ -80,7 +80,7 @@ module Rouge
         rule %r/\b[\p{Ll}_]\p{Word}*?[?!]?:\s+/, Str::Symbol, :expr_start
         rule %r/"/, Str::Double, :simple_string
         rule %r/(?<!\.)`/, Str::Backtick, :simple_backtick
-        rule %r/(')(\\u[a-fA-F0-9]{4}|\\u\{[a-fA-F0-9]{1,6}\}|\\[abefnrtv])?(\\\\|\\'|[^'])*(')/ do
+        rule %r/(')(\\u[a-fA-F0-9]{4}|\\u\{[a-fA-F0-9]{1,6}\}|\\[abefnrtv])?(\\\\|\\'|[^'\n])*(')/ do
           groups Str::Single, Str::Escape, Str::Single, Str::Single
         end
       end

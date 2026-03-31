@@ -54,9 +54,8 @@ module Rouge
         )
       end
 
-      def self.commands
-        Kernel::load File.join(Lexers::BASE_DIR, "sqf/keywords.rb")
-        commands
+      lazy do
+        require_relative 'sqf/keywords.rb'
       end
 
       state :root do
@@ -95,7 +94,7 @@ module Rouge
             token Keyword::Namespace
           elsif self.class.diag_commands.include? name
             token Name::Function
-          elsif self.class.commands.include? name
+          elsif COMMANDS.include? name
             token Name::Function
           elsif %r"_.+" =~ name
             token Name::Variable

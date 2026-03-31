@@ -7,6 +7,9 @@ module Rouge
     class Terminal256 < Formatter
       tag 'terminal256'
 
+      # max distance between two colors, #000000 to #ffffff
+      MAX_DISTANCE = 257 * 257 * 3
+
       # @private
       attr_reader :theme
 
@@ -137,9 +140,6 @@ module Rouge
 
           hexes.map { |h| h.to_i(16) }
         end
-
-        # max distance between two colors, #000000 to #ffffff
-        MAX_DISTANCE = 257 * 257 * 3
 
         def self.closest_color(r, g, b)
           @@colors_cache ||= {}

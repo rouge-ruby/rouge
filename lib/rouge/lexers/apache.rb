@@ -12,31 +12,18 @@ module Rouge
       filenames '.htaccess', 'httpd.conf'
 
       # self-modifying method that loads the keywords file
-      def self.directives
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        directives
-      end
-
-      def self.sections
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        sections
-      end
-
-      def self.values
-        Kernel::load File.join(Lexers::BASE_DIR, 'apache/keywords.rb')
-        values
+      lazy do
+        require_relative 'apache/keywords'
       end
 
       def name_for_token(token, tktype)
-        if self.class.sections.include? token
-          tktype
-        elsif self.class.directives.include? token
-          tktype
-        elsif self.class.values.include? token
-          tktype
-        else
-          Text
-        end
+        token = token.downcase
+
+        return tktype if SECTIONS.include?(token)
+        return tktype if DIRECTIVES.include?(token)
+        return tktype if VALUES.include?(token)
+
+        Text
       end
 
       state :whitespace do
@@ -48,12 +35,12 @@ module Rouge
         mixin :whitespace
 
         rule %r/(<\/?)(\w+)/ do |m|
-          groups Punctuation, name_for_token(m[2].downcase, Name::Label)
+          groups Punctuation, name_for_token(m[2], Name::Label)
           push :section
         end
 
         rule %r/\w+/ do |m|
-          token name_for_token(m[0].downcase, Name::Class)
+          token name_for_token(m[0], Name::Class)
           push :directive
         end
       end
@@ -75,8 +62,22 @@ module Rouge
         mixin :whitespace
 
         rule %r/\S+/ do |m|
-          token name_for_token(m[0].downcase, Literal::String::Symbol)
+          if VALUES.include?(m[0].downcase)
+            token Literal::String::Symbol
+          else
+            fallthrough!
+          end
         end
+
+        rule(%r/(?=\S)/) { push :value }
+      end
+
+      state :value do
+        rule %r/[ \t]+/, Text, :pop!
+        rule %r/[^\s%]+/, Text
+        rule %r/%{.*?}/, Name::Variable
+        rule %r/[%]/, Text
+        rule(/(?=\n)/) { pop! }
       end
     end
   end

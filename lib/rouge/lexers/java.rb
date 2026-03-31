@@ -51,7 +51,7 @@ module Rouge
         rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule %r/(?:#{types.join('|')})\b/, Keyword::Type
         rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
+        rule %r/(?:class|interface|record)\b/, Keyword::Declaration, :class
         rule %r/(?:import|package)\b/, Keyword::Namespace, :import
         rule %r/"""\s*\n.*?(?<!\\)"""/m, Str::Heredoc
         rule %r/"(\\\\|\\"|[^"])*"/, Str

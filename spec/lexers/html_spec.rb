@@ -66,6 +66,7 @@ describe Rouge::Lexers::HTML do
       assert_guess :filename => 'foo.htm'
       assert_guess :filename => 'foo.xhtml'
       assert_guess :filename => 'foo.cshtml'
+      assert_guess :filename => 'foo.razor'
     end
 
     it 'guesses by mimetype' do
@@ -75,21 +76,21 @@ describe Rouge::Lexers::HTML do
 
     it 'guesses by source' do
       assert_guess :source => '<!DOCTYPE html>'
-      assert_guess :source => <<-source
+      assert_guess :source => <<-SOURCE
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE html
             PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
         </html>
-      source
+SOURCE
 
-      assert_guess :source => <<-source
+      assert_guess :source => <<-SOURCE
         <!DOCTYPE html PUBLIC
           "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html lang="ar" dir="rtl" xmlns="http://www.w3.org/1999/xhtml">
         </html>
-      source
+SOURCE
 
       assert_guess :source => '<html></html>'
     end

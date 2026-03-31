@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'pathname'
-ROOT_DIR = Pathname.new(__FILE__).dirname.parent
-Kernel::load ROOT_DIR.join('lib/rouge.rb')
-Kernel::load ROOT_DIR.join('lib/rouge/cli.rb')
+require_relative "../lib/rouge"
+require_relative "../lib/rouge/cli"
+
 Signal.trap('PIPE', 'SYSTEM_DEFAULT') if Signal.list.include? 'PIPE'
 
 begin

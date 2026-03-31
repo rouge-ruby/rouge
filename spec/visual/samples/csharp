@@ -409,4 +409,10 @@ namespace Diva.Core {
                         };
                 }
         }
+
+        public static class UnicodeTests
+        {
+                const string FamousAgent = "YapılandırmaDosyasıAyarları";
+                const string AnonymousAgent = YapılandırmaDosyasıAyarları.value;
+        }
 }

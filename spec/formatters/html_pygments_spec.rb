@@ -12,6 +12,6 @@ describe Rouge::Formatters::HTMLPygments do
   end
 
   it 'contain pre with class name "shell"' do
-    assert { output =~ /<pre class="shell">/ }
+    assert { output.include?('<pre class="shell">') }
   end
 end

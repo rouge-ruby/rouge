@@ -20,4 +20,17 @@ describe Rouge::Lexers::Crystal do
       assert_guess :source => '#!/usr/local/bin/crystal'
     end
   end
+
+  describe 'lexing' do
+    include Support::Lexing
+
+    it 'rejects string literal than spans multiple lines' do
+      assert_tokens_equal "'a\nb'",
+                          ['Error', "'"],
+                          ["Name", "a"],
+                          ["Text", "\n"],
+                          ["Name", "b"],
+                          ["Error", "'"]
+    end
+  end
 end

@@ -7,7 +7,7 @@ module Rouge
       title 'COBOL'
       desc 'COBOL (Common Business-Oriented Language) programming language'
       tag 'cobol'
-      filenames '*.cob', '*.cbl'
+      filenames '*.cob', '*.cbl', '*.cpy', '*.cpb'
       mimetypes 'text/x-cobol'
 
       identifier = /\p{Alpha}[\p{Alnum}-]*/

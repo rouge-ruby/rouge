@@ -32,7 +32,7 @@ module Rouge
       end
 
       def self.primitive_table
-        @primitive_table ||= Hash.new([:name]).tap do |h|
+        @primitive_table ||= Hash.new([:name].freeze).tap do |h|
           {
             '()' => [:other],
             '=' => [:verb, :other, :other],

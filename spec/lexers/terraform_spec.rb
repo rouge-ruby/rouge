@@ -16,13 +16,9 @@ describe Rouge::Lexers::Terraform do
 
     it 'guesses by filename' do
       assert_guess :filename => 'foo.tf'
+      assert_guess :filename => 'foo.tfvars'
+      assert_guess :filename => 'foo.tofu'
       deny_guess   :filename => 'foo'
-    end
-
-    it 'guesses by mimetype' do
-    end
-
-    it 'guesses by source' do
     end
   end
 end

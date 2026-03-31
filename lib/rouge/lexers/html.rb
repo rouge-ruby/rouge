@@ -7,7 +7,7 @@ module Rouge
       title "HTML"
       desc "HTML, the markup language of the web"
       tag 'html'
-      filenames '*.htm', '*.html', '*.xhtml', '*.cshtml'
+      filenames '*.htm', '*.html', '*.xhtml', '*.cshtml', '*.razor'
       mimetypes 'text/html', 'application/xhtml+xml'
 
       def self.detect?(text)

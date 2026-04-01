@@ -37,7 +37,7 @@ class VisualTestApp < Sinatra::Application
     # base HTML formatter
     formatter = inline ?
                   Rouge::Formatters::HTMLInline.new(@theme) :
-                  Rouge::Formatters::HTML.new
+                  Rouge::Formatters::HTMLDebug.new
 
     if line_numbers
       formatter = line_table ?

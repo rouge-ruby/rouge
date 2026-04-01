@@ -72,7 +72,7 @@ module Rouge
         rule %r/\.\w+/i do |m|
           if m[0] == '.const'
             token Keyword::Constant
-          elsif m[0] =~ /^\.(for|while|macro|function|pseudopc|pseudocommand)$/i
+          elsif m[0] =~ /^\.(for|while|macro|function|pseudopc|pseudocommand)$/io
             token Keyword::Reserved
           elsif self.class.type_directives.include?(m[0].downcase)
             token Keyword::Declaration

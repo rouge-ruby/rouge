@@ -3,6 +3,9 @@
 
 module Rouge
   module Lexers
+
+    # Find the reference for the KickAssembler syntax at
+    # https://www.theweb.dk/KickAssembler/KickAssembler.pdf
     class KickAssembler < RegexLexer
       title 'KickAssembler'
       desc 'Kick assembler NMOS 65xx syntax'

@@ -1,0 +1,29 @@
+:actor Main
+  :new (env)
+    Spec.Process.run(env, [
+      Spec.Run(AdditionSpec).new(env)
+    ])
+
+:class AdditionSpec
+  :is Spec
+  :const describes: "Addition"
+
+  :: Return the number 2 (written in hex, just for fun).
+  :const _two U64'val: 0x02
+
+  :it "adds two twos"
+    assert: @_two + '\x02' == 4
+
+  :: Raise an error if the argument is positive.
+  :fun non add_overflow!(a U64'val, b U64'val): a +! b
+
+  :it "can error on overflow"
+    integers Array(U64)'val = [99, 100, 101]
+
+    // Check addition overflow for various pairs of addends.
+    assert error: add_overflow!(U64.max_value, 1)
+    assert no_error: add_overflow!(U64.max_value, 0)
+    assert no_error: add_overflow!(integers[0]!, 1)
+
+    // Print a bit of extra information using string interpolation.
+    @env.out.print("The first integer is \(integers[0]!)")

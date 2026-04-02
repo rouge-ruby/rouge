@@ -1,0 +1,187 @@
+#!/usr/bin/env kos
+
+import base.*;
+import io;
+import math.min;
+
+/* multi-line
+   comment
+// */ var a1 = 1
+var a2 = 2 // single-line comment /*
+var a3 = 3 # single-line comment /*
+
+const        constant        = void
+var          variable        = void
+public const public_constant = void
+public var   public_variable = void
+
+class some extends object {
+    constructor {
+        super()
+        print(__line__, this, true, false, void)
+    }
+}
+
+# Let's test literals
+
+const decimal0 = 0
+const decimal1 = 1
+const decimal100 = 100
+const decimalMil = 1_000_000
+const decimalFloatMan = 0.0
+const decimalFloatExp1 = 0e+1
+const decimalFloatExp2 = 0e-1
+const decimalFloatExp3 = 0e1
+const decimalFloatExp4 = 0E+1
+const decimalFloatExp5 = 0E-1
+const decimalFloatExp6 = 0E1
+const decimalFloatExp7 = 0p+1
+const decimalFloatExp8 = 0p-1
+const decimalFloatExp9 = 0p1
+const decimalFloatExpA = 0P+1
+const decimalFloatExpB = 0P-1
+const decimalFloatExpC = 0P1
+const decimalFloatManExp1 = 0.1e+1
+const decimalFloatManExp2 = 0.1e-1
+const decimalFloatManExp3 = 0.1e1
+const decimalFloatManExp4 = 0.1E+1
+const decimalFloatManExp5 = 0.1E-1
+const decimalFloatManExp6 = 0.1E1
+const decimalFloatManExp7 = 0.1p+1
+const decimalFloatManExp8 = 0.1p-1
+const decimalFloatManExp9 = 0.1p1
+const decimalFloatManExpA = 0.1P+1
+const decimalFloatManExpB = 0.1P-1
+const decimalFloatManExpC = 0.1P1
+
+const hex0 = 0x0
+const hex1 = 0x1
+const hex16 = 0x10
+const hexGazillion = 0x1_0000_0000
+
+const bin0 = 0b0
+const Bin0 = 0B0
+const bin16 = 0b1_0000
+const Bin16 = 0B1_0000
+
+const strEmpty = ""
+const strFull = "full"
+const strRaw = r"
+Multi-line raw string
+"
+
+const strInterp = "string\( "".join(strFull -> map(fun(x) { return x + ":" }))
+                            + " in-str " + strEmpty)string"
+
+const strEscape = "eol: \r\n    backslash: \\   quote: \"     tab: \t"
+
+const some_array  = [ "value" ]
+const some_object = { prop: 0 }
+assert "prop" propertyof some_object
+assert "prop" in some_object
+delete some_object.prop
+
+# Let's test operators
+
+const o_add    = 1 + 2
+const o_sub    = 1 - 2
+const o_mul    = 1 * 2
+const o_div    = 1 / 2
+const o_mod    = 1 % 2
+const o_and    = 1 & 2
+const o_or     = 1 | 2
+const o_xor    = 1 ^ 2
+const o_shl    = 1 << 2
+const o_shr    = 1 >> 2
+const o_sar    = 1 >>> 2
+const o_not    = !1
+const o_neg    = ~1
+const o_lt     = 1 <  2
+const o_le     = 1 <= 2
+const o_gt     = 1 >  2
+const o_ge     = 1 >= 2
+const o_eq     = 1 == 2
+const o_ne     = 1 != 2
+const o_which  = 1 ? 2 : 3
+const o_land   = 1 && 2
+const o_lor    = 1 || 2
+
+var val = 0
+val += 1
+val -= 1
+val *= 1
+val /= 1
+val %= 1
+val &= 1
+val |= 1
+val ^= 1
+val <<= 1
+val >>= 1
+val >>>= 1
+
+# Test lambdas and stream operator
+;[1, 2, 3] -> map(x => -x) -> each(print)
+
+# Now let's test  keywords
+for const i, _ in enumerate("abcdefgh") {
+    assert i >= 0 && i < 3
+
+    defer {
+        val &= 0xFF
+    }
+
+    if i < 2 {
+        continue
+    }
+    else {
+        break
+    }
+
+    try {
+        switch i {
+            case 0: {
+                val *= 2
+                fallthrough
+            }
+            case 1 {
+                val *= 3
+                break
+            }
+            default {
+                throw typeof val
+            }
+        }
+    }
+    catch const e {
+        val *= -1
+    }
+}
+
+fun test_generator(base, objs...) {
+    repeat {
+        yield objs[-1] instanceof base
+        objs.resize(objs.size - 1)
+    } while objs.size
+
+    loop {
+        yield 0
+        break
+    }
+}
+
+do {
+    const gen = test_generator(integer, 1)
+    assert gen() == true
+    assert gen() == 0
+}
+
+with const o = { release: fun { } } { }
+
+if false {
+    val.get()
+    val.match()
+    val.set()
+    val.static()
+}
+
+# vim: ft=kos

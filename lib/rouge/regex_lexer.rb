@@ -179,7 +179,7 @@ module Rouge
         end
 
         def default(*args, &block)
-          @default = block || Rule.make_action(%r//o, *args)
+          @default = block || Rule.make_action(@covering_regex, *args)
         end
 
         def to_proc

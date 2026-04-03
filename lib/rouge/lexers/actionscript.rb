@@ -98,7 +98,7 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= %w(
+        @builtins ||= Set.new %w(
           void Function Math Class
           Object RegExp decodeURI
           decodeURIComponent encodeURI encodeURIComponent
@@ -129,22 +129,12 @@ module Rouge
 
         rule %r/[{}]/, Punctuation, :statement
 
-        rule id do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-            push :expr_start
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-            push :expr_start
-          elsif self.class.reserved.include? m[0]
-            token Keyword::Reserved
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          else
-            token Name::Other
-          end
+        keywords id do
+          rule :keywords, Keyword
+          rule :declarations, Keyword::Declaration
+          rule :reserved, Keyword::Reserved
+          rule :builtins, Name::Builtin
+          default Name::Other
         end
 
         rule %r/\-?[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float

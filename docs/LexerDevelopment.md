@@ -267,6 +267,93 @@ rules, as if the regular expression had not matched.
 
 You can see an example of these more complex rules in [the Ruby lexer][ruby-lexer].
 
+#### Keywords, Builtins, and other word sets
+
+Most programming languages reserve certain words for use as identifiers that
+have a special meaning in the language. To make regular expressions that search
+for these words easier, many lexers will put the applicable keywords in a
+set and make them available in a particular way (be it as a local variable,
+an instance variable or what have you).
+
+For small sets, you can simply use a constant:
+
+```rb
+module Rouge
+  module Lexers
+    class YetAnotherLanguage < RegexLexer
+      # ...
+      KEYWORDS = Set.new %w(key words used in this language)
+      # ...
+    end
+  end
+end
+```
+
+If the keyword sets are very large (>75 elements or so), please put them in a constant in a separate file, which is lazily loaded:
+
+```rb
+# lib/rouge/lexers/my_lang.rb
+module Rouge
+  module Lexers
+    class MyLang < RegexLexer
+      tag :my_lang
+      # ...
+
+      lazy do
+        requre_relative 'my_lang/keywords'
+      end
+
+      # ...
+    end
+  end
+end
+
+# lib/rouge/lexers/my_lang/keywords.rb
+module Rouge
+  module Lexers
+    class MyLang
+      KEYWORDS = Set.new %w(massive set goes here)
+    end
+  end
+end
+```
+
+This way, users of Rouge who are not using your language will not have to load the keyword sets. These keywords can then be used with the special `#keywords` api:
+
+```rb
+state :my_cool_state do
+  # ...
+
+  # Use a "covering regex" here, like /\w+/, which matches the general form
+  # of keywords. This should be possible for almost all languages. If there is no
+  # appropriate regex that will cover all cases, consider special-casing some of
+  # the exceptions. If the language has *truly* free-form keyword sets (like Gherkin),
+  # please let us know and we'll consider allowing a large regex instead.
+  keywords %r/\w+/ do
+    # this method acts much like a normal #rule call - it takes a token type, and
+    # potentially an action block. Except instead of a regex, it takes a Set, which
+    # the match from above will be checked against, in the order they appear here.
+    rule KEYWORDS, Keyword
+    rule BUILTINS, Name::Builtin, :pop!
+
+    # symbols will be mapped to class methods on the lexer
+    rule :small_set, Name::Function
+
+    # or you can just inline small sets here
+    rule Set[%w(one two three four)], Num::Integer
+    # etc...
+
+    # optional: transform the match before checking set membership
+    transform(&:downcase)
+
+    # optional: a default rule if the match isn't contained in any of the sets.
+    # If this is not given, Rouge will simply fall through to the next rules after
+    # the keywords block.
+    default Name
+  end
+end
+```
+
 ### Additional Features
 
 While the properties and states are the minimum elements of a lexer that need
@@ -302,93 +389,6 @@ For more general disambiguation between different lexers, see [Conflicting
 Filename Globs][conflict-globs] below.
 
 [conflict-globs]: #conflicting-filename-globs
-
-#### Keywords, Builtins, and other word sets
-
-Most programming languages reserve certain words for use as identifiers that
-have a special meaning in the language. To make regular expressions that search
-for these words easier, many lexers will put the applicable keywords in a
-set and make them available in a particular way (be it as a local variable,
-an instance variable or what have you).
-
-For small sets, you can simply use a constant:
-
-```rb
-module Rouge
-  module Lexers
-    class YetAnotherLanguage < RegexLexer
-      # ...
-      KEYWORDS = Set.new %w(key words used in this language)
-      # ...
-    end
-  end
-end
-```
-
-If the keyword sets are very large (>75 elements or so), please put them in a constant in a separate file, which is lazily loaded:
-
-```
-# lib/rouge/lexers/my_lang.rb
-module Rouge
-  module Lexers
-    class MyLang < RegexLexer
-      tag :my_lang
-      # ...
-
-      lazy do
-        requre_relative 'my_lang/keywords'
-      end
-
-      # ...
-    end
-  end
-end
-
-# lib/rouge/lexers/my_lang/keywords.rb
-module Rouge
-  module Lexers
-    class MyLang
-      KEYWORDS = Set.new %w(massive set goes here)
-    end
-  end
-end
-```
-
-This way, they will not affect users of Rouge who are not using your language. These keywords can then be used with the special `#keywords` api:
-
-```rb
-state :my_cool_state do
-  # ...
-
-  # Use a "covering regex" here, like /\w+/, which matches the general form
-  # of keywords. This should be possible for almost all languages. If there is no
-  # appropriate regex that will cover all cases, consider special-casing some of
-  # the exceptions. If the language has *truly* free-form keyword sets (like Gherkin),
-  # please let us know and we'll consider allowing a large regex instead.
-  keywords %r/\w+/ do
-    # this method acts much like a normal #rule call - it takes a token type, and
-    # potentially an action block. Except instead of a regex, it takes a Set, which
-    # the match from above will be checked against, in the order they appear here.
-    rule KEYWORDS, Keyword
-    rule BUILTINS, Name::Builtin, :pop!
-
-    # symbols will be mapped to class methods on the lexer
-    rule :small_set, Name::Function
-
-    # or you can just inline small sets here
-    rule Set[%w(one two three four)], Num::Integer
-    # etc...
-
-    # optional: transform the match before checking set membership
-    transform(&:downcase)
-
-    # optional: a default rule if the match isn't contained in any of the sets.
-    # If this is not given, Rouge will simply fall through to the next rules after
-    # the keywords block.
-    default Name
-  end
-end
-```
 
 #### Startup
 

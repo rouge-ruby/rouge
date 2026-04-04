@@ -8,6 +8,7 @@ gem 'rake'
 
 gem 'minitest', '>= 5.0'
 gem 'minitest-power_assert'
+gem 'minitest-focus'
 gem 'power_assert', '~> 2.0'
 
 # don't try to install redcarpet under jruby

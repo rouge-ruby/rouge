@@ -42,16 +42,12 @@ module Rouge
 
         rule %r/i[1-9]\d*/, Keyword::Type
 
-        rule %r/\w+/ do |m|
-          if TYPES.include? m[0]
-            token Keyword::Type
-          elsif INSTRUCTIONS.include? m[0]
-            token Keyword
-          elsif KEYWORDS.include? m[0]
-            token Keyword
-          else
-            token Error
-          end
+        keywords %r/\w+/ do
+          transform(&:downcase)
+          rule TYPES, Keyword::Type
+          rule INSTRUCTIONS, Keyword
+          rule KEYWORDS, Keyword
+          default Error
         end
       end
     end

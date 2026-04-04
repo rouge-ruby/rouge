@@ -13,7 +13,7 @@ module Rouge
       mimetypes 'text/x-powershell'
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_cmdletbindingattribute?view=powershell-6
-      ATTRIBUTES = %w(
+      ATTRIBUTES = Set.new %w(
         ConfirmImpact DefaultParameterSetName HelpURI PositionalBinding
         SupportsPaging SupportsShouldProcess
       )
@@ -170,13 +170,12 @@ module Rouge
       state :bracket do
         rule %r/\]/, Punctuation, :pop!
         rule %r/[A-Za-z]\w+\./, Name
-        rule %r/([A-Za-z]\w+)/ do |m|
-          if ATTRIBUTES.include? m[0]
-            token Name::Builtin::Pseudo
-          else
-            token Name
-          end
+
+        keywords %r/([A-Za-z]\w+)/ do
+          rule ATTRIBUTES, Name::Builtin::Pseudo
+          default Name
         end
+
         mixin :root
       end
 

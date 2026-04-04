@@ -548,7 +548,7 @@ module Rouge
       end
 
       state :command do
-        rule id, Name::Function do |m|
+        rule id do |m|
           if self.class.keywords.include? m[0]
             token Keyword
           elsif self.class.builtins.include? m[0]

@@ -10,7 +10,6 @@ module Rouge
       desc "The AppleScript scripting language by Apple Inc. (https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/introduction/ASLR_intro.html)"
 
       tag 'applescript'
-      aliases 'applescript'
 
       filenames '*.applescript', '*.scpt'
 
@@ -23,7 +22,7 @@ module Rouge
         rule %r/¬\n/, Literal::String::Escape
         rule %r/'s\s+/, Text
         rule %r/(--|#).*?$/, Comment::Single
-        rule %r/\(\*/, Comment::Multiline, :multicomment
+        rule %r/[(][*]/, Comment::Multiline, :multicomment
         rule %r/[\(\){}!,.:]/, Punctuation
         rule %r/(«)([^»]+)(»)/ do |match|
           token Text, match[1]
@@ -51,7 +50,7 @@ module Rouge
 
         ident = %r/([a-zA-Z]\w*)\b|[|].*?[|]/
 
-        rule /(as)([ \t]+)(#{ident})/ do |match|
+        rule %r/(as)([ \t]+)(#{ident})/ do |match|
           groups Keyword, Text, Name::Class
         end
 
@@ -59,14 +58,10 @@ module Rouge
 
         rule MULTI_WORD_BUILTINS_RE, Name::Builtin
 
-        rule ident do |m|
-          if RESERVED.include?(m[0])
-            token Keyword
-          elsif BUILTINS.include?(m[0])
-            token Name::Builtin
-          else
-            token Name
-          end
+        keywords ident do
+          rule RESERVED, Keyword
+          rule BUILTINS, Name::Builtin
+          default Name
         end
 
         rule %r/[-+]?(\d+\.\d*|\d*\.\d+)(E[-+][0-9]+)?/, Literal::Number::Float

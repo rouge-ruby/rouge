@@ -59,6 +59,19 @@ require_relative 'rouge/lexer'
 require_relative 'rouge/regex_lexer'
 require_relative 'rouge/template_lexer'
 
+# workaround for https://bugs.ruby-lang.org/issues/21870
+# delete this entire begin/end block (or guard it against RUBY_VERSION)
+# when that is fixed.
+begin
+  old_verbose, $VERBOSE = $VERBOSE, false
+  require_relative 'rouge/lexers/xml'
+  require_relative 'rouge/lexers/css'
+  require_relative 'rouge/lexers/html'
+  require_relative 'rouge/lexers/julia'
+ensure
+  $VERBOSE = old_verbose
+end
+
 Dir.glob('rouge/lexers/*.rb', base: __dir__).each do |file|
   require_relative file
 end

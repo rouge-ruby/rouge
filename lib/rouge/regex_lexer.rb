@@ -16,6 +16,18 @@ module Rouge
       end
     end
 
+    class InvalidRule < StandardError
+      def to_s
+        "#rule used both arguments and a block. Only one is supported."
+      end
+    end
+
+    class InvalidKeywordSet < StandardError
+      def to_s
+        "Invalid keyword set: Keys must be an instance of Set."
+      end
+    end
+
     class ClosedState < StandardError
       attr_reader :state
       def initialize(state)
@@ -58,6 +70,61 @@ module Rouge
       def inspect
         "#<Rule #{@re.inspect}>"
       end
+
+      def self.make_action(re, tok=nil, next_state=nil)
+        if tok.nil?
+          raise "please pass a token to yield, or use a callback"
+        end
+
+        matches_empty = re.match?('')
+
+        case next_state
+        when :pop!
+          proc do |stream|
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
+            @output_stream.call(tok, stream[0])
+            puts "    popping stack: 1" if @debug
+            @stack.pop or raise 'empty stack!'
+          end
+        when :push
+          proc do |stream|
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
+            @output_stream.call(tok, stream[0])
+            puts "    pushing :#{@stack.last.name}" if @debug
+            @stack.push(@stack.last)
+          end
+        when Symbol
+          proc do |stream|
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
+            @output_stream.call(tok, stream[0])
+            state = @states[next_state] || self.class.get_state(next_state)
+            puts "    pushing :#{state.name}" if @debug
+            @stack.push(state)
+          end
+        when Array
+          # [jneen] TODO: deprecate this.
+          proc do |stream|
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
+            @output_stream.call(tok, stream[0])
+            for i_next_state in next_state do
+              next @stack.pop if i_next_state == :pop!
+              next @stack.push(@stack.last) if i_next_state == :push
+
+              state = @states[i_next_state] || self.class.get_state(i_next_state)
+              puts "    pushing :#{state.name}" if @debug
+              @stack.push(state)
+            end
+          end
+        when nil
+          # cannot use an empty-matching regexp with no predicate
+          raise InvalidRegex.new(re) if matches_empty
+
+          proc do |stream|
+            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
+            @output_stream.call(tok, stream[0])
+          end
+        end
+      end
     end
 
     # a State is a named set of rules that can be tested for or
@@ -77,8 +144,77 @@ module Rouge
     end
 
     class StateDSL
+      class KeywordRule
+        def initialize(lexer_class, covering_regex, &defn)
+          @lexer_class = lexer_class
+          @covering_regex = covering_regex
+          @transform = nil
+          @default = nil
+          @group = 0
+          @sets = []
+          instance_eval(&defn)
+        end
+
+        def transform(&b)
+          @mapper = b
+        end
+
+        def group(g)
+          @group = g
+        end
+
+        def rule(keyword_set, *args, &action)
+          if keyword_set.is_a?(Symbol)
+            keyword_set = @lexer_class.public_send(keyword_set)
+          end
+
+          unless keyword_set.is_a?(Set)
+            raise InvalidKeywordSet
+          end
+
+          raise InvalidRule if action && args.any?
+          action ||= Rule.make_action(@covering_regex, *args)
+
+          @sets << [keyword_set, action]
+        end
+
+        def default(*args, &block)
+          @default = block || Rule.make_action(@covering_regex, *args)
+        end
+
+        def to_proc
+          mapper = @mapper
+          sets = @sets
+          default = @default
+          group = @group
+
+          proc do |m|
+            match = m[group]
+            match = mapper.call(match) if mapper
+            found = false
+            sets.each do |(keyword_set, action)|
+              next unless keyword_set.include?(match)
+
+              instance_exec(m, &action)
+
+              found = true
+              break
+            end
+
+            next if found
+
+            if default
+              instance_exec(m, &default)
+            else
+              fallthrough!
+            end
+          end
+        end
+      end
+
       attr_reader :rules, :name
-      def initialize(name, &defn)
+      def initialize(lexer_class, name, &defn)
+        @lexer_class = lexer_class
         @name = name
         @defn = defn
         @rules = []
@@ -96,7 +232,7 @@ module Rouge
 
       def prepended(&defn)
         parent_defn = @defn
-        StateDSL.new(@name) do
+        StateDSL.new(@lexer_class, @name) do
           instance_eval(&defn)
           instance_eval(&parent_defn)
         end
@@ -104,7 +240,7 @@ module Rouge
 
       def appended(&defn)
         parent_defn = @defn
-        StateDSL.new(@name) do
+        StateDSL.new(@lexer_class, @name) do
           instance_eval(&parent_defn)
           instance_eval(&defn)
         end
@@ -130,62 +266,12 @@ module Rouge
       #   methods, including {RegexLexer#push}, {RegexLexer#pop!},
       #   {RegexLexer#token}, and {RegexLexer#delegate}.  The first
       #   argument can be used to access the match groups.
-      def rule(re, tok=nil, next_state=nil, &callback)
+      def rule(re, *args, &callback)
         raise ClosedState.new(self) if @closed
-
-        if tok.nil? && callback.nil?
-          raise "please pass `rule` a token to yield or a callback"
-        end
 
         matches_empty = re =~ ''
 
-        callback ||= case next_state
-        when :pop!
-          proc do |stream|
-            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
-            @output_stream.call(tok, stream[0])
-            puts "    popping stack: 1" if @debug
-            @stack.pop or raise 'empty stack!'
-          end
-        when :push
-          proc do |stream|
-            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
-            @output_stream.call(tok, stream[0])
-            puts "    pushing :#{@stack.last.name}" if @debug
-            @stack.push(@stack.last)
-          end
-        when Symbol
-          proc do |stream|
-            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
-            @output_stream.call(tok, stream[0])
-            state = @states[next_state] || self.class.get_state(next_state)
-            puts "    pushing :#{state.name}" if @debug
-            @stack.push(state)
-          end
-        when nil
-          # cannot use an empty-matching regexp with no predicate
-          raise InvalidRegex.new(re) if matches_empty
-
-          proc do |stream|
-            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
-            @output_stream.call(tok, stream[0])
-          end
-        when Array
-          proc do |stream|
-            puts "    yielding: #{tok.qualname}, #{stream[0].inspect}" if @debug
-            @output_stream.call(tok, stream[0])
-            for i_next_state in next_state do
-              next @stack.pop if i_next_state == :pop!
-              next @stack.push(@stack.last) if i_next_state == :push
-
-              state = @states[i_next_state] || self.class.get_state(i_next_state)
-              puts "    pushing :#{state.name}" if @debug
-              @stack.push(state)
-            end
-          end
-        else
-          raise "invalid next state: #{next_state.inspect}"
-        end
+        callback ||= Rule.make_action(re, *args)
 
         rules << Rule.new(re, callback)
 
@@ -211,6 +297,15 @@ module Rouge
       # to the rest of the rules in this state.
       def mixin(state)
         rules << state.to_s
+      end
+
+      # Define keyword sets with an overarching regular expression.
+      def keywords(covering_regex, &block)
+        keyword_rule = KeywordRule.new(@lexer_class, covering_regex, &block)
+
+        keyword_rule.check! if @debug
+
+        rule(covering_regex, &keyword_rule.to_proc)
       end
 
     private
@@ -256,7 +351,7 @@ module Rouge
     # The block will be evaluated in the context of a {StateDSL}.
     def self.state(name, &b)
       name = name.to_sym
-      state_definitions[name] = StateDSL.new(name, &b)
+      state_definitions[name] = StateDSL.new(self, name, &b)
     end
 
     def self.prepend(name, &b)
@@ -279,6 +374,12 @@ module Rouge
         defn = state_definitions[name.to_sym] or raise "unknown state: #{name.inspect}"
         defn.to_state(self)
       end
+    end
+
+    def self.dangerous_alternation_regexp(list)
+      # rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
+      /#{Regexp.union(list)}\b/
+      # rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
     end
 
     # @private
@@ -462,7 +563,7 @@ module Rouge
       push_state = if state_name
         get_state(state_name)
       elsif block_given?
-        StateDSL.new(b.inspect, &b).to_state(self.class)
+        StateDSL.new(self.class, b.inspect, &b).to_state(self.class)
       else
         # use the top of the stack by default
         self.state

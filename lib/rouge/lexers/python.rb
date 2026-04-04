@@ -17,7 +17,7 @@ module Rouge
       end
 
       def self.keywords
-        @keywords ||= %w(
+        @keywords ||= Set.new %w(
           assert break continue del elif else except exec
           finally for global if lambda pass print raise
           return try while yield as with from import
@@ -26,7 +26,7 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= %w(
+        @builtins ||= Set.new %w(
           __import__ abs aiter all anext any apply ascii
           basestring bin bool buffer breakpoint bytearray bytes
           callable chr classmethod cmp coerce compile complex
@@ -42,11 +42,11 @@ module Rouge
       end
 
       def self.builtins_pseudo
-        @builtins_pseudo ||= %w(None Ellipsis NotImplemented False True)
+        @builtins_pseudo ||= Set.new %w(None Ellipsis NotImplemented False True)
       end
 
       def self.exceptions
-        @exceptions ||= %w(
+        @exceptions ||= Set.new %w(
           ArithmeticError AssertionError AttributeError BaseException
           BaseExceptionGroup BlockingIOError BrokenPipeError BufferError
           BytesWarning ChildProcessError ConnectionAbortedError ConnectionError
@@ -133,18 +133,12 @@ module Rouge
         mixin :soft_keywords
 
         # using negative lookbehind so we don't match property names
-        rule %r/(?<!\.)#{identifier}/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.exceptions.include? m[0]
-            token Name::Builtin
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          elsif self.class.builtins_pseudo.include? m[0]
-            token Name::Builtin::Pseudo
-          else
-            token Name
-          end
+        keywords %r/(?<!\.)#{identifier}/ do |m|
+          rule :keywords, Keyword
+          rule :exceptions, Name::Builtin
+          rule :builtins, Name::Builtin
+          rule :builtins_pseudo, Name::Builtin::Pseudo
+          default Name
         end
 
         rule identifier, Name

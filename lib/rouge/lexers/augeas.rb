@@ -40,17 +40,16 @@ module Rouge
           groups Punctuation, Keyword::Type
         end
 
-        rule %r/\w[\w']*/ do |m|
-          name = m[0]
-          if name == "module"
-            token Keyword::Reserved
-            push :module
-          elsif self.class.reserved.include? name
-            token Keyword::Reserved
-          elsif name =~ /\A[A-Z]/
-            token Keyword::Namespace
-          else
-            token Name
+        keywords %r/\w[\w']*/ do
+          rule Set["module"], Keyword::Reserved, :module
+          rule :reserved, Keyword::Reserved
+
+          default do |m|
+            if m[0].match?(/\A[A-Z]/)
+              token Keyword::Namespace
+            else
+              token Name
+            end
           end
         end
 

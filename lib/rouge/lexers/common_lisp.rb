@@ -319,7 +319,7 @@ module Rouge
         end
 
         rule %r/\(/, Punctuation, :root
-        rule %r/\)/, Punctuation do
+        rule %r/\)/ do
           if stack.size == 1
             token Error
           else

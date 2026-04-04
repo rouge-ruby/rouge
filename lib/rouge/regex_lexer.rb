@@ -16,6 +16,12 @@ module Rouge
       end
     end
 
+    class InvalidRule < StandardError
+      def to_s
+        "#rule used both arguments and a block. Only one is supported."
+      end
+    end
+
     class ClosedState < StandardError
       attr_reader :state
       def initialize(state)
@@ -138,6 +144,8 @@ module Rouge
         end
 
         matches_empty = re =~ ''
+
+        raise InvalidRule if callback && tok
 
         callback ||= case next_state
         when :pop!

@@ -64,19 +64,18 @@ module Rouge
         @builtins ||= Set.new %w(
           roAppendFile roAppInfo roAppManager roArray roAssociativeArray
           roAudioGuide roAudioMetadata roAudioPlayer roAudioPlayerEvent
-          roAudioResourceroBitmap roBoolean roBoolean roBrightPackage roBrSub
+          roAudioResourceroBitmap roBoolean roBrightPackage roBrSub
           roButton roByteArray roCaptionRenderer roCaptionRendererEvent
           roCecInterface roCECStatusEvent roChannelStore roChannelStoreEvent
           roClockWidget roCodeRegistrationScreen
-          roCodeRegistrationScreenEventroCompositor roControlDown roControlPort
-          roControlPort roControlUp roCreateFile roDatagramReceiver
+          roCodeRegistrationScreenEventroCompositor roControlDown roControlPort roControlUp roCreateFile roDatagramReceiver
           roDatagramSender roDataGramSocket roDateTime roDeviceInfo
           roDeviceInfoEvent roDoubleroEVPCipher roEVPDigest roFileSystem
           roFileSystemEvent roFloat roFont roFontMetrics roFontRegistry
           roFunction roGlobal roGpio roGridScreen roGridScreenEvent
           roHdmiHotPlugEventroHdmiStatus roHdmiStatusEvent roHMAC roHttpAgent
           roImageCanvas roImageCanvasEvent roImageMetadata roImagePlayer
-          roImageWidgetroInput roInputEvent roInt roInt roInvalid roInvalid
+          roImageWidgetroInput roInputEvent roInt roInvalid
           roIRRemote roKeyboard roKeyboardPress roKeyboardScreen
           roKeyboardScreenEventroList roListScreen roListScreenEvent
           roLocalization roLongInteger roMessageDialog roMessageDialogEvent

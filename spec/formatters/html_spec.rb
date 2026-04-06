@@ -16,11 +16,11 @@ describe Rouge::Formatters::HTML do
   end
 
   describe '#inline_theme' do
-    class InlineTheme < Rouge::CSSTheme
-      style Name, :bold => true
+    inline_theme = Class.new(Rouge::CSSTheme) do
+      style self::Name, :bold => true
     end
 
-    let(:options) { { :inline_theme => InlineTheme.new, :wrap => false } }
+    let(:options) { { :inline_theme => inline_theme.new, :wrap => false } }
 
     let(:output) {
       subject.format([[Token['Name'], 'foo']])

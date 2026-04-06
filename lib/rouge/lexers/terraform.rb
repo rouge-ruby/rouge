@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'hcl'
+
 module Rouge
   module Lexers
-    load_lexer 'hcl.rb'
-
     class Terraform < Hcl
       title "Terraform"
       desc "Terraform HCL Interpolations"
 
       tag 'terraform'
       aliases 'tf'
-      filenames '*.tf', '*.tfvars'
+      filenames '*.tf', '*.tfvars', '*.tofu'
 
       def self.keywords
         @keywords ||= Set.new %w(

@@ -60,6 +60,7 @@ echo $ΔΔ;
 1.414e10;
 1_000_000;
 007;
+0o664;
 0b1010;
 0xabcdef;
 
@@ -190,6 +191,12 @@ class C {
     public static ?string $a = "";
     public static int $b = 0;
 
+    const bool CONST_1 = true;
+    public const int CONST_2 = 1;
+    protected const float CONST_3 = 1.0;
+    private const string CONST_4 = "foo";
+    const ?array CONST_5 = [];
+
     public function __construct(
         public $foo,
         protected readonly $bar,
@@ -223,6 +230,22 @@ trait SomeTrait {
 interface SomeInterface {
   function interfaceFunc(bool $arg): iterable;
   function nullableTypes(?bool $arg): ?iterable;
+}
+
+
+/* Enums */
+
+enum Suit {
+  case Hearts;
+  case Diamonds;
+  case Clubs;
+  case Spades;
+}
+enum Status: string {
+  case Pending    = 'pending';
+  case Processing = 'processing';
+  case Completed  = 'completed';
+  case Failed     = 'failed';
 }
 
 
@@ -365,6 +388,67 @@ class SetUp {
 }
 
 function f(\Ns1\Ns2\Ns3\Class $x) {
+}
+
+?>
+
+/* Asymmetric Visibility */
+
+<?php
+
+class C {
+    public private(set) int $a1;
+    protected(set) protected string $a2;
+    public private(set) readonly int $a3;
+
+    public function __construct(
+        public public(set) string $a4,
+        private(set) protected mixed $a5,
+        public protected(set) readonly float $a6,
+    ) {}
+}
+
+?>
+
+/* Property Hooks */
+
+<?php
+
+class A {
+    public string $x1 {
+        get {
+            return $this->x1;
+        }
+        set (string $value) {
+            $this->x1 = trim($value);
+        }
+    }
+
+    public string $x2 {
+        get => strtolower($this->x2);
+        set => trim($value);
+    }
+
+    public array $x3 {
+        &get => $this->data;
+    }
+
+    public string $x4 {
+        final get => $this->x6;
+        set => strtolower($value);
+    }
+
+    public function __construct(
+        public string $x5 { get => strtoupper($this->x5); },
+        protected int $x6 {
+            set {
+                if ($value < 0) {
+                    throw new \ValueError('Must be non-negative');
+                }
+                $this->x6 = $value;
+            }
+        },
+    ) {}
 }
 
 ?>

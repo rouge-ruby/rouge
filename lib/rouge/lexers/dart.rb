@@ -45,6 +45,8 @@ module Rouge
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule %r/"/, Str, :dqs
         rule %r/'/, Str, :sqs
+        rule %r/r""".*?"""/m, Str::Other
+        rule %r/r'''.*?'''/m, Str::Other
         rule %r/r"[^"]*"/, Str::Other
         rule %r/r'[^']*'/, Str::Other
         rule %r/##{id}*/i, Str::Symbol

@@ -159,7 +159,7 @@ module Rouge
       end
 
       def run
-        @mode.doc.each(&method(:puts))
+        @mode.doc.each { |line| puts line }
       end
     end
 
@@ -212,7 +212,7 @@ module Rouge
       # and we provide explicit opt-in and opt-out with $COLORTERM
       def self.supports_truecolor?
         return true if %w(24bit truecolor).include?(ENV['COLORTERM'])
-        return false if ENV['COLORTERM'] && ENV['COLORTERM'] =~ /256/
+        return false if ENV['COLORTERM'] && ENV['COLORTERM'].include?('256')
 
         if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
           ENV['ConEmuANSI'] == 'ON' && !ENV['ANSICON']
@@ -344,11 +344,11 @@ module Rouge
 
       def run
         Formatter.enable_escape! if @escape
-        formatter.format(lexer.lex(input), &method(:print))
+        formatter.format(lexer.lex(input)) { |piece| print piece }
       end
 
-    private_class_method def self.parse_cgi(str)
-        pairs = CGI.parse(str).map { |k, v| [k.to_sym, v.first] }
+      private_class_method def self.parse_cgi(str)
+        pairs = URI.decode_www_form(str).map { |k, v| [k.to_sym, v] }
         Hash[pairs]
       end
     end
@@ -439,7 +439,7 @@ module Rouge
       end
 
       def run
-        @theme.render(&method(:puts))
+        @theme.render { |line| puts line }
       end
     end
 
@@ -510,13 +510,11 @@ module Rouge
     end
 
 
-  private_class_method def self.normalize_syntax(argv)
+    private_class_method def self.normalize_syntax(argv)
       out = []
       argv.each do |arg|
         case arg
-        when /^(--\w+)=(.*)$/
-          out << $1 << $2
-        when /^(-\w)(.+)$/
+        when /^(--\w+)=(.*)$/, /^(-\w)(.+)$/
           out << $1 << $2
         else
           out << arg

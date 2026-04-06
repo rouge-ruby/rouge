@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'sass/common'
+
 module Rouge
   module Lexers
-    load_lexer 'sass/common.rb'
-
     class Scss < SassCommon
       title "SCSS"
       desc "SCSS stylesheets (sass-lang.com)"

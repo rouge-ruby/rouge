@@ -38,7 +38,7 @@ module Rouge
           edestruct constructor econstructor eexists exists
           f_equal refine instantiate revert simpl
           specialize generalize dependent red induction
-          beta iota zeta delta exfalso autorewrite setoid_rewrite
+          beta iota zeta delta exfalso autorewrite
           compute vm_compute native_compute
         )
       end

@@ -10,6 +10,7 @@ module Rouge
     class Gruvbox < CSSTheme
       name 'gruvbox'
 
+      # rubocop:disable Naming/ConstantName
       # global Gruvbox colours {{{
       C_dark0_hard = '#1d2021'
       C_dark0 ='#282828'
@@ -121,6 +122,8 @@ module Rouge
         palette aqua: C_faded_aqua
         palette orange: C_faded_orange
       end
+
+      # rubocop:enable Naming/ConstantName
 
       dark!
       mode :light

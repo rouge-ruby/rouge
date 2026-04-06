@@ -8,7 +8,7 @@ module Rouge
       desc 'The Nial programming language (nial-array-language.org)'
       tag 'nial'
       filenames '*.ndf', '*.nlg'
-      
+
       def self.keywords
         @keywords ||= Set.new ["is", "gets", "op", "tr", ";",
                      "if", "then", "elseif", "else",
@@ -40,7 +40,7 @@ module Rouge
         "reduce", "reducecols", "reducerows",
         "sort", "team", "timeit", "twig"]
       end
-      
+
       def self.funcs
         @funcs ||= Set.new ["operation", "expression", "and", "abs",
                   "allbools", "allints", "allchars", "allin",
@@ -56,9 +56,9 @@ module Rouge
                   "cutall", "cut", "display", "deparse",
                   "deepupdate", "descan", "depth", "diagram",
                   "div", "divide", "drop", "dropright", "edit",
-                  "empty", "expression", "exit", "except", "erase",
+                  "empty", "exit", "except", "erase",
                   "equal", "eval", "eraserecord", "execute", "exp",
-                  "external", "exprs", "findall", "find", 
+                  "external", "exprs", "findall", "find",
                   "fault", "falsehood", "filestatus", "filelength",
                   "filepath", "filetally", "floor", "first",
                   "flip", "fuse", "fromraw", "front",
@@ -72,8 +72,7 @@ module Rouge
                   "loaddefs", "nonlocal", "max", "match", "log",
                   "lt", "lower", "lte", "mate", "min", "maxlength",
                   "mod", "mix", "minus", "nialroot", "mold", "not",
-                  "numeric", "no_op", "no_expr", "notin",
-                  "operation", "open", "or", "opposite", "opp",
+                  "numeric", "no_op", "no_expr", "notin", "open", "or", "opposite", "opp",
                   "operators", "plus", "pick", "pack", "pass", "pair", "parse",
                   "paste", "phrase", "place", "picture", "placeall",
                   "power", "positions", "post", "quotient", "putfile",
@@ -137,7 +136,7 @@ module Rouge
             token Text
           end
         end
-        
+
         rule %r/\b[_A-Za-z]\w*\b/ do |m|
           lower = m[0].downcase
           if self.class.keywords.include?(lower)
@@ -155,7 +154,7 @@ module Rouge
 
         rule %r/\s+/, Text
       end
-      
+
       state :str do
         rule %r/''/, Str::Escape
         rule %r/[^']+/, Str::Single

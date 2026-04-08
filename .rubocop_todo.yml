@@ -88,7 +88,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 Rouge/NoHugeCollections:
   Exclude:
     - 'lib/rouge/lexers/abap.rb'
-    - 'lib/rouge/lexers/cobol.rb'
     - 'lib/rouge/lexers/common_lisp.rb'
     - 'lib/rouge/lexers/css.rb'
     - 'lib/rouge/lexers/datastudio.rb'

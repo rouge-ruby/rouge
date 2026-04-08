@@ -8,13 +8,8 @@ module Rouge
       desc "BPF bytecode syntax"
       tag 'bpf'
 
-      TYPE_KEYWORDS = %w(
-        u8 u16 u32 u64 s8 s16 s32 s64 ll
-      ).join('|')
-
-      MISC_KEYWORDS = %w(
-        be16 be32 be64 le16 le32 le64 bswap16 bswap32 bswap64 exit lock map
-      ).join('|')
+      TYPE_KEYWORDS = %r/[us](?:8|16|32|64)|ll/
+      MISC_KEYWORDS = %r/(?:[bl]e|bswap)(?:16|32|64)|exit|lock|map/
 
       state :root do
         # Line numbers and hexadecimal output from bpftool/objdump
@@ -67,7 +62,7 @@ module Rouge
         rule %r/\/\//, Comment::Single, :linecomment
         rule %r/\/\*/, Comment::Multiline, :multilinescomment
 
-        rule %r/#{MISC_KEYWORDS}/i, Keyword
+        rule MISC_KEYWORDS, Keyword
 
         # Literals and global objects (maps) refered by name
         rule %r/([-]?0x\h+|[-]?\d+)(\s*)(ll)?/i do

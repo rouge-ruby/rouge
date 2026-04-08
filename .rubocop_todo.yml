@@ -41,7 +41,6 @@ Naming/MethodName:
 # SupportedStyles: snake_case, camelCase
 Naming/VariableName:
   Exclude:
-    - 'lib/rouge/lexers/brightscript.rb'
     - 'lib/rouge/lexers/dafny.rb'
     - 'lib/rouge/lexers/freefem.rb'
     - 'lib/rouge/lexers/igorpro.rb'

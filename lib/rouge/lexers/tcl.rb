@@ -7,7 +7,7 @@ module Rouge
       title "Tcl"
       desc "The Tool Command Language (tcl.tk)"
       tag 'tcl'
-      filenames '*.tcl'
+      filenames '*.tcl', '*.tm'
       mimetypes 'text/x-tcl', 'text/x-script.tcl', 'application/x-tcl'
 
       def self.detect?(text)

@@ -57,7 +57,6 @@ Performance/StringInclude:
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
     - 'lib/rouge/lexers/armasm.rb'
-    - 'lib/rouge/lexers/cfscript.rb'
     - 'lib/rouge/lexers/cmhg.rb'
     - 'lib/rouge/lexers/console.rb'
     - 'lib/rouge/lexers/crystal.rb'

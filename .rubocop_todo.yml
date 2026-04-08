@@ -85,7 +85,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 # Offense count: 20
 Rouge/NoHugeCollections:
   Exclude:
-    - 'lib/rouge/lexers/cobol.rb'
     - 'lib/rouge/lexers/common_lisp.rb'
     - 'lib/rouge/lexers/css.rb'
     - 'lib/rouge/lexers/datastudio.rb'

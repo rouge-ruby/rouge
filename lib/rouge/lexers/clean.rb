@@ -79,20 +79,14 @@ module Rouge
 
         rule %r/code(\s+inline)?\s*{/, Comment::Preproc, :abc
 
-        rule %r/_*[a-z][\w`]*/ do |m|
-          if self.class.keywords.include?(m[0])
-            token Keyword
-          else
-            token Name
-          end
+        keywords %r/_*[a-z][\w`]*/ do
+          rule :keywords, Keyword
+          default Name
         end
 
-        rule %r/_*[A-Z][\w`]*/ do |m|
-          if m[0]=='True' || m[0]=='False'
-            token Keyword::Constant
-          else
-            token Keyword::Type
-          end
+        keywords %r/_*[A-Z][\w`]*/ do |m|
+          rule Set['True', 'False'], Keyword::Constant
+          default Keyword::Type
         end
 
         rule %r/[^\w\s`]/, Punctuation

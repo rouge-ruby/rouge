@@ -9,8 +9,10 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          as assert existing extends extension false for from func if import in metadata module
-          none null output param provider resource targetScope test true type using var void with
+          as assert existing extends extension false for from func
+          if import in metadata module none null output param
+          provider resource targetScope test true type using var
+          void with
         )
       end
 
@@ -20,21 +22,25 @@ module Rouge
 
       def self.functions
         @functions ||= Set.new %w(
-          array base64 base64ToJson base64ToString bool cidrHost cidrSubnet concat contains dataUri
-          dataUriToString dateTimeAdd dateTimeFromEpoch dateTimeToEpoch deployer deployment empty endsWith
-          environment extensionResourceId fail filter first flatten format getSecret groupBy guid indexOf int
-          intersection items join json last lastIndexOf length list* listAccountSas listKeys listSecrets loadFileAsBase64
-          loadJsonContent loadTextContent loadYamlContent managementGroup managementGroupResourceId map mapValue max min
-          newGuid objectKeys padLeft parseCidr pickZones range readEnvironmentVariable reduce reference replace resourceGroup
-          resourceId shallowMerge skip sort split startsWith string subscription subscriptionResourceId substring take tenant
-          tenantResourceId toLogicalZone toLower toObject toPhysicalZone toUpper trim union uniqueString uri uriComponent
-          uriComponentToString utcNow
+          array base64 base64ToJson base64ToString bool cidrHost
+          cidrSubnet concat contains dataUri dataUriToString
+          dateTimeAdd dateTimeFromEpoch dateTimeToEpoch deployer
+          deployment empty endsWith environment extensionResourceId
+          fail filter first flatten format getSecret groupBy guid
+          indexOf int intersection items join json last lastIndexOf
+          length list* listAccountSas listKeys listSecrets
+          loadFileAsBase64 loadJsonContent loadTextContent
+          loadYamlContent managementGroup managementGroupResourceId
+          map mapValue max min newGuid objectKeys padLeft parseCidr
+          pickZones range readEnvironmentVariable reduce reference
+          replace resourceGroup resourceId shallowMerge skip sort
+          split startsWith string subscription subscriptionResourceId
+          substring take tenant tenantResourceId toLogicalZone
+          toLower toObject toPhysicalZone toUpper trim union
+          uniqueString uri uriComponent uriComponentToString utcNow
         )
       end
 
-      operators = %w(+ - * / % < <= > >= == != =~ !~ && || ! ?? ... .?)
-
-      punctuations = %w(( ) { } [ ] , : ; = .)
 
       state :root do
         mixin :comments
@@ -46,26 +52,21 @@ module Rouge
         rule %r/\b\d+\b/, Num
 
         # Rules for sets of reserved keywords
-        rule %r/\b\w+\b/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.datatypes.include? m[0]
-            token Keyword::Type
-          elsif self.class.functions.include? m[0]
-            token Name::Function
-          else
-            token Name
-          end
+        keywords %r/\w+/ do
+          rule :keywords, Keyword
+          rule :datatypes, Keyword::Type
+          rule :functions, Name::Function
+          default Name
         end
 
         # Match operators
-        rule %r/#{operators.map { |o| Regexp.escape(o) }.join('|')}/, Operator
+        rule %r(<=|>=|==|=>|!=|=~|!~|[&][&]|[|][|]|[?][?]|[.][.][.]|[.][?]|[-+!*/%<]), Operator
 
         # Enter a state when encountering an opening curly bracket
         rule %r/{/, Punctuation::Indicator, :block
 
         # Match punctuation
-        rule %r/#{punctuations.map { |p| Regexp.escape(p) }.join('|')}/, Punctuation
+        rule %r/[(){}\[\],:;=.]/, Punctuation
 
         # Match identifiers
         rule %r/[a-zA-Z_]\w*/, Name

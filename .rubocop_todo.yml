@@ -65,7 +65,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
     - 'lib/rouge/lexers/bicep.rb'
     - 'lib/rouge/lexers/cfscript.rb'
     - 'lib/rouge/lexers/cmhg.rb'
-    - 'lib/rouge/lexers/console.rb'
     - 'lib/rouge/lexers/crystal.rb'
     - 'lib/rouge/lexers/csharp.rb'
     - 'lib/rouge/lexers/d.rb'

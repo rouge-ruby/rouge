@@ -75,7 +75,7 @@ module Rouge
 
       def end_chars
         @end_chars ||= if @prompt.any?
-          @prompt.reject { |c| c.empty? }
+          @prompt.reject { |c| c.empty? }.uniq.first(20)
         elsif allow_comments?
           %w($ > ;)
         else
@@ -173,9 +173,13 @@ module Rouge
       end
 
       def prompt_regex
+        # [jneen] these characters can come from user input. They are escaped here,
+        # and we limit the user to 20.
+        #rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
         @prompt_regex ||= begin
           /^#{prompt_prefix_regex}(?:#{end_chars.map { |c| Regexp.escape(c) }.join('|')})/
         end
+        #rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
       end
 
       def stream_tokens(input, &output)

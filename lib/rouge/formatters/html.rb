@@ -9,9 +9,10 @@ module Rouge
         '&' => '&amp;',
         '<' => '&lt;',
         '>' => '&gt;',
+        "\r" => "",
       }.freeze
 
-      ESCAPE_REGEX = /[&<>]/.freeze
+      ESCAPE_REGEX = /[&<>\r]/.freeze
 
       tag 'html'
 

@@ -48,7 +48,7 @@ module Rouge
         rule %r(/\*), Comment::Multiline, :multiline_comments
 
         rule %r([*+\-<>=&|~%^]), Operator
-        rule %r/[{}),;\[\]]/, Str::Symbol
+        rule %r/[{}),;\[\]]/, Punctuation
 
         # literal number
         rule %r/(\w+)(:)(\s*)(-?[._\d]+)/ do
@@ -59,15 +59,13 @@ module Rouge
         # - "name("
         # - "name  ("
         # - "name ("
-        rule %r/(\w+)(\s*)(\()/ do |m|
-          name = m[1].upcase
-          if self.class.functions.include? name
-            groups Name::Function, Text::Whitespace, Str::Symbol
-          elsif self.class.keywords.include? name
-            groups Keyword, Text::Whitespace, Str::Symbol
-          else
-            groups Name, Text::Whitespace, Str::Symbol
-          end
+        keywords %r/(\w+)(?=\s*[(])/ do |m|
+          group 1
+          transform(&:upcase)
+
+          rule :functions, Name::Function
+          rule :keywords, Keyword
+          default Name
         end
 
         rule %r/:\w+/, Name::Class
@@ -87,7 +85,7 @@ module Rouge
         rule %r([.\w]+:), Name::Property
 
         # remaining "("
-        rule %r/\(/, Str::Symbol
+        rule %r/\(/, Punctuation
 
         rule %r/[.\w$]+/ do |m|
           match = m[0].upcase

@@ -16,6 +16,40 @@ module Rouge
         return true if text.shebang? 'crystal'
       end
 
+      KEYWORDS = Set.new %w(
+        BEGIN END alias begin break case defined\? do else elsif end
+        ensure for if ifdef in next redo rescue raise retry return super then
+        undef unless until when while yield lib fun type of as
+
+        abstract union enum
+      )
+
+      KEYWORDS_PSEUDO = Set.new %w(
+        initialize new loop include extend raise attr_reader attr_writer
+        attr_accessor alias_method attr catch throw private module_function
+        public protected true false nil __FILE__ __LINE__
+        getter getter? getter! property property? property! struct record
+      )
+
+      BUILTIN_GLOBALS = Set.new %w(
+        abort ancestors at_exit
+        caller catch chomp chop clone constants
+        display dup eval exec exit extend fail fork format freeze
+        getc gets global_variables gsub hash id included_modules
+        inspect instance_eval instance_method instance_methods
+        lambda loop method method_missing
+        methods module_eval object_id open p print printf
+        proc putc puts raise rand
+        readline readlines require scan select self send
+        sleep split sprintf srand sub syscall system
+        test throw to_a to_s trap warn flag?
+      )
+
+      BUILTIN_METHODS = Set.new %w(
+        eql? equal? include? is_a? iterator? kind_of? nil?
+        chomp! chop! exit! gsub! sub!
+      )
+
       state :symbols do
         # symbols
         rule %r(
@@ -90,9 +124,11 @@ module Rouge
       end
 
       # double-quoted string and symbol
-      [[:string, Str::Double, '"'],
-       [:sym, Str::Symbol, '"'],
-       [:backtick, Str::Backtick, '`']].each do |name, tok, fin|
+      [
+        [:string, Str::Double, '"'],
+        [:sym, Str::Symbol, '"'],
+        [:backtick, Str::Backtick, '`']
+      ].each do |name, tok, fin|
         state :"simple_#{name}" do
           mixin :string_intp_escaped
           rule %r/[^\\#{fin}#]+/m, tok
@@ -100,39 +136,6 @@ module Rouge
           rule %r/#{fin}/, tok, :pop!
         end
       end
-
-      keywords = %w(
-        BEGIN END alias begin break case defined\? do else elsif end
-        ensure for if ifdef in next redo rescue raise retry return super then
-        undef unless until when while yield lib fun type of as
-      )
-
-      keywords_pseudo = %w(
-        initialize new loop include extend raise attr_reader attr_writer
-        attr_accessor alias_method attr catch throw private module_function
-        public protected true false nil __FILE__ __LINE__
-        getter getter? getter! property property? property! struct record
-      )
-
-      builtins_g = %w(
-        abort ancestors at_exit
-        caller catch chomp chop clone constants
-        display dup eval exec exit extend fail fork format freeze
-        getc gets global_variables gsub hash id included_modules
-        inspect instance_eval instance_method instance_methods
-        lambda loop method method_missing
-        methods module_eval name object_id open p print printf
-        proc putc puts raise rand
-        readline readlines require scan select self send
-        sleep split sprintf srand sub syscall system
-        test throw to_a to_s trap warn
-      )
-
-      builtins_q = %w(
-        eql equal include is_a iterator kind_of nil
-      )
-
-      builtins_b = %w(chomp chop exit gsub sub)
 
       start do
         push :expr_start
@@ -175,9 +178,6 @@ module Rouge
 
         mixin :strings
 
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword, :expr_start
-        rule %r/(?:#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo, :expr_start
-
         rule %r(
           (module)
           (\s+)
@@ -196,25 +196,33 @@ module Rouge
           push :classname
         end
 
-        rule %r/(?:#{builtins_q.join('|')})[?]/, Name::Builtin, :expr_start
-        rule %r/(?:#{builtins_b.join('|')})!/,  Name::Builtin, :expr_start
-        rule %r/(?<!\.)(?:#{builtins_g.join('|')})\b/,
-          Name::Builtin, :method_call
-
         mixin :has_heredocs
 
         # `..` and `...` for ranges must have higher priority than `.`
         # Otherwise, they will be parsed as :method_call
-        rule %r/\.{2,3}/, Operator, :expr_start
+        rule %r/[.]{2,3}/, Operator, :expr_start
 
         rule %r/[\p{Lu}][\p{L}0-9_]*/, Name::Constant, :method_call
-        rule %r/(\.|::)(\s*)([\p{Ll}_]\p{Word}*[!?]?|[*%&^`~+-\/\[<>=])/ do
-          groups Punctuation, Text, Name::Function
-          push :method_call
+        keywords %r/(\.|::)(\s*)([\p{Ll}_]\p{Word}*[!?]?|[*%&^`~+-\/\[<>=])/ do
+          group 3
+          rule BUILTIN_METHODS do
+            groups Punctuation, Text, Name::Builtin
+            push :method_call
+          end
+
+          default do
+            groups Punctuation, Text, Name::Function
+            push :method_call
+          end
         end
 
-        rule %r/[\p{L}_]\p{Word}*[?!]/, Name, :expr_start
-        rule %r/[\p{L}_]\p{Word}*/, Name, :method_call
+        keywords %r/[\p{L}_]\p{Word}*[?!]?/ do
+          rule KEYWORDS, Keyword, :expr_start
+          rule KEYWORDS_PSEUDO, Keyword::Pseudo, :expr_start
+          rule BUILTIN_GLOBALS, Name::Builtin, :method_call
+          default Name, :expr_start
+        end
+
         rule %r/\*\*|\/\/|>=|<=|<=>|<<?|>>?|=~|={3}|!~|&&?|\|\||\./,
           Operator, :expr_start
         rule %r/{%|%}/, Punctuation

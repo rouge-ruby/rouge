@@ -67,7 +67,7 @@ module Rouge
         rule(id) do |m|
           if CSS.builtins.include? m[0]
             token Name::Builtin
-          elsif CSS.constants.include? m[0]
+          elsif CSS.colors.include? m[0]
             token Name::Constant
           else
             token Name

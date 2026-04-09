@@ -5,6 +5,8 @@ module Rouge
   module Lexers
     # shared states with SCSS
     class SassCommon < RegexLexer
+      lazy { require_relative '../css/builtins' }
+
       id = /[\w-]+/
 
       state :content_common do
@@ -65,9 +67,9 @@ module Rouge
 
         # identifiers
         rule(id) do |m|
-          if CSS.builtins.include? m[0]
+          if CSS::BUILTINS.include? m[0]
             token Name::Builtin
-          elsif CSS.colors.include? m[0]
+          elsif CSS::COLORS.include? m[0]
             token Name::Constant
           else
             token Name

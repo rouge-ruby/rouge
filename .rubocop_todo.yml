@@ -50,7 +50,6 @@ Naming/VariableName:
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
     - 'lib/rouge/lexers/armasm.rb'
-    - 'lib/rouge/lexers/csharp.rb'
     - 'lib/rouge/lexers/d.rb'
     - 'lib/rouge/lexers/dart.rb'
     - 'lib/rouge/lexers/eiffel.rb'

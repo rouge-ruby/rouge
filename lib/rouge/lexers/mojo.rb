@@ -30,6 +30,10 @@ module Rouge
           register_passable
         )
       end
+
+      prepend :newline do
+        rule %r/fn\b/, Keyword, :funcname
+      end
     end
   end
 end

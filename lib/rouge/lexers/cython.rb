@@ -25,13 +25,20 @@ module Rouge
       end
 
       def self.c_keywords
-        @ckeywords ||= %w(
+        @c_keywords ||= Set.new %w(
           public readonly extern api inline enum union
         )
       end
 
+      def self.builtins
+        @builtins ||= super + %w(python_call)
+      end
+
       identifier = /[a-z_]\w*/i
-      dotted_identifier = /[a-z_.][\w.]*/i
+
+      prepend :from_import do
+        rule %r/cimport\b/, Keyword::Namespace, :pop!
+      end
 
       prepend :root do
         rule %r/cp?def|ctypedef/ do
@@ -40,52 +47,14 @@ module Rouge
           push :c_start
         end
 
-        rule %r/(from)((?:\\\s|\s)+)(#{dotted_identifier})((?:\\\s|\s)+)(cimport)/ do
-          groups Keyword::Namespace,
-                 Text,
-                 Name::Namespace,
-                 Text,
-                 Keyword::Namespace
-        end
-
-        rule %r/(cimport)(\s+)(#{dotted_identifier})/ do
-          groups Keyword::Namespace, Text, Name::Namespace
-        end
+        rule %r/cimport\b/, Keyword::Namespace, :import
 
         rule %r/(struct)((?:\\\s|\s)+)/ do
           groups Keyword, Text
           push :classname
         end
 
-        mixin :func_call_fix
-
         rule %r/[(,]/, Punctuation, :c_start
-      end
-
-      prepend :classname do
-        rule %r/(?:\\\s|\s)+/, Text
-      end
-
-      prepend :funcname do
-        rule %r/(?:\\\s|\s)+/, Text
-      end
-      # This is a fix for the way that function calls are lexed in the Python
-      # lexer. This should be moved to the Python lexer once confirmed that it
-      # does not cause any regressions.
-      state :func_call_fix do
-        rule %r/#{identifier}(?=\()/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.exceptions.include? m[0]
-            token Name::Builtin
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          elsif self.class.builtins_pseudo.include? m[0]
-            token Name::Builtin::Pseudo
-          else
-            token Name::Function
-          end
-        end
       end
 
       # The Cython lexer adds three states to those already in the Python lexer.
@@ -97,7 +66,7 @@ module Rouge
       # have moved out of a C block.
 
       state :c_start do
-        rule %r/[^\S\n]+/, Text
+        mixin :inline_whitespace
 
         rule %r/cp?def|ctypedef/, Keyword
 
@@ -106,16 +75,16 @@ module Rouge
         # This rule matches identifiers that could be type declarations. The
         # lookahead matches (1) pointers, (2) arrays and (3) variable names.
         rule %r/#{identifier}(?=(?:\*+)|(?:[ \t]*\[)|(?:[ \t]+\w))/ do |m|
-          if self.class.keywords.include? m[0]
+          if self.class.keywords.include?(m[0])
             token Keyword
             pop!
-          elsif %w(def).include? m[0]
+          elsif m[0] == 'def'
             token Keyword
             goto :funcname
-          elsif %w(struct class).include? m[0]
-            token Keyword::Reserved
-            goto :classname
-          elsif self.class.c_keywords.include? m[0]
+          elsif %w(struct class).include?(m[0])
+            token Keyword
+            goto :funcname
+          elsif self.class.c_keywords.include?(m[0])
             token Keyword::Reserved
           else
             token Keyword::Type
@@ -144,7 +113,14 @@ module Rouge
           end
         end
 
-        rule(//) { @indentation = nil; reset_stack }
+        rule(//) do
+          @indentation = nil
+          # pop c_indent
+          pop!
+
+          # replace :c_definitions with :newline
+          goto :newline
+        end
       end
     end
   end

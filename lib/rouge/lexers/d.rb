@@ -12,7 +12,7 @@ module Rouge
       title "D"
       desc 'The D programming language(dlang.org)'
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         abstract alias align asm assert auto body
         break case cast catch class const continue
         debug default delegate delete deprecated do else
@@ -27,14 +27,14 @@ module Rouge
         __gshared __traits __vector __parameters
       )
 
-      keywords_type = %w(
+      KEYWORDS_TYPE = Set.new %w(
         bool byte cdouble cent cfloat char creal
         dchar double float idouble ifloat int ireal
         long real short ubyte ucent uint ulong
         ushort void wchar
       )
 
-      keywords_pseudo = %w(
+      KEYWORDS_PSEUDO = Set.new %w(
         __FILE__ __FILE_FULL_PATH__ __MODULE__ __LINE__ __FUNCTION__
         __PRETTY_FUNCTION__ __DATE__ __EOF__ __TIME__ __TIMESTAMP__
         __VENDOR__ __VERSION__
@@ -51,13 +51,7 @@ module Rouge
         rule %r(//.*), Comment::Single
         rule %r(/(\\\n)?[*](.|\n)*?[*](\\\n)?/), Comment::Multiline
         rule %r(/\+), Comment::Multiline, :nested_comment
-        # Keywords
-        rule %r/(#{keywords.join('|')})\b/, Keyword
-        rule %r/(#{keywords_type.join('|')})\b/, Keyword::Type
-        rule %r/(false|true|null)\b/, Keyword::Constant
-        rule %r/(#{keywords_pseudo.join('|')})\b/, Keyword::Pseudo
-        rule %r/macro\b/, Keyword::Reserved
-        rule %r/(string|wstring|dstring|size_t|ptrdiff_t)\b/, Name::Builtin
+
         # Literals
         # HexFloat
         rule %r/0[xX]([0-9a-fA-F_]*\.[0-9a-fA-F_]+|[0-9a-fA-F_]+)[pP][+\-]?[0-9_]+[fFL]?[i]?/, Num::Float
@@ -100,8 +94,19 @@ module Rouge
         rule %r/@([a-zA-Z_]\w*)?/, Name::Decorator
         # Tokens
         rule %r`(~=|\^=|%=|\*=|==|!>=|!<=|!<>=|!<>|!<|!>|!=|>>>=|>>>|>>=|>>|>=|<>=|<>|<<=|<<|<=|\+\+|\+=|--|-=|\|\||\|=|&&|&=|\.\.\.|\.\.|/=)|[/.&|\-+<>!()\[\]{}?,;:$=*%^~]`, Punctuation
+
         # Identifier
-        rule %r/[a-zA-Z_]\w*/, Name
+        # Keywords, identifiers
+        keywords %r/[a-zA-Z_]\w*/ do
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+          rule KEYWORDS_PSEUDO, Keyword::Pseudo
+          rule Set['false', 'true', 'nil'], Keyword::Constant
+          rule Set['macro'], Keyword::Reserved
+          rule Set['string', 'wstring', 'dstring', 'size_t', 'ptrdiff_t'], Name::Builtin
+          default Name
+        end
+
         # Line
         rule %r/#line\s.*\n/, Comment::Special
       end

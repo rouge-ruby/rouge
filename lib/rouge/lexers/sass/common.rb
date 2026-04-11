@@ -156,12 +156,9 @@ module Rouge
 
       state :attr_common do
         mixin :has_interp
-        rule id do |m|
-          if CSS.properties.include? m[0]
-            token Name::Label
-          else
-            token Name::Attribute
-          end
+        keywords id do
+          rule CSS::PROPERTIES, Name::Label
+          default Name::Attribute
         end
       end
 

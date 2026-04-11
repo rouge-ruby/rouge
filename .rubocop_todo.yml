@@ -23,10 +23,8 @@ Naming/ConstantName:
 # SupportedStylesForLeadingUnderscores: disallowed, required, optional
 Naming/MemoizedInstanceVariableName:
   Exclude:
-    - 'lib/rouge/lexers/cython.rb'
     - 'lib/rouge/lexers/freefem.rb'
     - 'lib/rouge/lexers/hack.rb'
-    - 'lib/rouge/lexers/python.rb'
     - 'lib/rouge/lexers/verilog.rb'
 
 # Offense count: 16
@@ -90,7 +88,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
     - 'lib/rouge/lexers/pascal.rb'
     - 'lib/rouge/lexers/perl.rb'
     - 'lib/rouge/lexers/postscript.rb'
-    - 'lib/rouge/lexers/python.rb'
     - 'lib/rouge/lexers/r.rb'
     - 'lib/rouge/lexers/rust.rb'
     - 'lib/rouge/lexers/scala.rb'

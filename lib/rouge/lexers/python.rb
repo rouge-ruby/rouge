@@ -17,7 +17,7 @@ module Rouge
       end
 
       def self.keywords
-        @keywords ||= %w(
+        @keywords ||= Set.new %w(
           assert break continue del elif else except exec
           finally for global if lambda pass print raise
           return try while yield as with from import
@@ -26,7 +26,7 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= %w(
+        @builtins ||= Set.new %w(
           __import__ abs aiter all anext any apply ascii
           basestring bin bool buffer breakpoint bytearray bytes
           callable chr classmethod cmp coerce compile complex
@@ -42,11 +42,11 @@ module Rouge
       end
 
       def self.builtins_pseudo
-        @builtins_pseudo ||= %w(None Ellipsis NotImplemented False True)
+        @builtins_pseudo ||= Set.new %w(None Ellipsis NotImplemented False True)
       end
 
       def self.exceptions
-        @exceptions ||= %w(
+        @exceptions ||= Set.new %w(
           ArithmeticError AssertionError AttributeError BaseException
           BaseExceptionGroup BlockingIOError BrokenPipeError BufferError
           BytesWarning ChildProcessError ConnectionAbortedError ConnectionError

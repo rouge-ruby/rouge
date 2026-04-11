@@ -23,10 +23,8 @@ Naming/ConstantName:
 # SupportedStylesForLeadingUnderscores: disallowed, required, optional
 Naming/MemoizedInstanceVariableName:
   Exclude:
-    - 'lib/rouge/lexers/cython.rb'
     - 'lib/rouge/lexers/freefem.rb'
     - 'lib/rouge/lexers/hack.rb'
-    - 'lib/rouge/lexers/python.rb'
     - 'lib/rouge/lexers/verilog.rb'
 
 # Offense count: 16
@@ -43,7 +41,6 @@ Naming/MethodName:
 # SupportedStyles: snake_case, camelCase
 Naming/VariableName:
   Exclude:
-    - 'lib/rouge/lexers/brightscript.rb'
     - 'lib/rouge/lexers/dafny.rb'
     - 'lib/rouge/lexers/freefem.rb'
     - 'lib/rouge/lexers/igorpro.rb'
@@ -59,16 +56,8 @@ Performance/StringInclude:
 # Offense count: 113
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
-    - 'lib/rouge/lexers/apple_script.rb'
     - 'lib/rouge/lexers/armasm.rb'
-    - 'lib/rouge/lexers/bbcbasic.rb'
-    - 'lib/rouge/lexers/bicep.rb'
-    - 'lib/rouge/lexers/cfscript.rb'
-    - 'lib/rouge/lexers/cmhg.rb'
     - 'lib/rouge/lexers/console.rb'
-    - 'lib/rouge/lexers/crystal.rb'
-    - 'lib/rouge/lexers/csharp.rb'
-    - 'lib/rouge/lexers/d.rb'
     - 'lib/rouge/lexers/dart.rb'
     - 'lib/rouge/lexers/eiffel.rb'
     - 'lib/rouge/lexers/elm.rb'
@@ -90,7 +79,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
     - 'lib/rouge/lexers/pascal.rb'
     - 'lib/rouge/lexers/perl.rb'
     - 'lib/rouge/lexers/postscript.rb'
-    - 'lib/rouge/lexers/python.rb'
     - 'lib/rouge/lexers/r.rb'
     - 'lib/rouge/lexers/rust.rb'
     - 'lib/rouge/lexers/scala.rb'
@@ -104,10 +92,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 Rouge/NoHugeCollections:
   Exclude:
     - 'lib/rouge/lexers/abap.rb'
-    - 'lib/rouge/lexers/apple_script.rb'
-    - 'lib/rouge/lexers/cobol.rb'
-    - 'lib/rouge/lexers/common_lisp.rb'
-    - 'lib/rouge/lexers/css.rb'
     - 'lib/rouge/lexers/datastudio.rb'
     - 'lib/rouge/lexers/freefem.rb'
     - 'lib/rouge/lexers/hql.rb'

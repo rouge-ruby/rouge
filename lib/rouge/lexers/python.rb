@@ -72,6 +72,8 @@ module Rouge
 
       identifier =        /[[:alpha:]_][[:alnum:]_]*/
       dotted_identifier = /[[:alpha:]_.][[:alnum:]_.]*/
+      inline_ws = /(?:[ \t]|\\\n)*?/
+      inline_content = /(?:[^\\\n]|\\[\n.])*?/
 
       def current_string
         @current_string ||= StringRegister.new
@@ -177,8 +179,8 @@ module Rouge
 
       state :post_dot do
         mixin :inline_whitespace
-        rule %r/([a-z_]\w*)[ \t]*(?=(\(.*\)))/m, Name::Function
-        rule %r/([A-Z_]\w*)[ \t]*(?=(\(.*\)))/m, Name::Class
+        rule %r/([A-Z]\w*)(?=#{inline_ws}[(])/m, Name::Class
+        rule %r/(#{identifier})(?=#{inline_ws}[(])/m, Name::Function
         rule(//) { pop! }
       end
 
@@ -187,9 +189,6 @@ module Rouge
 
         rule %r/from\b/, Keyword::Namespace, :from
         rule %r/import\b/, Keyword::Namespace, :import
-
-        inline_ws = /(?:[ \t]|\\\n)*?/
-        inline_content = /(?:[^\n]|\\\n)*?/
 
         # [jneen] This lookahead is a best-effort hack, since soft keywords are
         # technically not possible to detect in the lexing stage. If we see an

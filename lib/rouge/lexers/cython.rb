@@ -83,7 +83,7 @@ module Rouge
             goto :funcname
           elsif %w(struct class).include?(m[0])
             token Keyword
-            goto :funcname
+            goto :classname
           elsif self.class.c_keywords.include?(m[0])
             token Keyword::Reserved
           else

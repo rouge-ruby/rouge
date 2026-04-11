@@ -123,18 +123,12 @@ module Rouge
         end
 
         # using negative lookbehind so we don't match property names
-        rule %r/(?<!\.)#{identifier}/ do |m|
-          if self.class.keywords.include?(m[0])
-            token Keyword
-          elsif self.class.exceptions.include?(m[0])
-            token Name::Exception
-          elsif self.class.builtins.include?(m[0])
-            token Name::Builtin
-          elsif self.class.builtins_pseudo.include?(m[0])
-            token Name::Builtin::Pseudo
-          else
-            token Name
-          end
+        keywords %r/(?<!\.)#{identifier}/ do |m|
+          rule :keywords, Keyword
+          rule :exceptions, Name::Exception
+          rule :builtins, Name::Builtin
+          rule :builtins_pseudo, Name::Builtin::Pseudo
+          default Name
         end
 
         rule identifier, Name

@@ -84,7 +84,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 Rouge/NoHugeCollections:
   Exclude:
     - 'lib/rouge/lexers/abap.rb'
-    - 'lib/rouge/lexers/datastudio.rb'
     - 'lib/rouge/lexers/freefem.rb'
     - 'lib/rouge/lexers/hql.rb'
     - 'lib/rouge/lexers/idlang.rb'

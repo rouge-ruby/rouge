@@ -12,12 +12,12 @@ module Rouge
 
       mimetypes 'text/x-erlang', 'application/x-erlang'
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         after begin case catch cond end fun if
         let of query receive try when
       )
 
-      builtins = %w(
+      BUILTINS = Set.new %w(
         abs append_element apply atom_to_list binary_to_list
         bitstring_to_list binary_to_term bit_size bump_reductions
         byte_size cancel_timer check_process_code delete_module
@@ -48,7 +48,7 @@ module Rouge
       )
 
       operators = %r{(\+\+?|--?|\*|/|<|>|/=|=:=|=/=|=<|>=|==?|<-|!|\?)}
-      word_operators = %w(
+      WORD_OPERATORS = Set.new %w(
         and andalso band bnot bor bsl bsr bxor
         div not or orelse rem xor
       )
@@ -66,9 +66,13 @@ module Rouge
       state :root do
         rule(/\s+/, Text)
         rule(/%.*\n/, Comment)
-        rule(%r{(#{keywords.join('|')})\b}, Keyword)
-        rule(%r{(#{builtins.join('|')})\b}, Name::Builtin)
-        rule(%r{(#{word_operators.join('|')})\b}, Operator::Word)
+
+        keywords %r/[a-z]\w*/ do
+          rule KEYWORDS, Keyword
+          rule BUILTINS, Name::Builtin
+          rule WORD_OPERATORS, Operator::Word
+        end
+
         rule(/^-/, Punctuation, :directive)
         rule(operators, Operator)
         rule(/"/, Str, :string)
@@ -101,14 +105,14 @@ module Rouge
 
       state :directive do
         rule %r{(define)(\s*)(\()(#{macro_re})} do
-          groups Name::Entity, Text, Punctuation, Name::Constant
+          groups Keyword::Type, Text, Punctuation, Name::Constant
           pop!
         end
         rule %r{(record)(\s*)(\()(#{macro_re})} do
-          groups Name::Entity, Text, Punctuation, Name::Label
+          groups Keyword::Type, Text, Punctuation, Name::Label
           pop!
         end
-        rule(atom_re, Name::Entity, :pop!)
+        rule(atom_re, Comment::Preproc, :pop!)
       end
     end
   end

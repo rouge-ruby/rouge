@@ -12,7 +12,7 @@ module Rouge
       mimetypes 'text/x-elm'
 
       # Keywords are logically grouped by lines
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         module exposing port
         import as
         type alias
@@ -29,13 +29,12 @@ module Rouge
         # Multiline comments
         rule %r/{-/, Comment::Multiline, :multiline_comment
 
-        # Keywords
-        rule %r/\b(#{keywords.join('|')})\b/, Keyword
+        # Keywords and normal names
+        keywords %r/[a-z_]\w*/ do
+          rule KEYWORDS, Keyword
+          default Name
+        end
 
-        # Variable or a function
-        rule %r/[a-z]\w*/, Name
-        # Underscore is a name for a variable, when it won't be used later
-        rule %r/_/, Name
         # Type
         rule %r/[A-Z]\w*/, Keyword::Type
 

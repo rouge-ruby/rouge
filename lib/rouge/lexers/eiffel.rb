@@ -11,7 +11,7 @@ module Rouge
       filenames '*.e'
       mimetypes 'text/x-eiffel'
 
-      LanguageKeywords = %w(
+      KEYWORDS = Set.new %w(
         across agent alias all and attached as assign attribute check
         class convert create debug deferred detachable do else elseif end
         ensure expanded export external feature from frozen if implies  inherit
@@ -20,22 +20,30 @@ module Rouge
         some then undefine until variant Void when xor
       )
 
-      BooleanConstants = %w(True False)
-
-      LanguageVariables = %w(Current Result)
-
-      SimpleString = /(?:[^"%\b\f\v]|%[A-DFHLNQR-V%'"()<>]|%\/(?:0[xX][\da-fA-F](?:_*[\da-fA-F])*|0[cC][0-7](?:_*[0-7])*|0[bB][01](?:_*[01])*|\d(?:_*\d)*)\/)+?/
+      STRING_RE = /(?:[^"%\b\f\v]|%[A-DFHLNQR-V%'"()<>]|%\/(?:0[xX][\da-fA-F](?:_*[\da-fA-F])*|0[cC][0-7](?:_*[0-7])*|0[bB][01](?:_*[01])*|\d(?:_*\d)*)\/)+?/
 
       state :root do
+        rule %r/\s+/, Text
+
         rule %r/"\[/, Str::Other, :aligned_verbatim_string
         rule %r/"\{/, Str::Other, :non_aligned_verbatim_string
         rule %r/"(?:[^%\b\f\n\r\v]|%[A-DFHLNQR-V%'"()<>]|%\/(?:0[xX][\da-fA-F](?:_*[\da-fA-F])*|0[cC][0-7](?:_*[0-7])*|0[bB][01](?:_*[01])*|\d(?:_*\d)*)\/)*?"/, Str::Double
         rule %r/--.*/, Comment::Single
         rule %r/'(?:[^%\b\f\n\r\t\v]|%[A-DFHLNQR-V%'"()<>]|%\/(?:0[xX][\da-fA-F](?:_*[\da-fA-F])*|0[cC][0-7](?:_*[0-7])*|0[bB][01](?:_*[01])*|\d(?:_*\d)*)\/)'/, Str::Char
 
-        rule %r/(?:#{LanguageKeywords.join('|')})\b/, Keyword
-        rule %r/(?:#{LanguageVariables.join('|')})\b/, Keyword::Variable
-        rule %r/(?:#{BooleanConstants.join('|')})\b/, Keyword::Constant
+        keywords %r/[a-z]\w*/i do
+          rule KEYWORDS, Keyword
+          rule Set['Current', 'Result'], Keyword::Variable
+          rule Set['True', 'False'], Keyword::Constant
+
+          default do |m|
+            if ('A'..'Z').cover?(m[0][0])
+              token Name::Class
+            else
+              token Name
+            end
+          end
+        end
 
         rule %r/\b0[xX][\da-fA-F](?:_*[\da-fA-F])*b/, Num::Hex
         rule %r/\b0[cC][0-7](?:_*[0-7])*\b/, Num::Oct
@@ -45,20 +53,16 @@ module Rouge
 
         rule %r/:=|<<|>>|\(\||\|\)|->|\.|[{}\[\];(),:?]/, Punctuation::Indicator
         rule %r/\\\\|\|\.\.\||\.\.|\/[~\/]?|[><\/]=?|[-+*^=~≤≥−∀∃¦⟳⟲]/, Operator
-
-        rule %r/[A-Z][\dA-Z_]*/, Name::Class
-        rule %r/[A-Za-z][\dA-Za-z_]*/, Name
-        rule %r/\s+/, Text
       end
 
       state :aligned_verbatim_string do
         rule %r/]"/, Str::Other, :pop!
-        rule SimpleString, Str::Other
+        rule STRING_RE, Str::Other
       end
 
       state :non_aligned_verbatim_string do
         rule %r/}"/, Str::Other, :pop!
-        rule SimpleString, Str::Other
+        rule STRING_RE, Str::Other
       end
     end
   end

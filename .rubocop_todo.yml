@@ -12,11 +12,6 @@ Lint/EmptyBlock:
   Exclude:
     - 'lib/rouge/lexers/nix.rb'
 
-# Offense count: 4
-Naming/ConstantName:
-  Exclude:
-    - 'lib/rouge/lexers/eiffel.rb'
-
 # Offense count: 5
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: EnforcedStyleForLeadingUnderscores.
@@ -50,7 +45,6 @@ Naming/VariableName:
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
     - 'lib/rouge/lexers/armasm.rb'
-    - 'lib/rouge/lexers/eiffel.rb'
     - 'lib/rouge/lexers/elm.rb'
     - 'lib/rouge/lexers/erlang.rb'
     - 'lib/rouge/lexers/haskell.rb'

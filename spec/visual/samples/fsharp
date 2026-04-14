@@ -202,5 +202,9 @@ finally
 let value = array.[0]
 let value = dict.Test.["key"]
 
+let! value = 3
+yield! 44
+thing! 5
+
 // syntax highlighting
 let number = 123

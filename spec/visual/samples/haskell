@@ -388,8 +388,11 @@ foo :: String
 foo = replicate n '\x1f363'
   where n = 32
 
-bar :: String
-bar = "\x1f389\x1f363\x1f389"
+bar :: Int -> String
+bar 1 = "\x1f389\x1f363\x1f389"
+bar 2 = "\NUL"
+bar 3 = "\nul" -- this one should be a newline followed by ul
+bar 4 = "\DC1ABC" -- escape should be DC1
 
 quasi1 = [quoter|Some quoted text|]
 

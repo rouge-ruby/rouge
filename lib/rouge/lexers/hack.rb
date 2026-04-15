@@ -13,16 +13,14 @@ module Rouge
       filenames '*.php', '*.hh'
 
       def self.detect?(text)
-        return true if /<\?hh/ =~ text
+        return true if text.start_with?('<?hh')
         return true if text.shebang?('hhvm')
-        return true if /async function [a-zA-Z]/ =~ text
-        return true if /\): Awaitable</ =~ text
 
         return false
       end
 
       def self.keywords
-        @hh_keywords ||= super.merge Set.new %w(
+        @keywords ||= super.merge Set.new %w(
           type newtype enum
           as super
           async await Awaitable

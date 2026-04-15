@@ -25,7 +25,6 @@ Naming/MemoizedInstanceVariableName:
   Exclude:
     - 'lib/rouge/lexers/cython.rb'
     - 'lib/rouge/lexers/freefem.rb'
-    - 'lib/rouge/lexers/hack.rb'
     - 'lib/rouge/lexers/python.rb'
     - 'lib/rouge/lexers/verilog.rb'
 
@@ -49,12 +48,6 @@ Naming/VariableName:
     - 'lib/rouge/lexers/igorpro.rb'
     - 'lib/rouge/lexers/kotlin.rb'
     - 'lib/rouge/lexers/xpath.rb'
-
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Performance/StringInclude:
-  Exclude:
-    - 'lib/rouge/lexers/hack.rb'
 
 # Offense count: 113
 Rouge/NoBuildingAlternationPatternInRegexp:

@@ -28,7 +28,7 @@ module Rouge
         is_inf is_nan lerp linear2db load log max min nearest_po2 pow
         preload print print_stack printerr printraw prints printt rad2deg
         rand_range rand_seed randf randi randomize range round seed sign
-        sin sinh sqrt stepify str str2var tan tan tanh type_exist typeof
+        sin sinh sqrt stepify str str2var tan tanh type_exist typeof
         var2bytes var2str weakref yield
       )
 

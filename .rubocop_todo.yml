@@ -44,7 +44,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
     - 'lib/rouge/lexers/armasm.rb'
     - 'lib/rouge/lexers/console.rb'
-    - 'lib/rouge/lexers/haskell.rb'
     - 'lib/rouge/lexers/http.rb'
     - 'lib/rouge/lexers/idris.rb'
     - 'lib/rouge/lexers/isabelle.rb'

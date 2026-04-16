@@ -4,6 +4,8 @@
 module Rouge
   module Formatters
     class HTMLLinewise < Formatter
+      tag 'html_linewise'
+
       def initialize(formatter, opts={})
         @formatter = formatter
         @tag_name = opts.fetch(:tag_name, 'div')

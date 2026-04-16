@@ -73,7 +73,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 Rouge/NoHugeCollections:
   Exclude:
     - 'lib/rouge/lexers/abap.rb'
-    - 'lib/rouge/lexers/hql.rb'
     - 'lib/rouge/lexers/idlang.rb'
     - 'lib/rouge/lexers/igorpro.rb'
     - 'lib/rouge/lexers/janet.rb'

@@ -80,5 +80,4 @@ Rouge/NoHugeCollections:
     - 'lib/rouge/lexers/plsql.rb'
     - 'lib/rouge/lexers/racket.rb'
     - 'lib/rouge/lexers/sas.rb'
-    - 'lib/rouge/lexers/sql.rb'
     - 'lib/rouge/lexers/stata.rb'

@@ -70,7 +70,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 # Offense count: 20
 Rouge/NoHugeCollections:
   Exclude:
-    - 'lib/rouge/lexers/hql.rb'
     - 'lib/rouge/lexers/idlang.rb'
     - 'lib/rouge/lexers/igorpro.rb'
     - 'lib/rouge/lexers/janet.rb'

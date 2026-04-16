@@ -43,9 +43,17 @@ describe Rouge::Formatters::HTMLLinewise do
 
   describe 'inside html table formatter' do
     let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar\n"]] }
+    let(:output) { Rouge::Formatters::HTMLTable.new(subject).format(input_stream) }
+    let(:expected_output) { %(<table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1\n2\n</pre></td><td class="rouge-code"><pre><div class="line-1">foo\n</div><div class="line-2"><span class="n">bar</span>\n</div></pre></td></tr></tbody></table>) }
 
     it 'should delegate to linewise formatter' do
-      assert { Rouge::Formatters::HTMLTable.new(subject).format(input_stream) == %(<table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1\n2\n</pre></td><td class="rouge-code"><pre><div class="line-1">foo\n</div><div class="line-2"><span class="n">bar</span>\n</div></pre></td></tr></tbody></table>) }
+      assert { output == expected_output }
+    end
+
+    let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar"]] }
+
+    it 'should correctly handle missing trailing newline' do
+      assert { output == expected_output }
     end
   end
 end

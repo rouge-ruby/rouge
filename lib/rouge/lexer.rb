@@ -243,9 +243,9 @@ module Rouge
         return if @_loaded
         @_loaded = true
 
-        lazy_procs.each { |b| instance_eval(&b) }
-
         superclass.eager_load! unless superclass == Lexer
+
+        lazy_procs.each { |b| instance_eval(&b) }
 
         self
       end

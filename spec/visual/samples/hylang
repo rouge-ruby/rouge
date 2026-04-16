@@ -70,3 +70,10 @@
             [(= highlight-library "rouge")
              (generate-rouge-file)]
             [True "Usage: hy hyghlight.hy [highlight.js | rouge]"]))))
+
+( ; here is a comment )))))
+
+my-cool-function ; this should be highlighted Name.Function
+
+my-arg
+)

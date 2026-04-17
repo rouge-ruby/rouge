@@ -35,7 +35,7 @@ module Rouge
         buffer = [%(<table class="#@table_class"><tbody>)]
         token_lines(tokens).with_index(@start_line) do |line_tokens, lineno|
           buffer << %(<tr id="#{sprintf @line_id, lineno}" class="#@line_class">)
-          buffer << %(<td class="#@gutter_class gl" )
+          buffer << %(<td class="#@gutter_class gl" aria-hidden="true" )
           buffer << %(style="-moz-user-select: none;-ms-user-select: none;)
           buffer << %(-webkit-user-select: none;user-select: none;">)
           buffer << %(<pre>#{lineno}</pre></td>)

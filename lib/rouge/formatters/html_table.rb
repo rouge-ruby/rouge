@@ -36,7 +36,7 @@ module Rouge
 
         buffer = [%(<table class="#@table_class"><tbody><tr>)]
         # the "gl" class applies the style for Generic.Lineno
-        buffer << %(<td class="#@gutter_class gl">)
+        buffer << %(<td class="#@gutter_class gl" aria-hidden="true">)
         buffer << %(<pre class="lineno">#{formatted_line_numbers}</pre>)
         buffer << '</td>'
         buffer << %(<td class="#@code_class"><pre>)

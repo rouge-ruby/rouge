@@ -12,18 +12,12 @@ Lint/EmptyBlock:
   Exclude:
     - 'lib/rouge/lexers/nix.rb'
 
-# Offense count: 4
-Naming/ConstantName:
-  Exclude:
-    - 'lib/rouge/lexers/eiffel.rb'
-
 # Offense count: 5
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: EnforcedStyleForLeadingUnderscores.
 # SupportedStylesForLeadingUnderscores: disallowed, required, optional
 Naming/MemoizedInstanceVariableName:
   Exclude:
-    - 'lib/rouge/lexers/freefem.rb'
     - 'lib/rouge/lexers/verilog.rb'
 
 # Offense count: 16
@@ -40,9 +34,7 @@ Naming/MethodName:
 # SupportedStyles: snake_case, camelCase
 Naming/VariableName:
   Exclude:
-    - 'lib/rouge/lexers/brightscript.rb'
     - 'lib/rouge/lexers/dafny.rb'
-    - 'lib/rouge/lexers/freefem.rb'
     - 'lib/rouge/lexers/igorpro.rb'
     - 'lib/rouge/lexers/kotlin.rb'
     - 'lib/rouge/lexers/xpath.rb'
@@ -50,22 +42,8 @@ Naming/VariableName:
 # Offense count: 113
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
-    - 'lib/rouge/lexers/apple_script.rb'
     - 'lib/rouge/lexers/armasm.rb'
-    - 'lib/rouge/lexers/bbcbasic.rb'
-    - 'lib/rouge/lexers/bicep.rb'
-    - 'lib/rouge/lexers/cfscript.rb'
-    - 'lib/rouge/lexers/cmhg.rb'
     - 'lib/rouge/lexers/console.rb'
-    - 'lib/rouge/lexers/crystal.rb'
-    - 'lib/rouge/lexers/csharp.rb'
-    - 'lib/rouge/lexers/d.rb'
-    - 'lib/rouge/lexers/dart.rb'
-    - 'lib/rouge/lexers/eiffel.rb'
-    - 'lib/rouge/lexers/elm.rb'
-    - 'lib/rouge/lexers/erlang.rb'
-    - 'lib/rouge/lexers/haskell.rb'
-    - 'lib/rouge/lexers/http.rb'
     - 'lib/rouge/lexers/idris.rb'
     - 'lib/rouge/lexers/isabelle.rb'
     - 'lib/rouge/lexers/java.rb'
@@ -94,13 +72,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 Rouge/NoHugeCollections:
   Exclude:
     - 'lib/rouge/lexers/abap.rb'
-    - 'lib/rouge/lexers/apple_script.rb'
-    - 'lib/rouge/lexers/cobol.rb'
-    - 'lib/rouge/lexers/common_lisp.rb'
-    - 'lib/rouge/lexers/css.rb'
-    - 'lib/rouge/lexers/datastudio.rb'
-    - 'lib/rouge/lexers/freefem.rb'
-    - 'lib/rouge/lexers/hql.rb'
     - 'lib/rouge/lexers/idlang.rb'
     - 'lib/rouge/lexers/igorpro.rb'
     - 'lib/rouge/lexers/janet.rb'
@@ -108,5 +79,4 @@ Rouge/NoHugeCollections:
     - 'lib/rouge/lexers/plsql.rb'
     - 'lib/rouge/lexers/racket.rb'
     - 'lib/rouge/lexers/sas.rb'
-    - 'lib/rouge/lexers/sql.rb'
     - 'lib/rouge/lexers/stata.rb'

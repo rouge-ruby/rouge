@@ -39,9 +39,9 @@ module Rouge
           buffer << %(style="-moz-user-select: none;-ms-user-select: none;)
           buffer << %(-webkit-user-select: none;user-select: none;">)
           buffer << %(<pre>#{lineno}</pre></td>)
-          buffer << %(<td class="#@code_class"><pre>)
+          buffer << %(<td class="#@code_class"><pre><code>)
           @formatter.stream(line_tokens) { |formatted| buffer << formatted }
-          buffer << "\n</pre></td></tr>"
+          buffer << "\n</code></pre></td></tr>"
         end
         buffer << %(</tbody></table>)
         yield buffer.join

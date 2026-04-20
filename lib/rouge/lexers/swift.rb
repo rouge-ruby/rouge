@@ -26,6 +26,11 @@ module Rouge
         actor any associatedtype borrowing class consuming deinit distributed dynamic enum convenience extension fileprivate final func import indirect init internal lazy let macro nonisolated open optional package private protocol public required some static struct subscript typealias var
       )
 
+      # Swift Testing macros
+      testing_macros = Set.new %w(
+        expect require
+      )
+
       constants = Set.new %w(
         true false nil
       )
@@ -35,9 +40,13 @@ module Rouge
         @re_delim = "" # multi-line regex delimiter
       end
 
-      # beginning of line
+      # beginning of line      
       state :bol do
-        rule %r/#(?![#"\/]).*/, Comment::Preproc
+        # Handle Swift compiler directives
+        rule %r/#if\b.*/, Comment::Preproc
+        rule %r/#elseif\b.*/, Comment::Preproc  
+        rule %r/#else\b.*/, Comment::Preproc
+        rule %r/#endif\b.*/, Comment::Preproc                
 
         mixin :inline_whitespace
 
@@ -86,7 +95,13 @@ module Rouge
         rule %r{[\d]+(?:_\d+)*}, Num::Integer
 
         rule %r/@#{id}/, Keyword::Declaration
-        rule %r/##{id}/, Keyword
+        rule %r/#(#{id})/ do |m|
+          if testing_macros.include?(m[1])
+            token Name::Builtin
+          else
+            token Keyword
+          end
+        end
 
         rule %r/(private|internal)(\([ ]*)(\w+)([ ]*\))/ do |m|
           if m[3] == 'set'

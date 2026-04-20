@@ -92,8 +92,17 @@ module Rouge
         # Numbers
         rule %r/\d+(?=}\s)/, Num
 
+        # The = might not only be an operator but also an assignment of a 
+        # list, tuple or dictionary. The dictionary, starting with an { 
+        # and ending with an } is not yet recognized!
+        rule %r/(=)( *\{)/ do
+           groups Operator, Punctuation
+           push :dictionary
+        end
+
         # Arithmetic operators (+, -, *, **, //, /)
         # TODO : implement modulo (%)
+        # rule %r/(\+|\-|\*|\/\/?|\*\*?|=)/, Operator
         rule %r/(\+|\-|\*|\/\/?|\*\*?|=)/, Operator
 
         # Comparisons operators (<=, <, >=, >, ==, ===, !=)
@@ -105,7 +114,16 @@ module Rouge
         rule %r/\]/, Punctuation
         rule %r/\(/, Punctuation
         rule %r/\)/, Punctuation
+        # The colon, used in dictionaries was missing
+        rule %r/\:/, Punctuation
       end
+
+      state :dictionary do
+        mixin :literal
+        mixin :text
+        rule %r/\}/, Punctuation, :pop!
+      end
+
 
       state :comment do
         rule %r/[^#]+/m, Comment

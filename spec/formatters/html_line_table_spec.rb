@@ -20,12 +20,12 @@ describe Rouge::Formatters::HTMLLineTable do
   <tbody>
     <tr id="line-1" class="lineno">
       <td class="rouge-gutter gl" style="#{cell_style}"><pre>1</pre></td>
-      <td class="rouge-code"><pre><span class="n">foo</span>\n</pre></td>
+      <td class="rouge-code"><pre><code><span class="n">foo</span>\n</code></pre></td>
     </tr>
   </tbody>
 </table>
 HTML
-      expected = expected.gsub(%r{>\s+<(?!/pre)}, '><').rstrip
+      expected = expected.gsub(%r{>\s+<(?!/code|/pre)}, '><').rstrip
 
       assert_includes output, 'id="line-1"'
       assert { output == expected }
@@ -41,24 +41,24 @@ HTML
   <tbody>
     <tr id="line-1" class="lineno">
       <td class="rouge-gutter gl" style="#{cell_style}"><pre>1</pre></td>
-      <td class="rouge-code"><pre>foo\n</pre></td>
+      <td class="rouge-code"><pre><code>foo\n</code></pre></td>
     </tr>
     <tr id="line-2" class="lineno">
       <td class="rouge-gutter gl" style="#{cell_style}"><pre>2</pre></td>
-      <td class="rouge-code"><pre><span class="n">bar</span>\n</pre></td>
+      <td class="rouge-code"><pre><code><span class="n">bar</span>\n</code></pre></td>
     </tr>
     <tr id="line-3" class="lineno">
       <td class="rouge-gutter gl" style="#{cell_style}"><pre>3</pre></td>
-      <td class="rouge-code"><pre>foo\n</pre></td>
+      <td class="rouge-code"><pre><code>foo\n</code></pre></td>
     </tr>
     <tr id="line-4" class="lineno">
       <td class="rouge-gutter gl" style="#{cell_style}"><pre>4</pre></td>
-      <td class="rouge-code"><pre>bar\n</pre></td>
+      <td class="rouge-code"><pre><code>bar\n</code></pre></td>
     </tr>
   </tbody>
 </table>
 HTML
-      expected = expected.gsub(%r{>\s+<(?!/pre)}, '><').rstrip
+      expected = expected.gsub(%r{>\s+<(?!/code|/pre)}, '><').rstrip
 
       assert_includes output, 'id="line-4"'
       assert { output == expected }
@@ -85,7 +85,7 @@ HTML
     <tr id="L15" class="line-no">
       <td class="code-gutter gl" style="#{cell_style}"><pre>15</pre></td>
       <td class="fenced-code">
-        <pre><span class="n">foo</span>bar\n</pre>
+        <pre><code><span class="n">foo</span>bar\n</code></pre>
       </td>
     </tr>
   </tbody>

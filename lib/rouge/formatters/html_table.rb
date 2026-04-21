@@ -39,9 +39,9 @@ module Rouge
         buffer << %(<td class="#@gutter_class gl">)
         buffer << %(<pre class="lineno">#{formatted_line_numbers}</pre>)
         buffer << '</td>'
-        buffer << %(<td class="#@code_class"><pre>)
+        buffer << %(<td class="#@code_class"><pre><code>)
         buffer << formatted
-        buffer << '</pre></td>'
+        buffer << '</code></pre></td>'
         buffer << '</tr></tbody></table>'
 
         yield buffer.join

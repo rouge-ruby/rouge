@@ -108,5 +108,9 @@ module Rouge
       yield out if out.any?
     end
 
+    def line_ending
+      ?\n
+    end
+
   end
 end

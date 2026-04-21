@@ -19,6 +19,10 @@ module Rouge
           yield %(\n</#{@tag_name}>)
         end
       end
+
+      def line_ending
+        %(\n</#@tag_name>)
+      end
     end
   end
 end

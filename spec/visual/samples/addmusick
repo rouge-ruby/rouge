@@ -1,0 +1,1246 @@
+#SPC
+{
+  #title "The Price is Right (sax ver)"
+  #author "Edd Kalehoff"
+  #game "The Price Is Right"
+  #comment "ported by jneen"
+}
+
+; generated from price.rmk by Ramekin vunknown
+; https://codeberg.org/jneen/ramekin
+
+; Sample Sources:
+;   Playersounds Compiled '23 (posted by Fullcannon)
+;   - https://www.smwcentral.net/?p=section&a=details&id=37388
+; 
+;   Super Bonk (posted by Nanako)
+;   - https://www.smwcentral.net/?p=section&a=details&id=12142
+
+#amk 4
+#option amk109hotpatch
+#path "price-is-right"
+
+#samples {
+  #default
+
+  "Playersounds Compiled '23 - Orchestral Hit.brr"
+  "Super Bonk - Acoustic Bass.brr"
+  "Super Bonk - Alto Sax.brr"
+  "Super Bonk - Crash.brr"
+}
+
+#instruments {
+  ; percussion overrides
+  @22 $0E $6A $40 $07 $00
+  @21 $0F $6A $7F $03 $00
+
+  ; custom instruments
+  "Playersounds Compiled '23 - Orchestral Hit.brr" $af $e0 $a0 $04 $00
+  "Super Bonk - Alto Sax.brr" $8b $e0 $b8 $04 $00
+  "Super Bonk - Acoustic Bass.brr" $ff $ec $b8 $03 $80
+  "Super Bonk - Crash.brr" $df $8f $b8 $03 $c0
+}
+
+t48 ; main tempo (0-60)
+w255 ; main volume (0-255)
+l16
+
+; echo settings
+$ef$1e$d8$d8 $f1$05$b0$01
+
+#0
+
+@34v200
+o2q7Fc=86r=10/
+[[ (1)[ f4f8.g=50r=58
+a-4a-8.>d-=50r=58
+e-4e-8.d-=50r=22<b-8.
+a-4a-8.a-=50r=22a-8.
+g4g8.>c=74r=34
+f=38r=10<f8.e-=50r=34e-r
+b-4a8.g=60f4 ] 
+a-4a-8.b-=50r=22b-8. ]]2
+
+; #.a-section
+
+(2)[ f4f8.f8f=60b-8
+b-8.b-8b-8>c=108
+d=84<g=108
+b-4b-8.e-=108
+f4f8.f8f8.f8.b-=60
+b-8.g4>cr>c8<c ] 
+(1) 
+
+; #.turnaround
+
+g2c2
+f8^=24$dd$00$18<f r2.
+
+#1
+
+@33p20,11,100 
+$f4$02
+r8.(3)[ v180
+o5q7Ffr<g=25v130f=11 ] /
+(4)[ v180
+$f4$01b-=12$dd$00$0c>c ^=60v130d64$f4$01^64r=54v180c=12$dd$00$06d r<g=25v130f=11v180
+$f4$01b-=24$dd$00$0c>c v130^64d32$f4$01^32p0,5,120 v180c=39p20,11,100 ^=6$dd$00$06<g r=60>cc=25v150e-=11v180
+e-=12$dd$00$06f f=25v150e-=11v180f8v130e-=13v180$f4$01f=23v130f+32g64$f4$01^64v180g=6$dd$00$06g+ ^=66
+g=13v150f=11v180e-=13v150c=11p0,8,200 <a-8p20,11,100 v130fv150g8.r ] v180>d=12$dd$00$0ce- 
+(5)[ rv150p0,3,220 c8p20,11,100 ^64<b-32.v180
+>c8v150$f4$01d24v130c24v150d48$f4$01^48v180$f4$01c8v150<b-32$f4$01^32v180>c4 ] 
+(6)[ d=12$dd$00$0ce r$f4$01c8v130<b-32$f4$01^32v180
+>c8.rf=24$dd$00$06g r$f4$01f8.v150g=2$f4$01^=1r=45 ] 
+(7)[ v180
+<f=21r64
+>f32.r64c=27v130<b-32.v180>c=30v130^=6$dd$00$06<g v180b-rb-8v150$f4$01a-=12$dd$00$0ca v180g16$f4$01^16 ] 
+(8)[ v150
+$f4$01f8v180
+g=12$dd$00$0ca- $f4$01^=36b-a-8b=24$dd$00$06>c  ] ^=24$dd$00$18<g 
+(9)[ 
+>f=12$dd$00$0cg r<g8v130f ] 
+(10)[ v180
+>c4d=13v150<a=11v180p0,15,120 $f4$01>c8.p20,11,100 v130d64$f4$01^64r16.v180c=12$dd$00$06d r<g8v150fv180
+>c=27v150e-v180p0,15,120 c=33v130^=12$dd$00$0c<g r=60p20,11,100 v180>cc8e-
+ff8e- ] 
+(11)[ f8^=48$dd$00$18b- ra-g=13f=11v150e-=13v180c=11
+<b-=13a-=11v150g=13v180f=11e-=13c=11<b-=13a-=11b=30$dd$00$0c>c ^=6$dd$00$06<a  ] 
+o5e-=12$dd$00$0cf (5) (6) (7) (8) v130$f4$01<a32g64$f4$01^64v150f8
+(12)[ v180
+b-8>c<f=12$dd$00$0ca 
+rp0,15,80 v130f8.^=12$dd$00$0cd p20,11,100 r8.v180a-=24$dd$00$0ca >c8d-=24$dd$00$0cd fg=12$dd$00$0ca- 
+rv150fv180f=15v130e-32.v180f8e-p0,15,100 f=30p20,11,100 ^=12$dd$00$06a- r=66
+c=13d=11f=13$f4$01g=24$dd$00$18g+ a32$f4$01^32rg=11v150f=13v180d=11c=13<b-=11av150gv180fv150dv180
+a-=13b-=11b=13$dd$00$04>c v130<a-=11v180$f4$01b-=5b=5b-48a-=5$f4$01^=5f=13e-=11a-=13b-=11$f4$01b-=10v150b=2v180b-=1$f4$01^=1a-=10b-8>c<g+=25$dd$00$0ca 
+>c=11d=14v150<a=10v180b=24$dd$00$06>c d<g+=16$dd$00$06g r32.v150f=11d=14v130c=10v180f8a-=14v150f=10v180a-=14v150f=10v180g=14v150f=34v180
+d=13c=15r6 ] 
+(3) (10) 
+>f8^=12$dd$00$0cb- ^=37$dd$00$0c>c v150<b-v180a-=11r32.g=14f=14e-=14
+c=15<b-=15a-=15p0,15,180 $f4$01g8p20,11,100 v150e-32$f4$01^32v180f8.r>c=12$dd$00$0ce- rc8v130<b-v180
+>c8c=14$dd$00$06d v150<a=10v180b=30$dd$00$06>c ^=15$dd$00$03d r=39(6) 
+(7) 
+<f8v150
+g=13v180g=23v150av180b-8r8p10,10,180 >c=36$dd$00$0cd p20,11,100 c<b-8$e8$0c$50^=12$dd$00$0cg rv180
+>f8$e8$30$50^=48$dd$00$30<f r=60(3) 
+
+#2
+
+@32v120
+y7
+o4q7Fc2/
+(13)[ r4v90f=38v120g=106
+a-4v90a-=38v120a-=106
+g4v90g4r=62b-=34
+a-4a-4r2
+>d4c=38<g=106
+f4v60f=37v120e-=107
+f4e=38d=58c4 ] 
+(14)[ a-4a-=37b-=107 ] 
+(13) (14) 
+@13v180
+o4q7Fc1
+d-4.r=14<b-=82r8
+>c4.r=14<b=106
+>d-4.r=14d-=106
+e=182d-2
+b-=106
+@32
+(13) 
+o4q7Fg2>c2<f1
+
+#3
+
+y13
+@32v120
+o4q7Fg2/
+(15)[ r4v90c=38c=58r4
+e-4e-=38f=58r4
+e-4e-4r=62f=34
+e-4e-4r2
+g4f=38e=106
+c4v60>c=37v120<b-=107
+d4c=37<b-=59a4 ] 
+(16)[ >e-4e-=37f=107 ] 
+(15) (16) 
+@13v180
+o4q7Fe1
+f4.r=14e=82r8
+f4.r=14f=106
+a-4.r=14g=106
+a=182f2
+f=106
+@32
+(15) 
+o4q7Fb2>e2f1
+
+#4
+
+@35o4q7Fc2/
+[[ (17)[ y9v255c4c=37c=35y14v195$e8$0c$37e=13v195$e8$0c$37e=11v255y10^4 ]6 
+(18)[ v225
+c8r4v255c4.c4 ] 
+c=85c=59c4 ]]2
+(19)[ v255
+c8v120f8v180f8v120f8v180
+f8v120f8v180f8v120f=14v180f8v120
+f=10f8v180f8v120f=14v180f=34 ] v120f8v180f8v120f8
+(19) v120f8v180f8v120f8
+(19) ^16frv255c8.
+(17)6 
+(18) 
+c2c2
+c1
+
+#5
+
+
+$fa$03$50
+r8.(20)[ @10y11
+
+o3q7Fa32v195a32r@31v255y7o5q7Ffry13c ] /
+[[ (21)[ @31y10
+v255
+o4q7Fc=14@30y12v150o4q7Fc=10v180y8c=14@31y10v255o4q7Fc=10@10y11o3q7Fa=13@30v120y8o4q7Fc=11v180y12c=13@31y10v255o4q7Fc=11 ] 
+(22)[ @30y12v180
+o4q7Fc=13@31y10v255o4q7Fc=11c=13@30y12v150o4q7Fc=11@10y11v255o3q7Fa=14@31y10o4q7Fa=10@30y12v150o4q7Fc=13@31y10v225o4q7Fc=11 ]  ]]5
+(21) 
+(23)[ @30y12v180
+o4q7Fc=13@31y10v255o4q7Fc=11c=13@30y12v150o4q7Fc=11@10y11v255o3q7Fa=14@30y12v180o4q7Fc=10@31y10v255o4q7Fc=13@30y12v150o4q7Fc=11 ] 
+(24)[ @31y10v255
+o4q7Fc=14c=10@30y12v180o4q7Fc=13@10y11v225o3q7Fa=11v255c=14@30y12v180o4q7Fc=10@31y10v255o4q7Fc=14c=19@10y11v155o3q7Fa48v255a=11@30y12v180o4q7Fa=13@31y10v255o4q7Fc=11@10y11o3q7Fa=13@30y12v180o4q7Fc=11@31y10v255o4q7Fc=13@30y12v180o4q7Fc=11@31y10v255
+o4q7Fc=14@10y11v225o3q7Fa=10v255c=14c=10@31y10o4q7Fc=14c=10c=14@10y11o3q7Fa=10v195c=14v225c=10@31y10v255o4q7Fc8@10y11o3q7Fa=14c=10v195c=14@31y10v255o4q7Fc=10 ] 
+[[ (21) 
+(22)  ]]5
+(21) (23) 
+(24) 
+[[ (21) 
+(22)  ]]4
+(24) 
+[[ (21) 
+(22)  ]]5
+(21) (23) 
+(24) @10y11
+o3q7Fa=85@31y10o4q7Fc24@10y11v195o3q7Fa64v255
+a8.(20) 
+
+; from ramekin
+#0
+@bass v200
+
+; the REL macro isn't defined yet, so the following should be highlighted Error
+; if macros are enabled, but Text if macros are disabled
+REL
+
+"REL=^^^=14r=10"
+c4 REL /
+[[
+(bass-A1)[
+f4 f8.g REL r4
+a-4 a-8.>d- REL r4
+e-4 e-8.d- REL r<b-^^
+a-4 a-8.a- REL ra-^^
+
+g4 g^^>c ^8 REL rr
+f^^=14r=10 <f8.e- REL r8e-r
+b-4 a8.g ^4 f4
+]
+a-4 a-8.b- REL rb-8.
+]]2
+
+#.a-section
+
+; ramekin fades
+(sqbass)2
+#echo/volume:50 \1
+
+; particularly gnarly ramekin bends and grace notes
+"LEADP=p10,10,100"
+"SQUEEZE=p5,20,200"
+(lead11)[e^^^ ^^^^ ^#legato/toggle ^ c+^
+~e^~f+|~^=10'&g ~SQUEEZE f+^^^ ^^LEADPe^] r2
+
+; zorp.rmk
+; to compile, first install the custom samples: cp -r zorp-samples ~/.ramekin/custom/
+
+#title "zorp's last voyage"
+#author "jneen & tesselode"
+#game "wigglin' (album)"
+#comment "published on automaphoni.ca"
+
+; uncomment for the version with an ending
+; #define NOLOOP
+
+#readme "
+A port of Zorp's Last Voyage from my and tesselode's album Wigglin, published
+on automaphonica.
+
+https://automaphoni.ca/releases/wigglin
+"
+
+#instrument @sine @smwep #tuning:0180 #adsr:3,0,7,22
+
+#incompatible:thunder
+
+#option TempoImmunity
+
+#ifdef NOLOOP
+  #option noloop
+#endif
+
+#path "zorps-last-voyage"
+
+; custom pack
+#pack "./amen"
+"TUNE=#tuning:0520"
+#instrument @k "kick3" TUNE u13 #adsr:0,5,3,max
+#instrument @s "snare-lay" TUNE #adsr:0,7,4,max
+#instrument @g "snare-ghost" TUNE
+#instrument @c "crash" TUNE
+#instrument @r "ride" TUNE
+
+#pack "Velocity Vortex"
+#instrument @bass "Bass & Guitar/Low Square 12.5%" o4 #tuning:0800
+#instrument @hibass "Orchestral & Synth/Square 12.5%"
+
+; custom pack
+#pack "./zorp-samples"
+#instrument @yo "yo" #adsr:flat o5 #tuning:0380
+#instrument @hiyo "hiyo" #adsr:flat o3 #tuning:0800
+"TUNE_DEEJAY=#tuning:0400"
+#instrument @dee "dee" #adsr:flat TUNE_DEEJAY
+#instrument @jay "jay" #adsr:flat TUNE_DEEJAY
+
+"EP_SOLO_VOL=v130 #adsr:1,5,6,19"
+"EP_CHORDS_VOL=#adsr:1,5,6,20 p20,15,100 v140"
+"GLOCK=@smwmarimba> #adsr:0,3,2,19"
+
+w170
+
+#default
+
+#bpm:200
+#echo/channels:01234
+#echo/volume:16
+#echo/delay:2
+#echo/feedback:-96
+#echo/fir:1
+
+"PORTAA=|^=14'&"
+"PORTA=|^=10'&"
+"PORT=|^=2'&"
+#0 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+r1
+r1
+r1
+@bass v150
+(bass-licc)[
+r8>f+8|`^=8&g=2'& e+8PORTAd+8 PORTAc+8PORTd+8 PORT<c+8PORTAd+8
+]
+
+#sustain/global-toggle /
+@bass v140 _0
+
+#.bass-a ; section marker, use --play .bass-a
+
+p8,10,80
+[[
+(bass-a1)[<f+4> r8>u-3c+r r8u+0<<i5f+8i7> >c+8PORTAd+8]
+(bass-a2)[
+<a+8PORTA>c+8 r8<f+8 r8g+8 PORTAd+8PORTc+8 PORTA
+<f+4> r8](bass-a22)[>u-3c+8 u+0<a+PORTbPORTa+r f+8c+8
+<b8>c+8 f+8<b8 >c+8a+8 <b8>f+8]
+(bass-a1)
+>
+(bass-a3)[
+g+8PORTAAa+8] (bass-a3b)[r8c+8 r8<g+8 PORTAd+8PORTc+8
+PORTA<f+4 r8](bass-a33)[>>c+8 ~<a+PORTAb>PORTAc+r <f+8c+8
+f+8c+8 <b8>a+8 f+8c+8] (bass-a333)[f+8PORT<g+8]
+]]2
+
+[[
+i7f+4 r8>>i2c+8i7 r4 r4
+r4 r8<f+8 r8g+8 PORTd+8PORTc+8
+<b4> r8(bass-a22)
+i7<f+4 r8>>i2c+8i7 r4 r4
+r4 r8c+8 r8<g+8 PORTAd+8PORTAc+8
+d+4 r8(bass-a33) <a+8PORTA>c+8
+
+d+4 r8 >i2c+8i7 r4 r4
+r4 r8d+8 r8<a+8 PORTAg+8PORTAc+8
+<b4 r8(bass-a22)
+
+f+4 r8 >>i2c+8i7 r4 r4
+r4 r8c+8 r8<g+8 PORTAd+8PORTAc+8
+d+4 r8(bass-a33) f+8PORTA<g+8
+]]2
+
+f+4 r4 r4 r4
+(bass-b1)[
+r4 f+4 r8f+8 ^8r8
+f+4 r4 r4 r8>c+8
+^8f+r bra+r >g+PORTa+PORTg+r e+rf+r
+]
+
+(bass-b2)[
+<f+4 r4 r4 r4
+r4 f+4 r8e+8 ^8r8
+d+4 r4 r4 r8c+8
+^8c+r c+r<br a+8PORTAg+r e+rf+r
+]
+f+^^|^ ^<&f+rr r4 r4
+(bass-b1)(bass-b2)
+
+; 0:no-drums
+
+@sine< v190 p0,0
+[[
+f+1^1
+<b1^1
+>d+1^1
+c+1^1
+]]2
+
+"YO_V=v180"
+
+#echo/toggle
+
+@yo<<< YO_V
+b2 r2
+r4 b4 r8>d+8 ^8r8
+c+2 r2
+r2
+@bass< v130
+a+2
+|^8&b8 @yo<<< YO_V <brbr r4 r4
+
+@bass< v140
+r4 brbr r4 >f+8r8
+f+8&g+8 ^8r8 d+4 r8f+8
+^4 ^^^|^ &g+&<a+^^ ^^^|^&b0
+
+@yo<<< YO_V p40,12,100
+[
+b2 r2
+r4 b4 r8>d+8 ^8r8
+c+2 r2
+r2
+<a+2
+|^8&b8 <brbr> r4 r4
+
+r4 brbr r4 >f+8r8
+
+f+8&g+8 ^8r8 ]d+4 r8f+8
+^4 ^^^|^ &g+&<a+^^ ^^^|^&b0
+
+* >a+4 r8b8
+^2 PORTA<f+4 ^8|^8&g+0
+
+a-4 ^8PORT>a-8 r8d-8 PORTAe-8PORTA<a-8
+^8r8 >d-4 |^8&<e-0>f8 ^8|^8&<f0>
+e-8PORTAb-8 PORTAe-8PORT>e-8 r8<f8 PORTAe8PORTAe-8
+^4 <b-4 r8>c8 ^4
+
+d-4 i2<d-rd-r d-rd->ri7 >c8|^8
+&d-4 i2<d-rd-r <d-rd-ri7 >a-8r8
+a-&b-8. ^8r8 f4 r8a-8
+^4 ^8|^8&>c0< c4 ^8.|^&d-0
+
+d-2 r2
+r4 r8d-8 r8f8 ^8PORTAAe-8
+^4 ^8|^32&e32&e- r8<e-8 PORTAAb-8>PORTAAe-8
+^4 PORTAA<c4 PORTAA>c4 ^^^|^
+
+^&d-8. <d-rd-r >d-8PORTAAf8 e8PORTAAe-8
+^4 PORTAd-rd-r c8PORTAAf8 PORTAg8PORTAb-8
+^4 ^8r8 c4 ^8|^8
+^8&d-32'&>d-r dre-8 ^^^|^ &<e-8|^8&<a-0
+
+; 0:marimba
+@smwep #adsr:flat yC v210 <<< _-12 p100,5,50
+(sub-bass)[
+>a-1< _0
+^4 PORTAA >a-4 ^4 ^8PORTAb-8
+PORTAa-1
+PORTAd-4 ^8PORTAAe-8 ^4 ^4
+
+<a-1
+^4 PORTAA >a-4 ^4 ^8PORTAb-8
+PORTAa-1
+PORTAA>g-2 PORTAAd-2
+]8
+
+; 0:finale (above)
+
+#.turnaround
+<v-50\1|a-4 ^4 ^4 |^4&<a-0
+#ifdef NOLOOP
+^8r8 r4 r4 r4
+#else
+@bass v150 (bass-licc)
+#endif
+
+
+
+#1 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+r1 r1 r1 r1 / _0
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+#.head
+
+@yo
+"V=p8,10,80"
+"SQ=p8,12,150"
+v150
+[[
+r4 (melody-snippet-1)[
+V i4 a+8>c+8 i7<SQa+8~Vg+8 ~f+^=2r=10rri7
+c+4. |^16.'&g+4. ^8f+8
+^4] ^^ u-8f+4. u-10f+4 u+0
+<b8PORT>i2c+8i7 f+8~<i4b8i7> f+g+i5a+8i7 SQd+8Vi4c+8i7
+
+#.melody2
+
+r4 (melody-snippet-2)[
+a+8>i2c+8i7 p0,10,100d+8i1c+8 i3<a+8i4g+8
+i7 c+4 r8g+8 ^4 |^8&a+8
+^4] r8i2f+8i7 u-2a+~u-1b>i4u+0c+8i7 <f+8i4f8i7
+f+8~c+8 PORTAAb8PORTAi1a+8 r8i2c+8 g+8PORTi7a+8 i7
+
+#.melody3
+r4 (melody-snippet-3)[
+i4a+8i2b8 >r=2i7SQc=10&c+V~<b8 a+rr8
+c+4 p8,120^8|^8& a+4 ^8#legato/toggle e+8
+^8|^&f+=6'|^&e+0 SQ^8Vd+8 V#legato/toggle ^4 ^8]<i4a+8
+&b8PORTA>c+8 f+8~<b=16r=8 i7>f+g+i3a+8i7 i2d+8i7c+8
+
+#.melody4
+^4 PORTd+8PORTAc+8 p10,5,100^4 ^4
+^1
+|^8.&>c+ ^4 ^4 ^8(melody-snippet-4)[i2<b8
+a&a+~f+r i7e32&d+32rc+8 ^^^|^&c0 u-3e+8i2u-0f+8i7]
+]]2
+
+v230 yC
+r1
+r1
+r2
+#.deejay
+(deejay)[@dee c+8 @jay c+8] ^32r32rrr
+r1
+
+#.deejay2
+r1
+@dee
+r4 r4 r8(deejay2)[@dee yL1i4c+c+ c+c+c+c+]
+r4 r4 r4 r8@jay yR1c+8
+^yCrrr r4 r4 r4
+
+r1
+@yo< yL1i2u-4f+f+f+f+i7 r4 r4 r4
+r2 yC(deejay)@yo yR1u-6i1f+f+rr
+r4 r4 r8i2u-8c+c+ i4c+8<a+8
+
+r1
+r4 r8yCi2f+8 c+c+(deejay2)
+r8@yo i2u-8a+8 r4 @jay r8yR1c+8 @yo u-5 yCi3b8i7b&>c+
+r4 r4 yL1i2fffr r8yR1i4f+8
+
+; 1:no-drums
+
+@smwep< EP_CHORDS_VOL
+(full-chords-1)[
+yC
+f+8 >c+8 ^4 ^4 ^4
+^1
+^4 ^4 ^4 r4
+<b24>f+24a+24^8 ^4 ^4 ^4
+
+<f+8 >c+8 ^4 ^4 ^4
+^1
+^4 ^4 ^4 r4
+<b24>f+24>c+24^8 ^4 ^4 ^4
+]2
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+#.soloo
+; solo
+@hiyo v140 i7 yC
+(solo-a)[
+r4 r4 a+&ba+8 f+8p50,10,190d+8
+^4 ^^^|^&c+0p0,0 r8c+8 a+8p50,10,150g+8
+^2.p0,0 p40,10,150d+|^&e+&c+
+^2p0,0 r4 <a+8PORTAb8
+
+^8a+8 >c+8d+PORTe+ ~f+8a+8 g+8p50,10,180b8&
+>c+2p0,0 r8<i1f+8i7 >c+&d+p50,10,190<g+8
+^4 ^4 ^|^&f+0 f+8>c+8 <a+8
+^4 ^^^|^&g+0p0,0 r4 r8>e+PORTf+PORT
+
+e+|^&e0c+8 <g+8|^8& a+8|^&a0r a+8~g+8~
+f+8p10,15,180e+8 ^8.p0,0r e+8c+8 p50,12,180<g+8 |^8&
+a+4 ^8|^&a0r rre+PORTf+ PORTg+8a+PORTb
+PORT>c+8e+PORTf+ PORTg+8a+PORTb PORT>c+8<bPORTa+ g+8f+8
+
+^2 |^8&>f+8 e+8|^&d+
+^4 i4c+8i7c+8 ^8.|^&c0 <a+8]f+8
+p30,12,190
+g+2 a+4 ^8b8
+^2 p30,12,100> c+2
+
+|^8&e-8 ^4 ^^^|^&d0 r4
+r4 e-8g&a- ^8b-8 ^8f8
+&g8f8 p30,12,190e-4 ^^^|^&d0 r4
+r8e-~f ~c8d-8 ~e-~d-~c~<a- ~g~e-~d-~c
+
+d-8f8 d-8a-8 |^&g0rrr f8a-8
+f8>c8 |^&<b0>rrr c8<b-8 a-8>d-8
+&e-4 ^^^|^&d0 c4 ^|^&<b0b-8
+^4 ^8PORTbPORTb- p50,12,110a-2
+
+^4 ^^^|^&g0 r4 r4
+>a-8g|^&f+0 e-8<b-8 &>c8<b-8 PORTAa-8g8
+^8>p3,12,150g8 ^8p30,12,110e-8 ^8|^8&d-0 p20,8,150<b-~>e-~g8
+^2 r8f8 PORTg8a-8
+
+^8f8 PORTg8a-8 ^8f8 PORTg8>p20,12,150c8
+^8<a-8 PORT>c8e-8 ^8d-~c ~<a-~f~e-8
+^4 ^8|^8&d-0 e-8&f8 ^8|^8&e-0
+#.here
+g-8&a-8 ^8|^8&g-0 u-2>d-8&e-8 ^4
+v-30\1|^1
+r1 r1 r1
+r1 r1 r1 r1
+
+#.marimba2
+@smwep< v200
+p8,10,80
+_+2
+v+0 (ep-ch0)[f+8^8 >g+8~a+8<]
+v-30 yL2  (ep-ch1)[f+8>c+8 g+8~a+8]
+v-50 yR2  (ep-ch1)
+v-70 yL2  (ep-ch1)
+v-90 yR2  (ep-ch1)
+v-110 yL2 (ep-ch1)
+o3 v+0    (ep-ch2)[r=10>yR2f+=10~yL2a+=10>~yR2c+=10~yCf+=10^=46 ^2]
+v+0 yC    (ep-ch1)
+v-30 yL2  (ep-ch1)
+v-50 yR2  (ep-ch1)
+v-70 yL2  (ep-ch1)
+v-90 yR2  (ep-ch1)
+v-110 yL2 (ep-ch1)
+o3 v+0    (ep-ch3)[r=10>yR2f+=10~yL2>c+=10~yR2f+=10~yCa+=10^=46 ^2]
+
+#.redux
+@bass v155 p8,10,80 ; _+2 already set
+[[
+(bass-a1)
+(bass-a2)(bass-a22)
+(bass-a1)
+@hibass _-22(bass-a3)_+2@bass(bass-a3b)(bass-a33)(bass-a333)
+]]4
+
+; 1:finale
+@smwep EP_CHORDS_VOL
+(full-chords-1)2
+
+r1 r1
+
+
+
+#2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+r1 r1 r1 r1/_0
+r1 r1 r1 r1
+r1 r1 r1 r1
+@smwep<
+
+#.enter-ep
+
+v200
+p8,10,80
+[[
+(ep-ch0)
+v-30 yL2  (ep-ch1)
+v-50 yR2  (ep-ch1)
+v-70 yL2  (ep-ch1)
+v-90 yR2  (ep-ch1)
+v-110 yL2 (ep-ch1)
+o3 v+0    (ep-ch2)
+v+0 yC    (ep-ch1)
+v-30 yL2  (ep-ch1)
+v-50 yR2  (ep-ch1)
+v-70 yL2  (ep-ch1)
+v-90 yR2  (ep-ch1)
+v-110 yL2 (ep-ch1)
+o3 v+0    (ep-ch3)
+]]5
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+#.breakdown2
+v+0 (ep-ch0)
+v-30 yL2  (ep-ch1)
+v-50 yR2  (ep-ch1)
+v-70 yL2  (ep-ch1)
+v-90 yR2  (ep-ch1)
+v-110 yL2 (ep-ch1)
+o3 v+0    (ep-ch2)
+v+0 yC    (ep-ch1)
+v-30 yL2  (ep-ch1)
+v-50 yR2  (ep-ch1)
+v-70 yL2  (ep-ch1)
+v-90 yR2  (ep-ch1)
+v-110 yL2 (ep-ch1)
+o3 v+0    (ep-ch3)
+
+; 2:no-drums
+#.2-no-drums
+o4 EP_CHORDS_VOL v-20
+(full-chords-2)[
+yL2
+r4 g+4 ^4 ^4
+^1
+^4 ^4 ^4 r4
+r8>c+8 ^4 ^4 ^4
+
+r4 <g+4 ^4 ^4
+^1
+^4 ^4 ^4 r4
+r8>f+8 ^4 ^4 ^4
+]2
+
+; 2:chordies
+
+#.chordies
+@smwep EP_SOLO_VOL yR1
+r8r24>c+12 ^4 ^4 ^4
+^1
+^1
+^8^24f+12 ^4 ^4 ^4
+#.chordies2
+^8f8 ^4 ^4 ^4
+^1
+^1
+^8^24f+12 ^4 ^4 ^4
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+; 2:splash
+#.splash v+30
+
+yL2
+<<a-1 ^1 ^2r2 b-1
+>d-1 ^1 ^2r2 c1
+d-1  ^1 ^1 e-1
+d-1  ^1
+
+b-2 >c2 d-2 e-2
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+; 2:marimba
+
+GLOCK>
+[[
+yL1<e-8a-8 b-8>e-8 ^4 ^4
+^1
+yR1<e-8a-8 b-8>d-8 ^4 ^4
+yL1^4 d-4 c4 <a-4
+
+yR1r8a-8 b-8>e-8 ^4 ^4
+^4 yL1<d-8a-8 >d-4 ^4
+yR1<u-5e-8u-0e-8 a-8b-8 >e-2
+yL1d-4 c4 <g4 a-4
+
+^8r8 yR1e-8a-8 b-8>e-8 ^4
+^1
+yL1<e-8a-8 b-8>d-8 ^4 ^4
+^4 yR1d-4 c4 <a-4
+
+r8yL1a-8 b-8>e-8 ^4 ^4
+^4 yR1<d-8a-8 >d-4 ^4
+yL1<u-5e-8u-0e-8 a-8b-8 >e-2
+yR1d-4 c4 <g4 a-4
+]]2
+
+; 2:finale
+@smwep EP_CHORDS_VOL _+2
+(full-chords-2)2
+
+r1 r1
+
+
+#3 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+r1 r1 r1 r1 /_0
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+@smwep< v200
+(2ch-backing)[
+r8>c+8 ^4 yL2^2
+yR2^2 yL2^2
+yR2^2 yL2^2
+<b1
+]10
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+(2ch-backing)2
+
+; 3:no-drums
+o4 EP_CHORDS_VOL
+(full-chords-3)[
+yR2
+r4 r8a+8 ^4 ^4
+^1
+^4 ^4 ^4 r4
+r8r24>f+24^24 ^4 ^4 ^4
+
+r4 r8<a+8 ^4 ^4
+^1
+^4 ^4 ^4 r4
+r8r24>a+24^24 ^4 ^4 ^4
+]2
+
+; 3:chordies
+@smwep EP_SOLO_VOL yC
+r24r24f+24a+8 ^4 ^4 ^4
+^1
+^1
+^8>c+8 ^4 ^4 ^4
+
+^12c+24^8 ^4 ^4 ^4
+^1
+^1
+^8c+8 ^4 ^4 ^4
+
+; 3:solo
+r @hiyo v80 yR1
+(solo-a)r
+
+#.twinkle
+
+GLOCK v255 p0,0 yL1
+g+2 a+4 ^8b8
+^2  >c+2
+
+; 3:splash
+d+4 ^8 @smwep EP_SOLO_VOL v+30 yR2 >c8 ^4 ^4
+^1
+^2r2
+r12<a+24 >d+24^12 ^4 ^4 ^4
+
+r4 c8g8 ^4 ^4
+^1
+^2r2
+r8r24a-12 ^4 ^4 ^4
+
+r4 d-8e-8 ^4 ^4
+^1
+^2r2
+r8g8 ^4 ^4 ^4
+
+
+r4 d-8e-8 ^4 ^4
+^1
+
+<d-2 e-2 f2 g2
+
+
+; 3:marimba
+#.marimba-low
+@smwmarimba< v255 #amplify:90 yL2
+
+[[
+r1
+r1
+r4 r=2'i3b-8r8 r4 r4
+r4 r4 r8r=2'e-8 r4
+
+r4 i3u-10>c8<a-8 u-8e-8r8 r4
+r4 >u-0d-8r8 r8c8 r4
+r4 c8r8 r4 r4
+c8r8 r4 r4 r4
+
+r4 c8r8 r4 r4
+r4 u-0d-8r8 r8c8 r4
+r4 c4 r4 r4
+<b-4 r4 r8>d-8 r4
+
+r4 c8r8 r4 r4
+r4 u-0d-8r8 r4 c8r8
+r1
+r4 d-4 c4 r4
+]]2
+
+#.melody-redux
+
+"YO_V=v145"
+r4 _+2 @yo yC #amplify:0 YO_V (melody-snippet-1)
+v-80\1|^4^4^4
+r1
+
+r4 YO_V (melody-snippet-2)
+v-80\2|^2 r4
+r1
+
+r4 YO_V (melody-snippet-3)^8
+v-30\4|^4 r2.
+
+r1
+r2 YO_V d-4 ^8|^8
+#.finale
+^8&>d-8 ^4 ^4 ^8 (melody-snippet-4)
+
+; 3:finale
+@smwep EP_CHORDS_VOL _+2
+(full-chords-3)2
+
+r1 r1
+
+#4 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+r1 r1 r1 r1 /_0
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+r1 r1 r1 r1
+r1 r1 r1 r1
+
+r1 r1 r1 r1
+r1 r1 r1
+r4 r4
+#.glock
+GLOCK v200
+p50,12,40
+yL2r8c+8yR2e+8yL2f+8
+[[
+yR2 ^2 yL2 ^2
+yR2 ^2 yL2 ^2
+^8yL2c+8 yR2f+8>yL2c+8 ^2
+^4 ^4 yR2^4 <e+8yL2f+8
+r1
+r1
+r8yL2c+8 yR2f+8>yL2c+8 ^2
+yR2 ^4 ^8<a+8 yL2f+8r8 yR2d+e+f+8
+]]2
+
+; 4:breakdown
+#.breakdown
+yC f+1
+^1
+v220 (glock-melody)[
+r8 u-3c+8 u-2f+8>u+0c+8 ^4 ^8<b8
+^8u-3a+8 u-4g+8u+0c+8 ^4 u-3e+8f+8
+
+<u-6~f+1
+^1
+>
+r8 u-3c+8 u-2f+8>u+0c+8 ^4 ^8d+8
+^8c+8 ^8<b8 a+8g+8 d+e+f+8
+]
+[[
+yC f+1
+^1 (glock-melody)
+]]3
+
+; 4:no-drums
+; *2
+
+; 4:chordies
+
+@smwep EP_SOLO_VOL v+30 yL1
+<b24>d+12^8 ^4 ^4 ^4
+^1
+^1
+<b24>f+24a+24^8 ^4 ^4 ^4
+
+<b24>d+12^8 ^4 ^4 ^4
+^1
+^1
+<b24>f+24a+24^8 ^4 ^4 ^4
+
+; 4:solo
+r8 @hiyo v60 yL2
+(solo-a)
+
+r32_+12 GLOCK v200 p0,0 yR2
+g+2 a+4 ^8b8
+^2  >c+4 ^^^^
+e-16.
+
+_0
+; 4:splash
+@smwep EP_SOLO_VOL v+30
+yC
+  d+8 a+4 ^4 ^4
+^1
+^2 @dee v255 c8 @jay c8^4 @smwep EP_SOLO_VOL v+30
+r24g12^8 ^4 ^4 ^4
+
+r8a-8 ^4 ^4 ^4
+^2 ^8 @dee v255 i4 cccccc
+r4 r4 r4 r8 @jay c8
+^24 @smwep EP_SOLO_VOL v+30 g24>c24e-8 ^4 ^4 ^4
+
+r8<a-8 ^4 ^4 ^4
+^1
+^2@dee v255 c8 @jay c8^4 @smwep EP_SOLO_VOL v+30
+r24b-24>f24^8 ^4 ^4 ^4
+
+r8<a-8 ^4 ^4 ^4
+^2 ^8 @dee v255 i4 cccccc
+r4 r4 r4 r8 @jay c8
+#.marimba
+^4 r4 r4 r4
+
+; 4:marimba
+@smwmarimba< v255 #amplify:90
+
+[[
+(mar-1)[
+yC
+a-|^=2'b->c|^=2'd- i3e-8c8 <a-8i7r8 r4
+r4 yR1>e-=4'f8r8 r8e-8 r4
+r4 yL1<`b-=4>i3e-8c8 <a-8r8 yR1i5>cccc
+|^=2'yL1i3d-8<b-8 g-8r8 r8yR1g8 r4
+]
+
+(mar-2)[
+r4 i3>r=2'e-8|^=4'c8 <a-8r8 r4
+r4 >f8r8 r8e-8 r4
+i3e-i2e-i3e-i2e- i3|^=2'f8d-8 <b-8r8 r4
+r=2'>e-8c8 <g-8r8 r8b-8 r4
+]
+
+(mar-1)
+
+(mar-4)[
+r4 i3>e-8c8 <a-8r8 r4
+r4 >f8r8 r4 e-8r8
+r4 e-=4'f8d-8 <b-8r8 i5a-b->cd-
+e-8c8 <g-8r8 a-8r8 i3a-a-a-a-
+]
+]]3
+
+#amplify:0
+
+; 4:finale
+GLOCK _+2 yC [[ f+1 ^1 (glock-melody) ]]2
+
+_0
+a-1^1
+
+
+
+
+
+#5 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+"K=@k h1 u12"
+"S=@s"
+"G=@g"
+"R=@r"
+"C=@c"
+"RUFF=Ru-8cGu-5c"
+v200
+
+[Sc8yL2RUFF yCKc8Sc8] yR2RUFFyCKc8 RUFFKc8
+*                     yR2RcSyCu-3cu+0c8 RUFFKc8
+*                     yR2RUFFyCKc8 RUFFSc8
+Cc8r8 r4 r4 r4
+
+/ v210
+_0
+
+#.a
+(drums-a)[
+yC Cc8.Ku-3c Sc8Kc8 yL1RcKyCcSc8 yR1RcyL1GcyR2 RUFF
+yL2RUFFyCKc8 Sc8yR2RUFF yL2RUFFyCKc8 Sc8 RUFF
+yC KcRyL1u-10cyR1u-2cKyCu-3c Sc8Kc8 yL1RUFFyCKc8 Sc8 yL2RUFF
+yR1 Cu-2c8.yCKu-3c Sc8
+yL1 Cu-2c8.yCKu-3c Sc8
+yL2Gu-8yL1cu-4yR1cu+0yR2cyCSc
+]4
+
+#.aa
+(drums-aa)[
+yC Cc8.Ku-3c Sc8Kc8 u-8RcKcSc8 RyR1c8cyL1Gc
+Ru-3c8yCKc8 Sc8yR1Ru-5c8 Rc8cGc yCScyL1GcyCKc8
+KcyL2Gu-10cu-2yR2Ru-3cyL2Gu-3c yCSc^Gu-3cSu-10c Rc8Kc8 Sc8Gu-3cRc
+yR1[[Cc8.Gc yCSc8yL1]]2 yR2GcyL1Su-10cu+0c8
+]8
+
+"S=@s h0 i2u14"
+"G=@g i4"
+"R=@r i2"
+(drums-b)[
+yC Cc4 ^=2Sc=22yL2Ru-8cGu-8c yR2Ru-8cGu-5cSyCc8 c8yL2RUFF yR2RUFFyCSc8yR1[[Cc8 ^GcyCSc8yL1]]2
+yR1Cc4 yCSc8yL1RUFF yCSc8c8 ^8yR1Cc8
+^8yCSc8 c8yL1Rcu-4c Gc8yCCc8 ^8Sc8
+]4
+
+#echo/toggle
+#.interlude
+; 5:interlude
+_-5
+; 5:no-drums
+#.no-drums
+(fadeout)[
+Cc8u-3c8 u-6c8u-9c8 u-12c8u-13c8 u-14c8c8]
+c8c8 c8c8 c8c8 c8c8
+r1 r1
+r1 r1 r1
+#echo/toggle
+#.interlude2
+r1 v-50
+_-7
+Kc8c8 c8.Kc Sc8rr Ru-10<gGcScr
+R<gu-10gKc8 c8.yCKc Sc8rR<yR1g u-10gyL1Gu-5<gR<gg
+yR1RUFFyCKc8 ^8c8 Sc8r8 r8Kc8
+r4 r8Cu-8h-1yR1c8 ^yL2KyCcSc8 #.interlude3 r8Ri7d8
+
+Kc4 Sc8yL1Cu-8h-1c8 ^yR2GcRUFF yL1Kc8yCGu-10cu-8c
+Sc4 yL2RcyCKcSc8 r8yL1Ru-10cu-8c yR1KcryCSc8
+yL1Kc8yR1c8 ^8yL2Ru-8cu-10c yR2Gu-12cu-8cyL2Ru-12cu-8c yCKc8Sc8 _-1 v+0
+^4 yL1Kc8yCSc8 yL2Ru-8cu-9cGyR2u-12cRu-14c #.interlude4 yL1Cu-5c8yCSc8
+
+"S=@s h0 i4u14"
+"G=@g i6"
+"R=@r i5u13"
+Kc8c8 cyL2Ru-8cu-5cyCKc Sc8yR2Ru-5cGu-3c yL2Ru-10<gGcyCScr
+yL3R<gu-10gyCKc8 c8RyR1u-4cyCKc Sc8ryL1R<g u-10gyR1Gu-5<gR<gg
+yL1RUFFyCKc8 RUFFCu-4cKc Sc8r8 r8Cc8
+yL1RUFFyR1RUFF yL1RUFFyCCu-3c8 yR2RUFFyCSc8 #.interlude5 RUFFKcr
+
+K<g4&>g0 Sc8yR1Kc8 r8yL1Ru-10cu-8c yR1Cu-8c8&<c0yL1GcyCKc
+Sc4 ^Kh-4cScRc u-10cu-8cu-10cu-4c u+0c8Sc8
+Ci5c8yL1c8 ^yR1Gu-8cyCSc8 yL2RUFFyR2RUFF yCKc8Sc8
+yR2RUFFyL2RUFF yCKc8c8 #.solo Sc2
+
+RUFFRUFF RUFFKc8 Sc4 Rc8Kc8
+RUFFRc8 Kc8u-3c8 Sc4 Rc8Cu-6c8
+[
+Kc8RUFF Rc8Kc8 Sc4 Kc8RUFF
+Rc8Kc8 RUFFKc8 Sc8RUFF Rc8]Gc8
+
+yR1yL1\8Cu-4c8&h+3c0rr yCRUFFRUFF Sc8Ru-10cu-8c u+0c8yL1yR1\8.Cu-4c8&h-3c0
+^ryCKc8 RUFFKc8 Sc8RUFF Rc8Kc8
+*Kc8
+
+Cc8RUFF Rc8Kc8 Sc8Ru-8cGu-10c yR1yL2\4Cc8Ru-4i2cc
+cyR1Gh+1u-5cRu-4c8 yL1h+2u-10cu-8cu-4cyCSu-5c u+0c8Ru-10cu-8c u+0c8Sc8
+KcGu-6cRu-6cSu-6c u+0c8yL1Ch+1c8 ^yCKcSc8 RUFFRUFF
+yR1Cc8yCRUFF Rc8Cc8 [[Sc8Ru-6cu-4c]]2
+
+Cc8Ru-6cGu-4c Su-5cRu-6cKc8 Si7cRi2u-6cu-4cu-5c u+0h-2i2crKc8
+RUFFRcc Cu-6h-1i2c8c8 Sc8Ru-8cu-4c u+0c8Kc8
+Cc8RUFF Ri2u-2c8Kc8 Sc8Ru-5cu-8c u+0c8Kc8
+RUFFRc8 Kc8c8 Cc8.Kc #.key-change Sc8c8
+
+_+1
+"S=@s"
+"G=@g"
+"R=@r"
+"C=@c u13"
+Cc8c8 ScRu-6c[yL1RUFF yR1RUFFKc8 yCSc]^ *^ *KcRUFF
+Cc8yR1yL1\8c8&h-4c0 yCKc8Sc8 ^8Kc8 Sc8Rh-1ch-5c
+yR1Cc8.yCKc Sc8yL1Cc8 ^yCKcc8 ScyL2Rcu-6yR2RUFF
+
+yCCh-3c8.&h+3c0Kc Sc8c8 r8Sc8 yL1Cc8.yCKc
+yR1Ru-4cu-6cyCSc8 yL1RUFFyCSc8 Kc8c8 Sc8c8
+KcyL2Ru-7cyR2u-5cyCSu-3h+1c yL2h0u+0cRu-6cu-4yR2cu-8c yCKcyL2Ru-6cu-4cyCSu-3c Sc8Kc8
+yR2RUFFyL2RUFF yCKc8Cc8 ^KcSc8 yL2RUFFyR2RUFF
+
+v+10 yC
+Cc8yR2RUFF yL1RUFFRUFF yCSc8yR2RUFF RUFFyCKcyL2Ru-8c
+RUFFKcRu-10c yCKcyR2Ru-8cu-4cyCSu-8h+2c h0u+0cRu-8cyL1Cc8 yR1RUFFRUFF
+yCRcu-3cCc8 Rc8Cc8 Sc8Rcu-4c u-6cu-2cCc8
+RUFFRUFF KcGu-3cKcGc Sc8Ru-2cu-8c u+0c8Kc8
+
+Cc8.Kc ScRcKcGu-3c RUFFKc8 Sc8RUFF
+RUFFKc8 Sc8RUFF RUFFKc8 Sc8c8
+Cc8RUFF RUFFKc8 Sc8RUFF RUFFSc8
+Cc8RUFF Cc8RUFF Sc8RUFF Sc8RUFF
+
+; 5:marimba
+"S=@s i2"
+"G=@g i2"
+"R=@r i2"
+"C=@c u13 i4"
+_0
+[[
+[Cc8RcKu-3c Sc8Kc8 ^Ku-6cSc8 r8 Ri1c8
+u-6c8Ku-3c8 Sc8Ru-13cu-10c u-0c8Ku-3c8 ScKc8.
+KcRu-13du-10dKd Sc8.Rc Rc8Kc8 Si7cRu-13cu-10cu-13c
+Cc8c8] Sc8Ru-13cu-10c u-8cu-6cSc8 Ru-13cu-10cu-13cu-10c
+]]3
+* Ri5u-8cu-10cu-6cu-3c Sc8Ri5u-13cu-10c u-8cGcRcGc
+
+"S=@s"
+"G=@g"
+"R=@r"
+"C=@c u13"
+[[
+(mar-drums-1)[Cc8RcKu-3c Sc8Kc8 RcKu-6cSc8 RUFF Rcu-8c
+RUFFKu-3c8 Sc8Ru-13cu-10c u-0c8Ku-3c8 ScKcRc8
+KcRu-13du-10dKd ScRu-8cu-0cu-8c RUFFKc8 Si7cRu-13cRUFF
+Cc8c8] (mar-drums-2)[Sc8Ru-13cu-10c u-8cu-6cSc8 Ru-13cu-10cu-13cu-10c]
+(mar-drums-1)(mar-drums-2)
+(mar-drums-1)(mar-drums-2)
+(mar-drums-1)
+(mar-drums-3)[Ri5u-8cu-10cu-6cu-3c Sc8Ri5u-13cu-10c Su-8cGu-6cu-4cSc]
+]]2
+
+; 5:finale
+(drums-b)4
+
+(fadeout)
+
+#ifdef NOLOOP
+u-14c8c8 c8c8 u-15c8r8 r4
+#else
+Sc1
+#endif
+
+; ramekin arp syntax
+#arp[=5: +12 0] c0~c1 #arp/off
+#arp[=5: +12 +7 0] c0~c1 #arp/off
+#arp[32^32: 0 +1] c1 #arp/off
+#arp[=3: 0 / +2 -2] c1 #arp/off
+c=1' #gliss[=5: -2] ^1
+
+; remote commands
+(!reset)[ #adsr:reset ]
+(!tail)[ #adsr:0,7,7,16 ]
+
+v150
+(!x)[ v+10 #adsr:4,0,7,max ]
+
+(!reset #keyon)
+(!tail #release)
+
+(!#off)
+
+; actual amk examples from wakana's tutorial
+(!800)[$ed$7f$e0]
+(!800,1,4)
+
+*100
+
+

@@ -1,3 +1,6 @@
+# documentation:
+#   - https://bin.smwcentral.net/u/1743/syntax_reference.html
+#   - https://codeberg.org/jneen/ramekin
 module Rouge
   module Lexers
     class AddmusicK < RegexLexer

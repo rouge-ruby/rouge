@@ -1,25 +1,12 @@
-#SPC
-{
-  #author "Koji Kondo"
-  #title "Starman"
-  #game "Super Mario World"
+#SPC {
+  #author "jneen"
+  #title "oh, you know"
+  #game "N/A"
 }
 
 #option TempoImmunity
 
+"INST=@8o4"
+
 #0
-@1 y0 q3E o4 a8 a8 a8 r16 a16 r16 a8. a8 a8 g8 g8 g8 r16 g8 g8. g8 g8 
-
-#1
-@8 q5E o2 d4 a8. o3 d8. r8 o2 a8 o3 d8 o2 c4 g8. o3 c8. r8 o2 g8 o3 c8 
-
-#2
-t56 @1 q3E o5 c8 c8 c8 r16 c16 r16 c8. c8 c8 o4 b8 b8 b8 r16 b8 b8. b8 b8 
-
-#3
-@1 y20 q3E o4 f8 f8 f8 d16 f8 f8 d16 f16 d16 f8 e8 e8 e8 c16 e8 e8 c16 e16 c16 e8 
-
-#5
-[[y20 q6D @22c16 @22c16 @22c16 @22c16 @23c8 @22c16 @22c16]]4
-
-#amk 2
+l8INSTq7Fdq7Eeq7Ffge4q78cq7Fd^4r4^4

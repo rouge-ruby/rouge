@@ -85,7 +85,9 @@ module Rouge
 
       def error_regex
         @error_regex ||= if @error.any?
-          /^(?:#{@error.map { |e| Regexp.escape(e) }.join('|')})/
+          #rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
+          /^(?:#{@error.first(20).map { |e| Regexp.escape(e) }.join('|')})/
+          #rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
         end
       end
 

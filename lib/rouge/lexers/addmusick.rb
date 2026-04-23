@@ -109,12 +109,14 @@ module Rouge
         rule %r/@\d+/, Name::Tag
         rule %r/@\w+/, Name::Tag
 
-        rule %r/[itwl]\d+/, Name::Function
-        rule %r/[uvh_][+-]?\d+/, Name::Function
+        rule %r/[tw]\d+/, Name::Function
+        rule %r/[il]\d+/, Name::Builtin
+        rule %r/[v_][+-]?\d+/, Name::Function
+        rule %r/[uh][+-]?\d+/, Name::Builtin
         rule %r/y[LR]?\d+/, Name::Function
         rule %r/y[C]/, Name::Function
-        rule %r/o\d/, Name::Function
-        rule %r/q\d\h/, Name::Function
+        rule %r/o\d/, Name::Builtin
+        rule %r/q\d\h/, Name::Builtin
 
         rule %r/[a-g][+-]?/ do
           @last = :note

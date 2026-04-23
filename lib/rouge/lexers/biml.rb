@@ -55,7 +55,7 @@ module Rouge
 
       state :directive_as_csharp do
         rule(/[^#]+/) { delegate @csharp }
-        rule /#>/, Name::Tag, :pop!
+        rule %r/#>/, Name::Tag, :pop!
         rule(/[#>]/) { delegate @csharp }
       end
 

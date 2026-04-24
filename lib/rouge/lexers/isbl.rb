@@ -45,13 +45,14 @@ module Rouge
         rule %r/[\[\]();]/, Punctuation
         rule %r([&*+=<>/-]), Operator
         rule %r/[\p{Alpha}_!]\p{Word}*(?=[(])/i, Name::Function
-        rule %r/[\p{Alpha}_!]\p{Word}*/i do |m|
-          if self.class.keywords.include?(m[0].downcase)
-            token Keyword
-          else
-            token Name::Variable
-          end
+
+        keywords %r/[\p{Alpha}_!]\p{Word}*/i do
+          transform(&:downcase)
+
+          rule :keywords, Keyword
+          default Name::Variable
         end
+
         rule %r/\b(\d+(\.\d+)?)\b/, Literal::Number
         rule %r(["].*?["])m, Literal::String::Double
         rule %r(['].*?['])m, Literal::String::Single

@@ -40,7 +40,7 @@ module Rouge
       lazy { require_relative 'igorpro/builtins' }
 
       object = /[a-z][a-z0-9_\.]*/i
-      noLineBreak = /(?:[ \t]|(?:\\\s*[\r\n]))+/
+      no_line_break = /(?:[ \t]|(?:\\\s*[\r\n]))+/
       operator = %r([\#$~!%^&*+=\|?:<>/-])
       punctuation = /[{}()\[\],.;]/
       number_float= /0x[a-f0-9]+/i
@@ -50,29 +50,18 @@ module Rouge
       state :root do
         rule %r(//), Comment, :comments
 
-        rule object do |m|
-          obj = m[0].downcase
+        rule %r/(v|s|w)_[a-z]+[a-z0-9]*/i, Name::Constant
 
-          if obj.include?('function')
-            token Keyword::Declaration
-            push :parse_function
-          elsif DECLARATIONS.include?(obj)
-            token Keyword::Declaration
-            push :parse_variables
-          elsif KEYWORDS.include?(obj)
-            token Keyword
-          elsif CONSTANTS.include?(obj)
-            token Keyword::Constant
-          elsif FUNCTIONS.include?(obj)
-            token Name::Builtin
-          elsif OPERATIONS.include?(obj)
-            token Keyword::Reserved
-            push :operationFlags
-          elsif obj.match?(/\A(v|s|w)_[a-z]+[a-z0-9]*/o)
-            token Name::Constant
-          else
-            token Name
-          end
+        keywords object do
+          transform(&:downcase)
+
+          rule Set['function'], Keyword::Declaration, :parse_function
+          rule DECLARATIONS, Keyword::Declaration, :parse_variables
+          rule KEYWORDS, Keyword
+          rule CONSTANTS, Keyword::Constant
+          rule FUNCTIONS, Name::Builtin
+          rule OPERATIONS, Keyword::Reserved, :operation_flags
+          default Name
         end
 
         mixin :preprocessor
@@ -124,10 +113,10 @@ module Rouge
         rule(//) { pop! }
       end
 
-      state :operationFlags do
-        rule noLineBreak, Text
+      state :operation_flags do
+        rule no_line_break, Text
         rule %r/[=]/, Punctuation, :assignment
-        rule %r([/][a-z]+)i, Keyword::Pseudo, :operationFlags
+        rule %r([/][a-z]+)i, Keyword::Pseudo, :operation_flags
         rule %r/(as)(\s*)(#{object})/i do
           groups Keyword::Type, Text, Name::Label
         end
@@ -164,7 +153,7 @@ module Rouge
       end
 
       state :whitespace do
-        rule noLineBreak, Text
+        rule no_line_break, Text
       end
 
       state :string1 do

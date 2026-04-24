@@ -52,26 +52,18 @@ module Rouge
         rule upper_id, Name::Class
         rule %r/[(][*](?![)])/, Comment, :comment
         rule %r(//.*?$), Comment::Single
-        rule id do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Keyword
-          elsif self.class.word_operators.include? match
-            token Operator::Word
-          elsif self.class.primitives.include? match
-            token Keyword::Type
-          else
-            token Name
-          end
+
+        keywords %r/\w+!?/ do
+          rule :keywords, Keyword
+          rule :word_operators, Operator::Word
+          rule :primitives, Keyword::Type
         end
 
-        rule operator do |m|
-          match = m[0]
-          if self.class.keyopts.include? match
-            token Punctuation
-          else
-            token Operator
-          end
+        rule id, Name
+
+        keywords operator do
+          rule :keyopts, Punctuation
+          default Operator
         end
 
         rule %r/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float

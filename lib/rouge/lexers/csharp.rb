@@ -18,7 +18,7 @@ module Rouge
       # Contextual Keywords
       # LINQ Query Expressions
       def self.keywords
-        @keywords ||= %w(
+        @keywords ||= Set.new %w(
           abstract add alias and as ascending async await base
           break by case catch checked const continue default delegate
           descending do else enum equals event explicit extern false
@@ -34,20 +34,22 @@ module Rouge
       end
 
       def self.keywords_type
-        @keywords_type ||= %w(
+        @keywords_type ||= Set.new %w(
           bool byte char decimal double dynamic float int long nint nuint
           object sbyte short string uint ulong ushort var
         )
       end
 
       def self.cpp_keywords
-        @cpp_keywords ||= %w(
+        @cpp_keywords ||= Set.new %w(
           if endif else elif define undef line error warning region
           endregion pragma nullable
         )
       end
 
       state :whitespace do
+        rule %r/^[ \t]*#/, Comment::Preproc, :preproc
+
         rule %r/\s+/m, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/[*].*?[*]/)m, Comment::Multiline
@@ -96,11 +98,20 @@ module Rouge
         )ix, Num
         rule %r/\b(?:class|record|struct|interface)\b/, Keyword, :class
         rule %r/\b(?:namespace|using)\b/, Keyword, :namespace
-        rule %r/^#[ \t]*(#{CSharp.cpp_keywords.join('|')})\b.*?\n/, Comment::Preproc
-        rule %r/\b(#{CSharp.keywords.join('|')})\b/, Keyword
-        rule %r/\b(#{CSharp.keywords_type.join('|')})\b/, Keyword::Type
+
+        keywords %r/\w+/ do
+          rule :keywords, Keyword
+          rule :keywords_type, Keyword::Type
+        end
+
         rule %r/#{id}(?=\s*[(])/, Name::Function
         rule id, Name
+      end
+
+      state :preproc do
+        rule %r/[^\\\n]+/, Comment::Preproc
+        rule %r/\\.?/m, Comment::Preproc
+        rule %r/\n/, Comment::Preproc, :pop!
       end
 
       state :class do

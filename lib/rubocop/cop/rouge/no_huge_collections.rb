@@ -14,9 +14,6 @@ module RuboCop
         RESTRICT_ON_SEND = [:[]]
         MAX_SIZE = 300
 
-        Set["1", "2", "3"]
-        Set.new %w(1 2 3)
-
         def on_send(node)
           return unless set_literal?(node)
 

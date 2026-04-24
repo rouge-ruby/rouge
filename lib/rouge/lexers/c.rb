@@ -56,8 +56,9 @@ module Rouge
         )
       end
 
+      # for subclasses
       def self.builtins
-        @builtins ||= []
+        @builtins ||= Set.new
       end
 
       start { push :bol }
@@ -109,20 +110,13 @@ module Rouge
         rule %r/[()\[\],.;]/, Punctuation
         rule %r/\bcase\b/, Keyword, :case
         rule %r/(?:true|false|NULL)\b/, Name::Builtin
-        rule id do |m|
-          name = m[0]
 
-          if self.class.keywords.include? name
-            token Keyword
-          elsif self.class.keywords_type.include? name
-            token Keyword::Type
-          elsif self.class.reserved.include? name
-            token Keyword::Reserved
-          elsif self.class.builtins.include? name
-            token Name::Builtin
-          else
-            token Name
-          end
+        keywords id do
+          rule :keywords, Keyword
+          rule :keywords_type, Keyword::Type
+          rule :reserved, Keyword::Reserved
+          rule :builtins, Name::Builtin
+          default Name
         end
       end
 

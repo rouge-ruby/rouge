@@ -67,19 +67,14 @@ module Rouge
         rule %r/(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i, Literal::Number::Float
         rule %r/\b[\d.,_]+/, Literal::Number
 
-        rule %r/\b[A-Z_]+\b/i do |m|
-          name = m[0].upcase
-          if self.class.keywords.include?(name)
-            token Keyword
-          elsif self.class.types.include?(name)
-            token Keyword::Type
-          elsif self.class.literals.include?(name)
-            token Literal
-          elsif self.class.operators.include?(name)
-            token Operator
-          else
-            token Name
-          end
+        keywords %r/\b[A-Z_]+\b/i do
+          transform(&:upcase)
+
+          rule :keywords, Keyword
+          rule :types, Keyword::Type
+          rule :literals, Literal
+          rule :operators, Operator
+          default Name
         end
 
         rule %r/S?R?:?=>?|&&?|\*\*?|<[=>]?|>=?|[-:^\/+#]/, Operator

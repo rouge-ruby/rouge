@@ -26,7 +26,6 @@ Naming/MemoizedInstanceVariableName:
 # ForbiddenIdentifiers: __id__, __send__
 Naming/MethodName:
   Exclude:
-    - 'lib/rouge/lexers/igorpro.rb'
     - 'lib/rouge/lexers/xpath.rb'
 
 # Offense count: 40
@@ -35,7 +34,6 @@ Naming/MethodName:
 Naming/VariableName:
   Exclude:
     - 'lib/rouge/lexers/dafny.rb'
-    - 'lib/rouge/lexers/igorpro.rb'
     - 'lib/rouge/lexers/kotlin.rb'
     - 'lib/rouge/lexers/xpath.rb'
 
@@ -71,7 +69,6 @@ Rouge/NoHugeCollections:
   Exclude:
     - 'lib/rouge/lexers/abap.rb'
     - 'lib/rouge/lexers/idlang.rb'
-    - 'lib/rouge/lexers/igorpro.rb'
     - 'lib/rouge/lexers/janet.rb'
     - 'lib/rouge/lexers/openedge.rb'
     - 'lib/rouge/lexers/plsql.rb'

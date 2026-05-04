@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# [jneen] This is an example implementation only. Please do not submit patches that
+# alter the behaviour or options of this formatter. You are highly encouraged to
+# write your own formatter for your application instead.
+
 module Rouge
   module Formatters
     class HTMLLinewise < Formatter
@@ -15,8 +19,9 @@ module Rouge
       def stream(tokens, &b)
         token_lines(tokens).with_index(1) do |line_tokens, lineno|
           yield %(<#{@tag_name} class="#{sprintf @class_format, lineno}">)
-          @formatter.stream(line_tokens) {|formatted| yield formatted }
-          yield %(\n</#{@tag_name}>)
+          line.each do |tok, val|
+            yield @formatter.span(tok, val)
+          end
         end
       end
     end

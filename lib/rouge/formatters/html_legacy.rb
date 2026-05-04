@@ -35,13 +35,21 @@ module Rouge
         @formatter = HTMLTable.new(@formatter, opts) if opts[:line_numbers]
 
         if opts.fetch(:wrap, true)
-          @formatter = HTMLPygments.new(@formatter, opts.fetch(:css_class, 'codehilite'))
+          @pygments_wrap = opts.fetch(:css_class, 'codehilite')
         end
       end
 
       # @yield the html output.
       def stream(tokens, &b)
+        if @pygments_wrap
+          yield %(<div class="highlight"><pre class="#{@pygments_wrap}"><code>)
+        end
+
         @formatter.stream(tokens, &b)
+
+        if @pygments_wrap
+          yield "</code></pre></div>"
+        end
       end
     end
   end

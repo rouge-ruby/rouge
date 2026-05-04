@@ -31,4 +31,14 @@ describe Rouge::Formatters::HTMLLinewise do
       assert { output == %(<div class="line-1"><span class="n">foo</span></div><div class="line-2"><span class="n">bar</span></div>) }
     end
   end
+
+  describe 'with an improper inner formatter' do
+    it 'raises an error' do
+      assert do
+        rescuing(ArgumentError, /got Rouge::Formatters::HTMLLinewise\b/) do
+          Rouge::Formatters::HTMLTable.new(Rouge::Formatters::HTMLLinewise.new(Rouge::Formatters::HTML.new))
+        end
+      end
+    end
+  end
 end

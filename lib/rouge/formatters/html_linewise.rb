@@ -12,7 +12,7 @@ module Rouge
       tag 'html_linewise'
 
       def initialize(formatter, opts={})
-        @formatter = formatter
+        @formatter = HTML.assert_html_formatter!(formatter)
         @tag_name = opts.fetch(:tag_name, 'div')
         @class_format = opts.fetch(:class, 'line-%i')
       end

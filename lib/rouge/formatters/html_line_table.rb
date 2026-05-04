@@ -22,7 +22,7 @@ module Rouge
       # @option opts [String] :code_class Class name for rendered code cell.
       #   Defaults to `"rouge-code"`.
       def initialize(formatter, opts={})
-        @formatter    = formatter
+        @formatter    = HTML.assert_html_formatter!(formatter)
         @start_line   = opts.fetch :start_line,   1
         @table_class  = opts.fetch :table_class,  'rouge-line-table'
         @gutter_class = opts.fetch :gutter_class, 'rouge-gutter'

@@ -12,7 +12,7 @@ module Rouge
       tag 'html_line_highlighter'
 
       def initialize(delegate, opts = {})
-        @delegate = delegate
+        @delegate = HTML.assert_html_formatter!(delegate)
         @highlight_line_class = opts.fetch(:highlight_line_class, 'hll')
         @highlight_lines = opts[:highlight_lines] || []
       end

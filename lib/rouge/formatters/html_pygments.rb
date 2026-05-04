@@ -4,7 +4,7 @@ module Rouge
   module Formatters
     class HTMLPygments < Formatter
       def initialize(inner, css_class='codehilite')
-        @inner = inner
+        @inner = HTML.assert_html_formatter!(inner)
         @css_class = css_class
       end
 

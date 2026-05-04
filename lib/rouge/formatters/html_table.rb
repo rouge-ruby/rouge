@@ -12,7 +12,7 @@ module Rouge
       tag 'html_table'
 
       def initialize(inner, opts={})
-        @inner = inner
+        @inner = HTML.assert_html_formatter!(inner)
         @start_line = opts.fetch(:start_line, 1)
         @line_format = opts.fetch(:line_format, '%i')
         @table_class = opts.fetch(:table_class, 'rouge-table')

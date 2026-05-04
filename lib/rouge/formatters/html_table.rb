@@ -21,8 +21,8 @@ module Rouge
       end
 
       def style(scope)
-        yield "#{scope} .rouge-table { border-spacing: 0 }"
-        yield "#{scope} .rouge-gutter { text-align: right }"
+        yield "#{scope} .#{@table_class} { border-spacing: 0 }"
+        yield "#{scope} .#{@gutter_class} { text-align: right }"
       end
 
       def stream(tokens, &b)

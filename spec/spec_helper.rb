@@ -53,9 +53,8 @@ class Minitest::Test
     Thread.current[:WARN_CAPTURE] = captured
     out = yield
 
+    [captured, out]
   ensure
     Thread.current[:WARN_CAPTURE] = nil
-
-    return [captured, out]
   end
 end

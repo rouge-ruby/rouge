@@ -11,6 +11,15 @@ module Rouge
     class HTMLTable < Formatter
       tag 'html_table'
 
+      def self.new(inner, opts={})
+        if !inner.is_a?(HTML) && inner.is_a?(Formatter)
+          require_relative 'html_legacy_table'
+          return HTMLLegacyTable.new(inner, opts)
+        end
+
+        super(inner, opts)
+      end
+
       def initialize(inner, opts={})
         @inner = HTML.assert_html_formatter!(inner)
         @start_line = opts.fetch(:start_line, 1)

@@ -123,3 +123,7 @@ Performance/ConstantRegexp:
 
 Performance/UnfreezeString:
   Enabled: false
+
+Performance/StringInclude:
+  Exclude:
+    - "spec/**/*.rb"

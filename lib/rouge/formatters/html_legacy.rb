@@ -27,7 +27,7 @@ module Rouge
       # Content will be wrapped in a tag (`div` if tableized, `pre` if
       # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
-        warn '[DEPRECATION] Rouge::Formatters::HTMLLegacy is deprecated and will be removed soon. Please use one of the other formatters, or write your own.'
+        warn '[DEPRECATED] Rouge::Formatters::HTMLLegacy is deprecated and will be removed soon. Please use one of the other formatters, or write your own.'
         @formatter = opts[:inline_theme] ? HTMLInline.new(opts[:inline_theme])
                    : HTML.new
 

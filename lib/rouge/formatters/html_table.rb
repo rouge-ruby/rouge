@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# [jneen] This is an example implementation only. You may use it as-is, but please do
+# not submit patches that alter the behaviour or options of this formatter for the
+# convenience of your application. You are highly encouraged to write your own
+# formatter for your application instead.
+
 module Rouge
   module Formatters
     class HTMLTable < Formatter
@@ -34,11 +39,12 @@ module Rouge
         # add an extra line for non-newline-terminated strings
         if last_val[-1] != "\n"
           num_lines += 1
-          @inner.span(Token::Tokens::Text::Whitespace, "\n") { |str| formatted << str }
+          yield @inner.span(Token::Tokens::Text::Whitespace, "\n")
         end
 
         # generate a string of newline-separated line numbers for the gutter>
-        formatted_line_numbers = (@start_line..num_lines+@start_line-1).map do |i|
+        last_line = num_lines + @start_line
+        formatted_line_numbers = (@start_line...last_line).map do |i|
           sprintf("#{@line_format}", i) << "\n"
         end.join('')
 

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-# [jneen] This is an example implementation only. Please do not submit patches that
-# alter the behaviour or options of this formatter. You are highly encouraged to
-# write your own formatter for your application instead.
+# [jneen] This is an example implementation only. You may use it as-is, but please do
+# not submit patches that alter the behaviour or options of this formatter for the
+# convenience of your application. You are highly encouraged to write your own
+# formatter for your application instead.
 
 module Rouge
   module Formatters
@@ -19,9 +20,10 @@ module Rouge
       def stream(tokens, &b)
         token_lines(tokens).with_index(1) do |line_tokens, lineno|
           yield %(<#{@tag_name} class="#{sprintf @class_format, lineno}">)
-          line.each do |tok, val|
+          line_tokens.each do |tok, val|
             yield @formatter.span(tok, val)
           end
+          yield %(</#{@tag_name}>)
         end
       end
     end

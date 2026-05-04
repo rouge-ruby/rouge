@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# [jneen] This is an example implementation only. You may use it as-is, but please do
+# not submit patches that alter the behaviour or options of this formatter for the
+# convenience of your application. You are highly encouraged to write your own
+# formatter for your application instead.
+
 module Rouge
   module Formatters
     # Transforms a token stream into HTML output.

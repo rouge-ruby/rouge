@@ -23,7 +23,7 @@ module Rouge
           line_tokens.each do |tok, val|
             yield @formatter.span(tok, val)
           end
-          yield %(</#{@tag_name}>)
+          yield %(\n</#{@tag_name}>)
         end
       end
     end

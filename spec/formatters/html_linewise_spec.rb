@@ -12,7 +12,7 @@ describe Rouge::Formatters::HTMLLinewise do
     let(:input_stream) { [[Token['Name'], 'foo']] }
 
     it 'formats' do
-      assert { output == %(<div class="line-1"><span class="n">foo</span></div>) }
+      assert { output == %(<div class="line-1"><span class="n">foo</span>\n</div>) }
     end
   end
 
@@ -20,7 +20,7 @@ describe Rouge::Formatters::HTMLLinewise do
     let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar\n"]] }
 
     it 'formats' do
-      assert { output == %(<div class="line-1">foo</div><div class="line-2"><span class="n">bar</span></div>) }
+      assert { output == %(<div class="line-1">foo\n</div><div class="line-2"><span class="n">bar</span>\n</div>) }
     end
   end
 
@@ -28,7 +28,7 @@ describe Rouge::Formatters::HTMLLinewise do
     let(:input_stream) { [[Token['Name'], "foo\nbar"]] }
 
     it 'formats' do
-      assert { output == %(<div class="line-1"><span class="n">foo</span></div><div class="line-2"><span class="n">bar</span></div>) }
+      assert { output == %(<div class="line-1"><span class="n">foo</span>\n</div><div class="line-2"><span class="n">bar</span>\n</div>) }
     end
   end
 
@@ -54,7 +54,7 @@ describe Rouge::Formatters::HTMLLinewise do
       warning = warnings.first
       assert { warning.match?(/DEPRECATED/) }
 
-      expected = %(<table class="rouge-table"><tbody><tr><td class="rouge-gutter gl" aria-hidden="true"><pre class="lineno">1\n2\n</pre></td><td class="rouge-code"><pre><code><div class="line-1">foo</div><div class="line-2"><span class="n">bar</span></div></code></pre></td></tr></tbody></table>)
+      expected = %(<table class="rouge-table"><tbody><tr><td class="rouge-gutter gl" aria-hidden="true"><pre class="lineno">1\n2\n</pre></td><td class="rouge-code"><pre><code><div class="line-1">foo\n</div><div class="line-2"><span class="n">bar</span>\n</div></code></pre></td></tr></tbody></table>)
 
       actual = formatter.format(input_stream)
 
@@ -68,7 +68,7 @@ describe Rouge::Formatters::HTMLLinewise do
     let(:options) { { tag_name: 'florbis' } }
 
     it 'should use tag name specified by :tag_name option' do
-      assert { output == %(<florbis class="line-1">foo</florbis><florbis class="line-2"><span class="n">bar</span></florbis>) }
+      assert { output == %(<florbis class="line-1">foo\n</florbis><florbis class="line-2"><span class="n">bar</span>\n</florbis>) }
     end
   end
 end

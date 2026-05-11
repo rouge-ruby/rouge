@@ -307,6 +307,8 @@ module Rouge
 
       # Define keyword sets with an overarching regular expression.
       def keywords(covering_regex, &block)
+        raise ClosedState.new(self) if @closed
+
         keyword_rule = KeywordRule.new(covering_regex, &block)
 
         rule(covering_regex, &keyword_rule.to_proc)

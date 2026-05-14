@@ -29,12 +29,12 @@ module Rouge
 
       def self.type_directives
         @type_directives ||= Set.new %w(
-          .align .assert .asserterror .break .by .byte .cpu
-          .disk .dword .dw .encoding .enum .error .errorif .eval
-          .file .fill .fillword .for .function .import .importonce
-          .label .lohifill .macro .memblock .modify .namespace
-          .pc .print .printnow .pseudocommand .pseudopc .return
-          .segment .segmentdef .struct .text .var .word .while .zp
+          align assert asserterror break by byte cpu
+          disk dword dw encoding enum error errorif eval
+          file fill fillword for function import importonce
+          label lohifill macro memblock modify namespace
+          pc print printnow pseudocommand pseudopc return
+          segment segmentdef struct text var word while zp
         )
       end
 
@@ -58,13 +58,11 @@ module Rouge
 
         rule %r/[+\-*\/=<>!]/, Operator
 
-        rule %r/#\w+/i do |m|
-          directive = m[0][1..-1].downcase
-          if self.class.preprocessor_directives.include?(directive)
-            token Keyword
-          else
-            token Punctuation
-          end
+        keywords %r/#(\w+)/ do
+          group 1
+
+          rule :preprocessor_directives, Keyword
+          default Punctuation
         end
 
         rule %r/#/, Punctuation
@@ -72,25 +70,21 @@ module Rouge
 
         rule %r/[a-z$._?][\w$.?#@~]*:/i, Name::Label
 
-        rule %r/\.\w+/i do |m|
-          if m[0] == '.const'
-            token Keyword::Constant
-          elsif m[0] =~ /^\.(for|while|macro|function|pseudopc|pseudocommand)$/io
-            token Keyword::Reserved
-          elsif self.class.type_directives.include?(m[0].downcase)
-            token Keyword::Declaration
-          else
-            token Keyword
-          end
+        keywords %r/[.](\w+)/i do
+          transform(&:downcase)
+
+          rule Set['const'], Keyword::Constant
+          rule Set['for', 'while', 'macro', 'function', 'pseudopc', 'pseudocommand'],
+            Keyword::Reserved
+
+          rule :type_directives, Keyword::Declaration
+          default Keyword
         end
 
-        rule %r/\b\w+\b/i do |m|
-          word = m[0].downcase
-          if self.class.mnemonics.include?(word)
-            token Keyword
-          else
-            token Name
-          end
+        keywords %r/\w+/ do
+          transform(&:downcase)
+          rule :mnemonics, Keyword
+          default Name
         end
 
         rule %r/[ \t\r\n]+/, Text

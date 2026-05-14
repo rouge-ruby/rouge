@@ -23,8 +23,13 @@ module Rouge
     end
 
     class InvalidKeywordSet < StandardError
+      def initialize(context)
+        @context = context
+        super()
+      end
+
       def to_s
-        "Invalid keyword set: Keys must be an instance of Set."
+        "#{@context}: Invalid keyword set: Keys must be an instance of Set."
       end
     end
 
@@ -62,7 +67,8 @@ module Rouge
     class Rule
       attr_reader :callback
       attr_reader :re
-      def initialize(re, callback)
+      def initialize(lexer_class, re, callback)
+        @lexer_class = lexer_class
         @re = re
         @callback = callback
       end
@@ -145,7 +151,8 @@ module Rouge
 
     class StateDSL
       class KeywordRule
-        def initialize(covering_regex, &defn)
+        def initialize(lexer_class, covering_regex, &defn)
+          @lexer_class = lexer_class
           @covering_regex = covering_regex
           @transform = nil
           @default = nil
@@ -164,7 +171,7 @@ module Rouge
 
         def rule(keyword_set, *args, &action)
           unless keyword_set.is_a?(Set) || keyword_set.is_a?(Symbol)
-            raise InvalidKeywordSet
+            raise InvalidKeywordSet.new(@lexer_class)
           end
 
           raise InvalidRule if action && args.any?
@@ -220,7 +227,8 @@ module Rouge
       end
 
       attr_reader :rules, :name
-      def initialize(name, &defn)
+      def initialize(lexer_class, name, &defn)
+        @lexer_class = lexer_class
         @name = name
         @defn = defn
         @rules = []
@@ -238,7 +246,7 @@ module Rouge
 
       def prepended(&defn)
         parent_defn = @defn
-        StateDSL.new(@name) do
+        StateDSL.new(@lexer_class, @name) do
           instance_eval(&defn)
           instance_eval(&parent_defn)
         end
@@ -246,7 +254,7 @@ module Rouge
 
       def appended(&defn)
         parent_defn = @defn
-        StateDSL.new(@name) do
+        StateDSL.new(@lexer_class, @name) do
           instance_eval(&parent_defn)
           instance_eval(&defn)
         end
@@ -279,7 +287,7 @@ module Rouge
 
         callback ||= Rule.make_action(re, *args)
 
-        rules << Rule.new(re, callback)
+        rules << Rule.new(@lexer_class, re, callback)
 
         close! if matches_empty && !context_sensitive?(re)
       end
@@ -309,7 +317,7 @@ module Rouge
       def keywords(covering_regex, &block)
         raise ClosedState.new(self) if @closed
 
-        keyword_rule = KeywordRule.new(covering_regex, &block)
+        keyword_rule = KeywordRule.new(@lexer_class, covering_regex, &block)
 
         rule(covering_regex, &keyword_rule.to_proc)
       end
@@ -357,7 +365,7 @@ module Rouge
     # The block will be evaluated in the context of a {StateDSL}.
     def self.state(name, &b)
       name = name.to_sym
-      state_definitions[name] = StateDSL.new(name, &b)
+      state_definitions[name] = StateDSL.new(self, name, &b)
     end
 
     def self.prepend(name, &b)
@@ -405,7 +413,7 @@ module Rouge
           superclass.get_keyword_set(name)
         end
 
-        raise InvalidKeywordSet unless set.is_a?(Set)
+        raise InvalidKeywordSet.new(self) unless set.is_a?(Set)
 
         set
       end
@@ -605,7 +613,7 @@ module Rouge
       push_state = if state_name
         get_state(state_name)
       elsif block_given?
-        StateDSL.new(b.inspect, &b).to_state(self.class)
+        StateDSL.new(self, b.inspect, &b).to_state(self.class)
       else
         # use the top of the stack by default
         self.state

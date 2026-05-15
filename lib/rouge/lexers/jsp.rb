@@ -23,9 +23,6 @@ module Rouge
         @java = Java.new
       end
 
-      directives = %w(page include taglib)
-      actions = %w(scriptlet declaration expression)
-
       state :whitespace do
         rule %r/\s+/, Text
         rule %r/<%--/, Comment, :jsp_comment

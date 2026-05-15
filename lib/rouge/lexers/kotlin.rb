@@ -96,9 +96,11 @@ module Rouge
         rule %r'"(\\\\|\\"|[^"\n])*["\n]'m, Str
         rule %r"'\\.'|'[^\\]'", Str::Char
         rule %r'(@#{class_name})', Name::Decorator
-        rule %r'(@)(#{use_site_targets.join('|')})(:)' do
-          groups Name::Decorator, Keyword, Punctuation
+
+        rule %r'(@\w+)(:)' do
+          groups Name::Decorator, Punctuation
         end
+
         rule %r'(#{class_name})(<)' do
           groups Name::Class, Punctuation
           push :generic_parameters

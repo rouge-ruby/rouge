@@ -31,8 +31,7 @@ class VisualTestApp < Sinatra::Application
     line_numbers = as_boolean params.fetch(:line_numbers, false)
 
     # parameters enabled by default
-    wrapped    = as_boolean params.fetch(:wrap, true)
-    line_table = as_boolean params.fetch(:line_table, true)
+    line_table = as_boolean params.fetch(:line_table, false)
 
     # base HTML formatter
     formatter = inline ?
@@ -40,14 +39,12 @@ class VisualTestApp < Sinatra::Application
                   Rouge::Formatters::HTMLDebug.new
 
     if line_numbers
-      formatter = line_table ?
-                    Rouge::Formatters::HTMLLineTable.new(formatter) :
-                    Rouge::Formatters::HTMLTable.new(formatter)
+      line_table \
+        ? Rouge::Formatters::HTMLLineTable.new(formatter, table_class: 'highlight')
+        : Rouge::Formatters::HTMLTable.new(formatter, table_class: 'highlight no-wrap')
+    else
+      Rouge::Formatters::HTMLPygments.new(formatter, 'highlight')
     end
-
-    return Rouge::Formatters::HTMLPygments.new(formatter) if wrapped
-
-    formatter
   end
 
   def as_boolean(value)
@@ -72,7 +69,7 @@ class VisualTestApp < Sinatra::Application
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
 
-    @theme         = theme_class.new(scope: '.codehilite')
+    @theme         = theme_class.new(scope: '.highlight')
     @comment_color = theme_class.get_style(Rouge::Token::Tokens::Comment).fg
     @formatter     = setup_formatter(params)
   end

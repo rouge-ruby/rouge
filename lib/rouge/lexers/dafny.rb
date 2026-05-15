@@ -47,8 +47,8 @@ module Rouge
       idchar = /[0-9a-zA-Z_'?]/
       id = /#{idstart}#{idchar}*/
 
-      arrayType = /array(?:1[0-9]+|[2-9][0-9]*)\??(?!#{idchar})/
-      bvType = /bv(?:0|[1-9][0-9]*)(?!#{idchar})/
+      array_type = /array(?:1[0-9]+|[2-9][0-9]*)\??(?!#{idchar})/
+      bv_type = /bv(?:0|[1-9][0-9]*)(?!#{idchar})/
 
       digit = /\d/
       digits = /#{digit}+(?:_#{digit}+)*/
@@ -92,8 +92,8 @@ module Rouge
         rule %r/[0-9_]+_(?!#{idchar})/, Error
         rule %r/[0-9]#{idchar}+/, Error
 
-        rule %r/#{arrayType}/, Keyword::Type
-        rule %r/#{bvType}/, Keyword::Type
+        rule %r/#{array_type}/, Keyword::Type
+        rule %r/#{bv_type}/, Keyword::Type
 
         keywords id do
           rule TYPES, Keyword::Type

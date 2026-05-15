@@ -13,7 +13,7 @@ module Rouge
       filenames '*.kt', '*.kts'
       mimetypes 'text/x-kotlin'
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         abstract annotation as break by catch class companion const
         constructor continue crossinline do dynamic else enum
         external false final finally for fun get if import in infix
@@ -35,31 +35,40 @@ module Rouge
         rule %r'\b(companion)(\s+)(object)\b' do
           groups Keyword, Text, Keyword
         end
+
         rule %r'\b(class|data\s+class|interface|object)(\s+)' do
           groups Keyword::Declaration, Text
           push :class
         end
+
         rule %r'\b(fun)(\s+)' do
           groups Keyword, Text
           push :function
         end
+
         rule %r'\b(package|import)(\s+)' do
           groups Keyword, Text
           push :package
         end
+
         rule %r'\b(val|var)(\s+)(\()' do
           groups Keyword::Declaration, Text, Punctuation
           push :destructure
         end
+
         rule %r'\b(val|var)(\s+)' do
           groups Keyword::Declaration, Text
           push :property
         end
+
         rule %r'(return|continue|break|this|super)(@#{name})?\b' do
           groups Keyword, Name::Decorator
         end
-        rule %r'\bfun\b', Keyword
-        rule %r'\b(?:#{keywords.join('|')})\b', Keyword
+
+        keywords %r/\w+/ do
+          rule KEYWORDS, Keyword
+        end
+
         rule %r'^\s*\[.*?\]', Name::Attribute
         rule %r'[^\S\n]+', Text
         rule %r'\\\n', Text # line continuation
@@ -73,10 +82,10 @@ module Rouge
         rule %r'::|!!|\?[:.]', Operator
         rule %r"(\.\.)", Operator
         # Number literals
-        decDigits = %r"([0-9][0-9_]*[0-9])|[0-9]"
-        exponent = %r"[eE][+-]?(#{decDigits})"
-        double = %r"((#{decDigits})?\.#{decDigits}(#{exponent})?)|(#{decDigits}#{exponent})"
-        rule %r"(#{double}[fF]?)|(#{decDigits}[fF])", Num::Float
+        dec_digits = %r"([0-9][0-9_]*[0-9])|[0-9]"
+        exponent = %r"[eE][+-]?(#{dec_digits})"
+        double = %r"((#{dec_digits})?\.#{dec_digits}(#{exponent})?)|(#{dec_digits}#{exponent})"
+        rule %r"(#{double}[fF]?)|(#{dec_digits}[fF])", Num::Float
         rule %r"0[bB]([01][01_]*[01]|[01])[uU]?L?", Num::Bin
         rule %r"0[xX]([0-9a-fA-F][0-9a-fA-F_]*[0-9a-fA-F]|[0-9a-fA-F])[uU]?L?", Num::Hex
         rule %r"(([1-9][0-9_]*[0-9])|[0-9])[uU]?L?", Num::Integer

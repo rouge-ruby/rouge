@@ -33,7 +33,6 @@ Naming/MethodName:
 # SupportedStyles: snake_case, camelCase
 Naming/VariableName:
   Exclude:
-    - 'lib/rouge/lexers/dafny.rb'
     - 'lib/rouge/lexers/xpath.rb'
 
 # Offense count: 113

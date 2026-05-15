@@ -178,6 +178,13 @@ public interface Comparable<in T> {}
 fun anAnnotatedFunction() = {
 }
 
+class AnnotatedProperty(
+        @get:Fancy x: Int,
+        @set:Inject("Bean") x: Int,
+        @param:[Fancy Inject("Bean")] y: Int,
+        @get:Fancy @set:Inject("Bean") z: String,
+)
+
 val (a, b) = pair
 
 loop@ for (i in 1..100) {

@@ -156,28 +156,18 @@ module Rouge
           groups Name, Name::Label, Operator
         end
 
-        rule %r((/?)([\w.]+)) do |m|
-          name = m[2].downcase
+        rule %r(/(?=[\w.])), Punctuation
 
-          if m[1] != ''
-            token Punctuation, m[1]
-          end
+        keywords %r/\w+/ do
+          transform(&:downcase)
 
-          if name == 'namespace_using'
-            token Keyword::Namespace, m[2]
-          elsif KEYWORDS[:exceptions].include? name
-            token Name::Exception, m[2]
-          elsif KEYWORDS[:types].include? name
-            token Keyword::Type, m[2]
-          elsif KEYWORDS[:traits].include? name
-            token Name::Decorator, m[2]
-          elsif KEYWORDS[:keywords].include? name
-            token Keyword, m[2]
-          elsif KEYWORDS[:builtins].include? name
-            token Name::Builtin, m[2]
-          else
-            token Name::Other, m[2]
-          end
+          rule Set['namespace_using'], Keyword::Namespace
+          rule KEYWORDS[:exceptions], Name::Exception
+          rule KEYWORDS[:types], Keyword::Type
+          rule KEYWORDS[:traits], Name::Decorator
+          rule KEYWORDS[:keywords], Keyword
+          rule KEYWORDS[:builtins], Name::Builtin
+          default Name::Other
         end
 
         rule %r/(=)(n?bw|n?ew|n?cn|lte?|gte?|n?eq|n?rx|ft)\b/i do

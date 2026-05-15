@@ -50,7 +50,7 @@ module Rouge
       end
 
       def self.keywords_system_task
-        @keyword_system_task ||= Set.new %w(
+        @keywords_system_task ||= Set.new %w(
           acos acosh asin asinh assertfailoff assertfailon  assertkill
           assertnonvacuouson assertoff asserton assertpassoff assertpasson
           assertvacuousoff atan atan2 atanh bits bitstoreal  bitstoshortreal
@@ -130,18 +130,11 @@ module Rouge
         rule %r/[()\[\],.$\#;]/, Punctuation
         rule %r/`(\w+)/, Comment::Preproc
 
-        rule id do |m|
-          name = m[0]
-
-          if self.class.keywords.include? name
-            token Keyword
-          elsif self.class.keywords_type.include? name
-            token Keyword::Type
-          elsif self.class.keywords_system_task.include? name
-            token Name::Builtin
-          else
-            token Name
-          end
+        keywords id do
+          rule :keywords, Keyword
+          rule :keywords_type, Keyword::Type
+          rule :keywords_system_task, Name::Builtin
+          default Name
         end
       end
 

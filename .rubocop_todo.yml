@@ -12,14 +12,6 @@ Lint/EmptyBlock:
   Exclude:
     - 'lib/rouge/lexers/nix.rb'
 
-# Offense count: 5
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyleForLeadingUnderscores.
-# SupportedStylesForLeadingUnderscores: disallowed, required, optional
-Naming/MemoizedInstanceVariableName:
-  Exclude:
-    - 'lib/rouge/lexers/verilog.rb'
-
 # Offense count: 16
 # Configuration parameters: EnforcedStyle, AllowedPatterns, ForbiddenIdentifiers, ForbiddenPatterns.
 # SupportedStyles: snake_case, camelCase

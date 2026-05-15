@@ -40,7 +40,6 @@ Naming/VariableName:
 # Offense count: 113
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
-    - 'lib/rouge/lexers/armasm.rb'
     - 'lib/rouge/lexers/kotlin.rb'
     - 'lib/rouge/lexers/lean.rb'
     - 'lib/rouge/lexers/magik.rb'

@@ -71,6 +71,7 @@ module Rouge
         rule %r/[a-z$._?][\w$.?#@~]*:/i, Name::Label
 
         keywords %r/[.](\w+)/i do
+          group 1
           transform(&:downcase)
 
           rule Set['const'], Keyword::Constant

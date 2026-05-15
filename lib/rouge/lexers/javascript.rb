@@ -129,7 +129,7 @@ module Rouge
           Array Boolean Date Error Function Math netscape
           Number Object Packages RegExp String sun decodeURI
           decodeURIComponent encodeURI encodeURIComponent
-          Error eval isFinite isNaN parseFloat parseInt
+          eval isFinite isNaN parseFloat parseInt
           document window navigator self global
           Promise Set Map WeakSet WeakMap Symbol Proxy Reflect
           Int8Array Uint8Array Uint8ClampedArray

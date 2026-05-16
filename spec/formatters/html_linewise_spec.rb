@@ -32,12 +32,13 @@ describe Rouge::Formatters::HTMLLinewise do
     end
   end
 
-  describe 'alternate tag name' do
-    let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar\n"]] }
-    let(:options) { { tag_name: 'span' } }
-
-    it 'should use tag name specified by :tag_name option' do
-      assert { output == %(<span class="line-1">foo\n</span><span class="line-2"><span class="n">bar</span>\n</span>) }
+  describe 'with an improper inner formatter' do
+    it 'raises an error' do
+      assert do
+        rescuing(ArgumentError, /got Rouge::Formatters::HTMLTable\b/) do
+          Rouge::Formatters::HTMLLinewise.new(Rouge::Formatters::HTMLTable.new(Rouge::Formatters::HTML.new))
+        end
+      end
     end
   end
 
@@ -45,7 +46,29 @@ describe Rouge::Formatters::HTMLLinewise do
     let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar\n"]] }
 
     it 'should delegate to linewise formatter' do
-      assert { Rouge::Formatters::HTMLTable.new(subject).format(input_stream) == %(<table class="rouge-table"><tbody><tr><td class="rouge-gutter gl" aria-hidden="true"><pre class="lineno">1\n2\n</pre></td><td class="rouge-code"><pre><code><div class="line-1">foo\n</div><div class="line-2"><span class="n">bar</span>\n</div></code></pre></td></tr></tbody></table>) }
+      warnings, formatter = capture_warnings do
+        Rouge::Formatters::HTMLTable.new(subject)
+      end
+
+      assert { warnings.size == 1}
+      warning = warnings.first
+      assert { warning.match?(/DEPRECATED/) }
+
+      expected = %(<table class="rouge-table"><tbody><tr><td class="rouge-gutter gl" aria-hidden="true"><pre class="lineno">1\n2\n</pre></td><td class="rouge-code"><pre><code><div class="line-1">foo\n</div><div class="line-2"><span class="n">bar</span>\n</div></code></pre></td></tr></tbody></table>)
+
+      actual = formatter.format(input_stream)
+
+      assert { actual == expected }
+    end
+  end
+
+
+  describe 'alternate tag name' do
+    let(:input_stream) { [[Token['Text'], "foo\n"], [Token['Name'], "bar\n"]] }
+    let(:options) { { tag_name: 'florbis' } }
+
+    it 'should use tag name specified by :tag_name option' do
+      assert { output == %(<florbis class="line-1">foo\n</florbis><florbis class="line-2"><span class="n">bar</span>\n</florbis>) }
     end
   end
 end

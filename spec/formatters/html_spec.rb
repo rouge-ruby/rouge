@@ -2,7 +2,17 @@
 # frozen_string_literal: true
 
 describe Rouge::Formatters::HTML do
-  let(:subject) { Rouge::Formatters::HTMLLegacy.new(options) }
+  let(:subject) do
+    warnings, formatter = capture_warnings do
+      Rouge::Formatters::HTMLLegacy.new(options)
+    end
+
+    assert { warnings.size == 1 }
+    assert { warnings[0].match?(/DEPRECATED/) }
+
+    formatter
+  end
+
   let(:options) { {} }
 
   describe 'skipping the wrapper' do

@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# [jneen] This is an example implementation only. You may use it as-is, but please do
+# not submit patches that alter the behaviour or options of this formatter for the
+# convenience of your application. You are highly encouraged to write your own
+# formatter for your application instead.
+
 module Rouge
   module Formatters
     # Transforms a token stream into HTML output.
@@ -22,6 +27,7 @@ module Rouge
       # Content will be wrapped in a tag (`div` if tableized, `pre` if
       # not) with the given `:css_class` unless `:wrap` is set to `false`.
       def initialize(opts={})
+        warn '[DEPRECATED] Rouge::Formatters::HTMLLegacy is deprecated and will be removed soon. Please use one of the other formatters, or write your own.'
         @formatter = opts[:inline_theme] ? HTMLInline.new(opts[:inline_theme])
                    : HTML.new
 
@@ -29,13 +35,21 @@ module Rouge
         @formatter = HTMLTable.new(@formatter, opts) if opts[:line_numbers]
 
         if opts.fetch(:wrap, true)
-          @formatter = HTMLPygments.new(@formatter, opts.fetch(:css_class, 'codehilite'))
+          @pygments_wrap = opts.fetch(:css_class, 'codehilite')
         end
       end
 
       # @yield the html output.
       def stream(tokens, &b)
+        if @pygments_wrap
+          yield %(<div class="highlight"><pre class="#{@pygments_wrap}"><code>)
+        end
+
         @formatter.stream(tokens, &b)
+
+        if @pygments_wrap
+          yield "</code></pre></div>"
+        end
       end
     end
   end

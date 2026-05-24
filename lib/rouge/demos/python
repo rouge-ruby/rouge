@@ -1,6 +1,19 @@
+lazy import re
+
+
 def fib(n):    # write Fibonacci series up to n
     """Print a Fibonacci series up to n."""
     a, b = 0, 1
     while a < n:
         print a,
         a, b = b, a+b
+
+
+_ANSI_RE = None
+
+def strip_ansi(s: str) -> str:
+    """Remove ANSI escapes from a string."""
+    if _ANSI_RE is None:
+        global _ANSI_RE
+        _ANSI_RE = re.compile(r"\033\[[;?0-9]*[a-zA-Z]")
+    return _ANSI_RE.sub("", s)

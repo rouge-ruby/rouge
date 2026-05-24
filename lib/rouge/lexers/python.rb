@@ -21,7 +21,7 @@ module Rouge
           assert break continue del elif else except exec
           finally for global if lambda pass print raise
           return try while yield as with from import
-          async await nonlocal
+          async await nonlocal lazy
         )
       end
 

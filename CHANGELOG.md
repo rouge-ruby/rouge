@@ -89,7 +89,7 @@ Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
   - strip carriage return in HTML formatter ([#2266](https://github.com/rouge-ruby/rouge/pull/2266/) by Jeanine Adkisson)
   - add formatter tag for html_linewise ([#2273](https://github.com/rouge-ruby/rouge/pull/2273/) by Ulysses Zhan)
   - enable aria-hidden for line numbers in html_table ([#2275](https://github.com/rouge-ruby/rouge/pull/2275/) by Ulysses Zhan)
-  - nest <code> in <pre> ([#2276](https://github.com/rouge-ruby/rouge/pull/2276/) by Ulysses Zhan)
+  - nest `<code>` in `<pre>` ([#2276](https://github.com/rouge-ruby/rouge/pull/2276/) by Ulysses Zhan)
 - Igor Pro Lexer
   - Update lexer for Igor Pro for recent Igor Pro 9 version ([#1985](https://github.com/rouge-ruby/rouge/pull/1985/) by Michael Huth)
   - Maint.igor pro manual builtins ([#2255](https://github.com/rouge-ruby/rouge/pull/2255/) by Jeanine Adkisson)

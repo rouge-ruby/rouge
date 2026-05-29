@@ -190,13 +190,9 @@ module Rouge
 
         rule %r/function(?=(\(.*\)))/, Keyword::Declaration # For anonymous functions
 
-        rule %r/(#?#{id})[ \t]*(?=(\(.*\)))/m do |m|
-          if self.class.keywords.include?(m[1])
-            # "if" in "if (...)" or "switch" in "switch (...)" are recognized as keywords.
-            token Keyword
-          else
-            token Name::Function
-          end
+        keywords %r/#?#{id}(?=[ \t]*[(])/m do
+          rule :keywords, Keyword
+          default Name::Function
         end
 
         rule %r/[{}]/, Punctuation, :statement

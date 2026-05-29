@@ -59,14 +59,14 @@ module Rouge
           rule KEYWORDS, Keyword
         end
 
-        rule /"[^"\n]*?"/, Literal::String
-        rule /'[^'\n]*?'/, Literal::String
-        rule /:#{identifier}/, Str::Symbol
-        rule /@[\s]*#{identifier}:#{identifier}/, Name::Label
-        rule /@[\s]*#{identifier}/, Name::Label
-        rule /%u[0-9a-z]{4}|%[^\s]+/i, Literal::String::Char
+        rule %r/"[^"\n]*?"/, Literal::String
+        rule %r/'[^'\n]*?'/, Literal::String
+        rule %r/:#{identifier}/, Str::Symbol
+        rule %r/@[\s]*#{identifier}:#{identifier}/, Name::Label
+        rule %r/@[\s]*#{identifier}/, Name::Label
+        rule %r/%u[0-9a-z]{4}|%[^\s]+/i, Literal::String::Char
         rule number, Literal::Number
-        rule /#{identifier}:#{identifier}/, Name
+        rule %r/#{identifier}:#{identifier}/, Name
         rule identifier, Name
 
         rule %r/[\[\]{}()\.,;]/, Punctuation

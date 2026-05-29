@@ -107,25 +107,21 @@ module Rouge
         rule %r/:/, Punctuation
 
         # keywords
-        rule %r/#{id}/ do |m|
-          if self.class.loop_control_keywords.include? m[0]
-            token Keyword
-            push :loop_control
-            next
-          elsif self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.constants.include? m[0]
-            token Name::Constant
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-          elsif /^[A-Z]/.match(m[0]) && /[^-][a-z]/.match(m[0])
-            token Name::Class
-          else
-            token Name::Variable
+        keywords id do
+          rule :loop_control_keywords, Keyword, :loop_control
+          rule :keywords, Keyword, :id
+          rule :constants, Name::Constant, :id
+          rule :builtins, Name::Builtin, :id
+          rule :declarations, Keyword::Declaration, :id
+          default do |m|
+            if ('A'..'Z').include?(m[0][0])
+              token Name::Class
+            else
+              token Name
+            end
+
+            push :id
           end
-          push :id
         end
 
         # punctuation and brackets

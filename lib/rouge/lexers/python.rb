@@ -21,7 +21,7 @@ module Rouge
           assert break continue del elif else except exec
           finally for global if lambda pass print raise
           return try while yield as with from import
-          async await nonlocal lazy
+          async await nonlocal
         )
       end
 
@@ -114,6 +114,11 @@ module Rouge
         rule %r/def\b/, Keyword, :funcname
 
         rule %r/class\b/, Keyword, :classname
+
+        # handle `lazy import` and `from ... lazy import ...` soft keyword usage
+        # since `import` and `from` are hard keywords, we know that this usage
+        # has to be the soft-keyword case
+        rule %r/lazy(?=#{inline_ws}(from|import))/, Keyword
 
         rule %r/`.*?`/, Str::Backtick
         rule %r/([rtfbu]{0,2})('''|"""|['"])/i do |m|

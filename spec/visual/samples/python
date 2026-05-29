@@ -262,3 +262,13 @@ match (100, 200):
       thing \
       :
       other
+
+
+lazy = "deferred"
+lazy import requests
+lazy \
+    import \
+    re
+from typing lazy import Iterator
+from typing lazy \
+    import Generator

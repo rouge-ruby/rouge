@@ -114,7 +114,7 @@ module Rouge
           rule :builtins, Name::Builtin, :id
           rule :declarations, Keyword::Declaration, :id
           default do |m|
-            if ('A'..'Z').include?(m[0][0])
+            if ('A'..'Z').cover?(m[0][0])
               token Name::Class
             else
               token Name

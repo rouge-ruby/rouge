@@ -5,7 +5,7 @@ module Rouge
   module Lexers
     class AddmusicK < RegexLexer
       title 'AddmusicK'
-      desc 'AddmusicK and Ramekin MML (https://smwc.me/s/37906)'
+      desc 'AddmusicK and Ramekin MML (https://smwc.me/s/37906, https://codeberg.org/jneen/ramekin)'
       tag 'addmusick'
       aliases 'ramekin', 'addmusickff', 'amk', 'rmk'
 

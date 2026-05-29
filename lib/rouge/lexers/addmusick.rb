@@ -159,10 +159,10 @@ module Rouge
           end
         end
 
-        rule %r/("\s*)(\S+?)(\s*)(=)/ do |m|
-          @macros << m[2]
+        rule %r/(")([^"=]+)(=)/ do |m|
+          @macros << m[2].strip
           @macros.sort_by!(&:size)
-          groups Comment::Preproc, Name::Class, Comment::Preproc, Comment::Preproc
+          groups Comment::Preproc, Name::Class, Comment::Preproc
           push :macro
         end
 

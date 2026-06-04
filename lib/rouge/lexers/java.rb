@@ -52,7 +52,7 @@ module Rouge
         rule %r/(?:#{types.join('|')})\b/, Keyword::Type
         rule %r/(?:true|false|null)\b/, Keyword::Constant
         rule %r/(?:class|interface|record)\b/, Keyword::Declaration, :class
-        rule %r/(?:import|package)\b/, Keyword::Namespace, :import
+        rule %r/(?:import(?:\s+(?:static|module))?|package)\b/, Keyword::Namespace, :import
         rule %r/"""\s*\n.*?(?<!\\)"""/m, Str::Heredoc
         rule %r/"(\\\\|\\"|[^"])*"/, Str
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char

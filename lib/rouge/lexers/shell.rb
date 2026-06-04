@@ -163,7 +163,7 @@ module Rouge
 
       state :math do
         rule %r/\)\)/, Keyword, :pop!
-        rule %r([-+*/%^|&!]|\*\*|\|\|), Operator
+        rule %r([-+*/%^|&!]|\*\*|\|\||<<|>>), Operator
         rule %r/\d+(#\w+)?/, Num
         mixin :root
       end

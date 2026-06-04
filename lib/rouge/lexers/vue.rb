@@ -5,6 +5,19 @@ require_relative 'html'
 module Rouge
   module Lexers
     class Vue < HTML
+      # HTML extended with Vue template attribute shorthands.
+      # Used as the delegate lexer for <template> content so that directives
+      # like @click and @click.disabled are recognised without polluting the plain
+      # HTML lexer with framework-specific syntax.
+      class TemplateHTML < HTML
+        prepend :tag do
+          rule %r/([@a-zA-Z0-9_:#\[\]()*.-]+\s*)(=)(\s*)/m do
+            groups Name::Attribute, Operator, Text
+            push :attr
+          end
+        end
+      end
+
       desc 'Vue.js single-file components'
       tag 'vue'
       aliases 'vuejs'
@@ -38,7 +51,7 @@ module Rouge
       prepend :root do
         rule %r/(<)(\s*)(template)/ do
           groups Name::Tag, Text, Keyword
-          @lang = HTML
+          @lang = TemplateHTML
           push :template
           push :lang_tag
         end
@@ -59,7 +72,10 @@ module Rouge
       end
 
       prepend :tag do
-        rule %r/[a-zA-Z0-9_:#\[\]()*.-]+\s*=\s*/m, Name::Attribute, :attr
+        rule %r/([a-zA-Z0-9_:#\[\]()*.-]+\s*)(=)(\s*)/m do
+          groups Name::Attribute, Operator, Text
+          push :attr
+        end
       end
 
       state :style do

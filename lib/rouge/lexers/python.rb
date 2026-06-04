@@ -118,7 +118,7 @@ module Rouge
         # handle `lazy import` soft keyword usage
         # since `import` is a hard keyword, we know that this usage has to be
         # the soft-keyword case
-        rule %r/lazy(?=#{inline_ws}import)/, Keyword
+        rule %r/lazy\b(?=#{inline_ws}import\b)/, Keyword
 
         rule %r/`.*?`/, Str::Backtick
         rule %r/([rtfbu]{0,2})('''|"""|['"])/i do |m|

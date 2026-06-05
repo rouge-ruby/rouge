@@ -727,3 +727,59 @@ public class PlatformManagerImpl implements PlatformManager
 // Permit Unicode characters in identifiers
 getHauptadresse().setPLZ("91126");
 getHauptadresse().setStraßePostfach("Am Hundsacker 6");
+
+////// modern-java.java //////
+
+// Annotation type declaration (@interface)
+@interface Reviewed {
+    String reviewer();
+    int year() default 2024;
+}
+
+// Enum (should tokenize enum name in :class state)
+enum Planet {
+    MERCURY(3.303e+23, 2.4397e6),
+    VENUS(4.869e+24, 6.0518e6),
+    EARTH(5.976e+24, 6.37814e6);
+
+    private final double mass;
+    private final double radius;
+
+    Planet(double mass, double radius) {
+        this.mass = mass;
+        this.radius = radius;
+    }
+}
+
+// Sealed classes (Java 17+): sealed, non-sealed, permits
+public sealed interface Shape permits Circle, Rectangle, Triangle {}
+
+public final class Circle implements Shape {
+    double radius;
+}
+
+public non-sealed class Triangle implements Shape {
+    double base, height;
+}
+
+// yield in switch expressions (Java 14+)
+int numLetters = switch (day) {
+    case MONDAY, FRIDAY, SUNDAY -> 6;
+    case TUESDAY                -> 7;
+    case THURSDAY, SATURDAY     -> 8;
+    case WEDNESDAY              -> {
+        System.out.println("nine!");
+        yield 9;
+    }
+};
+
+// when guards in pattern matching (Java 21+)
+static String format(Object obj) {
+    return switch (obj) {
+        case Integer i when i < 0      -> "negative int: " + i;
+        case Integer i                 -> "int: " + i;
+        case String s when s.isEmpty() -> "(empty)";
+        case String s                  -> "string: " + s;
+        default                        -> "other: " + obj;
+    };
+}

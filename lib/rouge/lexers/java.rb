@@ -14,11 +14,12 @@ module Rouge
       keywords = %w(
         assert break case catch continue default do else finally for
         if goto instanceof new return switch this throw try while
+        yield when
       )
 
       declarations = %w(
-        abstract const enum extends final implements native private protected
-        public static strictfp super synchronized throws transient volatile
+        abstract const extends final implements native permits private protected
+        public sealed static strictfp super synchronized throws transient volatile
       )
 
       types = %w(boolean byte char double float int long short var void)
@@ -47,11 +48,13 @@ module Rouge
           token Operator, m[4]
         end
 
+        rule %r/non-sealed\b/, Keyword::Declaration
+        rule %r/@interface\b/, Keyword::Declaration, :class
         rule %r/@#{id}/, Name::Decorator
         rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
         rule %r/(?:#{types.join('|')})\b/, Keyword::Type
         rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/(?:class|interface|record)\b/, Keyword::Declaration, :class
+        rule %r/(?:class|enum|interface|record)\b/, Keyword::Declaration, :class
         rule %r/(?:import(?:\s+(?:static|module))?|package)\b/, Keyword::Namespace, :import
         rule %r/"""\s*\n.*?(?<!\\)"""/m, Str::Heredoc
         rule %r/"(\\\\|\\"|[^"])*"/, Str

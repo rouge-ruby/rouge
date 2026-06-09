@@ -351,6 +351,35 @@ module Rouge
       @debug = Lexer.debug_enabled? && bool_option('debug')
     end
 
+    def inspect
+      parts = []
+      inspect_parts do |*new_parts|
+        parts.concat(new_parts)
+      end
+
+      parts.join
+    end
+
+    def inspect_parts(&b)
+      yield "#<", self.class.name, " "
+
+      first = true
+      @options.each do |k, v|
+        yield (first ? '?' : '&')
+        first = false
+
+        yield k, "=", v
+      end
+
+      inspect_details(&b)
+
+      yield ">"
+    end
+
+    def inspect_details
+      # pass
+    end
+
     def eager_load!
       self.class.eager_load!
     end

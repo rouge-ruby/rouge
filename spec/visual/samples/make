@@ -2,6 +2,8 @@
 
 VERSION := 0.1.$(shell git log --oneline | wc -l | sed -e "s/ //g")
 
+thing += other-thing
+
 # Simple assignments
 LIST=			Parser Grammar Objects Python Modules Mac
 STRING=			'--with-pydebug'

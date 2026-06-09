@@ -26,8 +26,8 @@ describe Rouge::Lexers::ConsoleLexer do
     assert_tokens_equal '$ cd application\\bin\\',
       ['Generic.Prompt', '$'],
       ['Text.Whitespace', ' '],
-      ['Name.Builtin', 'cd '],
-      ['Text', 'application'],
+      ['Name.Builtin', 'cd'],
+      ['Text', ' application'],
       ['Literal.String.Escape', '\\b'],
       ['Keyword', 'in'],
       ['Literal.String.Escape', '\\']

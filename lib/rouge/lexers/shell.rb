@@ -24,12 +24,12 @@ module Rouge
         return true if text.start_with?('#compdef', '#autoload')
       end
 
-      KEYWORDS = %w(
+      KEYWORDS = Set.new %w(
         if fi else while do done for then return function
         select continue until esac elif in
-      ).join('|')
+      )
 
-      BUILTINS = %w(
+      BUILTINS = Set.new %w(
         alias bg bind break builtin caller cd command compgen
         complete declare dirs disown enable eval exec exit
         export false fc fg getopts hash help history jobs let
@@ -43,19 +43,21 @@ module Rouge
         unexpand ls dir vdir dircolors cp dd install mv rm shred link ln
         mkdir mkfifo mknod readlink rmdir unlink chown chgrp chmod touch
         df du stat sync truncate echo printf yes expr tee basename dirname
-        pathchk mktemp realpath pwd stty printenv tty id logname whoami
+        pathchk mktemp realpath stty printenv tty id logname whoami
         groups users who date arch nproc uname hostname hostid uptime chcon
         runcon chroot env nice nohup stdbuf timeout kill sleep factor numfmt
         seq tar grep sudo awk sed gzip gunzip
-      ).join('|')
+      )
 
       state :basic do
         rule %r/#.*$/, Comment
 
-        rule %r/(#{KEYWORDS})\s*\b/, Keyword
-        rule %r/case\b/, Keyword, :case
+        keywords %r/\w+(?![.-])/ do
+          rule Set['case'], Keyword, :case
+          rule KEYWORDS, Keyword
+          rule BUILTINS, Name::Builtin
+        end
 
-        rule %r/(#{BUILTINS})\s*\b(?!(\.|-))/, Name::Builtin
         rule %r/[.](?=\s)/, Name::Builtin
 
         rule %r/(\w+)(=)/ do
@@ -64,6 +66,7 @@ module Rouge
 
         rule %r/[\[\]{}()!=>]/, Operator
         rule %r/&&|\|\|/, Operator
+        rule %r/[|]/, Punctuation
 
         # here-string
         rule %r/<<</, Operator

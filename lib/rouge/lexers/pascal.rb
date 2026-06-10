@@ -13,7 +13,7 @@ module Rouge
 
       id = /@?[_a-z]\w*/i
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         absolute abstract all and and_then array as asm assembler attribute
         begin bindable case class const constructor delay destructor div do
         downto else end except exit export exports external far file finalization
@@ -27,7 +27,7 @@ module Rouge
         view virtual while with write writeln xor
       )
 
-      keywords_type = %w(
+      KEYWORDS_TYPE = Set.new %w(
         ansichar ansistring bool boolean byte bytebool cardinal char comp currency
         double dword extended int64 integer iunknown longbool longint longword pansichar
         pansistring pbool pboolean pbyte pbytearray pcardinal pchar pcomp pcurrency
@@ -58,10 +58,13 @@ module Rouge
         rule %r/\$[0-9A-Fa-f]+/, Num::Hex
         rule %r{[~!@#\$%\^&\*\(\)\+`\-={}\[\]:;<>\?,\.\/\|\\]}, Punctuation
         rule %r{'([^']|'')*'}, Str
-        rule %r/(true|false|nil)\b/i, Name::Builtin
-        rule %r/\b(#{keywords.join('|')})\b/i, Keyword
-        rule %r/\b(#{keywords_type.join('|')})\b/i, Keyword::Type
-        rule id, Name
+        keywords id do
+          transform(&:downcase)
+          rule Set['true', 'false', 'nil'], Name::Constant
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+          default Name
+        end
       end
     end
   end

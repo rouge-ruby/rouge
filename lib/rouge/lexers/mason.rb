@@ -10,15 +10,12 @@ module Rouge
       filenames '*.mi', '*.mc', '*.mas', '*.m', '*.mhtml', '*.mcomp', 'autohandler', 'dhandler'
       mimetypes 'text/x-mason', 'application/x-mason'
 
-      def initialize(*)
-        super
-        @perl = Perl.new
-      end
-
       # Note: If you add a tag in the lines below, you also need to modify "disambiguate '*.m'" in file disambiguation.rb
-      TEXT_BLOCKS = %w(text doc)
-      PERL_BLOCKS = %w(args flags attr init once shared perl cleanup filter)
-      COMPONENTS = %w(def method)
+      PERL_BLOCKS = Set.new %w(args flags attr init once shared perl cleanup filter)
+
+      start do
+        @perl = Perl.new(@options)
+      end
 
       state :root do
         mixin :mason_tags
@@ -27,14 +24,17 @@ module Rouge
       state :mason_tags do
         rule %r/\s+/, Text::Whitespace
 
-        rule %r/<%(#{TEXT_BLOCKS.join('|')})>/oi, Comment::Preproc, :text_block
+        keywords %r/<%(\w+)>/ do
+          transform(&:downcase)
+          group 1
+          rule Set['text', 'doc'], Comment::Preproc, :text_block
+          rule PERL_BLOCKS, Comment::Preproc, :perl_block
+        end
 
-        rule %r/<%(#{PERL_BLOCKS.join('|')})>/oi, Comment::Preproc, :perl_block
+        # rule %r/<%(?:def|method)/
 
-        rule %r/(<%(#{COMPONENTS.join('|')}))([^>]*)(>)/oi do |m|
-          token Comment::Preproc, m[1]
-          token Name, m[3]
-          token Comment::Preproc, m[4]
+        rule %r/(<%(?:def|method))([^>]*)(>)/oi do |m|
+          groups Comment::Preproc, Name::Function, Comment::Preproc
           push :component_block
         end
 
@@ -65,21 +65,23 @@ module Rouge
       end
 
       state :perl_block do
-        rule %r/<\/%(#{PERL_BLOCKS.join('|')})>/oi, Comment::Preproc, :pop!
+        rule %r/<\/%\w+>/, Comment::Preproc, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
-        rule(/(.*?[^"])(?=<\/%)/m) { delegate @perl }
+        rule(/(['"`])(?:\\.|[^\\])*?\1/) { delegate @perl }
+        rule(/[<]/) { delegate @perl }
+        rule(/[^'"`<]+/m) { delegate @perl }
       end
 
       state :text_block do
-        rule %r/<\/%(#{TEXT_BLOCKS.join('|')})>/oi, Comment::Preproc, :pop!
+        rule %r/<\/%\w+>/, Comment::Preproc, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
-        rule %r/(.*?[^"])(?=<\/%)/m, Comment
+        rule %r/(.+?[^"])(?=<\/%)/m, Comment
       end
 
       state :component_block do
-        rule %r/<\/%(#{COMPONENTS.join('|')})>/oi, Comment::Preproc, :pop!
+        rule %r/<\/%\w+>/, Comment::Preproc, :pop!
         rule %r/\s+/, Text::Whitespace
         rule %r/^(#.*)$/, Comment
         mixin :mason_tags

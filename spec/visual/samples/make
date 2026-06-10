@@ -160,3 +160,13 @@ export variable := value
 export variable += value
 export variable
 unexport variable
+
+# Comment in recipe block
+on:
+# Start environment
+	docker-compose start
+	docker-compose top
+
+off:
+# Stop environment
+	docker-compose stop

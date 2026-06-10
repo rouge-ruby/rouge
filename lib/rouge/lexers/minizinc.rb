@@ -13,37 +13,29 @@ module Rouge
       filenames '*.mzn', '*.fzn', '*.dzn'
       mimetypes 'text/minizinc'
 
-      def self.builtins
-        @builtins = Set.new %w[
-          abort abs acosh array_intersect array_union array1d array2d array3d
-          array4d array5d array6d asin assert atan bool2int card ceil concat
-          cos cosh dom dom_array dom_size fix exp floor index_set
-          index_set_1of2 index_set_2of2 index_set_1of3 index_set_2of3
-          index_set_3of3 int2float is_fixed join lb lb_array length ln log log2
-          log10 min max pow product round set2array show show_int show_float
-          sin sinh sqrt sum tan tanh trace ub ub_array
-        ]
-      end
+      BUILTINS = Set.new %w[
+        abort abs acosh array_intersect array_union array1d array2d array3d
+        array4d array5d array6d asin assert atan bool2int card ceil concat
+        cos cosh dom dom_array dom_size fix exp floor index_set
+        index_set_1of2 index_set_2of2 index_set_1of3 index_set_2of3
+        index_set_3of3 int2float is_fixed join lb lb_array length ln log log2
+        log10 min max pow product round set2array show show_int show_float
+        sin sinh sqrt sum tan tanh trace ub ub_array
+      ]
 
-      def self.keywords
-        @keywords = Set.new %w[
-          ann annotation any constraint else endif function for forall if
-          include list of op output minimize maximize par predicate record
-          satisfy solve test then type var where
-        ]
-      end
+      KEYWORDS = Set.new %w[
+        ann annotation any constraint else endif function for forall if
+        include list of op output minimize maximize par predicate record
+        satisfy solve test then type var where
+      ]
 
-      def self.keywords_type
-        @keywords_type ||= Set.new %w(
-          array set bool enum float int string tuple
-        )
-      end
+      KEYWORDS_TYPE = Set.new %w(
+        array set bool enum float int string tuple
+      )
 
-      def self.operators
-        @operators ||= Set.new %w(
-          in subset superset union diff symdiff intersect
-        )
-      end
+      OPERATORS = Set.new %w(
+        in subset superset union diff symdiff intersect
+      )
 
       id = /[$a-zA-Z_]\w*/
 
@@ -62,18 +54,12 @@ module Rouge
         rule %r((true|false)\b), Keyword::Constant
         rule %r(([+-]?)\d+(\.(?!\.)\d*)?([eE][-+]?\d+)?), Literal::Number
 
-        rule id do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.keywords_type.include? m[0]
-            token Keyword::Type
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          elsif self.class.operators.include? m[0]
-            token Operator
-          else
-            token Name::Other
-          end
+        keywords id do
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+          rule BUILTINS, Name::Builtin
+          rule OPERATORS, Operator
+          default Name
         end
 
         rule %r(::\s*([^\W\d]\w*)(\s*\([^\)]*\))?), Name::Decorator

@@ -8,7 +8,7 @@ module Rouge
   module Lexers
 
     class ObjectiveCpp < Cpp
-      extend ObjectiveCCommon
+      include ObjectiveCCommon
 
       tag 'objective_cpp'
       title "Objective-C++"

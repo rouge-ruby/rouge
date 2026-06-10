@@ -48,6 +48,15 @@ module Rouge
         rule @@id, Name, :pop!
         rule %r/[({\[]/, Punctuation, :pop!
       end
+
+      state :keywords_and_names do
+        keywords @@id do
+          rule :keywords, Keyword
+          rule :word_operators, Operator::Word
+          rule :primitives, Keyword::Type
+          default Name
+        end
+      end
     end
   end
 end

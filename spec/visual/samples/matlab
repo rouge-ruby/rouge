@@ -16,6 +16,9 @@ end
 a = rand(30);
 b = rand(30);
 
+c = H5F.get_name(foo);
+c = H5F.some_weird_function_that_is_not_builtin(foo);
+
 c = a .* b ./ a \ ... comment at end of line and continuation
     (b .* a + b - a);
 

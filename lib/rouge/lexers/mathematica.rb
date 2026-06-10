@@ -53,11 +53,7 @@ module Rouge
 
       # Although Module, With and Block are normal built-in symbols, we give them a special treatment as they are
       # the most important expressions for defining local variables
-      def self.keywords
-        @keywords = Set.new %w(
-          Module With Block
-        )
-      end
+      KEYWORDS = Set.new %w(Module With Block)
 
       state :root do
         rule %r/\s+/, Text::Whitespace
@@ -66,16 +62,13 @@ module Rouge
         rule %r/(?:#{number}#{precision}?(?:\*\^[+-]?\d+)?)/, Num # all other numbers
         rule message, Name::Tag
         rule in_out, Generic::Prompt
-        rule %r/#{context_symbol}/m do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Name::Builtin::Pseudo
-          elsif BUILTINS.include? match
-            token Name::Builtin
-          else
-            token Name::Variable
-          end
+
+        keywords context_symbol do
+          rule KEYWORDS, Keyword::Pseudo
+          rule BUILTINS, Name::Builtin
+          default Name
         end
+
         rule slot, Name::Function
         rule operators, Operator
         rule braces, Punctuation

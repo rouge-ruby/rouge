@@ -25,18 +25,8 @@ module Rouge
         rule %r/`#{@@id}/, Name::Tag
         rule @@upper_id, Name::Class
         rule %r/[(][*](?![)])/, Comment, :comment
-        rule @@id do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Keyword
-          elsif self.class.word_operators.include? match
-            token Operator::Word
-          elsif self.class.primitives.include? match
-            token Keyword::Type
-          else
-            token Name
-          end
-        end
+
+        mixin :keywords_and_names
 
         rule %r/[(){}\[\];]+/, Punctuation
         rule @@operator, Operator

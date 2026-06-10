@@ -55,18 +55,7 @@ module Rouge
         rule %r(/\*), Comment::Multiline, :comment
 
         # Keywords and identifiers
-        rule @@id do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Keyword
-          elsif self.class.word_operators.include? match
-            token Operator::Word
-          elsif self.class.types.include? match
-            token Keyword::Type
-          else
-            token Name
-          end
-        end
+        mixin :keywords_and_names
 
         # Braces
         rule %r/[(){}\[\];]+/, Punctuation

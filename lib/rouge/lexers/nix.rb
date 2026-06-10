@@ -10,7 +10,7 @@ module Rouge
       aliases 'nixos'
       filenames '*.nix'
 
-      id_boundary = /(?![a-zA-Z0-9_'-])/
+      ident = %r/[a-zA-Z_][a-zA-Z0-9_'-]*/
 
       state :whitespaces do
         rule %r/^\s*\n\s*$/m, Text
@@ -28,29 +28,17 @@ module Rouge
       end
 
       state :number do
-        rule %r/[0-9]/, Num::Integer
-      end
-
-      state :null do
-        rule %r/null#{id_boundary}/, Keyword::Constant
-      end
-
-      state :boolean do
-        rule %r/(?:true|false)#{id_boundary}/, Keyword::Constant
-      end
-
-      state :binding do
-        rule %r/[a-zA-Z_][a-zA-Z0-9_'-]*/, Name::Variable
+        rule %r/[0-9]+/, Num::Integer
       end
 
       state :path do
-        word = "[a-zA-Z0-9\._-]+"
-        section = "(\/#{word})"
-        prefix = "[a-z\+]+:\/\/"
-        root = /#{section}+/.source
-        tilde = /~#{section}+/.source
-        basic = /#{word}(\/#{word})+/.source
-        url = /#{prefix}(\/?#{basic})/.source
+        word = /[a-zA-Z0-9._-]+/
+        section = %r(/#{word})
+        prefix = %r([a-z+]+://)
+        root = /#{section}+/
+        tilde = /~#{section}+/
+        basic = %r(#{word}(/#{word})+)
+        url = %r(#{prefix}(/?#{basic}))
         rule %r/(#{root}|#{tilde}|#{basic}|#{url})/, Str::Other
       end
 
@@ -137,8 +125,6 @@ module Rouge
       state :expression do
         mixin :ignore
         mixin :comment
-        mixin :boolean
-        mixin :null
         mixin :number
         mixin :path
         mixin :string
@@ -147,42 +133,13 @@ module Rouge
         mixin :accessor
         mixin :assignment
         mixin :delimiter
-        mixin :binding
         mixin :atom
         mixin :set
         mixin :list
       end
 
       state :keywords do
-        mixin :keywords_namespace
-        mixin :keywords_declaration
-        mixin :keywords_conditional
-        mixin :keywords_reserved
-        mixin :keywords_builtin
-      end
-
-      state :keywords_namespace do
-        keywords = %w(with in inherit)
-        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword::Namespace
-      end
-
-      state :keywords_declaration do
-        keywords = %w(let)
-        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword::Declaration
-      end
-
-      state :keywords_conditional do
-        keywords = %w(if then else)
-        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword
-      end
-
-      state :keywords_reserved do
-        keywords = %w(rec assert map)
-        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword::Reserved
-      end
-
-      state :keywords_builtin do
-        keywords = %w(
+        builtins = Set.new %w(
           abort
           baseNameOf
           builtins
@@ -194,7 +151,16 @@ module Rouge
           throw
           toString
         )
-        rule %r/(?:#{keywords.join('|')})#{id_boundary}/, Keyword::Reserved
+
+        keywords ident do
+          rule Set['with', 'in', 'inherit'], Keyword::Namespace
+          rule Set['let'], Keyword::Declaration
+          rule Set['null', 'true', 'false'], Keyword::Constant
+          rule Set['if', 'then', 'else'], Keyword
+          rule Set['rec', 'assert', 'map'], Keyword::Reserved
+          rule builtins, Name::Builtin
+          default Name
+        end
       end
 
       state :ignore do
@@ -204,9 +170,6 @@ module Rouge
       state :root do
         mixin :ignore
         mixin :expression
-      end
-
-      start do
       end
     end
   end

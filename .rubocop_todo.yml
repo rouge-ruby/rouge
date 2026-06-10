@@ -6,12 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 1
-# Configuration parameters: AllowComments, AllowEmptyLambdas.
-Lint/EmptyBlock:
-  Exclude:
-    - 'lib/rouge/lexers/nix.rb'
-
 # Offense count: 16
 # Configuration parameters: EnforcedStyle, AllowedPatterns, ForbiddenIdentifiers, ForbiddenPatterns.
 # SupportedStyles: snake_case, camelCase
@@ -30,7 +24,6 @@ Naming/VariableName:
 # Offense count: 113
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
-    - 'lib/rouge/lexers/nix.rb'
     - 'lib/rouge/lexers/p4.rb'
     - 'lib/rouge/lexers/pascal.rb'
     - 'lib/rouge/lexers/postscript.rb'

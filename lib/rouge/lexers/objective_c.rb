@@ -7,7 +7,7 @@ require_relative 'objective_c/common'
 module Rouge
   module Lexers
     class ObjectiveC < C
-      extend ObjectiveCCommon
+      include ObjectiveCCommon
 
       tag 'objective_c'
       title "Objective-C"

@@ -281,6 +281,18 @@ module Rouge
       end
     end
 
+    def inspect_details
+      yield ' stack:['
+      first = true
+      stack.each do |state|
+        yield ',' unless first
+        first = false
+        yield state.name
+      end
+
+      yield ']'
+    end
+
     # @private
     def get_state(state_name)
       self.class.get_state(state_name)

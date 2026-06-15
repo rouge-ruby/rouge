@@ -51,5 +51,9 @@ describe Rouge::Lexers::Markdown do
       assert_has_token("Literal.String.Backtick","\nx```ruby\nfoo\n```\n")
       deny_has_token("Name.Label","\nx```ruby\nfoo\n```\n")
     end
+
+    it 'does not treat text after an inline link as a new link target' do
+      assert_tokens_includes "[a](b) (c)\n", ["Text", " (c)\n"]
+    end
   end
 end

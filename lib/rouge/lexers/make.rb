@@ -103,6 +103,8 @@ module Rouge
           groups Keyword, Text, Comment, Text
         end
 
+        rule %r/#.*\n?/, Comment
+
         rule %r/(\t[\t ]*)([@-]?)/ do
           groups Text, Punctuation
           push :shell_line

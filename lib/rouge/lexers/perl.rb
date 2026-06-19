@@ -189,15 +189,6 @@ module Rouge
           groups Str::Affix, Text, Str::Delimiter
         end
 
-        rule %r/\w+/ do |m|
-          w = m[0]
-          if BUILTINS.include?(w)
-            token Name::Builtin
-          else
-            fallthrough!
-          end
-        end
-
         rule %r/((__(DIE|WARN)__)|(DATA|STD(IN|OUT|ERR)))\b/,
           Name::Builtin::Pseudo
 
@@ -234,6 +225,15 @@ module Rouge
         rule %r/sub\b/, Keyword, :funcname
         rule %r/[(]/, Punctuation, :expr_start
         rule %r/[)\[\]:;,<>\/?{}]/, Punctuation
+
+        rule %r/[a-z]\w*/ do |m|
+          w = m[0]
+          if BUILTINS.include?(w)
+            token Name::Builtin
+          else
+            fallthrough!
+          end
+        end
 
         rule(/(?=\w)/) { push :name }
       end

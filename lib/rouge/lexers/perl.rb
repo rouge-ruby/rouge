@@ -71,6 +71,12 @@ module Rouge
         rule(//) { pop! }
       end
 
+      state :regex_escapes do
+        rule %r/\\[0-7][0-7][0-7]/, Str::Escape
+        rule %r/\\x\h\h/, Str::Escape
+        rule %r/\\.(?:[{]\w+[}])?/, Str::Escape
+      end
+
       state :regex do
         rule %r/./ do |m|
           if m[0] == @regex_end
@@ -81,8 +87,7 @@ module Rouge
           end
         end
 
-        rule %r/\\[0-7][0-7][0-7]/, Str::Escape
-        rule %r/\\.(?:[{]\w+[}])?/, Str::Escape
+        mixin :regex_escapes
         rule %r/[{]\d+(?:,\d+)?[}]/, Operator
         rule %r/\[\^?/, Punctuation, :regex_char_class
         rule %r/[?]|[.]|[|]|[*+][?]?/, Operator
@@ -99,6 +104,7 @@ module Rouge
       end
 
       state :regex_char_class_inner do
+        mixin :regex_escapes
         rule %r/-(?!\])/, Punctuation
         rule %r/\\./, Str::Escape
         rule %r/[^-\]\\]+/, Str::Regex

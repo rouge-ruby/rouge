@@ -4,7 +4,7 @@
 sub substitutionOperator
 {
     s!\\!\\\\!g;
-    s!\\!\\\\!g;
+    s!/!\\/!g;
     s!"!\\"!g;
     s!\(!\\\(!g;
     s!\)!\\\)!g;
@@ -191,6 +191,18 @@ $aref->@[ ... ];  # same as @$aref[ ... ]
 $href->@{ ... };  # same as @$href{ ... }
 $aref->%[ ... ];  # same as %$aref[ ... ]
 $href->%{ ... };  # same as %$href{ ... }
+
+sub _is_domain_label {
+  my ($self, $string) = @_;
+  return unless $string =~ /\A
+    [A-Z0-9]          # must start with an alnum
+    (?:
+      [-A-Z0-9]*      # then maybe a dash or alnum
+      [A-Z0-9]        # finally ending with an alnum
+    )?                # lather, rinse, repeat
+  \z/ix;
+  return 1;
+}
 
 __DATA__
 

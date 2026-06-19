@@ -671,6 +671,12 @@ use relative paths:
 
 See my [About](/about/) page for details.   
 
+You can put text in parentheses after a link:
+
+    This [example link](http://example.com/) (is followed by a parenthesis).
+
+This [example link](http://example.com/) (is followed by a parenthesis).
+
 Reference-style links use a second set of square brackets, inside
 which you place a label of your choosing to identify the link:
 

@@ -139,6 +139,7 @@ module Rouge
 
         rule %r/[(]/ do
           token Punctuation
+          pop!
           push :inline_title
           push :inline_url
         end

@@ -185,7 +185,7 @@ module Rouge
         end
 
         rule %r/(m)(\s*)(#{regex_delim})/ do |m|
-          open_regex!(m[3].strip)
+          open_regex!(m[3])
           groups Str::Affix, Text, Str::Delimiter
         end
 

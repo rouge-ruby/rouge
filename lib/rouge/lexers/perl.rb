@@ -169,30 +169,23 @@ module Rouge
           end
         end
 
-        # # matches: common case, m-optional
-        # rule %r(m?/(\\\\|\\/|[^/\n])*/[msixpodualngc]*), re_tok
-        # rule %r(m(?=[/!\\{<\[\(@%\$])), re_tok, :balanced_regex
+        rule %r{(?=[a-z_]\w*(\s*#.*\n)*\s*=>)}i do
+          push :fat_comma
+        end
 
-        # arbitrary non-whitespace delimiters
-        # rule %r(m\s*([^\w\s])((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
-        # rule %r(m\s+(\w)((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
+        # non-whitespace delimiters that match \w are allowed only
+        # if there is whitespace between the operator and the delimiter.
+        # here we use a \b to detect that case in a way that shouldn't
+        # cause backtracking explosion.
+        regex_delim = /[^\w\s]|\b\w/
 
-        rule %r/\s+/, Text
-
-        rule(/(?=[a-z_]\w*(\s*#.*\n)*\s*=>)/i) { push :fat_comma }
-
-        rule %r/(s|tr|y)(\s*)([^\w\s])/ do |m|
+        rule %r/(s|tr|y)(\s*)(#{regex_delim})/ do |m|
           open_regex_operator!(m[3])
           groups Str::Affix, Text, Str::Delimiter
         end
 
-        rule %r/(s|tr|y)(\s+)(\S)/ do |m|
-          open_regex_operator!(m[3])
-          groups Str::Affix, Text, Str::Delimiter
-        end
-
-        rule %r/(m)(\s*)(\S)/ do |m|
-          open_regex!(m[3])
+        rule %r/(m)(\s*)(#{regex_delim})/ do |m|
+          open_regex!(m[3].strip)
           groups Str::Affix, Text, Str::Delimiter
         end
 

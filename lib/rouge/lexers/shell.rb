@@ -161,6 +161,18 @@ module Rouge
         mixin :root
       end
 
+      state :curly_interp do
+        rule %r/[}]/, Str::Interpol, :pop!
+        rule %r/[{]/, Operator, :curly_inner
+        mixin :root
+      end
+
+      state :curly_inner do
+        rule %r/[{]/, Operator, :push
+        rule %r/[}]/, Operator, :pop!
+        mixin :root
+      end
+
       state :math do
         rule %r/\)\)/, Keyword, :pop!
         rule %r([-+*/%^|&!]|\*\*|\|\||<<|>>), Operator
@@ -189,7 +201,11 @@ module Rouge
         rule %r/\\$/, Str::Escape # line continuation
         rule %r/\\./, Str::Escape
         rule %r/\$\(\(/, Keyword, :math
-        rule %r/\$\(/, Str::Interpol, :paren_interp
+        rule %r/\$[(]/, Str::Interpol, :paren_interp
+
+        # see https://www.gnu.org/software/bash/manual/bash.html#Command-Substitution-1
+        rule %r/\$[{][\s|]/, Str::Escape, :curly_interp
+
         rule %r/\${#?/, Keyword, :curly
         rule %r/`/, Str::Backtick, :backticks
         rule %r/\$#?(\w+|.)/, Name::Variable

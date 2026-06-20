@@ -16,16 +16,17 @@ module Rouge
         return true if /^%!/ =~ text
       end
 
-      delimiter = :"()<>\\[\\]{}/%\\s"
-      delimiter_end = Regexp.new("(?=[#{delimiter}])")
-      valid_name_chars = Regexp.new("[^#{delimiter}]")
-      valid_name = /#{valid_name_chars}+#{delimiter_end}/
+      delimiter = %r([()<>\[\]{}/%\s])
+      name_char = %r([^()<>\[\]{}/%\s])
+      delimiter_end = /(?=#{delimiter}|\z)/
+      valid_name = /#{name_char}+/
 
       # These keywords taken from
       # <http://www.math.ubc.ca/~cass/graphics/manual/pdf/a1.pdf>
       # Is there an authoritative list anywhere that doesn't involve
       # trawling documentation?
-      keywords = %w/abs add aload arc arcn array atan begin
+      BUILTINS = Set.new %w(
+        abs add aload arc arcn array atan begin
         bind ceiling charpath clip closepath concat
         concatmatrix copy cos currentlinewidth currentmatrix
         currentpoint curveto cvi cvs def defaultmatrix
@@ -42,9 +43,14 @@ module Rouge
         setrgbcolor shfill show showpage sin sqrt
         stack stringwidth stroke strokepath sub syntaxerror
         transform translate truncate typecheck undefined
-        undefinedfilename undefinedresult/
+        undefinedfilename undefinedresult
+      )
+
+      RESERVED = Set.new %w(eq ne ge gt le lt and or not if ifelse for forall)
 
       state :root do
+        rule %r'\s+', Text
+
         # All comment types
         rule %r'^%!.+?$', Comment::Preproc
         rule %r'%%.*?$', Comment::Special
@@ -59,12 +65,6 @@ module Rouge
 
         rule %r'[{}<>\[\]]', Punctuation
 
-        rule %r'(?:#{keywords.join('|')})#{delimiter_end}', Name::Builtin
-
-        # Conditionals / flow control
-        rule %r'(eq|ne|g[et]|l[et]|and|or|not|if(?:else)?|for(?:all)?)#{delimiter_end}', Keyword::Reserved
-        rule %r'(false|true)#{delimiter_end}', Keyword::Constant
-
         # Numbers
         rule %r'<[0-9A-Fa-f]+>#{delimiter_end}', Num::Hex
         # Slight abuse: use Oct to signify any explicit base system
@@ -72,10 +72,12 @@ module Rouge
         rule %r'(\-|\+)?([0-9]+\.?|[0-9]*\.[0-9]+|[0-9]+\.[0-9]*)((e|E)[0-9]+)?#{delimiter_end}', Num::Float
         rule %r'(\-|\+)?[0-9]+#{delimiter_end}', Num::Integer
 
-        # Names
-        rule valid_name, Name::Function      # Anything else is executed
-
-        rule %r'\s+', Text
+        keywords valid_name do
+          rule Set['false', 'true'], Keyword::Constant
+          rule RESERVED, Keyword::Reserved
+          rule BUILTINS, Name::Builtin
+          default Name::Function
+        end
       end
 
       state :stringliteral do

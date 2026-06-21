@@ -15,129 +15,7 @@ module Rouge
         return true if text.shebang? 'praat'
       end
 
-      def self.keywords
-        @keywords ||= %w(
-          if then else elsif elif endif fi for from to endfor endproc while
-          endwhile repeat until select plus minus demo assert stopwatch
-          nocheck nowarn noprogress editor endeditor clearinfo
-        )
-      end
-
-      def self.functions_string
-        @functions_string ||= %w(
-          backslashTrigraphsToUnicode$ chooseDirectory$ chooseReadFile$
-          chooseWriteFile$ date$ demoKey$ do$ environment$ extractLine$ extractWord$
-          fixed$ info$ left$ mid$ percent$ readFile$ replace$ replace_regex$ right$
-          selected$ string$ unicodeToBackslashTrigraphs$
-        )
-      end
-
-      def self.functions_numeric
-        @functions_numeric ||= %w(
-          abs appendFile appendFileLine appendInfo appendInfoLine arccos arccosh
-          arcsin arcsinh arctan arctan2 arctanh barkToHertz beginPause
-          beginSendPraat besselI besselK beta beta2 binomialP binomialQ boolean
-          ceiling chiSquareP chiSquareQ choice comment cos cosh createDirectory
-          deleteFile demoClicked demoClickedIn demoCommandKeyPressed
-          demoExtraControlKeyPressed demoInput demoKeyPressed
-          demoOptionKeyPressed demoShiftKeyPressed demoShow demoWaitForInput
-          demoWindowTitle demoX demoY differenceLimensToPhon do editor endPause
-          endSendPraat endsWith erb erbToHertz erf erfc exitScript exp
-          extractNumber fileReadable fisherP fisherQ floor gaussP gaussQ hash
-          hertzToBark hertzToErb hertzToMel hertzToSemitones imax imin
-          incompleteBeta incompleteGammaP index index_regex integer invBinomialP
-          invBinomialQ invChiSquareQ invFisherQ invGaussQ invSigmoid invStudentQ
-          length ln lnBeta lnGamma log10 log2 max melToHertz min minusObject
-          natural number numberOfColumns numberOfRows numberOfSelected
-          objectsAreIdentical option optionMenu pauseScript
-          phonToDifferenceLimens plusObject positive randomBinomial randomGauss
-          randomInteger randomPoisson randomUniform real readFile removeObject
-          rindex rindex_regex round runScript runSystem runSystem_nocheck
-          selectObject selected semitonesToHertz sentence sentencetext sigmoid
-          sin sinc sincpi sinh soundPressureToPhon sqrt startsWith studentP
-          studentQ tan tanh text variableExists word writeFile writeFileLine
-          writeInfo writeInfoLine
-        )
-      end
-
-      def self.functions_array
-        @functions_array ||= %w(
-          linear# randomGauss# randomInteger# randomUniform# zero#
-        )
-      end
-
-      def self.functions_matrix
-        @functions_matrix ||= %w(
-          linear## mul## mul_fast## mul_metal## mul_nt## mul_tn## mul_tt## outer## peaks##
-          randomGamma## randomGauss## randomInteger## randomUniform## softmaxPerRow##
-          solve## transpose## zero##
-        )
-      end
-
-      def self.functions_string_vector
-        @functions_string_vector ||= %w(
-          empty$# fileNames$# folderNames$# readLinesFromFile$# splitByWhitespace$#
-        )
-      end
-
-      def self.functions_builtin
-        @functions_builtin ||=
-          self.functions_string |
-          self.functions_numeric |
-          self.functions_array |
-          self.functions_matrix |
-          self.functions_string_vector
-      end
-
-      def self.objects
-        @objects ||= %w(
-          Activation AffineTransform AmplitudeTier Art Artword Autosegment
-          BarkFilter BarkSpectrogram CCA Categories Cepstrogram Cepstrum
-          Cepstrumc ChebyshevSeries ClassificationTable Cochleagram Collection
-          ComplexSpectrogram Configuration Confusion ContingencyTable Corpus
-          Correlation Covariance CrossCorrelationTable CrossCorrelationTableList
-          CrossCorrelationTables DTW DataModeler Diagonalizer Discriminant
-          Dissimilarity Distance Distributions DurationTier EEG ERP ERPTier
-          EditCostsTable EditDistanceTable Eigen Excitation Excitations
-          ExperimentMFC FFNet FeatureWeights FileInMemory FilesInMemory Formant
-          FormantFilter FormantGrid FormantModeler FormantPoint FormantTier
-          GaussianMixture HMM HMM_Observation HMM_ObservationSequence HMM_State
-          HMM_StateSequence HMMObservation HMMObservationSequence HMMState
-          HMMStateSequence Harmonicity ISpline Index Intensity IntensityTier
-          IntervalTier KNN KlattGrid KlattTable LFCC LPC Label LegendreSeries
-          LinearRegression LogisticRegression LongSound Ltas MFCC MSpline ManPages
-          Manipulation Matrix MelFilter MelSpectrogram MixingMatrix Movie Network
-          OTGrammar OTHistory OTMulti PCA PairDistribution ParamCurve Pattern
-          Permutation Photo Pitch PitchModeler PitchTier PointProcess Polygon
-          Polynomial PowerCepstrogram PowerCepstrum Procrustes RealPoint RealTier
-          ResultsMFC Roots SPINET SSCP SVD Salience ScalarProduct Similarity
-          SimpleString SortedSetOfString Sound Speaker Spectrogram Spectrum
-          SpectrumTier SpeechSynthesizer SpellingChecker Strings StringsIndex
-          Table TableOfReal TextGrid TextInterval TextPoint TextTier Tier
-          Transition VocalTract VocalTractTier Weight WordList
-        )
-      end
-
-      def self.variables_numeric
-        @variables_numeric ||= %w(
-          all average e left macintosh mono pi praatVersion right stereo
-          undefined unix windows
-        )
-      end
-
-      def self.variables_string
-        @variables_string ||= %w(
-          praatVersion$ tab$ shellDirectory$ homeDirectory$
-          preferencesDirectory$ newline$ temporaryDirectory$
-          defaultDirectory$
-        )
-      end
-
-      def self.object_attributes
-        @object_attributes ||= %w(
-          ncol nrow xmin ymin xmax ymax nx ny dx dy
-        )
-      end
+      lazy { require_relative 'praat/builtins' }
 
       state :root do
         rule %r/(\s+)(#.*?$)/ do
@@ -184,26 +62,17 @@ module Rouge
 
         rule %r/"/, Literal::String, :string
 
-        rule %r/\b([A-Z][a-zA-Z0-9]+)(?=\s+\S+\n)/ do |m|
-          match = m[0]
-          if self.class.objects.include?(match)
-            token Name::Class
-            push :string_unquoted
-          else
-            token Keyword
-          end
+        keywords %r/\b([A-Z][a-zA-Z0-9]+)(?=\s+\S+\n)/ do
+          rule OBJECTS, Name::Class, :string_unquoted
+          default Keyword
         end
 
         rule %r/\b(?=[A-Z])/, Text, :command
         rule %r/(\.{3}|[)(,\$])/, Punctuation
 
-        rule %r/[a_z]+/ do |m|
-          match = m[0]
-          if self.class.keywords.include?(match)
-            token Keyword
-          else
-            token Text
-          end
+        keywords %r/[a_z]+/ do |m|
+          rule KEYWORDS, Keyword
+          default Text
         end
       end
 
@@ -250,16 +119,10 @@ module Rouge
       end
 
       state :function_call do
-        rule %r/\b([a-z][a-zA-Z0-9_.]+)(\$#|##|\$|#)?(?=\s*[:(])/ do |m|
-          match = m[0]
-          if self.class.functions_builtin.include?(match)
-            token Name::Function
-            push :function
-          elsif self.class.keywords.include?(match)
-            token Keyword
-          else
-            token Operator::Word
-          end
+        keywords %r/\b([a-z][a-zA-Z0-9_.]+)(\$#|##|\$|#)?(?=\s*[:(])/ do
+          rule FUNCTIONS, Name::Function, :function
+          rule KEYWORDS, Keyword
+          default Operator::Word
         end
       end
 
@@ -314,26 +177,17 @@ module Rouge
         mixin :operator
         mixin :number
 
-        rule %r/\b([A-Z][a-zA-Z0-9]+)_/ do |m|
-          match = m[1]
-          if (['Object'] | self.class.objects).include?(match)
-            token Name::Builtin
-            push :object_reference
-          else
-            token Name::Variable
-          end
+        keywords %r/\b([A-Z][a-zA-Z0-9]+)_/ do
+          group 1
+          rule Set['Object'], Name::Builtin, :object_reference
+          rule OBJECTS, Name::Builtin, :object_reference
+          default Name::Variable
         end
 
-        rule %r/\.?[a-z][a-zA-Z0-9_.]*(\$#|##|\$|#)?/ do |m|
-          match = m[0]
-          if self.class.variables_string.include?(match) ||
-             self.class.variables_numeric.include?(match)
-            token Name::Builtin
-          elsif self.class.keywords.include?(match)
-            token Keyword
-          else
-            token Name::Variable
-          end
+        keywords %r/\.?[a-z][a-zA-Z0-9_.]*(\$#|##|\$|#)?/ do |m|
+          rule VARIABLES, Name::Builtin
+          rule KEYWORDS, Keyword
+          default Name::Variable
         end
 
         rule %r/[\[\]]/, Text, :comma_list
@@ -348,12 +202,9 @@ module Rouge
         mixin :string_interpolated
         rule %r/([a-z][a-zA-Z0-9_]*|\d+)/, Name::Builtin
 
-        rule %r/\.([a-z]+)\b/ do |m|
-          match = m[1]
-          if self.class.object_attributes.include?(match)
-            token Name::Builtin
-            pop!
-          end
+        keywords %r/\.([a-z]+)\b/ do |m|
+          group 1
+          rule ATTRIBUTES, Name::Builtin, :pop!
         end
 
         rule %r/\$/, Name::Builtin

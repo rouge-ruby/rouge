@@ -19,31 +19,30 @@ module Rouge
       )
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-6
-      AUTO_VARS = %w(
-        \$\$ \$\? \$\^ \$_
-        \$args \$ConsoleFileName \$Error \$Event \$EventArgs \$EventSubscriber
-        \$ExecutionContext \$false \$foreach \$HOME \$Host \$input \$IsCoreCLR
-        \$IsLinux \$IsMacOS \$IsWindows \$LastExitCode \$Matches \$MyInvocation
-        \$NestedPromptLevel \$null \$PID \$PROFILE \$PSBoundParameters \$PSCmdlet
-        \$PSCommandPath \$PSCulture \$PSDebugContext \$PSHOME \$PSItem
-        \$PSScriptRoot \$PSSenderInfo \$PSUICulture \$PSVersionTable \$PWD
-        \$REPORTERRORSHOWEXCEPTIONCLASS \$REPORTERRORSHOWINNEREXCEPTION
-        \$REPORTERRORSHOWSOURCE \$REPORTERRORSHOWSTACKTRACE
-        \$SENDER \$ShellId \$StackTrace \$switch \$this \$true
-      ).join('|')
+      AUTO_VARS = Set.new %w(
+        $args $ConsoleFileName $Error $Event $EventArgs $EventSubscriber
+        $ExecutionContext $false $foreach $HOME $Host $input $IsCoreCLR
+        $IsLinux $IsMacOS $IsWindows $LastExitCode $Matches $MyInvocation
+        $NestedPromptLevel $null $PID $PROFILE $PSBoundParameters $PSCmdlet
+        $PSCommandPath $PSCulture $PSDebugContext $PSHOME $PSItem
+        $PSScriptRoot $PSSenderInfo $PSUICulture $PSVersionTable $PWD
+        $REPORTERRORSHOWEXCEPTIONCLASS $REPORTERRORSHOWINNEREXCEPTION
+        $REPORTERRORSHOWSOURCE $REPORTERRORSHOWSTACKTRACE
+        $SENDER $ShellId $StackTrace $switch $this $true
+      )
 
       # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_reserved_words?view=powershell-6
-      KEYWORDS = %w(
+      KEYWORDS = Set.new %w(
         assembly exit process base filter public begin finally return break for
         sequence catch foreach static class from switch command function throw
         configuration hidden trap continue if try data in type define
         inlinescript until do interface using dynamicparam module var else
         namespace while elseif parallel workflow end param enum private
-      ).join('|')
+      )
 
       # https://devblogs.microsoft.com/scripting/powertip-find-a-list-of-powershell-type-accelerators/
       # ([PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get).Keys -join ' '
-      KEYWORDS_TYPE = %w(
+      KEYWORDS_TYPE = Set.new %w(
         Alias AllowEmptyCollection AllowEmptyString AllowNull ArgumentCompleter
         array bool byte char CmdletBinding datetime decimal double DscResource
         float single guid hashtable int int32 int16 long int64 ciminstance
@@ -60,34 +59,42 @@ module Rouge
         wmisearcher mailaddress scriptblock psvariable type psmoduleinfo
         powershell runspacefactory runspace initialsessionstate psscriptmethod
         psscriptproperty psnoteproperty psaliasproperty psvariableproperty
-      ).join('|')
+      )
 
-      OPERATORS = %w(
+      OPERATORS = Set.new %w(
         -split -isplit -csplit -join -is -isnot -as -eq -ieq -ceq -ne -ine -cne
         -gt -igt -cgt -ge -ige -cge -lt -ilt -clt -le -ile -cle -like -ilike
         -clike -notlike -inotlike -cnotlike -match -imatch -cmatch -notmatch
         -inotmatch -cnotmatch -contains -icontains -ccontains -notcontains
         -inotcontains -cnotcontains -replace -ireplace -creplace -shl -shr -band
-        -bor -bxor -and -or -xor -not \+= -= \*= \/= %=
-      ).join('|')
+        -bor -bxor -and -or -xor -not
+      )
 
-      MULTILINE_KEYWORDS = %w(
+      MULTILINE_KEYWORDS = Set.new %w(
         synopsis description parameter example inputs outputs notes link
         component role functionality forwardhelptargetname forwardhelpcategory
         remotehelprunspace externalhelp
-      ).join('|')
+      )
 
       state :variable do
-        rule %r/#{AUTO_VARS}/, Name::Builtin::Pseudo
+        rule %r/[$][$?^_]/, Name::Builtin::Pseudo
+
+        keywords %r/\$\w+/ do
+          rule AUTO_VARS, Name::Builtin::Pseudo
+        end
+
         rule %r/(\$)(?:(\w+)(:))?(\w+|\{(?:[^`]|`.)+?\})/ do
           groups Name::Variable, Name::Namespace, Punctuation, Name::Variable
         end
-        rule %r/\$\w+/, Name::Variable
+
         rule %r/\$\{(?:[^`]|`.)+?\}/, Name::Variable
       end
 
       state :multiline do
-        rule %r/\.(?:#{MULTILINE_KEYWORDS})/i, Comment::Special
+        keywords %r/[.](\w+)/ do
+          group 1
+          rule MULTILINE_KEYWORDS, Comment::Special
+        end
         rule %r/#>/, Comment::Multiline, :pop!
         rule %r/[^#.]+?/m, Comment::Multiline
         rule %r/[#.]+/, Comment::Multiline
@@ -169,9 +176,9 @@ module Rouge
 
       state :bracket do
         rule %r/\]/, Punctuation, :pop!
-        rule %r/[A-Za-z]\w+\./, Name
+        rule %r/[a-z]\w+\./i, Name
 
-        keywords %r/([A-Za-z]\w+)/ do
+        keywords %r/[a-z]\w+/i do
           rule ATTRIBUTES, Name::Builtin::Pseudo
           default Name
         end
@@ -204,18 +211,25 @@ module Rouge
         rule %r/#requires\s-version \d(?:\.\d+)?/, Comment::Preproc
 
         rule %r/\.\.(?=\.?\d)/, Operator
-        rule %r/(?:#{OPERATORS})\b/i, Operator
 
         rule %r/(class)(\s+)(\w+)/i do
           groups Keyword::Reserved, Text::Whitespace, Name::Class
           push :class
         end
+
         rule %r/(function)(\s+)(?:(\w+)(:))?(\w[-\w]+)/i do
           groups Keyword::Reserved, Text::Whitespace, Name::Namespace, Punctuation, Name::Function
         end
-        rule %r/(?:#{KEYWORDS})\b(?![-.])/i, Keyword::Reserved
 
-        rule %r/-{1,2}\w+/, Name::Tag
+        keywords %r/[-.\w]+/ do
+          transform(&:downcase)
+          rule KEYWORDS, Keyword::Reserved
+        end
+
+        keywords %r/-{1,2}\w+/ do
+          rule OPERATORS, Operator
+          default Name::Tag
+        end
 
         rule %r/(\.)?([-\w]+)(\[)/ do |m|
           groups Operator, Name, Punctuation
@@ -237,7 +251,8 @@ module Rouge
         mixin :expr
         mixin :variable
 
-        rule %r/[-+*\/%=!.&|]/, Operator
+        rule %r([-+*/%=!.&|]), Operator
+        rule %r([-+*/%]=), Operator
         rule %r/[{}(),:;]/, Punctuation
 
         rule %r/`$/, Str::Escape # line continuation

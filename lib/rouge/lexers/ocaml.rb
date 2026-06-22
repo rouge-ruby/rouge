@@ -21,15 +21,15 @@ module Rouge
       state :root do
         rule %r/\s+/m, Text
         rule %r/false|true|[(][)]|\[\]/, Name::Builtin::Pseudo
-        rule %r/#{@@upper_id}(?=\s*[.])/, Name::Namespace, :dotted
-        rule %r/`#{@@id}/, Name::Tag
-        rule @@upper_id, Name::Class
+        rule %r/#{OCAML_UPPER_ID}(?=\s*[.])/, Name::Namespace, :dotted
+        rule %r/`#{OCAML_ID}/, Name::Tag
+        rule OCAML_UPPER_ID, Name::Class
         rule %r/[(][*](?![)])/, Comment, :comment
 
         mixin :keywords_and_names
 
         rule %r/[(){}\[\];]+/, Punctuation
-        rule @@operator, Operator
+        rule OCAML_OPERATOR, Operator
 
         rule %r/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
         rule %r/0x\h[\h_]*/i, Num::Hex
@@ -41,7 +41,7 @@ module Rouge
         rule %r/'[.]'/, Str::Char
         rule %r/'/, Keyword
         rule %r/"/, Str::Double, :string
-        rule %r/[~?]#{@@id}/, Name::Variable
+        rule %r/[~?]#{OCAML_ID}/, Name::Variable
       end
 
       state :comment do

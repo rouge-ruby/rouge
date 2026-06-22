@@ -9,17 +9,10 @@ module Rouge
       tag 'rego'
       filenames '*.rego'
 
-      def self.constants
-        @constants ||= Set.new %w(
-          true false null
-        )
-      end
-
-      def self.operators
-        @operators ||= Set.new %w(
-          as default else import not package some with
-        )
-      end
+      CONSTANTS = Set.new %w(true false null)
+      OPERATORS = Set.new %w(
+        as default else import not package some with
+      )
 
       state :basic do
         rule %r/\s+/, Text
@@ -45,14 +38,10 @@ module Rouge
         mixin :basic
         mixin :operators
 
-        rule %r/[[:word:]]+/ do |m|
-          if self.class.constants.include? m[0]
-            token Keyword::Constant
-          elsif self.class.operators.include? m[0]
-            token Operator::Word
-          else
-            token Name
-          end
+        keywords %r/[[:word:]]+/ do
+          rule CONSTANTS, Keyword::Constant
+          rule OPERATORS, Operator::Word
+          default Name
         end
       end
     end

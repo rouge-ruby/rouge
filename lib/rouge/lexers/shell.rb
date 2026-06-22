@@ -204,7 +204,7 @@ module Rouge
         rule %r/\$[(]/, Str::Interpol, :paren_interp
 
         # see https://www.gnu.org/software/bash/manual/bash.html#Command-Substitution-1
-        rule %r/\$[{][\s|]/, Str::Escape, :curly_interp
+        rule %r/\$[{][\s|]/, Str::Interpol, :curly_interp
 
         rule %r/\${#?/, Keyword, :curly
         rule %r/`/, Str::Backtick, :backticks

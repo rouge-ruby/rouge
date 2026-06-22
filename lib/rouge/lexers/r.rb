@@ -13,18 +13,18 @@ module Rouge
 
       mimetypes 'text/x-r', 'application/x-r'
 
-      KEYWORDS = %w(if else for while repeat in next break function)
+      KEYWORDS = Set.new %w(if else for while repeat in next break function)
 
-      KEYWORD_CONSTANTS = %w(
+      KEYWORD_CONSTANTS = Set.new %w(
         NULL Inf TRUE FALSE NaN NA
         NA_integer_ NA_real_ NA_complex_ NA_character_
       )
 
-      BUILTIN_CONSTANTS = %w(LETTERS letters month.abb month.name pi T F)
+      BUILTIN_CONSTANTS = Set.new %w(LETTERS letters month.abb month.name pi T F)
 
       # These are all the functions in `base` that are implemented as a
       # `.Primitive`, minus those functions that are also keywords.
-      PRIMITIVE_FUNCTIONS = %w(
+      PRIMITIVE_FUNCTIONS = Set.new %w(
         abs acos acosh all any anyNA Arg as.call as.character
         as.complex as.double as.environment as.integer as.logical
         as.null.default as.numeric as.raw asin asinh atan atanh attr
@@ -66,18 +66,15 @@ module Rouge
         # function call, i.e. followed by an opening parenthesis.
         # `Name::Builtin` would be more logical, but is usually not
         # highlighted specifically; thus use `Name::Function`.
-        rule %r/\b(?<!.)(#{PRIMITIVE_FUNCTIONS.join('|')})(?=\()/, Name::Function
+        keywords %r/(?<!.)[a-z][a-z.]*(?=\()/i do
+          rule PRIMITIVE_FUNCTIONS, Name::Function
+        end
 
-        rule %r/(?:(?:[[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*)|[.]/ do |m|
-          if KEYWORDS.include? m[0]
-            token Keyword
-          elsif KEYWORD_CONSTANTS.include? m[0]
-            token Keyword::Constant
-          elsif BUILTIN_CONSTANTS.include? m[0]
-            token Name::Builtin
-          else
-            token Name
-          end
+        keywords %r/(?:(?:[[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*)|[.]/ do
+          rule KEYWORDS, Keyword
+          rule KEYWORD_CONSTANTS, Keyword::Constant
+          rule BUILTIN_CONSTANTS, Name::Builtin
+          default Name
         end
 
         rule %r/[\[\]{}();,]/, Punctuation

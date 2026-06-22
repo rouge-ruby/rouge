@@ -9,18 +9,14 @@ module Rouge
       tag 'rml'
       filenames '*.rml'
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          matches not with empty
-          all if else true false
-        )
-      end
+      KEYWORDS = Set.new %w(
+        matches not with empty
+        all if else true false
+      )
 
-      def self.arithmetic_keywords
-        @arithmetic_keywords ||= Set.new %w(
-          abs sin cos tan min max
-        )
-      end
+      ARITHMETIC_KEYWORDS = Set.new %w(
+        abs sin cos tan min max
+      )
 
       id_char = /[a-zA-Z0-9_]/
       uppercase_id = /[A-Z]#{id_char}*/
@@ -35,11 +31,11 @@ module Rouge
       comment = /\/\/[^\r\n]*/
 
       state :common_rules do
-        rule %r/#{whitespace}/, Text
-        rule %r/#{comment}/, Comment::Single
-        rule %r/#{string}/, Literal::String
-        rule %r/#{float}/, Num::Float
-        rule %r/#{int}/, Num::Integer
+        rule whitespace, Text
+        rule comment, Comment::Single
+        rule string, Literal::String
+        rule float, Num::Float
+        rule int, Num::Integer
       end
 
       state :root do
@@ -48,19 +44,16 @@ module Rouge
           groups Name::Function, Operator
           push :event_type_params
         end
-        rule %r/#{lowercase_id}/ do |m|
-          if m[0] == 'with'
-            token Keyword
-            push :data_expression_with
-          elsif self.class.keywords.include? m[0]
-            token Keyword
-          else
-            token Name::Function
-          end
+
+        keywords lowercase_id do
+          rule Set['with'], Keyword, :data_expression_with
+          rule KEYWORDS, Keyword
+          default Name
         end
+
         rule %r/\(|\{|\[/, Operator, :event_type_params
         rule %r/[_\|]/, Operator
-        rule %r/#{uppercase_id}/, Name::Class, :equation_block_expression
+        rule uppercase_id, Name::Class, :equation_block_expression
         rule %r/;/, Operator
       end
 
@@ -68,22 +61,19 @@ module Rouge
         mixin :common_rules
         rule %r/\(|\{|\[/, Operator, :push
         rule %r/\)|\}|\]/, Operator, :pop!
-        rule %r/#{lowercase_id}(?=:)/, Name::Entity
-        rule %r/(#{lowercase_id})/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          else
-            token Literal::String::Regex
-          end
+        rule %r/#{lowercase_id}(?=:)/, Name::Attribute
+        keywords lowercase_id do
+          rule KEYWORDS, Keyword
+          default Name
         end
-        rule %r/#{ellipsis}/, Literal::String::Symbol
+        rule ellipsis, Str::Symbol
         rule %r/[_\|;,:]/, Operator
       end
 
       state :equation_block_expression do
         mixin :common_rules
         rule %r/[<,>]/, Operator
-        rule %r/#{lowercase_id}/, Literal::String::Regex
+        rule lowercase_id, Str::Regex
         rule %r/=/ do
           token Operator
           goto :exp
@@ -102,28 +92,26 @@ module Rouge
           groups Name::Function, Operator
           push :event_type_params
         end
-        rule %r/(#{lowercase_id})/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          else
-            token Name::Function
-          end
+
+        keywords lowercase_id do
+          rule KEYWORDS, Keyword
+          default Name
         end
+
         rule %r/#{uppercase_id}(?=<)/, Name::Class, :data_expression
-        rule %r/#{uppercase_id}/, Name::Class
+        rule uppercase_id, Name::Class
         rule %r/[=(){}*+\/\\\|!>?]/, Operator
         rule %r/;/, Operator, :pop!
       end
 
       state :data_expression do
         mixin :common_rules
-        rule %r/#{lowercase_id}/ do |m|
-          if (self.class.arithmetic_keywords | self.class.keywords).include? m[0]
-            token Keyword
-          else
-            token Literal::String::Regex
-          end
+        keywords lowercase_id do
+          rule ARITHMETIC_KEYWORDS, Keyword
+          rule KEYWORDS, Keyword
+          default Name
         end
+
         rule %r/\(/, Operator, :push
         rule %r/\)/, Operator, :pop!
         rule %r/(>)(?=[^A-Z;]+[A-Z;>])/, Operator, :pop!
@@ -135,7 +123,6 @@ module Rouge
         mixin :common_rules
         rule %r/>/, Operator
         mixin :data_expression
-
       end
     end
   end

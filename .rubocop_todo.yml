@@ -78,7 +78,6 @@ Rouge/NoBuildingAlternationPatternInRegexp:
     - 'lib/rouge/lexers/nix.rb'
     - 'lib/rouge/lexers/p4.rb'
     - 'lib/rouge/lexers/pascal.rb'
-    - 'lib/rouge/lexers/perl.rb'
     - 'lib/rouge/lexers/postscript.rb'
     - 'lib/rouge/lexers/r.rb'
     - 'lib/rouge/lexers/rust.rb'

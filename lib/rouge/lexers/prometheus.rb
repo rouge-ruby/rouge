@@ -10,17 +10,15 @@ module Rouge
 
       mimetypes 'text/x-prometheus', 'application/x-prometheus'
 
-      def self.functions
-        @functions ||= Set.new %w(
-          abs absent ceil changes clamp_max clamp_min count_scalar day_of_month
-          day_of_week days_in_month delta deriv drop_common_labels exp floor
-          histogram_quantile holt_winters hour idelta increase irate label_replace
-          ln log2 log10 month predict_linear rate resets round scalar sort
-          sort_desc sqrt time vector year avg_over_time min_over_time
-          max_over_time sum_over_time count_over_time quantile_over_time
-          stddev_over_time stdvar_over_time
-        )
-      end
+      FUNCTIONS = Set.new %w(
+        abs absent ceil changes clamp_max clamp_min count_scalar day_of_month
+        day_of_week days_in_month delta deriv drop_common_labels exp floor
+        histogram_quantile holt_winters hour idelta increase irate label_replace
+        ln log2 log10 month predict_linear rate resets round scalar sort
+        sort_desc sqrt time vector year avg_over_time min_over_time
+        max_over_time sum_over_time count_over_time quantile_over_time
+        stddev_over_time stdvar_over_time
+      )
 
       state :root do
         mixin :strings
@@ -40,12 +38,10 @@ module Rouge
         end
         rule %r/(bool|offset)\b/, Keyword
         rule %r/(without|by)\b/, Keyword, :label_list
-        rule %r/[\w:]+/ do |m|
-          if self.class.functions.include?(m[0])
-            token Name::Builtin
-          else
-            token Name
-          end
+
+        keywords %r/[\w:]+/ do
+          rule FUNCTIONS, Name::Builtin
+          default Name
         end
 
         mixin :metrics

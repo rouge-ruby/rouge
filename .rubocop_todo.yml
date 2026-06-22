@@ -35,6 +35,5 @@ Rouge/NoBuildingAlternationPatternInRegexp:
 # Offense count: 20
 Rouge/NoHugeCollections:
   Exclude:
-    - 'lib/rouge/lexers/racket.rb'
     - 'lib/rouge/lexers/sas.rb'
     - 'lib/rouge/lexers/stata.rb'

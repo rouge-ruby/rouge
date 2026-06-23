@@ -1,0 +1,247 @@
+#!/usr/bin/env ruchy
+//! Comprehensive Ruchy Language Demonstration
+//! This file showcases all major features of the Ruchy programming language
+
+/// Documentation comment for MessageQueue actor
+/// Demonstrates actor model patterns and concurrent message processing
+actor MessageQueue {
+    messages: Vec<String>,
+    capacity: usize,
+    
+    fn new(capacity: usize) -> Self {
+        Self { 
+            messages: Vec::with_capacity(capacity),
+            capacity 
+        }
+    }
+    
+    /// Handle incoming messages with pattern matching
+    fn handle(&mut self, msg: Message) -> Response {
+        match msg {
+            Message::Add(text) if self.messages.len() < self.capacity => {
+                self.messages.push(text);
+                Response::Ok("Message added".to_string())
+            }
+            Message::Add(_) => Response::Error("Queue full".to_string()),
+            Message::Get => {
+                self.messages.pop()
+                    .map(Response::Data)
+                    .unwrap_or(Response::Empty)
+            }
+            Message::Count => Response::Data(self.messages.len().to_string()),
+        }
+    }
+}
+
+/// Message types for actor communication
+#[derive(Debug, Clone)]
+enum Message {
+    Add(String),
+    Get,
+    Count,
+}
+
+/// Response types from actors
+#[derive(Debug)]
+enum Response {
+    Ok(String),
+    Error(String), 
+    Data(String),
+    Empty,
+}
+
+/// Generic processor trait
+trait Processor<T> {
+    fn process(&mut self, input: T) -> Result<String, ProcessError>;
+}
+
+/// Custom error type
+struct ProcessError {
+    message: String,
+}
+
+/// Configuration struct with various data types
+struct Config {
+    name: String,
+    timeout_ms: u64,
+    retry_count: i32,
+    enabled: bool,
+    weights: Vec<f64>,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            name: "default".to_string(),
+            timeout_ms: 5000u64,
+            retry_count: 3i32,
+            enabled: true,
+            weights: vec![1.0f64, 0.5f64],
+        }
+    }
+}
+
+/// Async function with pipeline operators
+#[async]
+fn process_data(data: &str) -> Result<String, ProcessError> {
+    // Demonstrate pipeline operator (Ruchy-specific feature)
+    let result = data
+        >> |s| s.trim()
+        >> |s| s.to_lowercase() 
+        >> |s| s.replace(" ", "_")
+        >> |s| format!("processed_{}", s);
+        
+    // String interpolation
+    let message = "Processing completed: ${result}";
+    
+    Ok(result)
+}
+
+/// Function with lifetime annotations and generics
+fn combine_data<'a, T>(items: &'a [T], separator: &str) -> String 
+where 
+    T: std::fmt::Display 
+{
+    items
+        .iter()
+        .map(|item| item.to_string())
+        .collect::<Vec<_>>()
+        .join(separator)
+}
+
+/// Main function demonstrating actor usage
+#[async]
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Numeric literals with type suffixes
+    let binary_val = 0b1010_1101u8;
+    let hex_val = 0xFF_AA_00u32;
+    let octal_val = 0o755i32;
+    let float_val = 3.141_592_653_589f64;
+    let scientific = 1.23e-4f32;
+    
+    // Raw string literals
+    let raw_string = r#"This is a "raw" string with \n no escapes"#;
+    let raw_multiline = r###"
+        Multi-line raw string
+        with ### delimiters
+    "###;
+    
+    // Character literals
+    let char_simple = 'A';
+    let char_escape = '\n';
+    let char_unicode = '\u{1F600}'; // 😀
+    
+    // Actor spawning and communication
+    let queue = spawn(MessageQueue::new(10));
+    
+    // Send messages using actor operator
+    queue <- Message::Add("Hello World".to_string());
+    queue <- Message::Add("Second message".to_string());
+    
+    // Ask for response using actor operator
+    let count_response = queue <? Message::Count;
+    println!("Queue count: {:?}", count_response);
+    
+    // Pattern matching with guards
+    let data = vec![1, 2, 3, 4, 5];
+    let result = match data.len() {
+        0 => "Empty".to_string(),
+        1..=3 => "Small".to_string(), 
+        n if n > 10 => "Large".to_string(),
+        _ => "Medium".to_string(),
+    };
+    
+    // Loop constructs
+    for item in data.iter() {
+        if *item % 2 == 0 {
+            continue;
+        }
+        println!("Odd number: {}", item);
+        if *item > 3 {
+            break;
+        }
+    }
+    
+    // While loop with mutable state
+    let mut counter = 0usize;
+    while counter < 5 {
+        counter += 1;
+        if counter == 3 {
+            continue;
+        }
+        println!("Counter: {}", counter);
+    }
+    
+    // Infinite loop with break
+    let mut attempts = 0;
+    loop {
+        attempts += 1;
+        if attempts > 3 {
+            break;
+        }
+        // TODO: Implement retry logic here
+        println!("Attempt {}", attempts);
+    }
+    
+    // Pipeline with complex transformations
+    let processed = "  HELLO WORLD  "
+        >> |s| s.trim()
+        >> |s| s.to_lowercase()
+        >> |s| s.split_whitespace().collect::<Vec<_>>()
+        >> |words| words.join("-");
+    
+    println!("Processed: {}", processed);
+    
+    // Closure with move semantics
+    let captured_val = 42;
+    let closure = move |x: i32| x + captured_val;
+    println!("Closure result: {}", closure(8));
+    
+    Ok(())
+}
+
+// FIXME: This function needs optimization
+// HACK: Temporary workaround for performance issue
+// TODO: Add proper error handling
+// NOTE: This demonstrates SATD comment detection
+fn legacy_function() {
+    /* 
+     * DEBT: This code has technical debt
+     * WORKAROUND: Using suboptimal algorithm
+     * XXX: Remove this before production
+     * BUG: Known issue with edge case handling
+     */
+    println!("Legacy code with debt markers");
+}
+
+/* Multi-line comment demonstrating
+   nested comment support in some contexts
+   and various formatting styles */
+
+/// Module-level documentation
+mod utils {
+    use super::*;
+    
+    pub fn helper_function() -> &'static str {
+        "Helper function in module"
+    }
+    
+    pub const CONSTANT_VALUE: i32 = 100;
+    pub static STATIC_VALUE: &str = "Static string";
+}
+
+/// Trait implementation for custom types
+impl std::fmt::Display for ProcessError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Process error: {}", self.message)
+    }
+}
+
+/// Generic function with where clause
+fn complex_function<T, U>(param1: T, param2: U) -> String
+where
+    T: std::fmt::Debug + Clone,
+    U: std::fmt::Display,
+{
+    format!("T: {:?}, U: {}", param1, param2)
+}

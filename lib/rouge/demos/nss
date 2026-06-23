@@ -1,0 +1,12 @@
+/*
+ This is pipe is great!
+*/
+
+#include "inc_messages"
+
+void main()
+{
+    object oPC = GetLastUsedBy();
+    string sPipe = "a_fun_pipe";
+    object oPipe = CreateItemOnObject(sPipe, oPC, 1);
+}

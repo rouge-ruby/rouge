@@ -1,0 +1,2 @@
+@msgid=123;+draft/reply=321 :jess!~user@localhost PRIVMSG #test :hello world
+:localhost 404 jess #test :Cannot send to channel

@@ -1,0 +1,66 @@
+:mercury.libera.chat NOTICE * :*** Checking Ident
+:mercury.libera.chat NOTICE * :*** Looking up your hostname...
+:mercury.libera.chat NOTICE * :*** No Ident response
+:mercury.libera.chat NOTICE * :*** Found your hostname: wolf.jess.pm
+CAP LS
+:mercury.libera.chat CAP * LS :account-notify away-notify chghost extended-join multi-prefix sasl tls account-tag cap-notify echo-message solanum.chat/identify-msg solanum.chat/oper solanum.chat/realhost
+CAP REQ :account-tag solanum.chat/realhost
+:mercury.libera.chat CAP * ACK :account-tag solanum.chat/realhost
+CAP END
+USER j j j j
+NICK jess-test
+:mercury.libera.chat 001 jess-test :Welcome to the Libera.Chat Internet Relay Chat Network jess-test
+:mercury.libera.chat 002 jess-test :Your host is mercury.libera.chat[2001:41d0:801:1000::a44/6697], running version solanum-1.0-dev
+:mercury.libera.chat 003 jess-test :This server was created Mon Jul 4 2022 at 03:43:12 UTC
+:mercury.libera.chat 004 jess-test mercury.libera.chat solanum-1.0-dev DGMQRSZaghilopsuwz CFILMPQSTbcefgijklmnopqrstuvz bkloveqjfI
+:mercury.libera.chat 005 jess-test WHOX KNOCK MONITOR=100 ETRACE FNC SAFELIST ELIST=CMNTU CALLERID=g CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQSTcgimnprstuz :are supported by this server
+:mercury.libera.chat 005 jess-test CHANLIMIT=#:250 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=Libera.Chat STATUSMSG=@+ CASEMAPPING=rfc1459 NICKLEN=16 MAXNICKLEN=16 CHANNELLEN=50 TOPICLEN=390 DEAF=D :are supported by this server
+:mercury.libera.chat 005 jess-test TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: EXTBAN=$,ajrxz :are supported by this server
+:mercury.libera.chat 251 jess-test :There are 70 users and 45769 invisible on 27 servers
+:mercury.libera.chat 252 jess-test 41 :IRC Operators online
+:mercury.libera.chat 253 jess-test 3 :unknown connection(s)
+:mercury.libera.chat 254 jess-test 22685 :channels formed
+:mercury.libera.chat 255 jess-test :I have 2922 clients and 1 servers
+:mercury.libera.chat 265 jess-test 2922 3478 :Current local users 2922, max 3478
+:mercury.libera.chat 266 jess-test 45839 49931 :Current global users 45839, max 49931
+:mercury.libera.chat 250 jess-test :Highest connection count: 3479 (3478 clients) (65255 connections received)
+:mercury.libera.chat 375 jess-test :- mercury.libera.chat Message of the Day - 
+:mercury.libera.chat 372 jess-test :- -[ Mercury ]-[ Atomic number: 80 ]-[ Chemical symbol: Hg ]-
+:mercury.libera.chat 372 jess-test :-  
+:mercury.libera.chat 372 jess-test :- Known since antiquity, Mercury is a heavy, liquid metal
+:mercury.libera.chat 372 jess-test :- element at room temperature - the only such element. Despite
+:mercury.libera.chat 372 jess-test :- the wide ranging use, mercury is a relatively rare element,
+:mercury.libera.chat 372 jess-test :- though this is mitigated by its ore deposits tending to be
+:mercury.libera.chat 372 jess-test :- highly concentrated.
+:mercury.libera.chat 372 jess-test :-  
+:mercury.libera.chat 372 jess-test :- The uses of mercury include medical applications such as
+:mercury.libera.chat 372 jess-test :- dental amalgams, topical antiseptic compounds, and blood
+:mercury.libera.chat 372 jess-test :- pressure meters.  Outside of medicine, mercury can be found
+:mercury.libera.chat 372 jess-test :- in telescopes to form flat mirror surfaces, as well as
+:mercury.libera.chat 372 jess-test :- parabolic surfaces when their container is spun. Mercury has
+:mercury.libera.chat 372 jess-test :- historically and continues to be used in many other
+:mercury.libera.chat 372 jess-test :- industries and applications.
+:mercury.libera.chat 372 jess-test :-  
+:mercury.libera.chat 372 jess-test :-  
+:mercury.libera.chat 372 jess-test :- Welcome to Libera Chat, the IRC network for
+:mercury.libera.chat 372 jess-test :- free & open-source software and peer directed projects.
+:mercury.libera.chat 372 jess-test :-  
+:mercury.libera.chat 372 jess-test :- Use of Libera Chat is governed by our network policies.
+:mercury.libera.chat 372 jess-test :-  
+:mercury.libera.chat 372 jess-test :- To reduce network abuses we perform open proxy checks
+:mercury.libera.chat 372 jess-test :- on hosts at connection time.
+:mercury.libera.chat 372 jess-test :-  
+:mercury.libera.chat 372 jess-test :- Please visit us in #libera for questions and support.
+:mercury.libera.chat 372 jess-test :-  
+:mercury.libera.chat 372 jess-test :- Website and documentation:  https://libera.chat
+:mercury.libera.chat 372 jess-test :- Webchat:                    https://web.libera.chat
+:mercury.libera.chat 372 jess-test :- Network policies:           https://libera.chat/policies
+:mercury.libera.chat 372 jess-test :- Email:                      support@libera.chat
+:mercury.libera.chat 376 jess-test :End of /MOTD command.
+:jess-test MODE jess-test :+Ziw
+JOIN ##jess-test-3
+:jess-test!~j@wolf.jess.pm JOIN ##jess-test-3
+:mercury.libera.chat MODE ##jess-test-3 +Cnst
+:mercury.libera.chat 353 jess-test @ ##jess-test-3 :@sandcat jess-test
+:mercury.libera.chat 366 jess-test ##jess-test-3 :End of /NAMES list.
+@account=sandcat;solanum.chat/ip=2a01:4f9:c011:543c:: :sandcat!znc@wolf.jess.pm PRIVMSG jess-test :hello world

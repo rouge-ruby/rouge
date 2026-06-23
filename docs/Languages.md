@@ -130,6 +130,7 @@
 - Mathematica (`mathematica`)
 - MATLAB (`matlab`)
 - Meson (`meson`)
+- MetaPost/MetaFont (`metapost`)
 - MessageTrans (`msgtrans`)
 - MiniZinc (`minizinc`)
 - Mojo (`mojo`)

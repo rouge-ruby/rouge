@@ -1,0 +1,147 @@
+program {
+   Poner(Rojo)
+   Mover(Norte)
+   Sacar(Azul)
+   funcionLoca(3)
+}
+
+
+function funcionLoca(unNumero) {
+    //comment
+    """also a comment"""
+    --comment
+    return (unNumero * 4)
+}
+
+procedure MoverN(direccion, veces) {
+   repeat (veces) {
+      Mover(direccion)
+   }
+}
+
+procedure MoverSiPuede(direccion) {
+   if (puedeMover(direccion)) {
+      Mover(direccion)
+   }
+}
+
+program {
+  switch (decodificarCelda()) to
+    1 -> { DibujarVentana() }
+    2 -> { RedimensionarVentana() }
+    3 -> { MaximizarVentana() }
+    4 -> { MinimizarVentana() }
+    _ -> { NoHacerNada() }
+}
+
+procedure Zaraza() {
+  foreach cant in [1..5] {
+    DibujarLineaVerticalRoja(cant)
+    Mover(Este)
+  }
+}
+
+procedure Zaraza() {
+  unRango := [1..5]
+  foreach cant in unRango {
+    DibujarLineaVerticalRoja(cant)
+    Mover(Este)
+  }
+}
+
+
+procedure Colgar() {
+   x := False
+   while (True) {
+     x := not x
+   }
+}
+
+procedure Literales() {
+   unNumero := 3
+   unaLista := [2, 3, 4, 6]
+   unaTupla := (4, 5)
+   unaDireccion := Norte //O Sur, Este, Oeste
+}
+
+procedure MerryChristmas() {
+  repeat (2) {
+    PutFarEast(3, Verde)
+    Mover(Norte)
+  }
+
+  foreach largo in [7, 5, 3] {
+    DrawRowEast(largo, Verde)
+    Mover(Norte)
+    Mover(Este)
+  }
+}
+
+procedure Operadores() {
+   x := (5 + 5) / 6 * 4
+   y := x > 30
+   z := 4 div 5
+   z := 5 mod 4
+}
+
+
+function agregarSiHayColor(ls, c ) {
+    res := ls
+    if (hayBolitas(c)) {
+       res := ls ++ [c]
+    }
+    return (res)
+}
+
+
+
+function testSameColorEnum() {
+
+    x:= Verde
+    foreach c in [x..Verde] {
+        Poner(c)
+    }
+
+    foreach c in [Verde..Verde] { Poner(c) }
+    return(nroTotalBolitas() == 2 && nroBolitas(Verde) == 2)
+}
+
+function rangeCount(min, max) {
+    count := 0
+    foreach x in [min..max] { count := count + 1 }
+    return(count)
+}
+
+
+type Persona is record {
+	field dni
+	field casado
+	field direccion
+}
+
+type Propiedad is record {
+	field dueno
+	field direccion1
+}
+
+program {
+	p := Persona(dni <- 200, casado <- True, direccion <- Este)
+    //accessors
+	dni(p)
+    casado(p)
+}
+
+function igualPersona(p1, p2) {
+	return(nombre(p1) == nombre(p2) && edad(p1) == edad(p2) && dni(p1) == dni(p2))
+}
+
+function testBasicRecords() {
+	p1 := Persona(nombre <- 2, edad <- 21, dni <- 3523432)
+	p2 := Persona(nombre <- 2, edad <- 21, dni <- 3523432)
+	return(igualPersona(p1, p2))
+}
+
+function envejecer(unaPersona) {
+  return Persona(unaPersona | edad <- edad(unaPersona) + 1)
+
+}

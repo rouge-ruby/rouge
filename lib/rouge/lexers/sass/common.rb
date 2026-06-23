@@ -66,14 +66,10 @@ module Rouge
         rule %r(//[^\n]*), Comment::Single
 
         # identifiers
-        rule(id) do |m|
-          if CSS::BUILTINS.include? m[0]
-            token Name::Builtin
-          elsif CSS::COLORS.include? m[0]
-            token Name::Constant
-          else
-            token Name
-          end
+        keywords id do
+          rule CSS::BUILTINS, Name::Builtin
+          rule CSS::COLORS, Name::Constant
+          default Name
         end
       end
 

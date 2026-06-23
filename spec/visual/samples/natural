@@ -1,0 +1,85 @@
+* > Natural Program: EXEMPLO
+* > Description: Demonstração exaustiva de sintaxe e comandos
+************************************************************************
+DEFINE DATA                     /* Início do bloco de dados [cite: 5] */
+GLOBAL USING GCOMUM            /* Referência a área de dados global */
+LOCAL                           /* Variáveis locais do programa */
+  01 #MATRICULA      (N8)       /* Numérico de 8 dígitos  */
+  01 #NOME-COMPLETO  (A50)      /* Alfanumérico de 50 posições  */
+  01 #DATA-PROCESS   (D)        /* Tipo Data  */
+  01 #STATUS-VAR     (A1) INIT <'A'> /* Inicialização de variável */
+  01 #I              (I4)       /* Inteiro de 4 bytes  */
+  
+  /* Definição de uma View para acesso ao banco  */
+  01 EMPREGADOS VIEW OF EMPLOYEES
+    02 NAME
+    02 FIRST-NAME
+    02 SALARY       (1:2)       /* Campo múltiplo (Array) */
+    02 DEPT-CODE
+    
+  /* Redefinição de variável [cite: 6] */
+  01 #DATA-RED      (A8)
+  01 REDEFINE #DATA-RED
+    02 #ANO (A4)
+    02 #MES (A2)
+    02 #DIA (A2)
+
+END-DEFINE                      /* Fim da definição de dados [cite: 5] */
+
+* ----------------------------------------------------------------------
+* TRATAMENTO DE ERROS ON-LINE
+* ----------------------------------------------------------------------
+ON ERROR
+  WRITE 'ERRO SISTEMA:' *ERROR-NR ' NA LINHA:' *ERROR-LINE 
+  ESCAPE ROUTINE
+END-ERROR
+
+* ----------------------------------------------------------------------
+* LÓGICA DE PROCESSAMENTO
+* ----------------------------------------------------------------------
+FORMAT PS=60 LS=120             /* Configura página e linha  */
+#DATA-PROCESS := *DATX          /* Variável de sistema para data  */
+
+/* Comando de repetição simples  */
+FOR #I = 1 TO 10 STEP 1
+  IF #I > 5
+    IGNORE
+  ELSE
+    PRINT 'ITERAÇÃO:' #I
+  END-IF
+END-FOR
+
+/* Busca no Banco de Dados Adabas  */
+FIND EMPREGADOS WITH NAME = 'SMITH'
+  WHERE DEPT-CODE = 'FINA'
+  
+  /* Comando de decisão múltipla  */
+  DECIDE ON FIRST VALUE OF #STATUS-VAR
+    VALUE 'A'
+      PERFORM PROCESSAR-ATIVO   /* Chamada de sub-rotina interna  */
+    VALUE 'I'
+      IGNORE
+    NONE
+      REINPUT 'STATUS INVÁLIDO' MARK *#STATUS-VAR
+  END-DECIDE
+
+  /* Manipulação de Strings  */
+  COMPRESS FIRST-NAME NAME INTO #NOME-COMPLETO LEAVING NO SPACE
+  
+  /* Cálculo Aritmético  */
+  COMPUTE SALARY(1) = SALARY(1) * 1.10
+  
+  UPDATE                        /* Atualiza registro no banco  */
+  END TRANSACTION               /* Confirma alteração */
+  
+  DISPLAY 'NOME:' #NOME-COMPLETO (AL=30) 
+          'SALÁRIO ATUALIZADO:' SALARY(1)
+          
+END-FIND                        /* Fim do loop FIND  */
+
+/* Sub-rotina Interna  */
+DEFINE SUBROUTINE PROCESSAR-ATIVO
+  WRITE 'PROCESSANDO REGISTRO ATIVO DE:' *USER 
+END-SUBROUTINE
+
+END                             /* Encerramento do programa  */

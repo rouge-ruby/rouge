@@ -1,0 +1,89 @@
+namespace http://example.com/mmt-demo ❚
+
+import lfx http://gl.mathhub.info/MMT/LFX/TypedHierarchy ❚
+import finite http://gl.mathhub.info/MMT/LFX/Finite ❚
+import rules scala://structuralfeatures.lf.mmt.kwarc.info❚
+
+theory Notations =
+	Pi      # { V1T,… } 2 prec -10000❙
+	lambda  # [ V1T,… ] 2 prec -10000❙
+	apply   # 1%w…        prec -10❙
+	arrow   # 1⟶…        prec  -9990❙
+	case    # [ V2T,… ] 1 ⇝ 3 prec 5❙
+❚
+
+// Views ❚
+view emptyView : ?S -> ?T = ❚
+
+view v : ?S -> ?T =
+	a = b ❙
+	c = d ❙
+❚
+
+// some view qualifiers ❚
+total view v : ?S -> ?T = ❚
+implicit view v : ?S -> ?T = ❚
+implicit total view v : ?S -> ?T = ❚
+total implicit view v : ?S -> ?T = ❚
+
+theory NestedModules =
+	theory Very =
+		theory Deeply =
+			theory Nested =
+				view View : ?S -> ?T =
+					a/b/c/d = e/f/g/h ❙
+				❚
+			❚
+		❚
+	❚
+❚
+
+// Tests for structural features (incl. structures) ❚
+theory StructuralFeatures =
+	// structures without body ❙
+	structure foo : ?bar ❙
+
+	// structures with body ❙
+	implicit total structure divisibility : ?elation =
+		include ?Set❙
+		rel = [x,z] ∃[y]x∘y≐z❙
+
+		// ... with definiens, but without body ❙
+		structure foo = ?someReference ❙
+
+		// ... with definiens *and* meta ❙
+		structure bar : ?foo = ?someReference ❙
+	❚
+
+	// reversed {total, implicit} keywords ❙
+	total implicit structure foo : ?bar ❙
+
+	theory list_decls > a : type ❘ =
+		list: type ❙
+		nil: list ❙
+		cons: a ⟶ list ⟶ list ❙
+	❚
+
+	reflect list1(a: type) : ☞?InductivelyDefinedTypes/list_decls(a:type) ❙
+
+	inductive_definition concat(a:type) : list1(a: type) ❘ =
+		list : type ❘ = list1/list a⟶ list1/list a ❙
+		nil : list ❘ = [l] l ❙
+		cons : {x: a, f: list, l: list1/list a} list1/list a ❘ = [x, f, l] (list1/cons a x (f l)) ❙
+	❚
+❚
+
+document MetaAnnotations
+
+meta ?key "in document" ❚
+
+theory MetaAnnotations =
+	meta ?key "in theory" ❙
+
+	c ❘ meta ?key "in constant" ❙
+	d : type ❘ # foo ❘ meta ?key "in constant again" ❙
+
+	view v : ?S -> ?T =
+		meta ?key "in view" ❙
+	❚
+❚

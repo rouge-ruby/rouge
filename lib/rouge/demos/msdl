@@ -1,0 +1,16 @@
+# Example 2: A two-phase scenario
+scenario traffic::two_phases:    # Scenario name
+
+         # Define the car (with specific attributes)
+         car1: car with:
+               keep(.color == green)
+               keep(.category == truck)
+      
+        # Define the behavior   
+        do serial 
+             p1:  car1.drive(duration: 3 second)  with: 
+                      speed(0 kph, at: start)
+                      speed(10 kph, at: end)
+             p2:  car1.drive(duration: 5 second)  with:
+                    speed(10 kph) 
+

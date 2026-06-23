@@ -1,0 +1,36 @@
+#!/usr/bin/env mapl
+
+⍝ RIDE sample:
+{R}←{X}tradfn(Y Z);local
+dfn←{ ⍝ comment
+  0 ¯1.2e¯3j¯.45 'string' ⍬
+  +/-⍣(×A):⍺∇⍵[i;j]
+  {{{{nested ⍺:∇⍵}⍺:∇⍵}⍺:∇⍵}⍺:∇⍵}
+}
+label:
+:For i :In ⍳X ⋄ :EndFor
+:If condition
+  {⍵[⍋⍵]} ⋄ global←local←0
+  ⎕error ) ] } :error 'unclosed
+:EndIf
+search match
+
+⍝ strings
+'fdsfsdfd'
+'dsafdsf''dsfsdfasdf'
+'⍺⌊⌊⌈_⍺∊'
+'a'
+
+⍝ numbers
+123
+0
+123.456
+123E¯13
+¯23
+
+⍝ special:
+⎕⍬→←⍞{⍺⍵⍺⍺⍵⍵⍶⍹}
+
+⍝ names
+fdsfasd dfadsf
+a1 a2 a3

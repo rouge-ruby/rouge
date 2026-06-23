@@ -15,7 +15,7 @@ module Rouge
 
       state :basic do
         rule %r/\s+/, Text::Whitespace
-        rule %r/[;#].*?\n/, Comment
+        rule %r/^[ \t]*[;#][^\n]*(?=\n|\z)/, Comment
         rule %r/\\\n/, Str::Escape
       end
 

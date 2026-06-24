@@ -10,27 +10,23 @@ module Rouge
       filenames '*.rq'
       mimetypes 'application/sparql-query'
 
-      def self.builtins
-        @builtins = Set.new %w[
-          ABS AVG BNODE BOUND CEIL COALESCE CONCAT CONTAINS COUNT DATATYPE DAY
-          ENCODE_FOR_URI FLOOR GROUP_CONCAT HOURS IF IRI isBLANK isIRI
-          isLITERAL isNUMERIC isURI LANG LANGMATCHES LCASE MAX MD5 MIN MINUTES
-          MONTH NOW RAND REGEX REPLACE ROUND SAMETERM SAMPLE SECONDS SEPARATOR
-          SHA1 SHA256 SHA384 SHA512 STR STRAFTER STRBEFORE STRDT STRENDS
-          STRLANG STRLEN STRSTARTS STRUUID SUBSTR SUM TIMEZONE TZ UCASE URI
-          UUID YEAR
-        ]
-      end
+      BUILTINS = Set.new %w[
+        ABS AVG BNODE BOUND CEIL COALESCE CONCAT CONTAINS COUNT DATATYPE DAY
+        ENCODE_FOR_URI FLOOR GROUP_CONCAT HOURS IF IRI isBLANK isIRI
+        isLITERAL isNUMERIC isURI LANG LANGMATCHES LCASE MAX MD5 MIN MINUTES
+        MONTH NOW RAND REGEX REPLACE ROUND SAMETERM SAMPLE SECONDS SEPARATOR
+        SHA1 SHA256 SHA384 SHA512 STR STRAFTER STRBEFORE STRDT STRENDS
+        STRLANG STRLEN STRSTARTS STRUUID SUBSTR SUM TIMEZONE TZ UCASE URI
+        UUID YEAR
+      ]
 
-      def self.keywords
-        @keywords = Set.new %w[
-          ADD ALL AS ASC ASK BASE BIND BINDINGS BY CLEAR CONSTRUCT COPY CREATE
-          DATA DEFAULT DELETE DESC DESCRIBE DISTINCT DROP EXISTS FILTER FROM
-          GRAPH GROUP HAVING IN INSERT LIMIT LOAD MINUS MOVE NAMED NOT
-          OFFSET OPTIONAL ORDER PREFIX SELECT REDUCED SERVICE SILENT TO UNDEF
-          UNION USING VALUES WHERE WITH
-        ]
-      end
+      KEYWORDS = Set.new %w[
+        ADD ALL AS ASC ASK BASE BIND BINDINGS BY CLEAR CONSTRUCT COPY CREATE
+        DATA DEFAULT DELETE DESC DESCRIBE DISTINCT DROP EXISTS FILTER FROM
+        GRAPH GROUP HAVING IN INSERT LIMIT LOAD MINUS MOVE NAMED NOT
+        OFFSET OPTIONAL ORDER PREFIX SELECT REDUCED SERVICE SILENT TO UNDEF
+        UNION USING VALUES WHERE WITH
+      ]
 
       state :root do
         rule %r(\s+)m, Text::Whitespace
@@ -51,14 +47,13 @@ module Rouge
         rule %r(true|false)i, Keyword::Constant
         rule %r/a\b/, Keyword
 
-        rule %r([A-Z][[:word:]]+\b)i do |m|
-          if self.class.builtins.include? m[0].upcase
-            token Name::Builtin
-          elsif self.class.keywords.include? m[0].upcase
-            token Keyword
-          else
-            token Error
-          end
+        keywords %r([A-Z][[:word:]]+\b)i do
+          transform(&:upcase)
+
+          rule BUILTINS, Name::Builtin
+          rule KEYWORDS, Keyword
+
+          default Error
         end
 
         rule %r([+\-]?(?:\d+\.\d*|\.\d+)(?:[e][+\-]?[0-9]+)?)i, Num::Float

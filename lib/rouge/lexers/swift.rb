@@ -14,7 +14,7 @@ module Rouge
       id_rest = /[\p{Alnum}_]|[^\u0000-\uFFFF]/
       id = /#{id_head}#{id_rest}*/
 
-      keywords = Set.new %w(
+      KEYWORDS = Set.new %w(
         autoreleasepool await break case catch consume continue default defer discard do each else fallthrough guard if in for repeat return switch throw try where while
 
         as dynamicType is new super self Self Type
@@ -22,11 +22,11 @@ module Rouge
         associativity async didSet get infix inout isolated left mutating none nonmutating operator override postfix precedence precedencegroup prefix rethrows right set throws unowned weak willSet
       )
 
-      declarations = Set.new %w(
+      DECLARATIONS = Set.new %w(
         actor any associatedtype borrowing class consuming deinit distributed dynamic enum convenience extension fileprivate final func import indirect init internal lazy let macro nonisolated open optional package private protocol public required some static struct subscript typealias var
       )
 
-      constants = Set.new %w(
+      CONSTANTS = Set.new %w(
         true false nil
       )
 
@@ -128,17 +128,17 @@ module Rouge
           groups Name::Variable, Text, Punctuation
         end
 
-        rule id do |m|
-          if keywords.include? m[0]
-            token Keyword
-          elsif declarations.include? m[0]
-            token Keyword::Declaration
-          elsif constants.include? m[0]
-            token Keyword::Constant
-          elsif m[0] =~ /^[[:upper:]]/
-            token Keyword::Type
-          else
-            token Name
+        keywords id do
+          rule KEYWORDS, Keyword
+          rule DECLARATIONS, Keyword::Declaration
+          rule CONSTANTS, Keyword::Constant
+
+          default do |m|
+            if m[0][0].match?(/[[:upper:]]/)
+              token Keyword::Type
+            else
+              token Name
+            end
           end
         end
 

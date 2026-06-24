@@ -1,0 +1,22 @@
+$MAX=3;
+typedef data=0..$MAX-1;
+// A lossy buffer, with a single cell, that can hold a data.
+gal Buffer {
+	// MAX models an empty buffer
+	int value=$MAX;	
+	/** Allows to write to the buffer, if it is empty */
+	transition put (data $d) [value==$MAX] label "send"($d) {
+		value = $d;
+	}	
+}
+composite Channel {
+	// the sender sends at most three messages
+	BoundedCounter sender($BOUND=3);
+	Buffer buff;
+	synchronization sendData (data $d) {
+		sender."inc"(1);
+		buff."send"($d);
+	}	
+}
+main Channel;
+property noDead [ctl] : AG (EX true);

@@ -16,14 +16,14 @@ module Rouge
         return true if text.shebang? 'jimsh'
       end
 
-      KEYWORDS = %w(
+      KEYWORDS = Set.new %w(
         after apply array break catch continue elseif else error
         eval expr for foreach global if namespace proc rename return
         set switch then trace unset update uplevel upvar variable
         vwait while
       )
 
-      BUILTINS = %w(
+      BUILTINS = Set.new %w(
         append bgerror binary cd chan clock close concat dde dict
         encoding eof exec exit fblocked fconfigure fcopy file
         fileevent flush format gets glob history http incr info interp
@@ -65,14 +65,10 @@ module Rouge
             push :"params#{name}"
           end
 
-          rule %r/#{NOT_CHARS[END_WORD]}+/ do |m|
-            if KEYWORDS.include? m[0]
-              token Keyword
-            elsif BUILTINS.include? m[0]
-              token Name::Builtin
-            else
-              token Text
-            end
+          keywords %r/#{NOT_CHARS[END_WORD]}+/ do |m|
+            rule KEYWORDS, Keyword
+            rule BUILTINS, Name::Builtin
+            default Text
           end
 
           mixin :whitespace

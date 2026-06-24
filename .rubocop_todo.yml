@@ -24,12 +24,6 @@ Naming/VariableName:
 # Offense count: 113
 Rouge/NoBuildingAlternationPatternInRegexp:
   Exclude:
-    - 'lib/rouge/lexers/stata.rb'
     - 'lib/rouge/lexers/vala.rb'
     - 'lib/rouge/lexers/wollok.rb'
     - 'lib/rouge/lexers/xojo.rb'
-
-# Offense count: 20
-Rouge/NoHugeCollections:
-  Exclude:
-    - 'lib/rouge/lexers/stata.rb'

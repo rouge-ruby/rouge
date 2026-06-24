@@ -8,22 +8,18 @@ module Rouge
       desc "Syscall description language used by syzkaller"
       tag 'syzlang'
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          align breaks_returns dec define disabled hex ignore_return in incdir
-          include inet inout oct opt out packed parent prog_timeout pseudo
-          resource size syscall timeout type varlen
-        )
-      end
+      KEYWORDS = Set.new %w(
+        align breaks_returns dec define disabled hex ignore_return in incdir
+        include inet inout oct opt out packed parent prog_timeout pseudo
+        resource size syscall timeout type varlen
+      )
 
-      def self.keywords_type
-        @keywords_type ||= Set.new %w(
-          array bitsize bool16 bool32 bool64 bool8 boolptr buffer bytesize
-          bytesize2 bytesize4 bytesize8 const csum filename fileoff flags fmt
-          int16 int16be int32 int32be int64 int64be int8 int8be intptr len
-          offsetof optional proc ptr ptr64 string stringnoz text vma vma64 void
-        )
-      end
+      KEYWORDS_TYPE = Set.new %w(
+        array bitsize bool16 bool32 bool64 bool8 boolptr buffer bytesize
+        bytesize2 bytesize4 bytesize8 const csum filename fileoff flags fmt
+        int16 int16be int32 int32be int64 int64be int8 int8be intptr len
+        offsetof optional proc ptr ptr64 string stringnoz text vma vma64 void
+      )
 
       comment = /#.*$/
       inline_spaces = /[ \t]+/
@@ -63,14 +59,10 @@ module Rouge
         mixin :mixin_string
 
         # Keywords.
-        rule id do |m|
-          if self.class.keywords.include?(m[0])
-            token Keyword
-          elsif self.class.keywords_type.include?(m[0])
-            token Keyword::Type
-          else
-            token Name
-          end
+        keywords id do
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+          default Name
         end
 
         # Ranges.

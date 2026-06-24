@@ -10,29 +10,23 @@ module Rouge
       title "SuperCollider"
       desc 'A cross-platform interpreted programming language for sound synthesis, algorithmic composition, and realtime performance'
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          var arg classvar const super this
-        )
-      end
+      KEYWORDS = Set.new %w(
+        var arg classvar const super this
+      )
 
       # these aren't technically keywords, but we treat
       # them as such because it makes things clearer 99%
       # of the time
-      def self.reserved
-        @reserved ||= Set.new %w(
-          case do for forBy loop if while new newCopyArgs
-        )
-      end
+      RESERVED = Set.new %w(
+        case do for forBy loop if while new newCopyArgs
+      )
 
-      def self.constants
-        @constants ||= Set.new %w(
-          true false nil inf thisThread
-          thisMethod thisFunction thisProcess
-          thisFunctionDef currentEnvironment
-          topEnvironment
-        )
-      end
+      CONSTANTS = Set.new %w(
+        true false nil inf thisThread
+        thisMethod thisFunction thisProcess
+        thisFunctionDef currentEnvironment
+        topEnvironment
+      )
 
       state :whitespace do
         rule %r/\s+/m, Text
@@ -86,16 +80,11 @@ module Rouge
         rule %r/_\w+/, Name::Function
 
         # main identifiers section
-        rule %r/[a-z]\w*/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          elsif self.class.reserved.include? m[0]
-            token Keyword::Reserved
-          else
-            token Name
-          end
+        keywords %r/[a-z]\w*/ do
+          rule KEYWORDS, Keyword
+          rule CONSTANTS, Keyword::Constant
+          rule RESERVED, Keyword::Reserved
+          default Name
         end
 
         # environment variables

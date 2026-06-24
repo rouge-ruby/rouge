@@ -12,19 +12,15 @@ module Rouge
 
       mimetypes 'text/x-standardml', 'application/x-standardml'
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          abstype and andalso as case datatype do else end exception
-          fn fun handle if in infix infixr let local nonfix of op open
-          orelse raise rec then type val with withtype while
-          eqtype functor include sharing sig signature struct structure
-          where
-        )
-      end
+      KEYWORDS = Set.new %w(
+        abstype and andalso as case datatype do else end exception
+        fn fun handle if in infix infixr let local nonfix of op open
+        orelse raise rec then type val with withtype while
+        eqtype functor include sharing sig signature struct structure
+        where
+      )
 
-      def self.symbolic_reserved
-        @symbolic_reserved ||= Set.new %w(: | = => -> # :>)
-      end
+      SYMBOLIC_RESERVED = Set.new %w(: | = => -> # :>)
 
       id = /[\w']+/i
       symbol = %r([!%&$#/:<=>?@\\~`^|*+-]+)
@@ -52,25 +48,17 @@ module Rouge
       end
 
       def token_for_id_with_dot(id)
-        if self.class.keywords.include? id
+        if KEYWORDS.include? id
           Error
         else
           Name::Namespace
         end
       end
 
-      def token_for_final_id(id)
-        if self.class.keywords.include? id or self.class.symbolic_reserved.include? id
-          Error
-        else
-          Name
-        end
-      end
-
       def token_for_id(id)
-        if self.class.keywords.include? id
+        if KEYWORDS.include? id
           Keyword::Reserved
-        elsif self.class.symbolic_reserved.include? id
+        elsif SYMBOLIC_RESERVED.include? id
           Punctuation
         else
           Name
@@ -188,8 +176,9 @@ module Rouge
       end
 
       state :breakout do
-        rule %r/(?=\b(#{SML.keywords.to_a.join('|')})\b(?!'))/ do
-          pop!
+        keywords %r/(?=(#{id}))/ do
+          group 1
+          rule KEYWORDS, Keyword, :pop!
         end
       end
 

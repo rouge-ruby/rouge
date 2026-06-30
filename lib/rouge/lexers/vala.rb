@@ -13,7 +13,7 @@ module Rouge
 
       id = /@?[_a-z]\w*/i
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         abstract as async base break case catch const construct continue
         default delegate delete do dynamic else ensures enum errordomain
         extern false finally for foreach get global if in inline interface
@@ -23,7 +23,7 @@ module Rouge
         while yield
       )
 
-      keywords_type = %w(
+      KEYWORDS_TYPE = Set.new %w(
         bool char double float int int8 int16 int32 int64 long short size_t
         ssize_t string unichar uint uint8 uint16 uint32 uint64 ulong ushort
       )
@@ -53,10 +53,14 @@ module Rouge
           (e[+-][0-9]+)? # exponent
           [fldu]? # type
         )ix, Num
-        rule %r/\b(#{keywords.join('|')})\b/, Keyword
-        rule %r/\b(#{keywords_type.join('|')})\b/, Keyword::Type
-        rule %r/class|struct/, Keyword, :class
-        rule %r/namespace|using/, Keyword, :namespace
+
+        keywords id do
+          rule Set['class', 'struct'], Keyword, :class
+          rule Set['namespace', 'using'], Keyword::Namespace, :namespace
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+        end
+
         rule %r/#{id}(?=\s*[(])/, Name::Function
         rule id, Name
 

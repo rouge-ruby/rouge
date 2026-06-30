@@ -12,71 +12,65 @@ module Rouge
 
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          alias always always_comb always_ff always_latch assert assert_strobe
-          assign assume automatic attribute before begin bind bins binsof break
-          case casex casez clocking config constraint context continue cover
-          covergroup coverpoint cross deassign defparam default design dist do
-          else end endattribute endcase endclass endclocking endconfig
-          endfunction endgenerate endgroup endinterface endmodule endpackage
-          endprimitive endprogram endproperty endspecify endsequence endtable
-          endtask expect export extends extern final first_match for force
-          foreach fork forkjoin forever function generate genvar if iff ifnone
-          ignore_bins illegal_bins import incdir include initial inside instance
-          interface intersect join join_any join_none liblist library local
-          localparam  matches module modport new noshowcancelled null package
-          parameter primitive priority program property protected
-          pulsestyle_onevent  pulsestyle_ondetect pure rand randc randcase
-          randsequence release return sequence showcancelled solve specify super
-          table task this throughout timeprecision timeunit type typedef unique
-          use wait wait_order while wildcard with within
-        )
-      end
+      KEYWORDS = Set.new %w(
+        alias always always_comb always_ff always_latch assert assert_strobe
+        assign assume automatic attribute before begin bind bins binsof break
+        case casex casez clocking config constraint context continue cover
+        covergroup coverpoint cross deassign defparam default design dist do
+        else end endattribute endcase endclass endclocking endconfig
+        endfunction endgenerate endgroup endinterface endmodule endpackage
+        endprimitive endprogram endproperty endspecify endsequence endtable
+        endtask expect export extends extern final first_match for force
+        foreach fork forkjoin forever function generate genvar if iff ifnone
+        ignore_bins illegal_bins import incdir include initial inside instance
+        interface intersect join join_any join_none liblist library local
+        localparam  matches module modport new noshowcancelled null package
+        parameter primitive priority program property protected
+        pulsestyle_onevent  pulsestyle_ondetect pure rand randc randcase
+        randsequence release return sequence showcancelled solve specify super
+        table task this throughout timeprecision timeunit type typedef unique
+        use wait wait_order while wildcard with within
+      )
 
-      def self.keywords_type
-        @keywords_type ||= Set.new %w(
-          and bit buf bufif0 bufif1 byte cell chandle class cmos const disable
-          edge enum event highz0 highz1 initial inout input int integer join
-          logic longint macromodule medium nand negedge nmos nor not
-          notif0 notif1 or output packed parameter pmos posedge pull0 pull1
-          pulldown pullup rcmos real realtime ref reg repeat rnmos rpmos rtran
-          rtranif0 rtranif1 scalared shortint shortreal signed  specparam
-          static string strength strong0 strong1 struct supply0 supply1 tagged
-          time tran tranif0 tranif1 tri tri0 tri1 triand trior trireg union
-          unsigned uwire var vectored virtual void wait wand weak[01] wire wor
-          xnor xor
-        )
-      end
+      KEYWORDS_TYPE = Set.new %w(
+        and bit buf bufif0 bufif1 byte cell chandle class cmos const disable
+        edge enum event highz0 highz1 initial inout input int integer join
+        logic longint macromodule medium nand negedge nmos nor not
+        notif0 notif1 or output packed parameter pmos posedge pull0 pull1
+        pulldown pullup rcmos real realtime ref reg repeat rnmos rpmos rtran
+        rtranif0 rtranif1 scalared shortint shortreal signed  specparam
+        static string strength strong0 strong1 struct supply0 supply1 tagged
+        time tran tranif0 tranif1 tri tri0 tri1 triand trior trireg union
+        unsigned uwire var vectored virtual void wait wand weak[01] wire wor
+        xnor xor
+      )
 
-      def self.keywords_system_task
-        @keywords_system_task ||= Set.new %w(
-          acos acosh asin asinh assertfailoff assertfailon  assertkill
-          assertnonvacuouson assertoff asserton assertpassoff assertpasson
-          assertvacuousoff atan atan2 atanh bits bitstoreal  bitstoshortreal
-          cast ceil changed changed_gclk changing_gclk clog2 cos cosh countones
-          coverage_control coverage_get coverage_get_max coverage_merge
-          coverage_save dimensions display displayb displayh displayo
-          dist_chi_square dist_erlang dist_exponential dist_normal dist_poisson
-          dist_t dist_uniform dumpall dumpfile dumpflush dumplimit dumpoff
-          dumpon dumpports dumpportsall dumpportsflush dumpportslimit
-          dumpportsoff dumpportson dumpvars error exit exp falling_gclk fclose
-          fdisplay fdisplayb fdisplayh fdisplayo fell fell_gclk feof ferror
-          fflush fgetc fgets finish floor fmonitor fmonitorb fmonitorh fmonitoro
-          fopen fread fscanf fseek fstrobe fstrobeb fstrobeh fstrobeo ftell
-          future_gclk fwrite fwriteb fwriteh fwriteo get_coverage high hypot
-          increment info isunbounded isunknown itor left ln load_coverage_db
-          log10 low monitor monitorb monitorh monitoro monitoroff monitoron
-          onehot onehot0 past past_gclk pow printtimescale q_add q_exam q_full
-          q_initialize q_remove random readmemb readmemh realtime realtobits
-          rewind right rising_gclk rose rose_gclk rtoi sampled
-          set_coverage_db_name sformat sformatf shortrealtobits signed sin sinh
-          size sqrt sscanf stable stable_gclk steady_gclk stime stop strobe
-          strobeb strobeh strobeo swrite swriteb swriteh swriteo system tan tanh
-          time timeformat typename ungetc unpacked_dimensions unsigned warning
-          write writeb writeh writememb writememh writeo
-        )
-      end
+      KEYWORDS_SYSTEM_TASK = Set.new %w(
+        acos acosh asin asinh assertfailoff assertfailon  assertkill
+        assertnonvacuouson assertoff asserton assertpassoff assertpasson
+        assertvacuousoff atan atan2 atanh bits bitstoreal  bitstoshortreal
+        cast ceil changed changed_gclk changing_gclk clog2 cos cosh countones
+        coverage_control coverage_get coverage_get_max coverage_merge
+        coverage_save dimensions display displayb displayh displayo
+        dist_chi_square dist_erlang dist_exponential dist_normal dist_poisson
+        dist_t dist_uniform dumpall dumpfile dumpflush dumplimit dumpoff
+        dumpon dumpports dumpportsall dumpportsflush dumpportslimit
+        dumpportsoff dumpportson dumpvars error exit exp falling_gclk fclose
+        fdisplay fdisplayb fdisplayh fdisplayo fell fell_gclk feof ferror
+        fflush fgetc fgets finish floor fmonitor fmonitorb fmonitorh fmonitoro
+        fopen fread fscanf fseek fstrobe fstrobeb fstrobeh fstrobeo ftell
+        future_gclk fwrite fwriteb fwriteh fwriteo get_coverage high hypot
+        increment info isunbounded isunknown itor left ln load_coverage_db
+        log10 low monitor monitorb monitorh monitoro monitoroff monitoron
+        onehot onehot0 past past_gclk pow printtimescale q_add q_exam q_full
+        q_initialize q_remove random readmemb readmemh realtime realtobits
+        rewind right rising_gclk rose rose_gclk rtoi sampled
+        set_coverage_db_name sformat sformatf shortrealtobits signed sin sinh
+        size sqrt sscanf stable stable_gclk steady_gclk stime stop strobe
+        strobeb strobeh strobeo swrite swriteb swriteh swriteo system tan tanh
+        time timeformat typename ungetc unpacked_dimensions unsigned warning
+        write writeb writeh writememb writememh writeo
+      )
 
       state :expr_bol do
         mixin :inline_whitespace
@@ -131,9 +125,9 @@ module Rouge
         rule %r/`(\w+)/, Comment::Preproc
 
         keywords id do
-          rule :keywords, Keyword
-          rule :keywords_type, Keyword::Type
-          rule :keywords_system_task, Name::Builtin
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+          rule KEYWORDS_SYSTEM_TASK, Name::Builtin
           default Name
         end
       end

@@ -88,8 +88,6 @@ module Rouge
         rule %r/["\/]/, Str::Regex
       end
 
-      id = /[$a-z_\-][a-z0-9_\-]*/io
-
       state :expression do
         mixin :regexps
         mixin :primitives

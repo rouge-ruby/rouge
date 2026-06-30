@@ -11,44 +11,36 @@ module Rouge
       filenames '*.vbs', '*.vb'
       mimetypes 'text/x-visualbasic', 'application/x-visualbasic'
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          AddHandler Alias ByRef ByVal CBool CByte CChar CDate CDbl CDec
-          CInt CLng CObj CSByte CShort CSng CStr CType CUInt CULng CUShort
-          Call Case Catch Class Const Continue Declare Default Delegate
-          Dim DirectCast Do Each Else ElseIf End EndIf Enum Erase Error
-          Event Exit False Finally For Friend Function Get Global GoSub
-          GoTo Handles If Implements Imports Inherits Interface Let
-          Lib Loop Me Module MustInherit MustOverride MyBase MyClass
-          Namespace Narrowing New Next Not NotInheritable NotOverridable
-          Nothing Of On Operator Option Optional Overloads Overridable
-          Overrides ParamArray Partial Private Property Protected Public
-          RaiseEvent ReDim ReadOnly RemoveHandler Resume Return Select Set
-          Shadows Shared Single Static Step Stop Structure Sub SyncLock
-          Then Throw To True Try TryCast Using Wend When While Widening
-          With WithEvents WriteOnly
-        )
-      end
+      KEYWORDS = Set.new %w(
+        AddHandler Alias ByRef ByVal CBool CByte CChar CDate CDbl CDec
+        CInt CLng CObj CSByte CShort CSng CStr CType CUInt CULng CUShort
+        Call Case Catch Class Const Continue Declare Default Delegate
+        Dim DirectCast Do Each Else ElseIf End EndIf Enum Erase Error
+        Event Exit False Finally For Friend Function Get Global GoSub
+        GoTo Handles If Implements Imports Inherits Interface Let
+        Lib Loop Me Module MustInherit MustOverride MyBase MyClass
+        Namespace Narrowing New Next Not NotInheritable NotOverridable
+        Nothing Of On Operator Option Optional Overloads Overridable
+        Overrides ParamArray Partial Private Property Protected Public
+        RaiseEvent ReDim ReadOnly RemoveHandler Resume Return Select Set
+        Shadows Shared Single Static Step Stop Structure Sub SyncLock
+        Then Throw To True Try TryCast Using Wend When While Widening
+        With WithEvents WriteOnly
+      )
 
-      def self.keywords_type
-        @keywords_type ||= Set.new %w(
-          Boolean Byte Char Date Decimal Double Integer Long Object
-          SByte Short Single String Variant UInteger ULong UShort
-        )
-      end
+      KEYWORDS_TYPE = Set.new %w(
+        Boolean Byte Char Date Decimal Double Integer Long Object
+        SByte Short Single String Variant UInteger ULong UShort
+      )
 
-      def self.operator_words
-        @operator_words ||= Set.new %w(
-          AddressOf And AndAlso As GetType In Is IsNot Like Mod Or OrElse
-          TypeOf Xor
-        )
-      end
+      OPERATOR_WORDS = Set.new %w(
+        AddressOf And AndAlso As GetType In Is IsNot Like Mod Or OrElse
+        TypeOf Xor
+      )
 
-      def self.builtins
-        @builtins ||= Set.new %w(
-          Console ConsoleColor
-        )
-      end
+      BUILTINS = Set.new %w(
+        Console ConsoleColor
+      )
 
       id = /[a-z_]\w*/i
       upper_id = /[A-Z]\w*/
@@ -90,19 +82,12 @@ module Rouge
         rule %r/(Class|Structure|Enum)\b/, Keyword, :classname
         rule %r/(Module|Namespace|Imports)\b/, Keyword, :namespace
 
-        rule upper_id do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Keyword
-          elsif self.class.keywords_type.include? match
-            token Keyword::Type
-          elsif self.class.operator_words.include? match
-            token Operator::Word
-          elsif self.class.builtins.include? match
-            token Name::Builtin
-          else
-            token Name
-          end
+        keywords upper_id do
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+          rule OPERATOR_WORDS, Operator::Word
+          rule BUILTINS, Name::Builtin
+          default Name
         end
 
         rule(

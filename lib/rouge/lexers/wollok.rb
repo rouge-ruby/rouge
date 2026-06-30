@@ -23,7 +23,7 @@ module Rouge
         rule %r/(import)(.+$)/ do
           groups Keyword::Reserved, Text
         end
-        rule %r/(class|object|mixin)/, Keyword::Reserved, :foo
+        rule %r/(class|object|mixin)/, Keyword::Reserved, :class
         rule %r/test|program/, Keyword::Reserved #, :chunk_naming
         rule %r/(package)(\s+)(#{entity_name})/ do
           groups Keyword::Reserved, Text::Whitespace, Name::Class
@@ -34,7 +34,7 @@ module Rouge
         mixin :objects
       end
 
-      state :foo do
+      state :class do
         mixin :whitespaces_and_comments
         rule %r/inherits|mixed|with|and/, Keyword::Reserved
         rule %r/#{entity_name}(?=\s*{)/ do |m|
@@ -63,7 +63,7 @@ module Rouge
           if entities.include?(variable) || ('A'..'Z').cover?(variable[0])
             token Name::Class
           else
-            token Keyword::Variable
+            token Name
           end
         end
         rule %r/\.#{entity_name}/, Text
@@ -88,8 +88,8 @@ module Rouge
         rule %r/\+|-|\*|\/|%/, Operator
         rule %r/<=|=>|===|==|<|>/, Operator
         rule %r/and\b|or\b|not\b/, Operator
-        rule %r/\(|\)|=/, Text
-        rule %r/,/, Punctuation
+        rule %r/\(|\)|=/, Punctuation
+        rule %r/[,.]/, Punctuation
       end
 
       private

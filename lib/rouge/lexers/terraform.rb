@@ -34,7 +34,7 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= %w()
+        @builtins ||= Set.new %w()
       end
 
       state :strings do
@@ -100,21 +100,7 @@ module Rouge
         rule %r/[(\[,]/, Punctuation
         rule %r/[)\].]/, Punctuation
 
-        rule id do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-          elsif self.class.reserved.include? m[0]
-            token Keyword::Reserved
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          else
-            token Name::Other
-          end
-        end
+        mixin :words
       end
     end
   end

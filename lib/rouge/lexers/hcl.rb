@@ -54,7 +54,7 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= %w()
+        @builtins ||= Set.new %w()
       end
 
       id = /[$a-z_\-][a-z0-9_\-]*/io
@@ -72,23 +72,17 @@ module Rouge
           push :array
         end
 
-        rule id do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-            push :composite
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-            push :composite
-          elsif self.class.reserved.include? m[0]
-            token Keyword::Reserved
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          else
-            token Name::Other
-            push :composite
-          end
+        mixin :words
+      end
+
+      state :words do
+        keywords id do
+          rule :keywords, Keyword, :composite
+          rule :declarations, Keyword::Declaration, :composite
+          rule :reserved, Keyword::Reserved
+          rule :constants, Keyword::Constant
+          rule :builtins, Name::Builtin
+          default Name::Other, :composite
         end
       end
 

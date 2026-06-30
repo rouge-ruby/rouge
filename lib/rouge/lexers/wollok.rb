@@ -9,8 +9,6 @@ module Rouge
       tag 'wollok'
       filenames '*.wlk', '*.wtest', '*.wpgm'
 
-      keywords = %w(new super return if else var const override constructor)
-
       entity_name = /[a-zA-Z][a-zA-Z0-9]*/
       variable_naming = /_?#{entity_name}/
 
@@ -51,12 +49,9 @@ module Rouge
       end
 
       state :keywords do
-        def any(expressions)
-          /#{expressions.map { |keyword| "#{keyword}\\b" }.join('|')}/
-        end
-
         rule %r/self\b/, Name::Builtin::Pseudo
-        rule any(keywords), Keyword::Reserved
+        rule %r((?:new|super|return|if|else|var|const|override|constructor)\b), Keyword::Reserved
+
         rule %r/(method)(\s+)(#{variable_naming})/ do
           groups Keyword::Reserved, Text::Whitespace, Text
         end

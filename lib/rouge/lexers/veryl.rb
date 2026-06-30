@@ -57,21 +57,17 @@ module Rouge
 
       # Keywords
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          embed enum function include interface modport module package proto pub struct union unsafe
-          alias always_comb always_ff assign as bind block connect const final import initial inst let param return break type var
-          converse inout input output same
-          case default else if_reset if inside outside switch
-          for in repeat rev step
-        )
-      end
+      KEYWORDS = Set.new %w(
+        embed enum function include interface modport module package proto pub struct union unsafe
+        alias always_comb always_ff assign as bind block connect const final import initial inst let param return break type var
+        converse inout input output same
+        case default else if_reset if inside outside switch
+        for in repeat rev step
+      )
 
-      def self.keywords_type
-        @keywords_type ||= Set.new %w(
-          bit bbool lbool clock clock_posedge clock_negedge f32 f64 i8 i16 i32 i64 logic reset reset_async_high reset_async_low reset_sync_high reset_sync_low signed string tri u8 u16 u32 u64
-        )
-      end
+      KEYWORDS_TYPE = Set.new %w(
+        bit bbool lbool clock clock_posedge clock_negedge f32 f64 i8 i16 i32 i64 logic reset reset_async_high reset_async_low reset_sync_high reset_sync_low signed string tri u8 u16 u32 u64
+      )
 
       state :root do
         rule(COMMENT          , Comment             )
@@ -86,16 +82,10 @@ module Rouge
         rule(WHITE_SPACE      , Text                )
         rule(/"/              , Str::Double, :string)
 
-        rule IDENTIFIER do |m|
-          name = m[0]
-
-          if self.class.keywords.include? name
-            token Keyword
-          elsif self.class.keywords_type.include? name
-            token Keyword::Type
-          else
-            token Name
-          end
+        keywords IDENTIFIER do
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+          default Name
         end
       end
 

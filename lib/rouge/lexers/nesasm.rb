@@ -10,28 +10,22 @@ module Rouge
       aliases 'nes'
       filenames '*.nesasm'
 
-      def self.keywords
-        @keywords ||= %w(
-          ADC AND ASL BIT BRK CMP CPX CPY DEC EOR INC JMP JSR LDA LDX LDY LSR
-          NOP ORA ROL ROR RTI RTS SBC STA STX STY TAX TXA DEX INX TAY TYA DEY
-          INY BPL BMI BVC BVS BCC BCS BNE BEQ CLC SEC CLI SEI CLV CLD SED TXS
-          TSX PHA PLA PHP PLP
-        )
-      end
+      KEYWORDS = Set.new %w(
+        ADC AND ASL BIT BRK CMP CPX CPY DEC EOR INC JMP JSR LDA LDX LDY LSR
+        NOP ORA ROL ROR RTI RTS SBC STA STX STY TAX TXA DEX INX TAY TYA DEY
+        INY BPL BMI BVC BVS BCC BCS BNE BEQ CLC SEC CLI SEI CLV CLD SED TXS
+        TSX PHA PLA PHP PLP
+      )
 
-      def self.keywords_type
-        @keywords_type ||= %w(
-          DB DW BYTE WORD
-        )
-      end
+      KEYWORDS_TYPE = Set.new %w(
+        DB DW BYTE WORD
+      )
 
-      def self.keywords_reserved
-        @keywords_reserved ||= %w(
-          INCBIN INCLUDE ORG BANK RSSET RS MACRO ENDM DS PROC ENDP PROCGROUP
-          ENDPROCGROUP INCCHR DEFCHR ZP BSS CODE DATA IF IFDEF IFNDEF ELSE
-          ENDIF FAIL INESPRG INESCHR INESMAP INESMIR FUNC
-        )
-      end
+      KEYWORDS_RESERVED = Set.new %w(
+        INCBIN INCLUDE ORG BANK RSSET RS MACRO ENDM DS PROC ENDP PROCGROUP
+        ENDPROCGROUP INCCHR DEFCHR ZP BSS CODE DATA IF IFDEF IFNDEF ELSE
+        ENDIF FAIL INESPRG INESCHR INESMAP INESMIR FUNC
+      )
 
       state :root do
         rule %r/\s+/m, Text
@@ -43,18 +37,13 @@ module Rouge
         rule %r/\#?\d+/, Num # 10 #10
         rule %r([~&*+=\|?:<>/-]), Operator
 
-        rule %r/\#?\w+:?/i do |m|
-          name = m[0].upcase
+        keywords %r/\#?\w+:?/i do |m|
+          transform(&:upcase)
 
-          if self.class.keywords.include? name
-            token Keyword
-          elsif self.class.keywords_type.include? name
-            token Keyword::Type
-          elsif self.class.keywords_reserved.include? name
-            token Keyword::Reserved
-          else
-            token Name::Function
-          end
+          rule KEYWORDS, Keyword
+          rule KEYWORDS_TYPE, Keyword::Type
+          rule KEYWORDS_RESERVED, Keyword::Reserved
+          default Name::Function
         end
 
         rule %r/\#?(?:LOW|HIGH)\(.*\)/i, Keyword::Reserved # LOW() #HIGH()

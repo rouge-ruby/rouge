@@ -120,36 +120,26 @@ module Rouge
         rule %r/\?[^\s()\[\]{}#,;]*/, Generic::Error
         rule %r/%[^;]+;/, Comment::Multiline
         rule %r/^#(.+\n)+\n/, Comment::Multiline
-        rule %r/:=|[\{\}\[\]\(\),:;]/ do |m|
-          if self.class.punctuations.include?(m[0])
-            token Punctuation
-          else
-            token Text
-          end
-        end
-        # [".",  "!", "#", "+", "*", "-", "<<",
-        #   "/", "<", ">>", "<=", ">", "=", ">=", "@", "|", "~="]
-        rule %r'>>|>=|<=|~=|[\.!#+*\-=></|@]' do |m|
-          if self.class.operators.include?(m[0])
-            token Operator
-          else
-            token Text
-          end
+        keywords %r/:=|[\{\}\[\]\(\),:;]/ do
+          rule :punctuations, Punctuation
+          default Text
         end
 
-        rule %r/\b[_A-Za-z]\w*\b/ do |m|
-          lower = m[0].downcase
-          if self.class.keywords.include?(lower)
-            token Keyword
-          elsif self.class.funcs.include?(lower)
-            token Keyword::Pseudo
-          elsif self.class.transformers.include?(lower)
-            token Name::Builtin
-          elsif self.class.consts.include?(lower)
-            token Keyword::Constant
-          else
-            token Name::Variable
-          end
+        # [".",  "!", "#", "+", "*", "-", "<<",
+        #   "/", "<", ">>", "<=", ">", "=", ">=", "@", "|", "~="]
+        keywords %r'>>|>=|<=|~=|[\.!#+*\-=></|@]' do
+          rule :operators, Operator
+          default Text
+        end
+
+        keywords %r/\b[_A-Za-z]\w*\b/ do
+          transform(&:downcase)
+
+          rule :keywords, Keyword
+          rule :funcs, Keyword::Pseudo
+          rule :transformers, Name::Builtin
+          rule :consts, Keyword::Constant
+          default Name::Variable
         end
 
         rule %r/\s+/, Text

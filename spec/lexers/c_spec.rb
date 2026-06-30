@@ -24,5 +24,9 @@ describe Rouge::Lexers::C do
     it 'recognizes one-line comments not followed by a newline (#796)' do
       assert_tokens_equal '// comment', ['Comment.Single', '// comment']
     end
+
+    it "doesn't leak c++ keywords" do
+      assert_tokens_equal 'using', ['Name', 'using']
+    end
   end
 end

@@ -8,13 +8,11 @@ module Rouge
       desc "Program description language used by syzkaller"
       tag 'syzprog'
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          ANY ANYBLOB ANYPTR ANYPTR64 ANYPTRS ANYRES16 ANYRES32 ANYRES64
-          ANYRESDEC ANYRESHEX ANYRESOCT ANYUNION AUTO false nil true void
-          async fail_nth rerun
-        )
-      end
+      KEYWORDS = Set.new %w(
+        ANY ANYBLOB ANYPTR ANYPTR64 ANYPTRS ANYRES16 ANYRES32 ANYRES64
+        ANYRESDEC ANYRESHEX ANYRESOCT ANYUNION AUTO false nil true void
+        async fail_nth rerun
+      )
 
       comment = /#.*$/
       inline_spaces = /[ \t]+/
@@ -58,12 +56,9 @@ module Rouge
         mixin :mixin_string
 
         rule %r/#{res_id}/, Keyword::Pseudo
-        rule id do |m|
-          if self.class.keywords.include?(m[0])
-            token Keyword
-          else
-            token Name
-          end
+        keywords id do
+          rule KEYWORDS, Keyword
+          default Name
         end
       end
 

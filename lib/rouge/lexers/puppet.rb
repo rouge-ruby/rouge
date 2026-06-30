@@ -15,24 +15,14 @@ module Rouge
         return true if text.shebang? 'puppet'
       end
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          and case class default define else elsif if in import inherits
-          node unless
-        )
-      end
+      KEYWORDS = Set.new %w(
+        and case class default define else elsif if in import inherits
+        node unless
+      )
 
-      def self.constants
-        @constants ||= Set.new %w(
-          false true undef
-        )
-      end
+      CONSTANTS = Set.new %w(false true undef)
 
-      def self.metaparameters
-        @metaparameters ||= Set.new %w(
-          before require notify subscribe
-        )
-      end
+      METAPARAMETERS = Set.new %w(before require notify subscribe)
 
       id = /[a-z]\w*/
       cap_id = /[A-Z]\w*/
@@ -47,12 +37,9 @@ module Rouge
         mixin :whitespace
 
         rule %r/[$]#{qualname}/, Name::Variable
-        rule %r/(#{id})(?=\s*[=+]>)/m do |m|
-          if self.class.metaparameters.include? m[0]
-            token Keyword::Pseudo
-          else
-            token Name::Property
-          end
+        keywords %r/(#{id})(?=\s*[=+]>)/m do
+          rule METAPARAMETERS, Keyword::Pseudo
+          default Name::Property
         end
 
         rule %r/(#{qualname})(?=\s*[(])/m, Name::Function
@@ -81,16 +68,10 @@ module Rouge
 
         rule %r/\d+([.]\d+)?(e[+-]\d+)?/, Num
 
-        # a valid regex.  TODO: regexes are only allowed
-        # in certain places in puppet.
-        rule qualname do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          else
-            token Name
-          end
+        keywords qualname do
+          rule KEYWORDS, Keyword
+          rule CONSTANTS, Keyword::Constant
+          default Name
         end
       end
 

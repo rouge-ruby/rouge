@@ -37,17 +37,12 @@ module Rouge
         rule %r(\-\-.*), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
         rule %r(\(\*.*?\*\))m, Comment::Multiline
-        rule id do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Keyword
-          elsif self.class.word_operators.include? match
-            token Operator::Word
-          elsif self.class.primitives.include? match
-            token Keyword::Type
-          else
-            token Name
-          end
+
+        keywords id do
+          rule :keywords, Keyword
+          rule :word_operators, Operator::Word
+          rule :primitives, Keyword::Type
+          default Name
         end
 
         rule %r/[(){}\[\];]+/, Punctuation

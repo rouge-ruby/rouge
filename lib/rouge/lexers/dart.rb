@@ -11,19 +11,24 @@ module Rouge
       filenames '*.dart'
       mimetypes 'text/x-dart'
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         as assert await break case catch continue default do else finally for if
         in is new rethrow return super switch this throw try while when with yield
       )
 
-      declarations = %w(
-        abstract base async dynamic const covariant external extends factory final get implements
-        interface late native on operator required sealed set static sync typedef var
+      DECLARATIONS = Set.new %w(
+        abstract base async dynamic const covariant external extends
+        factory final get implements interface late native on
+        operator required sealed set static sync typedef var
       )
 
-      types = %w(bool Comparable double Dynamic enum Function int List Map Never Null num Object Pattern Record Set String Symbol Type Uri void)
+      TYPES = Set.new %w(
+        bool Comparable double Dynamic enum Function int List Map
+        Never Null num Object Pattern Record Set String Symbol Type
+        Uri void
+      )
 
-      imports = %w(import deferred export library part\s*of part source)
+      IMPORTS = Set.new %w(import deferred export library part source)
 
       id = /[a-zA-Z_]\w*/
 
@@ -51,12 +56,17 @@ module Rouge
         rule %r/r'[^']*'/, Str::Other
         rule %r/##{id}*/i, Str::Symbol
         rule %r/@#{id}/, Name::Decorator
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword
-        rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
-        rule %r/(?:#{types.join('|')})\b/, Keyword::Type
-        rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/(?:class|mixin)\b/, Keyword::Declaration, :class
-        rule %r/(?:#{imports.join('|')})\b/, Keyword::Namespace, :import
+        rule %r/part\s*of\b/, Keyword::Namespace, :import
+
+        keywords id do
+          rule KEYWORDS, Keyword
+          rule DECLARATIONS, Keyword::Declaration
+          rule TYPES, Keyword::Type
+          rule Set['true', 'false', 'nil'], Keyword::Constant
+          rule Set['class', 'mixin'], Keyword::Declaration, :class
+          rule IMPORTS, Keyword::Namespace, :import
+        end
+
         rule %r/(\.)(#{id})/ do
           groups Operator, Name::Attribute
         end

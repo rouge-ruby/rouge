@@ -14,14 +14,13 @@ module Rouge
       # https://opendylan.org/books/drm/Modules
       # https://opendylan.org/books/drm/Conditional_Execution
       # https://opendylan.org/books/drm/Statement_Macros
-      reserved_words = Set.new %w(
+      RESERVED_WORDS = Set.new %w(
         begin block case class constant create define domain else
         end exception for function generic handler if let library local
         macro method module otherwise select unless until variable while
       )
 
-      hash_word = Set.new %w(#t #f #next #rest #key #all-keys #include)
-      operators = Set.new %w(+ - * / ^ = == ~ ~= ~== < <= > >= & | :=)
+      OPERATORS = Set.new %w(+ - * / ^ = == ~ ~= ~== < <= > >= & | :=)
 
       state :root do
         rule %r/^[\w.-]+:/, Comment::Preproc, :header
@@ -48,16 +47,6 @@ module Rouge
         rule %r/\s+/, Text::Whitespace
 
         # Keywords
-        rule %r/\w+/ do |m|
-          if reserved_words.include?(m[0])
-            token Keyword
-          elsif hash_word.include?(m[0])
-            token Keyword::Constant
-          else
-            fallthrough!
-          end
-        end
-
         rule %r/#(t|f|next|rest|key|all-keys|include)\b/, Keyword::Constant
 
         # Numbers
@@ -77,18 +66,22 @@ module Rouge
 
         rule %r/\\#{word_re}/, Str::Symbol
 
-        rule word_re do |m|
-          word = m[0]
-          if operators.include?(word)
-            token Operator
-          elsif word.start_with?('<') && word.end_with?('>')
-            token Name::Class
-          elsif word.start_with?('*') && word.end_with?('*')
-            token Name::Variable::Instance
-          elsif word.start_with?('$')
-            token Name::Constant
-          else
-            token Name
+        keywords word_re do
+          rule RESERVED_WORDS, Keyword
+          rule OPERATORS, Operator
+
+          default do |m|
+            word = m[0]
+
+            if word.start_with?('<') && word.end_with?('>')
+              token Name::Class
+            elsif word.start_with?('*') && word.end_with?('*')
+              token Name::Variable::Instance
+            elsif word.start_with?('$')
+              token Name::Constant
+            else
+              token Name
+            end
           end
         end
 

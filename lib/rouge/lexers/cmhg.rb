@@ -9,16 +9,11 @@ module Rouge
       tag 'cmhg'
       filenames '*.cmhg'
 
-      def self.preproc_keyword
-        @preproc_keyword ||= %w(
-          define elif else endif error if ifdef ifndef include line pragma undef warning
-        )
-      end
-
       state :root do
         rule %r/;[^\n]*/, Comment
-        rule %r/^([ \t]*)(#[ \t]*(?:(?:#{CMHG.preproc_keyword.join('|')})(?:[ \t].*)?)?)(?=\n)/ do
-          groups Text, Comment::Preproc
+        rule %r/^([ \t]*)(#[ \t]*)(\w*)/ do
+          groups Text, Comment::Preproc, Comment::Preproc
+          push :preproc
         end
         rule %r/[-a-z]+:/, Keyword::Declaration
         rule %r/[a-z_]\w+/i, Name::Entity
@@ -28,6 +23,13 @@ module Rouge
         rule %r/[,\/()]/, Punctuation
         rule %r/[ \t]+/, Text
         rule %r/\n+/, Text
+      end
+
+      state :preproc do
+        rule %r/[^\n\\]+/, Comment::Preproc
+        rule %r/\\\n/, Comment::Preproc
+        rule %r/\n/, Comment::Preproc, :pop!
+        rule %r/\\/, Comment::Preproc
       end
     end
   end

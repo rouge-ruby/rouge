@@ -10,9 +10,9 @@ module Rouge
 
       option :content, "the language for the content (default: auto-detect)"
 
-      def self.http_methods
-        @http_methods ||= %w(GET POST PUT DELETE HEAD OPTIONS TRACE PATCH QUERY)
-      end
+      HTTP_METHODS = %r(
+        GET | POST | PUT | DELETE | HEAD | OPTIONS | TRACE | PATCH | QUERY
+      )mox
 
       def content_lexer
         @content_lexer ||= (lexer_option(:content) || guess_content_lexer)
@@ -31,7 +31,7 @@ module Rouge
       state :root do
         # request
         rule %r(
-          (#{HTTP.http_methods.join('|')})([ ]+) # method
+          (#{HTTP_METHODS})([ ]+) # method
           ([^ ]+)([ ]+)                          # path
           (HTTPS?)(/)(\d(?:\.\d)?)(\r?\n|$)      # http version
         )ox do
@@ -65,9 +65,12 @@ module Rouge
           value = m[5]
           if key.strip.casecmp('content-type').zero?
             @content_type = value.split(';')[0].downcase
+            value_token = Keyword::Type
+          else
+            value_token = Str
           end
 
-          groups Name::Attribute, Text, Punctuation, Text, Str, Text
+          groups Name::Attribute, Text, Punctuation, Text, value_token, Text
         end
 
         rule %r/([^\r\n]+)(\r?\n|$)/ do

@@ -126,18 +126,11 @@ module Rouge
 
         rule %r/#{id}(?=\s*:)/, Name::Attribute, :slash_starts_regex
 
-        rule %r/#{id}/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.constants.include? m[0]
-            token Name::Constant
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          else
-            token Name::Other
-          end
-
-          push :slash_starts_regex
+        keywords id do
+          rule :keywords, Keyword, :slash_starts_regex
+          rule :constants, Name::Constant, :slash_starts_regex
+          rule :builtins, Name::Builtin, :slash_starts_regex
+          default Name::Other, :slash_starts_regex
         end
 
         rule %r/[{(\[;,]/, Punctuation, :slash_starts_regex

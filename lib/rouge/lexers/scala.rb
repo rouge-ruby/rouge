@@ -32,7 +32,7 @@ module Rouge
 
       idrest = %r(#{letter}(?:#{letter}|#{digits})*(?:(?<=_)#{op}+)?)x
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         abstract case catch def do else extends final finally for forSome
         if implicit lazy match new override private protected requires return
         sealed super this throw try val var while with yield
@@ -77,10 +77,14 @@ module Rouge
           groups Operator, Name::Property
         end
 
+        keywords %r/[a-z]+/ do
+          rule KEYWORDS, Keyword
+        end
+
         rule %r(
-          (#{keywords.join("|")})\b|
           (<[%:-]|=>|>:|[#=@_\u21D2\u2190])(\b|(?=\s)|$)
         )x, Keyword
+
         rule %r/:(?!#{op})/, Keyword, :type
         rule %r/(true|false|null)\b/, Keyword::Constant
         rule %r/(import|package)(\s+)/ do

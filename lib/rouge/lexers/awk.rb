@@ -40,7 +40,7 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= %w(
+        @builtins ||= Set.new %w(
           exp log sqrt sin cos atan2 length rand srand int substr index match
           split sub gsub sprintf system tolower toupper
         )
@@ -118,24 +118,15 @@ module Rouge
 
         rule %r/[{}]/, Punctuation, :statement
 
-        rule id do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-            push :expr_start
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-            push :expr_start
-          elsif self.class.reserved.include? m[0]
-            token Keyword::Reserved
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          elsif m[0] =~ /^\$/
-            token Name::Variable
-          else
-            token Name::Other
-          end
+        rule %r/[$]\w+/, Name::Variable
+
+        keywords id do
+          rule :keywords, Keyword, :expr_start
+          rule :declarations, Keyword::Declaration, :expr_start
+          rule :reserved, Keyword::Reserved
+          rule :constants, Keyword::Constant
+          rule :builtins, Name::Builtin
+          default Name::Other
         end
 
         rule %r/[0-9]+\.[0-9]+/, Num::Float

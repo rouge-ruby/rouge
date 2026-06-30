@@ -11,23 +11,20 @@ module Rouge
       filenames '*.tpl', '*.smarty'
       mimetypes 'application/x-smarty', 'text/x-smarty'
 
-      def self.builtins
-        @builtins ||= %w(
-          append assign block call capture config_load debug extends
-          for foreach foreachelse break continue function if elseif
-          else include include_php insert ldelim rdelim literal nocache
-          php section sectionelse setfilter strip while
-          counter cycle eval fetch html_checkboxes html_image html_options
-          html_radios html_select_date html_select_time html_table
-          mailto math textformat
-          capitalize cat count_characters count_paragraphs
-          count_sentences count_words date_format default escape
-          from_charset indent lower nl2br regex_replace replace spacify
-          string_format strip strip_tags to_charset truncate unescape
-          upper wordwrap
-        )
-      end
-
+      BUILTINS = Set.new %w(
+        append assign block call capture config_load debug extends
+        for foreach foreachelse break continue function if elseif
+        else include include_php insert ldelim rdelim literal nocache
+        php section sectionelse setfilter strip while
+        counter cycle eval fetch html_checkboxes html_image html_options
+        html_radios html_select_date html_select_time html_table
+        mailto math textformat
+        capitalize cat count_characters count_paragraphs
+        count_sentences count_words date_format default escape
+        from_charset indent lower nl2br regex_replace replace spacify
+        string_format strip_tags to_charset truncate unescape
+        upper wordwrap
+      )
 
       state :root do
         rule(/\{\s+/) { delegate parent }
@@ -68,12 +65,9 @@ module Rouge
         rule %r/"(\\.|.)*?"/, Str::Double
         rule %r/'(\\.|.)*?'/, Str::Single
 
-        rule %r/([a-zA-Z_]\w*)/ do |m|
-          if self.class.builtins.include? m[0]
-            token Name::Builtin
-          else
-            token Name::Attribute
-          end
+        keywords %r/([a-zA-Z_]\w*)/ do
+          rule BUILTINS, Name::Builtin
+          default Name::Attribute
         end
       end
     end

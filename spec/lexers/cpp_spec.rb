@@ -35,4 +35,12 @@ describe Rouge::Lexers::Cpp do
       assert_guess :mimetype => 'text/x-c++src'
     end
   end
+
+  # [jneen] this tests that inheritance is working correctly for keywords/class methods
+  describe 'lexing' do
+    include Support::Lexing
+    it 'lexes additional keywords' do
+      assert_tokens_equal('using', ['Keyword', 'using'])
+    end
+  end
 end

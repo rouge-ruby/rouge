@@ -74,22 +74,12 @@ module Rouge
 
         # This rule matches identifiers that could be type declarations. The
         # lookahead matches (1) pointers, (2) arrays and (3) variable names.
-        rule %r/#{identifier}(?=(?:\*+)|(?:[ \t]*\[)|(?:[ \t]+\w))/ do |m|
-          if self.class.keywords.include?(m[0])
-            token Keyword
-            pop!
-          elsif m[0] == 'def'
-            token Keyword
-            goto :funcname
-          elsif %w(struct class).include?(m[0])
-            token Keyword
-            goto :classname
-          elsif self.class.c_keywords.include?(m[0])
-            token Keyword::Reserved
-          else
-            token Keyword::Type
-            pop!
-          end
+        keywords %r/#{identifier}(?=(?:\*+)|(?:[ \t]*\[)|(?:[ \t]+\w))/ do |m|
+          rule :keywords, Keyword, :pop!
+          rule(Set['def']) { token Keyword; goto :funcname }
+          rule(Set['struct', 'class']) { token Keyword::Reserved; goto :classname }
+          rule :c_keywords, Keyword::Reserved
+          default Keyword::Type, :pop!
         end
 
         rule(//) { pop! }

@@ -23,9 +23,9 @@ module Rouge
         @primitives ||= Set.new %w(unit int float bool string char list array)
       end
 
-      @@operator = %r([;,_!$%&*+./:<=>?@^|~#-]+)
-      @@id = /[a-z_][\w']*/i
-      @@upper_id = /[A-Z][\w']*/
+      OCAML_OPERATOR = %r([;,_!$%&*+./:<=>?@^|~#-]+)
+      OCAML_ID = /[a-z_][\w']*/i
+      OCAML_UPPER_ID = /[A-Z][\w']*/
 
       state :string do
         rule %r/[^\\"]+/, Str::Double
@@ -43,10 +43,19 @@ module Rouge
       state :dotted do
         rule %r/\s+/m, Text
         rule %r/[.]/, Punctuation
-        rule %r/#{@@upper_id}(?=\s*[.])/, Name::Namespace
-        rule @@upper_id, Name::Class, :pop!
-        rule @@id, Name, :pop!
+        rule %r/#{OCAML_UPPER_ID}(?=\s*[.])/, Name::Namespace
+        rule OCAML_UPPER_ID, Name::Class, :pop!
+        rule OCAML_ID, Name, :pop!
         rule %r/[({\[]/, Punctuation, :pop!
+      end
+
+      state :keywords_and_names do
+        keywords OCAML_ID do
+          rule :keywords, Keyword
+          rule :word_operators, Operator::Word
+          rule :primitives, Keyword::Type
+          default Name
+        end
       end
     end
   end

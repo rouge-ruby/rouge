@@ -10,15 +10,15 @@ module Rouge
       filenames "*.dfy"
       mimetypes "text/x-dafny"
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         abstract allocated assert assume
         break by
         calc case class codatatype const constructor
-        datatype decreases downto
+        datatype decreases default downto
         else ensures exists expect export extends
         false for forall fresh function
         ghost greatest
-        if import include invariant iterator
+        if import include inductive invariant iterator
         label least lemma
         match method modifies modify module
         nameonly new newtype null
@@ -29,24 +29,26 @@ module Rouge
         then this to trait true twostate type
         unchanged
         var
-        while witness
+        where while witness
         yield yields
       )
 
-      literals = %w{ true false null }
+      LITERALS = Set.new %w{ true false null }
 
-      textOperators = %w{ as is in }
+      TEXT_OPERATORS = Set.new %w{ as is in }
 
-      types = %w(bool char int real string nat
-                 array array? object object? ORDINAL
-                 seq set iset map imap multiset )
+      TYPES = Set.new %w(
+        bool char int real string nat
+        array array? object object? ORDINAL
+        seq set iset map imap multiset
+      )
 
       idstart = /[0-9a-zA-Z?]/
       idchar = /[0-9a-zA-Z_'?]/
       id = /#{idstart}#{idchar}*/
 
-      arrayType = /array(?:1[0-9]+|[2-9][0-9]*)\??(?!#{idchar})/
-      bvType = /bv(?:0|[1-9][0-9]*)(?!#{idchar})/
+      array_type = /array(?:1[0-9]+|[2-9][0-9]*)\??(?!#{idchar})/
+      bv_type = /bv(?:0|[1-9][0-9]*)(?!#{idchar})/
 
       digit = /\d/
       digits = /#{digit}+(?:_#{digit}+)*/
@@ -90,21 +92,15 @@ module Rouge
         rule %r/[0-9_]+_(?!#{idchar})/, Error
         rule %r/[0-9]#{idchar}+/, Error
 
-        rule %r/#{arrayType}/, Keyword::Type
-        rule %r/#{bvType}/, Keyword::Type
+        rule %r/#{array_type}/, Keyword::Type
+        rule %r/#{bv_type}/, Keyword::Type
 
-        rule id do |m|
-          if types.include?(m[0])
-            token Keyword::Type
-          elsif literals.include?(m[0])
-            token Keyword::Constant
-          elsif textOperators.include?(m[0])
-            token Operator::Word
-          elsif keywords.include?(m[0])
-            token Keyword::Reserved
-          else
-            token Name
-          end
+        keywords id do
+          rule TYPES, Keyword::Type
+          rule LITERALS, Keyword::Constant
+          rule TEXT_OPERATORS, Operator::Word
+          rule KEYWORDS, Keyword::Reserved
+          default Name
         end
 
         rule %r/\.\./, Operator

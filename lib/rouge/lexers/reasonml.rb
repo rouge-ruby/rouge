@@ -9,6 +9,7 @@ module Rouge
       title "ReasonML"
       desc 'New syntax on top of OCaml ecosystem (reasonml.github.io)'
       tag 'reasonml'
+      aliases 'reason'
       filenames '*.re', '*.rei'
       mimetypes 'text/x-reasonml'
 
@@ -21,26 +22,16 @@ module Rouge
       state :root do
         rule %r/\s+/m, Text
         rule %r/false|true|[(][)]|\[\]/, Name::Builtin::Pseudo
-        rule %r/#{@@upper_id}(?=\s*[.])/, Name::Namespace, :dotted
-        rule %r/`#{@@id}/, Name::Tag
-        rule @@upper_id, Name::Class
+        rule %r/#{OCAML_UPPER_ID}(?=\s*[.])/, Name::Namespace, :dotted
+        rule %r/`#{OCAML_ID}/, Name::Tag
+        rule OCAML_UPPER_ID, Name::Class
         rule %r(//.*), Comment::Single
         rule %r(/\*), Comment::Multiline, :comment
-        rule @@id do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Keyword
-          elsif self.class.word_operators.include? match
-            token Operator::Word
-          elsif self.class.primitives.include? match
-            token Keyword::Type
-          else
-            token Name
-          end
-        end
+
+        mixin :keywords_and_names
 
         rule %r/[(){}\[\];]+/, Punctuation
-        rule @@operator, Operator
+        rule OCAML_OPERATOR, Operator
 
         rule %r/-?\d[\d_]*(.[\d_]*)?(e[+-]?\d[\d_]*)/i, Num::Float
         rule %r/0x\h[\h_]*/i, Num::Hex
@@ -52,7 +43,7 @@ module Rouge
         rule %r/'[^'\/]'/, Str::Char
         rule %r/'/, Keyword
         rule %r/"/, Str::Double, :string
-        rule %r/[~?]#{@@id}/, Name::Variable
+        rule %r/[~?]#{OCAML_ID}/, Name::Variable
       end
 
       state :comment do

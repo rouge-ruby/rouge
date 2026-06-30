@@ -36,18 +36,18 @@ module Rouge
           delegate Shell, m[2]
         end
 
+        ident = %r/[a-z][_a-z0-9]*/i
 
-        # TODO [jneen]: there are elements of BUILTINS with
-        # a . in them - this won't match any of those.
-        rule %r/[a-zA-Z][_a-zA-Z0-9]*/m do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Keyword
-          elsif BUILTINS.include? match
-            token Name::Builtin
-          else
-            token Name
-          end
+        # [jneen]: there are elements of BUILTINS with
+        # a . in them - the generic rule below won't match any of those.
+        keywords %r/#{ident}[.]#{ident}/ do
+          rule BUILTINS, Name::Builtin
+        end
+
+        keywords ident do
+          rule :keywords, Keyword
+          rule BUILTINS, Name::Builtin
+          default Name
         end
 
         rule %r{[(){};:,\/\\\]\[]}, Punctuation

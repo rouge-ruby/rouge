@@ -93,22 +93,32 @@ module Rouge
       end
 
       def self.types
-        @types ||= %w(
+        @types ||= Set.new %w(
           Sort
           Prop
           Type
         )
       end
 
-      def self.operators
-        @operators ||= %w(
-          != # & && \* \+ - / @ ! ` -\. ->
-          \. \.\. \.\.\. :: :> ; ;; <
-          <- = == > _ \| \|\| ~ => <= >=
-          /\ \/ ∀ Π λ ↔ ∧ ∨ ≠ ≤ ≥ ⊎
-          ¬ ⁻¹ ⬝ ▸ → ∃ ℕ ℤ ≈ × ⌞ ⌟ ≡ ⟨ ⟩
-        )
-      end
+      OPERATORS = %r(
+        !=
+        | -[.]
+        | ->
+        | [.]{1,3}
+        | ::
+        | :>
+        | ;;?
+        | <[-=]?
+        | =[=>]?
+        | >=?
+        | _
+        | [|][|]?
+        | ~
+        | /\\
+        | \\/
+        | ⁻¹
+        | [-+*#&/@!∀Πλ↔∧∨≠≤≥⊎¬⬝▸→∃ℕℤ≈×⌞⌟≡⟨⟩]+
+      )x
 
       state :root do
         # comments starting after some space
@@ -117,17 +127,16 @@ module Rouge
         rule %r/"/, Str, :string
         rule %r/\d+/, Num::Integer
 
+        rule %r/@\[.*?\]/, Comment::Preproc
+
         # special commands or keywords
-        rule(/#?\w+/) do |m|
-          match = m[0]
-          if self.class.keywords.include?(match)
-            token Keyword
-          elsif self.class.types.include?(match)
-            token Keyword::Type
-          else
-            token Name
-          end
+        keywords %r/#?\w+/ do
+          rule :keywords, Keyword
+          rule :types, Keyword::Type
+          default Name
         end
+
+        rule %r/`\S+?`/, Operator::Word
 
         # special unicode keywords
         rule %r/[λ]/, Keyword
@@ -136,10 +145,10 @@ module Rouge
         # operators rules
         # ----------------
 
-        rule %r/\:=?/, Text
+        rule %r/\:=?/, Punctuation
         rule %r/\.[0-9]*/, Operator
 
-        rule %r(#{Lean.operators.join('|')}), Operator
+        rule OPERATORS, Operator
 
         # unmatched symbols
         rule %r/[\s\(\),\[\]αβ‹›]+/, Text

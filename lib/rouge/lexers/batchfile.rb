@@ -14,26 +14,26 @@ module Rouge
       mimetypes 'application/bat', 'application/x-bat', 'application/x-msdos-program'
 
       def self.keywords
-        @keywords ||= %w(
+        @keywords ||= Set.new %w(
           if else for in do goto call exit
         )
       end
 
       def self.operator_words
-        @operator_words ||= %w(
+        @operator_words ||= Set.new %w(
           exist defined errorlevel cmdextversion not equ neq lss leq gtr geq
         )
       end
 
       def self.devices
-        @devices ||= %w(
+        @devices ||= Set.new %w(
           con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2
           lpt3 lpt4 lpt5 lpt6 lpt7 lpt8 lpt9
         )
       end
 
       def self.builtin_commands
-        @builtin_commands ||= %w(
+        @builtin_commands ||= Set.new %w(
           assoc attrib break bcdedit cacls cd chcp chdir chkdsk chkntfs choice
           cls cmd color comp compact convert copy date del dir diskpart doskey
           dpath driverquery echo endlocal erase fc find findstr format fsutil
@@ -46,7 +46,7 @@ module Rouge
       end
 
       def self.other_commands
-        @other_commands ||= %w(
+        @other_commands ||= Set.new %w(
           addusers admodcmd ansicon arp at bcdboot bitsadmin browstat certreq
           certutil change cidiag cipher cleanmgr clip cmdkey compress convertcp
           coreinfo csccmd csvde cscript curl debug defrag delprof deltree devcon
@@ -71,7 +71,7 @@ module Rouge
       end
 
       def self.attributes
-        @attributes ||= %w(
+        @attributes ||= Set.new %w(
           on off disable enableextensions enabledelayedexpansion
         )
       end
@@ -86,24 +86,19 @@ module Rouge
         # Labels
         rule %r/:[a-z]+/i, Name::Label
 
-        rule %r/([a-z]\w*)(\.exe|com|bat|cmd|msi)?/i do |m|
-          if self.class.devices.include? m[1]
-            groups Keyword::Reserved, Error
-          elsif self.class.keywords.include? m[1]
-            groups Keyword, Error
-          elsif self.class.operator_words.include? m[1]
-            groups Operator::Word, Error
-          elsif self.class.builtin_commands.include? m[1]
-            token Name::Builtin
-          elsif self.class.other_commands.include? m[1]
-            token Name::Builtin
-          elsif self.class.attributes.include? m[1]
-            groups Name::Attribute, Error
-          elsif "set".casecmp m[1]
-            groups Keyword::Declaration, Error
-          else
-            token Text
-          end
+        keywords %r/([a-z]\w*)(\.exe|com|bat|cmd|msi)?/i do
+          group 1
+          transform(&:downcase)
+
+          rule(:devices) { groups Keyword::Reserved, Error }
+          rule(:keywords) { groups Keyword, Error }
+          rule(:operator_words) { groups Operator::Word, Error }
+          rule :builtin_commands, Name::Builtin
+          rule :other_commands, Name::Builtin
+          rule(:attributes) { groups Name::Attribute, Error }
+          rule(Set["set"]) { groups Keyword::Declaration, Error }
+
+          default Text
         end
 
         rule %r/((?:[\/\+]|--?)[a-z]+)\s*/i, Name::Attribute

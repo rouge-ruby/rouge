@@ -11,18 +11,18 @@ module Rouge
       filenames '*.java'
       mimetypes 'text/x-java'
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         assert break case catch continue default do else finally for
         if goto instanceof new return switch this throw try while
         yield when
       )
 
-      declarations = %w(
+      DECLARATIONS = Set.new %w(
         abstract const extends final implements native permits private protected
         public sealed static strictfp super synchronized throws transient volatile
       )
 
-      types = %w(boolean byte char double float int long short var void)
+      TYPES = Set.new %w(boolean byte char double float int long short var void String)
 
       id = /[[:alpha:]_][[:word:]]*/
       const_name = /[[:upper:]][[:upper:][:digit:]_]*\b/
@@ -32,30 +32,29 @@ module Rouge
         rule %r/[^\S\n]+/, Text
         rule %r(//.*?$), Comment::Single
         rule %r(/\*.*?\*/)m, Comment::Multiline
-        # keywords: go before method names to avoid lexing "throw new XYZ"
-        # as a method signature
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword
 
-        rule %r(
-          (\s*(?:[a-zA-Z_][a-zA-Z0-9_.\[\]<>]*\s+)+?) # return arguments
-          ([a-zA-Z_][a-zA-Z0-9_]*)                  # method name
-          (\s*)(\()                                 # signature start
-        )mx do |m|
-          # TODO: do this better, this shouldn't need a delegation
-          delegate Java, m[1]
-          token Name::Function, m[2]
-          token Text, m[3]
-          token Operator, m[4]
+        keywords %r/\w+/ do
+          rule KEYWORDS, Keyword
         end
 
+        rule %r/#{id}(?=\s*[(])/, Name::Function
+        rule %r/#{id}:/, Name::Label
+
+        # special case since this has a - in it, which normally would
+        # break the identifier
         rule %r/non-sealed\b/, Keyword::Declaration
+
+        keywords id do
+          rule Set['class', 'enum', 'interface', 'record'], Keyword::Declaration, :class
+          rule Set['import', 'package'], Keyword::Namespace, :import
+          rule DECLARATIONS, Keyword::Declaration
+          rule TYPES, Keyword::Type
+          rule Set['true', 'false', 'null'], Keyword::Constant
+          default Name
+        end
+
         rule %r/@interface\b/, Keyword::Declaration, :class
         rule %r/@#{id}/, Name::Decorator
-        rule %r/(?:#{declarations.join('|')})\b/, Keyword::Declaration
-        rule %r/(?:#{types.join('|')})\b/, Keyword::Type
-        rule %r/(?:true|false|null)\b/, Keyword::Constant
-        rule %r/(?:class|enum|interface|record)\b/, Keyword::Declaration, :class
-        rule %r/(?:import(?:\s+(?:static|module))?|package)\b/, Keyword::Namespace, :import
         rule %r/"""\s*\n.*?(?<!\\)"""/m, Str::Heredoc
         rule %r/"(\\\\|\\"|[^"])*"/, Str
         rule %r/'(?:\\.|[^\\]|\\u[0-9a-f]{4})'/, Str::Char
@@ -63,7 +62,6 @@ module Rouge
           groups Operator, Name::Attribute
         end
 
-        rule %r/#{id}:/, Name::Label
         rule const_name, Name::Constant
         rule class_name, Name::Class
         rule %r/\$?#{id}/, Name
@@ -88,6 +86,7 @@ module Rouge
 
       state :import do
         rule %r/\s+/m, Text
+        rule %r/(?:static|module)\b/, Keyword::Namespace
         rule %r/[a-z0-9_.]+\*?/i, Name::Namespace, :pop!
       end
     end

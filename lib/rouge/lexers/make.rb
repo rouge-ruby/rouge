@@ -11,14 +11,12 @@ module Rouge
       filenames '*.make', '*.mak', '*.mk', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile', '*,fe1'
       mimetypes 'text/x-makefile'
 
-      def self.functions
-        @functions ||= %w(
-          abspath addprefix addsuffix and basename call dir error eval file
-          filter filter-out findstring firstword flavor foreach if join lastword
-          notdir or origin patsubst realpath shell sort strip subst suffix value
-          warning wildcard word wordlist words
-        )
-      end
+      FUNCTIONS = Set.new %w(
+        abspath addprefix addsuffix and basename call dir error eval file
+        filter filter-out findstring firstword flavor foreach if join lastword
+        notdir or origin patsubst realpath shell sort strip subst suffix value
+        warning wildcard word wordlist words
+      )
 
       def initialize(opts={})
         super
@@ -27,10 +25,17 @@ module Rouge
 
       start { @shell.reset! }
 
-      state :root do
+      state :whitespace do
         rule %r/\s+/, Text
-
         rule %r/#.*?\n/, Comment
+      end
+
+      state :dollar_paren_interp do
+        rule %r/[$]+[({]/, Punctuation, :dollar_paren
+      end
+
+      state :root do
+        mixin :whitespace
 
         rule %r/([-s]?include)((?:[\t ]+[^\t\n #]+)+)/ do
           groups Keyword, Literal::String::Other
@@ -61,19 +66,28 @@ module Rouge
 
         rule %r/"(\\\\|\\.|[^"\\])*"/, Str::Double
         rule %r/'(\\\\|\\.|[^'\\])*'/, Str::Single
+
+        rule %r/(override\b)*([\t ])*(define)([\t ]+)([^#\n]+)/ do
+          groups Keyword::Declaration, Text, Keyword, Text, Name::Variable
+        end
+
         rule %r/([^\n:]+)(:+)([ \t]*)/ do
           groups Name::Label, Operator, Text
           push :block_header
         end
 
-        rule %r/(override\b)*([\t ])*(define)([\t ]+)([^#\n]+)/ do
-          groups Name::Builtin, Text, Keyword, Text, Name::Variable
+        mixin :dollar_paren_interp
+      end
+
+      state :dollar_paren do
+        mixin :whitespace
+
+        keywords %r/[\w-]+/ do
+          rule(FUNCTIONS) { token Name::Builtin; goto :shell_expr }
+          default { token Name::Function; goto :shell_expr }
         end
 
-        rule %r/(\$[({])([\t ]*)(#{Make.functions.join('|')})([\t ]+)/m do
-          groups Name::Function, Text, Name::Builtin, Text
-          push :shell_expr
-        end
+        rule(//) { goto :shell_expr }
       end
 
       state :export do
@@ -115,13 +129,10 @@ module Rouge
 
       state :shell do
         # macro interpolation
-        rule %r/[\$]{1,2}[({]/, Punctuation, :macro_expr
+        # rule %r/[\$]{1,2}[({]/, Punctuation, :macro_expr
 
+        mixin :dollar_paren_interp
         # function invocation
-        rule %r/(\$[({])([\t ]*)(#{Make.functions.join('|')})([\t ]+)/m do
-          groups Punctuation, Text, Name::Builtin, Text
-          push :shell_expr
-        end
 
         rule(/\\./m) { delegate @shell }
         stop = /[\$]{1,2}\(|[\$]{1,2}\{|\(|\)|\}|\\|$/

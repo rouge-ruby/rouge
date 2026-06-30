@@ -12,47 +12,41 @@ module Rouge
       filenames '*.vcl'
       mimetypes 'text/x-varnish', 'text/x-vcl'
 
-      SPACE = '[ \f\n\r\t\v]+'
+      SPACE = %r/[ \f\n\r\t\v]+/
 
       # backend acl
-      def self.keywords
-        @keywords ||= Set.new %w[
-          vcl set unset include import if else elseif elif elsif director probe
-          backend acl
+      KEYWORDS = Set.new %w[
+        vcl set unset include import if else elseif elif elsif director probe
+        backend acl
 
-          declare local
-          BOOL FLOAT INTEGER IP RTIME STRING TIME
-        ]
-      end
+        declare local
+        BOOL FLOAT INTEGER IP RTIME STRING TIME
+      ]
 
-      def self.functions
-        @functions ||= Set.new %w[
-          ban call hash_data new regsub regsuball return rollback
-          std.cache_req_body std.collect std.duration std.fileread std.healthy
-          std.integer std.ip std.log std.port std.querysort std.random std.real
-          std.real2time std.rollback std.set_ip_tos std.strstr std.syslog
-          std.time std.time2integer std.time2real std.timestamp std.tolower
-          std.toupper synth synthetic
-        ]
-      end
+      FUNCTIONS = Set.new %w[
+        ban call hash_data new regsub regsuball return rollback
+        std.cache_req_body std.collect std.duration std.fileread std.healthy
+        std.integer std.ip std.log std.port std.querysort std.random std.real
+        std.real2time std.rollback std.set_ip_tos std.strstr std.syslog
+        std.time std.time2integer std.time2real std.timestamp std.tolower
+        std.toupper synth synthetic
+      ]
 
-      def self.variables
-        @variables ||= Set.new %w[
-          bereq bereq.backend bereq.between_bytes_timeout bereq.connect_timeout
-          bereq.first_byte_timeout bereq.method bereq.proto bereq.retries
-          bereq.uncacheable bereq.url bereq.xid beresp beresp.age
-          beresp.backend beresp.backend.ip beresp.backend.name beresp.do_esi
-          beresp.do_gunzip beresp.do_gzip beresp.do_stream beresp.grace
-          beresp.keep beresp.proto beresp.reason beresp.status
-          beresp.storage_hint beresp.ttl beresp.uncacheable beresp.was_304
-          client.identity client.ip local.ip now obj.age obj.grace obj.hits
-          obj.keep obj.proto obj.reason obj.status obj.ttl obj.uncacheable
-          remote.ip req req.backend_hint req.can_gzip req.esi req.esi_level
-          req.hash_always_miss req.hash_ignore_busy req.method req.proto
-          req.restarts req.ttl req.url req.xid resp resp.proto resp.reason
-          resp.status server.hostname server.identity server.ip
-        ]
-      end
+      VARIABLES = Set.new %w[
+        bereq bereq.backend bereq.between_bytes_timeout bereq.connect_timeout
+        bereq.first_byte_timeout bereq.method bereq.proto bereq.retries
+        bereq.uncacheable bereq.url bereq.xid beresp beresp.age
+        beresp.backend beresp.backend.ip beresp.backend.name beresp.do_esi
+        beresp.do_gunzip beresp.do_gzip beresp.do_stream beresp.grace
+        beresp.keep beresp.proto beresp.reason beresp.status
+        beresp.storage_hint beresp.ttl beresp.uncacheable beresp.was_304
+        client.identity client.ip local.ip now obj.age obj.grace obj.hits
+        obj.keep obj.proto obj.reason obj.status obj.ttl obj.uncacheable
+        remote.ip req req.backend_hint req.can_gzip req.esi req.esi_level
+        req.hash_always_miss req.hash_ignore_busy req.method req.proto
+        req.restarts req.ttl req.url req.xid resp resp.proto resp.reason
+        resp.status server.hostname server.identity server.ip
+      ]
 
       # This is never used
       # def self.routines
@@ -96,11 +90,11 @@ module Rouge
           push :inline_c
         end
 
-        rule %r/\.?[a-z_][\w.-]*/i do |m|
-          next token Keyword if self.class.keywords.include? m[0]
-          next token Name::Function if self.class.functions.include? m[0]
-          next token Name::Variable if self.class.variables.include? m[0]
-          token Text
+        keywords %r/\.?[a-z_][\w.-]*/i do
+          rule KEYWORDS, Keyword
+          rule FUNCTIONS, Name::Function
+          rule VARIABLES, Name::Variable
+          default Text
         end
 
         ## for number literals
@@ -123,7 +117,7 @@ module Rouge
         }xi
 
         # duration literals
-        duration_suffix = Regexp.union(%w(ms s m h d w y))
+        duration_suffix = %r/ms|s|m|h|d|w|y/
         rule %r/#{numeric}#{duration_suffix}/, Num::Other
 
         # numeric literals (integer / float)

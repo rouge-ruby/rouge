@@ -1089,6 +1089,14 @@ $ echo "Sample feature output"
 ```
 ````
 
+```markdown
+---
+title: This sample has YAML frontmatter.
+---
+
+Some text.
+```
+
 [This is a link `with backticks`](example.com)
 [This is a link to a TOML section `[with brackets]` (and backticks)](example.com)
 [This is a link to a TOML section `[[with double brackets]]` (and backticks)](example.com)

@@ -26,12 +26,6 @@ module Rouge
 
         rule %r/\\./, Str::Escape
 
-        rule %r/^[\S ]+\n(?:---*)\n/, Generic::Heading
-        rule %r/^[\S ]+\n(?:===*)\n/, Generic::Subheading
-
-        rule %r/^#(?=[^#]).*?$/, Generic::Heading
-        rule %r/^##*.*?$/, Generic::Subheading
-
         rule %r/^([ \t]*)(`{3,}|~{3,})([^\n]*\n)((.*?)(\n\1)(\2))?/m do |m|
           name = m[3].strip
           sublexer =
@@ -72,6 +66,12 @@ module Rouge
         rule %r/\n\n((    |\t).*?\n|\n)+/, Str::Backtick
 
         rule %r/(`+)(?:#{edot}|\n)+?\1/, Str::Backtick
+
+        rule %r/^[\S ]+\n(?:---*)\n/, Generic::Heading
+        rule %r/^[\S ]+\n(?:===*)\n/, Generic::Subheading
+
+        rule %r/^#(?=[^#]).*?$/, Generic::Heading
+        rule %r/^##*.*?$/, Generic::Subheading
 
         # various uses of * are in order of precedence
 

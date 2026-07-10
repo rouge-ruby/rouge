@@ -40,3 +40,12 @@ Cool list filter {{ listx | join(', ') }}
 {% raw %} One line {{ raw }} block {% endraw %}
 
 {% include 'footer.html' %}
+
+{% set lights = {
+  'Floor': 'on',
+  'Livingroom': 'off',
+  'Bedroom': 'on'
+} %}
+{% for room, status in lights.items() %}
+  The light in {{ room }} is {{ status }}.
+{% endfor %}

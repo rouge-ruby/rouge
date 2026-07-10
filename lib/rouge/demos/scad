@@ -1,0 +1,16 @@
+// --------------------------------------------------------------------
+// a round groove to be substracted from other solids
+// --------------------------------------------------------------------
+module round_groove(length = goove_length)
+{
+    groove_radius = 2.25;
+    groove_center = 2.4;
+    groove_width = 3.0;
+    union()
+    {
+        translate([0, groove_center, 0] )  
+            cylinder(r = groove_radius, h=len + 2 * manifold_correction, center=true);
+        translate([0, 0.5, 0] )  
+            cube([groove_width,1.5,len + 2 * manifold_correction], center = true);
+    }
+}

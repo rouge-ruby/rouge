@@ -272,3 +272,11 @@ def take_first(pairs):
 
 # Distinguish between builtins and method calls
 self.filter(filter(lambda x: x == 1, items))
+
+# Builtin exceptions, custom exception classes and plain function calls
+def check(value):
+    if value is None:
+        raise ValueError("bad")
+    if not isinstance(value, MyCustomError):
+        raise MyCustomError("bad")
+    foo()

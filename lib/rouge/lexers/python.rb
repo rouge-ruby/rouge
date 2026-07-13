@@ -93,23 +93,18 @@ module Rouge
         rule %r/\\\n/, Str::Escape
       end
 
-      # Yield a token for an identifier. Handle keywords/builtins, attr accesses
+      # Yield a token for an identifier. Handle keywords/builtins
       def token_for_identifier(word, fallback)
         if self.class.keywords.include? word
           token Keyword
-        elsif not in_state?(:dot) and self.class.exceptions.include? word
+        elsif self.class.exceptions.include? word
+          token Name::Exception
+        elsif self.class.builtins.include? word
           token Name::Builtin
-        elsif not in_state?(:dot) and self.class.builtins.include? word
-          token Name::Builtin
-        elsif not in_state?(:dot) and self.class.builtins_pseudo.include? word
+        elsif self.class.builtins_pseudo.include? word
           token Name::Builtin::Pseudo
         else
           token fallback
-        end
-
-        # Reset attr access state
-        if in_state?(:dot)
-          pop!
         end
       end
 
@@ -201,6 +196,7 @@ module Rouge
         mixin :inline_whitespace
         rule %r/([A-Z]\w*)(?=#{inline_ws}[(])/m, Name::Class
         rule %r/(#{identifier})(?=#{inline_ws}[(])/m, Name::Function
+        rule identifier, Name, :pop!
         rule(//) { pop! }
       end
 

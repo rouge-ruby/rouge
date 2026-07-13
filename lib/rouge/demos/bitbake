@@ -1,0 +1,23 @@
+inherit kernel
+
+KERNEL_VERSION_PKG_NAME = "${@legitimize_package_name(d.getVar('KERNEL_VERSION'))}"
+KERNEL_VERSION_PKG_NAME[vardepvalue] = "${LINUX_VERSION}"
+
+# Demo Python Task
+python do_python_task () {
+    pn = d.getVar("PN")
+    kpn = d.getVar("KERNEL_PACKAGE_NAME")
+
+    if kpn == pn:
+        bb.warn("Some packages (E.g. *-dev) might be missing")
+}
+addtask python_task before do_deploy
+
+do_shell_task () {
+    echo "Copying initramfs into ./usr ..."
+    # In case the directory is not created yet from the first pass compile:
+    mkdir -p ${B}/usr
+    # Find and use the first initramfs image archive type we find
+    rm -f ${B}/usr/${INITRAMFS_IMAGE_NAME}.cpio
+}
+addtask shell_task before do_deploy

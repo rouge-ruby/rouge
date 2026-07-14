@@ -1,0 +1,123 @@
+#! /usr/bin/env perl6
+
+=begin pod
+
+=NAME    Test Program for Pod::To::Parser
+=AUTHOR  Patrick Spek
+=VERSION 0.0.1
+
+=begin LICENSE
+GNU Affero GPLN<Version 3>
+=end LICENSE
+
+=head1 A test program for App::POD::Manual
+
+Now we're reaching the real POD document that I care about. Let's add in some
+test cases as well here.
+
+=head2 Text styles
+
+=item1 This text is B<bold>
+=item1 This text is I<italic>
+=item1 This text is U<underlined>
+=item1 This text is C<code>
+=item1 This text is L<a link|https://www.tyil.work> to my blog
+=item1 This text is normal Z<or is it?>
+=item1 I'm running ouf of ideas N<Search the Internet for more!>
+
+=head2 Lists
+
+=item2 Starting off at level 2
+=item5 Progressing to level 5
+=item1 Back to level 1
+=item2 On to level 2
+=item3 On to level 3
+=item4 On to level 4
+
+=item8 But what about an item with content that goes well beyond the 80 characters?
+
+=begin item10
+Which can easily occur in a block item, for instance. It should wrap around
+and bring the next lines on a similar level of indentation.
+
+The question is, does it?
+=end item10
+
+=head3 Definition lists
+
+=defn pod
+Plain Ol' Documentation
+
+=defn foo
+Not the same as bar
+
+=head2 Code blocks
+
+Now on to some code blocks. These are generally used to show code samples.
+
+    This is a code block. It is indented by 4 spaces to indicate this.
+
+Code samples are important to easily show a user how to interact with the
+program they're using. Nobody wants to read through pages of a manual when they
+just want to know how to use it for their particular use case.
+
+=begin code :name<Named code block>
+This is a code block by name. It is covered by a begin and end block. It has no limit to line length.
+Spaces  in  the  code  are    preserved    .
+
+Similar for newlines, actually.
+=end code
+
+=code Code on a single line should also work as expected.
+
+And that concludes the test for code blocks!
+
+=head2 IO blocks
+
+There are blocks to denote program input and output, called IO blocks. They
+also have in-line variants:
+
+=item1 This is K<keyboard input>
+=item1 This is T<terminal output>
+
+The bigger blocks deserve a test as well, I think:
+
+=head3 Short-hand input and output
+
+=input A simple input line
+=output A simple output line
+
+=head3 Big input and output blocks
+
+=begin input
+A larger block of input.
+=end input
+
+=begin output
+A larger block of output.
+=end output
+
+=head2 Unicode
+
+And of course, let's throw in some Unicode stuff. I stole these examples from
+the documentation site, but I don't think that's a bad source of input for
+testing purposes.
+
+Perl 6 makes considerable use of the E<171> and E<187> characters.
+
+Perl 6 makes considerable use of the E<laquo> and E<raquo> characters.N<Not sure why these don't work>
+
+Perl 6 makes considerable use of the E<0b10101011> and E<0b10111011> characters.
+
+Perl 6 makes considerable use of the E<0o253> and E<0o273> characters.
+
+Perl 6 makes considerable use of the E<0d171> and E<0d187> characters.
+
+Perl 6 makes considerable use of the E<0xAB> and E<0xBB> characters.
+
+=head2 Conclusion
+
+And that concludes this test file. If everything looked good in your tests, you
+may now be confident about your work.
+
+=end pod

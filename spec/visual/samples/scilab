@@ -1,0 +1,81 @@
+function [out] = example(aa)
+    //
+    // Some comments ...
+    //
+
+    x = "a string with double quotes.";    // some "double quotes" in a comment
+    y = "a string with double quotes with ""internal"" double quotes.";
+    z = "a string with double quotes with ''internal'' quotes.";
+
+    x = 'a string with quotes';    // some 'single quotes' in a comment
+    y = 'a string with quotes with ''internal'' quotes.';
+    z = 'a string with quotes with ""internal"" double quotes.';
+
+    // for
+    for i = 1:20
+      disp(i);
+    end
+
+    // while
+    i = 20
+    while (i > 0)
+      disp(i);
+      i = i - 1
+    end
+
+    // select/case
+    select i
+    case 12 then
+      disp("12")
+    case 42 then
+      disp("42")
+    else
+      disp("else case")
+    end
+
+    // switch/otherwise
+    switch i
+    case 12 then
+      disp("12")
+    case 42 then
+      disp("42")
+    otherwise
+      disp("else case")
+    end
+
+    out = %T
+
+endfunction
+
+function y=otherfunc(x)
+    a = rand(30, 30);
+    b = rand(30, 30);
+
+    c = a .* b ./ a \ .. // comment at end of continuation line
+        (b .* a + b - a);
+
+    c = a' * b';  // note: these quotes are for conjugate transpose, not string.
+    d = a.' * b.';  // note: these quotes are for non-conjugate transpose, not string.
+    e = [a' , a']
+
+    %T && %F || %T
+    1 / 2
+    1 \ 2
+    1 ./ 2
+    1 .\ 2
+
+
+    disp("a comment symbol // in a double quoted string");
+    disp('a comment symbol // in a single quoted string');
+
+    y = {"hello"};
+endfunction
+
+/*
+Mutli-line block comment
+*/
+
+function nooutfunc(s)
+    // function without output argument
+    a = 1;
+end

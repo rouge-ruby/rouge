@@ -22,6 +22,7 @@ module Rouge
           fn self alias out read mut owned ref var
           struct trait raises with in match case
           deinit comptime thin async await capturing
+          where
         )
       end
 

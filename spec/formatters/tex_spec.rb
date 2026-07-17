@@ -13,11 +13,11 @@ describe Rouge::Formatters::Tex do
     let(:options) { { :wrap => false } }
 
     let(:expected) do
-<<-'OUT'
-\begin{RG*}%
-\RG{n}{foo}%
-\end{RG*}%
-    OUT
+      <<~'OUT'
+      \begin{RG*}%
+      \RG{n}{foo}%
+      \end{RG*}%
+      OUT
     end
 
     it 'renders' do
@@ -32,7 +32,7 @@ describe Rouge::Formatters::Tex do
     #   ~100%
     # }
     #
-    # we must escape the braces, the percent sign, the tilde, 
+    # we must escape the braces, the percent sign, the tilde,
     # and the initial space on the second line.
     let(:tokens) do
       [[Token['Keyword'], 'foo'],

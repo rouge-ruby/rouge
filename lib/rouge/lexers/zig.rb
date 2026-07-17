@@ -84,16 +84,16 @@ module Rouge
         rule %r/([.]?)(\s*)(@?#{id})(\s*)([(]?)/ do |m|
           name = m[3]
           t = if self.class.keywords.include? name
-                Keyword
-              elsif self.class.builtins.include? name
-                Name::Builtin
-              elsif !m[1].empty? && !m[5].empty?
-                Name::Function
-              elsif !m[1].empty?
-                Name::Property
-              else
-                Name
-              end
+            Keyword
+          elsif self.class.builtins.include? name
+            Name::Builtin
+          elsif !m[1].empty? && !m[5].empty?
+            Name::Function
+          elsif !m[1].empty?
+            Name::Property
+          else
+            Name
+          end
 
           groups Punctuation, Text, t, Text, Punctuation
         end

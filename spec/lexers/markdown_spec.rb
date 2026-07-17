@@ -40,7 +40,7 @@ describe Rouge::Lexers::Markdown do
     end
 
     it 'picks a sub-lexer when the code-block-content is ambiguous' do
-      source = "Index: ): Awaitable<\n"
+      source = "#!/usr/bin/env bash\n<html></html>"
       assert_raises Rouge::Guesser::Ambiguous do
         Rouge::Lexer.find_fancy(nil, source)
       end

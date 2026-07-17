@@ -10,6 +10,6 @@ describe Rouge::Lexers::JSL do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.jsl'
     end
-    
+
   end
 end

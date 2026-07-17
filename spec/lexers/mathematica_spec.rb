@@ -16,5 +16,10 @@ describe Rouge::Lexers::Mathematica do
       assert_guess :mimetype => 'application/vnd.wolfram.mathematica.package'
       assert_guess :mimetype => 'application/vnd.wolfram.wl'
     end
+
+    it 'guesses by source' do
+      assert_guess :filename => 'foo.m', :source => '(* Mathematica comment *)'
+      assert_guess :filename => 'foo.m', :source => 'a := b'
+    end
   end
 end

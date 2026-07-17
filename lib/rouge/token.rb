@@ -61,7 +61,7 @@ module Rouge
 
       def each_token(&b)
         Token.cache.each do |(_, t)|
-          b.call(t)
+          yield(t)
         end
       end
     end

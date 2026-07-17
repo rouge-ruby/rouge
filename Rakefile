@@ -16,6 +16,7 @@ task :test => [:check]
 task :build => [:clean, :check, "generate:docs"]
 
 # Add utility tasks
+desc 'Add a newline'
 task :newline do
   puts
 end
@@ -29,6 +30,7 @@ end
 def alias_task(aliases)
   aliases.each do |alias_name,task_name|
     t = Rake::Task[task_name]
+    desc "Add legacy alias #{alias_name} for modern #{task_name} task"
     task alias_name, *t.arg_names do |_, args|
       args = t.arg_names.map { |a| args[a] }
       t.invoke(args)

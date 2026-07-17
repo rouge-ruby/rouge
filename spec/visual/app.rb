@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
-require 'rubygems'
-require 'bundler'
-Bundler.require(:default, :development)
+$VERBOSE = true
+
+require 'sinatra'
+require 'pry'
 
 # stdlib
 require 'pathname'
 
+require_relative 'rouge_reloader'
+
 class VisualTestApp < Sinatra::Application
-  BASE = Pathname.new(__FILE__).dirname
+  BASE = Pathname.new(__dir__)
   SAMPLES = BASE.join('samples')
   ROOT = BASE.parent.parent
 
-  ROUGE_LIB = ROOT.join('lib/rouge.rb')
+  RELOADER = FeatureReloader.new(:Rouge, ROOT.join('lib').to_s, 'rouge.rb')
 
   DEMOS = ROOT.join('lib/rouge/demos')
-
-  def reload_source!
-    Rouge.reload!
-  end
 
   def query_string
     env['rack.request.query_string']
@@ -32,23 +31,20 @@ class VisualTestApp < Sinatra::Application
     line_numbers = as_boolean params.fetch(:line_numbers, false)
 
     # parameters enabled by default
-    wrapped    = as_boolean params.fetch(:wrap, true)
-    line_table = as_boolean params.fetch(:line_table, true)
+    line_table = as_boolean params.fetch(:line_table, false)
 
     # base HTML formatter
     formatter = inline ?
                   Rouge::Formatters::HTMLInline.new(@theme) :
-                  Rouge::Formatters::HTML.new
+                  Rouge::Formatters::HTMLDebug.new
 
     if line_numbers
-      formatter = line_table ?
-                    Rouge::Formatters::HTMLLineTable.new(formatter) :
-                    Rouge::Formatters::HTMLTable.new(formatter)
+      line_table \
+        ? Rouge::Formatters::HTMLLineTable.new(formatter, table_class: 'highlight')
+        : Rouge::Formatters::HTMLTable.new(formatter, table_class: 'highlight no-wrap')
+    else
+      Rouge::Formatters::HTMLPygments.new(formatter, 'highlight')
     end
-
-    return Rouge::Formatters::HTMLPygments.new(formatter) if wrapped
-
-    formatter
   end
 
   def as_boolean(value)
@@ -66,15 +62,14 @@ class VisualTestApp < Sinatra::Application
   end
 
   before do
-    reload_source!
-
+    RELOADER.reload!
     Rouge::Lexer.enable_debug!
     Rouge::Formatter.enable_escape! if params[:escape]
 
     theme_class = Rouge::Theme.find(params[:theme] || 'thankful_eyes')
     halt 404 unless theme_class
 
-    @theme         = theme_class.new(scope: '.codehilite')
+    @theme         = theme_class.new(scope: '.highlight')
     @comment_color = theme_class.get_style(Rouge::Token::Tokens::Comment).fg
     @formatter     = setup_formatter(params)
   end
@@ -95,7 +90,7 @@ class VisualTestApp < Sinatra::Application
 
   get '/' do
     @samples = DEMOS.entries.sort.reject { |s| s.basename.to_s =~ /^\.|~$/ }
-    @samples.map!(&Rouge::Lexer.method(:find))
+    @samples.map! { |s| Rouge::Lexer.find(s) }
 
     erb :index
   end

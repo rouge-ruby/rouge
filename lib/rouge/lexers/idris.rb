@@ -112,7 +112,7 @@ module Rouge
 
         rule %r/\[\s*\]/, Keyword::Type
         rule %r/\(\s*\)/, Name::Builtin
-        
+
         # Quasiquotations
         rule %r/(\[)([_a-z][\w']*)(\|)/ do |m|
           token Operator, m[1]

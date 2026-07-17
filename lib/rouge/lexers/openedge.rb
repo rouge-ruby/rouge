@@ -21,7 +21,7 @@ module Rouge
           ADD-BUFFER ADD-CALC-COL ADD-CALC-COLU ADD-CALC-COLUM ADD-CALC-COLUMN ADD-COLUMNS-FROM
           ADD-EVENTS-PROC ADD-EVENTS-PROCE ADD-EVENTS-PROCED ADD-EVENTS-PROCEDU ADD-EVENTS-PROCEDUR
           ADD-EVENTS-PROCEDURE ADD-FIELDS-FROM ADD-FIRST ADD-HEADER-ENTRY ADD-INDEX-FIELD ADD-INTERVAL
-          ADD-LAST ADD-LIKE-COLUMN ADD-LIKE-FIELD ADD-LIKE-INDEX ADD-NEW-FIELD ADD-NEW-INDEX       
+          ADD-LAST ADD-LIKE-COLUMN ADD-LIKE-FIELD ADD-LIKE-INDEX ADD-NEW-FIELD ADD-NEW-INDEX
           ADD-SCHEMA-LOCATION ADD-SOURCE-BUFFER ADD-SUPER-PROC ADD-SUPER-PROCE ADD-SUPER-PROCED
           ADD-SUPER-PROCEDU ADD-SUPER-PROCEDUR ADD-SUPER-PROCEDURE ADM-DATA ADVISE AFTER-BUFFER AFTER-ROWID
           AFTER-TABLE ALERT-BOX ALIAS ALL ALLOW-COLUMN-SEARCHING ALLOW-PREV-DESERIALIZATION ALLOW-REPLICATION
@@ -486,7 +486,7 @@ module Rouge
           WRITE-JSON WRITE-MESSAGE WRITE-PROCESSING-INSTRUCTION WRITE-STATUS WRITE-XML WRITE-XMLSCHEMA X XCODE
           XCODE-SESSION-KEY X-DOCUMENT XML-DATA-TYPE XML-ENTITY-EXPANSION-LIMIT XML-NODE-NAME XML-NODE-TYPE
           XML-SCHEMA-PAT XML-SCHEMA-PATH XML-STRICT-ENTITY-RESOLUTION XML-SUPPRESS-NAMESPACE-PROCESSING
-          X-NODEREF X-OF XOR XREF XREF-XML Y YEAR YEAR-OFFSET YES YES-NO YES-NO-CANCEL Y-OF          
+          X-NODEREF X-OF XOR XREF XREF-XML Y YEAR YEAR-OFFSET YES YES-NO YES-NO-CANCEL Y-OF
         )
       end
 
@@ -521,7 +521,7 @@ module Rouge
       end
 
       state :whitespace do
-        rule %r/\s+/m, Text 
+        rule %r/\s+/m, Text
       end
 
       state :singlelinecomment do
@@ -560,7 +560,7 @@ module Rouge
         rule %r([~!%^*+=\|?:<>/-]), Operator
         rule %r/[()\[\],.]/, Punctuation
       end
-      
+
       state :doublequotedstring do
         rule %r/\~[~nrt"]?/, Str::Escape
         rule %r/[^\\"]+/, Str::Double
@@ -572,7 +572,7 @@ module Rouge
         rule %r/[^\\']+/, Str::Single
         rule %r/'/, Str::Delimiter, :pop!
       end
-      
+
       state :preproc do
         rule %r/(\&analyze-suspend|\&analyze-resume)/i, Comment::Preproc, :analyze_suspend_resume_content
         rule %r/(\&scoped-define|\&global-define)\s*([\.\w\\\/-]*)/i , Comment::Preproc, :analyze_suspend_resume_content
@@ -584,18 +584,18 @@ module Rouge
         rule %r/.*\n/, Comment::Preproc, :pop!
         rule %r/.*/, Comment::Preproc, :pop!
       end
-      
+
       state :preproc_content do
         rule %r/\n/, Text, :pop!
         rule %r/\s+/, Text
- 
+
         rule %r/({?&)(\S+)/ do
           groups Comment::Preproc, Name::Other
         end
- 
+
         rule %r/"/, Str, :string
         mixin :numeric
- 
+
         rule %r/\S+/, Name
       end
 

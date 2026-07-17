@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'jsx'
+require_relative 'typescript/common'
+
 module Rouge
   module Lexers
-    load_lexer 'jsx.rb'
-    load_lexer 'typescript/common.rb'
-
     class TSX < JSX
       extend TypescriptCommon
 

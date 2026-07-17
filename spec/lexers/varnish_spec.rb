@@ -17,7 +17,7 @@ describe Rouge::Lexers::Varnish do
     include Support::Lexing
 
     it 'forwards C blocks to C lexer' do
-      assert_tokens_equal 'foo C{int}C bar', ['Text', 'foo '], [ 'Comment.Preproc', 'C{' ], [ 'Keyword.Type', 'int' ], [ 'Comment.Preproc', '}C' ], [ 'Text', ' bar' ] 
+      assert_tokens_equal 'foo C{int}C bar', ['Text', 'foo '], [ 'Comment.Preproc', 'C{' ], [ 'Keyword.Type', 'int' ], [ 'Comment.Preproc', '}C' ], [ 'Text', ' bar' ]
     end
   end
 end

@@ -70,6 +70,8 @@ describe Rouge::Lexers::COBOL do
     it 'guesses by filename' do
       assert_guess :filename => 'foo.cob'
       assert_guess :filename => 'foo.cbl'
+      assert_guess :filename => 'foo.cpy'
+      assert_guess :filename => 'foo.cpb'
     end
 
     it 'guesses by mimetype' do

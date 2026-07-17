@@ -22,7 +22,7 @@ module Rouge
           meson host_machine build_machine target_machine
         )
       end
-    
+
       def self.builtin_functions
         @builtin_functions ||= %w(
           add_global_arguments add_project_arguments

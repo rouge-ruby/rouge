@@ -671,6 +671,12 @@ use relative paths:
 
 See my [About](/about/) page for details.   
 
+You can put text in parentheses after a link:
+
+    This [example link](http://example.com/) (is followed by a parenthesis).
+
+This [example link](http://example.com/) (is followed by a parenthesis).
+
 Reference-style links use a second set of square brackets, inside
 which you place a label of your choosing to identify the link:
 
@@ -1088,6 +1094,14 @@ Here is an example of [feature](../feature.md):
 $ echo "Sample feature output"
 ```
 ````
+
+```markdown
+---
+title: This sample has YAML frontmatter.
+---
+
+Some text.
+```
 
 [This is a link `with backticks`](example.com)
 [This is a link to a TOML section `[with brackets]` (and backticks)](example.com)

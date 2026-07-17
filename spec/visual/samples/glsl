@@ -1,4 +1,5 @@
 #version 330 core
+#extension all : enable
 
 /**
  * The Material structure stores the details about the material
@@ -88,4 +89,151 @@ vec4 getDirectionalLight()
 void main()
 {
     fragColor = getBaseColor() * getDirectionalLight();
+}
+
+// https://github.com/graphitemaster/glsl-parser/blob/main/tests/arrays.glsl
+float a[1];
+float b[1][2];
+float c[1][2][3];
+float d[1][2][3][4];
+float[2] e[3]; // float[2][3]
+float[3][2] f; // float[2][3]
+// structure array!
+struct foo1 { float a; };
+foo1 bar1[1][2];
+foo1[1] bar2[2];
+foo1[1] aa[1], bb;
+
+// https://github.com/graphitemaster/glsl-parser/blob/main/tests/booleans.glsl
+void test() {
+    bool test_uninitialized;
+    bool test_true_initialized = true;
+    bool test_false_initialized = false;
+    bool test_assign;
+    test_assign = test_true_initialized;
+    test_assign = test_false_initialized;
+    test_assign = true;
+    test_assign = false;
+}
+
+// https://github.com/graphitemaster/glsl-parser/blob/main/tests/switch.glsl
+void test() {
+    // simple test
+    int i = 10;
+    switch (i) {
+    case 0: break;
+    default: break;
+    }
+    // nested
+    switch (i) {
+    case 0:
+        switch (1) {
+        case 1:
+            break;
+        default:
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+// https://github.com/graphitemaster/glsl-parser/blob/main/tests/floating_point_literals.glsl
+void test() {
+    float test_float_uninitialized;
+    float test_float_initialized = 1.5;
+    float test_float_f_lower = 1.5f;
+    float test_float_f_upper = 1.5F;
+    double test_double_uininitialized;
+    double test_double_initialized = 1.5;
+    double test_double_lf_lower = 1.5lf;
+    double test_double_lf_upper = 1.5LF;
+    float test_float_f_zero = 1.0f;
+}
+
+// https://github.com/graphitemaster/glsl-parser/blob/main/tests/integer_literals.glsl
+void test() {
+    int test_uninitialized_int;
+    int test_initialized_int = 42;
+    uint test_uninitialized_uint;
+    uint test_initialized_uint_no_suffix = 42;
+    uint test_initialized_uint_suffix = 42u;
+    uint test_hex_no_suffix_upper = 0xFF;
+    uint test_hex_suffix_upper = 0xFFu;
+    uint test_hex_no_suffix_lower = 0xff;
+    uint test_hex_suffix_lower = 0xffu;
+    uint test_hex_no_suffix_mixed = 0xFf;
+    uint test_hex_suffix_mixed = 0xFfU;
+    int test_negative = -1;
+    uint test_octal = 0777;
+}
+
+// https://github.com/graphitemaster/glsl-parser/blob/main/tests/ternary.glsl
+void main() {
+    float a = 0, b = 0, c = 0, d = 0;
+    float w = (a ? a,b : b,c);
+    float z = a ? b ? c : d : w;
+}
+
+// https://github.com/laurentlb/shader-minifier/blob/master/tests/unit/decimals.frag
+void test () {
+  x(3.141592653589793);
+  x(3.1415927);
+  //x(1e308);
+  //x(3e38);
+  //x(1e37);
+  x(1e28);
+  x(125.663704/180.);
+  x(.6981316889);
+  x(100000005.);
+  x(1.24e27);
+  x(1.20e27);
+  x(1.00e27);
+  x(1.24e4);
+  x(1.20e4);
+  x(1.00e4);
+  x(1.24e3);
+  x(1.20e3);
+  x(1.00e3);
+  x(1.24e2);
+  x(1.20e2);
+  x(1.00e2);
+  x(1.24e1);
+  x(1.20e1);
+  x(1.00e1);
+  x(1.24e0);
+  x(1.20e0);
+  x(1.00e0);
+  x(1.24e-1);
+  x(1.20e-1);
+  x(1.00e-1);
+  x(1.24e-2);
+  x(1.20e-2);
+  x(1.00e-2);
+  x(1.24e-3);
+  x(1.20e-3);
+  x(1.00e-3);
+  x(1.24e-4);
+  x(1.20e-4);
+  x(1.00e-4);
+  x(1.24e-27);
+  x(1.20e-27);
+  x(1.00e-27);
+  x(6e-29);
+  x(8e-46);
+  //x(3e-324);
+}
+
+// https://github.com/laurentlb/shader-minifier/blob/master/tests/unit/numbers.frag
+uint large() { return 3812015801U; }
+
+vec4 f()
+{
+float oct = float(042) / 1000.;
+float oct2 = float(-071) / 1000.;
+int dec = 65535;
+int dec2 = -65536;
+float n = oct - oct2 + float(4 * 0x0) + float(dec + dec2) / 20.;
+return vec4(n,n,n,0.);
 }

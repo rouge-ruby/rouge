@@ -81,3 +81,26 @@ p {
 <current-user #default="{ user }">
   {{ user.firstName }}
 </current-user>
+
+<!-- @ event shorthand and : bind shorthand -->
+<template>
+  <div class="pagination">
+    <button
+      class="join-item btn"
+      @click="currentPage = currentPage - 1"
+      :disabled="currentPage <= 1"
+    >
+      Previous
+    </button>
+    <button
+      class="join-item btn"
+      @click="currentPage = currentPage + 1"
+      :disabled="currentPage >= totalPages"
+    >
+      Next
+    </button>
+    <form @submit.prevent="onSearch">
+      <input :value="query" @input="query = $event.target.value" />
+    </form>
+  </div>
+</template>

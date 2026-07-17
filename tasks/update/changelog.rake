@@ -64,7 +64,7 @@ module Rouge
       class Log
         def initialize(remote, commits)
           @remote = remote
-          @msgs = commits.map { |c| Message.new(c.message, c.author.name) }
+          @msgs = commits.execute.map { |c| Message.new(c.message, c.author.name) }
         end
 
         def converted

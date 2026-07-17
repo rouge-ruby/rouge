@@ -70,6 +70,14 @@ EGA40WOA.FON=EGA40WOA.FON
 CGA80WOA.FON=CGA80WOA.FON
 CGA40WOA.FON=CGA40WOA.FON
 
+# HAProxy config
+global
+    daemon
+    maxconn 256
+
+defaults
+    mode http
+
 ## Other ##
 [section-name]
 foo-bar_ = baz

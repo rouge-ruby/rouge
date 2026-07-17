@@ -68,7 +68,7 @@ module Rouge
 
       state :root do
         mixin :whitespace
-        
+
         rule %r/\$(([1-9]\d*)?\d)/, Name::Variable
         rule %r/\$#{id}/, Name
         rule %r/~Copyable\b/, Keyword::Type
@@ -156,7 +156,7 @@ module Rouge
       state :tuple do
         rule %r/(#{id})/, Name::Variable
         rule %r/(`)(#{id})(`)/ do
-            groups Punctuation, Name::Variable, Punctuation
+          groups Punctuation, Name::Variable, Punctuation
         end
         rule %r/,/, Punctuation
         rule %r/[(]/, Punctuation, :push

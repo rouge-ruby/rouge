@@ -52,13 +52,13 @@ module Rouge
       state :basic do
         rule %r/#.*$/, Comment
 
-        rule %r/\b(#{KEYWORDS})\s*\b/, Keyword
-        rule %r/\bcase\b/, Keyword, :case
+        rule %r/(#{KEYWORDS})\s*\b/, Keyword
+        rule %r/case\b/, Keyword, :case
 
-        rule %r/\b(#{BUILTINS})\s*\b(?!(\.|-))/, Name::Builtin
+        rule %r/(#{BUILTINS})\s*\b(?!(\.|-))/, Name::Builtin
         rule %r/[.](?=\s)/, Name::Builtin
 
-        rule %r/(\b\w+)(=)/ do
+        rule %r/(\w+)(=)/ do
           groups Name::Variable, Operator
         end
 
@@ -161,15 +161,27 @@ module Rouge
         mixin :root
       end
 
+      state :curly_interp do
+        rule %r/[}]/, Str::Interpol, :pop!
+        rule %r/[{]/, Operator, :curly_inner
+        mixin :root
+      end
+
+      state :curly_inner do
+        rule %r/[{]/, Operator, :push
+        rule %r/[}]/, Operator, :pop!
+        mixin :root
+      end
+
       state :math do
         rule %r/\)\)/, Keyword, :pop!
-        rule %r([-+*/%^|&!]|\*\*|\|\|), Operator
+        rule %r([-+*/%^|&!]|\*\*|\|\||<<|>>), Operator
         rule %r/\d+(#\w+)?/, Num
         mixin :root
       end
 
       state :case do
-        rule %r/\besac\b/, Keyword, :pop!
+        rule %r/esac\b/, Keyword, :pop!
         rule %r/\|/, Punctuation
         rule %r/\)/, Punctuation, :case_stanza
         mixin :root
@@ -189,7 +201,11 @@ module Rouge
         rule %r/\\$/, Str::Escape # line continuation
         rule %r/\\./, Str::Escape
         rule %r/\$\(\(/, Keyword, :math
-        rule %r/\$\(/, Str::Interpol, :paren_interp
+        rule %r/\$[(]/, Str::Interpol, :paren_interp
+
+        # see https://www.gnu.org/software/bash/manual/bash.html#Command-Substitution-1
+        rule %r/\$[{][\s|]/, Str::Interpol, :curly_interp
+
         rule %r/\${#?/, Keyword, :curly
         rule %r/`/, Str::Backtick, :backticks
         rule %r/\$#?(\w+|.)/, Name::Variable

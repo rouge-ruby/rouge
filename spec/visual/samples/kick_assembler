@@ -1,0 +1,71 @@
+#if !FOO
+#define FOO
+#endif
+
+.const LINE_1 = $0590
+.const LINE_2 = $0608
+.const COLOR_LINE_1 = $d990
+.const COLOR_LINE_2 = $da08
+
+BasicUpstart2(start)
+
+start:
+  sei
+
+  jsr init_screen
+  jsr init_text
+  jsr init_color
+
+  lda #%01111111
+  sta $dc0d // CIA#1
+  lda $dc0d // CIA#1
+  lda $d01a // INTERRUPT_CONTROL
+  ora #%00000001
+  STA $d01a
+  lda $d011 // Clear bit#8 of raster line interrupt
+  and #%01111111
+  sta $d011
+  lda #0
+  sta $d012 // generate an interrupt at line 0
+  lda #<irq
+  sta $0314 // INTERRUPT_SERVICE_ROUTINE_ADDRESS
+  lda #>irq
+  sta $0315
+  cli
+
+  jmp *
+
+line_1: .text "       ... xavier nayrac 2026 ...       "
+line_2: .text "commodore 64 demo as if we were in 1986 "
+
+color:
+.byte 9,9,9,9,9,9,2,2,8,8,10,10,15,15,7,7,1,1,1,1
+.byte 1,1,1,1,7,7,15,15,10,10,8,8,2,2,9,9,9,9,9,9
+
+// ---------------------------------------------------------------------
+color_wash: {
+  lda COLOR_LINE_1+39
+  sta temp
+  lda COLOR_LINE_2
+  sta temp2
+
+  ldy #39
+  ldx #0
+lines:
+  lda COLOR_LINE_1-1,y
+  sta COLOR_LINE_1,y
+  lda COLOR_LINE_2+1,x
+  sta COLOR_LINE_2,x
+  inx
+  dey
+  bne lines
+
+  lda temp
+  sta COLOR_LINE_1
+  lda temp2
+  sta COLOR_LINE_2+39
+
+  rts
+temp: .byte 0
+temp2: .byte 0
+}

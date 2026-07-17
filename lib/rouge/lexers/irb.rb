@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'console'
+require_relative 'ruby'
+
 module Rouge
   module Lexers
-    load_lexer 'console.rb'
-
     class IRBLexer < ConsoleLexer
       tag 'irb'
       aliases 'pry'
@@ -37,7 +38,6 @@ module Rouge
       end
     end
 
-    load_lexer 'ruby.rb'
     class IRBOutputLexer < Ruby
       tag 'irb_output'
 

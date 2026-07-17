@@ -67,7 +67,7 @@ module Rouge
         rule(id) do |m|
           if CSS.builtins.include? m[0]
             token Name::Builtin
-          elsif CSS.constants.include? m[0]
+          elsif CSS.colors.include? m[0]
             token Name::Constant
           else
             token Name
@@ -155,7 +155,7 @@ module Rouge
       state :attr_common do
         mixin :has_interp
         rule id do |m|
-          if CSS.attributes.include? m[0]
+          if CSS.properties.include? m[0]
             token Name::Label
           else
             token Name::Attribute

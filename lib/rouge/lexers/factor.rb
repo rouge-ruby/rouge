@@ -25,7 +25,7 @@ module Rouge
             do unless* if* loop bi-curry* drop when* assert= retainstack
             assert? -rot execute 2bi@ 2tri@ boa with either? 3drop bi
             curry?  datastack until 3dip over 3curry tri-curry* tri-curry@
-            swap and 2nip throw bi-curry (clone) hashcode* compose 2dip if
+            swap and 2nip throw bi-curry (clone) hashcode* compose 2dip
             3tri unless compose? tuple keep 2curry equal? assert tri 2drop
             most <wrapper> boolean? identity-hashcode identity-tuple?
             null new dip bi-curry@ rot xor identity-tuple boolean

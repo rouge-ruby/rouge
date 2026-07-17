@@ -41,7 +41,13 @@ module Support
       end
 
       actual = lexer.lex(text).map { |token, value| [ token.qualname, value ] }
-      assert { expected == actual }
+
+      expected.zip(actual) do |expected_tok, actual_tok|
+        assert { expected_tok == actual_tok }
+      end
+
+      trailing = actual[expected.size..]
+      assert { trailing.empty? }
     end
 
     def assert_tokens_includes(text, *expected)

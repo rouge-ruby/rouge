@@ -33,7 +33,7 @@ module Rouge
       end
 
       def stream_tokens(str, &b)
-        stream = StringScanner.new(str)
+        stream = StringScanner.new(str, fixed_anchor: true)
 
         loop do
           if stream.scan(to_start_regex)

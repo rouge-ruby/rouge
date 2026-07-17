@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'c'
+require_relative 'objective_c/common'
+
 module Rouge
   module Lexers
-    load_lexer 'c.rb'
-    load_lexer 'objective_c/common.rb'
-
     class ObjectiveC < C
       extend ObjectiveCCommon
 

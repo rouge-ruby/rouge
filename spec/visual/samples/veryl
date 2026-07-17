@@ -1,0 +1,155 @@
+// The following code is from https://github.com/veryl-lang/doc/tree/main/book/src/04_code_examples
+// Copyright (c) 2024 Naoye Hatta <dalance@gmail.com>
+// Provided under Apache-2.0 or MIT license
+
+// module definition
+module ModuleA #(
+    param ParamA: u32 = 10,
+    const ParamB: u32 = 10, // trailing comma is allowed
+) (
+    i_clk : input  clock            , // `clock` is a special type for clock
+    i_rst : input  reset            , // `reset` is a special type for reset
+    i_sel : input  logic            ,
+    i_data: input  logic<ParamA> [2], // `[]` means unpacked array in SystemVerilog
+    o_data: output logic<ParamA>    , // `<>` means packed array in SystemVerilog
+) {
+    // const parameter declaration
+    //   `param` is not allowed in module
+    const ParamC: u32 = 10;
+
+    // variable declaration
+    var r_data0: logic<ParamA>;
+    var r_data1: logic<ParamA>;
+    var r_data2: logic<ParamA>;
+
+    // value binding
+    let _w_data2: logic<ParamA> = i_data[0];
+
+    // always_ff statement with reset
+    //   `always_ff` can take a mandatory clock and a optional reset
+    //   `if_reset` means `if (i_rst)`. This conceals reset porality
+    //   `()` of `if` is not required
+    //   `=` in `always_ff` is non-blocking assignment
+    always_ff (i_clk, i_rst) {
+        if_reset {
+            r_data0 = 0;
+        } else if i_sel {
+            r_data0 = i_data[0];
+        } else {
+            r_data0 = i_data[1];
+        }
+    }
+
+
+    // always_ff statement without reset
+    always_ff (i_clk) {
+        r_data1 = r_data0;
+    }
+
+    // clock and reset can be omitted
+    // if there is a single clock and reset in the module
+    always_ff {
+        r_data2 = r_data1;
+    }
+
+    assign o_data = r_data1;
+}
+
+module ModuleA #(
+    param ParamA: u32 = 10,
+) (
+    i_clk : input  clock        ,
+    i_rst : input  reset        ,
+    i_data: input  logic<ParamA>,
+    o_data: output logic<ParamA>,
+) {
+    var r_data1: logic<ParamA>;
+    var r_data2: logic<ParamA>;
+
+    assign r_data1 = i_data + 1;
+    assign o_data  = r_data2 + 2;
+
+    // instance declaration
+    //   `inst` keyword starts instance declaration
+    //   port connnection can be specified by `()`
+    //   each port connection is `[port_name]:[variable]`
+    //   `[port_name]` means `[port_name]:[port_name]`
+    inst u_module_b: ModuleB (
+        i_clk          ,
+        i_data: r_data1,
+        o_data: r_data2,
+    );
+
+    // instance declaration with parameter override
+    //   notation of parameter connection is the same as port
+    inst u_module_c: ModuleC #( ParamA, ParamB: 10 );
+}
+
+module ModuleB #(
+    param ParamA: u32 = 10,
+) (
+    i_clk : input  clock        ,
+    i_data: input  logic<ParamA>,
+    o_data: output logic<ParamA>,
+) {
+    assign o_data = 1;
+}
+
+module ModuleC #(
+    param ParamA: u32 = 10,
+    param ParamB: u32 = 10,
+) () {}
+
+// interface definition
+interface InterfaceA #(
+    param ParamA: u32 = 1,
+    param ParamB: u32 = 1,
+) {
+    const ParamC: u32 = 1;
+
+    var a: logic<ParamA>;
+    var b: logic<ParamA>;
+    var c: logic<ParamA>;
+
+    // modport definition
+    modport master {
+        a: input ,
+        b: input ,
+        c: output,
+    }
+
+    modport slave {
+        a: input ,
+        b: input ,
+        c: output,
+    }
+}
+
+module ModuleA (
+    i_clk: input clock,
+    i_rst: input reset,
+    // port declaration by modport
+    intf_a_mst: modport InterfaceA::master,
+    intf_a_slv: modport InterfaceA::slave ,
+) {
+    // interface instantiation
+    inst u_intf_a: InterfaceA [10];
+}
+
+// package definition
+package PackageA {
+    const ParamA: u32 = 1;
+    const ParamB: u32 = 1;
+
+    function FuncA (
+        a: input logic<ParamA>,
+    ) -> logic<ParamA> {
+        return a + 1;
+
+    }
+}
+
+module ModuleA {
+    let a : logic<10> = PackageA::ParamA;
+    let _b: logic<10> = PackageA::FuncA(a);
+}

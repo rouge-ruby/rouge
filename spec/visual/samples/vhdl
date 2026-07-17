@@ -11,8 +11,13 @@ end entity test_module;
 
 architecture RTL of test_module is
 
+	/* this is the data signal */
 	signal data : std_logic := '0';
-	
+
+	/*
+		This function has two integer parameters a and b and
+		returns x"A" or "0101".
+	*/
 	function test(a, b : integer) return std_logic_vector is
 	begin
 	

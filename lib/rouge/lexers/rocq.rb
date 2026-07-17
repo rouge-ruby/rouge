@@ -3,11 +3,15 @@
 
 module Rouge
   module Lexers
-    class Coq < RegexLexer
-      title "Coq"
-      desc 'Coq (coq.inria.fr)'
-      tag 'coq'
-      mimetypes 'text/x-coq'
+    class Rocq < RegexLexer
+      title "Rocq"
+      desc 'The Rocq Prover (rocq-prover.org)'
+      tag 'rocq'
+
+      # Coq was renamed to Rocq
+      # https://github.com/rocq-prover/rfcs/blob/coq-roadmap/text/069-coq-roadmap.md#change-of-name-coq---the-rocq-prover
+      aliases 'coq'
+      mimetypes 'text/x-coq', 'text/x-rocq'
 
       def self.gallina
         @gallina ||= Set.new %w(
@@ -38,7 +42,7 @@ module Rouge
           edestruct constructor econstructor eexists exists
           f_equal refine instantiate revert simpl
           specialize generalize dependent red induction
-          beta iota zeta delta exfalso autorewrite setoid_rewrite
+          beta iota zeta delta exfalso autorewrite
           compute vm_compute native_compute
         )
       end
@@ -176,6 +180,8 @@ module Rouge
         rule %r(:=|=>|;|:>|:|::|_), Punctuation
         rule %r(->|/\\|\\/|;|:>|[⇒→↔⇔≔≡∀∃∧∨¬⊤⊥⊢⊨∈λ]), Operator
 
+        # [jneen] TODO: it is not ideal that we don't actually yield all of the
+        # consumed text here.
         rule id do |m|
           @name = m[0]
           @id_dotted = false
@@ -251,5 +257,8 @@ module Rouge
         end
       end
     end
+
+    # legacy
+    Coq = Rocq
   end
 end

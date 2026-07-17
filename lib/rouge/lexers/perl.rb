@@ -17,13 +17,13 @@ module Rouge
         return true if text.shebang? 'perl'
       end
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         case continue do else elsif for foreach if last my next our
         redo reset then unless until while use print new BEGIN CHECK
         INIT END return
       )
 
-      builtins = %w(
+      BUILTINS = Set.new %w(
         abs accept alarm atan2 bind binmode bless caller chdir chmod
         chomp chop chown chr chroot close closedir connect continue cos
         crypt dbmclose dbmopen defined delete die dump each endgrent
@@ -49,25 +49,108 @@ module Rouge
         utime values vec wait waitpid wantarray warn write
       )
 
+      OPERATOR_WORDS = Set.new %w(eq lt gt le ge ne not and or cmp)
+
       re_tok = Str::Regex
 
       state :balanced_regex do
-        rule %r(/(\\[\\/]|[^/])*/[egimosx]*)m, re_tok, :pop!
-        rule %r(!(\\[\\!]|[^!])*![egimosx]*)m, re_tok, :pop!
-        rule %r(\\(\\\\|[^\\])*\\[egimosx]*)m, re_tok, :pop!
-        rule %r({(\\[\\}]|[^}])*}[egimosx]*), re_tok, :pop!
-        rule %r(<(\\[\\>]|[^>])*>[egimosx]*), re_tok, :pop!
-        rule %r(\[(\\[\\\]]|[^\]])*\][egimosx]*), re_tok, :pop!
-        rule %r[\((\\[\\\)]|[^\)])*\)[egimosx]*], re_tok, :pop!
-        rule %r(@(\\[\\@]|[^@])*@[egimosx]*), re_tok, :pop!
-        rule %r(%(\\[\\%]|[^%])*%[egimosx]*), re_tok, :pop!
-        rule %r(\$(\\[\\\$]|[^\$])*\$[egimosx]*), re_tok, :pop!
+        rule %r/\s+/, Text
+        rule %r/./ do |m|
+          pop!
+          open_regex!(m[0])
+          token Str::Delimiter
+        end
+      end
+
+      state :continued_regex do
+        mixin :regex
+      end
+
+      state :regex_flags do
+        rule %r/[msixpodualngcr]+/, Str::Affix
+        rule(//) { pop! }
+      end
+
+      state :regex_escapes do
+        rule %r/\\[0-7][0-7][0-7]/, Str::Escape
+        rule %r/\\x\h\h/, Str::Escape
+        rule %r/\\.(?:[{]\w+[}])?/, Str::Escape
+      end
+
+      state :regex do
+        rule %r/./ do |m|
+          if m[0] == @regex_end
+            token Str::Delimiter
+            goto :regex_flags
+          else
+            fallthrough!
+          end
+        end
+
+        mixin :regex_escapes
+        rule %r/[{]\d+(?:,\d+)?[}]/, Operator
+        rule %r/\[\^?/, Punctuation, :regex_char_class
+        rule %r/[?]|[.]|[|]|[*+][?]?/, Operator
+        rule %r/[(](?:[?][=!<:]?)?/, Punctuation
+        rule %r/[(][?]<!/, Punctuation
+        rule %r/[{})]/, Punctuation
+        rule %r/./, Str::Regex
+      end
+
+      state :regex_char_class do
+        rule(/\^/) { token Punctuation; goto :regex_char_class_inner }
+        rule(/-/) { token Str::Regex; goto :regex_char_class_inner }
+        rule(//) { goto :regex_char_class_inner }
+      end
+
+      state :regex_char_class_inner do
+        mixin :regex_escapes
+        rule %r/-(?!\])/, Punctuation
+        rule %r/\\./, Str::Escape
+        rule %r/[^-\]\\]+/, Str::Regex
+        rule %r/\]/, Punctuation, :pop!
+      end
+
+      BALANCED_DELIMITERS = {
+        '{' => '}',
+        '(' => ')',
+        '[' => ']',
+        '<' => '>',
+      }
+
+      def open_regex!(delimiter)
+        @regex_end = BALANCED_DELIMITERS.fetch(delimiter, delimiter)
+        push :regex
+      end
+
+      def open_regex_operator!(delimiter)
+        if BALANCED_DELIMITERS.key?(delimiter)
+          push :balanced_regex
+        else
+          push :continued_regex
+        end
+
+        open_regex!(delimiter)
+      end
+
+      state :expr_start do
+        mixin :whitespace
+        rule %r(/) do
+          open_regex!('/')
+          token Str::Delimiter
+        end
+
+        rule(//) { pop! }
+      end
+
+      state :whitespace do
+        rule %r/#.*/, Comment::Single
+        rule %r/\s+/, Text
+        rule %r/^=[a-zA-Z0-9]+\s+.*?\n=cut/m, Comment::Multiline
       end
 
       state :root do
-        rule %r/#.*/, Comment::Single
-        rule %r/^=[a-zA-Z0-9]+\s+.*?\n=cut/m, Comment::Multiline
-        rule %r/(?:#{keywords.join('|')})\b/, Keyword
+        mixin :whitespace
 
         rule %r/(format)(\s+)([a-zA-Z0-9_]+)(\s*)(=)(\s*\n)/ do
           groups Keyword, Text, Name, Text, Punctuation, Text
@@ -75,34 +158,37 @@ module Rouge
           push :format
         end
 
-        rule %r/(?:eq|lt|gt|le|ge|ne|not|and|or|cmp)\b/, Operator::Word
+        rule %r/\w+/ do |m|
+          w = m[0]
+          if KEYWORDS.include?(w)
+            token Keyword
+          elsif OPERATOR_WORDS.include?(w)
+            token Operator::Word
+          else
+            fallthrough!
+          end
+        end
 
-        # substitution/transliteration: balanced delimiters
-        rule %r((?:s|tr|y){(\\\\|\\}|[^}])*}\s*), re_tok, :balanced_regex
-        rule %r((?:s|tr|y)<(\\\\|\\>|[^>])*>\s*), re_tok, :balanced_regex
-        rule %r((?:s|tr|y)\[(\\\\|\\\]|[^\]])*\]\s*), re_tok, :balanced_regex
-        rule %r[(?:s|tr|y)\((\\\\|\\\)|[^\)])*\)\s*], re_tok, :balanced_regex
+        rule %r{(?=[a-z_]\w*(\s*#.*\n)*\s*=>)}i do
+          push :fat_comma
+        end
 
-        # substitution/transliteration: arbitrary non-whitespace delimiters
-        rule %r((?:s|tr|y)\s*([^\w\s])((\\\\|\\\1)|[^\1])*?\1((\\\\|\\\1)|[^\1])*?\1[msixpodualngcr]*)m, re_tok
-        rule %r((?:s|tr|y)\s+(\w)((\\\\|\\\1)|[^\1])*?\1((\\\\|\\\1)|[^\1])*?\1[msixpodualngcr]*)m, re_tok
+        # non-whitespace delimiters that match \w are allowed only
+        # if there is whitespace between the operator and the delimiter.
+        # here we use a \b to detect that case in a way that shouldn't
+        # cause backtracking explosion.
+        regex_delim = /[^\w\s]|\b\w/
 
-        # matches: common case, m-optional
-        rule %r(m?/(\\\\|\\/|[^/\n])*/[msixpodualngc]*), re_tok
-        rule %r(m(?=[/!\\{<\[\(@%\$])), re_tok, :balanced_regex
+        rule %r/(s|tr|y)(\s*)(#{regex_delim})/ do |m|
+          open_regex_operator!(m[3])
+          groups Str::Affix, Text, Str::Delimiter
+        end
 
-        # arbitrary non-whitespace delimiters
-        rule %r(m\s*([^\w\s])((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
-        rule %r(m\s+(\w)((\\\\|\\\1)|[^\1])*?\1[msixpodualngc]*)m, re_tok
+        rule %r/(m)(\s*)(#{regex_delim})/ do |m|
+          open_regex!(m[3])
+          groups Str::Affix, Text, Str::Delimiter
+        end
 
-        rule %r(((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[msixpodualngc]*),
-          re_tok, :balanced_regex
-
-        rule %r/\s+/, Text
-
-        rule(/(?=[a-z_]\w*(\s*#.*\n)*\s*=>)/i) { push :fat_comma }
-
-        rule %r/(?:#{builtins.join('|')})\b/, Name::Builtin
         rule %r/((__(DIE|WARN)__)|(DATA|STD(IN|OUT|ERR)))\b/,
           Name::Builtin::Pseudo
 
@@ -113,7 +199,9 @@ module Rouge
         rule %r/\$[\\"'\[\]&`+*.,;=%~?@$!<>(^\|\/_-](?!\w)/, Name::Variable::Global
         rule %r/[$@%&*][$@%&*#_]*(?=[a-z{\[;])/i, Name::Variable, :varname
 
-        rule %r/[-+\/*%=<>&^\|!\\~]=?/, Operator
+        rule %r/\[\]|\*\*|::|<<|>>|>=|<=|<=>|={3}|!=|=~|!~|&&?|\|\||\.{1,3}/,
+          Operator, :expr_start
+        rule %r/[-+\/*%=<>&^\|!\\~]=?/, Operator, :expr_start
 
         rule %r/0_?[0-7]+(_[0-7]+)*/, Num::Oct
         rule %r/0x[0-9A-Fa-f]+(_[0-9A-Fa-f]+)*/, Num::Hex
@@ -133,11 +221,20 @@ module Rouge
         rule %r/(q|qq|qw|qr|qx)</, Str::Other, :lt_string
         rule %r/(q|qq|qw|qr|qx)(\W)(.|\n)*?\2/, Str::Other
 
-        rule %r/package\s+/, Keyword, :modulename
-        rule %r/sub\s+/, Keyword, :funcname
-        rule %r/\[\]|\*\*|::|<<|>>|>=|<=|<=>|={3}|!=|=~|!~|&&?|\|\||\.{1,3}/,
-          Operator
-        rule %r/[()\[\]:;,<>\/?{}]/, Punctuation
+        rule %r/package\b/, Keyword, :modulename
+        rule %r/sub\b/, Keyword, :funcname
+        rule %r/[(]/, Punctuation, :expr_start
+        rule %r/[)\[\]:;,<>\/?{}]/, Punctuation
+
+        rule %r/[a-z]\w*/ do |m|
+          w = m[0]
+          if BUILTINS.include?(w)
+            token Name::Builtin
+          else
+            fallthrough!
+          end
+        end
+
         rule(/(?=\w)/) { push :name }
       end
 

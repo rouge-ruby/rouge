@@ -172,9 +172,21 @@ module Rouge
       end
 
       state :block_nodes do
-        # implicit key
+        # implicit unquoted key
         rule %r/([^#,?\[\]{}"'\n]+)(:)(?=\s|$)/ do |m|
           groups Name::Attribute, Punctuation::Indicator
+          set_indent m[0], :implicit => true
+        end
+
+        # implicit double-quoted key
+        rule %r/("(?:[^\n"]|\\")*")(\s*)(:)(?=\s|$)/ do |m|
+          groups Name::Attribute, Text, Punctuation::Indicator
+          set_indent m[0], :implicit => true
+        end
+
+        # implicit single-quoted key
+        rule %r/('(?:[^\n']|\\')*')(\s*)(:)(?=\s|$)/ do |m|
+          groups Name::Attribute, Text, Punctuation::Indicator
           set_indent m[0], :implicit => true
         end
 

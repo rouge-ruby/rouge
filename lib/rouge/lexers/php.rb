@@ -18,6 +18,10 @@ module Rouge
       option :funcnamehighlighting, 'Whether to highlight builtin functions (default: true)'
       option :disabledmodules, 'Disable certain modules from being highlighted as builtins (default: empty)'
 
+      lazy auto: false do
+        require_relative "php/keywords"
+      end
+
       def initialize(*)
         super
 
@@ -26,6 +30,8 @@ module Rouge
         @start_inline = bool_option(:start_inline) { :guess }
         @funcnamehighlighting = bool_option(:funcnamehighlighting) { true }
         @disabledmodules = list_option(:disabledmodules)
+
+        eager_load! if @funcnamehighlighting
       end
 
       def self.detect?(text)
@@ -48,16 +54,11 @@ module Rouge
         )
       end
 
-      def self.builtins
-        Kernel::load File.join(Lexers::BASE_DIR, 'php/keywords.rb')
-        builtins
-      end
-
       def builtins
         return [] unless @funcnamehighlighting
 
         @builtins ||= Set.new.tap do |builtins|
-          self.class.builtins.each do |mod, fns|
+          BUILTINS.each do |mod, fns|
             next if @disabledmodules.include? mod
             builtins.merge(fns)
           end
@@ -100,11 +101,16 @@ module Rouge
       end
 
       state :names do
+        rule %r/(?:public|protected|private)\(set\)/i do
+          push :in_visibility
+          token Keyword
+        end
+
         rule %r/#{id_with_ns}(?=\s*\()/ do |m|
           name = m[0].downcase
           if self.class.keywords.include? name
             token Keyword
-          elsif self.builtins.include? name
+          elsif builtins.include? name
             token Name::Builtin
           else
             token Name::Function
@@ -179,7 +185,7 @@ module Rouge
 
         # numbers
         rule %r/(\d[_\d]*)?\.(\d[_\d]*)?(e[+-]?\d[_\d]*)?/i, Num::Float
-        rule %r/0[0-7][0-7_]*/, Num::Oct
+        rule %r/0o?[0-7][0-7_]*/i, Num::Oct
         rule %r/0b[01][01_]*/i, Num::Bin
         rule %r/0x[a-f0-9][a-f0-9_]*/i, Num::Hex
         rule %r/\d[_\d]*/, Num::Integer
@@ -243,6 +249,13 @@ module Rouge
           groups Keyword::Declaration, Text, Name::Class
         end
 
+        rule %r/(enum)
+                (\s+)
+                (#{id_with_ns})/ix do |m|
+          groups Keyword::Declaration, Text, Name::Class
+          push :in_enum
+        end
+
         mixin :names
 
         rule %r/[;,\(\)\{\}\[\]]/, Punctuation
@@ -280,6 +293,9 @@ module Rouge
       end
 
       state :in_const do
+        rule %r/(\??#{id})(\s+)(#{id})/i do
+          groups Keyword::Type, Text, Name::Constant
+        end
         rule id, Name::Constant
         rule %r/=/, Operator, :in_assign
         mixin :escape
@@ -307,8 +323,9 @@ module Rouge
         rule %r/,/, Punctuation
         rule %r/[.]{3}/, Punctuation
         rule %r/=/, Operator, :in_assign
-        rule %r/\b(?:public|protected|private|readonly)\b/i, Keyword
-        rule %r/\??#{id}/, Keyword::Type, :in_assign
+        rule %r/\b(?:public|protected|private|readonly)(?:\(set\)|\b)/i, Keyword
+        rule %r/\breadonly\b/i, Keyword
+        rule %r/\??#{id}/, Keyword::Type, :in_property
         mixin :escape
         mixin :whitespace
         mixin :variables
@@ -369,12 +386,84 @@ module Rouge
       end
 
       state :in_visibility do
+        rule %r/\b(?:public|protected|private)(?:\(set\)|\b)/i, Keyword
         rule %r/\b(?:readonly|static)\b/i, Keyword
         rule %r/(?=(abstract|const|function)\b)/i, Keyword, :pop!
-        rule %r/\??#{id}/, Keyword::Type, :pop!
+        rule %r/\??#{id}/ do
+          token Keyword::Type
+          goto :in_property
+        end
         mixin :escape
         mixin :whitespace
         mixin :return
+      end
+
+      state :in_enum do
+        rule %r/:/, Punctuation, :in_enum_base_type
+        rule %r/\{/, Punctuation, :in_enum_body
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_enum_base_type do
+        rule id, Keyword::Type, :pop!
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_enum_body do
+        rule %r/\}/, Punctuation, :pop!
+        rule %r/(case)(\s+)(#{id})/i do
+          groups Keyword, Text, Name::Constant
+        end
+        mixin :php
+      end
+
+      state :in_property do
+        rule %r/\$+#{id}/, Name::Variable
+        rule %r/\{/ do
+          token Punctuation
+          goto :in_property_hooks
+        end
+        rule %r/[;,]/, Punctuation, :pop!
+        rule %r/(?==)/ do
+          pop!
+        end
+        rule %r/[|&]/, Operator
+        rule %r/\??#{id}/, Keyword::Type
+        mixin :escape
+        mixin :whitespace
+        mixin :return
+      end
+
+      state :in_property_hooks do
+        rule %r/\}/, Punctuation, :pop!
+        rule %r/\bfinal\b/i, Keyword
+        rule %r/&(?=get\b)/, Operator
+        rule %r/(\bset\b)(\s*)(\()/ do
+          groups Keyword, Text, Punctuation
+          push :in_property_hook_params
+        end
+        rule %r/\b(?:get|set)\b/, Keyword
+        rule %r/\{/, Punctuation, :in_function_body
+        rule %r/[;,\(\)\[\]]/, Punctuation
+        mixin :escape
+        mixin :whitespace
+        mixin :variables
+        mixin :values
+        mixin :names
+        mixin :operators
+        rule %r/[=?]/, Operator
+      end
+
+      state :in_property_hook_params do
+        rule %r/\)/, Punctuation, :pop!
+        rule %r/\??#{id}/, Keyword::Type
+        mixin :escape
+        mixin :whitespace
+        mixin :variables
       end
     end
   end

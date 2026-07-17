@@ -58,7 +58,7 @@ module Rouge
       schar = /(?:[^\\"\n\r]|\\["'ntr\\0])/
       uchar = /(?:\\u#{hex_digit}{4})/
 
-      ## IMPORTANT: Rules are ordered, which allows later rules to be 
+      ## IMPORTANT: Rules are ordered, which allows later rules to be
       ## simpler than they would otherwise be
       state :root do
         rule %r(/\*), Comment::Multiline, :comment

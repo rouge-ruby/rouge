@@ -253,6 +253,7 @@ module Rouge
       state :string do
         rule %r/"/, Str, :pop!
         rule escapes, Str::Escape
+        rule %r/\\\n[ \t\r\n]*/, Str::Escape
         rule %r/[^"\\]+/m, Str
       end
     end

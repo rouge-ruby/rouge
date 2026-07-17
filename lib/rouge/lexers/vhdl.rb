@@ -43,8 +43,10 @@ module Rouge
       state :whitespace do
         rule %r/\s+/, Text
         rule %r/\n/, Text
-        # Find Comments (VHDL doesn't support multiline comments)
+        # Find single-line comments "-- ..."
         rule %r/--.*$/, Comment::Single
+        # Find delimited comments "/* ... */"
+        rule %r{/\*.*?\*/}m, Comment::Multiline
       end
 
       state :statements do

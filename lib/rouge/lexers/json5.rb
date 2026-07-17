@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'json'
+
 module Rouge
   module Lexers
-    load_lexer 'json.rb'
-
     class JSON5 < JSON
       title 'JSON 5'
       tag 'json5'

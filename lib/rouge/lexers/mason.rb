@@ -14,12 +14,12 @@ module Rouge
         super
         @perl = Perl.new
       end
-  
+
       # Note: If you add a tag in the lines below, you also need to modify "disambiguate '*.m'" in file disambiguation.rb
       TEXT_BLOCKS = %w(text doc)
       PERL_BLOCKS = %w(args flags attr init once shared perl cleanup filter)
       COMPONENTS = %w(def method)
-  
+
       state :root do
         mixin :mason_tags
       end
@@ -37,7 +37,7 @@ module Rouge
           token Comment::Preproc, m[4]
           push :component_block
         end
-        
+
         # perl line
         rule %r/^(%)(.*)$/ do |m|
           token Comment::Preproc, m[1]
@@ -86,7 +86,7 @@ module Rouge
       end
 
       state :component_with_content do
-        rule %r/<\/&>/ do 
+        rule %r/<\/&>/ do
           token Comment::Preproc
           pop!
         end

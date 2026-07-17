@@ -17,7 +17,7 @@ describe Rouge::Plugins::Redcarpet do
   }
 
   it 'renders a thing' do
-    result = markdown.render <<-mkd
+    result = markdown.render <<-MKD
 ``` javascript
 var foo = 1;
 ```
@@ -25,51 +25,51 @@ var foo = 1;
 ``` shell
 foo=1
 ```
-    mkd
+MKD
 
     assert { result.include?(%(<pre class="highlight shell"><code>)) }
     assert { result.include?(%(<pre class="highlight javascript"><code>)) }
   end
 
   it 'guesses' do
-    result = markdown.render <<-mkd
+    result = markdown.render <<-MKD
 ``` guess
 #!/usr/bin/env ruby
 puts "hello, world"
 ```
-    mkd
+MKD
 
     assert { result.include?(%(<pre class="highlight ruby"><code>)) }
   end
 
   it 'chooses when a guess is ambiguous' do
-    result = markdown.render <<-mkd
+    result = markdown.render <<-MKD
 ``` guess
 Index: ): Awaitable<
 ```
-    mkd
+MKD
 
     assert { result.include?(%(<pre class="highlight)) }
   end
 
   it 'passes options' do
-    result = markdown.render <<-mkd
+    result = markdown.render <<-MKD
 ``` shell?k=v
 foo=1
 ```
-    mkd
+MKD
 
     # TODO: test that an option is actually there
     assert { result.include?(%(<pre class="highlight shell"><code>)) }
   end
 
   it 'works when no language is provided' do
-    result = markdown.render <<-mkd
+    result = markdown.render <<-MKD
 ```
 #!/usr/bin/env ruby
 $stdin.each { |l| $stdout.puts l.reverse }
 ```
-    mkd
+MKD
     assert { result.include?(%(<pre class="highlight ruby"><code>)) }
   end
 end

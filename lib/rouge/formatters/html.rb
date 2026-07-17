@@ -9,9 +9,16 @@ module Rouge
         '&' => '&amp;',
         '<' => '&lt;',
         '>' => '&gt;',
+        "\r" => "",
       }.freeze
 
-      ESCAPE_REGEX = /[&<>]/.freeze
+      ESCAPE_REGEX = /[&<>\r]/.freeze
+
+      def self.assert_html_formatter!(formatter)
+        return formatter if formatter.respond_to?(:span)
+
+        raise ArgumentError.new("Expected an instance of Rouge::Formatters::HTML, got #{formatter.class}. Try HTML, HTMLDebug, or HTMLInline.")
+      end
 
       tag 'html'
 

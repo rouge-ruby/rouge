@@ -96,11 +96,10 @@ module Rouge
 
         rule %r/(cycle)(\s+)(?:([\w-]+|'[^']*'|"[^"]*")(\s*)(:))?(\s*)/ do |m|
           token_class = case m[3]
-                        when %r/'[^']*'/ then Str::Single
-                        when %r/"[^"]*"/ then Str::Double
-                        else
-                          Name::Attribute
-                        end
+          when %r/'[^']*'/ then Str::Single
+          when %r/"[^"]*"/ then Str::Double
+          else Name::Attribute
+          end
           groups Name::Tag, Text::Whitespace, token_class,
                  Text::Whitespace, Punctuation, Text::Whitespace
           push :tag_args
@@ -235,7 +234,7 @@ module Rouge
 
       state :filter do
         rule %r/[a-zA-Z_](?:\w|-(?![%}]))*/, Name::Function, :pop!
-        
+
         mixin :whitespace
       end
 

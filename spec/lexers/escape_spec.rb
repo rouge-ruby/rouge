@@ -11,7 +11,7 @@ describe Rouge::Lexers::Escape do
     let(:formatter) { Rouge::Formatters::HTML.new }
 
     it 'unescapes' do
-      assert { result =~ /<bar>/ }
+      assert { result.include?('<bar>') }
     end
   end
 
@@ -20,10 +20,10 @@ describe Rouge::Lexers::Escape do
     let(:text) { %({ "foo": \n <!\e123!> }) }
 
     it 'unescapes' do
-      assert { result =~ /\e123/ }
+      assert { result.include?("\e123") }
 
       # shouldn't escape the term codes around \n
-      assert { result =~ /\n\e/ }
+      assert { result.include?("\n\e") }
     end
   end
 end

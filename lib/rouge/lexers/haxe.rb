@@ -139,7 +139,7 @@ module Rouge
       state :root do
         rule %r/\n/, Text, :statement
         rule %r(\{), Punctuation, :expr_start
-        
+
         mixin :comments_and_whitespace
 
         rule %r/@/, Name::Decorator, :metadata
@@ -254,7 +254,7 @@ module Rouge
         rule %r/\\x\h{2}/, Str::Escape
         rule %r/\\u\h{4}/, Str::Escape
         rule %r/\\u\{\h{1,6}\}/, Str::Escape
-      end 
+      end
 
       state :str_interpol do
         rule %r/\}/, Str::Interpol, :pop!

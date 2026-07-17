@@ -25,12 +25,13 @@ module Rouge
         end
 
         formatter = rouge_formatter(lexer)
-        formatter.format(lexer.lex(code))
+        formatted = formatter.format(lexer.lex(code))
+        %(<pre class="highlight #{lexer.tag}"><code>#{formatted}</code></pre>)
       end
 
       # override this method for custom formatting behavior
       def rouge_formatter(lexer)
-        Formatters::HTMLLegacy.new(:css_class => "highlight #{lexer.tag}")
+        Rouge::Formatters::HTML.new
       end
     end
   end

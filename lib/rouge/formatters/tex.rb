@@ -28,7 +28,7 @@ module Rouge
         "\t" => '{\tab}',
       }
 
-      ESCAPE_REGEX = /[#{ESCAPE.keys.map(&Regexp.method(:escape)).join}]/om
+      ESCAPE_REGEX = /[#{ESCAPE.keys.map { |k| Regexp.escape(k) }.join}]/om
 
       def initialize(opts={})
         @prefix = opts.fetch(:prefix) { 'RG' }

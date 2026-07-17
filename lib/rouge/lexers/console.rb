@@ -75,7 +75,7 @@ module Rouge
 
       def end_chars
         @end_chars ||= if @prompt.any?
-          @prompt.reject { |c| c.empty? }
+          @prompt.reject { |c| c.empty? }.uniq.first(20)
         elsif allow_comments?
           %w($ > ;)
         else
@@ -85,7 +85,9 @@ module Rouge
 
       def error_regex
         @error_regex ||= if @error.any?
-          /^(?:#{@error.map(&Regexp.method(:escape)).join('|')})/
+          #rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
+          /^(?:#{@error.first(20).map { |e| Regexp.escape(e) }.join('|')})/
+          #rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
         end
       end
 
@@ -144,7 +146,7 @@ module Rouge
           yield Text::Whitespace, $& unless $&.empty?
 
           lang_lexer.continue_lex($', &output)
-        elsif comment_regex =~ input[0].strip
+        elsif allow_comments? && comment_regex =~ input[0].strip
           puts "console: matched comment #{input[0].inspect}" if @debug
           output_lexer.reset!
           lang_lexer.reset!
@@ -173,13 +175,17 @@ module Rouge
       end
 
       def prompt_regex
+        # [jneen] these characters can come from user input. They are escaped here,
+        # and we limit the user to 20.
+        #rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
         @prompt_regex ||= begin
-          /^#{prompt_prefix_regex}(?:#{end_chars.map(&Regexp.method(:escape)).join('|')})/
+          /^#{prompt_prefix_regex}(?:#{end_chars.map { |c| Regexp.escape(c) }.join('|')})/
         end
+        #rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
       end
 
       def stream_tokens(input, &output)
-        input = StringScanner.new(input)
+        input = StringScanner.new(input, fixed_anchor: true)
         lang_lexer.reset!
         output_lexer.reset!
 

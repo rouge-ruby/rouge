@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'php'
+
 module Rouge
   module Lexers
-    load_lexer 'php.rb'
-
     class Hack < PHP
       title 'Hack'
       desc 'The Hack programming language (hacklang.org)'
@@ -13,16 +13,14 @@ module Rouge
       filenames '*.php', '*.hh'
 
       def self.detect?(text)
-        return true if /<\?hh/ =~ text
+        return true if text.start_with?('<?hh')
         return true if text.shebang?('hhvm')
-        return true if /async function [a-zA-Z]/ =~ text
-        return true if /\): Awaitable</ =~ text
 
         return false
       end
 
       def self.keywords
-        @hh_keywords ||= super.merge Set.new %w(
+        @keywords ||= super.merge Set.new %w(
           type newtype enum
           as super
           async await Awaitable

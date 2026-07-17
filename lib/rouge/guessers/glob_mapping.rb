@@ -32,12 +32,12 @@ module Rouge
         basename = File.basename(filename)
 
         collect_best(lexers) do |lexer|
-          (@glob_map[lexer.name] || []).map do |pattern|
+          (@glob_map[lexer.name] || []).filter_map do |pattern|
             if test_glob(pattern, basename)
               # specificity is better the fewer wildcards there are
               -pattern.scan(/[*?\[]/).size
             end
-          end.compact.min
+          end.min
         end
       end
     end

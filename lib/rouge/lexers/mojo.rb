@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+require_relative 'python'
+
 module Rouge
   module Lexers
-    load_lexer 'python.rb'
-    
     class Mojo < Python
       title "Mojo"
       desc "The Mojo programming language (modular.com)"
@@ -31,6 +31,10 @@ module Rouge
           __mlir_attr __mlir_type __mlir_op parameter alwaysinline
           register_passable type_of
         )
+      end
+
+      prepend :newline do
+        rule %r/fn\b/, Keyword, :funcname
       end
     end
   end

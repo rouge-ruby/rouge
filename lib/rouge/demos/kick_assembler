@@ -1,0 +1,14 @@
+BasicUpstart2(start)
+
+.const GET_CHAR = $ffe4
+
+start:
+  jsr get_char
+  rts
+
+// Routine
+get_char: {
+  jsr GET_CHAR
+  beq get_char
+  rts
+}

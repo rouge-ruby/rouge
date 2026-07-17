@@ -156,61 +156,61 @@ describe Rouge::Lexer do
   end
 
   it 'delegates' do
-    class MasterLexer < Rouge::RegexLexer
-      state :root do
-        rule %r/a/, 'A'
-        rule %r/{(.*?)}/ do |m|
-          token 'brace', '{'
-          delegate BracesLexer.new, m[1]
-          token 'brace', '}'
-        end
-      end
-    end
-
-    class BracesLexer < Rouge::RegexLexer
+    braces_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
         rule %r/b/, 'B'
       end
     end
 
-    assert_no_errors 'a{b}a', MasterLexer
+    master_lexer = Class.new(Rouge::RegexLexer) do
+      state :root do
+        rule %r/a/, 'A'
+        rule %r/{(.*?)}/ do |m|
+          token 'brace', '{'
+          delegate braces_lexer.new, m[1]
+          token 'brace', '}'
+        end
+      end
+    end
+
+    assert_no_errors 'a{b}a', master_lexer
   end
 
   it 'detects the beginnings of lines with ^ rules' do
-    class MyLexer < Rouge::RegexLexer
+    my_lexer = Class.new(Rouge::RegexLexer) do
       state :root do
         rule %r/^a/, 'start'
         rule %r/a/, 'not-start'
       end
     end
 
-    assert_has_token('start', 'a', MyLexer)
-    assert_has_token('start', "\na", MyLexer)
-    deny_has_token('not-start', 'a', MyLexer)
-    assert_has_token('not-start', 'aa', MyLexer)
+    assert_has_token('start', 'a', my_lexer)
+    assert_has_token('start', "\na", my_lexer)
+    deny_has_token('not-start', 'a', my_lexer)
+    assert_has_token('not-start', 'aa', my_lexer)
   end
 
   it 'is undetectable by default' do
-    UndetectableLexer = Class.new(Rouge::Lexer)
+    undetectable_lexer = Class.new(Rouge::Lexer)
 
-    refute { UndetectableLexer.methods(false).include?(:detect?) }
-    refute { UndetectableLexer.detectable? }
+    refute { undetectable_lexer.methods(false).include?(:detect?) }
+    refute { undetectable_lexer.detectable? }
   end
 
   it 'can only be detectable within current scope' do
-    class DetectableLexer < Rouge::Lexer
+    detectable_lexer = Class.new(Rouge::Lexer) do
       def self.detect?
         text.shebang?('foobar')
       end
     end
 
-    assert { DetectableLexer.methods(false).include?(:detect?) }
-    assert { DetectableLexer.detectable? }
+    assert { detectable_lexer.methods(false).include?(:detect?) }
+    assert { detectable_lexer.detectable? }
 
-    NonDetectableLexer = Class.new(DetectableLexer)
+    non_detectable_lexer = Class.new(detectable_lexer)
 
-    refute { NonDetectableLexer.methods(false).include?(:detect?) }
-    refute { NonDetectableLexer.detectable? }
+    refute { non_detectable_lexer.methods(false).include?(:detect?) }
+    refute { non_detectable_lexer.detectable? }
   end
 
   it 'handles boolean options' do
@@ -242,5 +242,40 @@ describe Rouge::Lexer do
     assert { inline_php != php }
     assert { php.instance_variable_get(:@start_inline) == :guess }
     assert { inline_php.instance_variable_get(:@start_inline) == true }
+  end
+
+  it 'supports custom demos' do
+    lexer = Class.new(Rouge::Lexer) do
+      demo 'my cool demo'
+    end
+
+    assert { lexer.demo == 'my cool demo' }
+  end
+
+  it 'falls through' do
+    new_lexer = Class.new(Rouge::RegexLexer) do
+      state :root do
+        rule %r/\w+\b/ do |m|
+          fallthrough! unless %w(testy1 testy2).include?(m[0])
+
+          token 'builtin'
+        end
+
+        rule %r/\w+\b/ do |m|
+          token 'function'
+        end
+
+        rule %r/\s+/, 'text'
+      end
+    end
+
+    result = new_lexer.lex('testy1 foobar testy2').to_a
+
+    assert { result.size == 5 }
+    assert { result[0] == ['builtin', 'testy1'] }
+    assert { result[1] == ['text', ' '] }
+    assert { result[2] == ['function', 'foobar'] }
+    assert { result[3] == ['text', ' '] }
+    assert { result[4] == ['builtin', 'testy2'] }
   end
 end

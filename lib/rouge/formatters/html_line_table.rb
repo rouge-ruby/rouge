@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# [jneen] This is an example implementation only. You may use it as-is, but please do
+# not submit patches that alter the behaviour or options of this formatter for the
+# convenience of your application. You are highly encouraged to write your own
+# formatter for your application instead.
+
 module Rouge
   module Formatters
     class HTMLLineTable < Formatter
@@ -22,7 +27,7 @@ module Rouge
       # @option opts [String] :code_class Class name for rendered code cell.
       #   Defaults to `"rouge-code"`.
       def initialize(formatter, opts={})
-        @formatter    = formatter
+        @formatter    = HTML.assert_html_formatter!(formatter)
         @start_line   = opts.fetch :start_line,   1
         @table_class  = opts.fetch :table_class,  'rouge-line-table'
         @gutter_class = opts.fetch :gutter_class, 'rouge-gutter'
@@ -39,9 +44,9 @@ module Rouge
           buffer << %(style="-moz-user-select: none;-ms-user-select: none;)
           buffer << %(-webkit-user-select: none;user-select: none;">)
           buffer << %(<pre>#{lineno}</pre></td>)
-          buffer << %(<td class="#@code_class"><pre>)
+          buffer << %(<td class="#@code_class"><pre><code>)
           @formatter.stream(line_tokens) { |formatted| buffer << formatted }
-          buffer << "\n</pre></td></tr>"
+          buffer << "\n</code></pre></td></tr>"
         end
         buffer << %(</tbody></table>)
         yield buffer.join

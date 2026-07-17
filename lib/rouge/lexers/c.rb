@@ -17,9 +17,10 @@ module Rouge
 
       def self.keywords
         @keywords ||= Set.new %w(
-          auto break case const continue default do else enum extern
-          for goto if register restricted return sizeof static struct
-          switch typedef union volatile virtual while
+          alignas alignof auto break case const constexpr continue
+          default do else enum extern for goto if register return
+          sizeof static static_assert struct switch typedef typeof
+          typeof_unqual union volatile while
 
           _Alignas _Alignof _Atomic _Generic _Imaginary
           _Noreturn _Static_assert _Thread_local
@@ -44,6 +45,8 @@ module Rouge
           uintmax_t
 
           char16_t char32_t
+
+          _BitInt _Decimal128 _Decimal32 _Decimal64 bool nullptr_t
         )
       end
 
@@ -52,7 +55,8 @@ module Rouge
           __asm __int8 __based __except __int16 __stdcall __cdecl
           __fastcall __int32 __declspec __finally __int61 __try __leave
           inline _inline __inline naked _naked __naked restrict _restrict
-          __restrict thread _thread __thread typename _typename __typename
+          __restrict thread _thread __thread thread_local
+          typename _typename __typename
         )
       end
 
@@ -108,7 +112,7 @@ module Rouge
         rule %r([~!%^&*+=\|?:<>/-]), Operator
         rule %r/[()\[\],.;]/, Punctuation
         rule %r/\bcase\b/, Keyword, :case
-        rule %r/(?:true|false|NULL)\b/, Name::Builtin
+        rule %r/(?:true|false|NULL|nullptr)\b/, Name::Builtin
         rule id do |m|
           name = m[0]
 

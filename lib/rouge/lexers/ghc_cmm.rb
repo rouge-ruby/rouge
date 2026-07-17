@@ -245,7 +245,7 @@ module Rouge
         #   `(type /* optional whitespace */ var_name /* optional whitespace */)`
         # Note: Only the token for type is produced here.
         rule %r{
-                (^#{id})
+                (#{id})
                 (#{ws}+)
                 (#{id})
               }mx do |m|

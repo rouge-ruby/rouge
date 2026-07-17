@@ -2,10 +2,11 @@
 # frozen_string_literal: true
 #
 # adapted from lustre.rf (adapted from ocaml.rb), hence some ocaml-ism migth remains
+
+require_relative 'lustre'
+
 module Rouge
   module Lexers
-    load_lexer 'lustre.rb'
-
     class Lutin < Lustre
       title "Lutin"
       desc 'The Lutin programming language (Verimag)'
@@ -16,13 +17,13 @@ module Rouge
       def self.keywords
         @keywords ||= Set.new %w(
           let in node extern system returns weak strong assert raise try catch
-          trap do exist erun run type ref exception include false true 
+          trap do exist erun run type ref exception include false true
         )
       end
 
       def self.word_operators
         @word_operators ||= Set.new %w(
-           div and xor mod or not nor if then else pre) 
+           div and xor mod or not nor if then else pre)
       end
 
       def self.primitives

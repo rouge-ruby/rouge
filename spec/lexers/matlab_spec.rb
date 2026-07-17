@@ -17,21 +17,26 @@ describe Rouge::Lexers::Matlab do
     end
 
     it 'guesses by source' do
-      assert_guess :filename => 'foo.m', :source => <<-eos
+      assert_guess :filename => 'foo.m', :source => <<-EOS
       function ImageGaborPhase(TFType,pkt,ell,titlestr)
       % ImageGaborPhase -- Time-Frequency Display with congruent rectangles
       
-      eos
+EOS
     end
 
     it 'guesses by source' do
-      assert_guess :filename => 'foo.m', :source => <<-eos
+      assert_guess :filename => 'foo.m', :source => <<-EOS
       methods
         function obj = GaussianBlur(sigma, img_size, edges)
             %GAUSSIANBLUR Create Gaussian Blur filter object
         end
       end
-      eos
+EOS
+    end
+
+    it 'guesses by source' do
+      assert_guess :filename => 'foo.m', :source => '% MATLAB comment'
+      assert_guess :filename => 'foo.m', :source => 'mycell = {'
     end
   end
 end

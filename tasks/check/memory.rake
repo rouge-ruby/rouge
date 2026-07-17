@@ -1,14 +1,21 @@
 
 namespace :check do
   desc "Analyse the memory profile of Rouge"
-  task :memory do
+  task :memory, [:type] do |task, args|
+    args.with_defaults(type: 'normal')
+
     require 'memory_profiler'
 
     dir = Rake.application.original_dir
     source = File.expand_path('lib/rouge/lexer.rb', dir)
     sample = File.read(source, encoding: 'utf-8')
     report = MemoryProfiler.report do
-      require 'rouge'
+      if args[:type] == 'eager'
+        require 'rouge/eager'
+      else
+        require 'rouge'
+      end
+
       formatter  = Rouge::Formatters::HTML.new
       ruby_lexer = Rouge::Lexers::Ruby.new
       guessed_lexer = Rouge::Lexer.find_fancy('guess', sample)

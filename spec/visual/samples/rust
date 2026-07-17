@@ -38,6 +38,9 @@ println!(r###"r##"r#""#"##"###);
 println!(r#"
   "New line in a raw string"
 "#);
+println!("String continuation\
+
+    escape");
 
 trait Iterable<A> {
     fn iterate(&self, blk: impl FnMut(&A) -> bool);

@@ -83,6 +83,11 @@ module Rouge
           groups Name::Class, Punctuation, Name::Function
           pop!
         end
+
+        rule Magik.identifier do
+          token Name::Class
+          pop!
+        end
       end
     end
   end

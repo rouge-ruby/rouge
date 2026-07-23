@@ -5,7 +5,6 @@ module Rouge
   module Lexers
     class Cypher < RegexLexer
       tag 'cypher'
-      aliases 'cypher'
       filenames '*.cypher'
       mimetypes 'application/x-cypher-query'
 

@@ -7,7 +7,6 @@ module Rouge
       title "Scala"
       desc "The Scala programming language (scala-lang.org)"
       tag 'scala'
-      aliases 'scala'
       filenames '*.scala', '*.sbt'
 
       mimetypes 'text/x-scala', 'application/x-scala'

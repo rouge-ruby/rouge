@@ -7,7 +7,6 @@ module Rouge
       title "Prolog"
       desc "The Prolog programming language (http://en.wikipedia.org/wiki/Prolog)"
       tag 'prolog'
-      aliases 'prolog'
       filenames '*.pro', '*.P', '*.prolog', '*.pl'
       mimetypes 'text/x-prolog'
 

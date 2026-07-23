@@ -8,7 +8,6 @@ module Rouge
       title 'Lean'
       desc 'The Lean programming language (leanprover.github.io)'
       tag 'lean'
-      aliases 'lean'
       filenames '*.lean'
 
       def self.keywords

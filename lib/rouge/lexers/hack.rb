@@ -9,7 +9,7 @@ module Rouge
       title 'Hack'
       desc 'The Hack programming language (hacklang.org)'
       tag 'hack'
-      aliases 'hack', 'hh'
+      aliases 'hh'
       filenames '*.php', '*.hh'
 
       def self.detect?(text)

@@ -8,7 +8,7 @@ module Rouge
       title "PostScript"
       desc "The PostScript language (adobe.com/devnet/postscript.html)"
       tag "postscript"
-      aliases "postscr", "postscript", "ps", "eps"
+      aliases "postscr", "ps", "eps"
       filenames "*.ps", "*.eps"
       mimetypes "application/postscript"
 

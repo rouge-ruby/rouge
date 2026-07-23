@@ -8,7 +8,7 @@ module Rouge
       title 'JSX'
       desc 'An XML-like syntax extension to JavaScript (facebook.github.io/jsx/)'
       tag 'jsx'
-      aliases 'jsx', 'react'
+      aliases 'react'
       filenames '*.jsx'
 
       mimetypes 'text/x-jsx', 'application/x-jsx'

@@ -10,7 +10,7 @@ module Rouge
       desc "Elixir language (elixir-lang.org)"
 
       tag 'elixir'
-      aliases 'elixir', 'exs'
+      aliases 'exs'
 
       filenames '*.ex', '*.exs'
 

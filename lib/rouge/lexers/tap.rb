@@ -6,7 +6,6 @@ module Rouge
       title 'TAP'
       desc 'Test Anything Protocol'
       tag 'tap'
-      aliases 'tap'
       filenames '*.tap'
 
       mimetypes 'text/x-tap', 'application/x-tap'

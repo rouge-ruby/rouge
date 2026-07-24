@@ -5,7 +5,6 @@ module Rouge
     class Prometheus < RegexLexer
       desc 'prometheus'
       tag 'prometheus'
-      aliases 'prometheus'
       filenames '*.prometheus'
 
       mimetypes 'text/x-prometheus', 'application/x-prometheus'

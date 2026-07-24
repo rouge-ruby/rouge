@@ -7,7 +7,7 @@ module Rouge
       title "Go"
       desc 'The Go programming language (http://golang.org)'
       tag 'go'
-      aliases 'go', 'golang'
+      aliases 'golang'
       filenames '*.go'
 
       mimetypes 'text/x-go', 'application/x-go'

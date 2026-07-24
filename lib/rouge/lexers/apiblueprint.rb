@@ -9,7 +9,7 @@ module Rouge
       desc 'Markdown based API description language.'
 
       tag 'apiblueprint'
-      aliases 'apiblueprint', 'apib'
+      aliases 'apib'
       filenames '*.apib'
       mimetypes 'text/vnd.apiblueprint'
 

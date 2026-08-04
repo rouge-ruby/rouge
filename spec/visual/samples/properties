@@ -14,3 +14,5 @@ key\ with\ spaces = This is the value that could be looked up with the key "key 
 key.with.dots = This is the value that could be looked up with the key "key.with.dots".
 # Unicode
 tab : \u0009
+
+# comment at eof

@@ -11,10 +11,10 @@ module Rouge
       filenames '*.properties'
       mimetypes 'text/x-java-properties'
 
-      identifier = /[\w.-]+/
+      identifier = /(?:[\w.-]|\\u\h{4}|\\.)+/
 
       state :basic do
-        rule %r/[!#].*?\n/, Comment
+        rule %r/[!#].*/, Comment
         rule %r/\s+/, Text
         rule %r/\\\n/, Str::Escape
       end

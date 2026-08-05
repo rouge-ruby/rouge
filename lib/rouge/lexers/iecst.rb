@@ -64,7 +64,8 @@ module Rouge
         rule %r/\b(?:D|DT|T|TOD)#[\d_shmd:]*/i, Literal::Date
         rule %r/\b(?:16#[\d_a-f]+|0x[\d_a-f]+)\b/i, Literal::Number::Hex
         rule %r/\b2#[01_]+/, Literal::Number::Bin
-        rule %r/(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i, Literal::Number::Float
+        rule %r/BYTE(#[\h_]+)+/, Literal::Number
+        rule %r/(?:\b[\d_]+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i, Literal::Number::Float
         rule %r/\b[\d.,_]+/, Literal::Number
 
         rule %r/\b[A-Z_]+\b/i do |m|

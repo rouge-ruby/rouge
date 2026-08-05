@@ -1,0 +1,124 @@
+## Pacman by Dominexis: tick.mcfunction
+# Assign character values
+
+execute as @e[type=armor_stand,tag=lobby] at @s if entity @a[scores={character=0},distance=..1] run function pacman:gameplay/generic/assign_character
+
+
+# Reset character booleans
+
+scoreboard players set #pacman_player value 0
+scoreboard players set #blinky_player value 0
+scoreboard players set #pinky_player value 0
+scoreboard players set #inky_player value 0
+scoreboard players set #clyde_player value 0
+
+# Execute player function
+
+execute as @a at @s run function pacman:player/main
+
+# Count players
+
+execute store result score #player_count_lobby value if entity @a[scores={character=0  }]
+execute store result score #player_count_game value if entity @a[ scores={character=1..}]
+
+# Manage lobby characters
+
+execute if score #pacman_player value matches 0 unless entity @e[type=armor_stand,tag=lobby,tag=pacman] run summon armor_stand 028 49.5 000 {Tags:["lobby","pacman"],NoGravity:1,Invisible:1,DisabledSlots:4144959,ArmorItems:[{},{},{},{id:"stone",Count:1,tag:{CustomModelData:1101902}}]}
+execute if score #blinky_player value matches 0 unless entity @e[type=armor_stand,tag=lobby,tag=blinky] run summon armor_stand -28 49.5 021 {Tags:["lobby","blinky"],NoGravity:1,Invisible:1,DisabledSlots:4144959,ArmorItems:[{},{},{},{id:"stone",Count:1,tag:{CustomModelData:1201801}}]}
+execute if score #pinky_player value matches 0 unless entity @e[ type=armor_stand,tag=lobby,tag=pinky ] run summon armor_stand -28 49.5 007 {Tags:["lobby","pinky" ],NoGravity:1,Invisible:1,DisabledSlots:4144959,ArmorItems:[{},{},{},{id:"stone",Count:1,tag:{CustomModelData:1202801}}]}
+execute if score #inky_player value matches 0 unless entity @e[  type=armor_stand,tag=lobby,tag=inky  ] run summon armor_stand -28 49.5 -07 {Tags:["lobby","inky"  ],NoGravity:1,Invisible:1,DisabledSlots:4144959,ArmorItems:[{},{},{},{id:"stone",Count:1,tag:{CustomModelData:1203801}}]}
+execute if score #clyde_player value matches 0 unless entity @e[ type=armor_stand,tag=lobby,tag=clyde ] run summon armor_stand -28 49.5 -21 {Tags:["lobby","clyde" ],NoGravity:1,Invisible:1,DisabledSlots:4144959,ArmorItems:[{},{},{},{id:"stone",Count:1,tag:{CustomModelData:1204801}}]}
+
+execute as @e[type=armor_stand,tag=lobby] run function pacman:animation/lobby
+
+# Game mechanics
+
+execute if score #phase value matches 0 run function pacman:gameplay/phase_0/main
+execute if score #phase value matches 1 run function pacman:gameplay/phase_1/main
+execute if score #phase value matches 2 run function pacman:gameplay/phase_2/main
+execute if score #phase value matches 3 run function pacman:gameplay/phase_3/main
+execute if score #phase value matches 4 run function pacman:gameplay/phase_4/main
+execute if score #phase value matches 5 run function pacman:gameplay/phase_5/main
+execute if score #phase value matches 6 run function pacman:gameplay/phase_6/main
+execute if score #phase value matches 7 run function pacman:gameplay/phase_7/main
+execute if score #phase value matches 8 run function pacman:gameplay/phase_8/main
+execute if score #phase value matches 9 run function pacman:gameplay/phase_9/main
+
+# Phase definition
+
+# Phase 0: Lobby
+# Phase 1: Waiting for players to join
+# Phase 2: Initial game start
+# Phase 3: Other game starts through respawn or a new level
+# Phase 4: Gameplay
+# Phase 5: Death animation
+# Phase 6: New level timer
+# Phase 7: Game over
+# Phase 8: Level 256
+# Phase 9: Intermission
+
+# Display scores
+
+execute if score #phase value matches 2..9 run title @a[scores={character=1..}] actionbar [{"text":"Score: ","color":"#DEDEFF"},{"score":{"name":"#score","objective":"value"}},{"text":"      High Score: "},{"score":{"name":"#high_score","objective":"value"}}]
+execute if score #phase value matches 2..9 run title @a[scores={character=0  }] actionbar ""
+
+# Reset button
+
+execute if score #phase value matches 2.. run function pacman:gameplay/generic/reset_button
+
+# Animations
+
+execute if score #phase value matches 02.. run scoreboard players add #scene_animation value 1
+execute if score #phase value matches 4..5 run scoreboard players add #arena_animation value 1
+
+scoreboard players operation #math_00 value = #arena_animation value
+scoreboard players operation #math_00 value %= #8 value
+execute if score #math_00 value matches 0 run function pacman:animation/power_pellet/on
+execute if score #math_00 value matches 4 run function pacman:animation/power_pellet/off
+
+scoreboard players operation #math_00 value = #scene_animation value
+scoreboard players operation #math_00 value %= #20 value
+execute if score #math_00 value matches 00 run function pacman:animation/1up/on
+execute if score #math_00 value matches 10 run function pacman:animation/1up/off
+
+execute as @e[type=armor_stand,tag=game] run function pacman:animation/character/mechanics
+
+# Terminate items
+
+kill @e[type=item]
+
+# Reset use item score
+
+scoreboard players reset * use_item
+
+# Display particles
+
+execute at @e[type=area_effect_cloud,tag=intersection] run particle dust 0 1 0 1 ~ 20 ~ 0 0 0 0 1 force
+
+## rwt by Pizzaspren: storage_manip.mcfunction
+
+data modify storage rwtlib:storage Recipes set value []
+
+data modify storage rwtlib:storage Recipes append from storage rwtlib:storage Items[].tag.rwt
+
+data remove storage rwtlib:storage Items[].tag.rwt
+
+execute store result score $rwtlib:tag_count rwtlib.config run data get storage rwtlib:storage Items[0].tag
+execute if score $rwtlib:tag_count rwtlib.config matches 0 run data remove storage rwtlib:storage Items[0].tag
+execute store result score $rwtlib:tag_count rwtlib.config run data get storage rwtlib:storage Items[1].tag
+execute if score $rwtlib:tag_count rwtlib.config matches 0 run data remove storage rwtlib:storage Items[1].tag
+execute store result score $rwtlib:tag_count rwtlib.config run data get storage rwtlib:storage Items[2].tag
+execute if score $rwtlib:tag_count rwtlib.config matches 0 run data remove storage rwtlib:storage Items[2].tag
+execute store result score $rwtlib:tag_count rwtlib.config run data get storage rwtlib:storage Items[3].tag
+execute if score $rwtlib:tag_count rwtlib.config matches 0 run data remove storage rwtlib:storage Items[3].tag
+execute store result score $rwtlib:tag_count rwtlib.config run data get storage rwtlib:storage Items[4].tag
+execute if score $rwtlib:tag_count rwtlib.config matches 0 run data remove storage rwtlib:storage Items[4].tag
+execute store result score $rwtlib:tag_count rwtlib.config run data get storage rwtlib:storage Items[5].tag
+execute if score $rwtlib:tag_count rwtlib.config matches 0 run data remove storage rwtlib:storage Items[5].tag
+
+data modify storage rwtlib:storage Recipes[0].sell set from storage rwtlib:storage Items[0]
+data modify storage rwtlib:storage Recipes[1].sell set from storage rwtlib:storage Items[1]
+data modify storage rwtlib:storage Recipes[2].sell set from storage rwtlib:storage Items[2]
+data modify storage rwtlib:storage Recipes[3].sell set from storage rwtlib:storage Items[3]
+data modify storage rwtlib:storage Recipes[4].sell set from storage rwtlib:storage Items[4]
+data modify storage rwtlib:storage Recipes[5].sell set from storage rwtlib:storage Items[5]

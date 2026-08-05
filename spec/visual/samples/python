@@ -11,6 +11,15 @@ def lex(code, lexer):
                             'not a class')
         raise
 
+# identifiers
+foo.Bar() # Name::Function
+foo.import(bar) # Keyword
+foo.import # Keyword
+foo.else # Keyword
+foo.list # Name::Property
+foo.list(x) # Name::Function
+list(x) # Name::Builtin
+
 # quotes in strings
 def foo():
     "it's working"

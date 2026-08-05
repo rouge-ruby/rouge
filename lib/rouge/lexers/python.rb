@@ -86,6 +86,17 @@ module Rouge
         push :newline
       end
 
+      state :special_idents do
+        keywords identifier do
+          rule :keywords, Keyword
+          rule :exceptions, Name::Exception
+        end
+      end
+
+      state :function_idents do
+        rule %r/#{identifier}(?=#{inline_ws}[(])/, Name::Function
+      end
+
       state :inline_whitespace do
         rule %r/[ \t]+/, Text
         rule %r/\\\n/, Str::Escape
@@ -122,14 +133,15 @@ module Rouge
           push :generic_string
         end
 
-        # using negative lookbehind so we don't match property names
-        keywords %r/(?<!\.)#{identifier}/ do |m|
-          rule :keywords, Keyword
-          rule :exceptions, Name::Exception
+        mixin :special_idents
+
+        # builtins cannot be in property names (see :post_dot)
+        keywords identifier do |m|
           rule :builtins, Name::Builtin
           rule :builtins_pseudo, Name::Builtin::Pseudo
-          default Name
         end
+
+        mixin :function_idents
 
         rule identifier, Name
 
@@ -173,8 +185,11 @@ module Rouge
 
       state :post_dot do
         mixin :inline_whitespace
-        rule %r/([A-Z]\w*)(?=#{inline_ws}[(])/m, Name::Class
-        rule %r/(#{identifier})(?=#{inline_ws}[(])/m, Name::Function
+
+        mixin :special_idents
+        mixin :function_idents
+        rule identifier, Name::Property
+
         rule(//) { pop! }
       end
 

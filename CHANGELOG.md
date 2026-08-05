@@ -4,6 +4,41 @@ This log summarizes the changes in each released version of Rouge.
 
 Rouge follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## version 5.1.0: 2026-08-05
+
+[Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v5.0.0...v5.1.0)
+
+- General
+  - add a more helpful #inspect method for lexers ([#2303](https://github.com/rouge-ruby/rouge/pull/2303/) by Jeanine Adkisson)
+  - Wrap code/pre references in changelog ([#2293](https://github.com/rouge-ruby/rouge/pull/2293/) by Matt Jankowski)
+  - remove redundant alias declarations, and warn on duplicate registration ([#2317](https://github.com/rouge-ruby/rouge/pull/2317/) by Jeanine Adkisson)
+  - update AGENTS.md and CONTRIBUTING.md ([#2316](https://github.com/rouge-ruby/rouge/pull/2316/) by Jeanine Adkisson)
+- AddmusicK/Ramekin Lexer (**NEW**)
+  - Add an AddmusicK/Ramekin lexer ([#2277](https://github.com/rouge-ruby/rouge/pull/2277/) by Jeanine Adkisson)
+- AppleScript Lexer
+  - Fix applescript warning and move files to locations that match the tag ([#2321](https://github.com/rouge-ruby/rouge/pull/2321/) by Jeanine Adkisson)
+- Makefile Lexer
+  - Add comment support in Makefile body blocks ([#2305](https://github.com/rouge-ruby/rouge/pull/2305/) by Tan Le)
+- Markdown Lexer
+  - Fix edge case in markdown lexer for links ([#2308](https://github.com/rouge-ruby/rouge/pull/2308/) by Marcel Amirault)
+- Java Lexer
+  - Support modern Java syntax ([#2300](https://github.com/rouge-ruby/rouge/pull/2300/) by Tan Le)
+  - Fix Java import static tokenized as separate tokens ([#2298](https://github.com/rouge-ruby/rouge/pull/2298/) by Tan Le)
+- Perl Lexer
+  - Overhaul the perl lexer ([#2307](https://github.com/rouge-ruby/rouge/pull/2307/) by Jeanine Adkisson)
+- Properties Lexer
+  - properties: fix comments at eof and escaped chars in keys ([#2320](https://github.com/rouge-ruby/rouge/pull/2320/) by Jeanine Adkisson)
+- Shell Lexer
+  - shell: use Str::Interpol instead of Str::Escape ([#2310](https://github.com/rouge-ruby/rouge/pull/2310/) by Jeanine Adkisson)
+  - Add bitwise shift operators to shell math context ([#2297](https://github.com/rouge-ruby/rouge/pull/2297/) by Tan Le)
+  - add support for bash 5.3 curly substitutions ([#2309](https://github.com/rouge-ruby/rouge/pull/2309/) by Jeanine Adkisson)
+- VHDL Lexer
+  - VHDL: support delimited comments ([#2304](https://github.com/rouge-ruby/rouge/pull/2304/) by marph91)
+- Vue Lexer
+  - Fix @ event shorthand in Vue templates ([#2296](https://github.com/rouge-ruby/rouge/pull/2296/) by Tan Le)
+- YAML Lexer
+  - Fix bug with yaml separator in code blocks ([#2313](https://github.com/rouge-ruby/rouge/pull/2313/) by Marcel Amirault)
+
 ## version 5.0.0: 2026-05-26
 
 [Comparison with the previous version](https://github.com/rouge-ruby/rouge/compare/v4.7.0...v5.0.0)

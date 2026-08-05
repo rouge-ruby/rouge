@@ -115,6 +115,11 @@ module Rouge
 
         rule %r/class\b/, Keyword, :classname
 
+        # handle `lazy import` soft keyword usage
+        # since `import` is a hard keyword, we know that this usage has to be
+        # the soft-keyword case
+        rule %r/lazy\b(?=#{inline_ws}import\b)/, Keyword
+
         rule %r/`.*?`/, Str::Backtick
         rule %r/([rtfbu]{0,2})('''|"""|['"])/i do |m|
           groups Str::Affix, Str::Heredoc
@@ -173,6 +178,7 @@ module Rouge
       # import after from, meaning we don't push the :import state
       state :from_import do
         mixin :inline_whitespace
+        rule %r/lazy\b/, Keyword::Namespace
         rule %r/import\b/, Keyword::Namespace, :pop!
         rule(//) { pop! }
       end

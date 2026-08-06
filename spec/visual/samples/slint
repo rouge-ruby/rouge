@@ -1,0 +1,55 @@
+// This is a single-line comment
+
+/*
+   This is a multi-line comment
+   to test nested or block-style comments
+*/
+
+// Using several keywords, built-in types, properties, color literals, etc.
+import { Button } from "std-widgets.slint";
+
+export component MyComponent inherits Rectangle {
+    // properties
+    property <float> float-prop: 3.14;
+    in-out property <string> title: "Slint Demo";
+    out property <bool> is-enabled: true;
+
+    // Color literal
+    background: #123456;
+
+    // Numeric with units
+    preferred-width: 100%;
+    height: 200px;
+
+    // callback
+    callback action;
+
+    // property change handler
+    changed float-prop => { action(); }
+
+    // States and transitions
+    states [
+        enabled when is-enabled : {
+            title: "Enabled";
+	    float-prop: 10.0;
+
+            in {
+                animate float-prop { duration: 100ms; }
+            }
+            out {
+                animate float-prop { duration: 300ms; }
+            }
+        }
+    ]
+
+    // Function usage
+    public function doSomething(input-value: int) {
+        return Math.min(root.float-prop, Math.max(root.float-prop, 5.));
+    }
+}
+
+/* Another multi-line comment
+   with random punctuation to test fallback or error handling:
+   ^ $$ &lt; &gt; : ?!?!
+*/
+

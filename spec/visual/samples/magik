@@ -69,6 +69,47 @@ _method test_object.method_name(arg_1, _gather args)
 _endmethod
 $
 
+_abstract _private _iter _method test_object.abstract_private_iter()
+  _loopbody(_unset, _unset)
+_endmethod
+$
+
+_method test_object[]
+_endmethod
+$
+
+_method test_object[a]
+_endmethod
+$
+
+_method test_object[a, b]
+_endmethod
+$
+
+_method test_object.method<< a
+_endmethod
+$
+
+_method test_object.method^<< a
+_endmethod
+$
+
+_method test_object[a]<< b
+_endmethod
+$
+
+_method test_object[a]^<< a
+_endmethod
+$
+
+_method test_object.method(a)<< b
+_endmethod
+$
+
+_method test_object.method(a)^<< b
+_endmethod
+$
+
 _block
         _thisthread.traceback()
 _endblock

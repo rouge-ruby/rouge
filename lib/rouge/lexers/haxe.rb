@@ -47,7 +47,7 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= %w(
+        @builtins ||= Set.new %w(
           Void Dynamic Math Class Any Float Int UInt String StringTools Sys
           EReg isNaN parseFloat parseInt this Array Map Date DateTools Bool
           Lambda Reflect Std File FileSystem
@@ -157,27 +157,14 @@ module Rouge
           push :expr_start
         end
 
-        rule id do |m|
-          match = m[0]
-
-          if self.class.imports.include?(match)
-            token Keyword::Namespace
-            push :namespace
-          elsif self.class.keywords.include?(match)
-            token Keyword
-            push :expr_start
-          elsif self.class.declarations.include?(match)
-            token Keyword::Declaration
-            push :expr_start
-          elsif self.class.reserved.include?(match)
-            token Keyword::Reserved
-          elsif self.class.constants.include?(match)
-            token Keyword::Constant
-          elsif self.class.builtins.include?(match)
-            token Name::Builtin
-          else
-            token Name::Other
-          end
+        keywords id do
+          rule :imports, Keyword::Namespace, :namespace
+          rule :keywords, Keyword, :expr_start
+          rule :declarations, Keyword::Declaration, :expr_start
+          rule :reserved, Keyword::Reserved
+          rule :constants, Keyword::Constant
+          rule :builtins, Name::Builtin
+          default Name::Other
         end
 
         rule %r/\-?\d+\.\d+(?:[eE]\d+)?[fd]?/, Num::Float

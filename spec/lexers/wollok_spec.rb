@@ -25,9 +25,9 @@ describe Rouge::Lexers::Wollok do
       result_a2 = a.lex('foo.bar()').to_a
       assert_equal result_a2[0].first, Token['Name.Class']
 
-      # If "foo" is undefined, it is recognized as Keyword.Variable.
+      # If "foo" is undefined, it is recognized as Name
       result_b1 = b.lex('foo.bar()').to_a
-      assert_equal result_b1[0].first, Token['Keyword.Variable']
+      assert_equal result_b1[0].first, Token['Name']
     end
   end
 end

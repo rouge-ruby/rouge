@@ -125,11 +125,11 @@ module Rouge
       end
 
       def self.builtins
-        @builtins ||= %w(
+        @builtins ||= Set.new %w(
           Array Boolean Date Error Function Math netscape
           Number Object Packages RegExp String sun decodeURI
           decodeURIComponent encodeURI encodeURIComponent
-          Error eval isFinite isNaN parseFloat parseInt
+          eval isFinite isNaN parseFloat parseInt
           document window navigator self global
           Promise Set Map WeakSet WeakMap Symbol Proxy Reflect
           Int8Array Uint8Array Uint8ClampedArray
@@ -190,33 +190,20 @@ module Rouge
 
         rule %r/function(?=(\(.*\)))/, Keyword::Declaration # For anonymous functions
 
-        rule %r/(#?#{id})[ \t]*(?=(\(.*\)))/m do |m|
-          if self.class.keywords.include?(m[1])
-            # "if" in "if (...)" or "switch" in "switch (...)" are recognized as keywords.
-            token Keyword
-          else
-            token Name::Function
-          end
+        keywords %r/#?#{id}(?=[ \t]*[(])/m do
+          rule :keywords, Keyword
+          default Name::Function
         end
 
         rule %r/[{}]/, Punctuation, :statement
 
-        rule %r/#?#{id}/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-            push :expr_start
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-            push :expr_start
-          elsif self.class.reserved.include? m[0]
-            token Keyword::Reserved
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          else
-            token Name::Other
-          end
+        keywords %r/#?#{id}/ do
+          rule :keywords, Keyword, :expr_start
+          rule :declarations, Keyword::Declaration, :expr_start
+          rule :reserved, Keyword::Reserved
+          rule :constants, Keyword::Constant
+          rule :builtins, Name::Builtin
+          default Name::Other
         end
 
         rule %r/[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float

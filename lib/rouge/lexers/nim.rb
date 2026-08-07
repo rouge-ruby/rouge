@@ -12,7 +12,7 @@ module Rouge
       aliases 'nimrod'
       filenames '*.nim'
 
-      KEYWORDS = %w(
+      KEYWORDS = Set.new %w(
         addr as asm atomic bind block break case cast const continue
         converter defer discard distinct do elif else end enum except export
         func finally for from generic if import include interface iterator let
@@ -20,28 +20,22 @@ module Rouge
         template try tuple type using var when while with without yield
       )
 
-      OPWORDS = %w(
+      OPWORDS = Set.new %w(
         and or not xor shl shr div mod in notin is isnot
       )
 
-      PSEUDOKEYWORDS = %w(
+      PSEUDOKEYWORDS = Set.new %w(
         nil true false
       )
 
-      TYPES = %w(
+      TYPES = Set.new %w(
        int int8 int16 int32 int64 float float32 float64 bool char range array
        seq set string
       )
 
-      NAMESPACE = %w(
+      NAMESPACE = Set.new %w(
         from import include
       )
-
-      def self.underscorize(words)
-        words.map do |w|
-          w.gsub(/./) { |x| "#{Regexp.escape(x)}_?" }
-        end.join('|')
-      end
 
       state :chars do
         rule(/\\([\\abcefnrtvl"\']|x[a-fA-F0-9]{2}|[0-9]{1,3})/, Str::Escape)
@@ -119,16 +113,21 @@ module Rouge
         # Char
         rule(/'/, Str::Char, :chars)
 
-        # Keywords
-        rule(%r[(#{Nim.underscorize(OPWORDS)})\b], Operator::Word)
         rule(/(p_?r_?o_?c_?\s)(?![\(\[\]])/, Keyword, :funcname)
-        rule(%r[(#{Nim.underscorize(KEYWORDS)})\b],  Keyword)
-        rule(%r[(#{Nim.underscorize(NAMESPACE)})\b], Keyword::Namespace)
-        rule(/(v_?a_?r)\b/, Keyword::Declaration)
-        rule(%r[(#{Nim.underscorize(TYPES)})\b],          Keyword::Type)
-        rule(%r[(#{Nim.underscorize(PSEUDOKEYWORDS)})\b], Keyword::Pseudo)
-        # Identifiers
-        rule(/\b((?![_\d])\w)(((?!_)\w)|(_(?!_)\w))*/, Name)
+
+        # Keywords and Identifiers
+        keywords %r/(?![_\d])\w+/ do
+          # underscores can be used freely in idents
+          transform { |word| word.delete('_') }
+
+          rule OPWORDS,        Operator::Word
+          rule KEYWORDS,       Keyword
+          rule NAMESPACE,      Keyword::Namespace
+          rule Set['var'],     Keyword::Declaration
+          rule TYPES,          Keyword::Type
+          rule PSEUDOKEYWORDS, Keyword::Pseudo
+          default Name
+        end
 
         # Numbers
         # Note: Have to do this with a block to push multiple states first,

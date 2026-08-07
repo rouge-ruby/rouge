@@ -151,12 +151,10 @@ module Rouge
           @last = nil
         end
 
-        rule %r/#(\w+)/ do |m|
-          if KEYWORDS.include?(m[1])
-            token Keyword
-          else
-            token Name::Class
-          end
+        keywords %r/#(\w+)/ do
+          group 1
+          rule KEYWORDS, Keyword
+          default Name::Class
         end
 
         rule %r/(")([^"=]+)(=)/ do |m|

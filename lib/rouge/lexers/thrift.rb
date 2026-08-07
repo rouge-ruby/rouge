@@ -11,29 +11,21 @@ module Rouge
       filenames '*.thrift'
       mimetypes 'text/x-thrift', 'application/x-thrift'
 
-      def self.declarations
-        @declarations ||= Set.new %w(
-          include cpp_include namespace const typedef enum struct union
-          exception service
-        )
-      end
+      DECLARATIONS = Set.new %w(
+        include cpp_include namespace const typedef enum struct union
+        exception service
+      )
 
-      def self.keywords
-        @keywords ||= Set.new %w(
-          async cpp_type extends oneway optional required throws
-          xsd_all xsd_attrs xsd_nillable xsd_optional
-        )
-      end
+      KEYWORDS = Set.new %w(
+        async cpp_type extends oneway optional required throws
+        xsd_all xsd_attrs xsd_nillable xsd_optional
+      )
 
-      def self.types
-        @types ||= Set.new %w(
-          binary bool byte double i8 i16 i32 i64 list map set string uuid void
-        )
-      end
+      TYPES = Set.new %w(
+        binary bool byte double i8 i16 i32 i64 list map set string uuid void
+      )
 
-      def self.constants
-        @constants ||= Set.new %w(false true)
-      end
+      CONSTANTS = Set.new %w(false true)
 
       id = /[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z0-9_]+)*/
       namespace_name = /[a-zA-Z_][a-zA-Z0-9_.-]*/
@@ -98,18 +90,12 @@ module Rouge
         rule double, Num::Float
         rule %r/[+-]?\d+/, Num::Integer
 
-        rule id do |m|
-          if self.class.declarations.include?(m[0])
-            token Keyword::Declaration
-          elsif self.class.keywords.include?(m[0])
-            token Keyword
-          elsif self.class.types.include?(m[0])
-            token Keyword::Type
-          elsif self.class.constants.include?(m[0])
-            token Keyword::Constant
-          else
-            token Name
-          end
+        keywords id do
+          rule DECLARATIONS, Keyword::Declaration
+          rule KEYWORDS, Keyword
+          rule TYPES, Keyword::Type
+          rule CONSTANTS, Keyword::Constant
+          default Name
         end
 
         rule %r/[&=+\-]/, Operator

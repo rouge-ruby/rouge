@@ -16,15 +16,16 @@ module Rouge
         return true if text.shebang?('runhaskell')
       end
 
-      reserved = %w(
+      RESERVED = Set.new %w(
         _ case class data default deriving do else if in infix infixl infixr
         instance let newtype of then type where
       )
 
-      ascii = %w(
-        NUL SOH [SE]TX EOT ENQ ACK BEL BS HT LF VT FF CR S[OI] DLE
-        DC[1-4] NAK SYN ETB CAN EM SUB ESC [FGRU]S SP DEL
-      )
+      ASCII_ESCAPE = %r(
+        (?: NUL | SOH | [SE]TX | EOT | ENQ | ACK | BEL | BS | HT | LF | VT | FF | CR
+        | S[OI] | DLE | DC[1-4] | NAK | SYN | ETB | CAN | EM | SUB | ESC | [FGRU]S
+        | SP | DEL )
+      )ox
 
       state :basic do
         rule %r/\s+/m, Text
@@ -63,20 +64,17 @@ module Rouge
         rule %r/0x[\da-f]+/i, Num::Hex
         rule %r/\d+/, Num::Integer
 
-        rule %r/[\w']+/ do |m|
-          match = m[0]
-          if match == "import"
-            token Keyword::Reserved
-            push :import
-          elsif match == "module"
-            token Keyword::Reserved
-            push :module
-          elsif reserved.include?(match)
-            token Keyword::Reserved
-          elsif match =~ /\A'?[A-Z]/
-            token Keyword::Type
-          else
-            token Name
+        keywords %r/[\w']+/ do
+          rule Set['import'], Keyword::Reserved, :import
+          rule Set['module'], Keyword::Reserved, :module
+          rule RESERVED, Keyword::Reserved
+
+          default do |m|
+            if m[0].match?(/\A'?[A-Z]/o)
+              token Keyword::Type
+            else
+              token Name
+            end
           end
         end
 
@@ -94,9 +92,7 @@ module Rouge
 
         # Quasiquotations
         rule %r/(\[)([_a-z][\w']*)(\|)/ do |m|
-          token Operator, m[1]
-          token Name, m[2]
-          token Operator, m[3]
+          groups Operator, Name, Operator
           push :quasiquotation
         end
 
@@ -196,7 +192,7 @@ module Rouge
       state :escape do
         rule %r/[abfnrtv"'&\\]/, Str::Escape, :pop!
         rule %r/\^[\]\[A-Z@\^_]/, Str::Escape, :pop!
-        rule %r/#{ascii.join('|')}/, Str::Escape, :pop!
+        rule ASCII_ESCAPE, Str::Escape, :pop!
         rule %r/o[0-7]+/i, Str::Escape, :pop!
         rule %r/x[\da-f]+/i, Str::Escape, :pop!
         rule %r/\d+/, Str::Escape, :pop!

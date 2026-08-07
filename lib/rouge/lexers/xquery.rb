@@ -38,7 +38,7 @@ module Rouge
       # Mixin states:
 
       state :tags do
-        rule %r/<#{XPath.qName}/, Name::Tag, :start_tag
+        rule %r/<#{XPath.q_name}/, Name::Tag, :start_tag
         rule %r/<!--/, Comment, :xml_comment
         rule %r/<\?.*?\?>/, Comment::Preproc
         rule %r/<!\[CDATA\[.*?\]\]>/, Comment::Preproc
@@ -58,7 +58,7 @@ module Rouge
           end
         end
 
-        rule %r/(namespace)(\s+)(#{XPath.ncName})/ do
+        rule %r/(namespace)(\s+)(#{XPath.nc_name})/ do
           groups Keyword, Text::Whitespace, Name::Namespace
         end
 
@@ -66,7 +66,7 @@ module Rouge
         rule %r/;/, Punctuation
         rule %r/%/, Keyword::Declaration, :annotation
 
-        rule %r/(\(#)(\s*)(#{XPath.eqName})/ do
+        rule %r/(\(#)(\s*)(#{XPath.eq_name})/ do
           groups Comment::Preproc, Text::Whitespace, Name::Tag
           push :pragma
         end
@@ -75,12 +75,12 @@ module Rouge
       end
 
       state :annotation do
-        mixin :commentsAndWhitespace
-        rule XPath.eqName, Keyword::Declaration, :pop!
+        mixin :comments_and_whitespace
+        rule XPath.eq_name, Keyword::Declaration, :pop!
       end
 
       state :pragma do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
         rule %r/#\)/, Comment::Preproc, :pop!
         rule %r/./, Comment::Preproc
       end
@@ -136,7 +136,7 @@ module Rouge
 
         rule %r/[^{}<&]/, Text
 
-        rule %r(</#{XPath.qName}(\s*)>) do
+        rule %r(</#{XPath.q_name}(\s*)>) do
           token Name::Tag
           pop! 2 # pop self and tag_start
         end

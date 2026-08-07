@@ -13,48 +13,42 @@ module Rouge
       id = /:?[a-zA-Z_][a-zA-Z0-9_]*/
 
       # control commands (rfc5228 § 3)
-      def self.controls
-        @controls ||= %w(if elsif else require stop)
-      end
+      CONTROLS = Set.new %w(if elsif else require stop)
 
-      def self.actions
-        @actions ||= Set.new(
-          # action commands (rfc5228 § 2.9)
-          %w(keep fileinto redirect discard) +
-          # Editheader Extension (rfc5293)
-          %w(addheader deleteheader) +
-          # Reject and Extended Reject Extensions (rfc5429)
-          %w(reject ereject) +
-          # Extension for Notifications (rfc5435)
-          %w(notify) +
-          # Imap4flags Extension (rfc5232)
-          %w(setflag addflag removeflag) +
-          # Vacation Extension (rfc5230)
-          %w(vacation) +
-          # MIME Part Tests, Iteration, Extraction, Replacement, and Enclosure (rfc5703)
-          %w(replace enclose extracttext)
-        )
-      end
+      ACTIONS = Set.new(
+        # action commands (rfc5228 § 2.9)
+        %w(keep fileinto redirect discard) +
+        # Editheader Extension (rfc5293)
+        %w(addheader deleteheader) +
+        # Reject and Extended Reject Extensions (rfc5429)
+        %w(reject ereject) +
+        # Extension for Notifications (rfc5435)
+        %w(notify) +
+        # Imap4flags Extension (rfc5232)
+        %w(setflag addflag removeflag) +
+        # Vacation Extension (rfc5230)
+        %w(vacation) +
+        # MIME Part Tests, Iteration, Extraction, Replacement, and Enclosure (rfc5703)
+        %w(replace enclose extracttext)
+      )
 
-      def self.tests
-        @tests ||= Set.new(
-          # test commands (rfc5228 § 5)
-          %w(address allof anyof exists false header not size true) +
-          # Body Extension (rfc5173)
-          %w(body) +
-          # Imap4flags Extension (rfc5232)
-          %w(hasflag) +
-          # Spamtest and Virustest Extensions (rfc5235)
-          %w(spamtest virustest) +
-          # Date and Index Extensions (rfc5260)
-          %w(date currentdate) +
-          # Extension for Notifications (rfc5435)
-          %w(valid_notify_method notify_method_capability) +
-          # Extensions for Checking Mailbox Status and Accessing Mailbox
-          # Metadata (rfc5490)
-          %w(mailboxexists metadata metadataexists servermetadata servermetadataexists)
-        )
-      end
+      TESTS = Set.new(
+        # test commands (rfc5228 § 5)
+        %w(address allof anyof exists false header not size true) +
+        # Body Extension (rfc5173)
+        %w(body) +
+        # Imap4flags Extension (rfc5232)
+        %w(hasflag) +
+        # Spamtest and Virustest Extensions (rfc5235)
+        %w(spamtest virustest) +
+        # Date and Index Extensions (rfc5260)
+        %w(date currentdate) +
+        # Extension for Notifications (rfc5435)
+        %w(valid_notify_method notify_method_capability) +
+        # Extensions for Checking Mailbox Status and Accessing Mailbox
+        # Metadata (rfc5490)
+        %w(mailboxexists metadata metadataexists servermetadata servermetadataexists)
+      )
 
       state :comments_and_whitespace do
         rule %r/\s+/, Text
@@ -75,18 +69,14 @@ module Rouge
 
         rule %r/[\[\](),;{}]/, Punctuation
 
-        rule id do |m|
-          if self.class.controls.include? m[0]
-            token Keyword
-          elsif self.class.tests.include? m[0]
-            token Name::Variable
-          elsif self.class.actions.include? m[0]
-            token Name::Function
-          elsif m[0] =~ /^:/ # tags like :contains, :matches etc.
-            token Operator
-          else
-            token Name::Other
-          end
+        # tags like :contains, :matches, etc.
+        rule %r/:[a-z][a-z0-9_]*/, Operator
+
+        keywords id do
+          rule CONTROLS, Keyword
+          rule TESTS, Name::Variable
+          rule ACTIONS, Name::Function
+          default Name::Other
         end
 
         rule %r/"/, Str::Double, :string

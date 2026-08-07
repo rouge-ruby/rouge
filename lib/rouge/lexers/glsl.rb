@@ -33,32 +33,20 @@ module Rouge
         rule %r/0/, Num::Integer
         rule %r([-.+/*%<>\[\](){}^|&~=!:;,?]), Punctuation
 
-        rule %r/\w+/ do |m|
-          if KEYWORDS.include?(m[0])
-            token Keyword
-          elsif TYPES.include?(m[0])
-            token Keyword::Type
-          else
-            fallthrough!
-          end
+        keywords %r/\w+/ do
+          rule KEYWORDS, Keyword
+          rule TYPES, Keyword::Type
         end
 
-        rule %r/\w+(?=\s*[(])/ do |m|
-          if BUILTINS.include?(m[0])
-            token Name::Builtin
-          else
-            token Name::Function
-          end
+        keywords %r/\w+(?=\s*[(])/ do
+          rule BUILTINS, Name::Builtin
+          default Name::Function
         end
 
-        rule %r/\w+/ do |m|
-          if GL_VARS.include?(m[0])
-            token Name::Constant
-          elsif BUILTINS.include?(m[0])
-            token Name::Builtin
-          else
-            token Name
-          end
+        keywords %r/\w+/ do
+          rule GL_VARS, Name::Constant
+          rule BUILTINS, Name::Builtin
+          default Name
         end
       end
     end

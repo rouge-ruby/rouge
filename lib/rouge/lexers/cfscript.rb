@@ -12,32 +12,44 @@ module Rouge
       filenames '*.cfc'
 
       def self.keywords
-        @keywords ||= %w(
+        @keywords ||= Set.new %w(
           if else var xml default break switch do try catch throw in continue for return while required
         )
       end
 
       def self.declarations
-        @declarations ||= %w(
+        @declarations ||= Set.new %w(
           component property function remote public package private
         )
       end
 
       def self.types
-        @types ||= %w(
+        @types ||= Set.new %w(
           any array binary boolean component date guid numeric query string struct uuid void xml
         )
       end
 
-      constants = %w(application session client cookie super this variables arguments cgi)
+      CONSTANTS = Set.new %w(
+        application session client cookie super this variables arguments cgi
+      )
 
 
-      operators = %w(\+\+ -- && \|\| <= >= < > == != mod eq lt gt lte gte not is and or xor eqv imp equal contains \? )
       dotted_id = /[$a-zA-Z_][a-zA-Z0-9_.]*/
 
       state :root do
         mixin :comments_and_whitespace
-        rule %r/(?:#{operators.join('|')}|does not contain|greater than(?: or equal to)?|less than(?: or equal to)?)\b/i, Operator, :expr_start
+
+        rule %r(
+            [+][+] | -- | [|][|] | <= | >= | == | !=
+          | [<>?]
+          | (?:
+             mod | eq | gte? | lte? | not | is | and | x?or | eqv | imp | equal
+             | contains
+             | does\s+not\s+contain
+             | (?:greater|less)\s+than(?:\s+or\s+equal\s+to)?
+          )\b
+        )x, Operator, :expr_start
+
         rule %r([-<>+*%&|\^/!=]=?), Operator, :expr_start
 
         rule %r/[(\[,]/, Punctuation, :expr_start
@@ -52,7 +64,10 @@ module Rouge
 
         rule %r/[{}]/, Punctuation, :statement
 
-        rule %r/(?:#{constants.join('|')})\b/, Name::Constant
+        keywords %r/\w+/ do
+          rule CONSTANTS, Name::Constant
+        end
+
         rule %r/(?:true|false|null)\b/, Keyword::Constant
         rule %r/import\b/, Keyword::Namespace, :import
         rule %r/(#{dotted_id})(\s*)(:)(\s*)/ do
@@ -60,31 +75,23 @@ module Rouge
           push :expr_start
         end
 
-        rule %r/([A-Za-z_$][\w.]*)(\s*)(\()/ do |m|
-          if self.class.keywords.include? m[1]
-            token Keyword, m[1]
-            token Text, m[2]
-            token Punctuation, m[3]
-          else
-            token Name::Function, m[1]
-            token Text, m[2]
-            token Punctuation, m[3]
+        keywords %r/([a-z_$][\w.]*)(\s*)(\()/i do |m|
+          group 1
+
+          rule :keywords do |m|
+            groups Keyword, Text, Punctuation
+          end
+
+          default do |m|
+            groups Name::Function, Text, Punctuation
           end
         end
 
-        rule dotted_id do |m|
-          if self.class.declarations.include? m[0]
-            token Keyword::Declaration
-            push :expr_start
-          elsif self.class.keywords.include? m[0]
-            token Keyword
-            push :expr_start
-          elsif self.class.types.include? m[0]
-            token Keyword::Type
-            push :expr_start
-          else
-            token Name::Other
-          end
+        keywords dotted_id do
+          rule :declarations, Keyword::Declaration, :expr_start
+          rule :keywords, Keyword, :expr_start
+          rule :types, Keyword::Type, :expr_start
+          default Name::Other
         end
 
         rule %r/[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?/, Num::Float
@@ -92,7 +99,6 @@ module Rouge
         rule %r/[0-9]+/, Num::Integer
         rule %r/"(\\\\|\\"|[^"])*"/, Str::Double
         rule %r/'(\\\\|\\'|[^'])*'/, Str::Single
-
       end
 
       # same as java, broken out

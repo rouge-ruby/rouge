@@ -14,7 +14,7 @@ module Rouge
 
       # http://docs.digdag.io/operators.html
       # as of digdag v0.9.10
-      KEYWORD_PATTERN = Regexp.union(%w(
+      KEYWORDS = Set.new(%w(
         call
         require
         loop
@@ -59,9 +59,12 @@ module Rouge
       ))
 
       prepend :block_nodes do
-        rule %r/(#{KEYWORD_PATTERN})(:)(?=\s|$)/ do |m|
-          groups Keyword::Reserved, Punctuation::Indicator
-          set_indent m[0], :implicit => true
+        keywords %r/(\w+>?)(:)(?=\s|$)/ do
+          group 1
+          rule KEYWORDS do |m|
+            groups Keyword::Reserved, Punctuation::Indicator
+            set_indent m[0], :implicit => true
+          end
         end
       end
     end

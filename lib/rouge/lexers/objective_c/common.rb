@@ -4,23 +4,22 @@
 module Rouge
   module Lexers
     module ObjectiveCCommon
-      def at_keywords
-        @at_keywords ||= %w(
-          selector private protected public encode synchronized try
-          throw catch finally end property synthesize dynamic optional
-          interface implementation import autoreleasepool
-        )
-      end
+      AT_BUILTINS = Set.new %w(true false YES NO)
 
-      def at_builtins
-        @at_builtins ||= %w(true false YES NO)
-      end
+      AT_KEYWORDS = Set.new %w(
+        selector private protected public encode synchronized try
+        throw catch finally end property synthesize dynamic optional
+        interface implementation import autoreleasepool
+      )
 
-      def builtins
-        @builtins ||= %w(YES NO nil)
-      end
+      BUILTINS = Set.new %w(YES NO nil)
 
-      def self.extended(base)
+      def self.included(base)
+        # override for the C/C++ lexers
+        def base.builtins
+          BUILTINS
+        end
+
         base.prepend :statements do
           rule %r/@"/, base::Str, :string
           rule %r/@'(\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|\\.|[^\\'\n]')/,
@@ -36,14 +35,11 @@ module Rouge
           rule %r/@(?:interface|implementation)\b/, base::Keyword, :objc_classname
           rule %r/@(?:class|protocol)\b/, base::Keyword, :forward_classname
 
-          rule %r/@([[:alnum:]]+)/ do |m|
-            if base.at_keywords.include? m[1]
-              token base::Keyword
-            elsif base.at_builtins.include? m[1]
-              token base::Name::Builtin
-            else
-              token base::Error
-            end
+          keywords %r/@([[:alnum:]]+)/ do |m|
+            group 1
+            rule AT_KEYWORDS, base::Keyword
+            rule AT_BUILTINS, base::Name::Builtin
+            default base::Error
           end
 
           rule %r/[?]/, base::Punctuation, :ternary

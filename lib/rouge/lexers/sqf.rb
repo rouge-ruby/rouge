@@ -10,49 +10,37 @@ module Rouge
       title "SQF"
       desc "Status Quo Function, a Real Virtuality engine scripting language"
 
-      def self.wordoperators
-        @wordoperators ||= Set.new %w(
-          and or not
-        )
-      end
+      WORDOPERATORS = Set.new %w(
+        and or not
+      )
 
-      def self.initializers
-        @initializers ||= Set.new %w(
-          private param params
-        )
-      end
+      INITIALIZERS = Set.new %w(
+        private param params
+      )
 
-      def self.controlflow
-        @controlflow ||= Set.new %w(
-          if then else exitwith switch do case default while for from to step
-          foreach
-        )
-      end
+      CONTROLFLOW = Set.new %w(
+        if then else exitwith switch do case default while for from to step
+        foreach
+      )
 
-      def self.constants
-        @constants ||= Set.new %w(
-          true false player confignull controlnull displaynull grpnull
-          locationnull netobjnull objnull scriptnull tasknull teammembernull
-        )
-      end
+      CONSTANTS = Set.new %w(
+        true false player confignull controlnull displaynull grpnull
+        locationnull netobjnull objnull scriptnull tasknull teammembernull
+      )
 
-      def self.namespaces
-        @namespaces ||= Set.new %w(
-          currentnamespace missionnamespace parsingnamespace profilenamespace
-          uinamespace
-        )
-      end
+      NAMESPACES = Set.new %w(
+        currentnamespace missionnamespace parsingnamespace profilenamespace
+        uinamespace
+      )
 
-      def self.diag_commands
-        @diag_commands ||= Set.new %w(
-          diag_activemissionfsms diag_activesqfscripts diag_activesqsscripts
-          diag_activescripts diag_captureframe diag_captureframetofile
-          diag_captureslowframe diag_codeperformance diag_drawmode diag_enable
-          diag_enabled diag_fps diag_fpsmin diag_frameno diag_lightnewload
-          diag_list diag_log diag_logslowframe diag_mergeconfigfile
-          diag_recordturretlimits diag_setlightnew diag_ticktime diag_toggle
-        )
-      end
+      DIAG_COMMANDS = Set.new %w(
+        diag_activemissionfsms diag_activesqfscripts diag_activesqsscripts
+        diag_activescripts diag_captureframe diag_captureframetofile
+        diag_captureslowframe diag_codeperformance diag_drawmode diag_enable
+        diag_enabled diag_fps diag_fpsmin diag_frameno diag_lightnewload
+        diag_list diag_log diag_logslowframe diag_mergeconfigfile
+        diag_recordturretlimits diag_setlightnew diag_ticktime diag_toggle
+      )
 
       lazy do
         require_relative 'sqf/keywords.rb'
@@ -79,28 +67,20 @@ module Rouge
         rule %r"[\!\%\&\*\+\-\/\<\=\>\^\|\#]", Operator
         rule %r"[\(\)\{\}\[\]\,\:\;]", Punctuation
 
+        rule %r/_[a-z0-9]+/i, Name::Variable
+
         # Identifiers (variables and functions)
-        rule %r"[a-zA-Z0-9_]+" do |m|
-          name = m[0].downcase
-          if self.class.wordoperators.include? name
-            token Operator::Word
-          elsif self.class.initializers.include? name
-            token Keyword::Declaration
-          elsif self.class.controlflow.include? name
-            token Keyword::Reserved
-          elsif self.class.constants.include? name
-            token Keyword::Constant
-          elsif self.class.namespaces.include? name
-            token Keyword::Namespace
-          elsif self.class.diag_commands.include? name
-            token Name::Function
-          elsif COMMANDS.include? name
-            token Name::Function
-          elsif %r"_.+" =~ name
-            token Name::Variable
-          else
-            token Name::Variable::Global
-          end
+        keywords %r"[a-z0-9_]+"i do
+          transform(&:downcase)
+
+          rule WORDOPERATORS, Operator::Word
+          rule INITIALIZERS, Keyword::Declaration
+          rule CONTROLFLOW, Keyword::Reserved
+          rule CONSTANTS, Keyword::Constant
+          rule NAMESPACES, Keyword::Namespace
+          rule DIAG_COMMANDS, Name::Function
+          rule COMMANDS, Name::Function
+          default Name
         end
       end
     end

@@ -105,19 +105,19 @@ module Rouge
         end
       end
 
-      keywords = %w(
+      KEYWORDS = Set.new %w(
         BEGIN END alias begin break case defined? do else elsif end
         ensure for if in next redo rescue raise retry return super then
         undef unless until when while yield
       )
 
-      keywords_pseudo = %w(
+      KEYWORDS_PSEUDO = Set.new %w(
         loop include extend raise
         alias_method attr catch throw private module_function
         public protected true false nil __FILE__ __LINE__
       )
 
-      builtins_g = %w(
+      BUILTINS = Set.new %w(
         attr_reader attr_writer attr_accessor
 
         __id__ __send__ abort ancestors at_exit autoload binding callcc
@@ -137,14 +137,14 @@ module Rouge
         taint test throw to_a to_s trace_var trap untaint untrace_var warn
       )
 
-      builtins_q = %w(
-        autoload block_given const_defined eql equal frozen
-        include instance_of is_a iterator kind_of method_defined
-        nil private_method_defined protected_method_defined
-        public_method_defined respond_to tainted
-      )
+      BUILTINS_SIGIL = Set.new %w(
+        autoload? block_given? const_defined? eql? equal? frozen?
+        include? instance_of? is_a? iterator? kind_of? method_defined?
+        nil? private_method_defined? protected_method_defined?
+        public_method_defined? respond_to? tainted?
 
-      builtins_b = %w(chomp chop exit gsub sub)
+        chomp! chop! exit! gsub! sub!
+      )
 
       start do
         push :expr_start
@@ -186,19 +186,11 @@ module Rouge
 
         mixin :strings
 
-        rule %r/\w+[?]?/ do |m|
-          if keywords.include?(m[0])
-            token Keyword
-          elsif keywords_pseudo.include?(m[0])
-            token Keyword::Pseudo
-          else
-            fallthrough!
-          end
-
-          push :expr_start
+        keywords %r/\w+[?]?/ do
+          rule KEYWORDS, Keyword, :expr_start
+          rule KEYWORDS_PSEUDO, Keyword::Pseudo, :expr_start
+          rule Set['not', 'and', 'or'], Operator::Word, :expr_start
         end
-
-        rule %r/(not|and|or)\b/, Operator::Word, :expr_start
 
         rule %r(
           (module)
@@ -218,25 +210,12 @@ module Rouge
           push :classname
         end
 
-        rule %r/(\w+)([?!])?/ do |m|
-          if m[2] == "?" && builtins_q.include?(m[1])
-            token Name::Builtin
-          elsif m[2] == "!" && builtins_b.include?(m[1])
-            token Name::Builtin
-          else
-            fallthrough!
-          end
-
-          push :expr_start
+        keywords %r/\w+[?!]/ do |m|
+          rule BUILTINS_SIGIL, Name::Builtin, :expr_start
         end
 
-        rule %r/(?<![.])\w+/ do |m|
-          if builtins_g.include?(m[0])
-            token Name::Builtin
-            push :method_call
-          else
-            fallthrough!
-          end
+        keywords %r/(?<![.])\w+/ do
+          rule BUILTINS, Name::Builtin, :method_call
         end
 
         mixin :has_heredocs

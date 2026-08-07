@@ -9,12 +9,6 @@ module Rouge
       tag 'bbcbasic'
       filenames '*,fd1'
 
-      def self.punctuation
-        @punctuation ||= %w(
-          [,;'~] SPC TAB
-        )
-      end
-
       def self.function
         @function ||= %w(
           ABS ACS ADVAL ASC ASN ATN BEATS BEAT BGET# CHR\$ COS COUNT DEG DIM
@@ -49,9 +43,16 @@ module Rouge
       end
 
       state :expression do
+        # [jneen] inexplicably, BBC Basic does not require spaces or other delimiters
+        # around its keywords. I am allowing the use of joined regexes here as a special
+        # exception.
+
+        # rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
         rule %r/#{BBCBASIC.function.join('|')}/o, Name::Builtin  # function or pseudo-variable
         rule %r/#{BBCBASIC.operator.join('|')}/o, Operator
         rule %r/#{BBCBASIC.constant.join('|')}/o, Name::Constant
+        # rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
+
         rule %r/"[^"]*"/o, Literal::String
         rule %r/[a-z_`][\w`]*[$%]?/io, Name::Variable
         rule %r/@%/o, Name::Variable
@@ -75,9 +76,11 @@ module Rouge
         rule %r/[\[]/o, Keyword, :assembly1
         rule %r/REM *>.*/o, Comment::Special
         rule %r/REM.*/o, Comment
+        # rubocop:disable Rouge/NoBuildingAlternationPatternInRegexp
         rule %r/(?:#{BBCBASIC.statement.join('|')}|CIRCLE(?: *FILL)?|DEF *(?:FN|PROC)|DRAW(?: *BY)?|DIM(?!\()|ELLIPSE(?: *FILL)?|ERROR(?: *EXT)?|FILL(?: *BY)?|INPUT(?:#| *LINE)?|LINE(?: *INPUT)?|LOCAL(?: *DATA| *ERROR)?|MOUSE(?: *COLOUR| *OFF| *ON| *RECTANGLE| *STEP| *TO)?|MOVE(?: *BY)?|ON(?! *ERROR)|ON *ERROR *(?:LOCAL|OFF)?|POINT(?: *BY)?(?!\()|RECTANGE(?: *FILL)?|RESTORE(?: *DATA| *ERROR)?|TRACE(?: *CLOSE| *ENDPROC| *OFF| *STEP(?: *FN| *ON| *PROC)?| *TO)?)/o, Keyword
+        # rubocop:enable Rouge/NoBuildingAlternationPatternInRegexp
         mixin :expression
-        rule %r/#{BBCBASIC.punctuation.join('|')}/o, Punctuation
+        rule %r/[,;'~]|SPC|TAB/, Punctuation
       end
 
       # Assembly statements are parsed as

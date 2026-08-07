@@ -10,35 +10,26 @@ module Rouge
       filenames '*.p4'
       mimetypes 'text/x-p4'
 
-      def self.keywords
-        @keywords ||= %w(
-          abstract action actions apply const default default_action else enum
-          entries extern exit if in inout key list out package packet_in
-          packet_out return size select switch this transition tuple type
-          typedef
-        )
-      end
+      KEYWORDS = Set.new %w(
+        abstract action actions apply const default default_action else enum
+        entries extern exit if in inout key list out package packet_in
+        packet_out return size select switch this transition tuple type
+        typedef
+      )
 
-      def self.operators
-        @operators ||= %w(
-          \|\+\| \|-\| \? \& \&\&\& < > << >> \* \| ~ \^ - \+ /
-          \# \. = != <= >= \+\+
-        )
-      end
+      OPERATORS = Set.new %w(
+        \|\+\| \|-\| \? \& \&\&\& < > << >> \* \| ~ \^ - \+ /
+        \# \. = != <= >= \+\+
+      )
 
-      def self.decls
-        @decls ||= %w(
-          control header header_union parser state struct table
-          value_set
-        )
-      end
+      DECLS = Set.new %w(
+        value_set parser Travelstate struct table
+      )
 
-      def self.builtins
-        @builtins ||= %w(
-          bit bool error extract int isValid setValid setInvalid match_kind
-          string varbit verify void
-        )
-      end
+      BUILTINS = Set.new %w(
+        bit bool error extract int isValid setValid setInvalid match_kind
+        string varbit verify void
+      )
 
       state :whitespace do
         rule %r/\s+/m, Text
@@ -65,15 +56,19 @@ module Rouge
         mixin :comment
 
         rule %r/#\s*#{id}/, Comment::Preproc
-        rule %r/\b(?:#{P4.keywords.join('|')})\b/, Keyword
-        rule %r/\b(?:#{P4.decls.join('|')})\b/, Keyword::Declaration
-        rule %r/\b(?:#{P4.builtins.join('|')})\b/, Name::Builtin
-        rule %r/\b#{id}_[th]\b/x, Name::Class
-        rule %r/(?:#{P4.operators.join('|')})/x, Operator
-        rule %r/[(){}\[\]<>,:;\.]/, Punctuation
+        rule %r/#{id}_[th]\b/x, Name::Class
+
+        keywords id do
+          rule KEYWORDS, Keyword
+          rule DECLS, Keyword::Declaration
+          rule BUILTINS, Name::Builtin
+          rule OPERATORS, Operator
+          default Name
+        end
+        rule %r([|][+-][|]|[?]|&|[&][&][&]|<[<=]?|>[>=]?|[-+./~^*#]|!?=|[+][+]), Operator
+        rule %r/[(){}\[\]<>,:;\.]+/, Punctuation
         mixin :number
-        rule %r/@#{id}/x, Name::Label
-        rule %r/#{id}/x, Text
+        rule %r/@#{id}/, Name::Label
         rule %r/"(?: #{string_element} )*"/x, Str::String
       end
     end

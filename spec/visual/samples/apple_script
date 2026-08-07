@@ -55,3 +55,14 @@ set jp to "日本語"
 set ru to "Русский"
 
 jp & " and " & ru -- returns "日本語 and Русский"
+
+-- valid identifiers according to the docs:
+
+set |back&forth| to |*| as |Right*Now!|
+
+(* nested
+multiline
+(* comments *)
+ending *)
+
+set thing to 1

@@ -82,18 +82,13 @@ module Rouge
         end
 
         rule %r/[a-zA-Z_][a-zA-Z0-9_]*:/, Name::Label
-        rule %r/[a-zA-Z_\$][a-zA-Z0-9_]*/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-          elsif self.class.types.include? m[0]
-            token Keyword::Type
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          else
-            token Name
-          end
+
+        keywords %r/[a-zA-Z_\$][a-zA-Z0-9_]*/ do
+          rule :keywords, Keyword
+          rule :declarations, Keyword::Declaration
+          rule :types, Keyword::Type
+          rule :constants, Keyword::Constant
+          default Name
         end
 
         rule %r([~^*!%&\[\](){}<>\|+=:;,./?-]), Operator

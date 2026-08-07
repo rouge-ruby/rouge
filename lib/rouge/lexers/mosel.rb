@@ -15,149 +15,7 @@ module Rouge
 
       id = /[a-zA-Z_][a-zA-Z0-9_]*/
 
-      ############################################################################################################################
-      #  General language lements
-      ############################################################################################################################
-
-      core_keywords = %w(
-        and array as
-        boolean break
-        case count counter
-        declarations div do dynamic
-        elif else end evaluation exit
-        false forall forward from function
-        if imports in include initialisations initializations integer inter is_binary is_continuous is_free is_integer is_partint is_semcont is_semint is_sos1 is_sos2
-        linctr list
-        max min mod model mpvar
-        next not of options or
-        package parameters procedure
-        public prod range real record repeat requirements
-        set string sum
-        then to true
-        union until uses
-        version
-        while with
-      )
-
-      core_functions = %w(
-        abs arctan assert
-        bitflip bitneg bitset bitshift bittest bitval
-        ceil cos create currentdate currenttime cuthead cuttail
-        delcell exists exit exp exportprob
-        fclose fflush finalize findfirst findlast floor fopen fselect fskipline
-        getact getcoeff getcoeffs getdual getfid getfirst gethead getfname getlast getobjval getparam getrcost getreadcnt getreverse getsize getslack getsol gettail gettype getvars
-        iseof ishidden isodd ln log
-        makesos1 makesos2 maxlist minlist
-        publish
-        random read readln reset reverse round
-        setcoeff sethidden setioerr setname setparam setrandseed settype sin splithead splittail sqrt strfmt substr
-        timestamp
-        unpublish
-        write writeln
-      )
-
-      ############################################################################################################################
-      # mmxprs module elements
-      ############################################################################################################################
-
-      mmxprs_functions = %w(
-        addmipsol
-        basisstability
-        calcsolinfo clearmipdir clearmodcut command copysoltoinit
-        defdelayedrows defsecurevecs
-        estimatemarginals
-        fixglobal
-        getbstat getdualray getiis getiissense getiistype getinfcause getinfeas getlb getloadedlinctrs getloadedmpvars getname getprimalray getprobstat getrange getsensrng getsize getsol getub getvars
-        implies indicator isiisvalid isintegral loadbasis
-        loadmipsol loadprob
-        maximize minimize
-        postsolve
-        readbasis readdirs readsol refinemipsol rejectintsol repairinfeas resetbasis resetiis resetsol
-        savebasis savemipsol savesol savestate selectsol setbstat setcallback setcbcutoff setgndata setlb setmipdir setmodcut setsol setub setucbdata stopoptimize
-        unloadprob
-        writebasis writedirs writeprob writesol
-        xor
-      )
-
-      mmxpres_constants = %w(XPRS_OPT  XPRS_UNF  XPRS_INF XPRS_UNB XPRS_OTH)
-
-      mmxprs_parameters = %w(XPRS_colorder XPRS_enumduplpol XPRS_enummaxsol XPRS_enumsols XPRS_fullversion XPRS_loadnames XPRS_problem XPRS_probname XPRS_verbose)
-
-
-      ############################################################################################################################
-      # mmsystem module elements
-      ############################################################################################################################
-
-      mmsystem_functions = %w(
-        addmonths
-        copytext cuttext
-        deltext
-        endswith expandpath
-        fcopy fdelete findfiles findtext fmove
-        getasnumber getchar getcwd getdate getday getdaynum getdays getdirsep
-        getendparse setendparse
-        getenv getfsize getfstat getftime gethour getminute getmonth getmsec getpathsep
-        getqtype setqtype
-        getsecond
-        getsepchar setsepchar
-        getsize
-        getstart setstart
-        getsucc setsucc
-        getsysinfo getsysstat gettime
-        gettmpdir
-        gettrim settrim
-        getweekday getyear
-        inserttext isvalid
-        makedir makepath newtar
-        newzip nextfield
-        openpipe
-        parseextn parseint parsereal parsetext pastetext pathmatch pathsplit
-        qsort quote
-        readtextline regmatch regreplace removedir removefiles
-        setchar setdate setday setenv sethour
-        setminute setmonth setmsec setsecond settime setyear sleep startswith system
-        tarlist textfmt tolower toupper trim
-        untar unzip
-        ziplist
-      )
-
-      mmsystem_parameters = %w(datefmt datetimefmt monthnames sys_endparse sys_fillchar sys_pid sys_qtype sys_regcache sys_sepchar)
-
-      ############################################################################################################################
-      # mmjobs  module elements
-      ############################################################################################################################
-
-      mmjobs_instance_mgmt_functions = %w(
-        clearaliases connect
-        disconnect
-        findxsrvs
-        getaliases getbanner gethostalias
-        sethostalias
-      )
-
-      mmjobs_model_mgmt_functions = %w(
-        compile
-        detach
-        getannidents getannotations getexitcode getgid getid getnode getrmtid getstatus getuid
-        load
-        reset resetmodpar run
-        setcontrol setdefstream setmodpar setworkdir stop
-        unload
-      )
-
-      mmjobs_synchornization_functions = %w(
-        dropnextevent
-        getclass getfromgid getfromid getfromuid getnextevent getvalue
-        isqueueempty
-        nullevent
-        peeknextevent
-        send setgid setuid
-        wait waitfor
-      )
-
-      mmjobs_functions = mmjobs_instance_mgmt_functions + mmjobs_model_mgmt_functions + mmjobs_synchornization_functions
-
-      mmjobs_parameters = %w(conntmpl defaultnode fsrvdelay fsrvnbiter fsrvport jobid keepalive nodenumber parentnumber)
+      lazy { require_relative 'mosel/keywords' }
 
 
       state :whitespace do
@@ -201,22 +59,31 @@ module Rouge
 
 
         rule %r/(true|false)\b/i, Name::Builtin
-        rule %r/\b(#{core_keywords.join('|')})\b/i, Keyword
-        rule %r/\b(#{core_functions.join('|')})\b/, Name::Builtin
 
+        # Handle the extremely special case of core keywords being valid if they are *all* upper case,
+        # but not *partially* upper case.
+        #
+        # ref: https://www.fico.com/fico-xpress-optimization/docs/latest/mosel/mosel_lang/dhtml/moselreflang.html?scroll=seclangintro_2
+        # > Note that, although the lexical analyzer of Mosel is case-sensitive,
+        # > the reserved words are defined both as lower and upper case (i.e. AND
+        # > and and are keywords but not And).
+        rule id do |m|
+          fallthrough! unless CORE_KEYWORDS.include?(m[0].downcase)
+          fallthrough! unless m[0].match?(/\A[A-Z_]+\z|\A[a-z_]+\z/)
+          token Keyword
+        end
 
-
-        rule %r/\b(#{mmxprs_functions.join('|')})\b/, Name::Function
-        rule %r/\b(#{mmxpres_constants.join('|')})\b/, Name::Constant
-        rule %r/\b(#{mmxprs_parameters.join('|')})\b/i, Name::Property
-
-        rule %r/\b(#{mmsystem_functions.join('|')})\b/i, Name::Function
-        rule %r/\b(#{mmsystem_parameters.join('|')})\b/, Name::Property
-
-        rule %r/\b(#{mmjobs_functions.join('|')})\b/i, Name::Function
-        rule %r/\b(#{mmjobs_parameters.join('|')})\b/, Name::Property
-
-        rule id, Name
+        keywords id do
+          rule CORE_FUNCTIONS, Name::Builtin
+          rule MMXPRS_FUNCTIONS, Name::Function
+          rule MMXPRES_CONSTANTS, Name::Constant
+          rule MMXPRS_PARAMETERS, Name::Property
+          rule MMSYSTEM_FUNCTIONS, Name::Function
+          rule MMSYSTEM_PARAMETERS, Name::Property
+          rule MMJOBS_FUNCTIONS, Name::Function
+          rule MMJOBS_PARAMETERS, Name::Property
+          default Name
+        end
       end
 
       state :root do

@@ -12,40 +12,36 @@ module Rouge
       title 'Zig'
       desc 'The Zig programming language (ziglang.org)'
 
-      def self.keywords
-        @keywords ||= %w(
-          align linksection threadlocal struct enum union error break return
-          anyframe fn c_longlong c_ulonglong c_longdouble c_void comptime_float
-          c_short c_ushort c_int c_uint c_long c_ulong continue asm defer
-          errdefer const var extern packed export pub if else switch and or
-          orelse while for bool unreachable try catch async suspend nosuspend
-          await resume undefined usingnamespace test void noreturn type
-          anyerror usize noalias inline noinline comptime callconv volatile
-          allowzero
-        )
-      end
+      KEYWORDS = Set.new %w(
+        align linksection threadlocal struct enum union error break return
+        anyframe fn c_longlong c_ulonglong c_longdouble c_void comptime_float
+        c_short c_ushort c_int c_uint c_long c_ulong continue asm defer
+        errdefer const var extern packed export pub if else switch and or
+        orelse while for bool unreachable try catch async suspend nosuspend
+        await resume undefined usingnamespace test void noreturn type
+        anyerror usize noalias inline noinline comptime callconv volatile
+        allowzero
+      )
 
-      def self.builtins
-        @builtins ||= %w(
-          @addWithOverflow @as @atomicLoad @atomicStore @bitCast @breakpoint
-          @alignCast @alignOf @cDefine @cImport @cInclude @bitOffsetOf
-          @atomicRmw @bytesToSlice @byteOffsetOf @OpaqueType @panic @ptrCast
-          @bitReverse @Vector @sin @cUndef @canImplicitCast @clz @cmpxchgWeak
-          @cmpxchgStrong @compileError @compileLog @ctz @popCount @divExact
-          @divFloor @cos @divTrunc @embedFile @export @tagName @TagType
-          @errorName @call @errorReturnTrace @fence @fieldParentPtr @field
-          @unionInit @errorToInt @intToEnum @enumToInt @setAlignStack @frame
-          @Frame @exp @exp2 @log @log2 @log10 @fabs @floor @ceil @trunc @round
-          @floatCast @intToFloat @floatToInt @boolToInt @errSetCast @intToError
-          @frameAddress @import @newStackCall @asyncCall @intToPtr @intCast
-          @frameSize @memcpy @memset @mod @mulWithOverflow @splat @ptrToInt
-          @rem @returnAddress @setCold @Type @shuffle @setGlobalLinkage
-          @setGlobalSection @shlExact @This @hasDecl @hasField
-          @setRuntimeSafety @setEvalBranchQuota @setFloatMode @shlWithOverflow
-          @shrExact @sizeOf @bitSizeOf @sqrt @byteSwap @subWithOverflow
-          @sliceToBytes comptime_int @truncate @typeInfo @typeName @TypeOf
-        )
-      end
+      BUILTINS = Set.new %w(
+        @addWithOverflow @as @atomicLoad @atomicStore @bitCast @breakpoint
+        @alignCast @alignOf @cDefine @cImport @cInclude @bitOffsetOf
+        @atomicRmw @bytesToSlice @byteOffsetOf @OpaqueType @panic @ptrCast
+        @bitReverse @Vector @sin @cUndef @canImplicitCast @clz @cmpxchgWeak
+        @cmpxchgStrong @compileError @compileLog @ctz @popCount @divExact
+        @divFloor @cos @divTrunc @embedFile @export @tagName @TagType
+        @errorName @call @errorReturnTrace @fence @fieldParentPtr @field
+        @unionInit @errorToInt @intToEnum @enumToInt @setAlignStack @frame
+        @Frame @exp @exp2 @log @log2 @log10 @fabs @floor @ceil @trunc @round
+        @floatCast @intToFloat @floatToInt @boolToInt @errSetCast @intToError
+        @frameAddress @import @newStackCall @asyncCall @intToPtr @intCast
+        @frameSize @memcpy @memset @mod @mulWithOverflow @splat @ptrToInt
+        @rem @returnAddress @setCold @Type @shuffle @setGlobalLinkage
+        @setGlobalSection @shlExact @This @hasDecl @hasField
+        @setRuntimeSafety @setEvalBranchQuota @setFloatMode @shlWithOverflow
+        @shrExact @sizeOf @bitSizeOf @sqrt @byteSwap @subWithOverflow
+        @sliceToBytes comptime_int @truncate @typeInfo @typeName @TypeOf
+      )
 
       id = /[a-z_]\w*/i
       escapes = /\\ ([nrt'"\\0] | x\h{2} | u\h{4} | U\h{8})/x
@@ -81,11 +77,22 @@ module Rouge
         mixin :literals
 
         rule %r/'#{id}/, Name::Variable
+
+        rule %r/[.]/, Punctuation, :post_dot
+
+        keywords %r/@?#{id}/ do
+          rule KEYWORDS, Keyword
+          rule BUILTINS, Name::Builtin
+        end
+
+        rule %r/@?#{id}(?=\s*[(])/, Name::Function
+        rule %r/@?#{id}/, Name
+
         rule %r/([.]?)(\s*)(@?#{id})(\s*)([(]?)/ do |m|
           name = m[3]
-          t = if self.class.keywords.include? name
+          t = if KEYWORDS.include? name
             Keyword
-          elsif self.class.builtins.include? name
+          elsif BUILTINS.include? name
             Name::Builtin
           elsif !m[1].empty? && !m[5].empty?
             Name::Function
@@ -100,6 +107,18 @@ module Rouge
 
         rule %r/[()\[\]{}|,:;]/, Punctuation
         rule %r/[*\/!@~&+%^<>=\?-]|\.{1,3}/, Operator
+      end
+
+      state :post_dot do
+        mixin :whitespace
+
+        keywords %r/@?#{id}/ do
+          rule KEYWORDS, Keyword, :pop!
+          rule BUILTINS, Name::Builtin, :pop!
+          default Name::Property, :pop!
+        end
+
+        rule(//) { pop! }
       end
 
       state :literals do

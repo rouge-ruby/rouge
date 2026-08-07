@@ -120,25 +120,20 @@ module Rouge
 
         rule %r/[()\[\],.;{}]/, Punctuation
 
-        rule id do |m|
-          caseSensitiveChunk = m[0]
-          caseInsensitiveChunk = m[0].upcase
+        # separate block for case sensitivity
+        keywords id do
+          rule :builtins, Keyword::Reserved
+        end
 
-          if self.class.builtins.include?(caseSensitiveChunk)
-            token Keyword::Reserved
-          elsif self.class.keyword_reserved.include?(caseInsensitiveChunk)
-            token Keyword::Reserved
-          elsif self.class.keyword_reserved_unsupported.include?(caseInsensitiveChunk)
-            token Keyword::Reserved
-          elsif self.class.keyword_type.include?(caseInsensitiveChunk)
-            token Keyword::Type
-          elsif self.class.name_builtin.include?(caseInsensitiveChunk)
-            token Name::Builtin
-          elsif self.class.operator_word.include?(caseInsensitiveChunk)
-            token Operator::Word
-          else
-            token Name
-          end
+        keywords id do
+          transform(&:upcase)
+
+          rule :keyword_reserved, Keyword::Reserved
+          rule :keyword_reserved_unsupported, Keyword::Reserved
+          rule :keyword_type, Keyword::Type
+          rule :name_builtin, Name::Builtin
+          rule :operator_word, Operator::Word
+          default Name
         end
       end
     end

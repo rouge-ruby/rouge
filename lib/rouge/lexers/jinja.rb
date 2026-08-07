@@ -14,25 +14,29 @@ module Rouge
                 'text/html+django', 'text/html+jinja'
 
       def self.keywords
-        @keywords ||= %w(as context do else extends from ignore missing
-                         import include reversed recursive scoped
-                         autoescape endautoescape block endblock call endcall
-                         filter endfilter for endfor if endif macro endmacro
-                         set endset trans endtrans with endwith without)
+        @keywords ||= Set.new %w(
+          as context do else extends from ignore missing
+          import include reversed recursive scoped
+          autoescape endautoescape block endblock call endcall
+          filter endfilter for endfor if endif macro endmacro
+          set endset trans endtrans with endwith without
+        )
       end
 
       def self.tests
-        @tests ||= %w(callable defined divisibleby equalto escaped even iterable
-                      lower mapping none number odd sameas sequence string
-                      undefined upper)
+        @tests ||= Set.new %w(
+          callable defined divisibleby equalto escaped even iterable
+          lower mapping none number odd sameas sequence string
+          undefined upper
+        )
       end
 
       def self.pseudo_keywords
-        @pseudo_keywords ||= %w(true false none True False None)
+        @pseudo_keywords ||= Set.new %w(true false none True False None)
       end
 
       def self.word_operators
-        @word_operators ||= %w(is in and or not)
+        @word_operators ||= Set.new %w(is in and or not)
       end
 
       state :root do
@@ -125,18 +129,12 @@ module Rouge
       end
 
       state :statement do
-        rule %r/(\w+\.?)/ do |m|
-          if self.class.keywords.include?(m[0])
-            groups Keyword
-          elsif self.class.pseudo_keywords.include?(m[0])
-            groups Keyword::Pseudo
-          elsif self.class.word_operators.include?(m[0])
-            groups Operator::Word
-          elsif self.class.tests.include?(m[0])
-            groups Name::Builtin
-          else
-            groups Name::Variable
-          end
+        keywords %r/(\w+\.?)/ do
+          rule :keywords, Keyword
+          rule :pseudo_keywords, Keyword::Pseudo
+          rule :word_operators, Operator::Word
+          rule :tests, Name::Builtin
+          default Name::Variable
         end
 
         mixin :filter

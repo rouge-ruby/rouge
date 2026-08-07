@@ -15,53 +15,53 @@ module Rouge
         @digits ||= %r/[0-9]+/
       end
 
-      def self.decimalLiteral
-        @decimalLiteral ||= %r/\.#{digits}|#{digits}\.[0-9]*/
+      def self.decimal_literal
+        @decimal_literal ||= %r/\.#{digits}|#{digits}\.[0-9]*/
       end
 
-      def self.doubleLiteral
-        @doubleLiteral ||= %r/(\.#{digits})|#{digits}(\.[0-9]*)?[eE][+-]?#{digits}/
+      def self.double_literal
+        @double_literal ||= %r/(\.#{digits})|#{digits}(\.[0-9]*)?[eE][+-]?#{digits}/
       end
 
-      def self.stringLiteral
-        @stringLiteral ||= %r/("(("")|[^"])*")|('(('')|[^'])*')/
+      def self.string_literal
+        @string_literal ||= %r/("(("")|[^"])*")|('(('')|[^'])*')/
       end
 
-      def self.ncName
-        @ncName ||= %r/[a-z_][a-z_\-.0-9]*/i
+      def self.nc_name
+        @nc_name ||= %r/[a-z_][a-z_\-.0-9]*/i
       end
 
-      def self.qName
-        @qName ||= %r/(?:#{ncName})(?::#{ncName})?/
+      def self.q_name
+        @q_name ||= %r/(?:#{nc_name})(?::#{nc_name})?/
       end
 
-      def self.uriQName
-        @uriQName ||= %r/Q\{[^{}]*\}#{ncName}/
+      def self.uri_q_name
+        @uri_q_name ||= %r/Q\{[^{}]*\}#{nc_name}/
       end
 
-      def self.eqName
-        @eqName ||= %r/(?:#{uriQName}|#{qName})/
+      def self.eq_name
+        @eq_name ||= %r/(?:#{uri_q_name}|#{q_name})/
       end
 
-      def self.commentStart
-        @commentStart ||= %r/\(:/
+      def self.comment_start
+        @comment_start ||= %r/\(:/
       end
 
-      def self.openParen
-        @openParen ||= %r/\((?!:)/
+      def self.open_paren
+        @open_paren ||= %r/\((?!:)/
       end
 
       # Terminal symbols:
       # https://www.w3.org/TR/xpath-30/#id-terminal-delimitation
-      def self.kindTest
-        @kindTest ||= Regexp.union %w(
+      def self.kind_test
+        @kind_test ||= Regexp.union %w(
           element attribute schema-element schema-attribute
           comment text node document-node namespace-node
         )
       end
 
-      def self.kindTestForPI
-        @kindTestForPI ||= Regexp.union %w(processing-instruction)
+      def self.kind_test_for_pi
+        @kind_test_for_pi ||= Regexp.union %w(processing-instruction)
       end
 
       def self.axes
@@ -89,14 +89,14 @@ module Rouge
         )
       end
 
-      def self.constructorTypes
-        @constructorTypes ||= Regexp.union %w(function array map empty-sequence)
+      def self.constructor_types
+        @constructor_types ||= Regexp.union %w(function array map empty-sequence)
       end
 
       # Mixin states:
 
-      state :commentsAndWhitespace do
-        rule XPath.commentStart, Comment, :comment
+      state :comments_and_whitespace do
+        rule XPath.comment_start, Comment, :comment
         rule %r/\s+/m, Text::Whitespace
       end
 
@@ -107,13 +107,13 @@ module Rouge
       # https://www.w3.org/TR/xpath-31/#id-revision-log
 
       state :root do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
 
         # Literals
-        rule XPath.doubleLiteral, Num::Float
-        rule XPath.decimalLiteral, Num::Float
+        rule XPath.double_literal, Num::Float
+        rule XPath.decimal_literal, Num::Float
         rule XPath.digits, Num
-        rule XPath.stringLiteral, Literal::String
+        rule XPath.string_literal, Literal::String
 
         # Variables
         rule %r/\$/, Name::Variable, :varname
@@ -125,22 +125,22 @@ module Rouge
         rule %r/[?,{}()\[\]]/, Punctuation
 
         # Functions
-        rule %r/(function)(\s*)(#{XPath.openParen})/ do # function declaration
+        rule %r/(function)(\s*)(#{XPath.open_paren})/ do # function declaration
           groups Keyword, Text::Whitespace, Punctuation
         end
         rule %r/(map|array|empty-sequence)/, Keyword # constructors
-        rule %r/(#{XPath.kindTest})(\s*)(#{XPath.openParen})/ do  # kindtest
+        rule %r/(#{XPath.kind_test})(\s*)(#{XPath.open_paren})/ do  # kindtest
           groups Keyword, Text::Whitespace, Punctuation
           push :kindtest
         end
-        rule %r/(#{XPath.kindTestForPI})(\s*)(#{XPath.openParen})/ do # processing instruction kindtest
+        rule %r/(#{XPath.kind_test_for_pi})(\s*)(#{XPath.open_paren})/ do # processing instruction kindtest
           groups Keyword, Text::Whitespace, Punctuation
           push :kindtestforpi
         end
-        rule %r/(#{XPath.eqName})(\s*)(#{XPath.openParen})/ do # function call
+        rule %r/(#{XPath.eq_name})(\s*)(#{XPath.open_paren})/ do # function call
           groups Name::Function, Text::Whitespace, Punctuation
         end
-        rule %r/(#{XPath.eqName})(\s*)(#)(\s*)(\d+)/ do # namedFunctionRef
+        rule %r/(#{XPath.eq_name})(\s*)(#)(\s*)(\d+)/ do # named_function_ref
           groups Name::Function, Text::Whitespace, Name::Function, Text::Whitespace, Name::Function
         end
 
@@ -163,10 +163,10 @@ module Rouge
         end
 
         # Paths
-        rule %r/(#{XPath.ncName})(\s*)(:)(\s*)(\*)/ do
+        rule %r/(#{XPath.nc_name})(\s*)(:)(\s*)(\*)/ do
           groups Name::Tag, Text::Whitespace, Punctuation, Text::Whitespace, Operator
         end
-        rule %r/(\*)(\s*)(:)(\s*)(#{XPath.ncName})/ do
+        rule %r/(\*)(\s*)(:)(\s*)(#{XPath.nc_name})/ do
           groups Operator, Text::Whitespace, Punctuation, Text::Whitespace, Name::Tag
         end
         rule %r/(#{XPath.axes})(\s*)(::)/ do
@@ -174,40 +174,40 @@ module Rouge
         end
         rule %r/\.\.|\.|\*/, Operator
         rule %r/@/, Name::Attribute, :attrname
-        rule XPath.eqName, Name::Tag
+        rule XPath.eq_name, Name::Tag
       end
 
       state :singletype do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
 
         # Type name
-        rule XPath.eqName do
+        rule XPath.eq_name do
           token Keyword::Type
           pop!
         end
       end
 
       state :itemtype do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
 
         # Type tests
-        rule %r/(#{XPath.kindTest})(\s*)(#{XPath.openParen})/ do
+        rule %r/(#{XPath.kind_test})(\s*)(#{XPath.open_paren})/ do
           groups Keyword::Type, Text::Whitespace, Punctuation
           # go to kindtest then occurrenceindicator
           goto :occurrenceindicator
           push :kindtest
         end
-        rule %r/(#{XPath.kindTestForPI})(\s*)(#{XPath.openParen})/ do
+        rule %r/(#{XPath.kind_test_for_pi})(\s*)(#{XPath.open_paren})/ do
           groups Keyword::Type, Text::Whitespace, Punctuation
           # go to kindtestforpi then occurrenceindicator
           goto :occurrenceindicator
           push :kindtestforpi
         end
-        rule %r/(item)(\s*)(#{XPath.openParen})(\s*)(\))/ do
+        rule %r/(item)(\s*)(#{XPath.open_paren})(\s*)(\))/ do
           groups Keyword::Type, Text::Whitespace, Punctuation, Text::Whitespace, Punctuation
           goto :occurrenceindicator
         end
-        rule %r/(#{XPath.constructorTypes})(\s*)(#{XPath.openParen})/ do
+        rule %r/(#{XPath.constructor_types})(\s*)(#{XPath.open_paren})/ do
           groups Keyword::Type, Text::Whitespace, Punctuation
         end
 
@@ -245,7 +245,7 @@ module Rouge
         end
 
         # Other types (e.g. xs:double)
-        rule XPath.eqName do
+        rule XPath.eq_name do
           token Keyword::Type
           goto :occurrenceindicator
         end
@@ -253,16 +253,16 @@ module Rouge
 
       # For pseudo-parameters for the KindTest productions
       state :kindtest do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
 
         # Pseudo-parameters:
         rule %r/[?*]/, Operator
         rule %r/,/, Punctuation
-        rule %r/(element|schema-element)(\s*)(#{XPath.openParen})/ do
+        rule %r/(element|schema-element)(\s*)(#{XPath.open_paren})/ do
           groups Keyword::Type, Text::Whitespace, Punctuation
           push :kindtest
         end
-        rule XPath.eqName, Name::Tag
+        rule XPath.eq_name, Name::Tag
 
         # End of pseudo-parameters
         rule %r/\)/, Punctuation, :pop!
@@ -270,18 +270,18 @@ module Rouge
 
       # Similar to :kindtest, but recognizes NCNames instead of EQNames
       state :kindtestforpi do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
 
         # Pseudo-parameters
-        rule XPath.ncName, Name
-        rule XPath.stringLiteral, Literal::String
+        rule XPath.nc_name, Name
+        rule XPath.string_literal, Literal::String
 
         # End of pseudo-parameters
         rule %r/\)/, Punctuation, :pop!
       end
 
       state :occurrenceindicator do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
 
         # Occurrence indicator
         rule %r/[?*+]/ do
@@ -296,23 +296,23 @@ module Rouge
       end
 
       state :varname do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
 
         # Function call
-        rule %r/(#{XPath.eqName})(\s*)(#{XPath.openParen})/ do
+        rule %r/(#{XPath.eq_name})(\s*)(#{XPath.open_paren})/ do
           groups Name::Variable, Text::Whitespace, Punctuation
           pop!
         end
 
         # Variable name
-        rule XPath.eqName, Name::Variable, :pop!
+        rule XPath.eq_name, Name::Variable, :pop!
       end
 
       state :attrname do
-        mixin :commentsAndWhitespace
+        mixin :comments_and_whitespace
 
         # Attribute name
-        rule XPath.eqName, Name::Attribute, :pop!
+        rule XPath.eq_name, Name::Attribute, :pop!
         rule %r/\*/, Operator, :pop!
       end
 
@@ -321,7 +321,7 @@ module Rouge
         rule %r/:\)/, Comment, :pop!
 
         # Nested comment
-        rule XPath.commentStart, Comment, :comment
+        rule XPath.comment_start, Comment, :comment
 
         # Comment contents
         rule %r/[^:(]+/m, Comment

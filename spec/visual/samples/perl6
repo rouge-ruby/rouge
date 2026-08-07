@@ -1,0 +1,129 @@
+#! /usr/bin/env perl6
+
+#### regex_delimiters
+
+sub substitutionOperator
+{
+}
+
+use v6;
+
+# common delimiters
+print "a: ";
+my $a = "foo";
+print $a, " - ";
+$a ~~ s/foo/bar/;
+say $a;
+
+print "b: ";
+my $b = "foo";
+print $b, " - ";
+$b ~~ s!foo!bar!;
+say $b;
+
+print "c: ";
+my $c = "foo";
+print $c, " - ";
+$c ~~ s@foo@bar@;
+say $c;
+
+print "d: ";
+my $d = "foo";
+print $d, " - ";
+$d ~~ s\foo\bar\;
+say $d;
+
+say '';
+
+# balanced delimiters with whitespace
+print "i: ";
+my $i = "foo";
+print $i, " - ";
+$i ~~ s{foo} = 'bar';
+say $i;
+
+print "j: ";
+my $j = "foo";
+print $j, " - ";
+$j ~~ s<foo> =          'bar';
+say $j;
+
+print "k: ";
+my $k = "foo";
+print $k, " - ";
+$k ~~
+        s(foo)
+        =
+        'bar';
+say $k;
+
+say '';
+
+##### perl6_misc #####
+
+use v6;
+
+for 1 .. 5 {
+    my $fh = open :r, '/proc/sys/kernel/random/entropy_avail' or die;
+    $fh.get.say;
+    $fh.close;
+    sleep 100_000;
+}
+
+grammar Parser {
+    rule  TOP  { I <love> <lang> }
+    token love { '♥' | love }
+    token lang { < Perl Rust Go Python Ruby > }
+}
+
+say Parser.parse: 'I ♥ Perl';
+say Parser.parse: 'I love Rust';
+
+start { sleep 1.5; print "hi" }
+await Supply.from-list(<A B C D E F>).throttle: 2, {
+    sleep 0.5;
+    .print
+}
+
+my @primes = ^∞ .grep: *.is-prime;
+say "1001ˢᵗ prime is @primes[1000]";
+
+.say for '50TB.file.txt'.IO.words;
+
+my @a = <a b c>;
+my @b = @a».ord;
+sub foo(Str:D $c){ $c.ord * 2 };
+say @a».&foo;
+say @a».&{ .ord };
+
+class CarefulClass { method take-care {} }
+my CarefulClass @objs;
+my @results = @objs».take-care();
+ 
+my @slops;        # May Contain Nuts 
+@slops».?this-method-may-not-exist();
+
+sub weird(@elems, :$direction = 'forward') {
+    my %direction = (
+        forward  => sub { take $_ for @elems },
+        backward => sub { take $_ for @elems.reverse },
+        random   => sub { take $_ for @elems.pick(*) },
+    );
+    return gather %direction{$direction}();
+}
+ 
+say weird(<a b c>, :direction<backward> );          # OUTPUT: «(c b a)␤» 
+
+=head1 Single Quote Breaker
+
+That's all folks
+
+=cut
+
+=end pod
+
+sub foo {
+    "after the POD with the single quote, it's all still good"
+}
+
+

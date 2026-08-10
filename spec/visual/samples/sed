@@ -2302,3 +2302,17 @@ x
 # The End ;(
 
 ### colorized by sedsed, a sed script debugger/indenter/tokenizer/HTMLizer
+
+blabel
+tlabel
+:label
+atext
+itext
+ctext
+q123
+Q456
+l789
+r/tmp/foo.txt
+R/tmp/foo.txt
+w/tmp/foo.txt
+W/tmp/foo.txt

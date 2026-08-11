@@ -275,19 +275,30 @@ for these words easier, many lexers will put the applicable keywords in a
 set and make them available in a particular way (be it as a local variable,
 an instance variable or what have you).
 
-For small sets, you can simply use a constant:
+The most basic keyword set looks like this:
 
 ```rb
 module Rouge
   module Lexers
     class YetAnotherLanguage < RegexLexer
-      # ...
       KEYWORDS = Set.new %w(key words used in this language)
-      # ...
+      OPERATORS = Set.new %(and or not)
+
+      state :my_state do
+        keywords %r/\w+/ do
+          rule KEYWORDS, Keyword
+          rule OPERATORS, Operator
+          default Name
+        end
+      end
     end
   end
 end
 ```
+
+Here, the keywords are defined in a constant `Set`, and they are matched against words
+that are detected, in this case with `/\w+/`. The given sets are tried in order, and
+if none are matched, the default token type is used.
 
 If the keyword sets are very large (>75 elements or so), please put them in a constant in a separate file, which is lazily loaded:
 

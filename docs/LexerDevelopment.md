@@ -340,16 +340,31 @@ state :my_cool_state do
     rule :small_set, Name::Function
 
     # or you can just inline small sets here
-    rule Set[%w(one two three four)], Num::Integer
-    # etc...
+    rule Set['one', 'two', 'three', 'four'], Num::Integer
 
-    # optional: transform the match before checking set membership
+    # block syntax can be used the same as any other rule for complex cases
+    rule Set['def'] do
+      token Keyword
+      goto :other_state
+    end
+
+    # OPTIONAL: transform the match before checking set membership
     transform(&:downcase)
 
-    # optional: a default rule if the match isn't contained in any of the sets.
+    # OPTIONAL: pick a group from the covering regex to check against the set
+    # instead of the entire string. The whol string will still be used to make
+    # the token
+    group 2
+
+    # OPTIONAL: a default rule if the match isn't contained in any of the sets.
     # If this is not given, Rouge will simply fall through to the next rules after
     # the keywords block.
     default Name
+
+    # OR:
+    default do |m|
+      # ...
+    end
   end
 end
 ```

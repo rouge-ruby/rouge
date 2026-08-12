@@ -107,7 +107,7 @@ module Rouge
         rule %r/[pd]/, Keyword
 
         # commands that take a number argument
-        rule %r/([qQl])(\s+)(\d+)/i do
+        rule %r/([qQl])(\s*)(\d+)/i do
           groups Keyword, Text, Num
           pop!
         end
@@ -116,13 +116,13 @@ module Rouge
         rule %r/[={}dDgGhHlnpPqx]/, Keyword, :pop!
 
         # commands that take a filename argument
-        rule %r/([rRwW])(\s+)(\S+)/ do
+        rule %r/([rRwW])(\s*)(\S+)/ do
           groups Keyword, Text, Name
           pop!
         end
 
         # commands that take a label argument
-        rule %r/([:btT])(\s+)(\S+)/ do
+        rule %r/([:btT])(\s*)(\S+)/ do
           groups Keyword, Text, Name::Label
           pop!
         end

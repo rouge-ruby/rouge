@@ -1,0 +1,1 @@
+.products[] | select(.price < 100) | .name

@@ -99,6 +99,7 @@ require_relative 'rouge/formatters/terminal256'
 require_relative 'rouge/formatters/terminal_truecolor'
 require_relative 'rouge/formatters/tex'
 require_relative 'rouge/formatters/null'
+require_relative 'rouge/formatters/plain'
 
 require_relative 'rouge/theme'
 require_relative 'rouge/tex_theme_renderer'

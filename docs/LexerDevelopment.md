@@ -275,19 +275,30 @@ for these words easier, many lexers will put the applicable keywords in a
 set and make them available in a particular way (be it as a local variable,
 an instance variable or what have you).
 
-For small sets, you can simply use a constant:
+The most basic keyword set looks like this:
 
 ```rb
 module Rouge
   module Lexers
     class YetAnotherLanguage < RegexLexer
-      # ...
       KEYWORDS = Set.new %w(key words used in this language)
-      # ...
+      OPERATORS = Set.new %(and or not)
+
+      state :my_state do
+        keywords %r/\w+/ do
+          rule KEYWORDS, Keyword
+          rule OPERATORS, Operator
+          default Name
+        end
+      end
     end
   end
 end
 ```
+
+Here, the keywords are defined in a constant `Set`, and they are matched against words
+that are detected, in this case with `/\w+/`. The given sets are tried in order, and
+if none are matched, the default token type is used.
 
 If the keyword sets are very large (>75 elements or so), please put them in a constant in a separate file, which is lazily loaded:
 
@@ -299,9 +310,7 @@ module Rouge
       tag :my_lang
       # ...
 
-      lazy do
-        requre_relative 'my_lang/keywords'
-      end
+      lazy { requre_relative 'my_lang/keywords' }
 
       # ...
     end
@@ -318,7 +327,9 @@ module Rouge
 end
 ```
 
-This way, users of Rouge who are not using your language will not have to load the keyword sets. These keywords can then be used with the special `#keywords` api:
+This way, users of Rouge who are not using your language will not have to load the keyword sets.
+
+Here is a full description of the `#keywords` method and how it is used:
 
 ```rb
 state :my_cool_state do
@@ -340,16 +351,31 @@ state :my_cool_state do
     rule :small_set, Name::Function
 
     # or you can just inline small sets here
-    rule Set[%w(one two three four)], Num::Integer
-    # etc...
+    rule Set['one', 'two', 'three', 'four'], Num::Integer
 
-    # optional: transform the match before checking set membership
+    # block syntax can be used the same as any other rule for complex cases
+    rule Set['def'] do
+      token Keyword
+      goto :other_state
+    end
+
+    # OPTIONAL: transform the match before checking set membership
     transform(&:downcase)
 
-    # optional: a default rule if the match isn't contained in any of the sets.
+    # OPTIONAL: pick a group from the covering regex to check against the set
+    # instead of the entire string. The whol string will still be used to make
+    # the token
+    group 2
+
+    # OPTIONAL: a default rule if the match isn't contained in any of the sets.
     # If this is not given, Rouge will simply fall through to the next rules after
     # the keywords block.
     default Name
+
+    # OR:
+    default do |m|
+      # ...
+    end
   end
 end
 ```
@@ -379,10 +405,11 @@ A lexer can implement its own `self.detect?` method that takes a
 returns true, the lexer will be selected as the appropriate lexer.
 
 It is important to note that `self.detect?` should _only_ return `true` if it
-is 100% sure that the language is detected. The most common ways for source
-code to identify the language it's written in is with a shebang or a doctype
-and Rouge provides the {Rouge::TextAnalyzer#shebang} method and the
-{Rouge::TextAnalyzer#doctype} method specifically for use with `self.detect?`
+is ***100% sure*** that the language is detected. The most common ways for source
+code to identify the language it's written in is with a shebang
+(like `#!/usr/bin/env ruby`) or a doctype (like `<!DOCTYPE html>`).
+Rouge provides the {Rouge::TextAnalyzer#shebang?} method and the
+{Rouge::TextAnalyzer#doctype?} method specifically for use with `self.detect?`
 to make these checks easy to perform.
 
 For more general disambiguation between different lexers, see [Conflicting

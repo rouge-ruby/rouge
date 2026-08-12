@@ -310,9 +310,7 @@ module Rouge
       tag :my_lang
       # ...
 
-      lazy do
-        requre_relative 'my_lang/keywords'
-      end
+      lazy { requre_relative 'my_lang/keywords' }
 
       # ...
     end
@@ -329,7 +327,9 @@ module Rouge
 end
 ```
 
-This way, users of Rouge who are not using your language will not have to load the keyword sets. These keywords can then be used with the special `#keywords` api:
+This way, users of Rouge who are not using your language will not have to load the keyword sets.
+
+Here is a full description of the `#keywords` method and how it is used:
 
 ```rb
 state :my_cool_state do
@@ -405,10 +405,11 @@ A lexer can implement its own `self.detect?` method that takes a
 returns true, the lexer will be selected as the appropriate lexer.
 
 It is important to note that `self.detect?` should _only_ return `true` if it
-is 100% sure that the language is detected. The most common ways for source
-code to identify the language it's written in is with a shebang or a doctype
-and Rouge provides the {Rouge::TextAnalyzer#shebang} method and the
-{Rouge::TextAnalyzer#doctype} method specifically for use with `self.detect?`
+is ***100% sure*** that the language is detected. The most common ways for source
+code to identify the language it's written in is with a shebang
+(like `#!/usr/bin/env ruby`) or a doctype (like `<!DOCTYPE html>`).
+Rouge provides the {Rouge::TextAnalyzer#shebang?} method and the
+{Rouge::TextAnalyzer#doctype?} method specifically for use with `self.detect?`
 to make these checks easy to perform.
 
 For more general disambiguation between different lexers, see [Conflicting

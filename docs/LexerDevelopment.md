@@ -267,6 +267,119 @@ rules, as if the regular expression had not matched.
 
 You can see an example of these more complex rules in [the Ruby lexer][ruby-lexer].
 
+#### Keywords, Builtins, and other word sets
+
+Most programming languages reserve certain words for use as identifiers that
+have a special meaning in the language. To make regular expressions that search
+for these words easier, many lexers will put the applicable keywords in a
+set and make them available in a particular way (be it as a local variable,
+an instance variable or what have you).
+
+The most basic keyword set looks like this:
+
+```rb
+module Rouge
+  module Lexers
+    class YetAnotherLanguage < RegexLexer
+      KEYWORDS = Set.new %w(key words used in this language)
+      OPERATORS = Set.new %(and or not)
+
+      state :my_state do
+        keywords %r/\w+/ do
+          rule KEYWORDS, Keyword
+          rule OPERATORS, Operator
+          default Name
+        end
+      end
+    end
+  end
+end
+```
+
+Here, the keywords are defined in a constant `Set`, and they are matched against words
+that are detected, in this case with `/\w+/`. The given sets are tried in order, and
+if none are matched, the default token type is used.
+
+If the keyword sets are very large (>75 elements or so), please put them in a constant in a separate file, which is lazily loaded:
+
+```rb
+# lib/rouge/lexers/my_lang.rb
+module Rouge
+  module Lexers
+    class MyLang < RegexLexer
+      tag :my_lang
+      # ...
+
+      lazy { requre_relative 'my_lang/keywords' }
+
+      # ...
+    end
+  end
+end
+
+# lib/rouge/lexers/my_lang/keywords.rb
+module Rouge
+  module Lexers
+    class MyLang
+      KEYWORDS = Set.new %w(massive set goes here)
+    end
+  end
+end
+```
+
+This way, users of Rouge who are not using your language will not have to load the keyword sets.
+
+Here is a full description of the `#keywords` method and how it is used:
+
+```rb
+state :my_cool_state do
+  # ...
+
+  # Use a "covering regex" here, like /\w+/, which matches the general form
+  # of keywords. This should be possible for almost all languages. If there is no
+  # appropriate regex that will cover all cases, consider special-casing some of
+  # the exceptions. If the language has *truly* free-form keyword sets (like Gherkin),
+  # please let us know and we'll consider allowing a large regex instead.
+  keywords %r/\w+/ do
+    # this method acts much like a normal #rule call - it takes a token type, and
+    # potentially an action block. Except instead of a regex, it takes a Set, which
+    # the match from above will be checked against, in the order they appear here.
+    rule KEYWORDS, Keyword
+    rule BUILTINS, Name::Builtin, :pop!
+
+    # symbols will be mapped to class methods on the lexer
+    rule :small_set, Name::Function
+
+    # or you can just inline small sets here
+    rule Set['one', 'two', 'three', 'four'], Num::Integer
+
+    # block syntax can be used the same as any other rule for complex cases
+    rule Set['def'] do
+      token Keyword
+      goto :other_state
+    end
+
+    # OPTIONAL: transform the match before checking set membership
+    transform(&:downcase)
+
+    # OPTIONAL: pick a group from the covering regex to check against the set
+    # instead of the entire string. The whol string will still be used to make
+    # the token
+    group 2
+
+    # OPTIONAL: a default rule if the match isn't contained in any of the sets.
+    # If this is not given, Rouge will simply fall through to the next rules after
+    # the keywords block.
+    default Name
+
+    # OR:
+    default do |m|
+      # ...
+    end
+  end
+end
+```
+
 ### Additional Features
 
 While the properties and states are the minimum elements of a lexer that need
@@ -292,67 +405,17 @@ A lexer can implement its own `self.detect?` method that takes a
 returns true, the lexer will be selected as the appropriate lexer.
 
 It is important to note that `self.detect?` should _only_ return `true` if it
-is 100% sure that the language is detected. The most common ways for source
-code to identify the language it's written in is with a shebang or a doctype
-and Rouge provides the {Rouge::TextAnalyzer#shebang} method and the
-{Rouge::TextAnalyzer#doctype} method specifically for use with `self.detect?`
+is ***100% sure*** that the language is detected. The most common ways for source
+code to identify the language it's written in is with a shebang
+(like `#!/usr/bin/env ruby`) or a doctype (like `<!DOCTYPE html>`).
+Rouge provides the {Rouge::TextAnalyzer#shebang?} method and the
+{Rouge::TextAnalyzer#doctype?} method specifically for use with `self.detect?`
 to make these checks easy to perform.
 
 For more general disambiguation between different lexers, see [Conflicting
 Filename Globs][conflict-globs] below.
 
 [conflict-globs]: #conflicting-filename-globs
-
-#### Special Words
-
-Most programming languages reserve certain words for use as identifiers that
-have a special meaning in the language. To make regular expressions that search
-for these words easier, many lexers will put the applicable keywords in a
-set and make them available in a particular way (be it as a local variable,
-an instance variable or what have you).
-
-For performance and safety, we strongly recommend lexers use a class method:
-
-```rb
-module Rouge
-  module Lexers
-    class YetAnotherLanguage < RegexLexer
-      ...
-
-      def self.keywords
-        @keywords ||= Set.new %w(key words used in this language)
-      end
-
-      ...
-    end
-  end
-end
-```
-
-These keywords can then be used like so:
-
-```rb
-rule /\w+/ do |m|
-  if self.class.keywords.include?(m[0])
-    token Keyword
-  elsif
-    token Name
-  end
-end
-```
-
-In some cases, you may want to interpolate your keywords into a regular
-expression. **We strongly recommend you avoid doing this.** Having a large
-number of rules that are searching for particular words is not as performant as
-a rule with a generic pattern with a block that checks whether the pattern is a
-member of a predefined set and assigns tokens, pushes new states, etc.
-
-If you do need to use interpolation, be careful to use the `\b` anchor to avoid
-inadvertently matching part of a longer word (eg. `if` matching `iff`)::
-
-```rb
-rule /\b(#{keywords.join('|')})\b/, Keyword
-```
 
 #### Startup
 

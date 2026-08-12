@@ -41,16 +41,10 @@ module Rouge
 
         rule %r/[A-Z]\w*/, Name::Class
 
-        rule %r/[a-z_]\w*/ do |m|
-          name = m[0]
-
-          if self.class.constants.include? name
-            token Keyword::Constant
-          elsif self.class.builtins.include? name
-            token Name::Builtin
-          else
-            token Name
-          end
+        keywords %r/[a-z_]\w*/ do |m|
+          rule :constants, Keyword::Constant
+          rule :builtins, Name::Builtin
+          default Name
         end
 
         rule %r((\d+[.]?\d*|\d*[.]\d+)(e[+-]?[0-9]+)?)i, Num::Float

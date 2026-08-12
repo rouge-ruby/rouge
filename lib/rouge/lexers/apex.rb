@@ -29,15 +29,15 @@ module Rouge
 
       def self.soql
         @soql ||= Set.new %w(
-          SELECT FROM WHERE UPDATE LIKE TYPEOF END USING SCOPE WITH DATA
-          CATEGORY GROUP BY ROLLUP CUBE HAVING ORDER ASC DESC NULLS FIRST
-          LAST LIMIT OFFSET FOR VIEW REFERENCE TRACKING VIEWSTAT OR AND
+          select from where update like typeof end using scope with data
+          category group by rollup cube having order asc desc nulls first
+          last limit offset for view reference tracking viewstat or and
         )
       end
 
       def self.types
         @types ||= Set.new %w(
-          String boolean byte char double float int long short var void
+          string boolean byte char double float int long short var void
         )
       end
 
@@ -56,22 +56,21 @@ module Rouge
         rule %r/(?:class|interface)\b/, Keyword::Declaration, :class
         rule %r/import\b/, Keyword::Namespace, :import
 
+        keywords id do
+          transform(&:downcase)
+
+          rule :keywords, Keyword
+          rule :soql, Keyword
+          rule :declarations, Keyword::Declaration
+          rule :types, Keyword::Type
+          rule :constants, Keyword::Constant
+          rule Set['package'], Keyword::Namespace
+
+          default Name
+        end
+
         rule %r/([@$.]?)(#{id})([:(]?)/io do |m|
-          lowercased = m[0].downcase
-          uppercased = m[0].upcase
-          if self.class.keywords.include? lowercased
-            token Keyword
-          elsif self.class.soql.include? uppercased
-            token Keyword
-          elsif self.class.declarations.include? lowercased
-            token Keyword::Declaration
-          elsif self.class.types.include? lowercased
-            token Keyword::Type
-          elsif self.class.constants.include? lowercased
-            token Keyword::Constant
-          elsif lowercased == 'package'
-            token Keyword::Namespace
-          elsif m[1] == "@"
+          if m[1] == "@"
             token Name::Decorator
           elsif m[3] == ":"
             groups Operator, Name::Label, Punctuation

@@ -39,34 +39,23 @@ module Rouge
         rule %r/\btrue|false\b/, Keyword::Constant
 
         # Module chain
-        rule %r/#{@@upper_id}(?=\s*[.])/, Name::Namespace, :dotted
+        rule %r/#{OCAML_UPPER_ID}(?=\s*[.])/, Name::Namespace, :dotted
 
         # Decorator
-        rule %r/@#{@@id}(\.#{@@id})*/, Name::Decorator
+        rule %r/@#{OCAML_ID}(\.#{OCAML_ID})*/, Name::Decorator
 
         # Poly variant
-        rule %r/\##{@@id}/, Name::Class
+        rule %r/\##{OCAML_ID}/, Name::Class
 
         # Variant or Module
-        rule @@upper_id, Name::Class
+        rule OCAML_UPPER_ID, Name::Class
 
         # Comments
         rule %r(//.*), Comment::Single
         rule %r(/\*), Comment::Multiline, :comment
 
         # Keywords and identifiers
-        rule @@id do |m|
-          match = m[0]
-          if self.class.keywords.include? match
-            token Keyword
-          elsif self.class.word_operators.include? match
-            token Operator::Word
-          elsif self.class.types.include? match
-            token Keyword::Type
-          else
-            token Name
-          end
-        end
+        mixin :keywords_and_names
 
         # Braces
         rule %r/[(){}\[\];]+/, Punctuation

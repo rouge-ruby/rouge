@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*- #
 # frozen_string_literal: true
 
+# For Haskell::ASCII_ESCAPE
+require_relative 'haskell'
+
 module Rouge
   module Lexers
     class Idris < RegexLexer
@@ -12,36 +15,37 @@ module Rouge
       filenames '*.idr'
       mimetypes 'text/x-idris'
 
-      def self.reserved_keywords
-        @reserved_keywords ||= %w(
-          _ data class instance namespace
-          infix[lr]? let where of with type
-          do if then else case in
-        )
-      end
+      RESERVED = Set.new %w(
+        _ data class instance namespace
+        infixl infixr let where of with type
+        do if then else case in
+      )
 
-      def self.ascii
-        @ascii ||= %w(
-          NUL SOH [SE]TX EOT ENQ ACK BEL BS HT LF VT FF CR S[OI] DLE
-          DC[1-4] NAK SYN ETB CAN EM SUB ESC [FGRU]S SP DEL
-        )
-      end
+      PRELUDE_FUNCTIONS = Set.new %w(
+        abs acos all and any asin atan atan2 break ceiling compare concat
+        concatMap const cos cosh curry cycle div drop dropWhile elem
+        encodeFloat enumFrom enumFromThen enumFromThenTo enumFromTo exp
+        fail filter flip floor foldl foldl1 foldr foldr1 fromInteger fst
+        gcd getChar getLine head id init iterate last lcm length lines log
+        lookup map max maxBound maximum maybe min minBound minimum mod
+        negate not null or pi pred print product putChar putStr putStrLn
+        readFile recip repeat replicate return reverse scanl scanl1 sequence
+        sequence_ show sin sinh snd span splitAt sqrt succ sum tail take
+        takeWhile tan tanh uncurry unlines unwords unzip unzip3 words
+        writeFile zip zip3 zipWith zipWith3
+      )
 
-      def self.prelude_functions
-        @prelude_functions ||= %w(
-          abs acos all and any asin atan atan2 break ceiling compare concat
-          concatMap const cos cosh curry cycle div drop dropWhile elem
-          encodeFloat enumFrom enumFromThen enumFromThenTo enumFromTo exp
-          fail filter flip floor foldl foldl1 foldr foldr1 fromInteger fst
-          gcd getChar getLine head id init iterate last lcm length lines log
-          lookup map max maxBound maximum maybe min minBound minimum mod
-          negate not null or pi pred print product putChar putStr putStrLn
-          readFile recip repeat replicate return reverse scanl scanl1 sequence
-          sequence_ show sin sinh snd span splitAt sqrt succ sum tail take
-          takeWhile tan tanh uncurry unlines unwords unzip unzip3 words
-          writeFile zip zip3 zipWith zipWith3
-        )
-      end
+      CONSTANTS = Set.new %w(Just Nothing Left Right True False LT LTE EQ GT GTE)
+
+      KEYWORD_TYPE = Set.new %w(
+        Type Exists World IO IntTy FTy File Mode Dec Bool Ordering Either IsJust
+        List Maybe Nat Stream StrM Not Lazy Inf
+      )
+
+      NAME_CLASS = Set.new %w(
+        Eq Ord Num MinBound MaxBound Integral Applicative Alternative Cast Foldable
+        Functor Monad Traversable Uninhabited Semigroup Monoid
+      )
 
       state :basic do
         rule %r/\s+/m, Text
@@ -58,6 +62,7 @@ module Rouge
         rule %r/[^-{}]+/, Comment::Multiline
         rule %r/[-{}]/, Comment::Multiline
       end
+
       state :comment_preproc do
         rule %r/-}/, Comment::Preproc, :pop!
         rule %r/{-/, Comment::Preproc, :comment
@@ -72,26 +77,32 @@ module Rouge
         rule %r/\%(provide)\s+.*\s+(with)\s+/, Keyword  # type
       end
 
-      state :prelude do
-        rule %r/\b(Type|Exists|World|IO|IntTy|FTy|File|Mode|Dec|Bool|Ordering|Either|IsJust|List|Maybe|Nat|Stream|StrM|Not|Lazy|Inf)\s/, Keyword::Type
-        rule %r/\b(Eq|Ord|Num|MinBound|MaxBound|Integral|Applicative|Alternative|Cast|Foldable|Functor|Monad|Traversable|Uninhabited|Semigroup|Monoid)\s/, Name::Class
-        rule %r/\b(?:#{Idris.prelude_functions.join('|')})[ ]+(?![=:-])/, Name::Builtin
-      end
-
       state :root do
         mixin :basic
         mixin :directive
 
-        rule %r/\bimport\b/, Keyword::Reserved, :import
-        rule %r/\bmodule\b/, Keyword::Reserved, :module
-        rule %r/\b(?:#{Idris.reserved_keywords.join('|')})\b/, Keyword::Reserved
-        rule %r/\b(Just|Nothing|Left|Right|True|False|LT|LTE|EQ|GT|GTE)\b/, Keyword::Constant
         # function signature
+        # Special since you can override names defined in Prelude
         rule %r/^[\w']+\s*:/, Name::Function
-        # should be below as you can override names defined in Prelude
-        mixin :prelude
-        rule %r/[_a-z][\w']*/, Name
-        rule %r/[A-Z][\w']*/, Keyword::Type
+
+        keywords %r/[_a-z][\w']*/i do
+          rule Set['import'], Keyword::Reserved, :import
+          rule Set['module'], Keyword::Reserved, :module
+          rule Set['public', 'export', 'partial'], Keyword::Namespace
+          rule RESERVED, Keyword::Reserved
+          rule CONSTANTS, Keyword::Constant
+          rule KEYWORD_TYPE, Keyword::Type
+          rule NAME_CLASS, Name::Class
+          rule PRELUDE_FUNCTIONS, Name::Builtin
+
+          default do |m|
+            if m[0].match?(/\A'?[A-Z]/o)
+              token Keyword::Type
+            else
+              token Name
+            end
+          end
+        end
 
         # lambda operator
         rule %r(\\(?![:!#\$\%&*+.\\/<=>?@^\|~-]+)), Name::Function
@@ -199,7 +210,7 @@ module Rouge
       state :escape do
         rule %r/[abfnrtv"'&\\]/, Str::Escape, :pop!
         rule %r/\^[\]\[A-Z@\^_]/, Str::Escape, :pop!
-        rule %r/#{Idris.ascii.join('|')}/, Str::Escape, :pop!
+        rule Haskell::ASCII_ESCAPE, Str::Escape, :pop!
         rule %r/o[0-7]+/i, Str::Escape, :pop!
         rule %r/x[\da-fA-F]+/i, Str::Escape, :pop!
         rule %r/\d+/, Str::Escape, :pop!

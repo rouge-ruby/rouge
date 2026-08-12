@@ -28,7 +28,7 @@ describe Rouge::Lexers::Make do
 
     it 'recognizes declarations not terminated by a new line (#694)' do
       assert_tokens_equal "hello: \n\techo hello",
-       ["Name.Label", "hello"], ["Operator", ":"], ["Text", " \n\t"], ["Name.Builtin", "echo "], ["Text", "hello"]
+       ["Name.Label", "hello"], ["Operator", ":"], ["Text", " \n\t"], ["Name.Builtin", "echo"], ["Text", " hello"]
     end
   end
 end

@@ -86,6 +86,17 @@ module Rouge
         push :newline
       end
 
+      state :special_idents do
+        keywords identifier do
+          rule :keywords, Keyword
+          rule :exceptions, Name::Exception
+        end
+      end
+
+      state :function_idents do
+        rule %r/#{identifier}(?=#{inline_ws}[(])/, Name::Function
+      end
+
       state :inline_whitespace do
         rule %r/[ \t]+/, Text
         rule %r/\\\n/, Str::Escape
@@ -122,20 +133,15 @@ module Rouge
           push :generic_string
         end
 
-        # using negative lookbehind so we don't match property names
-        rule %r/(?<!\.)#{identifier}/ do |m|
-          if self.class.keywords.include?(m[0])
-            token Keyword
-          elsif self.class.exceptions.include?(m[0])
-            token Name::Exception
-          elsif self.class.builtins.include?(m[0])
-            token Name::Builtin
-          elsif self.class.builtins_pseudo.include?(m[0])
-            token Name::Builtin::Pseudo
-          else
-            token Name
-          end
+        mixin :special_idents
+
+        # builtins cannot be in property names (see :post_dot)
+        keywords identifier do |m|
+          rule :builtins, Name::Builtin
+          rule :builtins_pseudo, Name::Builtin::Pseudo
         end
+
+        mixin :function_idents
 
         rule identifier, Name
 
@@ -179,8 +185,11 @@ module Rouge
 
       state :post_dot do
         mixin :inline_whitespace
-        rule %r/([A-Z]\w*)(?=#{inline_ws}[(])/m, Name::Class
-        rule %r/(#{identifier})(?=#{inline_ws}[(])/m, Name::Function
+
+        mixin :special_idents
+        mixin :function_idents
+        rule identifier, Name::Property
+
         rule(//) { pop! }
       end
 

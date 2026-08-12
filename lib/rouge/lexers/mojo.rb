@@ -9,7 +9,6 @@ module Rouge
       title "Mojo"
       desc "The Mojo programming language (modular.com)"
       tag 'mojo'
-      aliases 'mojo'
       filenames '*.mojo', '*.🔥'
       mimetypes 'text/x-mojo', 'application/x-mojo'
 

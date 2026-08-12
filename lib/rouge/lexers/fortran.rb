@@ -136,19 +136,12 @@ module Rouge
         rule %r/sync\s+(all|images|memory)\b/i, Keyword
         rule %r/error\s+stop\b/i, Keyword
 
-        rule %r/#{name}/m do |m|
-          match = m[0].downcase
-          if self.class.keywords.include? match
-            token Keyword
-          elsif self.class.types.include? match
-            token Keyword::Type
-          elsif self.class.intrinsics.include? match
-            token Name::Builtin
-          else
-            token Name
-          end
+        keywords name do
+          rule :keywords, Keyword
+          rule :types, Keyword::Type
+          rule :intrinsics, Name::Builtin
+          default Name
         end
-
       end
 
       state :string_single do

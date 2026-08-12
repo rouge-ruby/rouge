@@ -112,22 +112,13 @@ module Rouge
         rule %r/[(),.]/, Punctuation
         rule %r/\[[a-zA-Z0-9]*\]/, Punctuation
 
-        rule id do |m|
-          name = m[0]
-
-          if self.class.keywords.include? name.downcase
-            token Keyword
-          elsif self.class.keywords_type.include? name.downcase
-            token Keyword::Type
-          elsif self.class.reserved.include? name.downcase
-            token Keyword::Reserved
-          elsif self.class.builtins.include? name.downcase
-            token Name::Builtin
-          elsif name =~ /[a-zA-Z0-9]+/
-            token Name::Variable
-          else
-            token Name
-          end
+        keywords id do
+          transform(&:downcase)
+          rule :keywords, Keyword
+          rule :keywords_type, Keyword::Type
+          rule :reserved, Keyword::Reserved
+          rule :builtins, Name::Builtin
+          default Name
         end
       end
 

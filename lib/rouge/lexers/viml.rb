@@ -44,20 +44,13 @@ module Rouge
         rule %r/\b(NONE|bold|italic|underline|dark|light)\b/, Name::Builtin
 
         rule %r/[absg]:\w+\b/, Name::Variable
-        rule %r/\b\w+\b/ do |m|
-          name = m[0]
 
-          if KEYWORDS[:command].include? name
-            token Keyword
-          elsif (
-            KEYWORDS[:function].include?(name) ||
-            KEYWORDS[:option].include?(name) ||
-            KEYWORDS[:auto].include?(name)
-          )
-            token Name::Builtin
-          else
-            token Text
-          end
+        keywords %r/\b\w+\b/ do
+          rule KEYWORDS[:command], Keyword
+          rule KEYWORDS[:function], Name::Builtin
+          rule KEYWORDS[:option], Name::Builtin
+          rule KEYWORDS[:auto], Name::Builtin
+          default Text
         end
 
         # no errors in VimL!

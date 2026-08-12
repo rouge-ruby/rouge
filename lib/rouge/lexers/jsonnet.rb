@@ -31,62 +31,14 @@ module Rouge
 
       def self.builtins
         @builtins ||= Set.new %w(
-          acos
-          asin
-          atan
-          ceil
-          char
-          codepoint
-          cos
-          exp
-          exponent
-          filter
-          floor
-          force
-          length
-          log
-          makeArray
-          mantissa
-          objectFields
-          objectHas
-          pow
-          sin
-          sqrt
-          tan
-          thisFile
-          type
-          abs
-          assertEqual
-          escapeStringBash
-          escapeStringDollars
-          escapeStringJson
-          escapeStringPython
-          filterMap
-          flattenArrays
-          foldl
-          foldr
-          format
-          join
-          lines
-          manifestIni
-          manifestPython
-          manifestPythonVars
-          map
-          max
-          min
-          mod
-          range
-          set
-          setDiff
-          setInter
-          setMember
-          setUnion
-          sort
-          split
-          stringChars
-          substr
-          toString
-          uniq
+          acos asin atan ceil char codepoint cos exp exponent filter
+          floor force length log makeArray mantissa objectFields
+          objectHas pow sin sqrt tan thisFile type abs assertEqual
+          escapeStringBash escapeStringDollars escapeStringJson
+          escapeStringPython filterMap flattenArrays foldl foldr
+          format join lines manifestIni manifestPython manifestPythonVars
+          map max min mod range set setDiff setInter setMember
+          setUnion sort split stringChars substr toString uniq
         )
       end
 
@@ -109,18 +61,12 @@ module Rouge
 
         rule %r/\$/, Keyword
 
-        rule identifier do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.declarations.include? m[0]
-            token Keyword::Declaration
-          elsif self.class.constants.include? m[0]
-            token Keyword::Constant
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          else
-            token Name::Other
-          end
+        keywords identifier do
+          rule :keywords, Keyword
+          rule :declarations, Keyword::Declaration
+          rule :constants, Keyword::Constant
+          rule :builtins, Name::Builtin
+          default Name::Other
         end
       end
 

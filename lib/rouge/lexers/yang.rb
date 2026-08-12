@@ -10,7 +10,7 @@ module Rouge
       filenames '*.yang'
       mimetypes 'application/yang'
 
-      id = /[\w-]+(?=[^\w\-\:])\b/
+      id = /[\w-]+(?=[^:])\b/
 
       #Keywords from RFC7950 ; oriented at BNF style
       top_keywords = Set.new %w(module submodule)
@@ -94,18 +94,12 @@ module Rouge
         rule %r/([0-9]+\.[0-9]+)(?=[\s\{\}\;])/, Num::Float
         rule %r/([0-9]+)(?=[\s\{\}\;])/, Num::Integer
 
-        rule id do |m|
-          name = m[0].downcase
-
-          if DECLARATIONS.include?(name)
-            token Keyword::Declaration
-          elsif TYPES.include? name
-            token Keyword::Type
-          elsif CONSTANTS.include? name
-            token Name::Constant
-          else
-            token Name
-          end
+        keywords id do
+          transform(&:downcase)
+          rule DECLARATIONS, Keyword::Declaration
+          rule TYPES, Keyword::Type
+          rule CONSTANTS, Name::Constant
+          default Name
         end
 
         rule %r/[^;{}\s'"]+/, Name

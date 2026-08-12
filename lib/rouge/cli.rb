@@ -334,6 +334,7 @@ module Rouge
         when 'html-line-table' then Formatters::HTMLLineTable.new(Formatters::HTML.new)
         when 'html-table' then Formatters::HTMLTable.new(Formatters::HTML.new)
         when 'null', 'raw', 'tokens' then Formatters::Null.new
+        when 'plain' then Formatters::Plain.new
         when 'tex' then Formatters::Tex.new
         else
           error! "unknown formatter preset #{opts[:formatter]}"

@@ -12,27 +12,27 @@ module Rouge
 
       identifier = /\.?[a-z][a-z0-9_.]*/i
 
-      def self.keywords
-        @keywords ||= %w[do if while select update delete exec from by]
-      end
+      KEYWORDS = Set.new %w[do if while select update delete exec from by]
 
-      def self.word_operators
-        @word_operators ||= %w[
-          and or except inter like each cross vs sv within where in asof bin binr cor cov cut ej fby
-          div ij insert lj ljf mavg mcount mdev mmax mmin mmu mod msum over prior peach pj scan scov setenv ss
-          sublist uj union upsert wavg wsum xasc xbar xcol xcols xdesc xexp xgroup xkey xlog xprev xrank
-        ]
-      end
+      WORD_OPERATORS = Set.new %w[
+        and or except inter like each cross vs sv within where in
+        asof bin binr cor cov cut ej fby div ij insert lj ljf mavg
+        mcount mdev mmax mmin mmu mod msum over prior peach pj scan
+        scov setenv ss sublist uj union upsert wavg wsum xasc xbar
+        xcol xcols xdesc xexp xgroup xkey xlog xprev xrank
+      ]
 
-      def self.builtins
-        @builtins ||= %w[
-          first enlist value type get set count string key max min sum prd last flip distinct raze neg
-          desc differ dsave dev eval exit exp fills fkeys floor getenv group gtime hclose hcount hdel hopen hsym
-          iasc idesc inv keys load log lsq ltime ltrim maxs md5 med meta mins next parse plist prds prev rand rank ratios
-          read0 read1 reciprocal reverse rload rotate rsave rtrim save sdev show signum sin sqrt ssr sums svar system
-          tables tan til trim txf ungroup var view views wj wj1 ww
-        ]
-      end
+      BUILTINS = Set.new %w[
+        first enlist value type get set count string key max min
+        sum prd last flip distinct raze neg desc differ dsave dev
+        eval exit exp fills fkeys floor getenv group gtime hclose
+        hcount hdel hopen hsym iasc idesc inv keys load log lsq
+        ltime ltrim maxs md5 med meta mins next parse plist prds
+        prev rand rank ratios read0 read1 reciprocal reverse rload
+        rotate rsave rtrim save sdev show signum sin sqrt ssr sums
+        svar system tables tan til trim txf ungroup var view views
+        wj wj1 ww
+      ]
 
       state :root do
         # q allows a file to start with a shebang
@@ -52,17 +52,17 @@ module Rouge
         rule(/^.\)/, Keyword::Declaration)
 
         # Identifiers, word operators, etc.
-        rule %r/#{identifier}/ do |m|
-          if self.class.keywords.include? m[0]
-            token Keyword
-          elsif self.class.word_operators.include? m[0]
-            token Operator::Word
-          elsif self.class.builtins.include? m[0]
-            token Name::Builtin
-          elsif /^\.[zQqho]\./ =~ m[0]
-            token Name::Constant
-          else
-            token Name
+        keywords identifier do
+          rule KEYWORDS, Keyword
+          rule WORD_OPERATORS, Operator::Word
+          rule BUILTINS, Name::Builtin
+
+          default do |m|
+            if /^\.[zQqho]\./ =~ m[0]
+              token Name::Constant
+            else
+              token Name
+            end
           end
         end
 

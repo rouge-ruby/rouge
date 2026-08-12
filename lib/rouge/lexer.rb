@@ -225,6 +225,12 @@ module Rouge
       def register(name, lexer)
         # reset an existing list of lexers
         @all = nil if defined?(@all)
+        name = name.to_s
+
+        if registry.key?(name)
+          Kernel.warn("duplicate lexer tag/alias: #{name}")
+        end
+
         registry[name.to_s] = lexer
       end
 
@@ -237,9 +243,9 @@ module Rouge
         return if @_loaded
         @_loaded = true
 
-        lazy_procs.each { |b| instance_eval(&b) }
-
         superclass.eager_load! unless superclass == Lexer
+
+        lazy_procs.each { |b| instance_eval(&b) }
 
         self
       end

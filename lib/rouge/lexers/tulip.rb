@@ -5,7 +5,6 @@ module Rouge
     class Tulip < RegexLexer
       desc 'the tulip programming language (twitter.com/tuliplang)'
       tag 'tulip'
-      aliases 'tulip'
 
       filenames '*.tlp'
 

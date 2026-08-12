@@ -1,0 +1,89 @@
+# import modules
+import "mymodule" as foo;
+include "bar";
+
+# define functions
+def add($a; $b): $a + $b;
+
+# error handling
+def handle_error:
+    try .a catch ". is not an object";
+
+# literals
+def literals:
+    null as $null |
+    true as $t |
+    false as $f |
+    1.23 as $num |
+    1.23e8 as $num_index |
+    1.23e-8 as $num_index2 |
+    "abc" as $str |
+    [1, "a", [2, 3]] as $arr |
+    {"num": 1, "str": 2, "obj": {"arr": [3]}} as $obj |
+    .;
+
+def string_interpolation($a; $b):
+    "\($a) + \($b) = \($a + $b)";
+
+def escape_sequences:
+    "\u03bc == \"μ\"\n";
+
+# operators
+def operators:
+    2 != 3 |
+    2 == 3 |
+    2 < 3 |
+    2 > 3 |
+    2 <= 3 |
+    2 >= 3 |
+    2 + 3 |
+    2 - 3 |
+    2 * 3 |
+    2 / 3 |
+    2 % 3 |
+    2 // 3 ;
+
+def destructuring_alternative_operator:
+    .a as [$a, $b] ?// $a | .;
+
+def boolean_operators:
+    2 and 3 |
+    2 or 3;
+
+# control flows
+def if_expression:
+    if . == 0 then "zero" elif . == 1 then "one" else "many" end;
+
+def accumulate:
+    foreach range(1; 10) as $i (0; . + $i; .);
+
+def sum:
+    reduce .[] as $item (0; . + $item);
+
+def inverses:
+    label $out | reduce .[] as $item ([]; if $item == 0 then break $out else . + [1 / $item] end);
+
+def doubles:
+    [while(.<100; .*2)];
+
+# object indexing
+def indexing:
+    .foo[0]["bar"][0:2] | ..;
+
+# assignments
+def assignments:
+    . = 2 |
+    . += 2 |
+    . -= 2 |
+    . *= 2 |
+    . /= 2 |
+    . %= 2 |
+    . //= 2 |
+    . |= 2;
+
+# format strings
+def escape_for_html:
+    . | @html;
+
+# expression with pipes
+.values[0].foo | add(.a; .b), .bar?

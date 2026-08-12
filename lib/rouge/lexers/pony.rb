@@ -7,7 +7,7 @@ module Rouge
       tag 'pony'
       filenames '*.pony'
 
-      keywords = Set.new %w(
+      KEYWORDS = Set.new %w(
         actor addressof and as
         be break
         class compiler_intrinsic consume continue
@@ -28,11 +28,11 @@ module Rouge
         where while with
       )
 
-      capabilities = Set.new %w(
+      CAPABILITIES = Set.new %w(
         box iso ref tag trn val
       )
 
-      types = Set.new %w(
+      TYPES = Set.new %w(
         Number Signed Unsigned Float
         I8 I16 I32 I64 I128 U8 U32 U64 U128 F32 F64
         EventID Align IntFormat NumberPrefix FloatFormat
@@ -61,18 +61,11 @@ module Rouge
         rule %r/0[xX][0-9a-fA-F_]+/, Num::Hex
         rule %r/(0|[1-9][0-9_]*)([LUu]|Lu|LU|uL|UL)?/, Num::Integer
 
-        rule %r/[a-z_][a-z0-9_]*/io do |m|
-          match = m[0]
-
-          if capabilities.include?(match)
-            token Keyword::Declaration
-          elsif keywords.include?(match)
-            token Keyword::Reserved
-          elsif types.include?(match)
-            token Keyword::Type
-          else
-            token Name
-          end
+        keywords %r/[a-z_][a-z0-9_]*/i do
+          rule CAPABILITIES, Keyword::Declaration
+          rule KEYWORDS, Keyword::Reserved
+          rule TYPES, Keyword::Type
+          default Name
         end
       end
 

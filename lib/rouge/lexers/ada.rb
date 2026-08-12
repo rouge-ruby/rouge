@@ -19,35 +19,28 @@ module Rouge
       XNUM = /\h(_?\h)*/
       EXP = /(E[-+]?#{NUM})?/i
 
-      # Return a hash mapping lower-case identifiers to token classes.
-      def self.idents
-        @idents ||= Hash.new(Name).tap do |h|
-          %w(
-            abort abstract accept access aliased all array at begin body
-            case constant declare delay delta digits do else elsif end
-            exception exit for generic goto if in interface is limited
-            loop new null of others out overriding parallel pragma private
-            protected raise range record renames requeue return reverse
-            select separate some synchronized tagged task terminate then
-            until use when while with
-          ).each {|w| h[w] = Keyword}
+      KEYWORDS = Set.new %w(
+        abort abstract accept access aliased all array at begin body
+        case constant declare delay delta digits do else elsif end
+        exception exit for generic goto if in interface is limited
+        loop new null of others out overriding parallel pragma private
+        protected raise range record renames requeue return reverse
+        select separate some synchronized tagged task terminate then
+        until use when while with
+      )
 
-          %w(abs and mod not or rem xor).each {|w| h[w] = Operator::Word}
+      OPERATORS = Set.new %w(abs and mod not or rem xor)
 
-          %w(
-            entry function package procedure subtype type
-          ).each {|w| h[w] = Keyword::Declaration}
+      DECLARATIONS = Set.new %w(entry function package procedure subtype type)
 
-          %w(
-            boolean character constraint_error duration float integer
-            natural positive long_float long_integer long_long_float
-            long_long_integer program_error short_float short_integer
-            short_short_integer storage_error string tasking_error
-            wide_character wide_string wide_wide_character
-            wide_wide_string
-          ).each {|w| h[w] = Name::Builtin}
-        end
-      end
+      BUILTINS = Set.new %w(
+        boolean character constraint_error duration float integer
+        natural positive long_float long_integer long_long_float
+        long_long_integer program_error short_float short_integer
+        short_short_integer storage_error string tasking_error
+        wide_character wide_string wide_wide_character
+        wide_wide_string
+      )
 
       state :whitespace do
         rule %r{\s+}m, Text
@@ -91,21 +84,19 @@ module Rouge
       state :libunit_name do
         mixin :whitespace
 
-        rule ID do |m|
-          t = self.class.idents[m[0].downcase]
-          if t <= Name
-            # Convert all kinds of Name to namespaces in this context.
-            token Name::Namespace
-          else
+        keywords ID do
+          transform(&:downcase)
+
+          rule OPERATORS, Operator::Word, :pop!
+          rule KEYWORDS, Keyword, :pop!
+          rule DECLARATIONS do
+            token Keyword::Declaration
             # Yikes, we're not supposed to get a keyword in a library unit name!
             # We probably entered this state by mistake, so try to fix it.
-            token t
-            if t == Keyword::Declaration
-              goto :decl_name
-            else
-              pop!
-            end
+            goto :decl_name
           end
+
+          default Name::Namespace
         end
 
         rule %r{[.,]}, Punctuation
@@ -146,12 +137,13 @@ module Rouge
         rule %r{[+*/&<=>|]|-|=>|\.\.|\*\*|[:></]=|<<|>>|<>|@}, Operator
         rule %r{[.,:;()\[\]]}, Punctuation
 
-        rule ID do |m|
-          t = self.class.idents[m[0].downcase]
-          token t
-          if t == Keyword::Declaration
-            push :decl_name
-          end
+        keywords ID do |m|
+          transform(&:downcase)
+          rule KEYWORDS, Keyword
+          rule OPERATORS, Operator::Word
+          rule DECLARATIONS, Keyword::Declaration, :decl_name
+          rule BUILTINS, Name::Builtin
+          default Name
         end
 
         # Flag word-like things that don't match the ID pattern.

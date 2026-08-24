@@ -12,7 +12,7 @@ module Rouge
 
       # Primary reference: https://github.com/agda/agda/blob/master/src/full/Agda/Syntax/Parser/Lexer.x
 
-      pragmas = %w(
+      PRAGMAS = Set.new %w(
         BUILTIN CATCHALL COMPILE FOREIGN DISPLAY ETA ETA_EQUALITY IMPOSSIBLE
         INJECTIVE INJECTIVE_FOR_INFERENCE INLINE INCOHERENT NOINLINE
         NOT_PROJECTION_LIKE LINE MEASURE NO_POSITIVITY_CHECK
@@ -23,7 +23,7 @@ module Rouge
 
       # These exclude the reflection builtins because there are too many
       # See https://agda.readthedocs.io/en/latest/language/reflection.html
-      builtins = %w(
+      BUILTINS = Set.new %w(
         UNIT SIGMA LIST MAYBE BOOL TRUE FALSE NATURAL NATPLUS NATMINUS NATTIMES
         NATEQUALS NATLESS NATDIVSUCAUX NATMODSUCAUX WORD64 INTEGER INTEGERPOS
         INTERGERNEGSUC FLOAT CHAR STRING EQUALITY TYPE PROP SETOMEGA LEVEL
@@ -31,7 +31,7 @@ module Rouge
         SIZEMAX INFINITY SHARP FLAT IO REWRITE FROMNAT FROMNEG FROMSTRING
       )
 
-      reserved = %w(
+      RESERVED = Set.new %w(
         abstract codata coinductive constructor data do eta-equality field
         forall import in inductive infix infixl infixr instance interleaved let
         macro module mutual no-eta-equality open overlap pattern postulate
@@ -55,13 +55,16 @@ module Rouge
         rule %r/{-/, Comment::Multiline, :comment
         rule %r/{!/, Comment::Special, :hole
 
-        # Keywords
-        rule %r/\b(#{reserved.join('|')})\b/, Keyword::Reserved
-
         # Agda primitives (see https://agda.github.io/agda-stdlib/master/Agda.Primitive.html)
         # Do we also want to do built-ins (see https://agda.readthedocs.io/en/latest/language/built-ins.html)?
         rule %r/\b(Level|LevelUniv|lsuc|lzero)\b/, Name::Builtin
         rule %r/\b(S?Set|Prop)(ω|[₀₁₂₃₄₅₆₇₈₉]*)/, Keyword::Type
+
+        # Keywords
+        keywords %r/\w+/ do
+          rule RESERVED, Keyword::Reserved
+          default Name
+        end
 
         # Attributes
         rule %r/@flat|@♭|@⊤/, Name::Attribute
@@ -109,19 +112,15 @@ module Rouge
       state :pragma do
         rule %r/#-}/, Comment::Preproc, :pop!
         rule %r/\s+/, Comment::Preproc
-        rule %r/\w+/ do |m|
-          if pragmas.include?(m[0])
-            # Agda pragmas must begin with a pragma name;
-            # here, the lexer is more lax
-            token Keyword::Pseudo
-          elsif builtins.include?(m[0])
-            token Keyword::Pseudo
-          else
-            # This could be a little more restrictive:
-            # for instance, if we're in the OPTIONS pragma,
-            # we enter an :options state in which we lex only flags
-            token Comment::Preproc
-          end
+        keywords %r/\w+/ do
+          # Agda pragmas must begin with a pragma name;
+          # here, the lexer is more lax
+          rule PRAGMAS, Keyword::Pseudo
+          rule BUILTINS, Keyword::Pseudo
+          # This could be a little more restrictive:
+          # for instance, if we're in the OPTIONS pragma,
+          # we enter an :options state in which we lex only flags
+          default Comment::Preproc
         end
         rule %r/./, Comment::Preproc
       end

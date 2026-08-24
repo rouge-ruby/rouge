@@ -28,10 +28,12 @@ cong f (refl x) = refl (f x)
 data ℕ : Set where
   Z  : ℕ
   S  : ℕ → ℕ
+{-# BUILTIN NATURAL ℕ #-}
 
 _+_ : ℕ → ℕ → ℕ
 Z   + n = n
 S m + n = S (m + n)
+{-# BUILTIN NATPLUS _+_ #-}
 
 -- Left identity for addition.
 +-left-id : (n : ℕ) → (Z + n) =[ ℕ ] n
@@ -52,3 +54,4 @@ S m + n = S (m + n)
   The type of the argument is left implicit. -}
 identity : ∀ {A : Setω} → A → A
 identity = λ { x → x }
+

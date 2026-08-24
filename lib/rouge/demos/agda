@@ -1,8 +1,8 @@
 -- The type of natural numbers.
-data ℕ : Set where
-  Z  : ℕ
-  S  : ℕ → ℕ
+data Nat : Set where
+  zero : Nat
+  succ : Nat → Nat
 
-_+_ : ℕ → ℕ → ℕ
-Z   + n = n
-S m + n = S (m + n)
+_+_ : Nat → Nat → Nat
+zero   + n = n
+succ m + n = succ (m + n)

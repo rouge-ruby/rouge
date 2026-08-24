@@ -13,10 +13,12 @@ module Rouge
       # Primary reference: https://github.com/agda/agda/blob/master/src/full/Agda/Syntax/Parser/Lexer.x
 
       pragmas = %w(
-        BUILTIN CATCHALL COMPILE FOREIGN DISPLAY ETA IMPOSSIBLE INJECTIVE
-        INLINE NOINLINE LINE MEASURE NO_POSITIVITY_CHECK NO_TERMINATION_CHECK
-        NO_UNIVERSE_CHECK NON_COVERING NON_TERMINATING OPTIONS POLARITY REWRITE
-        STATIC TERMINATING WARNING_ON_USAGE WARNING_ON_IMPORT
+        BUILTIN CATCHALL COMPILE FOREIGN DISPLAY ETA ETA_EQUALITY IMPOSSIBLE
+        INJECTIVE INJECTIVE_FOR_INFERENCE INLINE INCOHERENT NOINLINE
+        NOT_PROJECTION_LIKE LINE MEASURE NO_POSITIVITY_CHECK
+        NO_TERMINATION_CHECK NO_UNIVERSE_CHECK NON_COVERING NON_TERMINATING
+        OPTIONS OVERLAPPABLE OVERLAPPING OVERLAPS POLARITY REWRITE STATIC
+        TERMINATING WARNING_ON_USAGE WARNING_ON_IMPORT
       )
 
       # These exclude the reflection builtins because there are too many
@@ -34,7 +36,7 @@ module Rouge
         forall import in inductive infix infixl infixr instance interleaved let
         macro module mutual no-eta-equality open overlap pattern postulate
         primitive private quote quoteTerm record rewrite syntax tactic unquote
-        unquoteDecl unquoteDef variable where with
+        unquoteDecl unquoteDef variable where with opaque unfolding
         using hiding renaming to public
       )
 
@@ -56,11 +58,10 @@ module Rouge
         # Keywords
         rule %r/\b(#{reserved.join('|')})\b/, Keyword::Reserved
 
-        # Agda primitives (see https://agda.github.io/agda-stdlib/Agda.Primitive.html)
+        # Agda primitives (see https://agda.github.io/agda-stdlib/master/Agda.Primitive.html)
         # Do we also want to do built-ins (see https://agda.readthedocs.io/en/latest/language/built-ins.html)?
-        rule %r/\b(Level|lsuc|lzero)\b/, Name::Builtin
-        rule %r/\bProp[₀₁₂₃₄₅₆₇₈₉]*/, Keyword::Type
-        rule %r/\bS?Set(ω|[₀₁₂₃₄₅₆₇₈₉]*)/, Keyword::Type
+        rule %r/\b(Level|LevelUniv|lsuc|lzero)\b/, Name::Builtin
+        rule %r/\b(S?Set|Prop)(ω|[₀₁₂₃₄₅₆₇₈₉]*)/, Keyword::Type
 
         # Attributes
         rule %r/@flat|@♭|@⊤/, Name::Attribute

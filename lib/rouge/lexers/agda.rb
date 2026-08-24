@@ -40,11 +40,12 @@ module Rouge
         using hiding renaming to public
       )
 
-      escapes = %w(
-        a b f n r t v
-        NUL SOH STX ETX EOT ENQ ACK BEL BS HT LF VT FF CR SO SI DLE
-        DC1 DC2 DC3 DC4 NAK SYN ETB CAN EM SUB ESC FS GS RS US SP DEL
-      )
+      ESCAPES = %r/
+        a | b | f | n | r | t | v |
+        NUL | SOH | STX | ETX | EOT | ENQ | ACK | BEL | BS  | HT  | LF  | VT  |
+        FF  | CR  | SO  | SI  | DLE | DC1 | DC2 | DC3 | DC4 | NAK | SYN | ETB |
+        CAN | EM  | SUB | ESC | FS  | GS  | RS  | US  | SP  | DEL
+      /x
 
       state :root do
         # Comments can stick behind some punctuation
@@ -88,7 +89,7 @@ module Rouge
         end
 
         # Numbers
-        rule %r/-?0x[\da-fA-F]+(_[\da-fA-F]+)*\b/, Num::Hex
+        rule %r/-?0x\h+(_\h+)*\b/, Num::Hex
         rule %r/-?0b[01]+(_[01]+)*\b/, Num::Hex
         rule %r/-?\d+(\.\d+)?[eE][+-]?\d+\b/, Num::Float
         rule %r/-?\d+(_\d+)*\b/, Num::Integer
@@ -138,13 +139,13 @@ module Rouge
       end
 
       state :char do
-        rule %r/\\(#{escapes.join('|')}|x[\da-fA-F]+|o[0-7]+|\d+|\\|')'/, Str::Escape, :pop!
+        rule %r/\\(#{ESCAPES}|\^[@-_]|x\h+|o[0-7]+|\d+|\\|')'/, Str::Escape, :pop!
         rule %r/.'/, Str::Char, :pop!
       end
 
       state :string do
         rule %r/"/, Str, :pop!
-        rule %r/\\(#{escapes.join('|')}|x[\da-fA-F]+|o[0-7]+|\d+|\\|")/, Str::Escape
+        rule %r/\\(#{ESCAPES}|\^[@-_]|x\h+|o[0-7]+|\d+|\\|")/, Str::Escape
         rule %r/./, Str
       end
     end

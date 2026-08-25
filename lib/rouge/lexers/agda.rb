@@ -44,7 +44,8 @@ module Rouge
         a | b | f | n | r | t | v |
         NUL | SOH | STX | ETX | EOT | ENQ | ACK | BEL | BS  | HT  | LF  | VT  |
         FF  | CR  | SO  | SI  | DLE | DC1 | DC2 | DC3 | DC4 | NAK | SYN | ETB |
-        CAN | EM  | SUB | ESC | FS  | GS  | RS  | US  | SP  | DEL
+        CAN | EM  | SUB | ESC | FS  | GS  | RS  | US  | SP  | DEL |
+        \^[@-_] | x\h+ | o[0-7]+ | \d+ | \\
       /x
 
       state :root do
@@ -70,15 +71,10 @@ module Rouge
         rule %r/{!/, Comment::Special, :hole
 
         # Agda primitives (see https://agda.github.io/agda-stdlib/master/Agda.Primitive.html)
-        # Do we also want to do built-ins (see https://agda.readthedocs.io/en/latest/language/built-ins.html)?
-        rule %r/\b(Level|LevelUniv|lsuc|lzero)\b/, Name::Builtin
+        # Builtins can be renamed so there's no point lexing them all specially,
+        # but the sorts are predefined rather than postulated somewhere
+        rule %r/\b(LevelUniv)\b/, Keyword::Type
         rule %r/\b(S?Set|Prop)(ω|[₀₁₂₃₄₅₆₇₈₉]*)/, Keyword::Type
-
-        # Keywords
-        keywords %r/\w+/ do
-          rule RESERVED, Keyword::Reserved
-          default Name
-        end
 
         # Attributes
         rule %r/@flat|@♭|@⊤/, Name::Attribute
@@ -110,6 +106,12 @@ module Rouge
         # Characters and strings with escape codes
         rule %r/'/, Str::Char, :char
         rule %r/"/, Str, :string
+
+        # Keywords
+        keywords %r/\w+/ do
+          rule RESERVED, Keyword::Reserved
+          default Name
+        end
 
         # Special operators with characters that could appear in regular names
         # require spaces after them to distinguish them from names
@@ -156,13 +158,13 @@ module Rouge
       end
 
       state :char do
-        rule %r/\\(#{ESCAPES}|\^[@-_]|x\h+|o[0-7]+|\d+|\\|')'/, Str::Escape, :pop!
+        rule %r/\\(#{ESCAPES}|')'/, Str::Escape, :pop!
         rule %r/.'/, Str::Char, :pop!
       end
 
       state :string do
         rule %r/[^"\\]+/, Str
-        rule %r/\\(#{ESCAPES}|\^[@-_]|x\h+|o[0-7]+|\d+|\\|")/, Str::Escape
+        rule %r/\\(#{ESCAPES}|")/, Str::Escape
         rule %r/"/, Str, :pop!
       end
     end

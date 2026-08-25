@@ -5,6 +5,10 @@ module agda where
 open import Level
 open import Agda.Primitive
 
+postulate
+  MyLevel : LevelUniv
+{-# BUILTIN LEVEL MyLevel #-}
+
 data Id {ℓ : Level} (A : Set ℓ) : A → A → Set ℓ where
   refl : (x : A) → Id A x x
 
@@ -44,8 +48,8 @@ big--minus = ?
 
 -- Right identity for addition.
 +-right-id : (n : ℕ) → (n + Z) =[ ℕ ] n
-+-right-id Z     = refl Z
-+-right-id (S n) = cong S (+-right-id n)
++-right-id Z       = refl Z
++-right-id _@(S n) = cong S (+-right-id n)
 
 -- Associativity of addition.
 -- Make sure that the ∀ notation is lexed correctly as well.
@@ -53,9 +57,59 @@ big--minus = ?
 +-assoc Z     n o = refl (n + o)
 +-assoc (S m) n o = cong S (+-assoc m n o)
 
+idP : ∀ {A : SProp} → A → A
+idP {_} = λx → x
+
 {- Large identity function
   The type of the argument is left implicit. -}
 identity : ∀ {A : Setω} → A → A
 identity = λ { x → x }  -- a pattern lambda
 
   -- This is a comment with indented space.
+
+compare : Nat → Nat → Comparison
+compare x y with x < y
+...            | false with y < x
+...                       | false = equal
+...                       | true  = greater
+compare x y    | true = less
+
+module _ (A B : Set) (recompute : .B → .{{A}} → B) where
+
+  _$_ : .(A → B) → .A → B
+  f $ x with .{f} | .(f x) | .{{x}}
+  ... | y = recompute y
+
+defaultTo : {A : Set} (x : A) → Term → TC ⊤
+defaultTo x hole = bindTC (quoteTC x) (unify hole)
+
+record Bools : SSet₁₈₄₄₆₇₄₄₀₇₃₇₀₉₅₅₁₆₁₅ where
+  constructor mkBools
+  field fst : Bool
+        @(tactic defaultTo fst)-- If `snd` is not provided, set it to `fst`.
+          {snd} : Bool
+open Bools
+
+data ♭ {@♭ l : Level} (@♭ A : Set l) : Set l where
+  con : (@♭ x : A) → ♭ A
+
+some-numbers = [
+  0xdEAd_bEEf,
+  -0xf0ccac1a,
+  0b0_1_0_1_0,
+  -6.02214076e+23,
+  1_000_000
+]
+
+some-chars = [
+  '\x237C',
+  '\b',
+  '\BEL'
+]
+
+some-strings = [
+  '"',
+  "",
+  "\BEL is the same as \^G is the same as \a is the same as \x07 is the same as \o07",
+  "\"'\"'\""
+]

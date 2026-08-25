@@ -13,7 +13,7 @@ module Rouge
       # Primary reference: https://github.com/agda/agda/blob/master/src/full/Agda/Syntax/Parser/Lexer.x
 
       PRAGMAS = Set.new %w(
-        BUILTIN CATCHALL COMPILE FOREIGN DISPLAY ETA ETA_EQUALITY IMPOSSIBLE
+        CATCHALL COMPILE FOREIGN DISPLAY ETA ETA_EQUALITY IMPOSSIBLE
         INJECTIVE INJECTIVE_FOR_INFERENCE INLINE INCOHERENT NOINLINE
         NOT_PROJECTION_LIKE LINE MEASURE NO_POSITIVITY_CHECK
         NO_TERMINATION_CHECK NO_UNIVERSE_CHECK NON_COVERING NON_TERMINATING
@@ -48,10 +48,23 @@ module Rouge
       /x
 
       state :root do
-        # Comments can stick behind some punctuation
-        rule %r/(^|[\s\(\)\}\.;])(--.*)$/ do
+        # Line comments can stick behind some punctuation
+        rule %r/(^|[\(\)\}\.;])(--.*)$/ do
           groups Punctuation, Comment
         end
+
+        # Otherwise, line comments follow spaces
+        rule %r/(\s+)(--.*)$/ do
+          groups Text, Comment
+        end
+
+        # Builtin pragmas
+        rule %r/({-#)(\s+)(BUILTIN)/ do
+          groups Comment::Preproc, Text, Keyword::Pseudo
+          push :builtin
+        end
+
+        # All other block comments
         rule %r/{-#/, Comment::Preproc, :pragma
         rule %r/{-/, Comment::Multiline, :comment
         rule %r/{!/, Comment::Special, :hole
@@ -110,29 +123,33 @@ module Rouge
         rule %r/\s+/, Text
       end
 
-      state :pragma do
-        rule %r/#-}/, Comment::Preproc, :pop!
+      state :builtin do
         rule %r/\s+/, Comment::Preproc
         keywords %r/\w+/ do
-          # Agda pragmas must begin with a pragma name;
-          # here, the lexer is more lax
-          rule PRAGMAS, Keyword::Pseudo
           rule BUILTINS, Keyword::Pseudo
-          # This could be a little more restrictive:
-          # for instance, if we're in the OPTIONS pragma,
-          # we enter an :options state in which we lex only flags
-          default Comment::Preproc
         end
-        rule %r/./, Comment::Preproc
+        rule %r/\s+/, Comment::Preproc
+        rule %r/.+#-}/, Comment::Preproc, :pop!
+      end
+
+      state :pragma do
+        rule %r/\s+/, Comment::Preproc
+        keywords %r/\w+/ do
+          rule PRAGMAS, Keyword::Pseudo
+        end
+        rule %r/\s+/, Comment::Preproc
+        rule %r/.+#-}/, Comment::Preproc, :pop!
       end
 
       state :comment do
+        rule %r/[^{-]+/, Comment::Multiline
         rule %r/-}/, Comment::Multiline, :pop!
         rule %r/{-/, Comment::Multiline, :comment
         rule %r/./, Comment::Multiline
       end
 
       state :hole do
+        rule %r/[^{!]+/, Comment::Special
         rule %r/!}/, Comment::Special, :pop!
         rule %r/{!/, Comment::Special, :hole
         rule %r/./, Comment::Special
@@ -144,9 +161,9 @@ module Rouge
       end
 
       state :string do
-        rule %r/"/, Str, :pop!
+        rule %r/[^"\\]+/, Str
         rule %r/\\(#{ESCAPES}|\^[@-_]|x\h+|o[0-7]+|\d+|\\|")/, Str::Escape
-        rule %r/./, Str
+        rule %r/"/, Str, :pop!
       end
     end
   end

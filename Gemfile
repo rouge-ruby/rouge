@@ -6,10 +6,18 @@ gemspec
 
 gem 'rake'
 
-gem 'minitest', '>= 5.0'
+if RUBY_VERSION < '3.2'
+  gem 'minitest', '~> 5.0'
+else
+  gem 'minitest', '~> 6.0'
+end
 gem 'minitest-power_assert'
 gem 'minitest-focus'
-gem 'power_assert', '~> 2.0'
+if RUBY_VERSION < '3.2'
+  gem 'power_assert', '~> 2.0'
+else
+  gem 'power_assert', '~> 3.0'
+end
 
 # don't try to install redcarpet under jruby
 gem 'redcarpet', platforms: :ruby
@@ -26,7 +34,7 @@ group :development do
 
   gem 'rubocop'
   gem 'rubocop-performance', '~> 1.26'
-  gem 'rubocop-minitest', '~> 0.38'
+  gem 'rubocop-minitest', '~> 0.40'
   gem 'rubocop-rake', '~> 0.7'
 
   # docs

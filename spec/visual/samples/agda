@@ -35,9 +35,12 @@ Z   + n = n
 S m + n = S (m + n)
 {-# BUILTIN NATPLUS _+_ #-}
 
+big--minus : ℕ → ℕ → ℕ
+big--minus = ?
+
 -- Left identity for addition.
 +-left-id : (n : ℕ) → (Z + n) =[ ℕ ] n
-+-left-id n = refl n
++-left-id n = {! refl ! {{!! n !!}} ! } !}
 
 -- Right identity for addition.
 +-right-id : (n : ℕ) → (n + Z) =[ ℕ ] n
@@ -53,5 +56,6 @@ S m + n = S (m + n)
 {- Large identity function
   The type of the argument is left implicit. -}
 identity : ∀ {A : Setω} → A → A
-identity = λ { x → x }
+identity = λ { x → x }  -- a pattern lambda
 
+  -- This is a comment with indented space.

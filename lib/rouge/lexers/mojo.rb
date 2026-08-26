@@ -20,13 +20,16 @@ module Rouge
         @keywords ||= super + %w(
           fn self alias out read mut owned ref var
           struct trait raises with in match case
+          deinit comptime thin async await capturing
+          where __list_literal__ __dict_literal__ __set_literal__
+          __literal_size__ abi
         )
       end
 
       def self.builtins
         @builtins ||= super + %w(
           __mlir_attr __mlir_type __mlir_op parameter alwaysinline
-          register_passable
+          register_passable type_of
         )
       end
 

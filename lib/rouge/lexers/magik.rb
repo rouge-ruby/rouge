@@ -84,7 +84,7 @@ module Rouge
           pop!
         end
 
-        rule Magik.identifier do
+        rule identifier do
           token Name::Class
           pop!
         end

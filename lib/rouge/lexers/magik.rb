@@ -64,7 +64,7 @@ module Rouge
         rule %r/:#{identifier}/, Str::Symbol
         rule %r/@[\s]*#{identifier}:#{identifier}/, Name::Label
         rule %r/@[\s]*#{identifier}/, Name::Label
-        rule %r/%u[0-9a-z]{4}|%[^\s]+/i, Literal::String::Char
+        rule %r/%(?:\w+|\W)/, Literal::String::Char
         rule number, Literal::Number
         rule %r/#{identifier}:#{identifier}/, Name
         rule identifier, Name

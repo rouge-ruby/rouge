@@ -19,12 +19,12 @@ module Rouge
         _try _with _when _endtry
         _catch _endcatch
         _throw
-        _lock _endlock
+        _lock _locking _endlock
         _if _then _elif _else _endif
         _for _over _while _loop _finally _endloop _loopbody _continue _leave
         _return
         _class
-        _local _constant _recursive _global _dynamic _import
+        _local _constant _global _dynamic _import
         _private _iter _abstract _method _endmethod
         _proc _endproc
         _gather _scatter _allresults _optional

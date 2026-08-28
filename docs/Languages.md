@@ -171,6 +171,7 @@
 - ReasonML (`reasonml`)
 - Rego (`rego`)
 - ReScript (`rescript`)
+- RISC-V Assembly (`riscvasm`)
 - RML (`rml`)
 - Robot Framework (`robot_framework`)
 - Ruby (`ruby`)

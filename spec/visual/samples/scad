@@ -1,0 +1,199 @@
+use <text/test.scad>
+include <text/test.scad>
+
+// --------------------------------------------------------------------
+// A collection of useful modules to create Fischertechnik parts,
+// mainly grooves, holes and pins to be added or substracted 
+// --------------------------------------------------------------------
+
+basic_block_size = 15;
+basic_block_half = basic_block_size / 2;
+basic_block_center = basic_block_half;
+
+goove_length = 15.0;
+manifold_correction = 0.1;
+eyelet_len = 2.5;
+
+$fn = 50; 
+
+// --------------------------------------------------------------------
+// a round groove to be substracted from other solids
+// --------------------------------------------------------------------
+module round_groove(length = goove_length)
+{
+    groove_radius = 2.25;
+    groove_center = 2.4;
+    groove_width = 3.0;
+    union()
+    {
+        translate([0, groove_center, 0] )  
+            cylinder(r = groove_radius, h=length + 2 * manifold_correction, center=true);
+        translate([0, 0.5, 0] )  
+            cube([groove_width,1.5,length + 2 * manifold_correction], center = true);
+    }
+}
+
+// --------------------------------------------------------------------
+// a flat groove to be substracted from other solids
+// --------------------------------------------------------------------
+module flat_groove(length = goove_length)
+{
+    render() intersection()
+    {
+        round_groove(length);
+        translate([-2.3, -0.25, -(length  + 2 * manifold_correction)/2] )  
+            cube([4.6,3.05,length + 2 * manifold_correction]);
+    }
+}
+
+
+// Apply a size correction to the eyelets which are printed on
+// the build plate of the 3D printer?
+// On my Ender 3 the eyelets on the build plate are too tall so 
+// I needed to widen them. The eyelets on the vertical wall of the 
+// girder are ok, they need no correction.
+function apply_correction(val, correctionVal = 0.0, correction=false) = correction == true ? val + correctionVal : val;
+
+
+// --------------------------------------------------------------------
+// a single eyelet for the girders and struts
+// --------------------------------------------------------------------
+module eyelet(height=eyelet_len,radius=2.05, correctionVal = 0.0, horizontal=false)
+{
+    render() union()
+    {
+        radius = apply_correction(radius, correctionVal, horizontal);
+        cube_width = apply_correction(7.2, correctionVal, horizontal);
+        cube_height = apply_correction(3.1, correctionVal, horizontal);
+        
+        translate([0, 0, horizontal == false ? -(height/2) + manifold_correction : (height/2) - manifold_correction ])
+        {
+            cylinder(h=height,r=radius, center=true);
+            cube([cube_height,cube_width,height], center=true);
+        }
+    }
+}
+
+// --------------------------------------------------------------------
+// a row of eyelets
+// --------------------------------------------------------------------
+module eyelet_row(length = 1, height=eyelet_len, eyelet_dist = 15.0, correction = 0.0, horizontal = false)
+{
+    cnt = length / eyelet_dist;
+    for (i = [0 : eyelet_dist : (cnt - 1) * eyelet_dist])
+    {
+        translate([eyelet_dist / 2, eyelet_dist / 2 + i ,0]) 
+            eyelet(height=height, horizontal=horizontal, correctionVal=correction);
+    }
+}
+
+
+// --------------------------------------------------------------------
+// basic cube with cylinder to cut out holes for fixing the pins of the 
+// basic blocks. Used by cube_with_cylinder to build zero point centered
+// variants for the four main directions.
+// --------------------------------------------------------------------
+module cwc(width = 4.2, s = 3.2, c = 0.8, h = 2.8)
+{
+    r = width /2;
+    segment_height = r - sqrt(4 * pow(r,2) - pow(s,2))/2;
+    cylinder_center_offset = r - segment_height;
+
+    translate([0, cylinder_center_offset , width])
+    {
+        difference()
+        {
+            union()
+            {
+                translate([-width/2,-width/2 - manifold_correction,0])
+                    cube([width,width,width]);
+                translate([0,-segment_height,0])
+                    cube([s,s,width*2], center = true);
+                translate([0,c,0])
+                    cylinder(h=width*2, r=width/2,center = true);
+            }
+            //#translate([-width/2  - manifold_correction /2, -width/2 + 2.8, 0])
+            translate([-width/2  - manifold_correction /2, -width/2 + h, 0])
+                cube([width + manifold_correction,width + manifold_correction,width + manifold_correction]);
+        }
+    }
+}
+
+// --------------------------------------------------------------------
+// A cube with attached cylinder to cut out holes for the pins of the 
+// basic blocks. Centered on the zero point of the coordinate system. 
+// Supports the four directions up, down, left and right.
+// The build plate must be face down in the coordinate system to cut
+// out the holes with this module.
+// if the holes are too tall, adjust width (the width and height of 
+// the larger square hole) or the segment width s (the width of the 
+// the smaller rectangle)
+// --------------------------------------------------------------------
+module cube_with_cylinder(width = 4.2, s = 3.2, co = 0.8, h = 2.8, dir = "up")
+{
+    
+    if (dir == "up")
+    {
+        translate([0,width,0])
+            rotate([90,0,0])
+                cwc(width = width, s = s, h = h, c = co);
+    }
+    else if (dir == "down")
+    {
+        translate([0,-width,0])
+            rotate([90,0,180])
+                cwc(width = width, s = s, h = h, c = co);
+    }
+    else if (dir == "left")
+    {
+        translate([width,0,0])
+            rotate([90,0,270])
+                cwc(width = width, s = s, h = h, c = co);
+    }
+    else if (dir == "right")
+    {
+        translate([-width,0,0])
+            rotate([90,0,90])
+                cwc(width = width, s = s, h = h, c = co);
+    }
+}
+
+// --------------------------------------------------------------------
+// Pin which fits into the round and flat grooves. 
+// The base_length is for pins placed on blocks or plates
+// --------------------------------------------------------------------
+module pin(diameter = 4, base_width = 3, base_length = 1.2)
+{
+    rotate([90,0,0])
+        translate([0, (base_width +  base_length) / 2, 0])
+            union()
+            {
+                difference()
+                {
+                    // build the rounded part of the pin
+                    intersection()
+                    {
+                        cylinder(d = diameter, h = diameter, center = true);
+                        rotate([0, 90, 0])
+                            cylinder(d = diameter, h = diameter, center = true);
+                    }
+                    // cut off the top
+                    translate([0, diameter / 2 + 0.6, 0])
+                        cube([diameter, diameter, diameter], center = true );
+                }
+                // add the base below the rounded part
+                translate([0, -(base_width / 2), 0])
+                    cube([base_width, base_length, base_width], center = true );
+            }
+}
+
+// --------------------------------------------------------------------
+// Final test for some exotic features like the modifiers
+// --------------------------------------------------------------------
+module Test()
+{
+     %rotate([90,0,0]) { }
+     #translate([0, 0, 0]) { }
+     !union() { }
+     *difference() { }
+}

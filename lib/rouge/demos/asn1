@@ -1,0 +1,12 @@
+Payment-method ::= CHOICE {
+  check       NumericString(SIZE (15)),
+  credit-card Credit-card,
+  cash        NULL
+}
+Credit-card ::= SEQUENCE {
+  type        Card-type,
+  number      NumericString(SIZE (20)),
+  expiry-date NumericString(SIZE (6)) -- MMYYYY
+}
+Card-type ::= ENUMERATED {
+  cb(0), visa(1), eurocard(2), diners(3), american-express(4)}

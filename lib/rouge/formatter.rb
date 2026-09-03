@@ -6,6 +6,7 @@ module Rouge
   class Formatter
     # @private
     REGISTRY = {}
+    LF = "\n".b.freeze
 
     # Specify or get the unique tag for this formatter.  This is used
     # for specifying a formatter in `rougify`.
@@ -94,12 +95,29 @@ module Rouge
 
       out = []
       tokens.each do |tok, val|
-        val.scan %r/\n|[^\n]+/ do |s|
-          if s == "\n"
+        if val.valid_encoding? && val.encoding.ascii_compatible?
+          bytes = val.b
+          start = 0
+
+          while (finish = bytes.index(LF, start))
+            segment = val.byteslice(start...finish)
+            out << [tok, segment] unless segment.empty?
+
             yield out
             out = []
-          else
-            out << [tok, s]
+            start = finish + LF.bytesize
+          end
+
+          segment = val.byteslice(start...)
+          out << [tok, segment] unless segment.empty?
+        else
+          val.scan %r/\n|[^\n]+/ do |s|
+            if s == "\n"
+              yield out
+              out = []
+            else
+              out << [tok, s]
+            end
           end
         end
       end

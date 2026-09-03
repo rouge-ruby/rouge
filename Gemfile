@@ -23,6 +23,7 @@ end
 gem 'redcarpet', platforms: :ruby
 
 # Profiling
+gem 'benchmark', require: false
 gem 'memory_profiler', require: false
 
 group :development do

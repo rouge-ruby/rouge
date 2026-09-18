@@ -7,6 +7,7 @@
 require 'rbconfig'
 
 module Rouge
+  # @private
   class FileReader
     attr_reader :input
     def initialize(input)
@@ -36,7 +37,10 @@ module Rouge
     end
   end
 
+  # The class that runs the rougify CLI program.
+  # See rougify --help for more info.
   class CLI
+    # @private
     def self.doc
       return enum_for(:doc) unless block_given?
 
@@ -97,6 +101,7 @@ module Rouge
       self.class.error!(*a)
     end
 
+    # @private
     def self.class_from_arg(arg)
       case arg
       when 'version', '--version', '-v'
@@ -116,6 +121,7 @@ module Rouge
       end
     end
 
+    # CLI command to print the version
     class Version < CLI
       def self.desc
         "print the rouge version number"
@@ -128,11 +134,13 @@ module Rouge
       end
     end
 
+    # CLI command to print help.
     class Help < CLI
       def self.desc
         "print help info"
       end
 
+      # @private
       def self.doc
         return enum_for(:doc) unless block_given?
 
@@ -163,11 +171,13 @@ module Rouge
       end
     end
 
+    # Default CLI command to highlight code. See `rougify help highlight`.
     class Highlight < CLI
       def self.desc
         "highlight code"
       end
 
+      # @private
       def self.doc
         return enum_for(:doc) unless block_given?
 
@@ -358,6 +368,7 @@ module Rouge
       def self.desc
       end
 
+      # @private
       def self.doc
         return enum_for(:doc) unless block_given?
 
@@ -382,6 +393,7 @@ module Rouge
         "print CSS styles"
       end
 
+      # @private
       def self.doc
         return enum_for(:doc) unless block_given?
 
@@ -449,6 +461,7 @@ module Rouge
         "list available lexers"
       end
 
+      # @private
       def self.doc
         return enum_for(:doc) unless block_given?
 

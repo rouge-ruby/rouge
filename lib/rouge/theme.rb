@@ -2,10 +2,38 @@
 # frozen_string_literal: true
 
 module Rouge
+  # Base class of all themes. These objects map token types to {Style} objects,
+  # to be used to generate CSS, ANSI codes, etc. Colours are defined with a base
+  # palette. Contains a DSL for defining palette colours and individual settings
+  # for tokens.
+  #
+  # Usage:
+  #
+  # ```ruby
+  # class MyTheme < CSSTheme
+  #   # define palette colours with arbitrary names
+  #   palette :color_one => '#123456'
+  #   palette :color_two => '#654321'
+  #
+  #   # style tokens with foreground and background colours
+  #   style Text, :fg => :color_one, :bg => :color_two
+  #
+  #   # apply bold and italic
+  #   style Keyword, :fg => :color_two, :bold => true, :italic => true
+  #
+  #   # style multiple token types at once
+  #   style Keyword::Namespace,
+  #         Keyword::Pseudo, :fg => :color_one, :italic => true
+  # end
+  # ```
   class Theme
     include Token::Tokens
 
+    # A specific style setting.
     class Style < Hash
+      # Constructs a style
+      # @param theme [Theme] the containing theme.
+      # @param hsh [Hash] The theme settings.
       def initialize(theme, hsh={})
         super()
         @theme = theme
@@ -19,6 +47,9 @@ module Rouge
         end
       end
 
+      # Renders the style as CSS to a selector. Returns a string if no block is given.
+      #
+      # @yield [String] chunks of CSS output.
       def render(selector, &b)
         return enum_for(:render, selector).to_a.join("\n") unless b
 
@@ -31,6 +62,10 @@ module Rouge
         yield "}"
       end
 
+      # Renders the interior of a CSS style. Returns a concatenated string
+      # if no block is given.
+      #
+      # @yield [String] individual style lines.
       def rendered_rules(&b)
         return enum_for(:rendered_rules) unless b
         yield "color: #{fg}" if fg
@@ -161,10 +196,14 @@ module Rouge
   end
 
   class CSSTheme < Theme
+    # @option opts [String] :scope The containing CSS scope for the theme.
     def initialize(opts={})
       @scope = opts[:scope] || '.highlight'
     end
 
+    # @yield [String]
+    #
+    # Yields chunks of CSS, or a returns a concatenated CSS string if no block is given.
     def render(&b)
       return enum_for(:render).to_a.join("\n") unless b
 
@@ -177,10 +216,18 @@ module Rouge
       end
     end
 
+    # @yield [String]
+    # @param [String] selector A CSS selector to render the styles into.
+    #
+    # Renders the base style of a theme. Useful for applying its styling to
+    # non-highlighted text. Yields chunks of output or returns the full
+    # output as a String if no block is given.
     def render_base(selector, &b)
       self.class.base_style.render(selector, &b)
     end
 
+    # @param [Token] tok The token class.
+    # @return [Style] The Style object associated with the given token type.
     def style_for(tok)
       self.class.get_style(tok)
     end

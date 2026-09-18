@@ -7,7 +7,7 @@ require 'set'
 require 'strscan'
 require 'uri'
 
-# The containing module for Rouge
+# The containing module for Rouge.
 module Rouge
   # cache value in a constant since `__dir__` allocates a new string
   # on every call.

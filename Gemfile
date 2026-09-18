@@ -27,10 +27,12 @@ gem 'memory_profiler', require: false
 
 group :development do
   gem 'pry'
+  gem 'irb'
 
   # Needed for a Rake task
   gem 'git'
   gem 'yard'
+  gem 'rackup'
 
   gem 'rubocop'
   gem 'rubocop-performance', '~> 1.26'

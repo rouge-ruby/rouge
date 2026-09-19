@@ -332,7 +332,8 @@ module Rouge
 
         @lexer_opts = opts[:lexer_opts]
 
-        theme = Theme.find(opts[:theme]).new or error! "unknown theme #{opts[:theme]}"
+        theme_class = Theme.find(opts[:theme]) or error! "unknown theme #{opts[:theme]}"
+        theme = theme_class.new
 
         # TODO: document this in --help
         @formatter = case opts[:formatter]

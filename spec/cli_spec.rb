@@ -38,6 +38,20 @@ describe Rouge::CLI do
       }
     end
 
+    describe 'an unknown theme' do
+      let(:argv) { %w(highlight -l ruby -t no-such-theme) }
+      it('reports the theme by name instead of crashing') {
+        error = nil
+        begin
+          subject
+        rescue Rouge::CLI::Error => e
+          error = e
+        end
+        assert { !error.nil? }
+        assert { error.message == 'unknown theme no-such-theme' }
+      }
+    end
+
     describe 'guessing a lexer by mimetype' do
       let(:argv) { %w(highlight -m application/javascript) }
       it('parses') {

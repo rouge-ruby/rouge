@@ -19,7 +19,7 @@ push: build
 # default ruby for jobs
 tmp/ruby-versions.txt: $(CI_FILE)
 	mkdir -p $(dir $@)
-	ruby -r yaml -e 'puts YAML.load_file("$(CI_FILE)", aliases: true).dig("variables", "ruby-versions")' > $@
+	ruby -r yaml -e 'puts YAML.load_file("$(CI_FILE)", aliases: true).dig("_variables", "ruby-versions")' > $@
 
 # copy in needed files from the repo so the dockerfile doesn't have to reach into ../
 tmp/%: ../%

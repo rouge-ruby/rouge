@@ -1,7 +1,7 @@
 ---
 name: CI
 
-variables:
+_variables:
   defaults: &defaults
     runs-on: ["rouge-feline", "small", "debian-13-x86_64"]
     container:
